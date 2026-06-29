@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "channel": "CHANGE-ME",
+  "lead": "maestro",
+  "seats": [
+    {
+      "handle": "maestro",
+      "role": "lead",
+      "scope": "orchestration, the file-scoped atomic land, human liaison",
+      "spawn": false
+    },
+    {
+      "handle": "engine",
+      "role": "engine",
+      "scope": "the core logic / determinism layer + its proof (goldens, unit tests)",
+      "spawn": true
+    },
+    {
+      "handle": "spine",
+      "role": "spine",
+      "scope": "the wire layer between engine and surface — state, transforms, the cross-slice contracts",
+      "spawn": true
+    },
+    {
+      "handle": "surface",
+      "role": "surface",
+      "scope": "the UI / presentation layer",
+      "spawn": true
+    },
+    {
+      "handle": "verify",
+      "role": "verify",
+      "scope": "integration / end-to-end — drives the assembled artifact in a realistic environment",
+      "spawn": true
+    }
+  ],
+  "grounding": ["AGENTS.md", "README.md"],
+  "paths": {
+    "teamDir": "docs/team",
+    "seatDir": "docs/team/dev",
+    "seams": "docs/team/dev/seams.md"
+  },
+  "launch": "claude \"/anthill:join {handle}\""
+}
