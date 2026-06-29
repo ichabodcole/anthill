@@ -10,6 +10,8 @@
     "typescript": "^5"
   },
   "scripts": {
-    "anthill": "bun scripts/anthill/cli.ts"
+    "anthill": "bun scripts/anthill/cli.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   }
 }
