@@ -172,7 +172,7 @@ export const teamInitCommand = defineAnthillCommand({
       emitError({
         format,
         command: "init",
-        error: `templates dir not found: ${templatesDir}. (The docs-team templates land in T7; pass --templates <dir> to render a custom set.)`,
+        error: `templates dir not found: ${templatesDir}. (The bundled templates live at <plugin>/templates/docs-team; pass --templates <dir> to render a custom set.)`,
       });
       process.exit(1);
     }
