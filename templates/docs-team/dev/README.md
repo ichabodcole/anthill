@@ -21,4 +21,6 @@ grapevine.
   only at the end, and ping-pongs with the owning seat until green. See the SOP.
 
 This roster is a **hypothesis**, not law — the finalize **structure reflection** can split, merge, or
-re-scope a seat when the work says so. Re-run `anthill init` after a reshape.
+re-scope a seat when the work says so. Re-run `anthill init` after a reshape to render any new seat
+docs (existing docs are never clobbered). **`init` does not rewrite this roster table** — when a seat
+is added / renamed / re-scoped, the lead updates the row above by hand.
