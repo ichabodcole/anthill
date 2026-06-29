@@ -22,6 +22,14 @@ import { defineCommand, runMain } from "citty";
 import { buildManifest, type ScopeLabel } from "./manifest.ts";
 import { renderGroupedHelp } from "./help-renderer.ts";
 import { infoCommand } from "./commands/info.ts";
+import { teamAttachCommand } from "./commands/team-attach.ts";
+import { teamCommitCommand } from "./commands/team-commit.ts";
+import { teamConveneCommand } from "./commands/team-convene.ts";
+import { teamDownCommand } from "./commands/team-down.ts";
+import { teamInitCommand } from "./commands/team-init.ts";
+import { teamJoinCommand } from "./commands/team-join.ts";
+import { teamSpawnCommand } from "./commands/team-spawn.ts";
+import { teamStatusCommand } from "./commands/team-status.ts";
 
 const main = defineCommand({
   meta: {
@@ -38,6 +46,14 @@ const main = defineCommand({
   },
   subCommands: {
     info: infoCommand,
+    convene: teamConveneCommand,
+    join: teamJoinCommand,
+    spawn: teamSpawnCommand,
+    attach: teamAttachCommand,
+    down: teamDownCommand,
+    status: teamStatusCommand,
+    commit: teamCommitCommand,
+    init: teamInitCommand,
   },
 });
 
