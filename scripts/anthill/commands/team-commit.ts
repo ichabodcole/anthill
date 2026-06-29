@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { closeSync, openSync, readFileSync, statSync, unlinkSync, writeSync } from "node:fs";
 import { join } from "node:path";
 import { defineAnthillCommand } from "../define.ts";
-import { emit, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { nowMillis } from "../runtime.ts";
 
 // How long to wait for the serialize lock before giving up, and when to treat a
@@ -124,14 +124,26 @@ export const teamCommitCommand = defineAnthillCommand({
     const paths = ((ctx.args._ as string[] | undefined) ?? []).filter((p) => p.length > 0);
     const warnings: string[] = [];
 
+    // Guards emit the dual-audience error envelope (clean {ok:false} in JSON
+    // mode) rather than throwing — a JSON-mode stack trace would regress the
+    // stable envelope contract this CLI sells.
     if (!message) {
-      throw new Error('a commit message is required: `anthill commit -m "<msg>" <path>…`');
+      emitError({
+        format,
+        command: "commit",
+        error: 'a commit message is required: `anthill commit -m "<msg>" <path>…`',
+      });
+      process.exit(1);
     }
     if (paths.length === 0) {
-      throw new Error(
-        "refusing to commit with NO explicit paths. On a shared tree a bare commit sweeps a " +
+      emitError({
+        format,
+        command: "commit",
+        error:
+          "refusing to commit with NO explicit paths. On a shared tree a bare commit sweeps a " +
           'peer\'s staged file — pass exactly your paths: `anthill commit -m "<msg>" <path>…`',
-      );
+      });
+      process.exit(1);
     }
 
     const root = repoRoot(process.cwd());
