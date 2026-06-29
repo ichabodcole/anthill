@@ -10,9 +10,22 @@ the terminals close — distinct from landing the _code_. This is what makes the
 _live_. Don't skip it on a real session.
 
 > **The anthill CLI** — driven from the plugin:
-> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below.
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below
+> (shorthand, not a binary on PATH). (`${CLAUDE_PLUGIN_ROOT}` is set by Claude Code whenever a plugin
+> skill runs.) Doc paths below show the **defaults** (`docs/team/…`); the real locations resolve from
+> `.team/config.json` (`paths.teamDir` / `paths.seatDir` / `paths.seams`).
 
 ## Steps
+
+### Kickoff — the lead triggers the ritual
+
+0. **Broadcast the start on the vine.** The seats are in **separate panes** (or subagents) — nothing
+   makes them synthesize unless told. The lead posts on the channel: _"Finalizing — every seat run your
+   `anthill:finalize-session` synthesis (steps 1–2) now and confirm on the vine when your seat doc is
+   landed."_ Then the lead **gathers confirmations** and does not proceed to land + teardown (step 5)
+   until **every present seat has confirmed** — knowledge capture is the whole point, and a torn-down
+   pane can't synthesize. (In subagent mode, the lead invokes each seat's synthesis directly instead of
+   broadcasting.)
 
 ### Per seat — each agent does this for its own doc
 
@@ -47,11 +60,12 @@ _live_. Don't skip it on a real session.
 ### Land + close — the lead
 
 5. **Land** the doc updates as a **file-scoped** commit: **`anthill commit -m "<msg>" <paths…>`** (never
-   `git add -A`). Settle the board (cards → review/done). Then, **only after every seat has
-   finalized**, tear the session down: **`anthill down`** — it resolves the session by name and
-   **refuses to kill while seats are still present on the vine** (pass `--force` to override). That
-   presence guard is your backstop against yanking a seat out mid-ritual. (If you spawned with a custom
-   `--session <name>`, pass the same here. Any code branch is landed separately.)
+   `git add -A`). Settle the board (cards → review/done). Then, **only after every seat has confirmed
+   (step 0)**, tear the session down: **`anthill down`** — the session is named after the **channel**
+   (`config.channel`) by default, so `anthill down` resolves it with no arguments. It **refuses to kill
+   while seats are still present on the vine** (pass `--force` to override) — that presence guard is
+   your backstop against yanking a seat out mid-ritual. (If you spawned with a custom `--session
+   <name>`, pass the same here. Any code branch is landed separately.)
 
 ## Output
 

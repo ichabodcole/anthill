@@ -10,7 +10,9 @@ human tells you which seat to take (your **handle** — one of the seats in `.te
 how a fresh session inherits the seat's lineage: its hard-won understanding lives in its living doc.
 
 > **The anthill CLI** — driven from the plugin:
-> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below.
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below
+> (shorthand, not a binary on PATH — run the full `bun "${CLAUDE_PLUGIN_ROOT}/…"` form).
+> (`${CLAUDE_PLUGIN_ROOT}` is set by Claude Code whenever a plugin skill runs.)
 
 ## Steps
 
@@ -33,6 +35,9 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
    and **board tail** commands — each wrapped with the **Monitor** tool (filter keepalives as the
    checklist shows), so you wake on team messages and register presence as your handle. **`anthill
    status`** shows who's on + the board.
+   - **Were you dispatched as a subagent** (not a terminal seat)? A one-shot subagent can't hold a
+     Monitor tail — **skip the tail wiring**. The lead drives you directly (dispatch → result) and
+     relays the vine. The tail wiring above is the **terminal-seat path**.
 
 4. **Mint your session scratch.** Create your running-capture file:
    **`.team/scratch/<handle>/<YYYY-MM-DD>-<slug>.md`** (it's gitignored — `anthill init` added the
