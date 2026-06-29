@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { renderTemplates, type TemplateFile } from "./team-init.ts";
+import { planGitignore, renderTemplates, SCRATCH_GITIGNORE_LINE, type TemplateFile } from "./team-init.ts";
 
 const CONFIG = {
   channel: "myproj",
@@ -70,5 +70,35 @@ describe("renderTemplates", () => {
       exists: () => false,
     });
     expect(writes[0]?.content).toBe("lead=[]");
+  });
+});
+
+describe("planGitignore (idempotent ensure-line)", () => {
+  const LINE = SCRATCH_GITIGNORE_LINE;
+
+  it("adds the line to an empty / missing file", () => {
+    expect(planGitignore(null, LINE)).toEqual({ action: "added", content: `${LINE}\n` });
+    expect(planGitignore("", LINE)).toEqual({ action: "added", content: `${LINE}\n` });
+  });
+
+  it("appends with a separating newline when the file lacks a trailing one", () => {
+    expect(planGitignore("node_modules", LINE)).toEqual({
+      action: "added",
+      content: `node_modules\n${LINE}\n`,
+    });
+  });
+
+  it("appends without doubling the newline when one is already present", () => {
+    expect(planGitignore("node_modules\n", LINE)).toEqual({
+      action: "added",
+      content: `node_modules\n${LINE}\n`,
+    });
+  });
+
+  it("is a no-op when the line is already present (per-line, trimmed)", () => {
+    const existing = `node_modules\n${LINE}\ndist\n`;
+    expect(planGitignore(existing, LINE)).toEqual({ action: "present", content: existing });
+    // trailing whitespace variant still counts as present (no dupe)
+    expect(planGitignore(`${LINE}  \n`, LINE).action).toBe("present");
   });
 });

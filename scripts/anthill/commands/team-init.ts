@@ -95,6 +95,30 @@ export function renderTemplates(opts: {
   return { writes, skipped };
 }
 
+/** The gitignore line init ensures in the target repo: the per-session running
+ * scratch (spec §6). `.team/config.json` + `docs/team/` are committed; the
+ * scratch under `.team/scratch/` is disposable, so it's ignored. */
+export const SCRATCH_GITIGNORE_LINE = ".team/scratch/";
+
+export interface GitignorePlan {
+  action: "added" | "present";
+  content: string;
+}
+
+/**
+ * PURE idempotent gitignore-ensure: append `line` to `.gitignore` content if it's
+ * absent, never duplicate. `existing` is the current file content (null/"" when
+ * there's no file). Per-line trimmed comparison so a trailing-whitespace variant
+ * doesn't double-add. Re-runnable: a second call finds it present.
+ */
+export function planGitignore(existing: string | null, line: string): GitignorePlan {
+  const content = existing ?? "";
+  const present = content.split("\n").some((l) => l.trim() === line);
+  if (present) return { action: "present", content };
+  const sep = content.length > 0 && !content.endsWith("\n") ? "\n" : "";
+  return { action: "added", content: `${content}${sep}${line}\n` };
+}
+
 /** Recursively read a directory into a flat list of {relPath, content}. */
 function readTemplateDir(dir: string): TemplateFile[] {
   const out: TemplateFile[] = [];
@@ -112,7 +136,7 @@ function readTemplateDir(dir: string): TemplateFile[] {
   return out;
 }
 
-/** The bundled templates dir: <plugin-root>/templates/docs-team (lands in T7). */
+/** The bundled templates dir: <plugin-root>/templates/docs-team. */
 function defaultTemplatesDir(): string {
   // commands/ -> anthill/ -> scripts/ -> <plugin root>
   return resolve(import.meta.dir, "..", "..", "..", "templates", "docs-team");
@@ -122,6 +146,7 @@ interface InitData {
   teamDir: string;
   written: string[];
   skipped: string[];
+  gitignore: "added" | "present";
 }
 
 // `anthill init` — deterministic, idempotent renderer. Reads .team/config.json,
@@ -170,7 +195,20 @@ export const teamInitCommand = defineAnthillCommand({
     }
     const skipped = plan.skipped.map((rel) => relative(config.projectRoot, join(teamDir, rel)));
 
-    const data: InitData = { teamDir: relative(config.projectRoot, teamDir), written, skipped };
+    // Ensure the gitignored running-scratch line in the target repo (idempotent).
+    const gitignorePath = join(config.projectRoot, ".gitignore");
+    const gi = planGitignore(
+      existsSync(gitignorePath) ? readFileSync(gitignorePath, "utf8") : null,
+      SCRATCH_GITIGNORE_LINE,
+    );
+    if (gi.action === "added") writeFileSync(gitignorePath, gi.content);
+
+    const data: InitData = {
+      teamDir: relative(config.projectRoot, teamDir),
+      written,
+      skipped,
+      gitignore: gi.action,
+    };
 
     emit({
       format,
@@ -188,6 +226,11 @@ export const teamInitCommand = defineAnthillCommand({
           for (const p of d.skipped) lines.push(`  · ${p}`);
         }
         if (!d.written.length && !d.skipped.length) lines.push("(no templates to render)");
+        lines.push(
+          d.gitignore === "added"
+            ? `.gitignore: added "${SCRATCH_GITIGNORE_LINE}"`
+            : `.gitignore: "${SCRATCH_GITIGNORE_LINE}" already present`,
+        );
         return lines.join("\n");
       },
     });
