@@ -1,0 +1,15 @@
+{
+  "name": "anthill",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "citty": "^0.2.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "scripts": {
+    "anthill": "bun scripts/anthill/cli.ts"
+  }
+}
