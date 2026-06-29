@@ -1,0 +1,11 @@
+{
+  "name": "anthill",
+  "version": "0.1.0",
+  "description": "Portable team-OS — installs an ephemeral-agent team (durable seats, coordination over grapevine + bounty, living docs) into any project. Stigmergy-driven methodology, a Bun CLI, and the bootstrap / convene / join / finalize-session lifecycle skills.",
+  "author": {
+    "name": "Cole Reed"
+  },
+  "homepage": "https://github.com/ichabodcole/anthill",
+  "repository": "https://github.com/ichabodcole/anthill",
+  "license": "MIT"
+}

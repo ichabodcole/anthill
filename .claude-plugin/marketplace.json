@@ -1,0 +1,28 @@
+{
+  "name": "anthill-marketplace",
+  "owner": {
+    "name": "Cole Reed",
+    "email": "alienlobsterbuffet.dev@gmail.com"
+  },
+  "metadata": {
+    "description": "Anthill — a portable team-OS plugin. Installs an ephemeral-agent team structure (seats, coordination, living docs) into any project.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "anthill",
+      "source": ".",
+      "category": "development",
+      "tags": [
+        "team",
+        "orchestration",
+        "coordination",
+        "tmux",
+        "stigmergy",
+        "agents",
+        "scaffolding",
+        "portable"
+      ]
+    }
+  ]
+}
