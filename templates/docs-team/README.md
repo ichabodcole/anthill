@@ -91,6 +91,9 @@ holds if you commit by hand: `git commit -m "<msg>" -- <explicit paths>`, never 
   cut a phantom, don't assert a cause you haven't proven.
 - **Verify the real artifact, not a proxy.** Trust the rendered output; distrust the measurement or
   the stub. A proxy will eventually lie.
+- **One sentence per line in the living docs.** These docs live in the host repo, so its formatter
+  (prettier / biome) may reflow them — and a hard-wrapped continuation line can be mangled into a
+  stray list bullet, corrupting the trail. One sentence per line makes a reflow a no-op.
 
 ## Finalize + the structure reflection
 
