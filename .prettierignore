@@ -1,0 +1,8 @@
+# Scaffold templates: markdown carries {{handle}}/{{rosterTable}}/{{channel}} tokens
+# (and a {{handle}}.md path-token file) that `anthill init` renders verbatim.
+# Prettier must NOT reflow these — the rendered docs/team output must stay byte-identical.
+templates/
+
+# Generated / vendored
+node_modules
+dist

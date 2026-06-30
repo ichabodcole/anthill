@@ -3,8 +3,12 @@
   "type": "module",
   "private": true,
   "devDependencies": {
+    "@biomejs/biome": "2.4.16",
     "@types/bun": "latest",
-    "citty": "^0.2.2"
+    "citty": "^0.2.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.9.4"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -12,6 +16,20 @@
   "scripts": {
     "anthill": "bun scripts/anthill/cli.ts",
     "test": "bun test",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "biome check --error-on-warnings .",
+    "lint:fix": "biome check --write --error-on-warnings .",
+    "format": "biome format --write .",
+    "format:md": "prettier --write '**/*.md'",
+    "check": "tsc --noEmit -p tsconfig.json && biome check --error-on-warnings . && bun test",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,json,jsonc}": [
+      "biome check --write --error-on-warnings --no-errors-on-unmatched"
+    ],
+    "*.md": [
+      "prettier --write"
+    ]
   }
 }
