@@ -20,6 +20,18 @@ for now, propose-from-the-archetype and let the human ratify.
 
 ## Steps
 
+### 0. Is there already a team here?
+
+Before anything, check for an existing footprint: if **`.anthill/config.json`** or the legacy
+**`.team/config.json`** already exists (here or up the tree), this repo is **already bootstrapped** —
+do NOT re-bootstrap (you'd double-write or clobber). Instead:
+
+- on the **current** version → run **`anthill:convene`** to start a session;
+- on an **older** version (e.g. the legacy `.team/` layout) → run **`anthill:upgrade`** to migrate it
+  to the current `.anthill/` layout (history-preserving). `anthill migrate --dry-run` reports which.
+
+Only continue below when there's no footprint yet.
+
 ### 1. Preflight the dependencies
 
 anthill depends on three things. Check each; if any is missing, **guide the install and stop** — don't
