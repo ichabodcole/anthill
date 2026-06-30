@@ -2,7 +2,11 @@
 
 **Created:** 2026-06-30
 **Related Proposal:** [proposal.md](./proposal.md)
-**Status:** Draft
+**Status:** Active
+
+**Progress:** Phase 1 ✓ (`bd8d9f0` — `.anthill/` is the native v2 layout; gate green, fresh
+`init` verified). Phases 2–4 (migration engine → `anthill migrate` CLI → `anthill:upgrade`
+skill) remain.
 
 ---
 
