@@ -37,8 +37,11 @@ write a half-working config.
 
 ### 2. Light discovery
 
-- Read the repo's **product-grounding docs** — `AGENTS.md`, `README.md`, `docs/PROJECT-SUMMARY.md` if
-  present — to understand what this project is.
+- **Detect the repo's real grounding anchors** — don't assume `AGENTS.md` exists. Probe the usual
+  candidates (`AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/PROJECT-SUMMARY.md`, `docs/PROJECT_MANIFESTO.md`)
+  and read the ones that are **actually present** to understand what this project is. The archetype's
+  default `grounding: [AGENTS.md, README.md]` is only a guess — on a repo with no `AGENTS.md` it would
+  emit a dangling reference, so set `grounding` to the anchors you actually found (next steps).
 - **Confirm it's a layered app** (an engine/logic layer → a wire/state layer → a UI/surface layer, with
   integration to verify). If it clearly isn't, say so and offer to proceed with a hand-tailored roster
   anyway (the archetype is a starting point, not a gate).
@@ -57,8 +60,11 @@ Present the proposed roster (handles · roles · scopes) and confirm — one foc
   engine layer → fold it into spine.)
 - **Channel:** replace `CHANGE-ME` with the team's grapevine channel name (default tmux session name
   too) — usually the project's short name.
-- **grounding / paths:** confirm the `grounding` docs match the repo's real product docs; keep the
-  default `paths` unless the project wants its team docs somewhere other than `docs/team/`.
+- **grounding / paths:** set `grounding` to the anchors you actually detected (step 2) — **drop any
+  default that doesn't exist** rather than emit a dangling path. (`anthill join` warns when a configured
+  grounding doc is missing, so a dangling ref won't stay silent — but don't write one in the first
+  place.) Keep the default `paths` unless the project wants its team docs somewhere other than
+  `docs/team/`.
 
 ### 4. Write the config + render the scaffold
 

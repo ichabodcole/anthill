@@ -18,6 +18,10 @@ interface JoinData {
   tailCommand: string;
   boardTailCommand: string;
   checklist: string[];
+  /** Surfaced when a configured grounding path doesn't exist — a dangling
+   * `config.grounding` ref (e.g. a default `AGENTS.md` the repo doesn't have)
+   * shouldn't be a silent miss. */
+  warnings?: string[];
 }
 
 // `anthill join <handle>` — produce the grounding manifest (docs to read, in
@@ -84,6 +88,17 @@ export const teamJoinCommand = defineAnthillCommand({
       exists: existsSync(p),
     }));
 
+    // A configured grounding path that doesn't exist is a dangling reference
+    // (commonly a default `AGENTS.md` the repo doesn't have) — surface it as a
+    // real warning, not just an inline "(missing!)" the reader might skim past.
+    const missingGrounding = grounding.filter((g) => !g.exists).map((g) => relative(root, g.path));
+    const warnings =
+      missingGrounding.length > 0
+        ? [
+            `${missingGrounding.length} grounding doc(s) not found: ${missingGrounding.join(", ")} — fix \`config.grounding\` or create them`,
+          ]
+        : undefined;
+
     const tailCommand = `bun ${grapevineCli} tail ${channel} --as ${handle}`;
     const boardTailCommand = `bun ${bountyCli} tail --mine --as ${handle}`;
     const seatDocRel = relative(root, config.seatDocPath(handle));
@@ -98,7 +113,15 @@ export const teamJoinCommand = defineAnthillCommand({
       `Route questions + decisions to the lead${config.lead ? ` (${config.lead})` : ""} on the vine — not direct to the human.`,
     ];
 
-    const data: JoinData = { handle, channel, grounding, tailCommand, boardTailCommand, checklist };
+    const data: JoinData = {
+      handle,
+      channel,
+      grounding,
+      tailCommand,
+      boardTailCommand,
+      checklist,
+      ...(warnings && { warnings }),
+    };
 
     emit({
       format,
@@ -126,6 +149,10 @@ export const teamJoinCommand = defineAnthillCommand({
         d.checklist.forEach((c, i) => {
           lines.push(`  [${i + 1}] ${c}`);
         });
+        if (d.warnings?.length) {
+          lines.push("");
+          for (const w of d.warnings) lines.push(`⚠ ${w}`);
+        }
         return lines.join("\n");
       },
     });
