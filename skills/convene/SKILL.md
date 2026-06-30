@@ -45,11 +45,10 @@ stay solo.
    - **Channel:** run **`anthill convene --topic "<one-line framing>"`** to open the grapevine channel
      (idempotent) and report board state.
    - **Board:** convene _reports_ the bounty board but does **not** open it (bounty's `open` isn't
-     idempotent). Open it yourself via the **`spellbook:bounty`** skill — invoke that skill and run its
-     CLI: `bounty open --title "<project> · <phase>"`. Then **seed the initial cards in owner lanes**,
-     left in `todo`: `bounty add "<task title>" --owner <handle>` (one per planned lane; the doer owns
-     its card's lifecycle `todo→doing→review`, the reviewer closes). The board is _state_; the vine is
-     _substance_.
+     idempotent). Open it yourself via the **`spellbook:bounty`** skill (it documents its own CLI): title
+     it for this work (e.g. `<project> · <phase>`), then **seed one `todo` card per planned lane, in
+     owner lanes** — the doer owns its card's lifecycle `todo→doing→review`, the reviewer closes. The
+     board is _state_; the vine is _substance_.
    - **`anthill status`** confirms the result (who's on the vine + the board column counts).
 
 4. **Brief the seats, then spawn them.** Post a framing opener on the channel (what we're building, the
