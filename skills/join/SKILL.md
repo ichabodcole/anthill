@@ -19,6 +19,9 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
 1. **Identify your handle** — from the invocation ("join as `<handle>`"). If it wasn't given, ask which
    seat. It must be one of the seats in `.team/config.json` (`anthill join <handle>` errors with the
    valid list if not).
+   - Your anthill **seat handle** and any **external identity** you carry (an agent-bridge name, a
+     runtime label, etc.) are **separate namespaces** — they need not match. If you're `mosaic` here
+     and `Gandalf` on a bridge, that's fine; this seat handle is who you are _on this team_.
 
 2. **Re-ground in your seat (the heart of this).** Read, in order (paths from `.team/config.json`):
    - the **`grounding`** docs (the _product_ context) — your seat doc assumes you know it;
@@ -34,7 +37,7 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
 3. **Get on the wires.** From the `anthill join <handle>` output, run the resolved **grapevine tail**
    and **board tail** commands — each wrapped with the **Monitor** tool (filter keepalives as the
    checklist shows), so you wake on team messages and register presence as your handle. **`anthill
-   status`** shows who's on + the board.
+status`** shows who's on + the board.
    - **Were you dispatched as a subagent** (not a terminal seat)? A one-shot subagent can't hold a
      Monitor tail — **skip the tail wiring**. The lead drives you directly (dispatch → result) and
      relays the vine. The tail wiring above is the **terminal-seat path**.
