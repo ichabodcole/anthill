@@ -35,26 +35,58 @@ export interface BoardCounts {
   done: number;
 }
 
+/** The shape `bounty state` returns (the bits we read): a title + the task list. */
+interface BoardState {
+  state?: { title?: string; tasks?: Array<{ status?: string }> };
+}
+
+export interface BoardSummary {
+  counts: BoardCounts;
+  /** The board's title — surfaced so an AMBIENT board (a stranger's, read off the
+   * bounty daemon's global "latest" pointer) is self-evidently labeled, not passed
+   * off as this team's. */
+  title: string | undefined;
+}
+
 /**
- * Read the bounty board's column counts. Returns null (never throws) when the
- * board isn't running / can't be read; the warning text is returned alongside so
- * callers can surface it in `data.warnings`.
+ * PURE: tally a parsed `bounty state` payload into column counts + the board title.
+ * Returns null when the payload carries no task list (board not readable).
  */
-export async function readBoardCounts(): Promise<{ board: BoardCounts | null; warning?: string }> {
+export function summarizeBoard(parsed: BoardState | null): BoardSummary | null {
+  const tasks = parsed?.state?.tasks;
+  if (!tasks) return null;
+  const counts: BoardCounts = { todo: 0, doing: 0, review: 0, done: 0 };
+  for (const task of tasks) {
+    if (task.status && task.status in counts) {
+      counts[task.status as keyof BoardCounts] += 1;
+    }
+  }
+  return { counts, title: parsed?.state?.title };
+}
+
+/**
+ * Read the bounty board's column counts + title. Returns `board: null` (never
+ * throws) when the board isn't running / can't be read; the warning text is
+ * returned alongside so callers can surface it in `data.warnings`.
+ *
+ * NOTE: `bounty state` (no `--session`) reads the daemon's global "latest" board,
+ * which may belong to ANOTHER project. We can't yet scope to this team's own board
+ * (anthill persists no board id — that lands with the `.anthill/` footprint work);
+ * until then we return the `title` so callers can label which board this is.
+ */
+export async function readBoardCounts(): Promise<{
+  board: BoardCounts | null;
+  title?: string;
+  warning?: string;
+}> {
   try {
     const bountyCli = resolveCoordCli("bounty");
     const state = await execCoord(bountyCli, ["state"]);
-    const parsed = parseJsonLine<{ state?: { tasks?: Array<{ status?: string }> } }>(state.stdout);
-    if (!state.ok || !parsed?.state?.tasks) {
+    const summary = state.ok ? summarizeBoard(parseJsonLine<BoardState>(state.stdout)) : null;
+    if (!summary) {
       return { board: null, warning: "bounty board not running (open one via the bounty skill)" };
     }
-    const board: BoardCounts = { todo: 0, doing: 0, review: 0, done: 0 };
-    for (const task of parsed.state.tasks) {
-      if (task.status && task.status in board) {
-        board[task.status as keyof BoardCounts] += 1;
-      }
-    }
-    return { board };
+    return { board: summary.counts, title: summary.title };
   } catch (err) {
     return { board: null, warning: `bounty CLI unresolved: ${(err as Error).message}` };
   }
