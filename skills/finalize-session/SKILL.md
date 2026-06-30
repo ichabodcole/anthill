@@ -52,10 +52,16 @@ _live_. Don't skip it on a real session.
    - **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)
    - **What were the natural seams?** (the contracts that actually emerged vs. the ones we guessed.)
    - **Who actually owned what?** (vs. the roster on paper.)
-   - **Did the composition fit?** (an idle seat, an overloaded one, a missing lens.)
-     Output flows to seat docs, `seams.md`, and **occasionally the roster/`.anthill/config.json` itself**. If
-     you reshape the roster, **re-run `anthill init`** to render any new seat docs (existing are never
-     clobbered) and update the `dev/README.md` roster row by hand.
+   - **Did the composition fit?** (headcount — an idle seat, an overloaded one, a missing lens.)
+   - **Did any seat's real work diverge from its stated scope?** (the deeper question — not headcount
+     but **shape**: work that drifted across a boundary, a scope now too broad or too narrow, a role
+     that's no longer the right cut. **Split / merge / redraw the scope, or reshape the role** — knock
+     down the corridor and re-form the walls. Capture the proposed `seats[]` edit + the _why_; this is
+     the pheromone signal the next convene acts on.)
+
+   Output flows to seat docs, `seams.md`, and **occasionally the roster/`.anthill/config.json` itself**. If
+   you reshape the roster, **re-run `anthill init`** to render any new seat docs (existing are never
+   clobbered) and update the `dev/README.md` roster row by hand.
 
 ### Land + close — the lead
 

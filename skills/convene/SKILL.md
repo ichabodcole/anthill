@@ -35,6 +35,10 @@ stay solo.
    - What are we building this session? (Point at the proposal / plan / project folder if one exists.)
    - Which seats does **this phase** need — all of them, or a subset? (The `spawn:true` seats in config
      are the default set; you override per phase.)
+   - **Is this the right team _shape_ for the work in front of you?** Before spawning, sanity-check the
+     seat scopes against what this phase actually needs — if a scope has drifted or doesn't fit, **split
+     / merge / re-draw it now** (and `anthill init` any new seat doc). This is the forward half of the
+     finalize re-scope reflection: last session's captured misfit is this session's signal to act on.
    - Anything constraining: what's already in flight, deadlines, sensitivities.
 
 3. **Stand up coordination.**
