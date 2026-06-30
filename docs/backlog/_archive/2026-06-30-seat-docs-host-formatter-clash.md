@@ -1,8 +1,6 @@
 # Protect seat docs from the host repo's formatters
 
-**Added:** 2026-06-30 · **Status:** Belt done (`167c996`); **suspenders still pending** — a small
-follow-up to `anthill init` (detect the host prettier/biome and add the `.anthill/` dir to its
-ignore). It was NOT implemented in the footprint-migration project (the four phases didn't scope it).
+**Added:** 2026-06-30 · **Status:** Done — belt (`167c996`) + suspenders (`84dfb12`)
 
 Seat docs live in the consumer repo, so its husky/lint-staged + prettier/biome run on
 them. On media-buffet this normalized `*italics*`→`_italics_` (churn the lead must
@@ -23,15 +21,16 @@ doc.
 ## Acceptance Criteria
 
 - [x] anthill-authored seat docs use one-sentence-per-line (no soft wraps)
-- [ ] `init` adds an ignore-guard when it can confidently detect prettier/biome;
-      otherwise warns
+- [x] the team-docs dir is added to the host formatter's ignore when one is detected
+      (reframed from a CLI `init` guard to a bootstrap/upgrade **agent instruction** —
+      simpler for a one-time, low-judgement action)
 - [x] a host `format` / commit run leaves seat docs byte-stable
 
-**Disposition:** the **belt** shipped (`167c996`) — the seat-doc template is authored
-one-sentence-per-line, with the convention noted in the template + the SOP's shared
-practices, so a host reflow is a structural no-op. The **suspenders** (`init` adds the
-team-docs dir to the detected formatter's ignore) rides with the `.anthill/` footprint work
-(migration Phase 1), since it couples to where the docs live.
+**Disposition:** the **belt** shipped (`167c996`) — seat-doc templates are authored
+one-sentence-per-line (convention noted in the template + the SOP), so a host reflow is a
+structural no-op. The **suspenders** shipped (`84dfb12`) as a setup **instruction** rather
+than a CLI feature: `anthill:bootstrap` (and `anthill:upgrade` post-migration) tell the agent
+to add the `.anthill/` dir to the host's prettier/biome ignore when the repo has one.
 
 ## References
 

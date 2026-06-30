@@ -1,8 +1,6 @@
 # Bootstrap: recommend a root CLAUDE/AGENTS "anthill methodology" pointer
 
-**Added:** 2026-06-30 · **Status:** Scoped into
-[`projects/anthill-footprint-migration`](../projects/anthill-footprint-migration/plan.md) (Phase 1
-adds the consent-gated bootstrap pointer) — not yet started
+**Added:** 2026-06-30 · **Status:** Done (`bd8d9f0`, Phase 1)
 
 As part of the bootstrap procedure, recommend (consent-gated) adding a short section to the
 consumer repo's root `CLAUDE.md` / `AGENTS.md` that announces the repo uses the **anthill
@@ -21,12 +19,17 @@ already uses and respect that; only add what's missing.
 
 ## Acceptance Criteria
 
-- [ ] bootstrap offers to add/refresh a root CLAUDE/AGENTS "anthill methodology" section
+- [x] bootstrap offers to add/refresh a root CLAUDE/AGENTS "anthill methodology" section
       (consent-gated, idempotent — don't duplicate if already present)
-- [ ] the pointer notes: team-based dev is available here, how to engage it, and where
+- [x] the pointer notes: team-based dev is available here, how to engage it, and where
       `.anthill/` lives
-- [ ] anthill's OWN root `CLAUDE.md` carries the equivalent pointer (dogfood — partially
-      done 2026-06-30; keep in sync once self-hosted)
+- [ ] anthill's OWN root `CLAUDE.md` carries the equivalent pointer (dogfood — completes
+      during the self-host dogfood, when anthill's own `.anthill/` exists)
+
+**Resolution (`bd8d9f0`):** Phase 1 of the footprint-migration added the consent-gated
+discoverability-pointer step to `anthill:bootstrap` (AGENTS.md home + CLAUDE.md redirect,
+idempotent, noting where `.anthill/` lives). The last AC — anthill's _own_ root pointer —
+naturally completes during the self-host dogfood; archived as the feature itself is done.
 
 ## References
 
