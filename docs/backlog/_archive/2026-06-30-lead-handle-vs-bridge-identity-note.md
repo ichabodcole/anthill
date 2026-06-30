@@ -1,6 +1,6 @@
 # Bootstrap note: lead handle vs external (agent-bridge) identity
 
-**Added:** 2026-06-30
+**Added:** 2026-06-30 · **Status:** Done (`1e42f68`)
 
 On media-buffet the lead's anthill handle (`arthur`) diverged from the project's
 agent-bridge identity (`Gandalf`) — separate namespaces, harmless, but a fresh agent
@@ -10,8 +10,12 @@ are distinct namespaces and need not match.
 
 ## Acceptance Criteria
 
-- [ ] bootstrap or join prose clarifies that the seat handle and external identities are
+- [x] bootstrap or join prose clarifies that the seat handle and external identities are
       separate namespaces
+
+**Resolution (`1e42f68`):** the `anthill:join` skill's "identify your handle" step now notes
+that a seat handle and any external identity (agent-bridge name, runtime label) are separate
+namespaces and need not match.
 
 ## References
 

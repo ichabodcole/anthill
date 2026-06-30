@@ -1,6 +1,6 @@
 # Bootstrap: detect grounding docs instead of defaulting to AGENTS.md
 
-**Added:** 2026-06-30
+**Added:** 2026-06-30 · **Status:** Done (`dea05b1`)
 
 The layered-app archetype defaults `grounding: [AGENTS.md, README.md]`. On the first
 external bootstrap (media-buffet) the repo had no `AGENTS.md` (it uses README +
@@ -11,9 +11,14 @@ exist, rather than emit a dangling reference.
 
 ## Acceptance Criteria
 
-- [ ] bootstrap discovers existing anchor docs rather than assuming `AGENTS.md`
-- [ ] a configured `grounding` path that doesn't exist produces a warning, not a silent
+- [x] bootstrap discovers existing anchor docs rather than assuming `AGENTS.md`
+- [x] a configured `grounding` path that doesn't exist produces a warning, not a silent
       dangling reference
+
+**Resolution (`dea05b1`):** the bootstrap skill now probes the usual anchors
+(AGENTS/CLAUDE/README/PROJECT-SUMMARY/PROJECT_MANIFESTO) and sets `grounding` to what's
+present (dropping absent defaults); `anthill join` surfaces any missing grounding path as a
+structured `warnings` entry (+ a ⚠ line), not just a silent inline "(missing!)".
 
 ## References
 
