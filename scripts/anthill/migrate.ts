@@ -21,6 +21,13 @@ import { CURRENT_VERSION } from "./config.ts";
 /** The consolidated v2 root every migration target lands in. */
 export const ANTHILL_DIR = ".anthill";
 
+/** The v1 config-dir marker (its `config.json` was the v1 root marker). */
+export const V1_CONFIG_DIR = ".team";
+
+/** The v1 DEFAULT living-docs dir (immutable history — v1 with no `paths` override
+ * put the living docs here). The IO scanner needs it to locate a v1 repo's docs. */
+export const V1_DEFAULT_TEAM_DIR = "docs/team";
+
 export type MigrationOp =
   /** Move a git-TRACKED path (history-preserving `git mv` in the executor). */
   | { kind: "git-mv"; from: string; to: string }

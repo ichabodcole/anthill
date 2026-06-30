@@ -26,6 +26,7 @@ import { teamConveneCommand } from "./commands/team-convene.ts";
 import { teamDownCommand } from "./commands/team-down.ts";
 import { teamInitCommand } from "./commands/team-init.ts";
 import { teamJoinCommand } from "./commands/team-join.ts";
+import { teamMigrateCommand } from "./commands/team-migrate.ts";
 import { teamSpawnCommand } from "./commands/team-spawn.ts";
 import { teamStatusCommand } from "./commands/team-status.ts";
 import { renderGroupedHelp } from "./help-renderer.ts";
@@ -54,6 +55,7 @@ const main = defineCommand({
     status: teamStatusCommand,
     commit: teamCommitCommand,
     init: teamInitCommand,
+    migrate: teamMigrateCommand,
   },
 });
 
