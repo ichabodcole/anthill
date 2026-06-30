@@ -29,8 +29,14 @@ _live_. Don't skip it on a real session.
 
 ### Per seat — each agent does this for its own doc
 
-1. **Review your session** — the work you did + the ah-ha judgments you captured in your scratch
-   (`.anthill/scratch/<handle>/…`).
+1. **Review your session — two passes:**
+   - **Reactive:** the work you did + the ah-ha judgments in your scratch (`.anthill/scratch/<handle>/…`)
+     — what bit, what surprised you, what you'd do differently.
+   - **Reflective:** even if the session ran _smoothly_, did anything you trusted **by default** — a
+     contract, a default, an assumption this seat never questioned — turn out to be load-bearing in a way
+     worth naming? Smooth runs hide exactly these, and a quiet assumption that held is often the most
+     durable lesson. (Reactive catches friction; reflective catches assumptions — both become seat-doc
+     scars below.)
 2. **Synthesize → your seat doc** (`.anthill/dev/<handle>.md`) — this is curation as pheromone:
    **strengthen the load-bearing trails, let the unimportant ones fade.**
    - Promote durable **judgments** (the reasoning + the generalizable lesson — not lesson-less events).
@@ -83,3 +89,7 @@ terminals close.
 
 If this ritual was rough — a step unclear, friction in the synthesis or the seams pass — capture it (a
 scratch note, or flag the lead / the human) so the next revision fixes it. The rituals improve by use.
+
+**Reflective pass (not just "what broke"):** even when it ran clean, did anything you trusted **by
+default** — a step's assumption, a default this ritual left implicit — feel like it might not always
+hold? Smooth runs suppress exactly that signal; name it anyway.

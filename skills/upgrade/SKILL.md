@@ -92,5 +92,8 @@ intact, hand-edited docs preserved, verified and committed.
 ## Skill feedback
 
 If this was rough — a migration step unclear, a reconciliation the guide didn't cover — capture it and
-flag the human (or file it for the next `anthill:finalize-session`). The migration guides improve by
-use.
+flag the human (or file it for the next `anthill:finalize-session`). The migration guides improve by use.
+
+**Reflective pass (not just "what broke"):** even when it ran clean, did anything you trusted **by
+default** — a path, a default, an assumption this skill left implicit — feel like it might not always
+hold? Smooth runs suppress exactly that signal; name it anyway.

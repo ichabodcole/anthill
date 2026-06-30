@@ -83,5 +83,8 @@ A convened team — live channel + board, seats briefed and joining, the lead co
 ## Skill feedback
 
 If this skill was rough — a step unclear, an `anthill` command that misbehaved, a missing case — jot it
-to your scratch and raise it at `anthill:finalize-session` (or flag the human). These skills improve by
-use.
+to your scratch and raise it at `anthill:finalize-session` (or flag the human). These skills improve by use.
+
+**Reflective pass (not just "what broke"):** even when it ran clean, did anything you trusted **by
+default** — a path, a default, an assumption this skill left implicit — feel like it might not always
+hold? Smooth runs suppress exactly that signal; name it anyway.
