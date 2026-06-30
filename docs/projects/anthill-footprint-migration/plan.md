@@ -4,9 +4,9 @@
 **Related Proposal:** [proposal.md](./proposal.md)
 **Status:** Active
 
-**Progress:** Phase 1 ✓ (`bd8d9f0` — `.anthill/` is the native v2 layout; gate green, fresh
-`init` verified). Phases 2–4 (migration engine → `anthill migrate` CLI → `anthill:upgrade`
-skill) remain.
+**Progress:** Phase 1 ✓ (`bd8d9f0` — `.anthill/` native v2 layout) · Phase 2 ✓ (`2db4e12` —
+pure migration planner, 9 tests). Phases 3–4 (`anthill migrate` CLI → `anthill:upgrade` skill)
+remain.
 
 ---
 
