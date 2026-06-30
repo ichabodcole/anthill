@@ -19,8 +19,6 @@
  */
 
 import { defineCommand, runMain } from "citty";
-import { buildManifest, type ScopeLabel } from "./manifest.ts";
-import { renderGroupedHelp } from "./help-renderer.ts";
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
 import { teamCommitCommand } from "./commands/team-commit.ts";
@@ -30,6 +28,8 @@ import { teamInitCommand } from "./commands/team-init.ts";
 import { teamJoinCommand } from "./commands/team-join.ts";
 import { teamSpawnCommand } from "./commands/team-spawn.ts";
 import { teamStatusCommand } from "./commands/team-status.ts";
+import { renderGroupedHelp } from "./help-renderer.ts";
+import { buildManifest, type ScopeLabel } from "./manifest.ts";
 
 const main = defineCommand({
   meta: {

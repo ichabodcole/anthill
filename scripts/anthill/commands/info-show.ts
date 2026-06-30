@@ -1,8 +1,8 @@
-import { defineCommand } from "citty";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { defineCommand } from "citty";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
-import { PROJECT_ROOT, PROJECT_PACKAGE_NAME } from "../paths.ts";
+import { PROJECT_PACKAGE_NAME, PROJECT_ROOT } from "../paths.ts";
 import { nowMillis } from "../runtime.ts";
 
 interface InfoShowData {

@@ -1,6 +1,6 @@
-import { defineAnthillCommand } from "../define.ts";
 import { emit, resolveFormat } from "../agent-layer.ts";
 import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
+import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import { type BoardCounts, readBoardCounts, requireConfig } from "./team-support.ts";
 
@@ -22,7 +22,11 @@ export const teamStatusCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
-    channel: { type: "string", description: "Grapevine channel (default: config.channel)", valueHint: "name" },
+    channel: {
+      type: "string",
+      description: "Grapevine channel (default: config.channel)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
@@ -76,7 +80,9 @@ export const teamStatusCommand = defineAnthillCommand({
       startedAt: started,
       renderText: (d) => {
         const lines: string[] = [`Channel: ${d.channel}`];
-        lines.push(d.present.length > 0 ? `On the vine: ${d.present.join(", ")}` : "On the vine: (nobody)");
+        lines.push(
+          d.present.length > 0 ? `On the vine: ${d.present.join(", ")}` : "On the vine: (nobody)",
+        );
         if (d.humans.length > 0) lines.push(`Humans: ${d.humans.join(", ")}`);
         if (d.board) {
           lines.push(

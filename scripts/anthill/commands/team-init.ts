@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
-import { defineAnthillCommand } from "../define.ts";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import { requireConfig } from "./team-support.ts";
 
@@ -159,7 +159,11 @@ export const teamInitCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
-    templates: { type: "string", description: "Templates dir (default: bundled templates/docs-team)", valueHint: "path" },
+    templates: {
+      type: "string",
+      description: "Templates dir (default: bundled templates/docs-team)",
+      valueHint: "path",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {

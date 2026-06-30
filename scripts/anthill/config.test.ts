@@ -41,7 +41,10 @@ const MINIMAL_CONFIG = {
 };
 
 describe("resolveConfig — full fixture", () => {
-  const cfg = resolveConfig(FULL_CONFIG, { projectRoot: ROOT, configPath: `${ROOT}/.team/config.json` });
+  const cfg = resolveConfig(FULL_CONFIG, {
+    projectRoot: ROOT,
+    configPath: `${ROOT}/.team/config.json`,
+  });
 
   test("resolves scalars", () => {
     expect(cfg.version).toBe(1);
@@ -62,7 +65,12 @@ describe("resolveConfig — full fixture", () => {
   });
 
   test("defaultSpawnSet = spawn:true seats in array order", () => {
-    expect(cfg.defaultSpawnSet().map((s) => s.handle)).toEqual(["fathom", "mosaic", "loom", "prism"]);
+    expect(cfg.defaultSpawnSet().map((s) => s.handle)).toEqual([
+      "fathom",
+      "mosaic",
+      "loom",
+      "prism",
+    ]);
   });
 
   test("leadSeat + seat lookup", () => {
@@ -118,7 +126,9 @@ describe("resolveConfig — validation errors", () => {
   });
 
   test("missing/empty seats", () => {
-    expect(() => resolveConfig({ channel: "x" }, { projectRoot: ROOT })).toThrow(/seats is required/);
+    expect(() => resolveConfig({ channel: "x" }, { projectRoot: ROOT })).toThrow(
+      /seats is required/,
+    );
     expect(() => resolveConfig({ channel: "x", seats: [] }, { projectRoot: ROOT })).toThrow(
       /seats is required/,
     );
@@ -126,7 +136,10 @@ describe("resolveConfig — validation errors", () => {
 
   test("seat missing handle", () => {
     expect(() =>
-      resolveConfig({ channel: "x", seats: [{ role: "engine", scope: "y" }] }, { projectRoot: ROOT }),
+      resolveConfig(
+        { channel: "x", seats: [{ role: "engine", scope: "y" }] },
+        { projectRoot: ROOT },
+      ),
     ).toThrow(/handle is required/);
   });
 

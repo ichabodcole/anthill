@@ -88,7 +88,12 @@ export function resolveCoordCli(tool: CoordTool): string {
     );
   }
 
-  const best = selectCoordCli({ root: SPELLBOOK_CACHE_ROOT, tool, versionDirs, exists: existsSync });
+  const best = selectCoordCli({
+    root: SPELLBOOK_CACHE_ROOT,
+    tool,
+    versionDirs,
+    exists: existsSync,
+  });
   if (!best) {
     throw new Error(
       `anthill: could not resolve the spellbook ${tool} CLI under ` +

@@ -51,5 +51,3 @@ export const PROJECT_ROOT = findProjectRoot(PROJECT_PACKAGE_NAME);
 
 // Well-known paths — extend as your project grows.
 // Example: export const LOG_DIR = resolve(PROJECT_ROOT, "logs");
-
-

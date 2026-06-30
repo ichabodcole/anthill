@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
-import { defineAnthillCommand } from "../define.ts";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import {
   createSession,
@@ -103,7 +103,11 @@ export const teamSpawnCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
-    session: { type: "string", description: "tmux session name (default: config.channel)", valueHint: "name" },
+    session: {
+      type: "string",
+      description: "tmux session name (default: config.channel)",
+      valueHint: "name",
+    },
     attach: { type: "boolean", description: "Attach to the session (human TTY outside tmux only)" },
     cwd: { type: "string", description: "Working dir for each pane", valueHint: "path" },
     force: { type: "boolean", description: "Kill and recreate an existing same-named session" },
@@ -129,11 +133,17 @@ export const teamSpawnCommand = defineAnthillCommand({
 
     // Preflight: no half-spawn if tmux is missing.
     if (!hasTmux()) {
-      emitError({ format, command: "spawn", error: "tmux not found — install with: brew install tmux" });
+      emitError({
+        format,
+        command: "spawn",
+        error: "tmux not found — install with: brew install tmux",
+      });
       process.exit(1);
     }
 
-    const sessionName = sanitizeSessionName((ctx.args.session as string | undefined) || config.channel);
+    const sessionName = sanitizeSessionName(
+      (ctx.args.session as string | undefined) || config.channel,
+    );
     const cwd = (ctx.args.cwd as string | undefined) || config.projectRoot;
     const force = Boolean(ctx.args.force);
 
@@ -165,7 +175,9 @@ export const teamSpawnCommand = defineAnthillCommand({
     for (const handle of handles.slice(1)) {
       const split = await splitAndTile(sessionName, cwd);
       if (!split.ok) {
-        warnings.push(`split for seat "${handle}" failed: ${split.stderr.trim() || "unknown error"}`);
+        warnings.push(
+          `split for seat "${handle}" failed: ${split.stderr.trim() || "unknown error"}`,
+        );
       }
     }
 
@@ -186,7 +198,8 @@ export const teamSpawnCommand = defineAnthillCommand({
 
     // Attach only a human TTY that's outside tmux; otherwise hand back the command.
     const attachCommand = `tmux attach -t ${sessionName}`;
-    const canAttach = Boolean(ctx.args.attach) && Boolean(process.stdout.isTTY) && !process.env.TMUX;
+    const canAttach =
+      Boolean(ctx.args.attach) && Boolean(process.stdout.isTTY) && !process.env.TMUX;
 
     const data: SpawnData = {
       session: sessionName,

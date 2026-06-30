@@ -139,7 +139,7 @@ export function resolveConfig(
   }
 
   if (typeof raw.channel !== "string" || raw.channel.trim() === "") {
-    throw new ConfigError('config.channel is required (non-empty string)');
+    throw new ConfigError("config.channel is required (non-empty string)");
   }
   if (!Array.isArray(raw.seats) || raw.seats.length === 0) {
     throw new ConfigError("config.seats is required (non-empty array)");
@@ -178,9 +178,7 @@ export function resolveConfig(
   };
 
   const lead =
-    typeof raw.lead === "string"
-      ? raw.lead
-      : seats.find((s) => s.role === "lead")?.handle;
+    typeof raw.lead === "string" ? raw.lead : seats.find((s) => s.role === "lead")?.handle;
 
   const projectRoot = ctx.projectRoot;
   const resolved: ResolvedConfig = {

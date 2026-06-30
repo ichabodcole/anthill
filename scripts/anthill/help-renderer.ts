@@ -38,7 +38,6 @@ export async function renderGroupedHelp(
   const maxName = entries.reduce((m, e) => Math.max(m, e.name.length), 0);
   const lines: string[] = [];
 
-
   if (manifest.name) {
     const title = manifest.version ? `${manifest.name} ${manifest.version}` : manifest.name;
     lines.push(bold(accent(title)));
@@ -70,7 +69,14 @@ export async function renderGroupedHelp(
     lines.push("");
   }
 
-  lines.push(muted(`Run \`<cli> help --json\` for a machine-readable manifest.`.replace("<cli>", manifest.name ?? "anthill")));
+  lines.push(
+    muted(
+      `Run \`<cli> help --json\` for a machine-readable manifest.`.replace(
+        "<cli>",
+        manifest.name ?? "anthill",
+      ),
+    ),
+  );
 
   return lines.join("\n");
 }

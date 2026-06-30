@@ -17,8 +17,13 @@ async function runCli(args: string[]): Promise<{ code: number; stdout: string; s
 }
 
 /** Parse the first JSON object line out of a stream. */
-function firstJson(s: string): { ok?: boolean; error?: string; meta?: { command?: string } } | null {
-  const line = s.split("\n").map((l) => l.trim()).find((l) => l.startsWith("{"));
+function firstJson(
+  s: string,
+): { ok?: boolean; error?: string; meta?: { command?: string } } | null {
+  const line = s
+    .split("\n")
+    .map((l) => l.trim())
+    .find((l) => l.startsWith("{"));
   return line ? JSON.parse(line) : null;
 }
 

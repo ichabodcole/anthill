@@ -7,8 +7,8 @@ import {
   firstErrorLine,
   parseJsonLine,
   resolveCoordCli,
-  selectCoordCli,
   SPELLBOOK_CACHE_ROOT,
+  selectCoordCli,
 } from "./coord.ts";
 
 describe("compareSemver", () => {
@@ -106,7 +106,9 @@ describe("parseJsonLine", () => {
 
 describe("firstErrorLine", () => {
   test("skips Bun stack-trace framing, keeps the first real line", () => {
-    const stderr = ["", "  1 | const x = 1;", "    ^", "ConnectionRefused: dead daemon", ""].join("\n");
+    const stderr = ["", "  1 | const x = 1;", "    ^", "ConnectionRefused: dead daemon", ""].join(
+      "\n",
+    );
     expect(firstErrorLine(stderr, "fallback")).toBe("ConnectionRefused: dead daemon");
   });
 

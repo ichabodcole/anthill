@@ -1,8 +1,15 @@
 import { spawnSync } from "node:child_process";
-import { defineAnthillCommand } from "../define.ts";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
-import { attachArgs, hasTmux, sanitizeSessionName, sessionExists, switchClientArgs, tmuxPath } from "../tmux.ts";
+import {
+  attachArgs,
+  hasTmux,
+  sanitizeSessionName,
+  sessionExists,
+  switchClientArgs,
+  tmuxPath,
+} from "../tmux.ts";
 import { requireConfig } from "./team-support.ts";
 
 export type AttachAction = "switch" | "attach" | "print";
@@ -35,7 +42,11 @@ export const teamAttachCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
-    session: { type: "string", description: "tmux session name (default: config.channel)", valueHint: "name" },
+    session: {
+      type: "string",
+      description: "tmux session name (default: config.channel)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
@@ -45,11 +56,17 @@ export const teamAttachCommand = defineAnthillCommand({
 
     // Preflight: no point computing an action if tmux is missing.
     if (!hasTmux()) {
-      emitError({ format, command: "attach", error: "tmux not found — install with: brew install tmux" });
+      emitError({
+        format,
+        command: "attach",
+        error: "tmux not found — install with: brew install tmux",
+      });
       process.exit(1);
     }
 
-    const sessionName = sanitizeSessionName((ctx.args.session as string | undefined) || config.channel);
+    const sessionName = sanitizeSessionName(
+      (ctx.args.session as string | undefined) || config.channel,
+    );
 
     if (!(await sessionExists(sessionName))) {
       emitError({

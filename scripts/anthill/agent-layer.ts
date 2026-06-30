@@ -67,11 +67,7 @@ export function emit<T>(options: {
   process.stdout.write(`${JSON.stringify(envelope)}\n`);
 }
 
-export function emitError(options: {
-  format: OutputFormat;
-  command: string;
-  error: string;
-}): void {
+export function emitError(options: { format: OutputFormat; command: string; error: string }): void {
   if (options.format === "text") {
     process.stderr.write(`Error: ${options.error}\n`);
     return;

@@ -1,8 +1,8 @@
 import { spawnSync } from "node:child_process";
 import { closeSync, openSync, readFileSync, statSync, unlinkSync, writeSync } from "node:fs";
 import { join } from "node:path";
-import { defineAnthillCommand } from "../define.ts";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 
 // How long to wait for the serialize lock before giving up, and when to treat a
@@ -179,7 +179,9 @@ export const teamCommitCommand = defineAnthillCommand({
         data,
         startedAt: started,
         renderText: (d) => {
-          const lines = [`Committed ${d.sha ?? "(sha?)"} — ${d.paths.length} path(s), file-scoped:`];
+          const lines = [
+            `Committed ${d.sha ?? "(sha?)"} — ${d.paths.length} path(s), file-scoped:`,
+          ];
           for (const p of d.paths) lines.push(`  ${p}`);
           if (d.waitedMs && d.waitedMs > 500) {
             lines.push(`(waited ${Math.round(d.waitedMs)}ms for the serialize lock)`);

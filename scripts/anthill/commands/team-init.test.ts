@@ -1,5 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { planGitignore, renderTemplates, SCRATCH_GITIGNORE_LINE, type TemplateFile } from "./team-init.ts";
+import {
+  planGitignore,
+  renderTemplates,
+  SCRATCH_GITIGNORE_LINE,
+  type TemplateFile,
+} from "./team-init.ts";
 
 const CONFIG = {
   channel: "myproj",
@@ -12,13 +17,20 @@ const CONFIG = {
 
 const TEMPLATES: TemplateFile[] = [
   { relPath: "README.md", content: "# {{channel}}\nLead: {{lead}}\n\n{{rosterTable}}" },
-  { relPath: "dev/{{handle}}.md", content: "# {{handle}}\nRole: {{role}}\nScope: {{scope}}\nChannel: {{channel}}" },
+  {
+    relPath: "dev/{{handle}}.md",
+    content: "# {{handle}}\nRole: {{role}}\nScope: {{scope}}\nChannel: {{channel}}",
+  },
   { relPath: "paper-cuts.md", content: "literal {{unknownToken}} survives" },
 ];
 
 describe("renderTemplates", () => {
   it("substitutes global tokens in a non-per-seat template", () => {
-    const { writes } = renderTemplates({ templates: TEMPLATES, config: CONFIG, exists: () => false });
+    const { writes } = renderTemplates({
+      templates: TEMPLATES,
+      config: CONFIG,
+      exists: () => false,
+    });
     const readme = writes.find((w) => w.relPath === "README.md");
     expect(readme).toBeDefined();
     expect(readme?.content).toContain("# myproj");
@@ -29,7 +41,11 @@ describe("renderTemplates", () => {
   });
 
   it("fans a {{handle}} template out once per seat, substituting seat tokens", () => {
-    const { writes } = renderTemplates({ templates: TEMPLATES, config: CONFIG, exists: () => false });
+    const { writes } = renderTemplates({
+      templates: TEMPLATES,
+      config: CONFIG,
+      exists: () => false,
+    });
     const paths = writes.map((w) => w.relPath).sort();
     expect(paths).toContain("dev/maestro.md");
     expect(paths).toContain("dev/loom.md");
@@ -38,7 +54,11 @@ describe("renderTemplates", () => {
   });
 
   it("leaves unknown tokens untouched", () => {
-    const { writes } = renderTemplates({ templates: TEMPLATES, config: CONFIG, exists: () => false });
+    const { writes } = renderTemplates({
+      templates: TEMPLATES,
+      config: CONFIG,
+      exists: () => false,
+    });
     expect(writes.find((w) => w.relPath === "paper-cuts.md")?.content).toBe(
       "literal {{unknownToken}} survives",
     );
@@ -57,7 +77,11 @@ describe("renderTemplates", () => {
   });
 
   it("total writes = globals + (per-seat × seats) when nothing exists", () => {
-    const { writes, skipped } = renderTemplates({ templates: TEMPLATES, config: CONFIG, exists: () => false });
+    const { writes, skipped } = renderTemplates({
+      templates: TEMPLATES,
+      config: CONFIG,
+      exists: () => false,
+    });
     // README + paper-cuts (2 global) + dev/<handle> × 2 seats = 4.
     expect(writes).toHaveLength(4);
     expect(skipped).toHaveLength(0);

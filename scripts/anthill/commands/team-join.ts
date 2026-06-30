@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { isAbsolute, join, relative } from "node:path";
-import { defineAnthillCommand } from "../define.ts";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { resolveCoordCli } from "../coord.ts";
+import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import { requireConfig } from "./team-support.ts";
 
@@ -31,8 +31,16 @@ export const teamJoinCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
-    handle: { type: "positional", description: "Seat handle (must be in config.seats)", required: true },
-    channel: { type: "string", description: "Grapevine channel (default: config.channel)", valueHint: "name" },
+    handle: {
+      type: "positional",
+      description: "Seat handle (must be in config.seats)",
+      required: true,
+    },
+    channel: {
+      type: "string",
+      description: "Grapevine channel (default: config.channel)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
@@ -71,7 +79,10 @@ export const teamJoinCommand = defineAnthillCommand({
       config.seamsPath(),
       config.seatDocPath(handle),
     ];
-    const grounding: GroundingEntry[] = groundingPaths.map((p) => ({ path: p, exists: existsSync(p) }));
+    const grounding: GroundingEntry[] = groundingPaths.map((p) => ({
+      path: p,
+      exists: existsSync(p),
+    }));
 
     const tailCommand = `bun ${grapevineCli} tail ${channel} --as ${handle}`;
     const boardTailCommand = `bun ${bountyCli} tail --mine --as ${handle}`;

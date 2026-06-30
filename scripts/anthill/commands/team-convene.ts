@@ -1,6 +1,6 @@
-import { defineAnthillCommand } from "../define.ts";
 import { emit, resolveFormat } from "../agent-layer.ts";
 import { execCoord, firstErrorLine, resolveCoordCli } from "../coord.ts";
+import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import { type BoardCounts, readBoardCounts, requireConfig } from "./team-support.ts";
 
@@ -26,7 +26,11 @@ export const teamConveneCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
-    channel: { type: "string", description: "Grapevine channel (default: config.channel)", valueHint: "name" },
+    channel: {
+      type: "string",
+      description: "Grapevine channel (default: config.channel)",
+      valueHint: "name",
+    },
     topic: { type: "string", description: "Channel topic to set", valueHint: "text" },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
@@ -53,7 +57,9 @@ export const teamConveneCommand = defineAnthillCommand({
         if (setTopic.ok) {
           topicSet = true;
         } else {
-          warnings.push(`grapevine topic failed: ${firstErrorLine(setTopic.stderr, "unknown error")}`);
+          warnings.push(
+            `grapevine topic failed: ${firstErrorLine(setTopic.stderr, "unknown error")}`,
+          );
         }
       }
     } catch (err) {
@@ -63,7 +69,9 @@ export const teamConveneCommand = defineAnthillCommand({
     const { board, warning: boardWarning } = await readBoardCounts();
     if (boardWarning) warnings.push(boardWarning);
 
-    const leadDoc = config.lead ? config.seatDocPath(config.lead) : `${config.paths.seatDir}/<lead>.md`;
+    const leadDoc = config.lead
+      ? config.seatDocPath(config.lead)
+      : `${config.paths.seatDir}/<lead>.md`;
 
     const data: ConveneData = {
       channel,
