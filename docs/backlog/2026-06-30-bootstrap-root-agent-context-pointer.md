@@ -1,6 +1,8 @@
 # Bootstrap: recommend a root CLAUDE/AGENTS "anthill methodology" pointer
 
-**Added:** 2026-06-30
+**Added:** 2026-06-30 · **Status:** Scoped into
+[`projects/anthill-footprint-migration`](../projects/anthill-footprint-migration/plan.md) (Phase 1
+adds the consent-gated bootstrap pointer) — not yet started
 
 As part of the bootstrap procedure, recommend (consent-gated) adding a short section to the
 consumer repo's root `CLAUDE.md` / `AGENTS.md` that announces the repo uses the **anthill
