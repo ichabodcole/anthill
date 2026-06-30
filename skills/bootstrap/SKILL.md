@@ -88,6 +88,13 @@ Present the proposed roster (handles · roles · scopes) and confirm — one foc
 - **Render:** run **`anthill init`**. It reads the config and deterministically renders `.anthill/`
   (the SOP, `seams.md`, the roster `dev/README.md`, one `dev/<handle>.md` per seat) and ensures the
   `.anthill/scratch/` line in `.gitignore`. It's idempotent — re-running never clobbers existing docs.
+- **Shield the living docs from the host's formatter (if it has one).** The `.anthill/` docs are prose
+  pheromone living in the repo, so a host formatter (prettier / biome) will reflow them on commit —
+  churn at best, and a reflow can mangle a hand-wrapped line into a stray list bullet. If the repo uses
+  one (check for `.prettierignore`, a `biome.json` / prettier config, lint-staged), **add the team-docs
+  dir** (`.anthill/`, or your `paths.teamDir`) to its ignore — e.g. a `.anthill/` line in
+  `.prettierignore`. One-time setup; idempotent (skip if already ignored). No host formatter → nothing
+  to do.
 - **Sanity check:** `anthill status` (or `anthill join <lead>`) resolves against the new config without
   error.
 - **Drop a discoverability pointer (consent-gated).** Offer to add a short **anthill methodology** note

@@ -64,6 +64,9 @@ it together rather than overwriting. The per-migration guide flags when a step n
     file a newer release introduced (or a doc a seat was missing); that's expected, not a failure —
     fold any additions into the commit below.
   - Spot-check a relocated seat doc reads correctly.
+  - **If the repo has a code formatter** (prettier / biome), make sure `.anthill/` is in its ignore now
+    that the docs live there — same one-time guard `anthill:bootstrap` does. (A v1 repo likely never
+    ignored `docs/team/`, and the docs are newly under `.anthill/`.)
 - **Land — use a normal `git commit`, NOT `anthill commit`.** The `git mv`s are already staged
   (including the **deletions** of the old `.team/` + `docs/team/` dirs). Stage the remaining edits —
   `git add .anthill/config.json .gitignore` (plus any files `init` added) — then **review `git
