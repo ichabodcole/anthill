@@ -17,7 +17,7 @@ layers — lifecycle **skills** (`team-convene`/`team-join`/`team-finalize-sessi
 **tooling** (`flute team …` + tmux), and a **living-docs** knowledge system (`docs/team/`).
 
 **Goal:** extract that system into a **portable Claude Code plugin** — "anthill" — that can be
-installed into *any* project and set up a team that *makes sense for that project*. The point
+installed into _any_ project and set up a team that _makes sense for that project_. The point
 is a **methodology + tooling**, not a clone of dream-flute's exact roster. The plugin should
 evolve on its own (its own repo + marketplace + release cadence).
 
@@ -28,17 +28,17 @@ dream-flute onto the plugin in this slice (that's a later dogfood milestone).
 
 ## 2. Key Decisions (locked)
 
-| # | Decision | Rationale |
-|---|----------|-----------|
-| D1 | **Standalone plugin + own marketplace** (repo `anthill`) | Matches how spellbook / project-docs ship; gives independent versioning so it can "evolve on its own." |
-| D2 | **Composition = principles + archetype seeds** | Opinionated enough to be fast, flexible enough to fit any project. Discovery proposes a draft from the nearest archetype, then the human ratifies/tailors. (Full discovery intelligence is a later slice.) |
-| D3 | **Execution = both, tmux-first** | Primary path is tmux panes (visible, attachable, persistent); subagent mode is the documented lightweight fallback. Matches how dream-flute actually runs. |
-| D4 | **Build = walking skeleton** | Slice 1 gets the full loop running end-to-end for ONE archetype (layered-app), then later slices add discovery intelligence + more archetypes + dogfood. De-risks the portability contract early. |
-| D5 | **Brain/hands split** | The **skill** (`anthill:bootstrap`) decides the config (judgment: explore → converse → compose). The **CLI** (`anthill init`) deterministically renders templates from that config (mechanical). No external cookiecutter dependency — the agent is the smart templating engine; the CLI is the idempotent renderer. |
-| D6 | **CLI seeded from `create-project-cli`** | anthill's CLI shell is generated via `bunx github:ichabodcole/seed-project-cli anthill --no-api --no-auth` (all commands are `workspace` scope). We layer the team commands on top, lifting/generalizing flute's team layer. No hand-porting of CLI boilerplate. |
-| D7 | **Zero target-repo footprint** | Skills resolve + drive the plugin's CLI straight from the plugin cache (the way flute drives spellbook). A consuming repo gets only `.team/config.json`, `docs/team/`, and one `.gitignore` line. |
-| D8 | **Depends on spellbook + Bun + tmux** | spellbook (grapevine + bounty) is the coordination layer; Bun runs the CLI; tmux runs pane mode. `anthill:bootstrap` preflights all three and guides install if missing. |
-| D9 | **Reflection folds into finalize for Slice 1** | A mid-session / between-phases retro is noted as the next evolution, not built yet. |
+| #   | Decision                                                 | Rationale                                                                                                                                                                                                                                                                                                            |
+| --- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | **Standalone plugin + own marketplace** (repo `anthill`) | Matches how spellbook / project-docs ship; gives independent versioning so it can "evolve on its own."                                                                                                                                                                                                               |
+| D2  | **Composition = principles + archetype seeds**           | Opinionated enough to be fast, flexible enough to fit any project. Discovery proposes a draft from the nearest archetype, then the human ratifies/tailors. (Full discovery intelligence is a later slice.)                                                                                                           |
+| D3  | **Execution = both, tmux-first**                         | Primary path is tmux panes (visible, attachable, persistent); subagent mode is the documented lightweight fallback. Matches how dream-flute actually runs.                                                                                                                                                           |
+| D4  | **Build = walking skeleton**                             | Slice 1 gets the full loop running end-to-end for ONE archetype (layered-app), then later slices add discovery intelligence + more archetypes + dogfood. De-risks the portability contract early.                                                                                                                    |
+| D5  | **Brain/hands split**                                    | The **skill** (`anthill:bootstrap`) decides the config (judgment: explore → converse → compose). The **CLI** (`anthill init`) deterministically renders templates from that config (mechanical). No external cookiecutter dependency — the agent is the smart templating engine; the CLI is the idempotent renderer. |
+| D6  | **CLI seeded from `create-project-cli`**                 | anthill's CLI shell is generated via `bunx github:ichabodcole/seed-project-cli anthill --no-api --no-auth` (all commands are `workspace` scope). We layer the team commands on top, lifting/generalizing flute's team layer. No hand-porting of CLI boilerplate.                                                     |
+| D7  | **Zero target-repo footprint**                           | Skills resolve + drive the plugin's CLI straight from the plugin cache (the way flute drives spellbook). A consuming repo gets only `.team/config.json`, `docs/team/`, and one `.gitignore` line.                                                                                                                    |
+| D8  | **Depends on spellbook + Bun + tmux**                    | spellbook (grapevine + bounty) is the coordination layer; Bun runs the CLI; tmux runs pane mode. `anthill:bootstrap` preflights all three and guides install if missing.                                                                                                                                             |
+| D9  | **Reflection folds into finalize for Slice 1**           | A mid-session / between-phases retro is noted as the next evolution, not built yet.                                                                                                                                                                                                                                  |
 
 ---
 
@@ -53,7 +53,7 @@ the bootstrap's grounding.
    unimportant ones fade**, called over time.
 
 2. **Running capture → curated synthesis.** Agents don't wait for the end. Each keeps a
-   running session scratch ("this just bit me," "this seam is fuzzy"), and *finalize* is where
+   running session scratch ("this just bit me," "this seam is fuzzy"), and _finalize_ is where
    those are articulated into durable form for future agents. Cheap capture, deliberate synthesis.
 
 3. **The anthill adapts to the work.** Structure — app, process, **and team** — is mutable in
@@ -64,19 +64,19 @@ the bootstrap's grounding.
 4. **Three homes for knowledge** (carried from dream-flute): **taste → seat doc**;
    **truth → `seams.md`** (single-source contracts, never restated); **proof → tests**.
 
-5. **Shared practices:** root-cause before cutting; verify the *real artifact*, not a proxy;
+5. **Shared practices:** root-cause before cutting; verify the _real artifact_, not a proxy;
    file-scoped commits on a shared tree (explicit pathspec, serialize, atomic land by the lead).
 
 ### Lifecycle & evolution model
 
 - **Convene** — lead grounds, gathers the work from the human, stands up coordination, seeds
-  cards, briefs + spawns the seats the **current phase** needs. Composition is a *hypothesis*,
+  cards, briefs + spawns the seats the **current phase** needs. Composition is a _hypothesis_,
   not law.
 - **Work** — builders build; the lead/seats watch for **structure signals** (toe-stepping, a
   renegotiated seam, an overloaded/idle seat, a verifier finding that bounces work back).
-- **Verifier engagement is dynamic, not end-of-line.** A verify seat engages at *verification
-  points* — which may be phase 1 (we need tests before building further), mid (prove a feature),
-  or late — and often *stays* and ping-pongs with builders (fail → back to dev → re-verify). The
+- **Verifier engagement is dynamic, not end-of-line.** A verify seat engages at _verification
+  points_ — which may be phase 1 (we need tests before building further), mid (prove a feature),
+  or late — and often _stays_ and ping-pongs with builders (fail → back to dev → re-verify). The
   lead decides per-phase when to pull each seat in; the plan's phases drive that, not a fixed slot.
 - **Finalize (+ reflection)** — each seat curates scratch → seat doc; shared `seams.md` pass; a
   **structure reflection** (where did we step on each other? what are the natural seams? who
@@ -89,14 +89,14 @@ the bootstrap's grounding.
 
 Five pieces (plus a later dogfood milestone). Slice 1 touches all of them thinly.
 
-| Piece | What | Source material |
-|-------|------|-----------------|
-| 1. Foundation | `anthill` repo + `marketplace.json`/`plugin.json` + `.team/config.json` schema + CLI shell | `create-project-cli` (shell) |
+| Piece                    | What                                                                                         | Source material                            |
+| ------------------------ | -------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| 1. Foundation            | `anthill` repo + `marketplace.json`/`plugin.json` + `.team/config.json` schema + CLI shell   | `create-project-cli` (shell)               |
 | 2. Portable CLI commands | convene/join/spawn/attach/down/status/commit/**init** + `tmux.ts` + `coord.ts` + `config.ts` | flute `team-*.ts` + `tmux.ts` (generalize) |
-| 3. Scaffold templates | `docs/team/` skeletons (SOP, seams, seat-doc, roster, paper-cuts) | dream-flute `docs/team/` (strip domain) |
-| 4. Lifecycle skills | `anthill:convene` / `join` / `finalize-session`, config-driven | the three flute skills |
-| 5. `anthill:bootstrap` | meta-skill: explore → compose → write config → `anthill init` | *new* |
-| 6. Dogfood (later) | migrate dream-flute onto the plugin; prove parity | — |
+| 3. Scaffold templates    | `docs/team/` skeletons (SOP, seams, seat-doc, roster, paper-cuts)                            | dream-flute `docs/team/` (strip domain)    |
+| 4. Lifecycle skills      | `anthill:convene` / `join` / `finalize-session`, config-driven                               | the three flute skills                     |
+| 5. `anthill:bootstrap`   | meta-skill: explore → compose → write config → `anthill init`                                | _new_                                      |
+| 6. Dogfood (later)       | migrate dream-flute onto the plugin; prove parity                                            | —                                          |
 
 ---
 
@@ -110,31 +110,57 @@ skills **read** it; `anthill:bootstrap` **writes** it. **Its location is the pro
 // <project>/.team/config.json
 {
   "version": 1,
-  "channel": "myproject",        // grapevine channel + default tmux session name
-  "lead": "maestro",             // the lead handle — orchestrates, never spawned
+  "channel": "myproject", // grapevine channel + default tmux session name
+  "lead": "maestro", // the lead handle — orchestrates, never spawned
   "seats": [
-    { "handle": "maestro", "role": "lead",    "scope": "orchestration, merge, human liaison", "spawn": false },
-    { "handle": "fathom",  "role": "engine",  "scope": "engine / determinism + goldens",      "spawn": true  },
-    { "handle": "mosaic",  "role": "spine",   "scope": "wire layer between engine and UI",     "spawn": true  },
-    { "handle": "loom",    "role": "surface", "scope": "UI components",                        "spawn": true  },
-    { "handle": "prism",   "role": "verify",  "scope": "integration/E2E",                      "spawn": true  }
+    {
+      "handle": "maestro",
+      "role": "lead",
+      "scope": "orchestration, merge, human liaison",
+      "spawn": false,
+    },
+    {
+      "handle": "fathom",
+      "role": "engine",
+      "scope": "engine / determinism + goldens",
+      "spawn": true,
+    },
+    {
+      "handle": "mosaic",
+      "role": "spine",
+      "scope": "wire layer between engine and UI",
+      "spawn": true,
+    },
+    {
+      "handle": "loom",
+      "role": "surface",
+      "scope": "UI components",
+      "spawn": true,
+    },
+    {
+      "handle": "prism",
+      "role": "verify",
+      "scope": "integration/E2E",
+      "spawn": true,
+    },
   ],
-  "grounding": ["AGENTS.md", "docs/PROJECT-SUMMARY.md"],  // product-context reads, in order, before team docs
+  "grounding": ["AGENTS.md", "docs/PROJECT-SUMMARY.md"], // product-context reads, in order, before team docs
   "paths": {
-    "teamDir": "docs/team",            // SOP = teamDir/README.md
-    "seatDir": "docs/team/dev",        // seat docs + seams.md
-    "seams":   "docs/team/dev/seams.md"
+    "teamDir": "docs/team", // SOP = teamDir/README.md
+    "seatDir": "docs/team/dev", // seat docs + seams.md
+    "seams": "docs/team/dev/seams.md",
   },
-  "launch": "claude \"/anthill:join {handle}\""  // per-pane spawn command template
+  "launch": "claude \"/anthill:join {handle}\"", // per-pane spawn command template
 }
 ```
 
 **Field rules:**
+
 - `seats[]` is the **single source of the roster** (explicit, not derived from filenames). Each
   carries **`role` + `scope` only** — no timing flag, no `owns`, no `relationships` (those evolve
   and live in seat-doc prose, surfaced via the reflection touchpoint).
 - `spawn: true/false` is just the **zero-args default spawn set** for `anthill spawn`; the lead
-  overrides freely per phase. (layered-app defaults the verifier *in*, reflecting Cole's shift
+  overrides freely per phase. (layered-app defaults the verifier _in_, reflecting Cole's shift
   toward early verifier inclusion.)
 - `grounding` and `paths` are **overridable plugin defaults** — most real configs are just
   `channel` + `seats`.
@@ -147,13 +173,13 @@ skills **read** it; `anthill:bootstrap` **writes** it. **Its location is the pro
 What `anthill init` renders into a target repo. Generalized from dream-flute, with the three
 principles written in and all domain (wall/seam/engine) stripped.
 
-| Template | Content | Fill state |
-|----------|---------|------------|
-| `README.md` (SOP) | Stigmergy framing + the 3 principles; three homes for knowledge; shared practices; workflow (convene→work→finalize); commit discipline; the finalize+reflection ritual (curation-as-pheromone + structure-adapts) | Fully written, project-agnostic |
-| `dev/seams.md` | Single-source inter-seat contracts: what belongs here, who owns a contract, the "whoever moves a boundary updates this + its proof" maintenance trigger. Contracts accrete as discovered. | Skeleton + guidance, no contracts yet |
-| `dev/<handle>.md` | One per seat. Fields (locked): **Who I am · Scope · Boundaries · Relationships · Taste & reflexes · Hard-won lessons · Anti-patterns · Candidates**. Header pre-filled from config; body scaffolded prompts. | Header from config; body scaffolded |
-| `dev/README.md` | Roster table generated from `config.seats`. | Generated |
-| `paper-cuts.md` | Friction log: append-during-session, triage-by-cost, track-disposition (fixed / filed upstream / graduated to a project). | Template + method |
+| Template          | Content                                                                                                                                                                                                           | Fill state                            |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `README.md` (SOP) | Stigmergy framing + the 3 principles; three homes for knowledge; shared practices; workflow (convene→work→finalize); commit discipline; the finalize+reflection ritual (curation-as-pheromone + structure-adapts) | Fully written, project-agnostic       |
+| `dev/seams.md`    | Single-source inter-seat contracts: what belongs here, who owns a contract, the "whoever moves a boundary updates this + its proof" maintenance trigger. Contracts accrete as discovered.                         | Skeleton + guidance, no contracts yet |
+| `dev/<handle>.md` | One per seat. Fields (locked): **Who I am · Scope · Boundaries · Relationships · Taste & reflexes · Hard-won lessons · Anti-patterns · Candidates**. Header pre-filled from config; body scaffolded prompts.      | Header from config; body scaffolded   |
+| `dev/README.md`   | Roster table generated from `config.seats`.                                                                                                                                                                       | Generated                             |
+| `paper-cuts.md`   | Friction log: append-during-session, triage-by-cost, track-disposition (fixed / filed upstream / graduated to a project).                                                                                         | Template + method                     |
 
 **Running scratch:** per-session, append-only, gitignored — `.team/scratch/<handle>/<date>-<slug>.md`.
 `anthill:join` mints the session file; the seat appends as it works; `anthill:finalize-session`
@@ -167,17 +193,17 @@ curates it into the seat doc. Disposable after synthesis. `anthill init` adds th
 Namespace carries the branding (`anthill:<action>`, the way `project-docs:create-project` does),
 so action names stay clear.
 
-- **`anthill:convene`** *(invoking agent becomes the lead)* — ground (config `grounding` →
+- **`anthill:convene`** _(invoking agent becomes the lead)_ — ground (config `grounding` →
   SOP → lead seat doc → `seams.md`), gather the work from the human, stand up coordination
   (CLI → grapevine open + topic, bounty board), seed cards, brief + spawn the seats the current
   phase needs.
-- **`anthill:join <handle>`** *(a seat re-grounds)* — identify handle, re-ground (grounding →
+- **`anthill:join <handle>`** _(a seat re-grounds)_ — identify handle, re-ground (grounding →
   SOP → `seams.md` → own seat doc), get on the wires (CLI emits tail commands), **open the
   running scratch**, signal ready, claim card, work.
 - **`anthill:finalize-session`** — each seat curates scratch → seat doc; shared `seams.md` pass;
   the **structure reflection**; lead lands doc commits + tears down the session.
 
-The human surface is intentionally tiny: *"convene the team"* … *"finalize."* The lead agent
+The human surface is intentionally tiny: _"convene the team"_ … _"finalize."_ The lead agent
 drives the CLI; the human rarely intervenes.
 
 ---
@@ -204,6 +230,7 @@ anthill/
 ```
 
 **CLI command set (Slice 1):**
+
 - `anthill convene [--topic]` — grapevine open + topic + bounty state
 - `anthill join <handle>` — emit grounding manifest + tail commands
 - `anthill spawn [handles…]` — tmux panes, one per seat, auto-fire `/anthill:join`
@@ -215,7 +242,7 @@ anthill/
   without clobbering existing ones)
 
 **Generalizations from flute:** config-driven (no hardcoded channel/seats/paths); self-locating
-(CLI lives in plugin cache, resolves spellbook from *its* cache via the `resolveCoordCli` pattern).
+(CLI lives in plugin cache, resolves spellbook from _its_ cache via the `resolveCoordCli` pattern).
 
 ---
 

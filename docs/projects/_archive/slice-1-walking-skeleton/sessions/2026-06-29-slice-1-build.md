@@ -8,18 +8,18 @@ durable lessons land here instead of a seat doc. Ref: `docs/specs/2026-06-28-ant
 
 ## What shipped
 
-| Task | Deliverable |
-|------|-------------|
-| T1 | CLI shell seeded (`scripts/anthill/`, citty, dual-audience output) |
-| T2 | Plugin + marketplace manifests (`.claude-plugin/`) |
-| T3 | Config layer — `config.ts`, `.team/config.json` root marker |
-| T4 | Coordination facade — `coord.ts` (spellbook grapevine/bounty resolution) |
-| T5 | tmux helper — `tmux.ts` (lifted ~as-is from flute) |
-| T6 | The 8 team commands (convene/join/spawn/attach/down/status/commit/init) |
-| T7 | Scaffold templates (`templates/docs-team/`) + layered-app archetype |
-| T8 | Lifecycle skills (`anthill:convene/join/finalize-session`) |
-| T9 | `anthill:bootstrap` meta-skill |
-| T10a | Mechanism proof — full loop end-to-end in a throwaway repo |
+| Task | Deliverable                                                              |
+| ---- | ------------------------------------------------------------------------ |
+| T1   | CLI shell seeded (`scripts/anthill/`, citty, dual-audience output)       |
+| T2   | Plugin + marketplace manifests (`.claude-plugin/`)                       |
+| T3   | Config layer — `config.ts`, `.team/config.json` root marker              |
+| T4   | Coordination facade — `coord.ts` (spellbook grapevine/bounty resolution) |
+| T5   | tmux helper — `tmux.ts` (lifted ~as-is from flute)                       |
+| T6   | The 8 team commands (convene/join/spawn/attach/down/status/commit/init)  |
+| T7   | Scaffold templates (`templates/docs-team/`) + layered-app archetype      |
+| T8   | Lifecycle skills (`anthill:convene/join/finalize-session`)               |
+| T9   | `anthill:bootstrap` meta-skill                                           |
+| T10a | Mechanism proof — full loop end-to-end in a throwaway repo               |
 
 Verification posture: 76 unit tests (Bun), strict typecheck clean, and an end-to-end mechanism proof
 (bootstrap → convene → spawn → card lifecycle → down) outside dream-flute. T10b (live claude
@@ -28,7 +28,7 @@ boot+join, needs anthill installed as a plugin) is the remaining real-install mi
 ## Durable lessons (the synthesis)
 
 1. **A portable CLI must not do eager root-discovery that throws at import.** The seed's `paths.ts`
-   computed `PROJECT_ROOT = findProjectRoot()` at module load and *threw* when no host `package.json`
+   computed `PROJECT_ROOT = findProjectRoot()` at module load and _threw_ when no host `package.json`
    named `anthill` was found above cwd. Because `cli.ts` pulls `paths.ts` in transitively (via the
    `info` command), this crashed the **entire CLI at startup in any consuming repo** — the precise
    opposite of the portability goal. Fix: fall back to cwd, never throw at import. The lesson: a tool
@@ -46,14 +46,14 @@ boot+join, needs anthill installed as a plugin) is the remaining real-install mi
 3. **Brain/hands split: the skill composes, the CLI renders (design D5).** `anthill init` is a dumb,
    idempotent template renderer (a pure `renderTemplates` + a documented token scheme); the smart
    judgment — discovery, ratification, writing `.team/config.json` — lives in the `anthill:bootstrap`
-   *skill*. Keeping the deciding out of the CLI made the renderer trivially testable and re-runnable
+   _skill_. Keeping the deciding out of the CLI made the renderer trivially testable and re-runnable
    (skip-existing, never clobber). The lesson: separate the judgment from the mechanism; the agent is
    the smart templating engine, the CLI is the deterministic hand.
 
 4. **Prove a side-effecting seam without triggering the side effect.** `spawn` fires
    `claude "/anthill:join {handle}"` into tmux panes. Proving it for real would boot 4 live claude
    instances that — anthill not being installed — couldn't resolve the skill anyway. Instead: a
-   deterministic check that the default launch *substitutes* to the exact per-handle line, plus a
+   deterministic check that the default launch _substitutes_ to the exact per-handle line, plus a
    sentinel-echo launch whose firing is confirmed by `capturePane`. Every spawn seam (create / label /
    send-keys / substitute) proven cheaply; the live boot deferred to the real-install milestone. The
    lesson: substitute a safe sentinel and check the substitution separately — don't pay the real
@@ -62,7 +62,7 @@ boot+join, needs anthill installed as a plugin) is the remaining real-install mi
 5. **The dual-audience envelope is the contract — every exit routes through it.** `commit`'s guards
    originally `throw`'d (faithful to the flute source), which in `--format json` leaked a Bun stack
    trace and regressed the stable `{ok,data,meta}` / `{ok:false,error}` envelope the CLI sells. Switched
-   to `emitError` + `exit(1)`. The lesson: when a tool's value *is* a stable machine envelope, fidelity
+   to `emitError` + `exit(1)`. The lesson: when a tool's value _is_ a stable machine envelope, fidelity
    to the source loses to the contract — route every error path through the envelope. (`b42cf7c`)
 
 6. **Push decisions into pure functions; keep IO at the edge.** Every testable unit got a pure core
