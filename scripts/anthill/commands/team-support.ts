@@ -2,7 +2,7 @@
  * Shared helpers for the `anthill` team command facade.
  *
  * The facade is a thin, agent-aware wrapper over the spellbook `grapevine` +
- * `bounty` CLIs (via coord.ts) and the `.team/config.json` config layer (config.ts).
+ * `bounty` CLIs (via coord.ts) and the `.anthill/config.json` config layer (config.ts).
  * Everything that was hardcoded in flute's team-support.ts — the channel, the
  * roster, the default spawn set — is config-driven now.
  */
@@ -12,7 +12,7 @@ import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
 import { execCoord, parseJsonLine, resolveCoordCli } from "../coord.ts";
 
 /**
- * Load the resolved `.team/config.json` for a team command, or emit a clear
+ * Load the resolved `.anthill/config.json` for a team command, or emit a clear
  * error and exit(1). Centralizes the "no config yet" failure so every command
  * fails the same way (pointing at `anthill:bootstrap`).
  */

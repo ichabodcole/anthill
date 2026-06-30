@@ -16,7 +16,7 @@ interface StatusData {
 }
 
 // `anthill status` — combined snapshot of who's on the grapevine channel and the
-// bounty board's column counts. Channel comes from .team/config.json (overridable
+// bounty board's column counts. Channel comes from .anthill/config.json (overridable
 // with --channel). Degrades gracefully: a missing daemon/board is a warning.
 export const teamStatusCommand = defineAnthillCommand({
   meta: {

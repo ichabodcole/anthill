@@ -1,12 +1,12 @@
 ---
 name: convene
-description: Convene the project's agent team — the invoking agent BECOMES the lead, stands up coordination (grapevine + bounty), grounds in the team docs, gathers the work from the human, and briefs + spawns the seats. Use when the human says "convene the team", "spin up the team", "assemble the team", "let's get the team on this", or is moving from proposal/design into implementation and wants the multi-agent team. Requires a `.team/config.json` (run anthill:bootstrap first if there isn't one).
+description: Convene the project's agent team — the invoking agent BECOMES the lead, stands up coordination (grapevine + bounty), grounds in the team docs, gathers the work from the human, and briefs + spawns the seats. Use when the human says "convene the team", "spin up the team", "assemble the team", "let's get the team on this", or is moving from proposal/design into implementation and wants the multi-agent team. Requires a `.anthill/config.json` (run anthill:bootstrap first if there isn't one).
 ---
 
 # anthill: Convene (become the lead)
 
 Stand up the project's **agent team** for a working session. The agent that runs this **becomes the
-lead** (the `lead` handle in `.team/config.json`) and orchestrates the seats over the grapevine +
+lead** (the `lead` handle in `.anthill/config.json`) and orchestrates the seats over the grapevine +
 bounty CLIs. This is the START touchpoint; the END is `anthill:finalize-session`.
 
 Convene when moving from proposal/design → **implementation**. For a quick question or a trivial fix,
@@ -17,19 +17,19 @@ stay solo.
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`
 > Written **`anthill <command>`** below — that's shorthand, not a binary on PATH; always run the full
 > `bun "${CLAUDE_PLUGIN_ROOT}/…"` form. (`${CLAUDE_PLUGIN_ROOT}` is set by Claude Code whenever a plugin
-> skill runs.) Every command reads `.team/config.json` (the root marker; walk up from cwd). If there's
+> skill runs.) Every command reads `.anthill/config.json` (the root marker; walk up from cwd). If there's
 > no config yet, stop and run **`anthill:bootstrap`** first.
 
 ## Steps
 
-1. **Ground as the lead.** Read, in the canonical order (paths resolve from `.team/config.json` —
+1. **Ground as the lead.** Read, in the canonical order (paths resolve from `.anthill/config.json` —
    defaults shown):
-   - the **`grounding`** docs in `.team/config.json` (the _product_ context — e.g. `AGENTS.md`,
+   - the **`grounding`** docs in `.anthill/config.json` (the _product_ context — e.g. `AGENTS.md`,
      `README.md`) so you can judge what you're building;
-   - `docs/team/README.md` — the **SOP** (how the team works, the principles, the rituals);
-   - `docs/team/dev/seams.md` — the shared inter-seat **contracts**;
-   - your own **lead seat doc** `docs/team/dev/<lead>.md` (your orchestration reflexes + scars).
-   You are now the **lead**.
+   - `.anthill/README.md` — the **SOP** (how the team works, the principles, the rituals);
+   - `.anthill/dev/seams.md` — the shared inter-seat **contracts**;
+   - your own **lead seat doc** `.anthill/dev/<lead>.md` (your orchestration reflexes + scars).
+     You are now the **lead**.
 
 2. **Gather the work from the human** (ask only what you need — one focused round):
    - What are we building this session? (Point at the proposal / plan / project folder if one exists.)

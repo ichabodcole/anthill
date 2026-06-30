@@ -43,7 +43,7 @@ const MINIMAL_CONFIG = {
 describe("resolveConfig — full fixture", () => {
   const cfg = resolveConfig(FULL_CONFIG, {
     projectRoot: ROOT,
-    configPath: `${ROOT}/.team/config.json`,
+    configPath: `${ROOT}/.anthill/config.json`,
   });
 
   test("resolves scalars", () => {
@@ -51,7 +51,7 @@ describe("resolveConfig — full fixture", () => {
     expect(cfg.channel).toBe("myproject");
     expect(cfg.lead).toBe("maestro");
     expect(cfg.launch).toBe('claude "/anthill:join {handle}"');
-    expect(cfg.configPath).toBe(`${ROOT}/.team/config.json`);
+    expect(cfg.configPath).toBe(`${ROOT}/.anthill/config.json`);
   });
 
   test("roster = seats, in order", () => {
@@ -94,9 +94,9 @@ describe("resolveConfig — minimal fixture applies defaults", () => {
     expect(cfg.grounding).toEqual([...DEFAULT_GROUNDING]);
   });
 
-  test("paths default to docs/team conventions", () => {
+  test("paths default to .anthill conventions", () => {
     expect(cfg.paths).toEqual({ ...DEFAULT_PATHS });
-    expect(cfg.seatDocPath("worker")).toBe(resolve(ROOT, "docs/team/dev/worker.md"));
+    expect(cfg.seatDocPath("worker")).toBe(resolve(ROOT, ".anthill/dev/worker.md"));
   });
 
   test("launch + version default", () => {
@@ -169,7 +169,7 @@ describe("findConfigFile + loadConfig — walk up from cwd", () => {
 
   afterAll(() => rmSync(base, { recursive: true, force: true }));
 
-  test("finds .team/config.json walking up from a nested dir", () => {
+  test("finds .anthill/config.json walking up from a nested dir", () => {
     const found = findConfigFile(nested);
     expect(found.projectRoot).toBe(projectRoot);
     expect(found.configPath).toBe(resolve(projectRoot, CONFIG_REL_PATH));
@@ -179,13 +179,13 @@ describe("findConfigFile + loadConfig — walk up from cwd", () => {
     const cfg = loadConfig(nested);
     expect(cfg.channel).toBe("tiny");
     expect(cfg.projectRoot).toBe(projectRoot);
-    expect(cfg.seatDocPath("worker")).toBe(resolve(projectRoot, "docs/team/dev/worker.md"));
+    expect(cfg.seatDocPath("worker")).toBe(resolve(projectRoot, ".anthill/dev/worker.md"));
   });
 
   test("missing config -> clear error", () => {
     const orphan = mkdtempSync(resolve(tmpdir(), "anthill-noconfig-"));
     try {
-      expect(() => findConfigFile(orphan)).toThrow(/could not find .team\/config\.json/);
+      expect(() => findConfigFile(orphan)).toThrow(/could not find .anthill\/config\.json/);
     } finally {
       rmSync(orphan, { recursive: true, force: true });
     }

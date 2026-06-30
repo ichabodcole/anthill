@@ -20,7 +20,7 @@ the next instance follows**.
    called over time. A lean, true trail beats an exhaustive, rotting one.
 
 2. **Running capture → curated synthesis.** Don't wait for the end. Keep a cheap **running session
-   scratch** as you work (`.team/scratch/<handle>/<date>-<slug>.md`, gitignored) — "this just bit
+   scratch** as you work (`.anthill/scratch/<handle>/<date>-<slug>.md`, gitignored) — "this just bit
    me," "this seam is fuzzy." **Finalize** is where those are articulated into durable form for the
    next agent. Cheap capture, deliberate synthesis.
 
@@ -114,7 +114,7 @@ anthill is yours to re-shape.
 
 ## Onboarding a fresh agent
 
-Ground in the **product** first (the `grounding` docs in `.team/config.json`), then: this SOP →
+Ground in the **product** first (the `grounding` docs in `.anthill/config.json`), then: this SOP →
 `dev/seams.md` (shared contracts) → your seat's `dev/<handle>.md` → go. For the current state of
 play, check the bounty board + the active project docs. Then **keep your seat doc honest**: when
 something's no longer true, fix it.

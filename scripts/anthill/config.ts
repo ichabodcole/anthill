@@ -1,7 +1,7 @@
 /**
- * The `.team/config.json` config layer — the keystone every team command reads.
+ * The `.anthill/config.json` config layer — the keystone every team command reads.
  *
- * `.team/config.json` is THE project-root marker for the team layer: we walk up
+ * `.anthill/config.json` is THE project-root marker for the team layer: we walk up
  * from cwd looking for it (the same pattern git/cargo/deno use), which replaces
  * the seed's brittle package.json-name matching in `paths.ts`. `paths.ts` stays
  * for shell bits that still want the package root; team commands key off this.
@@ -9,29 +9,33 @@
  * Split for testability:
  * - `resolveConfig(raw, ctx)` — PURE: validate + apply plugin defaults + build
  *   resolvers. No filesystem; feed it a fixture object and a fake projectRoot.
- * - `findConfigFile(startDir)` — walk up for `.team/config.json`.
+ * - `findConfigFile(startDir)` — walk up for `.anthill/config.json`.
  * - `loadConfig(startDir)` — find + read + parse + resolve (the fs entrypoint).
  *
- * Schema: spec §5 (`docs/specs/2026-06-28-anthill-portable-team-os-design.md`).
+ * Schema: spec §5 (`docs/architecture/2026-06-28-anthill-portable-team-os-design.md`).
  */
 
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, isAbsolute, resolve } from "node:path";
 
-/** Where `.team/config.json` lives, relative to a project root. */
-export const CONFIG_DIR = ".team";
+/** Where `.anthill/config.json` lives, relative to a project root. */
+export const CONFIG_DIR = ".anthill";
 export const CONFIG_FILE = "config.json";
 export const CONFIG_REL_PATH = `${CONFIG_DIR}/${CONFIG_FILE}`;
 
 /** Plugin defaults — a minimal config (just `channel` + `seats`) resolves fully via these. */
 export const DEFAULT_GROUNDING = ["AGENTS.md", "README.md"] as const;
 export const DEFAULT_PATHS = {
-  teamDir: "docs/team",
-  seatDir: "docs/team/dev",
-  seams: "docs/team/dev/seams.md",
+  teamDir: ".anthill",
+  seatDir: ".anthill/dev",
+  seams: ".anthill/dev/seams.md",
 } as const;
 export const DEFAULT_LAUNCH = 'claude "/anthill:join {handle}"';
+/** Unstamped / legacy configs resolve as v1 — the old `.team/` + `docs/team/` layout. */
 export const DEFAULT_VERSION = 1;
+/** The plugin's CURRENT footprint version: what a fresh bootstrap stamps and what
+ * `anthill:upgrade` migrates toward. v2 = the consolidated `.anthill/` layout. */
+export const CURRENT_VERSION = 2;
 
 /** A single seat in the roster (spec §5). `role` + `scope` only — no timing/owns. */
 export interface SeatConfig {
@@ -70,7 +74,7 @@ export interface ResolvedConfig {
   /** Path templates as configured (relative to project root), after defaults. */
   paths: TeamPaths;
   launch: string;
-  /** Directory containing `.team/` — the resolved project root. */
+  /** Directory containing `.anthill/` — the resolved project root. */
   projectRoot: string;
   /** Absolute path to the config file (when loaded from disk; "" for pure resolves). */
   configPath: string;
@@ -206,8 +210,8 @@ export function resolveConfig(
 }
 
 /**
- * Walk up from `startDir` looking for `.team/config.json` (THE root marker).
- * Returns the config file path + the project root (the dir containing `.team/`).
+ * Walk up from `startDir` looking for `.anthill/config.json` (THE root marker).
+ * Returns the config file path + the project root (the dir containing `.anthill/`).
  * Throws a clear `ConfigError` if none is found up to the filesystem root.
  */
 export function findConfigFile(startDir: string = process.cwd()): {
@@ -232,7 +236,7 @@ export function findConfigFile(startDir: string = process.cwd()): {
 }
 
 /**
- * Find, read, parse, and resolve `.team/config.json` starting from `startDir`.
+ * Find, read, parse, and resolve `.anthill/config.json` starting from `startDir`.
  * Clear `ConfigError`s for a missing file (via `findConfigFile`) or malformed JSON.
  */
 export function loadConfig(startDir: string = process.cwd()): ResolvedConfig {

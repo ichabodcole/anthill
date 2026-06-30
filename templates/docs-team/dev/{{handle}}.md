@@ -1,6 +1,6 @@
 # {{handle}} — {{role}}
 
-> **Seat header (from `.team/config.json` — keep in sync with the roster).**
+> **Seat header (from `.anthill/config.json` — keep in sync with the roster).**
 > **Handle:** {{handle}} · **Role:** {{role}} · **Scope:** {{scope}} · **Channel:** {{channel}}
 
 This is {{handle}}'s **living doc** — the seat's brain, carried between ephemeral agents.

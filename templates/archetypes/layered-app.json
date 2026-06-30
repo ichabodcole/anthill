@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "channel": "CHANGE-ME",
   "lead": "maestro",
   "seats": [
@@ -35,10 +35,5 @@
     }
   ],
   "grounding": ["AGENTS.md", "README.md"],
-  "paths": {
-    "teamDir": "docs/team",
-    "seatDir": "docs/team/dev",
-    "seams": "docs/team/dev/seams.md"
-  },
   "launch": "claude \"/anthill:join {handle}\""
 }
