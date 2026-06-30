@@ -1,7 +1,8 @@
 # Protect seat docs from the host repo's formatters
 
-**Added:** 2026-06-30 · **Status:** Belt done (`167c996`); suspenders tracked in
-[`projects/anthill-footprint-migration`](../projects/anthill-footprint-migration/plan.md) (Phase 1)
+**Added:** 2026-06-30 · **Status:** Belt done (`167c996`); **suspenders still pending** — a small
+follow-up to `anthill init` (detect the host prettier/biome and add the `.anthill/` dir to its
+ignore). It was NOT implemented in the footprint-migration project (the four phases didn't scope it).
 
 Seat docs live in the consumer repo, so its husky/lint-staged + prettier/biome run on
 them. On media-buffet this normalized `*italics*`→`_italics_` (churn the lead must

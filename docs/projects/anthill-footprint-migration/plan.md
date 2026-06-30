@@ -4,9 +4,15 @@
 **Related Proposal:** [proposal.md](./proposal.md)
 **Status:** Active
 
-**Progress:** Phase 1 ✓ (`bd8d9f0` — `.anthill/` native v2 layout) · Phase 2 ✓ (`2db4e12` —
-pure migration planner, 9 tests). Phases 3–4 (`anthill migrate` CLI → `anthill:upgrade` skill)
-remain.
+**Progress:** ALL FOUR PHASES COMPLETE — Phase 1 `bd8d9f0` (`.anthill/` v2 layout) · Phase 2
+`2db4e12` (pure planner) · Phase 3 `af1f29e` (`anthill migrate` CLI) · Phase 4 `5b42009`
+(`anthill:upgrade` skill + guide, cold-read-hardened). 94 tests green; migrate proven in a temp
+repo (history-preserving, dry-run, idempotent, override); a real upgrade verified clean.
+
+**Remaining follow-up (not in the four planned phases):** the seat-doc formatter **suspenders**
+(`anthill init` adds the `.anthill/` dir to the host's prettier/biome ignore) — a small add to
+`init`; tracked in the seat-doc-formatter backlog item. The belt already protects pheromone docs
+structurally, so this is churn-reduction hardening, not a gap.
 
 ---
 
