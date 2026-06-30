@@ -12,8 +12,8 @@ _live_. Don't skip it on a real session.
 > **The anthill CLI** — driven from the plugin:
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below
 > (shorthand, not a binary on PATH). (`${CLAUDE_PLUGIN_ROOT}` is set by Claude Code whenever a plugin
-> skill runs.) Doc paths below show the **defaults** (`docs/team/…`); the real locations resolve from
-> `.team/config.json` (`paths.teamDir` / `paths.seatDir` / `paths.seams`).
+> skill runs.) Doc paths below show the **defaults** (`.anthill/…`); the real locations resolve from
+> `.anthill/config.json` (`paths.teamDir` / `paths.seatDir` / `paths.seams`).
 
 ## Steps
 
@@ -29,9 +29,15 @@ _live_. Don't skip it on a real session.
 
 ### Per seat — each agent does this for its own doc
 
-1. **Review your session** — the work you did + the ah-ha judgments you captured in your scratch
-   (`.team/scratch/<handle>/…`).
-2. **Synthesize → your seat doc** (`docs/team/dev/<handle>.md`) — this is curation as pheromone:
+1. **Review your session — two passes:**
+   - **Reactive:** the work you did + the ah-ha judgments in your scratch (`.anthill/scratch/<handle>/…`)
+     — what bit, what surprised you, what you'd do differently.
+   - **Reflective:** even if the session ran _smoothly_, did anything you trusted **by default** — a
+     contract, a default, an assumption this seat never questioned — turn out to be load-bearing in a way
+     worth naming? Smooth runs hide exactly these, and a quiet assumption that held is often the most
+     durable lesson. (Reactive catches friction; reflective catches assumptions — both become seat-doc
+     scars below.)
+2. **Synthesize → your seat doc** (`.anthill/dev/<handle>.md`) — this is curation as pheromone:
    **strengthen the load-bearing trails, let the unimportant ones fade.**
    - Promote durable **judgments** (the reasoning + the generalizable lesson — not lesson-less events).
    - **Prune / compact** — keep it lean; shed stale lines (split to a `<handle>/` folder only if it
@@ -44,7 +50,7 @@ _live_. Don't skip it on a real session.
 
 ### Shared — the lead coordinates over the vine
 
-3. **Seams pass.** As a team, look at `docs/team/dev/seams.md`: did we learn anything at the **team
+3. **Seams pass.** As a team, look at `.anthill/dev/seams.md`: did we learn anything at the **team
    level** — a contract that shifted, a boundary that moved? If so, update it **single-source** (the
    owning seat edits; the others point). Don't restate it across seat docs.
 
@@ -52,8 +58,14 @@ _live_. Don't skip it on a real session.
    - **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)
    - **What were the natural seams?** (the contracts that actually emerged vs. the ones we guessed.)
    - **Who actually owned what?** (vs. the roster on paper.)
-   - **Did the composition fit?** (an idle seat, an overloaded one, a missing lens.)
-   Output flows to seat docs, `seams.md`, and **occasionally the roster/`.team/config.json` itself**. If
+   - **Did the composition fit?** (headcount — an idle seat, an overloaded one, a missing lens.)
+   - **Did any seat's real work diverge from its stated scope?** (the deeper question — not headcount
+     but **shape**: work that drifted across a boundary, a scope now too broad or too narrow, a role
+     that's no longer the right cut. **Split / merge / redraw the scope, or reshape the role** — knock
+     down the corridor and re-form the walls. Capture the proposed `seats[]` edit + the _why_; this is
+     the pheromone signal the next convene acts on.)
+
+   Output flows to seat docs, `seams.md`, and **occasionally the roster/`.anthill/config.json` itself**. If
    you reshape the roster, **re-run `anthill init`** to render any new seat docs (existing are never
    clobbered) and update the `dev/README.md` roster row by hand.
 
@@ -65,7 +77,7 @@ _live_. Don't skip it on a real session.
    (`config.channel`) by default, so `anthill down` resolves it with no arguments. It **refuses to kill
    while seats are still present on the vine** (pass `--force` to override) — that presence guard is
    your backstop against yanking a seat out mid-ritual. (If you spawned with a custom `--session
-   <name>`, pass the same here. Any code branch is landed separately.)
+<name>`, pass the same here. Any code branch is landed separately.)
 
 ## Output
 
@@ -77,3 +89,7 @@ terminals close.
 
 If this ritual was rough — a step unclear, friction in the synthesis or the seams pass — capture it (a
 scratch note, or flag the lead / the human) so the next revision fixes it. The rituals improve by use.
+
+**Reflective pass (not just "what broke"):** even when it ran clean, did anything you trusted **by
+default** — a step's assumption, a default this ritual left implicit — feel like it might not always
+hold? Smooth runs suppress exactly that signal; name it anyway.

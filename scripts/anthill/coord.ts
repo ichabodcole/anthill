@@ -117,7 +117,7 @@ export interface ExecResult {
  * to `ok: false` so callers degrade gracefully instead of crashing.
  *
  * `opts.cwd` defaults to `process.cwd()` (the team layer is cwd-anchored via the
- * `.team/config.json` root marker, not a package-name root).
+ * `.anthill/config.json` root marker, not a package-name root).
  */
 export function execCoord(
   cliPath: string,

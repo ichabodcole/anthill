@@ -7,7 +7,7 @@ import { requireConfig } from "./team-support.ts";
 
 /**
  * The deterministic template renderer behind `anthill init` (design D5: the skill
- * is the smart compositor that writes `.team/config.json`; the CLI is the dumb,
+ * is the smart compositor that writes `.anthill/config.json`; the CLI is the dumb,
  * idempotent renderer). The PURE core (`renderTemplates`) is the unit-test target.
  *
  * TOKEN SCHEME (init owns both sides — these are the tokens T7's templates use):
@@ -96,9 +96,9 @@ export function renderTemplates(opts: {
 }
 
 /** The gitignore line init ensures in the target repo: the per-session running
- * scratch (spec §6). `.team/config.json` + `docs/team/` are committed; the
- * scratch under `.team/scratch/` is disposable, so it's ignored. */
-export const SCRATCH_GITIGNORE_LINE = ".team/scratch/";
+ * scratch (spec §6). `.anthill/config.json` + the rendered `.anthill/` docs are
+ * committed; the scratch under `.anthill/scratch/` is disposable, so it's ignored. */
+export const SCRATCH_GITIGNORE_LINE = ".anthill/scratch/";
 
 export interface GitignorePlan {
   action: "added" | "present";
@@ -149,13 +149,13 @@ interface InitData {
   gitignore: "added" | "present";
 }
 
-// `anthill init` — deterministic, idempotent renderer. Reads .team/config.json,
+// `anthill init` — deterministic, idempotent renderer. Reads .anthill/config.json,
 // expands templates/docs-team into the target repo's teamDir, substituting the
 // token scheme above. Re-runnable: existing files are skipped, never clobbered.
 export const teamInitCommand = defineAnthillCommand({
   meta: {
     name: "init",
-    description: "Render docs/team scaffold from .team/config.json (idempotent — never clobbers)",
+    description: "Render the team scaffold from .anthill/config.json (idempotent — never clobbers)",
     scope: "workspace",
   },
   args: {
@@ -220,7 +220,7 @@ export const teamInitCommand = defineAnthillCommand({
       data,
       startedAt: started,
       renderText: (d) => {
-        const lines = [`Rendered docs/team scaffold into ${d.teamDir}/`];
+        const lines = [`Rendered team scaffold into ${d.teamDir}/`];
         if (d.written.length) {
           lines.push(`Wrote ${d.written.length} file(s):`);
           for (const p of d.written) lines.push(`  + ${p}`);

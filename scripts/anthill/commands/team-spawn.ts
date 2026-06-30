@@ -43,7 +43,7 @@ export function resolveSpawnHandles(
 ): ResolveResult {
   const { roster, defaultSpawn, lead } = opts;
   if (roster.length === 0) {
-    return { error: "roster is empty — is .team/config.json set up? (run anthill:bootstrap)" };
+    return { error: "roster is empty — is .anthill/config.json set up? (run anthill:bootstrap)" };
   }
 
   const cleaned = requested.map((h) => h.trim()).filter((h) => h.length > 0);
@@ -72,7 +72,7 @@ export function resolveSpawnHandles(
   if (unsafe.length > 0) {
     const plural = unsafe.length > 1 ? "s" : "";
     return {
-      error: `unsafe seat handle${plural} ${unsafe.map((u) => `"${u}"`).join(", ")} — handles must match [A-Za-z0-9_-]. Rename the handle in .team/config.json.`,
+      error: `unsafe seat handle${plural} ${unsafe.map((u) => `"${u}"`).join(", ")} — handles must match [A-Za-z0-9_-]. Rename the handle in .anthill/config.json.`,
     };
   }
 

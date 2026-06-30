@@ -9,11 +9,14 @@ interface StatusData {
   present: string[];
   humans: string[];
   board: BoardCounts | null;
+  /** Title of the board the counts came from — labels an ambient/stranger board
+   * (read off bounty's global "latest"), so it isn't mistaken for this team's. */
+  boardTitle?: string;
   warnings?: string[];
 }
 
 // `anthill status` — combined snapshot of who's on the grapevine channel and the
-// bounty board's column counts. Channel comes from .team/config.json (overridable
+// bounty board's column counts. Channel comes from .anthill/config.json (overridable
 // with --channel). Degrades gracefully: a missing daemon/board is a warning.
 export const teamStatusCommand = defineAnthillCommand({
   meta: {
@@ -62,7 +65,7 @@ export const teamStatusCommand = defineAnthillCommand({
       warnings.push(`grapevine CLI unresolved: ${(err as Error).message}`);
     }
 
-    const { board, warning: boardWarning } = await readBoardCounts();
+    const { board, title: boardTitle, warning: boardWarning } = await readBoardCounts();
     if (boardWarning) warnings.push(boardWarning);
 
     const data: StatusData = {
@@ -70,6 +73,7 @@ export const teamStatusCommand = defineAnthillCommand({
       present,
       humans,
       board,
+      ...(boardTitle && { boardTitle }),
       ...(warnings.length > 0 && { warnings }),
     };
 
@@ -85,8 +89,9 @@ export const teamStatusCommand = defineAnthillCommand({
         );
         if (d.humans.length > 0) lines.push(`Humans: ${d.humans.join(", ")}`);
         if (d.board) {
+          const label = d.boardTitle ? `Board «${d.boardTitle}»` : "Board";
           lines.push(
-            `Board: todo ${d.board.todo} · doing ${d.board.doing} · review ${d.board.review} · done ${d.board.done}`,
+            `${label}: todo ${d.board.todo} · doing ${d.board.doing} · review ${d.board.review} · done ${d.board.done}`,
           );
         } else {
           lines.push("Board: unavailable");

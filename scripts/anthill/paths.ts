@@ -14,7 +14,7 @@
  * throwing — a throw here would crash the whole CLI at import time (cli.ts pulls
  * this in transitively via the info command) the moment it runs outside this
  * repo. The team commands do NOT use this at all: they key off the
- * `.team/config.json` root marker (config.ts). See spec §5.
+ * `.anthill/config.json` root marker (config.ts). See spec §5.
  */
 
 import { existsSync, readFileSync } from "node:fs";

@@ -1,12 +1,12 @@
 ---
 name: bootstrap
-description: Set up the anthill agent-team structure in this project — preflight the dependencies, propose a team composition from the nearest archetype, ratify it with the human, write `.team/config.json`, and render the `docs/team/` scaffold. Use when the human says "set up a team", "add a team to this project", "bootstrap the team", "install anthill here", "give this repo a dev team", or otherwise wants the multi-agent team structure stood up in a repo that doesn't have one yet. This is the FIRST thing you run in a new project; afterwards `anthill:convene` starts working sessions.
+description: Set up the anthill agent-team structure in this project — preflight the dependencies, propose a team composition from the nearest archetype, ratify it with the human, write `.anthill/config.json`, and render the `.anthill/` scaffold. Use when the human says "set up a team", "add a team to this project", "bootstrap the team", "install anthill here", "give this repo a dev team", or otherwise wants the multi-agent team structure stood up in a repo that doesn't have one yet. This is the FIRST thing you run in a new project; afterwards `anthill:convene` starts working sessions.
 ---
 
 # anthill: Bootstrap (stand up the team structure)
 
-Install the anthill **team-OS** into this project: a `.team/config.json` (the keystone every command
-reads) + a rendered `docs/team/` living-docs scaffold. This is the **one-time setup**; once it's done,
+Install the anthill **team-OS** into this project: a `.anthill/config.json` (the keystone every command
+reads) + a rendered `.anthill/` living-docs scaffold. This is the **one-time setup**; once it's done,
 `anthill:convene` / `anthill:join` / `anthill:finalize-session` run the actual sessions.
 
 **Slice-1 scope (thin):** instantiate the **layered-app** archetype and tailor it with the human.
@@ -20,6 +20,18 @@ for now, propose-from-the-archetype and let the human ratify.
 
 ## Steps
 
+### 0. Is there already a team here?
+
+Before anything, check for an existing footprint: if **`.anthill/config.json`** or the legacy
+**`.team/config.json`** already exists (here or up the tree), this repo is **already bootstrapped** —
+do NOT re-bootstrap (you'd double-write or clobber). Instead:
+
+- on the **current** version → run **`anthill:convene`** to start a session;
+- on an **older** version (e.g. the legacy `.team/` layout) → run **`anthill:upgrade`** to migrate it
+  to the current `.anthill/` layout (history-preserving). `anthill migrate --dry-run` reports which.
+
+Only continue below when there's no footprint yet.
+
 ### 1. Preflight the dependencies
 
 anthill depends on three things. Check each; if any is missing, **guide the install and stop** — don't
@@ -27,18 +39,20 @@ write a half-working config.
 
 - **Bun** (runs the CLI): `bun --version`. Missing → `curl -fsSL https://bun.sh/install | bash` (or
   `brew install oven-sh/bun/bun`).
-- **spellbook** (grapevine + bounty — the coordination layer): confirm the plugin is installed —
-  `ls ${HOME}/.claude/plugins/cache/spellbook-marketplace/spellbook/*/skills/grapevine/scripts/cli.ts`
-  and `.../bounty/scripts/cli.ts` should resolve (the `spellbook:grapevine` + `spellbook:bounty` skills
-  should also be in your skill list). Missing → install the spellbook plugin from its marketplace, then
-  re-run.
+- **spellbook** (grapevine + bounty — the coordination layer anthill builds on): confirm the plugin is
+  installed by checking your **available skills** for `spellbook:grapevine` + `spellbook:bounty`.
+  (anthill's CLI resolves their underlying scripts itself, so you don't need their install paths — only
+  that the plugin is present.) Missing → install the spellbook plugin from its marketplace, then re-run.
 - **tmux** (pane mode): `tmux -V`. Missing → `brew install tmux`. **Non-fatal** — without tmux you lose
   pane spawning but subagent mode still works; note the degradation and continue.
 
 ### 2. Light discovery
 
-- Read the repo's **product-grounding docs** — `AGENTS.md`, `README.md`, `docs/PROJECT-SUMMARY.md` if
-  present — to understand what this project is.
+- **Detect the repo's real grounding anchors** — don't assume `AGENTS.md` exists. Probe the usual
+  candidates (`AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/PROJECT-SUMMARY.md`, `docs/PROJECT_MANIFESTO.md`)
+  and read the ones that are **actually present** to understand what this project is. The archetype's
+  default `grounding: [AGENTS.md, README.md]` is only a guess — on a repo with no `AGENTS.md` it would
+  emit a dangling reference, so set `grounding` to the anchors you actually found (next steps).
 - **Confirm it's a layered app** (an engine/logic layer → a wire/state layer → a UI/surface layer, with
   integration to verify). If it clearly isn't, say so and offer to proceed with a hand-tailored roster
   anyway (the archetype is a starting point, not a gate).
@@ -57,33 +71,54 @@ Present the proposed roster (handles · roles · scopes) and confirm — one foc
   engine layer → fold it into spine.)
 - **Channel:** replace `CHANGE-ME` with the team's grapevine channel name (default tmux session name
   too) — usually the project's short name.
-- **grounding / paths:** confirm the `grounding` docs match the repo's real product docs; keep the
-  default `paths` unless the project wants its team docs somewhere other than `docs/team/`.
+- **grounding / paths:** set `grounding` to the anchors you actually detected (step 2) — **drop any
+  default that doesn't exist** rather than emit a dangling path. (`anthill join` warns when a configured
+  grounding doc is missing, so a dangling ref won't stay silent — but don't write one in the first
+  place.) Keep the default `paths` unless the project wants its team docs somewhere other than
+  `.anthill/`.
 
 ### 4. Write the config + render the scaffold
 
-- **Write `.team/config.json`** — you are the compositor: take the ratified roster and emit the
-  finalized config (the §5 schema — `version`, `channel`, `lead`, `seats[]`, and any non-default
-  `grounding`/`paths`/`launch`). Write it to `<repo-root>/.team/config.json`.
-- **Render:** run **`anthill init`**. It reads the config and deterministically renders `docs/team/`
+- **Write `.anthill/config.json`** — you are the compositor: take the ratified roster and emit the
+  finalized config (the §5 schema — `channel`, `lead`, `seats[]`, and any non-default
+  `grounding`/`paths`/`launch`). **Stamp `"version": 2`** — the current footprint version; an
+  unstamped config reads as the legacy v1 (`.team/` + `docs/team/`) layout. Write it to
+  `<repo-root>/.anthill/config.json`.
+- **Render:** run **`anthill init`**. It reads the config and deterministically renders `.anthill/`
   (the SOP, `seams.md`, the roster `dev/README.md`, one `dev/<handle>.md` per seat) and ensures the
-  `.team/scratch/` line in `.gitignore`. It's idempotent — re-running never clobbers existing docs.
+  `.anthill/scratch/` line in `.gitignore`. It's idempotent — re-running never clobbers existing docs.
+- **Shield the living docs from the host's formatter (if it has one).** The `.anthill/` docs are prose
+  pheromone living in the repo, so a host formatter (prettier / biome) will reflow them on commit —
+  churn at best, and a reflow can mangle a hand-wrapped line into a stray list bullet. If the repo uses
+  one (check for `.prettierignore`, a `biome.json` / prettier config, lint-staged), **add the team-docs
+  dir** (`.anthill/`, or your `paths.teamDir`) to its ignore — e.g. a `.anthill/` line in
+  `.prettierignore`. One-time setup; idempotent (skip if already ignored). No host formatter → nothing
+  to do.
 - **Sanity check:** `anthill status` (or `anthill join <lead>`) resolves against the new config without
   error.
+- **Drop a discoverability pointer (consent-gated).** Offer to add a short **anthill methodology** note
+  to the repo's root `AGENTS.md` (the preferred home) with `CLAUDE.md` as a one-line redirect to it —
+  so a fresh agent entering the repo learns that team-based dev is available here, how to engage it
+  (`anthill:convene`), and that the team lives in `.anthill/`. Detect which file(s) the repo already
+  uses and respect that; idempotent — skip if a pointer is already present. This edits the repo's root
+  files, so **ASK first**.
 
 ### 5. Report
 
-Tell the human the team is ready: the roster (handles + roles), where the docs landed (`docs/team/`),
+Tell the human the team is ready: the roster (handles + roles), where the docs landed (`.anthill/`),
 and the next step — **"run `anthill:convene` to start a working session."** Optionally suggest they
-commit `.team/config.json` + `docs/team/` (the scaffold is durable; `.team/scratch/` stays gitignored).
+commit `.anthill/config.json` + `.anthill/` (the scaffold is durable; `.anthill/scratch/` stays gitignored).
 
 ## Output
 
-A bootstrapped project: a valid `.team/config.json`, a coherent `docs/team/` scaffold, dependencies
+A bootstrapped project: a valid `.anthill/config.json`, a coherent `.anthill/` scaffold, dependencies
 confirmed — ready for `anthill:convene`.
 
 ## Skill feedback
 
 If this skill was rough — a preflight check that misfired, an archetype that didn't fit, a step unclear
-— jot it down and flag the human (or capture it for the first `anthill:finalize-session`). These skills
-improve by use.
+— jot it down and flag the human (or capture it for the first `anthill:finalize-session`). These skills improve by use.
+
+**Reflective pass (not just "what broke"):** even when it ran clean, did anything you trusted **by
+default** — a path, a default, an assumption this skill left implicit — feel like it might not always
+hold? Smooth runs suppress exactly that signal; name it anyway.
