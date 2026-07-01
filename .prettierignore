@@ -3,6 +3,14 @@
 # Prettier must NOT reflow these — the rendered docs/team output must stay byte-identical.
 templates/
 
+# Project knowledge docs — prose/pheromone (backlog, sessions, lessons, fragments,
+# projects, architecture, …). Prettier's markdown parser mangles prose: a line that
+# starts with `+`/`-`/`*` (which hand-wrapping can accidentally produce) becomes a
+# stray list bullet, and there's no prettier setting to disable that. Hit live
+# 2026-06-30. Same principle anthill's own bootstrap/upgrade apply to a consumer's
+# `.anthill/` footprint — the knowledge docs are load-bearing; keep the formatter off them.
+docs/
+
 # Generated / vendored
 node_modules
 dist
