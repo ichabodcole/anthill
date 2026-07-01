@@ -5,7 +5,23 @@
   "bootstrap-sha": "7eb66d7b390971ed979c878ac842bf417229061a",
   "packages": {
     ".": {
-      "component": "anthill"
+      "component": "anthill",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": ".claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": ".claude-plugin/marketplace.json",
+          "jsonpath": "$.metadata.version"
+        },
+        {
+          "type": "generic",
+          "path": "scripts/anthill/cli.ts"
+        }
+      ]
     }
   }
 }
