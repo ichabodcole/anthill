@@ -14,3 +14,7 @@ docs/
 # Generated / vendored
 node_modules
 dist
+
+# anthill team footprint (living docs + config.json) — keep the host formatter off the
+# pheromone docs and the JSON config (a **/*.json glob would rewrite it).
+.anthill/

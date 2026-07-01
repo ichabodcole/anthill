@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "channel": "anthill-dev",
+  "lead": "maestro",
+  "seats": [
+    {
+      "handle": "maestro",
+      "role": "lead",
+      "scope": "orchestration, the file-scoped atomic land, human liaison",
+      "spawn": false
+    },
+    {
+      "handle": "forager",
+      "role": "hands (CLI/engine)",
+      "scope": "scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, and their tests",
+      "spawn": true
+    },
+    {
+      "handle": "weaver",
+      "role": "brain (skills/methodology)",
+      "scope": "skills/ (the bootstrap/convene/join/finalize/upgrade lifecycle skills + the methodology) + templates/ (scaffold + archetypes)",
+      "spawn": true
+    },
+    {
+      "handle": "sentinel",
+      "role": "verify",
+      "scope": "cross-cutting verification — the quality gate (typecheck/biome/bun test), fresh-context cold-reads, and real-repo/consumer validation",
+      "spawn": true
+    }
+  ]
+}
