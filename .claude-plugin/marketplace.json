@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Anthill — a portable team-OS plugin. Installs an ephemeral-agent team structure (seats, coordination, living docs) into any project.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
