@@ -62,15 +62,21 @@ single-author planning; the framing is the whole value.
 4. **Build in lockstep** against the ratified seams.
 5. **Verify → land → finalize** (already anthill's existing rituals).
 
-**How it lands in anthill's surfaces** (see Technical Approach for the fit detail):
+**How it lands in anthill's surfaces** (decided — see Technical Approach for the fit detail):
 
-- A **portable methodology doc** that ships in the scaffold and is _pointed at_ (single-sourced), not
-  restated.
-- A **`convene` beat**: lead produces/loads a _skeleton_ and frames the lanes as claims-to-ratify.
+- A **new `anthill:plan` lifecycle skill** — the plan phase between convene and build. The **lead**
+  runs it to scaffold the skeleton (contract-_claims_) and host ratification. Its companion
+  **`methodology.md`** (bundled in the skill dir, single-source) carries the portable procedure.
 - A **`join` beat**: before moving a card `todo→doing`, ratify/falsify the seams you touch and enrich
   your lane.
 - A **`seams.md` framing** shift: the load-bearing contracts are _asserted up front and ratified_, not
   only accreted at merge.
+- **Pointers** (not copies) from the SOP + the lead archetype seat doc to the skill/methodology.
+
+**Lifecycle:** `bootstrap → convene → plan → build → finalize-session`. `plan` is a distinct,
+invocable phase (design → **plan** → build), not prose folded into `convene` — which keeps `convene`
+focused on standing up coordination and makes the plan phase discoverable and _forced_ rather than
+optional (the navigation-research adoption lesson).
 
 **When it applies:** a feature that **spans multiple seats**. Solo work — or authoring the skeleton
 itself — uses plain single-agent planning (`project-docs:generate-dev-plan`, `superpowers:writing-plans`).
@@ -80,22 +86,27 @@ This team layer sits **on top of** single-agent planning; it does not replace it
 
 **In Scope (MVP):**
 
-- A portable **methodology doc** in the scaffold (the skeleton→ratify flow, the roles, the
-  seams-are-the-value framing, the relationship to single-agent planning).
-- **`convene`** gains the skeleton/ratify beat (lead scaffolds claims; seats ratify seams before `doing`).
-- **`join`** gains the ratify-before-draft beat.
+- A new **`skills/plan/SKILL.md`** — the lead-facing plan phase (scaffold skeleton of contract-claims;
+  host ratification; "read-all-owners, rule once").
+- A companion **`skills/plan/methodology.md`** — the portable procedure, single-source (the skeleton→
+  ratify flow, the roles, the seams-are-the-value framing, the relationship to single-agent planning).
+- **`join`** gains the ratify-before-draft beat (ratify the seams you touch before `todo→doing`).
 - **`seams.md` template** gains the "assert & ratify load-bearing contracts up front" framing.
-- The **lead archetype seat doc** points at the methodology (replacing dream-flute's distributed
-  maestro reflex).
-- A note in the **architecture design doc** recording team-planning as a lifecycle stage (the decision).
+- The **lead archetype seat doc** + the **SOP template** _point at_ the skill/methodology (replacing
+  dream-flute's distributed maestro reflex + SOP one-liner — pointers, not restatements).
+- A note in the **architecture design doc** recording `plan` as a lifecycle phase (the decision).
 
 **Out of Scope:**
 
-- A dedicated CLI command or automation for skeletons/ratification — this is a **methodology + prompt**
+- A dedicated CLI command or automation for skeletons/ratification — this is a **skill + methodology**
   change, not new `scripts/anthill/` surface. (Consistent with the navigation research: the lever is
   forcing the seat to _engage_ the artifact, which is a skill/manifest change, not tooling.)
 - Changing `finalize-session` — step 5 of the procedure already matches what it does.
-- A new doc-type/dir for methodologies/playbooks (decide placement here; don't invent a taxonomy).
+- A formal `playbooks/` doc-category — start with the one methodology bundled beside its skill; promote
+  to a set only when a **second** playbook appears (YAGNI).
+- **Rendering the methodology into each project's `.anthill/`** — it's universal, so it ships once with
+  the plugin; only the _instantiation_ (a project's skeleton `plan.md`, its ratified seams) lives in
+  the project.
 
 **Future Considerations:**
 
@@ -107,23 +118,25 @@ This team layer sits **on top of** single-agent planning; it does not replace it
 
 This is a **plugin-surface** change (skills + templates), deliberately not a `docs/`-only change.
 
-**Placement — the key decision.** Because the methodology is **portable** (it must travel to
-dream-flute and every future consumer, not just anthill-the-repo), its home is the **scaffold that
-renders into each project's `.anthill/`** — i.e. `templates/docs-team/` — and the shipped **skills**
-(`convene`/`join`), which reach every consumer. A doc under anthill's own `docs/` would serve only this
-repo. Candidate homes to resolve during planning:
-
-- The **SOP** (`templates/docs-team/README.md`) — add a "team planning" section, _or_
-- a **new rendered methodology file** alongside the SOP that the SOP + lead seat doc point at (keeps the
-  SOP lean; matches the writeup's "single-sourced, pointed-at" suggestion).
+**Placement — decided.** The organizing principle: **universal → plugin; project-specific → `.anthill/`.**
+The methodology is _universal_ (it doesn't vary between anthill and dream-flute), so it ships **once with
+the plugin** — as a new **`skills/plan/`** skill carrying a companion **`methodology.md`** (the pattern
+used by `skills/upgrade/migrations/`), single-sourced and _pointed at_ from the SOP + lead seat doc. It
+is **not** rendered into each project's `.anthill/` (that would be N drifting copies). Only the
+_instantiation_ — a project's skeleton `plan.md`, its ratified `seams.md`, its seats — lives in the
+project. (Rejected: SOP-only, because reference prose gets ignored — the navigation-research adoption
+finding; and per-seat homes, because a coordination protocol single-sources at the team level, not N
+times across seat docs.)
 
 **Fit against current surfaces:**
 
 | Surface | Today | Change |
 | --- | --- | --- |
-| `convene` | plan is a finished input; seed cards → seats `doing` | insert skeleton/ratify beat before build |
+| `skills/plan/` | _does not exist_ | **NEW** lead-facing phase: scaffold skeleton of claims → host ratify → hand to build |
+| `convene` | plan is a finished input; seed cards → seats `doing` | minimal — hand off to `plan`; convene stays "stand up coordination" |
 | `join` | ground → claim card → work | ratify/falsify seams you touch before `todo→doing` |
 | `seams.md` template | contracts "accrete as discovered" (emergent) | load-bearing contracts "asserted up front & ratified" (proactive) — an emphasis shift, not a contradiction |
+| SOP + lead seat doc | maestro reflex + SOP one-liner (in dream-flute) | a **pointer** to `skills/plan/methodology.md` (single-source) |
 | `finalize-session` | owners synthesize; shared contracts pass | **no change** — already matches procedure step 5 |
 | bounty lifecycle | `todo→doing→review` | ratification is a gate _before_ `doing` (no schema change; a discipline in the skills) |
 
@@ -161,8 +174,13 @@ stage anthill doesn't currently model, plus a placement decision and a framing t
 
 ## Open Questions
 
-- **Placement:** SOP section vs. a standalone rendered methodology file the SOP points at? (Leaning
-  standalone-pointed-at, to keep the SOP lean and single-source the methodology.)
+- ~~**Placement**~~ — **resolved:** a new `skills/plan/` skill + companion `methodology.md`, shipped
+  with the plugin (universal → plugin), pointed-at from SOP + lead seat doc. Not SOP-only, not
+  per-project-rendered, not per-seat.
+- **How the lead invokes `plan`, and the subagent-vs-terminal split.** In terminal mode the lead drives
+  ratification over the vine; in subagent mode there are no tails — the lead dispatches each seat to
+  ratify its seams and collects verdicts. The skill needs both paths (mirror `convene`/`join`'s existing
+  dual-mode handling).
 - **seams.md:** how hard to push "assert up front" without discouraging the healthy emergent accretion
   the template currently encourages?
 - **Ratify mechanics:** is ratification a literal bounty gate (a `ratified` marker / a card state before
