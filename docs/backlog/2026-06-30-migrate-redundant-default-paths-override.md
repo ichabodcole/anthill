@@ -5,12 +5,11 @@
 `migrate` treats ANY `paths` presence in the config as a deliberate escape hatch, so it leaves the
 living docs where the override points and moves only config + scratch into `.anthill/`. On
 media-buffet the override wasn't deliberate — it just spelled out the **v1 DEFAULT** (`docs/team`,
-`docs/team/dev`, `docs/team/dev/seams.md`). Result: a HALF-consolidated split (`.anthill/config.json`
-
-- living docs still at `docs/team/`), the exact thing v2 set out to kill. Only a human paying
-  attention caught it; the lead then hand-rolled the rest (`git mv docs/team/* → .anthill/`, dropped the
-  redundant `paths` block, fixed two live `docs/team/dev/seams.md` references). This was the
-  single highest-leverage finding of the run.
+`docs/team/dev`, `docs/team/dev/seams.md`). Result: a HALF-consolidated split — `.anthill/config.json`
+was created, but the living docs stayed at `docs/team/`, which is the exact thing v2 set out to kill.
+Only a human paying attention caught it; the lead then hand-rolled the rest: a `git mv` of the
+`docs/team/` contents into `.anthill/`, dropping the redundant `paths` block, and fixing two live
+`docs/team/dev/seams.md` references. This was the single highest-leverage finding of the run.
 
 **The fix (both halves are one feature):**
 
