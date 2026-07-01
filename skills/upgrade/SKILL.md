@@ -36,6 +36,11 @@ prints the migration plan **without touching anything**.
 Show the human the dry-run plan (the notes are the readable summary) and **confirm before applying**.
 It relocates committed files; it's reversible via git, but it's their repo — ask first.
 
+- **Watch for the redundant-default `paths` note.** If the plan flags that the repo's `paths` override
+  just spells out the old `docs/team` default, migrate will consolidate the docs anyway (and drop the
+  override) — surface that to the human. If they _deliberately_ want the docs to stay at `docs/team/`,
+  re-run the apply with **`anthill migrate --keep-paths`**.
+
 ### 3. Apply — let the CLI do the mechanical move
 
 Run **`anthill migrate`**. It performs the plan with **history-preserving `git mv`**, swaps the
@@ -54,6 +59,13 @@ The general discipline (for future content-changing migrations): **never clobber
 If a migration would rewrite a doc the team has edited, surface the conflict to the human and resolve
 it together rather than overwriting. The per-migration guide flags when a step needs this.
 
+- **Reconcile the root methodology pointer (if any).** `migrate` moves files but doesn't touch the
+  repo's root `AGENTS.md` / `CLAUDE.md`. If one carries an anthill methodology pointer that names the
+  **old** team-docs location ("team docs live in `docs/team/`"), update it to where the docs now live
+  (`.anthill/`, or the `paths` override). This is the twin of the bootstrap pointer step — bootstrap
+  _drops_ it, upgrade keeps it _true_. Idempotent: no pointer, or one that doesn't name the team dir →
+  nothing to do.
+
 ### 5. Verify, then land
 
 - **Verify:**
@@ -64,9 +76,10 @@ it together rather than overwriting. The per-migration guide flags when a step n
     file a newer release introduced (or a doc a seat was missing); that's expected, not a failure —
     fold any additions into the commit below.
   - Spot-check a relocated seat doc reads correctly.
-  - **If the repo has a code formatter** (prettier / biome), make sure `.anthill/` is in its ignore now
-    that the docs live there — same one-time guard `anthill:bootstrap` does. (A v1 repo likely never
-    ignored `docs/team/`, and the docs are newly under `.anthill/`.)
+  - **If the repo has a code formatter** (prettier / biome), make sure the whole `.anthill/` footprint is
+    in its ignore now that config + docs live there — that includes **`.anthill/config.json`** (JSON a
+    `**/*.json` formatter or a lint-staged hook would rewrite), not just the docs. Same one-time guard
+    `anthill:bootstrap` does; a v1 repo likely never ignored `docs/team/`.
 - **Land — use a normal `git commit`, NOT `anthill commit`.** The `git mv`s are already staged
   (including the **deletions** of the old `.team/` + `docs/team/` dirs). Stage the remaining edits —
   `git add .anthill/config.json .gitignore` (plus any files `init` added) — then **review `git

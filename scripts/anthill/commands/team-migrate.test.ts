@@ -43,12 +43,18 @@ function firstJson(s: string): {
   return line ? JSON.parse(line) : null;
 }
 
-/** Seed a temp git repo with a committed v1 footprint (.team/ + docs/team/). */
-function seedV1Repo(opts?: { override?: boolean }): string {
+/**
+ * Seed a temp git repo with a committed v1 footprint (`.team/` + a living-docs dir).
+ * `override`: none → the default `docs/team` with no `paths`; "redundant" → `paths` set
+ * to the v1 default `docs/team`; "bespoke" → `paths` set to a deliberately custom dir.
+ */
+function seedV1Repo(opts?: { override?: "redundant" | "bespoke" }): string {
   const root = mkdtempSync(resolve(tmpdir(), "anthill-migrate-"));
   sh(["git", "init", "-q"], root);
   sh(["git", "config", "user.email", "t@t.dev"], root);
   sh(["git", "config", "user.name", "tester"], root);
+
+  const teamDir = opts?.override === "bespoke" ? "team-docs" : "docs/team";
 
   mkdirSync(join(root, ".team"), { recursive: true });
   const config: Record<string, unknown> = {
@@ -58,18 +64,14 @@ function seedV1Repo(opts?: { override?: boolean }): string {
     seats: [{ handle: "lead", role: "lead", scope: "x", spawn: false }],
   };
   if (opts?.override) {
-    config.paths = {
-      teamDir: "docs/team",
-      seatDir: "docs/team/dev",
-      seams: "docs/team/dev/seams.md",
-    };
+    config.paths = { teamDir, seatDir: `${teamDir}/dev`, seams: `${teamDir}/dev/seams.md` };
   }
   writeFileSync(join(root, ".team/config.json"), `${JSON.stringify(config, null, 2)}\n`);
 
-  mkdirSync(join(root, "docs/team/dev"), { recursive: true });
-  writeFileSync(join(root, "docs/team/README.md"), "# SOP\n");
-  writeFileSync(join(root, "docs/team/dev/seams.md"), "# seams\n");
-  writeFileSync(join(root, "docs/team/dev/lead.md"), "# lead\n");
+  mkdirSync(join(root, teamDir, "dev"), { recursive: true });
+  writeFileSync(join(root, teamDir, "README.md"), "# SOP\n");
+  writeFileSync(join(root, teamDir, "dev/seams.md"), "# seams\n");
+  writeFileSync(join(root, teamDir, "dev/lead.md"), "# lead\n");
   writeFileSync(join(root, ".gitignore"), "node_modules\n.team/scratch/\n");
 
   sh(["git", "add", "-A"], root);
@@ -139,22 +141,44 @@ describe("anthill migrate — v1 → v2", () => {
     expect(env?.data?.ops).toEqual([]);
   });
 
-  test("paths override: living docs stay put, only the config dir consolidates", async () => {
-    root = seedV1Repo({ override: true });
+  test("redundant-default paths override consolidates anyway + drops the override", async () => {
+    root = seedV1Repo({ override: "redundant" });
     const { code } = await runCli(["migrate", "--format", "json"], root);
     expect(code).toBe(0);
 
-    // Config moved into .anthill/, .team/ gone.
-    expect(existsSync(join(root, ".anthill/config.json"))).toBe(true);
-    expect(existsSync(join(root, ".team"))).toBe(false);
-    // Living docs STAYED at the overridden docs/team (escape hatch respected).
-    expect(existsSync(join(root, "docs/team/README.md"))).toBe(true);
-    expect(existsSync(join(root, ".anthill/README.md"))).toBe(false);
-
-    // Version stamped; the override is retained.
+    // The override just repeated the v1 default → docs consolidated into .anthill/.
+    expect(existsSync(join(root, ".anthill/README.md"))).toBe(true);
+    expect(existsSync(join(root, "docs/team"))).toBe(false);
+    // The redundant `paths` block was dropped so config falls to the v2 default.
     const cfg = JSON.parse(readFileSync(join(root, ".anthill/config.json"), "utf8"));
     expect(cfg.version).toBe(2);
+    expect(cfg.paths).toBeUndefined();
+  });
+
+  test("--keep-paths honors a redundant override — docs stay put", async () => {
+    root = seedV1Repo({ override: "redundant" });
+    const { code } = await runCli(["migrate", "--keep-paths", "--format", "json"], root);
+    expect(code).toBe(0);
+
+    // Docs left at docs/team; only config consolidated; the override is retained.
+    expect(existsSync(join(root, "docs/team/README.md"))).toBe(true);
+    expect(existsSync(join(root, ".anthill/README.md"))).toBe(false);
+    const cfg = JSON.parse(readFileSync(join(root, ".anthill/config.json"), "utf8"));
     expect(cfg.paths.teamDir).toBe("docs/team");
+  });
+
+  test("bespoke paths override is honored — a genuinely custom location stays put", async () => {
+    root = seedV1Repo({ override: "bespoke" });
+    const { code } = await runCli(["migrate", "--format", "json"], root);
+    expect(code).toBe(0);
+
+    // The custom team-docs location is left in place; only config consolidated.
+    expect(existsSync(join(root, "team-docs/README.md"))).toBe(true);
+    expect(existsSync(join(root, ".anthill/README.md"))).toBe(false);
+    expect(existsSync(join(root, ".team"))).toBe(false);
+    const cfg = JSON.parse(readFileSync(join(root, ".anthill/config.json"), "utf8"));
+    expect(cfg.version).toBe(2);
+    expect(cfg.paths.teamDir).toBe("team-docs");
   });
 
   test("no footprint at all → clean {ok:false} envelope, exit 1", async () => {

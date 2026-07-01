@@ -74,8 +74,10 @@ Present the proposed roster (handles · roles · scopes) and confirm — one foc
 - **grounding / paths:** set `grounding` to the anchors you actually detected (step 2) — **drop any
   default that doesn't exist** rather than emit a dangling path. (`anthill join` warns when a configured
   grounding doc is missing, so a dangling ref won't stay silent — but don't write one in the first
-  place.) Keep the default `paths` unless the project wants its team docs somewhere other than
-  `.anthill/`.
+  place.) Keep the default `paths` unless the project **deliberately** wants its team docs somewhere
+  other than `.anthill/` (e.g. a repo that prefers `docs/team/`). And if you _do_ set `paths`, make it
+  that deliberate location — **never write a `paths` override that just repeats the `.anthill/` default**
+  (a redundant override is noise, and it's exactly what trips `anthill migrate` on a future upgrade).
 
 ### 4. Write the config + render the scaffold
 
@@ -90,9 +92,12 @@ Present the proposed roster (handles · roles · scopes) and confirm — one foc
 - **Shield the living docs from the host's formatter (if it has one).** The `.anthill/` docs are prose
   pheromone living in the repo, so a host formatter (prettier / biome) will reflow them on commit —
   churn at best, and a reflow can mangle a hand-wrapped line into a stray list bullet. If the repo uses
-  one (check for `.prettierignore`, a `biome.json` / prettier config, lint-staged), **add the team-docs
-  dir** (`.anthill/`, or your `paths.teamDir`) to its ignore — e.g. a `.anthill/` line in
-  `.prettierignore`. One-time setup; idempotent (skip if already ignored). No host formatter → nothing
+  one (check for `.prettierignore`, a `biome.json` / prettier config, lint-staged), **add the whole
+  `.anthill/` footprint** — the living docs **and** `.anthill/config.json` — to its ignore (a single
+  `.anthill/` line in `.prettierignore` covers both). Don't scope the guard to just the docs dir:
+  `config.json` is JSON, so a formatter globbing `**/*.json` (or lint-staged on staged JSON) will
+  rewrite it. (If a `paths` override puts the docs elsewhere, ignore that dir too.) One-time setup;
+  idempotent (skip if already ignored). No host formatter → nothing
   to do.
 - **Sanity check:** `anthill status` (or `anthill join <lead>`) resolves against the new config without
   error.

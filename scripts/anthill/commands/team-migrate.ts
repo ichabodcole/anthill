@@ -65,7 +65,7 @@ function findFootprintConfig(
 type RawConfig = { version?: unknown; paths?: { teamDir?: unknown } };
 
 /** Build the pure `RepoScan` from disk — the only place IO meets the planner. */
-function scanRepo(root: string, configDir: string, raw: RawConfig): RepoScan {
+function scanRepo(root: string, configDir: string, raw: RawConfig, keepPaths: boolean): RepoScan {
   const version = typeof raw.version === "number" ? raw.version : 1;
   const pathsExplicit =
     typeof raw.paths === "object" &&
@@ -88,7 +88,7 @@ function scanRepo(root: string, configDir: string, raw: RawConfig): RepoScan {
   const giPath = join(root, ".gitignore");
   const gitignore = existsSync(giPath) ? readFileSync(giPath, "utf8") : null;
 
-  return { version, pathsExplicit, teamDir, docsEntries, configDir, gitignore };
+  return { version, pathsExplicit, teamDir, docsEntries, configDir, gitignore, keepPaths };
 }
 
 /** Apply one `MigrationOp` to disk. Throws on a hard failure (caught + enveloped). */
@@ -133,6 +133,13 @@ function applyOp(op: MigrationOp, root: string): void {
       rmSync(resolve(root, op.path), { recursive: true, force: true });
       return;
     }
+    case "config-drop-paths": {
+      const fileAbs = resolve(root, op.file);
+      const parsed = JSON.parse(readFileSync(fileAbs, "utf8")) as Record<string, unknown>;
+      delete parsed.paths;
+      writeFileSync(fileAbs, `${JSON.stringify(parsed, null, 2)}\n`);
+      return;
+    }
   }
 }
 
@@ -153,12 +160,18 @@ export const teamMigrateCommand = defineAnthillCommand({
   },
   args: {
     "dry-run": { type: "boolean", description: "Preview the plan without changing anything" },
+    "keep-paths": {
+      type: "boolean",
+      description:
+        "Honor a `paths` override even when it just repeats the v1 default (don't consolidate the docs)",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
     const dryRun = ctx.args["dry-run"] === true;
+    const keepPaths = ctx.args["keep-paths"] === true;
 
     const found = findFootprintConfig(process.cwd());
     if (!found) {
@@ -175,7 +188,7 @@ export const teamMigrateCommand = defineAnthillCommand({
     let firstScan: RepoScan;
     try {
       const raw = JSON.parse(readFileSync(found.configPath, "utf8")) as RawConfig;
-      firstScan = scanRepo(root, found.configDir, raw);
+      firstScan = scanRepo(root, found.configDir, raw, keepPaths);
     } catch (err) {
       emitError({
         format,
@@ -238,7 +251,7 @@ export const teamMigrateCommand = defineAnthillCommand({
         const f = findFootprintConfig(root);
         if (!f) break;
         const raw = JSON.parse(readFileSync(f.configPath, "utf8")) as RawConfig;
-        const scan = scanRepo(root, f.configDir, raw);
+        const scan = scanRepo(root, f.configDir, raw, keepPaths);
         const next = pendingMigrations(scan.version)[0];
         if (!next) break;
         const plan = next.plan(scan);
