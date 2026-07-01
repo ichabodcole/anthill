@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import {
+  isRedundantDefaultPaths,
   type MigrationOp,
   migrationsBetween,
   pendingMigrations,
@@ -14,6 +15,7 @@ const V1_DEFAULT: RepoScan = {
   docsEntries: ["README.md", "paper-cuts.md", "dev"],
   configDir: ".team",
   gitignore: "node_modules\n.team/scratch/\n",
+  keepPaths: false,
 };
 
 describe("planV1ToV2 — default layout (no paths override)", () => {
@@ -43,10 +45,11 @@ describe("planV1ToV2 — default layout (no paths override)", () => {
   });
 });
 
-describe("planV1ToV2 — paths override (escape hatch)", () => {
-  const plan = planV1ToV2({ ...V1_DEFAULT, pathsExplicit: true });
+describe("planV1ToV2 — bespoke paths override (genuine escape hatch)", () => {
+  // A NON-default location the team deliberately chose → honored, docs left in place.
+  const plan = planV1ToV2({ ...V1_DEFAULT, pathsExplicit: true, teamDir: "team-docs" });
 
-  test("moves only the config dir — living docs are left in place", () => {
+  test("moves only the config dir — living docs stay put", () => {
     expect(plan.ops).toEqual([
       { kind: "git-mv", from: ".team/config.json", to: ".anthill/config.json" },
       { kind: "gitignore", remove: ".team/scratch/", add: ".anthill/scratch/" },
@@ -55,15 +58,41 @@ describe("planV1ToV2 — paths override (escape hatch)", () => {
     ]);
   });
 
-  test("no op touches the living-docs dir", () => {
+  test("no op touches the living-docs dir; a note explains the override was honored", () => {
     const touchesDocs = (o: MigrationOp) =>
-      (o.kind === "git-mv" && o.from.startsWith("docs/team")) ||
-      (o.kind === "rm" && o.path === "docs/team");
+      (o.kind === "git-mv" && o.from.startsWith("team-docs")) ||
+      (o.kind === "rm" && o.path === "team-docs");
     expect(plan.ops.some(touchesDocs)).toBe(false);
+    expect(plan.notes.some((n) => /bespoke location/.test(n))).toBe(true);
+  });
+});
+
+describe("planV1ToV2 — redundant-default paths override (the media-buffet trap)", () => {
+  // `paths` is set, but it just spells out the v1 default `docs/team` — non-deliberate.
+  const scan: RepoScan = { ...V1_DEFAULT, pathsExplicit: true, teamDir: "docs/team" };
+
+  test("consolidates the docs anyway AND drops the redundant override", () => {
+    const plan = planV1ToV2(scan);
+    expect(plan.ops).toEqual([
+      { kind: "git-mv", from: ".team/config.json", to: ".anthill/config.json" },
+      { kind: "git-mv", from: "docs/team/README.md", to: ".anthill/README.md" },
+      { kind: "git-mv", from: "docs/team/paper-cuts.md", to: ".anthill/paper-cuts.md" },
+      { kind: "git-mv", from: "docs/team/dev", to: ".anthill/dev" },
+      { kind: "rm", path: "docs/team" },
+      { kind: "config-drop-paths", file: ".anthill/config.json" },
+      { kind: "gitignore", remove: ".team/scratch/", add: ".anthill/scratch/" },
+      { kind: "rm", path: ".team" },
+      { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
+    ]);
+    expect(plan.notes.some((n) => /just spelled out the v1 default/.test(n))).toBe(true);
+    expect(plan.notes.some((n) => /--keep-paths/.test(n))).toBe(true);
   });
 
-  test("a note explains the override was respected", () => {
-    expect(plan.notes.some((n) => /paths override/.test(n))).toBe(true);
+  test("--keep-paths honors it — docs stay, no drop-paths op", () => {
+    const plan = planV1ToV2({ ...scan, keepPaths: true });
+    expect(plan.ops.some((o) => o.kind === "config-drop-paths")).toBe(false);
+    expect(plan.ops.some((o) => o.kind === "git-mv" && o.from.startsWith("docs/team"))).toBe(false);
+    expect(plan.notes.some((n) => /kept per --keep-paths/.test(n))).toBe(true);
   });
 });
 
@@ -74,6 +103,14 @@ describe("planV1ToV2 — already migrated", () => {
     expect(plan.from).toBe(2);
     expect(plan.to).toBe(2);
     expect(plan.notes[0]).toMatch(/already at v2/);
+  });
+});
+
+describe("isRedundantDefaultPaths", () => {
+  test("true only for the v1 default team dir", () => {
+    expect(isRedundantDefaultPaths("docs/team")).toBe(true);
+    expect(isRedundantDefaultPaths("team-docs")).toBe(false);
+    expect(isRedundantDefaultPaths(".anthill")).toBe(false);
   });
 });
 

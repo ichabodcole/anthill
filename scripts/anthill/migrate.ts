@@ -36,7 +36,10 @@ export type MigrationOp =
   /** Bump the `version` field of a config file. */
   | { kind: "stamp-version"; file: string; version: number }
   /** Remove a vacated directory (its only remaining content is disposable). */
-  | { kind: "rm"; path: string };
+  | { kind: "rm"; path: string }
+  /** Drop the `paths` block from a config file — a redundant-default override is
+   * being consolidated away, so the config falls back to the v2 default. */
+  | { kind: "config-drop-paths"; file: string };
 
 export interface MigrationPlan {
   from: number;
@@ -63,6 +66,20 @@ export interface RepoScan {
   configDir: string;
   /** Current `.gitignore` contents (null when the file is absent). */
   gitignore: string | null;
+  /** Honor a REDUNDANT-default `paths` override anyway (leave docs in place) rather
+   * than consolidating it. Set from `--keep-paths`; irrelevant to a bespoke override
+   * (always honored) or no override (always consolidated). */
+  keepPaths: boolean;
+}
+
+/**
+ * Is a `paths` override just the v1 DEFAULT spelled out — a redundant, almost-certainly
+ * non-deliberate override — rather than a bespoke location the team deliberately chose?
+ * Shared truth (via `V1_DEFAULT_TEAM_DIR`) for `migrate` (consolidate it) and for
+ * `bootstrap`'s guidance (confirm before writing `paths` == the default).
+ */
+export function isRedundantDefaultPaths(teamDir: string): boolean {
+  return teamDir === V1_DEFAULT_TEAM_DIR;
 }
 
 export interface Migration {
@@ -99,25 +116,40 @@ export function planV1ToV2(scan: RepoScan): MigrationPlan {
   ops.push({ kind: "git-mv", from: `${configDir}/config.json`, to: `${ANTHILL_DIR}/config.json` });
   notes.push(`config: ${configDir}/config.json → ${ANTHILL_DIR}/config.json`);
 
-  // 2. The living docs — only when they're at the v1 default (no override).
-  if (scan.pathsExplicit) {
+  // 2. The living docs. A `paths` override that just spells out the v1 DEFAULT
+  //    (`docs/team`) is almost never a deliberate escape hatch — it's the old default
+  //    written out, and honoring it silently HALF-consolidates (config moves, docs
+  //    don't), defeating v2. So a REDUNDANT override consolidates by default (dropping
+  //    the override); only a GENUINELY BESPOKE location — or a redundant one kept via
+  //    `--keep-paths` — is honored.
+  const redundant = isRedundantDefaultPaths(scan.teamDir) && scan.pathsExplicit;
+  const honorOverride = scan.pathsExplicit && (!redundant || scan.keepPaths);
+
+  if (honorOverride) {
     notes.push(
-      `paths override in effect — living docs stay at \`${scan.teamDir}/\`; only the config + ` +
-        `scratch consolidate to \`${ANTHILL_DIR}/\`. Re-point \`paths\` later if you want them moved.`,
+      redundant
+        ? `\`paths\` override kept per --keep-paths — living docs stay at \`${scan.teamDir}/\`; only ` +
+            `config + scratch consolidate to \`${ANTHILL_DIR}/\`.`
+        : `\`paths\` override honored (a bespoke location) — living docs stay at \`${scan.teamDir}/\`; ` +
+            `only config + scratch consolidate to \`${ANTHILL_DIR}/\`.`,
     );
   } else {
     for (const entry of scan.docsEntries) {
-      ops.push({
-        kind: "git-mv",
-        from: `${scan.teamDir}/${entry}`,
-        to: `${ANTHILL_DIR}/${entry}`,
-      });
+      ops.push({ kind: "git-mv", from: `${scan.teamDir}/${entry}`, to: `${ANTHILL_DIR}/${entry}` });
     }
     notes.push(
       `living docs: ${scan.teamDir}/* → ${ANTHILL_DIR}/* (${scan.docsEntries.length} entr` +
         `${scan.docsEntries.length === 1 ? "y" : "ies"})`,
     );
     ops.push({ kind: "rm", path: scan.teamDir });
+    if (redundant) {
+      ops.push({ kind: "config-drop-paths", file: `${ANTHILL_DIR}/config.json` });
+      notes.push(
+        `⚠ your \`paths\` override just spelled out the v1 default (\`${V1_DEFAULT_TEAM_DIR}\`), so it ` +
+          `was consolidated into \`${ANTHILL_DIR}/\` and the redundant override dropped. To keep the ` +
+          `docs at \`${scan.teamDir}/\` deliberately, re-run with \`--keep-paths\`.`,
+      );
+    }
   }
 
   // 3. The gitignored scratch line moves with the config dir.

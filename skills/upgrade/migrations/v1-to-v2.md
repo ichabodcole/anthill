@@ -22,12 +22,21 @@ changes, so there is nothing to reconcile.
 The vacated `.team/` (only the disposable, gitignored scratch remains in it) and the emptied
 `docs/team/` are removed.
 
-## The `paths` override (escape hatch)
+## The `paths` override (escape hatch) — and the redundant-default trap
 
-If the repo set an explicit `paths` override — its living docs deliberately live somewhere other than
-the `docs/team/` default — the migration **leaves the docs where they are** and moves only the config
-dir into `.anthill/`. The override stays valid; re-point it later if you want the docs under
-`.anthill/` too.
+A `paths` override tells migrate where the living docs live. Two cases, handled differently:
+
+- **A genuinely bespoke location** (docs deliberately somewhere other than `docs/team/`) → migrate
+  **leaves the docs where they are** and moves only the config dir into `.anthill/`. The override stays
+  valid.
+- **A _redundant_ override that just spells out the v1 default `docs/team`** → this is almost never
+  deliberate; it's the old default written out. Honoring it would silently HALF-consolidate (config
+  moves, docs don't) — the exact thing v2 exists to kill. So migrate **consolidates the docs into
+  `.anthill/` anyway and drops the redundant `paths` block**, and says so loudly in the plan. If you
+  _do_ want the docs to stay at `docs/team/` on purpose, re-run **`anthill migrate --keep-paths`**.
+
+(This is the media-buffet finding — a redundant default override quietly defeated the consolidation and
+only a human paying attention caught it.)
 
 ## Reconciliation
 

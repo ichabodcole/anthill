@@ -36,6 +36,11 @@ prints the migration plan **without touching anything**.
 Show the human the dry-run plan (the notes are the readable summary) and **confirm before applying**.
 It relocates committed files; it's reversible via git, but it's their repo — ask first.
 
+- **Watch for the redundant-default `paths` note.** If the plan flags that the repo's `paths` override
+  just spells out the old `docs/team` default, migrate will consolidate the docs anyway (and drop the
+  override) — surface that to the human. If they _deliberately_ want the docs to stay at `docs/team/`,
+  re-run the apply with **`anthill migrate --keep-paths`**.
+
 ### 3. Apply — let the CLI do the mechanical move
 
 Run **`anthill migrate`**. It performs the plan with **history-preserving `git mv`**, swaps the

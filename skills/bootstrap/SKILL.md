@@ -74,8 +74,10 @@ Present the proposed roster (handles · roles · scopes) and confirm — one foc
 - **grounding / paths:** set `grounding` to the anchors you actually detected (step 2) — **drop any
   default that doesn't exist** rather than emit a dangling path. (`anthill join` warns when a configured
   grounding doc is missing, so a dangling ref won't stay silent — but don't write one in the first
-  place.) Keep the default `paths` unless the project wants its team docs somewhere other than
-  `.anthill/`.
+  place.) Keep the default `paths` unless the project **deliberately** wants its team docs somewhere
+  other than `.anthill/` (e.g. a repo that prefers `docs/team/`). And if you _do_ set `paths`, make it
+  that deliberate location — **never write a `paths` override that just repeats the `.anthill/` default**
+  (a redundant override is noise, and it's exactly what trips `anthill migrate` on a future upgrade).
 
 ### 4. Write the config + render the scaffold
 
