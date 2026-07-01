@@ -59,6 +59,13 @@ The general discipline (for future content-changing migrations): **never clobber
 If a migration would rewrite a doc the team has edited, surface the conflict to the human and resolve
 it together rather than overwriting. The per-migration guide flags when a step needs this.
 
+- **Reconcile the root methodology pointer (if any).** `migrate` moves files but doesn't touch the
+  repo's root `AGENTS.md` / `CLAUDE.md`. If one carries an anthill methodology pointer that names the
+  **old** team-docs location ("team docs live in `docs/team/`"), update it to where the docs now live
+  (`.anthill/`, or the `paths` override). This is the twin of the bootstrap pointer step — bootstrap
+  _drops_ it, upgrade keeps it _true_. Idempotent: no pointer, or one that doesn't name the team dir →
+  nothing to do.
+
 ### 5. Verify, then land
 
 - **Verify:**

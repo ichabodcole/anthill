@@ -1,6 +1,6 @@
 # `anthill migrate`: a redundant `paths` override that equals the v1 default half-consolidates
 
-**Added:** 2026-06-30 · **Status:** Open — from the first real v1→v2 upgrade (media-buffet)
+**Added:** 2026-06-30 · **Status:** Done (`fc813fa`)
 
 `migrate` treats ANY `paths` presence in the config as a deliberate escape hatch, so it leaves the
 living docs where the override points and moves only config + scratch into `.anthill/`. On
@@ -24,10 +24,17 @@ Only a human paying attention caught it; the lead then hand-rolled the rest: a `
 
 ## Acceptance Criteria
 
-- [ ] `migrate` recognizes a `paths` override equal to the v1 default and offers to consolidate (move
-      docs + drop the override) rather than silently half-consolidating
-- [ ] a genuinely custom `paths` location is still left in place (the real escape hatch is preserved)
-- [ ] there is a CLI path to finish the consolidation — no hand-rolled `git mv`
+- [x] `migrate` recognizes a `paths` override equal to the v1 default and consolidates by default (moves
+      docs + drops the override) rather than silently half-consolidating
+- [x] a genuinely custom `paths` location is still left in place (the real escape hatch is preserved)
+- [x] there is a CLI path to finish the consolidation — no hand-rolled `git mv` (auto for a redundant
+      override; `--keep-paths` opts out)
+
+**Resolution (`fc813fa`):** `planV1ToV2` now branches on `isRedundantDefaultPaths` — a `paths` override
+equal to the v1 default consolidates the docs anyway and drops the redundant block (new
+`config-drop-paths` op) with a loud plan note; a bespoke location is honored; `--keep-paths` forces
+honoring a redundant one. Bootstrap also warns against authoring a redundant override in the first
+place. Covered by planner + subprocess tests.
 
 ## References
 
