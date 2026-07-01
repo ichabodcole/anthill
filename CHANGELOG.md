@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.0.0...anthill-v1.1.0) (2026-07-01)
+
+
+### Features
+
+* **migrate:** consolidate a redundant-default paths override (fix [#8](https://github.com/ichabodcole/anthill/issues/8).1/[#8](https://github.com/ichabodcole/anthill/issues/8).2) ([fc813fa](https://github.com/ichabodcole/anthill/commit/fc813faa1d803aac55f0ca80357d346f824de876))
+* **upgrade:** reconcile the root pointer (fix [#8](https://github.com/ichabodcole/anthill/issues/8).5); archive migration items ([2e4582f](https://github.com/ichabodcole/anthill/commit/2e4582f143d972d067c44d4c0776579abf8e43f4))
+
 ## 1.0.0 (2026-06-30)
 
 
