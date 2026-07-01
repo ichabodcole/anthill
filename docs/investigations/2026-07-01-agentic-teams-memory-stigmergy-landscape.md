@@ -173,3 +173,50 @@ grep on large codebases) are **plausible and worth prototyping, but not evidence
 
 - [v0.2 brief](../briefs/2026-06-30-anthill-v0.2-next-release.md) · the design-of-record in `../architecture/`
 - Follow-up: a dedicated **navigation-tooling** investigation (the under-evidenced axis).
+
+---
+
+## Addendum — OpenAI "Harness Engineering" (Feb 2026)
+
+Source: [openai.com/index/harness-engineering](https://openai.com/index/harness-engineering/) (R. Lopopolo,
+OpenAI Frontier & Symphony; direct fetch 403'd → triangulated via a full-text mirror + InfoQ + the Latent
+Space interview). **Harness engineering = designing the _environment_ around the agent** (scaffolding,
+constraints, feedback loops, repo structure), not writing code. Thesis: _"Humans steer. Agents execute."_
+Proof point: 3 engineers, ~1M LOC / ~1,500 merged PRs over 5 months with **zero manually-written code**.
+Load-bearing constraint: **"anything the agent can't access in-context doesn't exist"** → all knowledge must
+be repo-local, versioned artifacts (chat / Google Docs / heads are invisible).
+
+**Validates anthill (strong):** the committed living-doc pheromone trail — versioned plans + decision logs +
+co-located tech-debt, re-read by the next agent — is anthill's exact thesis, proven at 1M LOC. Their
+"not-in-context-doesn't-exist" framing is a sharper justification for committing durable docs over chat
+memory. The brain/hands split, lifecycle-tiered memory (active/completed/tech-debt), and finalize ritual are
+all mirrored.
+
+**Concrete steals (some genuinely novel vs. the rest of this investigation):**
+
+1. **Error-message-as-context-injection** (NOVEL — tightest steal). Their custom linters/tests don't just
+   pass/fail — the **error text is authored to inject remediation instructions into the agent's context**.
+   This is the missing feedback edge in anthill's brain/hands split: the deterministic "hands" (CLI) should
+   feed _correction_ back up, not just a pass/fail.
+2. **"doc-gardening" recurring agent** (NOVEL). A scheduled agent sweeps for stale docs that no longer match
+   code and opens fix-up PRs — a _continuous, automated_ version of anthill's end-of-session finalize.
+   Between-session gardener, not just a wind-down ritual.
+3. **`AGENTS.md`-as-map + progressive disclosure** (navigation upgrade — feeds the follow-up). A ~100-line
+   `AGENTS.md` that is a **map of pointers, not a manual**; agents "start with a small, stable entry point and
+   are taught where to look next." Direct antidote to living-doc bloat: keep the always-injected layer tiny
+   and make it a router. (anthill already does this with its own lean AGENTS.md — worth formalizing as a
+   principle for seat docs / KB.)
+4. **"Taste invariants" / "golden principles"** (NOVEL) — encode subjective code-taste (file-size limits,
+   logging shape, dependency-direction) as **mechanical, statically-enforced rules** run as recurring "GC,"
+   so agents stay consistent without human review.
+5. **"Boring tech = agent-legible"** — deliberately choosing stable, training-set-represented dependencies as
+   a harness decision.
+
+**Instructive contrast (worth pressure-testing):** OpenAI **deliberately runs NO agent-to-agent channel** —
+coordination is _entirely_ artifact-mediated through the repo. anthill leans on a live grapevine channel +
+bounty board (direct signaling). Their scale suggests artifact-mediated stigmergy carries most of the
+coordination load; anthill should pressure-test **which of its coordination genuinely needs a channel vs. a
+committed artifact.**
+
+**Caveat:** Lopopolo is "OpenAI Frontier & Symphony," so this post shares a source lineage with the Symphony
+findings above — treat overlaps as the same thread maturing, not independent corroboration.
