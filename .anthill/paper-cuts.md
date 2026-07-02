@@ -23,6 +23,23 @@ in-repo — file it upstream and note the workaround here.
 
 ---
 
+## 2026-07-02 — solo review session (Fable 5)
+
+### Tier 1 — breaks the house commit discipline
+
+1. **`git commit -- <pathspec>` + lint-staged = phantom "invalid object … Error building trees"** _(Fable 5, solo; hit twice, reproducibly, in THIS repo)._
+   A file-scoped pathspec commit runs the pre-commit hook against a **temporary index**, and lint-staged's stash/backup dance corrupts that interaction — the commit dies after every check passes, citing an invalid blob for an unrelated file (`.anthill/config.json`).
+   Staging the same content and committing **without** a pathspec succeeds (landed `3d5555c` / `c95785d` that way).
+   **This lands squarely on `anthill commit`:** it encodes exactly the pathspec-commit discipline, so it likely fails the same way on any consumer repo running husky + lint-staged — which includes this repo AND dream-flute (husky 9 + lint-staged 17).
+   - **Fix:** `anthill commit` (team-commit.ts) should, under its serialize lock, stage the named paths, **verify the staged set is exactly the named paths** (`git diff --cached --name-only`), then commit **without** a pathspec — verification replaces the pathspec's no-sweep guarantee, and the temp-index interaction never happens.
+   - **Workaround now:** stage explicitly, verify the staged set, plain `git commit`. Don't reach for `--no-verify`.
+
+### Disposition — 2026-07-02
+
+- ◻ **#1** — open; fix direction noted above. Promote to backlog if not picked up directly.
+
+---
+
 ## <date> — <session label>
 
 _(append entries below as you hit friction; triage at finalize. Suggested shape:)_
