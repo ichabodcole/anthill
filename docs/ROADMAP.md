@@ -15,7 +15,9 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 ## Now
 
 1. **`anthill:plan` — the skeleton→ratify planning skill** — [team-dev-planning](projects/team-dev-planning/proposal.md)
-   (proposal resolved; needs plan → build). Lifecycle position: **normally starts before
+   (**MVP built 2026-07-03** on `feat/anthill-plan-skill`, pending merge — `skills/plan/` + bundled
+   `methodology.md`, wired into `convene`/`join`/`seams.md`/SOP; the real dogfood exercise is #4).
+   Lifecycle position: **normally starts before
    convene** — the lead drafts the skeleton solo (phases, seat lanes, proposed seams) — then the
    **convened team completes it** (each seat ratifies/falsifies its lane and the seams that
    touch it). Convene must not _require_ a skeleton, though: a team can convene plan-less (it

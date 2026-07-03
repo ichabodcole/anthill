@@ -1,6 +1,6 @@
 # Team dev-planning: the skeleton → ratify handshake
 
-**Status:** Draft
+**Status:** Implemented (MVP built 2026-07-03 on `feat/anthill-plan-skill`; pending merge)
 **Created:** 2026-07-01
 **Author:** forager (from a dream-flute methodology writeup by the maestro seat)
 
@@ -71,16 +71,33 @@ single-author planning; the framing is the whole value.
   your lane.
 - A **`seams.md` framing** shift: the load-bearing contracts are _asserted up front and ratified_, not
   only accreted at merge.
-- **Pointers** (not copies) from the SOP + the lead archetype seat doc to the skill/methodology.
+- **Pointers** (not copies) from the SOP + `convene` to the skill/methodology.
 
 **Lifecycle:** `bootstrap → convene → plan → build → finalize-session`. `plan` is a distinct,
 invocable phase (design → **plan** → build), not prose folded into `convene` — which keeps `convene`
 focused on standing up coordination and makes the plan phase discoverable and _forced_ rather than
 optional (the navigation-research adoption lesson).
 
-**When it applies:** a feature that **spans multiple seats**. Solo work — or authoring the skeleton
-itself — uses plain single-agent planning (`project-docs:generate-dev-plan`, `superpowers:writing-plans`).
-This team layer sits **on top of** single-agent planning; it does not replace it.
+**When it applies:** a feature that **spans multiple seats**. Solo work skips it entirely — one agent
+just plans and builds its own change (no seam to ratify, no lane to divide).
+
+> **Refined post-build (2026-07-03), from dream-flute artifact review — two decisions:**
+>
+> 1. **Self-contained, not composed.** Earlier drafts referenced single-agent planning skills
+>    (`superpowers:writing-plans`, `project-docs:generate-dev-plan`) as the craft owners would invoke.
+>    Rejected: anthill is portable and those are **separate plugins** that a consumer repo may not
+>    have — a core skill can't hard-depend on them; referenced prose also goes unengaged (the
+>    nav-research finding). Instead `methodology.md` **synthesizes** the distilled plan-writing craft
+>    (right-sized TDD tasks, exact paths, no-placeholders, self-review against the seams) **in**, as
+>    its own team dev-plan method with its own triggers. dream-flute's own zero-rework practice was
+>    already self-contained — it never invoked those skills.
+> 2. **The plan is a two-layer artifact** (evidence: dream-flute's `timeline-loop-region` reference
+>    build). A **thin shared skeleton** (`plan.md` — integration order, the seams section
+>    `RATIFIED — owner × consumer`, slices, verification gate) authored by the **lead**, plus **one
+>    `plan/<seat>.md` lane file per owner** carrying the file-level HOW, authored by **that owner**
+>    after ratifying. The total plan is detailed; the _shared_ artifact stays skeletal; per-lane depth
+>    is owner-authored, not lead-dictated. Light features collapse to a single `plan.md` + a seat-RATIFY
+>    table.
 
 ## Scope
 
@@ -92,8 +109,9 @@ This team layer sits **on top of** single-agent planning; it does not replace it
   ratify flow, the roles, the seams-are-the-value framing, the relationship to single-agent planning).
 - **`join`** gains the ratify-before-draft beat (ratify the seams you touch before `todo→doing`).
 - **`seams.md` template** gains the "assert & ratify load-bearing contracts up front" framing.
-- The **lead archetype seat doc** + the **SOP template** _point at_ the skill/methodology (replacing
-  dream-flute's distributed maestro reflex + SOP one-liner — pointers, not restatements).
+- The **SOP template** + **`convene`** _point at_ the skill/methodology (replacing dream-flute's
+  distributed maestro reflex + SOP one-liner — pointers, not restatements). _(anthill has no
+  role-specific lead seat-doc template — see the resolved open question.)_
 - A note in the **architecture design doc** recording `plan` as a lifecycle phase (the decision).
 
 **Out of Scope:**
@@ -121,7 +139,7 @@ This is a **plugin-surface** change (skills + templates), deliberately not a `do
 **Placement — decided.** The organizing principle: **universal → plugin; project-specific → `.anthill/`.**
 The methodology is _universal_ (it doesn't vary between anthill and dream-flute), so it ships **once with
 the plugin** — as a new **`skills/plan/`** skill carrying a companion **`methodology.md`** (the pattern
-used by `skills/upgrade/migrations/`), single-sourced and _pointed at_ from the SOP + lead seat doc. It
+used by `skills/upgrade/migrations/`), single-sourced and _pointed at_ from the SOP + `convene`. It
 is **not** rendered into each project's `.anthill/` (that would be N drifting copies). Only the
 _instantiation_ — a project's skeleton `plan.md`, its ratified `seams.md`, its seats — lives in the
 project. (Rejected: SOP-only, because reference prose gets ignored — the navigation-research adoption
@@ -136,7 +154,7 @@ times across seat docs.)
 | `convene`           | plan is a finished input; seed cards → seats `doing` | minimal — hand off to `plan`; convene stays "stand up coordination"                                        |
 | `join`              | ground → claim card → work                           | ratify/falsify seams you touch before `todo→doing`                                                         |
 | `seams.md` template | contracts "accrete as discovered" (emergent)         | load-bearing contracts "asserted up front & ratified" (proactive) — an emphasis shift, not a contradiction |
-| SOP + lead seat doc | maestro reflex + SOP one-liner (in dream-flute)      | a **pointer** to `skills/plan/methodology.md` (single-source)                                              |
+| SOP + `convene`     | maestro reflex + SOP one-liner (in dream-flute)      | a **pointer** to `skills/plan/methodology.md` (single-source)                                              |
 | `finalize-session`  | owners synthesize; shared contracts pass             | **no change** — already matches procedure step 5                                                           |
 | bounty lifecycle    | `todo→doing→review`                                  | ratification is a gate _before_ `doing` (no schema change; a discipline in the skills)                     |
 
@@ -174,27 +192,32 @@ stage anthill doesn't currently model, plus a placement decision and a framing t
 
 ## Open Questions
 
+_All resolved in the MVP build (2026-07-03)._
+
 - ~~**Placement**~~ — **resolved:** a new `skills/plan/` skill + companion `methodology.md`, shipped
-  with the plugin (universal → plugin), pointed-at from SOP + lead seat doc. Not SOP-only, not
+  with the plugin (universal → plugin), pointed-at from SOP + `convene`. Not SOP-only, not
   per-project-rendered, not per-seat.
-- **How the lead invokes `plan`, and the subagent-vs-terminal split.** In terminal mode the lead drives
-  ratification over the vine; in subagent mode there are no tails — the lead dispatches each seat to
-  ratify its seams and collects verdicts. The skill needs both paths (mirror `convene`/`join`'s existing
-  dual-mode handling).
-- **seams.md:** how hard to push "assert up front" without discouraging the healthy emergent accretion
-  the template currently encourages?
-- **Ratify mechanics:** is ratification a literal bounty gate (a `ratified` marker / a card state before
-  `doing`), or a lighter vine-acknowledgement discipline? (MVP likely the lighter form.)
-- **Supersession:** the writeup notes dream-flute has distributed captures this replaces (a maestro
-  reflex, an SOP one-liner, scattered plan-scars). anthill's equivalent is the lead archetype seat doc +
-  SOP template — confirm nothing else needs point-away-from.
+- ~~**How the lead invokes `plan`, and the subagent-vs-terminal split.**~~ — **resolved:** the skill
+  carries both paths, mirroring `convene`/`join`. Terminal: post the skeleton on the vine, owners
+  ratify over the vine. Subagent: the lead dispatches each seat to ratify its seams and collects
+  verdicts (no tails).
+- ~~**seams.md:** how hard to push "assert up front"?~~ — **resolved: both/and.** The `seams.md`
+  template now frames it as _load-bearing contracts asserted & ratified up front during plan; the long
+  tail still accretes as discovered_ — an emphasis shift, not a replacement of the emergent default.
+- ~~**Ratify mechanics:**~~ — **resolved: the lighter form.** Ratification is a **vine-acknowledgement
+  discipline** (an explicit ratify/falsify before a card moves `todo→doing`), **not** a bounty schema
+  change. Written as a mandatory gate in the `join` beat + the `plan` skill.
+- ~~**Supersession:**~~ — **resolved:** anthill has **no role-specific seat-doc template** (the
+  `{{handle}}.md` scaffold is generic), so the lead-facing pointer the writeup calls "the lead
+  archetype seat doc" lives instead in the **SOP + `convene`** — where the lead grounds and acts.
+  Nothing else in anthill needs point-away-from.
 
 ## Success Criteria
 
 - A multi-seat feature can be run end-to-end with the lead authoring only a skeleton and each seat
   ratifying its seams before building — driven by the skills, without out-of-band coaching.
-- The methodology is single-sourced in the scaffold and merely _pointed at_ from `convene`, the SOP, and
-  the lead seat doc (no restated copies to drift).
+- The methodology is single-sourced in the scaffold and merely _pointed at_ from `convene` and the SOP
+  (no restated copies to drift).
 - dream-flute, post-migration, runs its existing planning practice through anthill's skills unchanged in
   spirit.
 

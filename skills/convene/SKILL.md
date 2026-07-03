@@ -33,6 +33,10 @@ stay solo.
 
 2. **Gather the work from the human** (ask only what you need — one focused round):
    - What are we building this session? (Point at the proposal / plan / project folder if one exists.)
+   - **Multi-seat feature without a ratified plan yet?** That's the **plan phase** — run
+     **`anthill:plan`** (the lead scaffolds a skeleton, the seats ratify the seams they touch before
+     drafting). Convene doesn't _require_ a skeleton — you can point the seats at one if it exists and
+     proceed if not — but plan is where a multi-seat plan gets authored. Solo work skips it.
    - Which seats does **this phase** need — all of them, or a subset? (The `spawn:true` seats in config
      are the default set; you override per phase.)
    - **Is this the right team _shape_ for the work in front of you?** Before spawning, sanity-check the

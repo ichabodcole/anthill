@@ -57,13 +57,19 @@ direct.
   `down` wrap grapevine + bounty + tmux). `anthill join <handle>` emits your grounding docs + an
   action checklist — that checklist is the single source; don't restate it.
 
-## Workflow — convene → work → finalize
+## Workflow — convene → plan → work → finalize
 
 - **Convene** — the lead grounds, gathers the work from the human, stands up coordination (channel +
   board), seeds cards, briefs + spawns the seats the **current phase** needs. Composition is a
   _hypothesis_, not law.
-- **Work** — builders build; the lead and seats watch for **structure signals** (toe-stepping, a
-  renegotiated seam, an overloaded/idle seat, a verify finding that bounces work back).
+- **Plan** _(multi-seat features)_ — the lead scaffolds a plan **skeleton** (the integration order +
+  the cross-seam interface contracts, as _claims_), then each owning seat **ratifies or falsifies
+  the seams it touches before drafting**. The skeleton is a **hypothesis**, not blanks to fill —
+  the value is catching a wrong seam _before_ merge. Run **`anthill:plan`** (single-source
+  methodology). Solo work skips it and uses plain single-agent planning.
+- **Work** — builders build against the ratified seams; the lead and seats watch for **structure
+  signals** (toe-stepping, a renegotiated seam, an overloaded/idle seat, a verify finding that
+  bounces work back).
 - **Finalize (+ reflection)** — each seat curates its scratch → seat doc; a shared `seams.md` pass;
   then the **structure reflection** (below). The lead lands the doc commits and tears down the
   session.

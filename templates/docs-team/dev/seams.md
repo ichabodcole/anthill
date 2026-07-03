@@ -10,8 +10,11 @@
 > invariant two seats both rely on, a protocol between slices. Not a seat's private taste (that's the
 > seat doc), not a one-off (that's a commit message), not product docs.
 >
-> **This is a seed.** No contracts yet — they **accrete as they're discovered**. Start empty; add the
-> first one the first time two seats have to agree on something.
+> **This is a seed.** No contracts yet. Two ways they land here: the **load-bearing** cross-seam
+> contracts are **asserted up front and ratified** during the **plan phase** (the lead's skeleton →
+> owners ratify the seams they touch — see `anthill:plan`); the rest **accrete as they're
+> discovered**. Both/and — assert the load-bearing ones up front, let the long tail accrete. Start
+> empty; add the first one the first time two seats have to agree on something.
 
 ## Ownership & the maintenance trigger
 
