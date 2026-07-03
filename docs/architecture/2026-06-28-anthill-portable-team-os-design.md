@@ -206,6 +206,15 @@ so action names stay clear.
 The human surface is intentionally tiny: _"convene the team"_ … _"finalize."_ The lead agent
 drives the CLI; the human rarely intervenes.
 
+> **Addendum (2026-07-03) — `plan` added as a lifecycle phase.** After this design was approved, a
+> distinct **plan** phase was added between design and build: `bootstrap → convene → plan → build →
+finalize-session`. The lead scaffolds a plan **skeleton** (integration order + cross-seam contracts
+> as _claims_) and each owning seat **ratifies or falsifies the seams it touches before drafting**.
+> It ships as the **`anthill:plan`** skill + a bundled `methodology.md` (universal → plugin), pointed
+> at from the SOP and `convene`; the ratify is a light vine-acknowledgement gate before `todo→doing`,
+> not a bounty schema change. Scoped to multi-seat features — solo work uses single-agent planning.
+> See `docs/projects/team-dev-planning/`.
+
 ---
 
 ## 8. Plugin/repo structure + CLI (Pieces 1–2)

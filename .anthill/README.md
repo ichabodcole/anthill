@@ -3,7 +3,7 @@
 The standard operating procedure for the agent team that builds this project. A **map, not a
 manual** — it points at the source of truth rather than restating it. This is a **seed**: everything
 here is meant to evolve by use, not stand as the final answer. The team coordinates on the
-**`{{channel}}`** grapevine channel (substance) and the bounty board (task state); **{{lead}}** leads.
+**`anthill-dev`** grapevine channel (substance) and the bounty board (task state); **maestro** leads.
 
 ## The idea: living context (stigmergy)
 
@@ -43,7 +43,7 @@ three docs guarantees drift. Everything else stays flexible.
 ## The seats
 
 See **`dev/README.md`** for the roster + division of labor. Each seat has its own living doc under
-`dev/`. Decisions and questions route to the human **through {{lead}}** (the lead / liaison), not
+`dev/`. Decisions and questions route to the human **through maestro** (the lead / liaison), not
 direct.
 
 ## Tools
@@ -51,25 +51,19 @@ direct.
 - **Bounty board** — task state (`todo → doing → review → done`). The **doer owns its card's
   lifecycle**; the lead creates + assigns (leaves in `todo`) and hands off on the vine; the reviewer
   closes. The board is _state_.
-- **Grapevine (`{{channel}}`)** — the back-channel. Seats discuss, coordinate, reconcile. The vine is
-  _substance_. Decisions route to the human **through {{lead}}**, not direct.
+- **Grapevine (`anthill-dev`)** — the back-channel. Seats discuss, coordinate, reconcile. The vine is
+  _substance_. Decisions route to the human **through maestro**, not direct.
 - **The CLI** — `anthill` (run from the plugin; `convene` / `join` / `spawn` / `status` / `commit` /
   `down` wrap grapevine + bounty + tmux). `anthill join <handle>` emits your grounding docs + an
   action checklist — that checklist is the single source; don't restate it.
 
-## Workflow — convene → plan → work → finalize
+## Workflow — convene → work → finalize
 
 - **Convene** — the lead grounds, gathers the work from the human, stands up coordination (channel +
   board), seeds cards, briefs + spawns the seats the **current phase** needs. Composition is a
   _hypothesis_, not law.
-- **Plan** _(multi-seat features)_ — the lead scaffolds a plan **skeleton** (the integration order +
-  the cross-seam interface contracts, as _claims_), then each owning seat **ratifies or falsifies
-  the seams it touches before drafting**. The skeleton is a **hypothesis**, not blanks to fill —
-  the value is catching a wrong seam _before_ merge. Run **`anthill:plan`** (single-source
-  methodology). Solo work skips it and uses plain single-agent planning.
-- **Work** — builders build against the ratified seams; the lead and seats watch for **structure
-  signals** (toe-stepping, a renegotiated seam, an overloaded/idle seat, a verify finding that
-  bounces work back).
+- **Work** — builders build; the lead and seats watch for **structure signals** (toe-stepping, a
+  renegotiated seam, an overloaded/idle seat, a verify finding that bounces work back).
 - **Finalize (+ reflection)** — each seat curates its scratch → seat doc; a shared `seams.md` pass;
   then the **structure reflection** (below). The lead lands the doc commits and tears down the
   session.

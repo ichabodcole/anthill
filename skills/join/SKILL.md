@@ -49,6 +49,14 @@ status`** shows who's on + the board.
 
 5. **Signal ready** on the vine (a short "in, grounded, here's my lane") and **claim your bounty card**
    (move it `todo→doing` when you actually start) — or await assignment from the lead.
+   - **Ratify your seams, then author your lane (the plan-phase gate).** If the lead posted a plan
+     **skeleton**, then _before_ you move a card `todo→doing`: (1) **ratify or falsify each cross-seam
+     contract your lane touches** — an explicit vine acknowledgement (_"ratified"_ / _"falsified —
+     here's the correction"_), never silence; you hold your domain's reflexes, so catching a wrong
+     seam now is the whole point. (2) **Author your own lane** — `plan/<seat>.md`, the file-level HOW
+     for your slice, against the _ratified_ seams (grounded paths, right-sized TDD tasks, no
+     placeholders — the craft is in `anthill:plan`'s `methodology.md`). Nothing to ratify (solo lane,
+     no shared seam)? Proceed.
 
 6. **Work** your lane per the SOP + your seat doc. As you go, **capture ah-ha judgments to your
    scratch** (the reasoning + the generalizable lesson — not lesson-less events) for synthesis at

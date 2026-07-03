@@ -14,22 +14,24 @@ distributed as its own plugin so it can evolve on its own.
 
 ## Status
 
-Design approved (2026-06-28). Building **Slice 1** (walking skeleton): the full loop running
-end-to-end for the `layered-app` archetype in a non-dream-flute repo.
+Slice 1 (walking skeleton) landed — the full loop runs end-to-end for the `layered-app`
+archetype in a non-dream-flute repo, and anthill now dogfoods its own team from `.anthill/`.
+Active work is on **v0.2**: the `anthill:plan` skeleton→ratify skill and the global `anthill`
+CLI (see [`docs/ROADMAP.md`](docs/ROADMAP.md)).
 
-See [`docs/specs/2026-06-28-anthill-portable-team-os-design.md`](docs/specs/2026-06-28-anthill-portable-team-os-design.md)
+See [`docs/architecture/2026-06-28-anthill-portable-team-os-design.md`](docs/architecture/2026-06-28-anthill-portable-team-os-design.md)
 for the full design.
 
 ## How it works (target shape)
 
 1. **One-time:** add the anthill marketplace, install the plugin.
 2. **In a project:** run `anthill:bootstrap` — it explores the repo, proposes a team
-   composition (archetype-seeded), you ratify, and it writes `.team/config.json` + renders
-   `docs/team/` via `anthill init`.
+   composition (archetype-seeded), you ratify, and it writes `.anthill/config.json` + renders
+   the `.anthill/` scaffold.
 3. **Per session:** `anthill:convene` → work → `anthill:finalize-session`.
 
-The only footprint in a consuming repo is `.team/config.json`, `docs/team/`, and one
-`.gitignore` line — everything else lives in the plugin.
+The only footprint in a consuming repo is the `.anthill/` root (config, living docs, and
+scratch) plus one `.gitignore` line — everything else lives in the plugin.
 
 ## Dependencies
 
