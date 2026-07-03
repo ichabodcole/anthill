@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.1.0...anthill-v1.2.0) (2026-07-03)
+
+
+### Features
+
+* **skills:** add anthill:plan — the skeleton→ratify planning phase ([f6b34eb](https://github.com/ichabodcole/anthill/commit/f6b34ebcd09d5fc87de49f553ff4a2c84f4b1254))
+
 ## [1.1.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.0.0...anthill-v1.1.0) (2026-07-01)
 
 
