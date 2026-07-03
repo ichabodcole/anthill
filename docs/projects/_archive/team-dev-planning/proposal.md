@@ -1,6 +1,6 @@
 # Team dev-planning: the skeleton → ratify handshake
 
-**Status:** Implemented (MVP built 2026-07-03 on `feat/anthill-plan-skill`; pending merge)
+**Status:** Complete — merged to `develop` 2026-07-03 (commit `f6b34eb`). Archived 2026-07-03.
 **Created:** 2026-07-01
 **Author:** forager (from a dream-flute methodology writeup by the maestro seat)
 

@@ -1,6 +1,6 @@
 # `.anthill/` Consolidation & the Versioned Migration Mechanic
 
-**Status:** Draft
+**Status:** Complete — shipped (all four phases landed; see `plan.md`). Archived 2026-07-03.
 **Created:** 2026-06-30
 **Author:** Claude Code (anthill dev agent)
 

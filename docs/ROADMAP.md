@@ -14,15 +14,12 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Now
 
-1. **`anthill:plan` — the skeleton→ratify planning skill** — [team-dev-planning](projects/team-dev-planning/proposal.md)
-   (**MVP built 2026-07-03** on `feat/anthill-plan-skill`, pending merge — `skills/plan/` + bundled
-   `methodology.md`, wired into `convene`/`join`/`seams.md`/SOP; the real dogfood exercise is #4).
-   Lifecycle position: **normally starts before
-   convene** — the lead drafts the skeleton solo (phases, seat lanes, proposed seams) — then the
-   **convened team completes it** (each seat ratifies/falsifies its lane and the seams that
-   touch it). Convene must not _require_ a skeleton, though: a team can convene plan-less (it
-   points at one if present, proceeds without if not). _Why first: it's the lifecycle keystone —
-   every multi-seat build after it, including the items below, should run through it._
+1. ✅ **`anthill:plan` — the skeleton→ratify planning skill** — **SHIPPED** 2026-07-03 (`f6b34eb`,
+   on `develop`). The lead scaffolds a thin skeleton (integration order + cross-seam contracts as
+   claims), seats ratify the seams they touch, owners author their lanes. Self-contained. Archived:
+   [proposal](projects/_archive/team-dev-planning/proposal.md) ·
+   [session](projects/_archive/team-dev-planning/sessions/2026-07-03-anthill-plan-skill-build.md).
+   _Not yet run live — the first real invocation in a convened session is the #4 dogfood._
 2. **Global `anthill` CLI** — [v0.2 brief, feature 3](briefs/2026-06-30-anthill-v0.2-next-release.md)
    (last unshipped foundation piece of v0.2; the human terminal door + what dream-flute parity rides on).
 
@@ -79,8 +76,8 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 - **Self-selection bounties** — the lead-bottleneck relief valve; no saturation signal yet.
 - **Semantic/embedding retrieval** — structure-before-search; revisit only if grep-over-structure
   measurably fails.
-- **Backlog minor items** — [status ambient-board scoping](backlog/2026-06-30-anthill-status-ambient-board-scoping.md),
-  [prettier markdown policy](backlog/2026-06-30-prettier-markdown-policy.md).
+- **Backlog minor items** — [status ambient-board scoping](backlog/2026-06-30-anthill-status-ambient-board-scoping.md).
+  (Prettier-markdown-policy resolved 2026-07-03 — archived.)
 
 ---
 

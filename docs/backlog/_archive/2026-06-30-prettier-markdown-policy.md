@@ -1,6 +1,16 @@
 # Prettier markdown policy: decide what (if anything) prettier should format
 
-**Added:** 2026-06-30 · **Status:** Partial — `docs/` excluded now; the skills/root-md decision is open
+**Added:** 2026-06-30 · **Status:** Resolved 2026-07-03 — see decision below. Archived.
+
+> **Decision (2026-07-03).** Policy settled: **prettier formats everything except `templates/`
+> (render tokens) and `.anthill/` (agent-owned living docs)** — recorded as a note in
+> `.prettierignore`. That means `docs/` is now formatted (the earlier `docs/` exclusion was
+> **reversed**: with the team's living docs moved to `.anthill/`, the mangle risk that justified
+> excluding all of `docs/` no longer outweighed the consistency win), and `skills/` + root markdown
+> stay formatted (option **a**, keep-with-belt). Prettier runs with the default `proseWrap: preserve`,
+> so no prose reflow. Residual friction worth noting: hand-wrapped inline-code / list-continuation
+> lines still got mangled a few times during the 2026-07-03 session and had to be hand-fixed — a
+> belt-authoring reminder, not a reason to reopen the policy.
 
 Prettier (via the husky lint-staged `*.md` hook) mangled a `docs/` file live on 2026-06-30: a
 hand-wrapped line starting with `+` became a stray list bullet. Prettier's markdown parser treats a

@@ -13,4 +13,4 @@ live (that's the roadmap-#4 dogfood).
 **Key files:** `skills/plan/SKILL.md`, `skills/plan/methodology.md`; wired into `skills/join`,
 `skills/convene`, `templates/docs-team/README.md` (SOP), `templates/docs-team/dev/seams.md`.
 
-**Docs:** [team-dev-planning project](../projects/team-dev-planning/) · [session](../projects/team-dev-planning/sessions/2026-07-03-anthill-plan-skill-build.md)
+**Docs:** [team-dev-planning project](../projects/_archive/team-dev-planning/) · [session](../projects/_archive/team-dev-planning/sessions/2026-07-03-anthill-plan-skill-build.md) _(archived)_
