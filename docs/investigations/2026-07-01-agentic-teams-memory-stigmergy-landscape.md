@@ -23,7 +23,7 @@ adversarially verified (3-vote, kill on 2/3 refute) → 16 confirmed, 9 killed.
 
 The field is **independently converging on the primitives anthill already runs on** — a shared
 coordination surface, durable per-scope memory, and stigmergic (artifact-mediated, no-direct-messaging)
-coordination. That is strong external validation of anthill's design. The value is in the *upgrades* the
+coordination. That is strong external validation of anthill's design. The value is in the _upgrades_ the
 leaders have that anthill doesn't yet.
 
 ## Findings (confirmed, with citations)
@@ -37,7 +37,7 @@ leaders have that anthill doesn't yet.
   `stall_timeout_ms`). _Confidence: high (3-0)._ Sources:
   openai.com/index/open-source-codex-orchestration-symphony, infoq.com/news/2026/05/openai-symphony-agents.
   - **Borrow:** an always-on **liveness guarantee** (a watchdog that detects stalled seats and
-    re-spawns them). anthill's seats are durable but their *liveness* is not guaranteed — a real gap.
+    re-spawns them). anthill's seats are durable but their _liveness_ is not guaranteed — a real gap.
   - **Contrast:** Symphony is one ephemeral workspace per issue; anthill's **durable seat** that
     outlives many tasks is arguably richer.
   - **Caveat:** Symphony is an open-sourced `SPEC.md` pattern, **not a hosted product**. Build on the
@@ -83,8 +83,8 @@ leaders have that anthill doesn't yet.
   experiential / working), and **Dynamics** (formation, consolidation/forgetting, retrieval).
   _Confidence: high (3-0)._ Sources: arxiv.org/abs/2512.13564, github.com/Shichun-Liu/Agent-Memory-Paper-List.
   - **Map to anthill:** anthill's living docs are almost entirely **token-level, factual/experiential**
-    memory. Two under-served areas: **Dynamics** (anthill has *formation* via finalize but weak explicit
-    *forgetting/consolidation*), and a formal experiential/skills tier (partly the brain skills).
+    memory. Two under-served areas: **Dynamics** (anthill has _formation_ via finalize but weak explicit
+    _forgetting/consolidation_), and a formal experiential/skills tier (partly the brain skills).
 
 ### Stigmergy — the evidence agents leave
 
@@ -96,8 +96,8 @@ leaders have that anthill doesn't yet.
   convergence, zero merge failures). _Confidence: high (3-0)._ Source: arxiv.org/abs/2510.18893.
   - **Borrow + caution:** strong validation of the model, but **parallelizing seats over a shared
     surface is not free** — gate parallel fan-out on task decomposability.
-  - **Mechanism difference:** CodeCRDT is *real-time concurrent* over a live CRDT; anthill's trail is
-    *asynchronous* (committed docs re-read next session).
+  - **Mechanism difference:** CodeCRDT is _real-time concurrent_ over a live CRDT; anthill's trail is
+    _asynchronous_ (committed docs re-read next session).
 
 ## Prioritized borrowable ideas
 
@@ -127,7 +127,7 @@ issue is arguably poorer than anthill's durable seats.
 - **Symphony** is an open-sourced `SPEC.md` pattern, not a running product (its page 403'd the fetcher;
   verification leaned on consistent secondaries incl. implementation-level detail like `stall_timeout_ms`).
 - **Copilot memory** is in public preview — 28-day expiry and "planned" search retrieval may change.
-- **Navigation tooling is materially under-evidenced.** *Every* specific state-of-the-art navigation
+- **Navigation tooling is materially under-evidenced.** _Every_ specific state-of-the-art navigation
   claim failed adversarial verification, partly due to a mid-run API rate-limit that killed ~23
   verification votes. Aider's repo-map (tree-sitter + PageRank) and Windsurf Codemaps surfaced as real
   tools but nothing was verified → **anthill's least-charted frontier + a dedicated follow-up needed.**

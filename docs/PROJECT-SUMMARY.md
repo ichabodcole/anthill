@@ -25,7 +25,7 @@ itself**: this repo carries its own anthill team in `.anthill/`.
 - **Framework/Runtime:** **Bun** (not Node — use `bun`/`bunx`); [Citty](https://github.com/unjs/citty) for the CLI
 - **Build Tools:** No bundler — scripts run directly under Bun
 - **Key Dependencies:** Citty (CLI); **spellbook** (grapevine + bounty coordination); **tmux** + the `claude` CLI (agent spawning)
-- **Development Tools:** Biome (lint/format for code), Prettier (markdown only; `docs/` excluded), Husky + lint-staged pre-commit, release-please + GitHub Actions CI
+- **Development Tools:** Biome (lint/format for code), Prettier (markdown; `.anthill/` + `templates/` excluded), Husky + lint-staged pre-commit, release-please + GitHub Actions CI
 
 ## Project Structure
 
@@ -47,8 +47,8 @@ docs/                    design-of-record, briefs, projects, investigations, rep
 .anthill/                anthill's OWN team footprint (self-host dogfood)
 ```
 
-The codebase splits along a **brain/hands** line: skills decide *what* the team should be
-(reading the repo, proposing composition), and the CLI *deterministically renders/migrates*
+The codebase splits along a **brain/hands** line: skills decide _what_ the team should be
+(reading the repo, proposing composition), and the CLI _deterministically renders/migrates_
 that decision into the `.anthill/` footprint.
 
 ## Documented Systems
@@ -69,7 +69,7 @@ tooling/plugin project, so formal domain specs may never be the primary artifact
 
 ## Recent Activity (Last 30 Days)
 
-The repository is roughly five weeks old, so the last 30 days *are* its bootstrap. Three arcs:
+The repository is roughly five weeks old, so the last 30 days _are_ its bootstrap. Three arcs:
 
 **Active Work Areas:**
 
@@ -93,11 +93,11 @@ is still scaffold-only.
 
 **Active Projects:**
 
-- **team-dev-planning** — *Draft* (proposal + methodology writeup; no plan.md yet). Adds a
+- **team-dev-planning** — _Draft_ (proposal + methodology writeup; no plan.md yet). Adds a
   first-class "skeleton → ratify" handshake so the lead drafts a light plan and each seat
   ratifies its own cross-seam boundary before building. Roadmap's #1 ("lifecycle keystone").
   See `docs/projects/team-dev-planning/`.
-- **anthill-footprint-migration** — *Draft* (has plan.md; largely landed per git history). The
+- **anthill-footprint-migration** — _Draft_ (has plan.md; largely landed per git history). The
   `.anthill/` consolidation shipped as the inaugural v1→v2 versioned migration. See
   `docs/projects/anthill-footprint-migration/`.
 
@@ -116,7 +116,7 @@ dogfood session** to generate real trail data before layering on more memory mac
   `main` is branch-protected (PR + green CI, admins included); release-please cuts releases on
   merge to `main`.
 - **The full gate:** `bun run check` (typecheck + Biome + tests) — also the Husky pre-commit.
-- **Self-hosting:** substantial work is done by a *convened team* (lead + seats), not a lone
+- **Self-hosting:** substantial work is done by a _convened team_ (lead + seats), not a lone
   agent — run `anthill:convene` to start a session, or `anthill:join <handle>` to take a seat.
 - **Docs-as-process:** a rich `docs/` taxonomy (briefs → projects → investigations → reports →
   lessons-learned) drives the work; `docs/ROADMAP.md` is the router over all of it.
@@ -135,7 +135,7 @@ dogfood session** to generate real trail data before layering on more memory mac
 
 - **Mechanism is currently ahead of usage.** The 2026-07-02 fresh-eyes review found the
   conceptual core sound but the team's own trails (`seams.md`, seat docs) still empty scaffolds
-  — which is why the roadmap deliberately sequences a real *dogfood session* before adding more
+  — which is why the roadmap deliberately sequences a real _dogfood session_ before adding more
   memory mechanisms.
 - **Brain/hands separation is load-bearing.** Skills make judgment calls; the CLI renders them
   deterministically. Keep non-deterministic decisions out of the CLI.

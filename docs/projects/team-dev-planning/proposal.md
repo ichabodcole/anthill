@@ -130,15 +130,15 @@ times across seat docs.)
 
 **Fit against current surfaces:**
 
-| Surface | Today | Change |
-| --- | --- | --- |
-| `skills/plan/` | _does not exist_ | **NEW** lead-facing phase: scaffold skeleton of claims → host ratify → hand to build |
-| `convene` | plan is a finished input; seed cards → seats `doing` | minimal — hand off to `plan`; convene stays "stand up coordination" |
-| `join` | ground → claim card → work | ratify/falsify seams you touch before `todo→doing` |
-| `seams.md` template | contracts "accrete as discovered" (emergent) | load-bearing contracts "asserted up front & ratified" (proactive) — an emphasis shift, not a contradiction |
-| SOP + lead seat doc | maestro reflex + SOP one-liner (in dream-flute) | a **pointer** to `skills/plan/methodology.md` (single-source) |
-| `finalize-session` | owners synthesize; shared contracts pass | **no change** — already matches procedure step 5 |
-| bounty lifecycle | `todo→doing→review` | ratification is a gate _before_ `doing` (no schema change; a discipline in the skills) |
+| Surface             | Today                                                | Change                                                                                                     |
+| ------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `skills/plan/`      | _does not exist_                                     | **NEW** lead-facing phase: scaffold skeleton of claims → host ratify → hand to build                       |
+| `convene`           | plan is a finished input; seed cards → seats `doing` | minimal — hand off to `plan`; convene stays "stand up coordination"                                        |
+| `join`              | ground → claim card → work                           | ratify/falsify seams you touch before `todo→doing`                                                         |
+| `seams.md` template | contracts "accrete as discovered" (emergent)         | load-bearing contracts "asserted up front & ratified" (proactive) — an emphasis shift, not a contradiction |
+| SOP + lead seat doc | maestro reflex + SOP one-liner (in dream-flute)      | a **pointer** to `skills/plan/methodology.md` (single-source)                                              |
+| `finalize-session`  | owners synthesize; shared contracts pass             | **no change** — already matches procedure step 5                                                           |
+| bounty lifecycle    | `todo→doing→review`                                  | ratification is a gate _before_ `doing` (no schema change; a discipline in the skills)                     |
 
 **Key dependencies:** the existing `seams.md` ownership model; the grapevine (the "back-channel" the
 ratification happens on); `spellbook:bounty` (the card lifecycle the gate sits in front of). No new

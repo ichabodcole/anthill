@@ -18,8 +18,8 @@ folders still make sense? Should some of them live in/near `.anthill/` in a diff
 the wiki/graph idea (Karpathy's LLM-wiki pattern) change how they should be structured?
 
 (Meta-note, because it's on-topic: this document itself faced the routing question. It's an
-*investigation* — a "should we act?" decision with a recommendation — following from the
-*report* — the "what is" assessment — per the report→investigation cycle in
+_investigation_ — a "should we act?" decision with a recommendation — following from the
+_report_ — the "what is" assessment — per the report→investigation cycle in
 `docs/reports/README.md`. The fact that the routing needed a paragraph to justify is itself
 evidence for the capture-friction finding below.)
 
@@ -45,13 +45,13 @@ Two repos give us a natural experiment:
   dream-flute's `adding-a-source.md` / `adding-a-modulator.md` are recurring-work procedures;
   the owning seat doc points at them with explicit "I point there, don't restate" language
   (`fathom.md` refs at lines 447, 509), and the SOP links `authoring-skills.md`. The seat even
-  recorded the measured payoff: *"the playbook + new tooling made this MARKEDLY faster than
-  supersaw"* (`fathom.md` §FM arc). Playbooks function as the seat's **procedural annex**.
+  recorded the measured payoff: _"the playbook + new tooling made this MARKEDLY faster than
+  supersaw"_ (`fathom.md` §FM arc). Playbooks function as the seat's **procedural annex**.
 - **Memories survive on a weak trigger.** 10 dated per-arc recaps, pointed at by the "new
   session? skim memories" convention — but in team mode that trigger competes with (and loses
   to) `join`'s seat-doc grounding. Inbound references: the SOP and one scratch file.
 - **The starved folders starved for one reason: no read-trigger.** Nothing in any ritual
-  re-reads `lessons-learned/` or `fragments/`; their *jobs* were taken by stores that do get
+  re-reads `lessons-learned/` or `fragments/`; their _jobs_ were taken by stores that do get
   re-read (lessons → seat docs / `seams.md`; observations → scratch → synthesis). This is the
   read-trigger rule from the [conceptual review report](../reports/2026-07-02-conceptual-implementation-review-report.md)
   observed as a natural experiment: agents under real workload only feed stores that pay them
@@ -65,7 +65,7 @@ Two repos give us a natural experiment:
    plus backlog. Lifecycle-scoped and temporal: produced at one stage, consumed at the next,
    archived when done. **The lifecycle IS the read-trigger**, so genre folders work — and the
    team dynamic consumes them as-is (convene points at the proposal; the plan phase reads the
-   plan). *This part holds up unchanged.* Flow artifacts are also *supposed* to go stale —
+   plan). _This part holds up unchanged._ Flow artifacts are also _supposed_ to go stale —
    staleness there is history, not rot.
 2. **Knowledge stores (stock)** — playbooks, memories, lessons-learned, fragments, and
    current-state architecture/reference docs. These are supposed to **compound**, and for stock
@@ -77,9 +77,9 @@ Two repos give us a natural experiment:
 already exist natively: `seams.md`'s "Pointed at from:" footer is a backlink convention;
 `docs/README.md` and per-folder READMEs are index pages. Karpathy's genuinely transferable moves
 are (a) an **index layer** read before full pages and (b) a **lint pass** for contradictions and
-staleness — and both apply to the *reference layer* (current-state truth), not to flow
+staleness — and both apply to the _reference layer_ (current-state truth), not to flow
 artifacts. A dated architecture doc that records a decision is a frozen ADR and is fine
-immutable; a *current-state* map is a wiki-style page that needs an owner and a lint. Don't
+immutable; a _current-state_ map is a wiki-style page that needs an owner and a lint. Don't
 conflate the two.
 
 **The one real friction: capture-time routing ambiguity.** A lesson today has ~seven candidate
@@ -113,21 +113,21 @@ invent a new scheme.
 
 ### Dispositions (the folder-by-folder answer)
 
-| Store | Kind | Disposition |
-| --- | --- | --- |
-| `briefs/`, `investigations/`, `projects/`, `reports/`, `backlog/` | flow | **Keep as-is.** Lifecycle is the trigger; archive-when-done is correct behavior. |
-| `architecture/` | both | **Split by intent.** Dated decision records: keep, immutable (ADR-style). Current-state maps: wiki treatment — an owner, an index line, a lint pass; `PROJECT-SUMMARY.md` is the index page of this layer. |
-| `specifications/`, `interaction-design/` | flow (mostly) | Keep; treat as inputs to projects. Fold into project folders if they only ever serve one project. |
-| `playbooks/` | stock | **Keep — the survivor.** Rule: every playbook must be pointed at from an owning seat doc (or SOP); universal ones graduate to plugin skills (per the universal→plugin rule in team-dev-planning). A playbook nothing points at is a lessons-learned-in-waiting. |
-| `memories/` | stock | **Let fade in team repos** — superseded by seat docs + project session notes. Keep for solo repos where no seat docs exist. |
-| `lessons-learned/` | stock | **Retire in team repos.** Route lessons to seat docs / `seams.md` at synthesis (the fragments doc's own conclusion). Remove the empty scaffold so it stops signaling a convention nobody follows. |
-| `fragments/` | stock | **Retire in team repos** — its compost role is the scenario ledger's job (report rec 4). Existing fragments get triaged into the ledger or archived. |
+| Store                                                             | Kind          | Disposition                                                                                                                                                                                                                                                     |
+| ----------------------------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `briefs/`, `investigations/`, `projects/`, `reports/`, `backlog/` | flow          | **Keep as-is.** Lifecycle is the trigger; archive-when-done is correct behavior.                                                                                                                                                                                |
+| `architecture/`                                                   | both          | **Split by intent.** Dated decision records: keep, immutable (ADR-style). Current-state maps: wiki treatment — an owner, an index line, a lint pass; `PROJECT-SUMMARY.md` is the index page of this layer.                                                      |
+| `specifications/`, `interaction-design/`                          | flow (mostly) | Keep; treat as inputs to projects. Fold into project folders if they only ever serve one project.                                                                                                                                                               |
+| `playbooks/`                                                      | stock         | **Keep — the survivor.** Rule: every playbook must be pointed at from an owning seat doc (or SOP); universal ones graduate to plugin skills (per the universal→plugin rule in team-dev-planning). A playbook nothing points at is a lessons-learned-in-waiting. |
+| `memories/`                                                       | stock         | **Let fade in team repos** — superseded by seat docs + project session notes. Keep for solo repos where no seat docs exist.                                                                                                                                     |
+| `lessons-learned/`                                                | stock         | **Retire in team repos.** Route lessons to seat docs / `seams.md` at synthesis (the fragments doc's own conclusion). Remove the empty scaffold so it stops signaling a convention nobody follows.                                                               |
+| `fragments/`                                                      | stock         | **Retire in team repos** — its compost role is the scenario ledger's job (report rec 4). Existing fragments get triaged into the ledger or archived.                                                                                                            |
 
 ### The plugin-level seam this implies
 
 **project-docs owns flow; anthill owns operational knowledge.** anthill should not require or
 render the full docs taxonomy in consumer repos — it defines its own stores (`.anthill/*`) and
-*points at* whatever flow pipeline the host has. Playbooks sit at the boundary: project-specific
+_points at_ whatever flow pipeline the host has. Playbooks sit at the boundary: project-specific
 ones live with the host (pointed from seat docs), universal ones become skills. This keeps both
 plugins coherent without coupling them.
 
@@ -144,7 +144,7 @@ plugins coherent without coupling them.
 
 ## Open Questions
 
-- Does `memories/` have a *human*-facing value (a skimmable "what happened lately" digest) worth
+- Does `memories/` have a _human_-facing value (a skimmable "what happened lately" digest) worth
   keeping even in team repos, or do project session notes cover it? Watch what Cole actually
   reads.
 - Should dream-flute's four playbooks migrate under `.anthill/` for footprint cohesion, or is

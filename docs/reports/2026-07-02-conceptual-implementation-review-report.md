@@ -24,7 +24,7 @@
   has four properties — co-located with the decision point, decaying by default, reinforced by
   traversal, read passively in the course of moving. anthill's living docs have none of these
   automatically; all four are simulated by manual ritual (finalize). The stigmergy metaphor is
-  right; the *dynamics* haven't been built yet.
+  right; the _dynamics_ haven't been built yet.
 - The memory model is **write-optimized, not read-optimized**, and has missing layers: an episodic
   (scenario) tier below the seat doc, a committed working-state (handoff) tier, and an explicit
   read-trigger for every store. Several existing stores (`lessons-learned/`, `fragments/`) are
@@ -37,14 +37,14 @@
 **Top recommendations:**
 
 1. **Run the colony before extending it** — real dogfood sessions generate the pheromone all the
-   proposed mechanisms need; let observed friction pull the features (which *is* principle 3).
+   proposed mechanisms need; let observed friction pull the features (which _is_ principle 3).
 2. **Give the trail pheromone dynamics** — last-verified stamps on claims, verify-at-join for
    pinned claims, and a token budget per living doc (finite capacity forces the "fade" half of
    stigmergy that curation-by-willpower doesn't).
 3. **Adopt the read-trigger rule** — no knowledge store without a named lifecycle moment that
    re-reads it; audit the current stores against it.
 4. **Build the scenario→principle pipeline as lazy generalization** (case-based reasoning shape):
-   cheap structured episode capture that *survives* finalize, a digest pass that mines recurrence,
+   cheap structured episode capture that _survives_ finalize, a digest pass that mines recurrence,
    promotion into a home that has a read-trigger.
 
 **Overall assessment:** The foundation is genuinely strong — unusually so for a young system —
@@ -83,11 +83,11 @@ spellbook internals; dream-flute.
   proof→tests is a real taxonomy, not decoration — it assigns each knowledge type the store with
   the right ownership and drift characteristics. "Defer, never restate" is the single best
   anti-rot rule in the system. (In the boundary-objects literature this is exactly why shared
-  artifacts survive: *rigid globally, plastic locally* — one canonical form, per-seat pointers.)
+  artifacts survive: _rigid globally, plastic locally_ — one canonical form, per-seat pointers.)
 - **The brain/hands split.** Judgment in skills, determinism in a tested CLI is the right
   decomposition for agent systems, and it's applied consistently (bootstrap/init, upgrade/migrate).
   The migration engine being pure + tested is the discipline paying off.
-- **The reflective pass at finalize.** Capturing what *held by default* (not just what broke) is
+- **The reflective pass at finalize.** Capturing what _held by default_ (not just what broke) is
   sophisticated — most retro formats only harvest failure. Keep it.
 - **Structure mutability (principle 3).** Most multi-agent frameworks fix the org chart; anthill
   treats team shape as a hypothesis under revision. The re-scope reflection + convene-side check
@@ -102,14 +102,14 @@ spellbook internals; dream-flute.
 The system's central metaphor makes four promises the implementation doesn't yet keep. Real
 pheromone is:
 
-1. **Co-located with the decision point.** An ant reads the trail *where it stands*. anthill's
+1. **Co-located with the decision point.** An ant reads the trail _where it stands_. anthill's
    knowledge is centralized in `.anthill/dev/` — away from the code where the next decision
    happens. A seat reads its doc at join, then works for hours in files that carry no trace of
-   prior agents' judgments about *those files*.
+   prior agents' judgments about _those files_.
 2. **Decaying by default.** Pheromone evaporates unless reinforced; a stale trail self-erases.
    Living-doc claims persist until an agent remembers to prune them. Truth requires effort;
    staleness is free — that's inverted from the metaphor.
-3. **Reinforced by traversal.** A trail that keeps working gets stronger *because it's used*.
+3. **Reinforced by traversal.** A trail that keeps working gets stronger _because it's used_.
    Nothing in anthill strengthens a claim when an agent relies on it successfully.
 4. **Read passively, in the course of moving.** Following a trail isn't a separate ritual from
    walking. Re-grounding is a discrete, front-loaded reading step — which the navigation research
@@ -119,12 +119,12 @@ This isn't a rebuke — the ritual-simulated version is a reasonable v1 — but 
 direction precisely: **build the dynamics, not more trail.** Concretely: claims carry
 last-verified dates (decay), join re-verifies citation-pinned claims against the tree and bumps
 the date (reinforcement + Copilot's self-healing move, already identified in the landscape
-investigation), and per-doc token budgets make fading *structural* — a full doc must shed a weak
+investigation), and per-doc token budgets make fading _structural_ — a full doc must shed a weak
 line to admit a strong one, which is how finite pheromone capacity actually works.
 
 A useful distinction from the stigmergy literature sharpens this further: **marker-based vs
-sematectonic stigmergy.** Marker-based = dedicated signals left *about* the work (pheromone;
-anthill's living docs). Sematectonic = the state of the work itself *is* the signal (the
+sematectonic stigmergy.** Marker-based = dedicated signals left _about_ the work (pheromone;
+anthill's living docs). Sematectonic = the state of the work itself _is_ the signal (the
 half-built wall tells the wasp where to build; git history, the code, the tests). Sematectonic
 signals are zero-authoring and cannot lie; marker-based signals are expressive but rot. anthill
 currently invests almost entirely in marker-based stigmergy. The heatmap investigation is the
@@ -136,7 +136,7 @@ contract).**
 #### Tension 2 — generalize-at-capture is lossy
 
 The SOP's bar — "capture judgments, not events; a lesson without its why is left out" — is
-correct for what enters a *seat doc*, but as the only pipeline it discards raw material too
+correct for what enters a _seat doc_, but as the only pipeline it discards raw material too
 early. Whether a scenario matters is often unknowable until it recurs; generalization at
 capture-time is premature compression by a tired agent at session end. Case-based reasoning
 (Part 4) resolves the tension cleanly: **store cases cheaply, generalize lazily when retrieval
@@ -148,21 +148,21 @@ This is the missing substrate for Cole's scenario→principle interest, and it's
 
 The grapevine is where the richest coordination happens (ratification debates, decisions,
 reconciliations) — and it's the least durable medium in the system. The harness-engineering
-contrast is instructive: OpenAI runs *no* agent-to-agent channel at 1M LOC; coordination is
+contrast is instructive: OpenAI runs _no_ agent-to-agent channel at 1M LOC; coordination is
 entirely artifact-mediated. anthill doesn't need to go that far (live ping-pong between a builder
 and a verifier is genuinely valuable), but the asymmetry needs a rule: **the vine is for
 synchronization; any decision that outlives the session must land in an artifact** (seams, the
 plan doc, a card) before finalize. The plan skill's ratification beat is the right place to make
-this concrete — ratification *outcomes* get recorded in the skeleton, not just agreed in chat.
+this concrete — ratification _outcomes_ get recorded in the skeleton, not just agreed in chat.
 
 #### Tension 4 — the two execution modes are not methodologically equivalent
 
 Terminal seats hold Monitor tails and hear everything; subagent seats hear only what the lead
 relays. That's a different information topology, and it plausibly matters for the most
-interesting field finding to date — verification-mindedness diffusing *off* the verify seat
+interesting field finding to date — verification-mindedness diffusing _off_ the verify seat
 (media-buffet). Culture diffuses through ambient channel exposure; a dispatch→result subagent has
 no ambience. The skills present subagent mode as a lighter variant of the same thing; it's more
-honest to treat it as a *different coordination regime* whose knowledge and culture dynamics are
+honest to treat it as a _different coordination regime_ whose knowledge and culture dynamics are
 unproven. Cheap move: note it in convene, and watch for it in dogfood.
 
 #### Observation — the lead is a serialization point
@@ -179,16 +179,16 @@ bottleneck is.
   planner is pure; `init` is idempotent and never clobbers; `down` has a presence guard;
   `commit` refuses pathless invocations and serializes. These are the right invariants, encoded
   in the right layer (deterministic CLI, not prompt prose).
-- **The empty-trail problem.** `.anthill/dev/seams.md` in anthill's *own* repo: zero contracts.
+- **The empty-trail problem.** `.anthill/dev/seams.md` in anthill's _own_ repo: zero contracts.
   `forager.md`: scaffold prompts, unfilled. The self-hosted team was bootstrapped (commit
   `231e263`) but hasn't yet run a real convened build. Meanwhile the methodology surface keeps
   growing (plan skill proposed, reflection prompts sharpened, upgrade machinery shipped). The
   ratio of ritual-to-accumulated-pheromone is currently high — and every memory-dynamics idea in
-  this report *needs accumulated memory to test against*. This is the strongest argument for
+  this report _needs accumulated memory to test against_. This is the strongest argument for
   sequencing: dogfood first, mechanisms pulled by observed friction.
 - **In-flight state is uncommitted.** Scratch is gitignored and disposable-after-synthesis — so a
   crashed pane or an interrupted session loses the "where was I, what was half-decided" state.
-  The board holds task *status* but not task *state*. A committed baton (a `handoff` field on the
+  The board holds task _status_ but not task _state_. A committed baton (a `handoff` field on the
   card, or `.anthill/batons/<card>.md`, written at any pause) is a small, on-thesis fix — it's
   exactly the working-memory tier the memory survey says is distinct from episodic capture.
 - **Grounding is task-blind.** Join's manifest is a fixed reading list regardless of what the
@@ -206,33 +206,33 @@ bottleneck is.
 investigations. The first four have owners and touchpoints. The repo-level stores mostly don't.
 
 **The read-trigger rule.** The fragments file on the lessons-learned touchpoint contains the
-single best native insight in the docs: *a knowledge store nothing re-reads is a write-only trap.*
+single best native insight in the docs: _a knowledge store nothing re-reads is a write-only trap._
 Generalize it into a design principle — **every knowledge store must name the lifecycle moment
 that re-reads it**, and a store that can't name one shouldn't exist (its content belongs in a
 store that can). Audit of current stores:
 
-| Store | Read-trigger today | Verdict |
-| --- | --- | --- |
-| Seat doc | `join` (forced, in manifest) | ✅ healthy |
-| `seams.md` | `join`, seams pass at finalize | ✅ healthy |
-| Scratch | finalize synthesis | ✅ (by design, disposable) |
-| Paper-cuts | finalize triage | ✅ (if triage actually runs) |
-| `lessons-learned/` | none | ⚠️ write-only (already flagged in fragments) |
-| `fragments/` | none | ⚠️ write-only |
-| Investigations/reports | ad-hoc citation | ◻ acceptable (reference tier) |
+| Store                  | Read-trigger today             | Verdict                                      |
+| ---------------------- | ------------------------------ | -------------------------------------------- |
+| Seat doc               | `join` (forced, in manifest)   | ✅ healthy                                   |
+| `seams.md`             | `join`, seams pass at finalize | ✅ healthy                                   |
+| Scratch                | finalize synthesis             | ✅ (by design, disposable)                   |
+| Paper-cuts             | finalize triage                | ✅ (if triage actually runs)                 |
+| `lessons-learned/`     | none                           | ⚠️ write-only (already flagged in fragments) |
+| `fragments/`           | none                           | ⚠️ write-only                                |
+| Investigations/reports | ad-hoc citation                | ◻ acceptable (reference tier)                |
 
 **Missing layers** (in the memory-survey vocabulary the landscape investigation already adopted):
 
 1. **Episodic — the scenario ledger.** Below the seat doc: cheap, structured episode capture
-   that survives finalize. Fields on the order of *context / decision taken / alternative
-   rejected / outcome / surprise*. One file per scenario or an append ledger per seat — but
+   that survives finalize. Fields on the order of _context / decision taken / alternative
+   rejected / outcome / surprise_. One file per scenario or an append ledger per seat — but
    structured enough to grep and cluster. Its read-trigger is the digest pass (below), not join.
 2. **Working — the committed baton.** Mid-task state for interrupted sessions (above).
 3. **Semantic, cross-project — the principle tier.** This exists in Cole's broader ecosystem as
    HiveMind. anthill shouldn't rebuild it; it should define the **export seam**: what a finalized
    scenario/lesson looks like when it graduates out of the project (the pattern format below),
    so any consumer — HiveMind or a future anthill-native KB — can ingest it.
-4. **The map — navigation artifacts.** Repo-map / heatmap outputs are memory *about the terrain*,
+4. **The map — navigation artifacts.** Repo-map / heatmap outputs are memory _about the terrain_,
    not about the team; keep them a separate tier (regenerated, never hand-curated) so they can't
    rot the way prose does.
 
@@ -254,7 +254,7 @@ from the harness-engineering addendum, as the between-session automated version.
    pattern.
 3. **Promote** — write the generalized principle in **pattern-language form** (context → forces →
    resolution → consequences; Alexander's format has survived 45 years because it stores the
-   *conditions of applicability* with the advice, which is exactly what makes a principle
+   _conditions of applicability_ with the advice, which is exactly what makes a principle
    retrievable later) — and land it in a home with a read-trigger: seat doc, `seams.md`, a skill,
    or the cross-project export.
 4. **Decay** — unpromoted ledger entries past a horizon are archived wholesale. The ledger is
@@ -277,27 +277,27 @@ used? Filtered to those with a concrete payload for anthill (each ends with the 
 
 1. **Stigmergy theory proper** (Grassé; Theraulaz & Bonabeau's "Brief History of Stigmergy";
    Hölldobler & Wilson). The marker-based/sematectonic distinction (Part 1) plus quantitative
-   (intensity-graded) vs qualitative (type-graded) signals. → *Classify every anthill signal:
-   prefer sematectonic; give marker-based signals intensity (dates, budgets) not just content.*
+   (intensity-graded) vs qualitative (type-graded) signals. → _Classify every anthill signal:
+   prefer sematectonic; give marker-based signals intensity (dates, budgets) not just content._
 2. **Ant colony optimization** (Dorigo). Evaporation rate is an explicit, tuned parameter; too
-   little evaporation causes *premature convergence* — the colony locks onto an early path that
-   is no longer best. → *Stale living docs aren't just noise; they actively lock future teams
+   little evaporation causes _premature convergence_ — the colony locks onto an early path that
+   is no longer best. → _Stale living docs aren't just noise; they actively lock future teams
    into yesterday's structure. Decay is a correctness feature, and its rate is worth tuning
-   deliberately (28-day-style horizons per knowledge type).*
+   deliberately (28-day-style horizons per knowledge type)._
 3. **Transactive memory systems** (Wegner; Lewis & Herndon). Effective teams don't share all
-   knowledge — they share an accurate *directory* of who knows what; team performance tracks
-   directory accuracy, not total knowledge. → *The roster + seat-doc headers are anthill's TMS
+   knowledge — they share an accurate _directory_ of who knows what; team performance tracks
+   directory accuracy, not total knowledge. → _The roster + seat-doc headers are anthill's TMS
    directory. Invest in the index: a seat's one-line "ask me about X" summary, kept accurate, may
    be worth more than another page of lessons. "Who/which doc knows X" is the retrieval query to
-   optimize, not "X."*
-4. **Distributed cognition** (Hutchins, *Cognition in the Wild*). Analyze the *system* — people +
+   optimize, not "X."_
+4. **Distributed cognition** (Hutchins, _Cognition in the Wild_). Analyze the _system_ — people +
    artifacts — by tracing how representational state propagates across media; the cockpit
-   remembers its speeds, not the pilot. → *A diagnostic method for dogfood sessions: trace one
+   remembers its speeds, not the pilot. → _A diagnostic method for dogfood sessions: trace one
    decision's state across vine → card → scratch → doc → code and find where it stalls or
-   evaporates (prediction: the vine→artifact hop is the leak; Part 1, Tension 3).*
+   evaporates (prediction: the vine→artifact hop is the leak; Part 1, Tension 3)._
 5. **Case-based reasoning** (Schank; Kolodner; Aamodt & Plaza's retrieve-reuse-revise-retain).
-   Store episodes cheap, index by problem features, generalize lazily on recurrence. → *The
-   scenario ledger's theoretical backbone (Part 3).*
+   Store episodes cheap, index by problem features, generalize lazily on recurrence. → _The
+   scenario ledger's theoretical backbone (Part 3)._
 6. **Organizational learning** — Nonaka's SECI spiral (tacit↔explicit conversion; externalization
    is the known bottleneck — which predicts finalize under-captures and supports lowering the
    capture bar via the ledger); the Army's **After-Action Review** literature (the strongest
@@ -307,23 +307,23 @@ used? Filtered to those with a concrete payload for anthill (each ends with the 
    paper-cuts' triage step is the analyst pass; protect it).
 7. **Team Topologies / Conway's law** (Skelton & Pais). Four team types, three interaction modes
    (collaboration / X-as-a-service / facilitating), cognitive load as the team-sizing limit.
-   anthill's decomposition heuristic ("semi-independent against a stable contract") *is*
+   anthill's decomposition heuristic ("semi-independent against a stable contract") _is_
    X-as-a-service; a spanning surface seat on a multi-surface repo is a cognitive-load violation.
-   → *Vocabulary for feature 5: annotate candidate seatings with the interaction mode each seam
-   implies; "collaboration mode" seams are the ones to ratify hardest in the plan skill.*
+   → _Vocabulary for feature 5: annotate candidate seatings with the interaction mode each seam
+   implies; "collaboration mode" seams are the ones to ratify hardest in the plan skill._
 8. **Complementary learning systems** (McClelland et al., hippocampus/neocortex). Fast episodic
-   store + slow semantic store, consolidated by *replay*; interleaving prevents catastrophic
-   overwrite; forgetting is functional. → *Keep scratch/ledger (fast) and seat docs (slow) as
+   store + slow semantic store, consolidated by _replay_; interleaving prevents catastrophic
+   overwrite; forgetting is functional. → _Keep scratch/ledger (fast) and seat docs (slow) as
    separate speeds; make consolidation a distinct replay-like pass (the molt / doc-gardener), not
-   a bigger finalize.*
+   a bigger finalize._
 9. **Pattern languages** (Alexander; the Hillside/PLoP tradition). The proven durable format for
-   promoted principles: context, forces, resolution, consequences — advice stored *with* its
-   applicability conditions. → *The output format of the scenario→principle pipeline.*
+   promoted principles: context, forces, resolution, consequences — advice stored _with_ its
+   applicability conditions. → _The output format of the scenario→principle pipeline._
 
 Fields considered and set aside for now: CRDT/tuplespace coordination (already surveyed in the
 landscape investigation; anthill's async-committed model doesn't need it), swarm robotics beyond
 ACO (adds little over the stigmergy sources), Ostrom's commons governance (interesting for
-multi-team/multi-human anthills, premature today), and Scott's *Seeing Like a State* (a one-line
+multi-team/multi-human anthills, premature today), and Scott's _Seeing Like a State_ (a one-line
 caution worth keeping: legibility for the center — tidy schemas, mandatory fields — can destroy
 the local knowledge it tries to capture; keep capture formats light).
 
@@ -432,18 +432,18 @@ this report's predictions be checked against data. Also reviewed: Karpathy's "LL
 - **The knowledge quality ceiling is very high.** dream-flute's `seams.md` (463 lines, 4
   contracts) contains genuinely sophisticated meta-knowledge: a **proof-topology grid** mapping
   which contract cells have test-teeth vs rest on discipline ("the discipline concentrates
-  precisely where the proof is absent"); **assert-the-absence** (declare what a feature *doesn't*
+  precisely where the proof is absent"); **assert-the-absence** (declare what a feature _doesn't_
   touch so nobody hunts a mirror that isn't there); **dual-face authorship** (the same issue's
   engine face and gate face authored by different seats, cross-pointing, single-sourced). This is
   the strongest possible evidence for the durable-seats + curated-trail thesis.
 - **The colony organically invented case-based reasoning.** Seat-doc lessons are dated arc
-  entries — case + commit pin + generalized rule — and `seams.md` grows case *taxonomies* under
+  entries — case + commit pin + generalized rule — and `seams.md` grows case _taxonomies_ under
   principles (the seek-guard taxonomy accreted from 2 → 4 cases across sessions, each refining
   the rule). The scenario→principle pipeline (rec 4) already exists implicitly; what's missing is
   only the compression step (cases never graduate to citations once the rule matures).
 - **Convergent design signal:** dream-flute's own "Candidates" sections independently propose
   three of this report's recommendations — a **decay-ledger** (seams.md, with the sharp note that
-  *"for contracts pinned to a green test, the test IS the ledger"*), a **cold-read validation
+  _"for contracts pinned to a green test, the test IS the ledger"_), a **cold-read validation
   loop** (seams.md + maestro.md), and a **synthesis skill** (maestro.md). Independent arrival is
   the best promotion evidence these ideas will get.
 - **Durable seats carry culture, again:** prism.md opens with a founding-scar narrative (the
@@ -456,7 +456,7 @@ this report's predictions be checked against data. Also reviewed: Karpathy's "LL
 `git log --numstat` over fathom.md's ~20 finalize commits: **~650 lines added, ~40 deleted** —
 and the deletions were all "trim restatement to pointer" hygiene, never fading. The **last 8
 finalizes deleted zero lines**. The finalize ritual's prune instruction exists and does not
-execute: curation-by-willpower runs the *strengthen* half of stigmergy at 100% and the *fade*
+execute: curation-by-willpower runs the _strengthen_ half of stigmergy at 100% and the _fade_
 half at ~0%. Consequences already visible:
 
 - **Join cost grows linearly, no ceiling.** A dream-flute seat re-ground is now roughly seat doc
@@ -466,14 +466,14 @@ half at ~0%. Consequences already visible:
   shipped features.
 - **Chronological accretion is invading the curated layers.** fathom's "Hard-won lessons" is a
   per-arc diary; even maestro.md now grows arc-scoped reflex sections ("Reflexes — Modal build
-  (2026-07-01)…"). Appending is cheap and restructuring is not, so the *brain* drifts toward a
-  *journal* — the diary-not-pheromone tension (Part 1) observed empirically, in the system's most
+  (2026-07-01)…"). Appending is cheap and restructuring is not, so the _brain_ drifts toward a
+  _journal_ — the diary-not-pheromone tension (Part 1) observed empirically, in the system's most
   mature instance.
 - `seams.md` is quietly becoming three stores in one file: boundary contracts, case law under
   them, and (Contract 3) team-process truths. It works, but the taxonomy wants sub-structure
   before it's 1,500 lines.
 
-None of this is failure — it's what success looks like *before* the read-side mechanisms exist.
+None of this is failure — it's what success looks like _before_ the read-side mechanisms exist.
 The colony is knowledge-rich and retrieval-poor, exactly as Part 3 predicted.
 
 ### The LLM-wiki pattern (Karpathy) — what to take, what to skip
@@ -483,7 +483,7 @@ markdown wiki the LLM owns → a schema doc governing it, with three operations 
 (integrate a source across ~10–15 pages), **query**, and **lint** (a periodic health pass:
 contradictions, staleness, orphans), supported by an **index.md** (one-line-per-page router,
 read before any full page) and an append-only **log.md**. Its thesis is anthill's thesis:
-knowledge compiled *at write time* into a compounding artifact beats re-derivation at query
+knowledge compiled _at write time_ into a compounding artifact beats re-derivation at query
 time, and LLMs uniquely make the maintenance affordable ("LLMs don't get bored").
 
 - **Take:** the **lint pass** as a named, recurring operation (it is exactly this report's
@@ -491,7 +491,7 @@ time, and LLMs uniquely make the maintenance affordable ("LLMs don't get bored")
   always read; full pages pulled on demand — the join-cost answer); **contradiction-flagging** as
   an explicit lint output (anthill has no mechanism that ever notices two claims disagree).
 - **Skip / already ahead:** the wiki is single-custodian with no ownership boundaries — at team
-  scale that drifts. anthill's seat/seams *ownership* model (one owner per contract, others
+  scale that drifts. anthill's seat/seams _ownership_ model (one owner per contract, others
   defer) is the multi-agent hardening the gist lacks. And log.md is redundant here — git history
   of the living docs is a superior append-only log.
 
@@ -511,7 +511,7 @@ time, and LLMs uniquely make the maintenance affordable ("LLMs don't get bored")
    as its own occasional short session (or scheduled gardener): verify pins, compress
    closed-arc case law to rule + citation, flag contradictions.
 4. **Promote the convergent candidates now:** the cold-read loop (a fresh agent re-grounds from
-   docs alone; its friction is both trail-validation *and* the compaction signal) and the
+   docs alone; its friction is both trail-validation _and_ the compaction signal) and the
    decay-ledger-lite (test-pinned claims need no dates — the test is the ledger; prose-only
    claims carry last-confirmed dates).
 5. **Absorb dream-flute's operational lessons into the plugin.** maestro.md holds
@@ -541,7 +541,7 @@ time, and LLMs uniquely make the maintenance affordable ("LLMs don't get bored")
 Two meta-observations that didn't fit above. First, the repo's investigation hygiene (adversarial
 verification, killed-claims sections, honest caveats) is itself a differentiator — most agent
 teams accrete unverified lore; this one audits its own inputs. Whatever else changes, keep that.
-Second, this report deliberately does *not* recommend new coordination machinery (watchdogs,
+Second, this report deliberately does _not_ recommend new coordination machinery (watchdogs,
 richer boards, agent-to-agent protocols): the evidence in the repo's own research points the
 other way — the durable-artifact side is where anthill's edge is, and the cheapest wins are all
 on the read path of the knowledge it already writes.

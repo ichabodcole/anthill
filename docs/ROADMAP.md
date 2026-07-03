@@ -18,9 +18,9 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
    (proposal resolved; needs plan → build). Lifecycle position: **normally starts before
    convene** — the lead drafts the skeleton solo (phases, seat lanes, proposed seams) — then the
    **convened team completes it** (each seat ratifies/falsifies its lane and the seams that
-   touch it). Convene must not *require* a skeleton, though: a team can convene plan-less (it
-   points at one if present, proceeds without if not). *Why first: it's the lifecycle keystone —
-   every multi-seat build after it, including the items below, should run through it.*
+   touch it). Convene must not _require_ a skeleton, though: a team can convene plan-less (it
+   points at one if present, proceeds without if not). _Why first: it's the lifecycle keystone —
+   every multi-seat build after it, including the items below, should run through it._
 2. **Global `anthill` CLI** — [v0.2 brief, feature 3](briefs/2026-06-30-anthill-v0.2-next-release.md)
    (last unshipped foundation piece of v0.2; the human terminal door + what dream-flute parity rides on).
 
@@ -30,9 +30,9 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
    (the headline field fix from media-buffet; visible seam-decisions, ratify-not-reconstruct).
 4. **First instrumented dogfood session** — build one of the above **with the convened anthill
    team**: trace one decision vine→card→doc→code, baseline seat-doc token counts, run the
-   cold-read check. *Why here: it exercises `anthill:plan` for real and generates the empirical
+   cold-read check. _Why here: it exercises `anthill:plan` for real and generates the empirical
    data every memory upgrade below depends on
-   ([report rec 1](reports/2026-07-02-conceptual-implementation-review-report.md)).*
+   ([report rec 1](reports/2026-07-02-conceptual-implementation-review-report.md))._
 5. **Ritual checklists baked into the lifecycle skills** — field-observed skips, so the fix is
    making the skills emit the checklist rather than adding a form to fill out. **Lead** (mostly
    convene already): create grapevine → create board → size bounty tasks where possible → convene
@@ -55,11 +55,11 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 ## Later (order softens out here)
 
 8. **Pheromone-dynamics bundle** — last-verified stamps, verify-at-join, per-doc token budgets
-   ([report rec 3](reports/2026-07-02-conceptual-implementation-review-report.md)). *Gated on #4's
-   data — dream-flute's zero-fade growth curve is the motivating evidence.*
+   ([report rec 3](reports/2026-07-02-conceptual-implementation-review-report.md)). _Gated on #4's
+   data — dream-flute's zero-fade growth curve is the motivating evidence._
 9. **Scenario ledger + digest** — the episode tier below seat docs, lazy generalization
-   ([report rec 4](reports/2026-07-02-conceptual-implementation-review-report.md)). *Gated on #4
-   for sample episodes; formally replaces fragments/lessons-learned in team repos.*
+   ([report rec 4](reports/2026-07-02-conceptual-implementation-review-report.md)). _Gated on #4
+   for sample episodes; formally replaces fragments/lessons-learned in team repos._
 10. **Task-conditioned grounding** — `applies-to` globs ∩ the claimed card
     ([report rec 5](reports/2026-07-02-conceptual-implementation-review-report.md)).
 11. **Docs-taxonomy dispositions** — archive hollow scaffolds, playbook-pointer rule

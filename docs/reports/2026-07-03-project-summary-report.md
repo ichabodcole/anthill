@@ -35,6 +35,7 @@ Foundation files were read directly by the orchestrator; five bounded explorer s
 **Briefs:** One real brief — `2026-06-30-anthill-v0.2-next-release.md` (Active) — the 6-feature v0.2 roadmap.
 
 **Active vs Archived:**
+
 - Projects: 2 active (`anthill-footprint-migration` — Draft, has plan.md; `team-dev-planning` — Draft, proposal + origin-methodology writeup, no plan.md yet), 1 archived (`slice-1-walking-skeleton`). Neither active project has a `sessions/` folder.
 - Investigations: 4 active (docs-taxonomy-in-the-team-era, agent-codebase-navigation, agentic-teams-memory-stigmergy-landscape, file-activity-heatmap).
 
@@ -42,7 +43,7 @@ Foundation files were read directly by the orchestrator; five bounded explorer s
 
 ### Recent Activity Analysis
 
-**Git Analysis (last 30 days):** This month *is* the project's bootstrap. Three arcs: (1) Slice-1 walking skeleton (T1–T10 — CLI shell, manifests, config, tmux + spellbook facade, deterministic scaffold renderer, lifecycle skills); (2) footprint migration v1→v2 (`.anthill/` consolidation, pure migration planner, `anthill migrate` CLI, `anthill:upgrade` skill); (3) tooling/docs hardening (Biome/Husky, release-please + CI, self-host dogfood, a burst of investigations/reports, and the new ROADMAP).
+**Git Analysis (last 30 days):** This month _is_ the project's bootstrap. Three arcs: (1) Slice-1 walking skeleton (T1–T10 — CLI shell, manifests, config, tmux + spellbook facade, deterministic scaffold renderer, lifecycle skills); (2) footprint migration v1→v2 (`.anthill/` consolidation, pure migration planner, `anthill migrate` CLI, `anthill:upgrade` skill); (3) tooling/docs hardening (Biome/Husky, release-please + CI, self-host dogfood, a burst of investigations/reports, and the new ROADMAP).
 
 **Most-touched areas:** `skills/` lifecycle docs (bootstrap most-touched), `scripts/anthill/` core (cli, commands, paths, config, migrate, coord), and `templates/docs-team/`.
 
@@ -66,7 +67,7 @@ Foundation files were read directly by the orchestrator; five bounded explorer s
 
 ### What This Project Actually Is
 
-anthill is a **Claude Code plugin that installs a multi-agent development team into any repo** — durable *seats* (lead / engine / spine / surface / verify) filled by *ephemeral* agents that coordinate over spellbook's grapevine (chat) + bounty (task board) and leave living docs behind as stigmergic "pheromone trails." It was extracted and generalized from the team system grown in the `dream-flute` project, and it now **dogfoods itself**: this repo carries its own team in `.anthill/`. The code half is a Bun/TypeScript Citty CLI that deterministically renders/migrates the `.anthill/` footprint (the "hands"); the skills half is the lifecycle brain (bootstrap → convene → work → finalize, plus upgrade).
+anthill is a **Claude Code plugin that installs a multi-agent development team into any repo** — durable _seats_ (lead / engine / spine / surface / verify) filled by _ephemeral_ agents that coordinate over spellbook's grapevine (chat) + bounty (task board) and leave living docs behind as stigmergic "pheromone trails." It was extracted and generalized from the team system grown in the `dream-flute` project, and it now **dogfoods itself**: this repo carries its own team in `.anthill/`. The code half is a Bun/TypeScript Citty CLI that deterministically renders/migrates the `.anthill/` footprint (the "hands"); the skills half is the lifecycle brain (bootstrap → convene → work → finalize, plus upgrade).
 
 ### Current State Assessment
 
@@ -79,7 +80,7 @@ anthill is a **Claude Code plugin that installs a multi-agent development team i
 
 - **Now:** (1) `anthill:plan` — the skeleton→ratify planning skill (the "lifecycle keystone"); (2) the global `anthill` CLI (last unshipped v0.2 foundation piece).
 - **Next:** multi-surface archetype + candidate seatings; then the **first instrumented dogfood session** (trace one decision vine→card→doc→code) to generate the empirical trail data that later memory upgrades are gated on.
-- **Tension surfaced by the 2026-07-02 fresh-eyes review:** *mechanism is outrunning usage* — the team's own `seams.md` and seat docs are empty scaffolds, so the roadmap deliberately sequences a real dogfood session before layering on more memory machinery.
+- **Tension surfaced by the 2026-07-02 fresh-eyes review:** _mechanism is outrunning usage_ — the team's own `seams.md` and seat docs are empty scaffolds, so the roadmap deliberately sequences a real dogfood session before layering on more memory machinery.
 
 ## Recommendations
 

@@ -144,12 +144,12 @@ dependency-graph index is therefore not a safe, evidence-backed bet for anthill.
 
 ## Comparison — when each navigation approach wins
 
-| Approach | Wins when | Evidence | anthill fit |
-| --- | --- | --- | --- |
-| **Committed architectural-context artifact** (living doc / repo-map) | Orienting fast in an unfamiliar repo; reducing wandering | 33–44% fewer nav steps (medium) | **Core bet — keep & strengthen** |
-| **Plain grep/glob (exact-match-first)** | The symbol/name is known or lexically findable | Strong baseline; hard to beat (high) | Already have; make it the default first move |
-| **Semantic/embedding retrieval** | The name is unknown; find-by-meaning; "semantic" tasks | Free win on lexical tasks; ~2% e2e (Copilot) | Optional add-on, not a priority |
-| **Dependency/knowledge graph** | _Claimed_ for hidden/structural dependencies | **Contested/refuted** — lost to shell baseline | **Do not invest heavily** |
+| Approach                                                             | Wins when                                                | Evidence                                       | anthill fit                                  |
+| -------------------------------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------- | -------------------------------------------- |
+| **Committed architectural-context artifact** (living doc / repo-map) | Orienting fast in an unfamiliar repo; reducing wandering | 33–44% fewer nav steps (medium)                | **Core bet — keep & strengthen**             |
+| **Plain grep/glob (exact-match-first)**                              | The symbol/name is known or lexically findable           | Strong baseline; hard to beat (high)           | Already have; make it the default first move |
+| **Semantic/embedding retrieval**                                     | The name is unknown; find-by-meaning; "semantic" tasks   | Free win on lexical tasks; ~2% e2e (Copilot)   | Optional add-on, not a priority              |
+| **Dependency/knowledge graph**                                       | _Claimed_ for hidden/structural dependencies             | **Contested/refuted** — lost to shell baseline | **Do not invest heavily**                    |
 
 Net: **compact map + grep-first, with optional semantic retrieval — mirroring the shipped agents.** The
 graph is the seductive-but-unproven option.

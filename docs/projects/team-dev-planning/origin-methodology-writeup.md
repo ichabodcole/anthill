@@ -32,7 +32,7 @@ The lead's skeleton is **not blanks for owners to fill in** — it is a set of *
 integration order + the cross-seam interface contracts) that the owners are asked to **falsify or
 ratify**. The value of the team layer is **seam-surfacing**: a single-author skeleton is most often
 wrong exactly at the **seams between owners**, and the owners — each holding their domain's reflexes —
-catch it *before a line is drafted*. The slices then fit bit-for-bit at integration because the seams
+catch it _before a line is drafted_. The slices then fit bit-for-bit at integration because the seams
 were **agreed up front, not discovered at merge**.
 
 ## Roles
@@ -79,7 +79,7 @@ single-agent skill; a multi-owner feature with shared contracts → add this rat
 The multi-perspective ratify is precisely where a single-author skeleton is most often wrong — and the
 owners catch it. The payoff is the **seam-surfacing**, not "fill in the blanks." (Instantiated with
 real scars in each project's owner docs — e.g. an owner correcting a plan's field types against the
-existing analog rather than trusting the plan's table; an owner reading the wire *type* instead of
+existing analog rather than trusting the plan's table; an owner reading the wire _type_ instead of
 inheriting the plan's verb; an owner catching a plan that contradicted a frozen constraint.)
 
 ## Portable core vs. project specifics
@@ -101,7 +101,8 @@ inheriting the plan's verb; an owner catching a plan that contradicted a frozen 
 **Provenance for the snag:** realizes layer 1 of the 3-layer initiative in the dream-flute memory
 `team-oriented-methodology-will-grow` (1: name+write this methodology · 2: extract the portable team-OS
 = anthill, now built · 3: meta-skills). Suggested home in anthill: a first-class methodology doc the SOP
-+ the lead seat doc **point at** (single-sourced, not restated), and referenced from the `convene`
-skill. The current distributed captures to supersede/point-away-from: the maestro seat reflex
-("Scaffold the plan; let the owners ratify the seams") + the one-line SOP workflow + scattered
-plan-scars in owner docs.
+
+- the lead seat doc **point at** (single-sourced, not restated), and referenced from the `convene`
+  skill. The current distributed captures to supersede/point-away-from: the maestro seat reflex
+  ("Scaffold the plan; let the owners ratify the seams") + the one-line SOP workflow + scattered
+  plan-scars in owner docs.
