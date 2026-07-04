@@ -36,7 +36,10 @@ in-repo — file it upstream and note the workaround here.
 
 ### Disposition — 2026-07-02
 
-- ◻ **#1** — open; fix direction noted above. Promote to backlog if not picked up directly.
+- ✅ **#1 → `ee8b62d`** (2026-07-04) — fixed as the direction above: `anthill commit` now stages the
+  named paths, **verifies the index is exactly those paths**, then commits **without** a pathspec (the
+  hook runs against the real index, so the temp-index/lint-staged corruption never happens). Unexpected
+  staged content aborts + restores the index. Covered by end-to-end tests (throwaway repo).
 
 ---
 

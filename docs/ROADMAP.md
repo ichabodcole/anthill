@@ -39,24 +39,22 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
    cold-read check. _Why here: it exercises `anthill:plan` for real and generates the empirical
    data every memory upgrade below depends on
    ([report rec 1](reports/2026-07-02-conceptual-implementation-review-report.md))._
-5. **Ritual checklists baked into the lifecycle skills** — field-observed skips, so the fix is
-   making the skills emit the checklist rather than adding a form to fill out. **Lead** (mostly
-   convene already): create grapevine → create board → size bounty tasks where possible → convene
-   → and the ones that get skipped: **collect every seat's finalize before standing them down**,
-   and **get explicit human sign-off before merging the feature branch to develop** — green tests
-   and a checked-off board are the team's own signals; the human's look (UI bugs, feel, feedback)
-   is a gate the team can't run itself, and end-of-session "we're done" momentum is exactly when
-   it gets skipped.
-   **Member** (join + SOP): join & monitor grapevine, join & monitor board, introduce yourself on
-   the vine, finalize before stand-down, and **route questions through the lead/liaison — never
-   block on the human** (the human may not be watching that terminal).
-6. **Rail-guarding paper-cut fixes** — `anthill commit` × lint-staged
-   ([paper-cuts 2026-07-02](../.anthill/paper-cuts.md)); channel hygiene in convene/down
-   (dream-flute paper-cut #14, the half anthill owns).
-7. **Cheap ritual/SOP edits from the review** — the read-trigger rule, the artifact-first rule
-   ("the vine evaporates"), route-at-synthesis
+5. ✅ **Ritual checklists baked into the lifecycle skills** — **SHIPPED** 2026-07-04 (`ead9e66`).
+   The skills now **emit** skip-resistant checklists: `convene` (lead setup), `join` (member), and a
+   `finalize-session` teardown checklist carrying the previously-missing **human sign-off gate before
+   the feature branch merges to develop**.
+   [session](projects/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md).
+6. ✅ **Rail-guarding paper-cut fix — `anthill commit` × lint-staged** — **SHIPPED** 2026-07-04
+   (`ee8b62d`). Stage → verify-index-is-exactly-our-paths → pathspec-less commit (runs the hook
+   against the real index, dodging the temp-index corruption); unexpected staged content aborts.
+   [paper-cuts](../.anthill/paper-cuts.md) ·
+   [session](projects/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md).
+   _Still open (the other half): channel hygiene in convene/down (dream-flute paper-cut #14)._
+7. ✅ **Cheap ritual/SOP edits** — **SHIPPED** 2026-07-04 (`ead9e66`). Into the SOP seed:
+   _no store without a named re-read moment_, _the vine evaporates_ (land decisions in an artifact),
+   _one intake route at synthesis_; playbook-pointer rule into `docs/README.md`
    ([report recs 2, 6](reports/2026-07-02-conceptual-implementation-review-report.md);
-   [taxonomy investigation next-steps](investigations/2026-07-02-docs-taxonomy-in-the-team-era.md)).
+   [taxonomy next-steps](investigations/2026-07-02-docs-taxonomy-in-the-team-era.md)).
 
 ## Later (order softens out here)
 
