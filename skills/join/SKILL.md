@@ -62,6 +62,16 @@ status`** shows who's on + the board.
    scratch** (the reasoning + the generalizable lesson — not lesson-less events) for synthesis at
    finalize. Route questions + decisions to the lead on the vine, not direct to the human.
 
+## Join checklist (the beats that get skipped)
+
+- ◻ **Grounded** in your seat (grounding docs → SOP → seams → your seat doc).
+- ◻ **On the vine** — grapevine tail wrapped in Monitor, presence registered (terminal-seat path).
+- ◻ **On the board** — board tail wrapped in Monitor.
+- ◻ **Introduced** on the vine — a short "in, grounded, here's my lane".
+- ◻ **Scratch minted** — `.anthill/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
+- ◻ **Route through the lead — never block on the human.** The human may not be watching this pane;
+  questions + decisions go to the lead/liaison on the vine, not direct.
+
 ## Output
 
 A grounded seat: re-grounded in your role, present on the vine + board, scratch minted, working your

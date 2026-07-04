@@ -39,6 +39,9 @@ _live_. Don't skip it on a real session.
      scars below.)
 2. **Synthesize → your seat doc** (`.anthill/dev/<handle>.md`) — this is curation as pheromone:
    **strengthen the load-bearing trails, let the unimportant ones fade.**
+   - **Route, don't re-sort** (the SOP's _one intake, route at synthesis_ rule). Your scratch was one
+     cheap intake — synthesis is where each note finds its durable home: your seat doc (taste),
+     `seams.md` (a boundary truth), or `paper-cuts.md` (tooling friction).
    - Promote durable **judgments** (the reasoning + the generalizable lesson — not lesson-less events).
    - **Prune / compact** — keep it lean; shed stale lines (split to a `<handle>/` folder only if it
      genuinely earns it).
@@ -71,13 +74,23 @@ _live_. Don't skip it on a real session.
 
 ### Land + close — the lead
 
-5. **Land** the doc updates as a **file-scoped** commit: **`anthill commit -m "<msg>" <paths…>`** (never
-   `git add -A`). Settle the board (cards → review/done). Then, **only after every seat has confirmed
-   (step 0)**, tear the session down: **`anthill down`** — the session is named after the **channel**
-   (`config.channel`) by default, so `anthill down` resolves it with no arguments. It **refuses to kill
-   while seats are still present on the vine** (pass `--force` to override) — that presence guard is
-   your backstop against yanking a seat out mid-ritual. (If you spawned with a custom `--session
-<name>`, pass the same here. Any code branch is landed separately.)
+5. **Stand the team down — the closing checklist.** End-of-session "we're done" momentum is exactly
+   when these get skipped, so run them as a list, in order:
+   - ◻ **Every seat confirmed** its finalize on the vine (step 0). Knowledge capture is the whole
+     point; a torn-down pane can't synthesize.
+   - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit -m "<msg>" <paths…>`**
+     (never `git add -A`).
+   - ◻ **Board settled** (cards → review/done).
+   - ◻ **Human sign-off before the code branch merges to `develop`.** Green tests and a checked-off
+     board are the team's _own_ signals — but the human's look (UI bugs, the feel, feedback) is a gate
+     the team **cannot run itself**. Get an explicit "yes, merge it" before you land the feature branch
+     to `develop`; the knowledge ritual above is separate from and precedes this code merge. Don't let
+     momentum merge it unseen.
+   - ◻ **Tear down:** **`anthill down`** — the session is named after the **channel**
+     (`config.channel`) by default, so it resolves with no arguments. It **refuses to kill while seats
+     are still present on the vine** (pass `--force` to override) — that presence guard is your backstop
+     against yanking a seat out mid-ritual. (If you spawned with a custom `--session <name>`, pass the
+     same here.)
 
 ## Output
 

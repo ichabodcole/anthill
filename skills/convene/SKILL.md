@@ -80,6 +80,19 @@ stay solo.
    human's decisions through you; you own the **file-scoped atomic land** (`anthill commit -- <paths>`,
    never `git add -A`). At wrap, run **`anthill:finalize-session`** for the team's knowledge.
 
+## Convene checklist (don't skip a setup beat)
+
+The stand-up beats that get skipped when you're eager to spawn. Run them as a list:
+
+- ◻ **Grounded** as the lead (grounding docs → SOP → seams → your seat doc).
+- ◻ **Work gathered** from the human; **plan phase** run (`anthill:plan`) if it's a multi-seat feature
+  without a ratified plan.
+- ◻ **Grapevine open** — `anthill convene --topic "<framing>"`.
+- ◻ **Board open + seeded** — one `todo` card per planned lane, in owner lanes; **size** them where the
+  work is known enough to size.
+- ◻ **Seats briefed** on the vine (what we're building, the lanes, where the plan lives).
+- ◻ **Seats spawned** — `anthill spawn <handles…>`; `anthill status` confirms who's on + the columns.
+
 ## Output
 
 A convened team — live channel + board, seats briefed and joining, the lead coordinating.
