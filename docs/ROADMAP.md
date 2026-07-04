@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-03
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-04
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -20,8 +20,15 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
    [proposal](projects/_archive/team-dev-planning/proposal.md) ·
    [session](projects/_archive/team-dev-planning/sessions/2026-07-03-anthill-plan-skill-build.md).
    _Not yet run live — the first real invocation in a convened session is the #4 dogfood._
-2. **Global `anthill` CLI** — [v0.2 brief, feature 3](briefs/2026-06-30-anthill-v0.2-next-release.md)
-   (last unshipped foundation piece of v0.2; the human terminal door + what dream-flute parity rides on).
+2. ✅ **Global `anthill` CLI (launcher slice)** — **SHIPPED** 2026-07-04 (`b8fe79d`, on `develop`).
+   A **launcher, not a copy**: a tiny opt-in binary ([anthill-cli](https://github.com/ichabodcole/anthill-cli),
+   `bun add -g github:ichabodcole/anthill-cli`) that resolves the highest-semver plugin cache and
+   delegates to _its_ `cli.ts` — one copy of CLI logic, zero skew. Plugin-side: `anthill attach
+--session` + a friendly no-project fallback; consent-gated bootstrap mention.
+   [proposal](projects/anthill-cli-launcher/proposal.md) · [plan](projects/anthill-cli-launcher/plan.md) ·
+   [session](projects/anthill-cli-launcher/sessions/2026-07-04-cli-launcher-build.md).
+   _Deferred (out of the "light now" slice): lead-facing vine/board wrapper verbs — see
+   [v0.2 brief, feature 3](briefs/2026-06-30-anthill-v0.2-next-release.md)._
 
 ## Next
 
