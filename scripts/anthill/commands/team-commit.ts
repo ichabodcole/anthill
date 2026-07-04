@@ -97,14 +97,43 @@ function releaseLock(path: string): void {
   }
 }
 
+/**
+ * PURE (the unit-test target): which staged entries fall OUTSIDE the paths we
+ * were asked to commit. `full` and `ours` are both `git diff --cached
+ * --name-only` outputs — one unfiltered, one filtered to our pathspec — so they're
+ * the same repo-root-relative namespace and the set-difference needs no path
+ * normalization. A non-empty result means the index holds staged content beyond
+ * our paths (a peer staged out-of-band, or pre-existing staging): the shared-tree
+ * "explicit paths, never sweep" contract is broken, so we abort rather than let a
+ * pathspec-less commit rake it in.
+ */
+export function unexpectedStaged(full: string[], ours: string[]): string[] {
+  const mine = new Set(ours);
+  return full.filter((p) => !mine.has(p));
+}
+
+/** Split a `git diff --cached --name-only` stdout blob into a clean path list. */
+function stagedList(stdout: string): string[] {
+  return stdout
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
+}
+
 // `anthill commit -m "<msg>" <path> [<path>…]` — the file-scoped, serialized land
 // for a shared tree. Two guarantees a bare `git commit` can't give when several
 // seats share one working tree + index:
-//   1. EXPLICIT PATHS ONLY — refuses to run without paths, so a commit can never
-//      sweep a peer's staged file (the recurring shared-index race). It commits
-//      the named paths' working-tree content directly (no `git add -A`).
+//   1. EXPLICIT PATHS ONLY — refuses to run without paths, then stages just those
+//      paths and VERIFIES the index holds nothing else before committing, so a
+//      commit can never sweep a peer's staged file (the recurring shared-index
+//      race). No `git add -A`; unexpected staged content aborts rather than rides
+//      along.
 //   2. SERIALIZE LOCK — concurrent seats queue instead of racing git's index +
 //      the pre-commit hook's lint-staged stash. One land at a time, in order.
+// It commits WITHOUT a pathspec (a partial `git commit -- <paths>` builds a temp
+// index that lint-staged's stash dance corrupts — every check passes, then the
+// commit dies on a phantom invalid blob); the verification above is what makes a
+// whole-index commit safe.
 // The same command IS the atomic cross-seat land: the lead collects every seat's
 // paths and passes them in one call → one commit across the seats.
 export const teamCommitCommand = defineAnthillCommand({
@@ -151,15 +180,42 @@ export const teamCommitCommand = defineAnthillCommand({
     const waitedMs = acquireLock(lock);
     try {
       // Stage exactly these paths (explicit pathspec → never a peer's file; also
-      // the only way a NEW/untracked path is known to the partial commit below).
+      // the only way a NEW/untracked path is picked up).
       const staged = git(["add", "--", ...paths], root);
       if (!staged.ok) {
         throw new Error(`git add failed:\n${staged.stderr || staged.stdout || "unknown"}`);
       }
-      // Commit the working-tree content of exactly these paths (partial commit —
-      // ignores anything else in the index). `-m` before `--` so the message
-      // isn't parsed as a pathspec.
-      const res = git(["commit", "-m", message, "--", ...paths], root);
+      // Verify the index is EXACTLY our paths before a pathspec-less commit. We do
+      // NOT use a partial (`git commit -- <paths>`) commit: that builds a temporary
+      // index, and lint-staged's stash/backup dance corrupts that interaction —
+      // every check passes, then the commit dies citing an invalid blob for an
+      // unrelated file (the recurring paper-cut). A whole-index commit runs the
+      // hook against the REAL index and sidesteps it — but only sweeps nothing if
+      // the index really is just our paths, which this verification guarantees.
+      const full = git(["diff", "--cached", "--name-only"], root);
+      const ours = git(["diff", "--cached", "--name-only", "--", ...paths], root);
+      if (!full.ok || !ours.ok) {
+        throw new Error(`git diff --cached failed:\n${full.stderr || ours.stderr || "unknown"}`);
+      }
+      const unexpected = unexpectedStaged(stagedList(full.stdout), stagedList(ours.stdout));
+      if (unexpected.length > 0) {
+        // Restore the index to how we found it (unstage only our paths), then
+        // refuse with the dual-audience envelope — same guard style as no-paths.
+        git(["reset", "--quiet", "--", ...paths], root);
+        releaseLock(lock);
+        emitError({
+          format,
+          command: "commit",
+          error:
+            "refusing to commit: the index has staged content beyond your paths " +
+            `(${unexpected.join(", ")}). On a shared tree that means a peer staged out-of-band, ` +
+            "or there's leftover staging — commit or reset it, then retry your paths.",
+        });
+        process.exit(1);
+      }
+      // Whole-index commit — NO pathspec. The verification above proved the index
+      // is exactly our paths, so this can't sweep a peer's file.
+      const res = git(["commit", "-m", message], root);
       if (!res.ok) {
         const detail = res.stderr || res.stdout || "git commit failed";
         throw new Error(`git commit failed:\n${detail}`);
