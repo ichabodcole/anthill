@@ -145,9 +145,11 @@ fallback + a bootstrap mention + docs. The only cross-cutting piece is the secon
 
 ## Open Questions
 
-- **Launcher repo + package name.** `anthill-cli`? (Consider the option-2 ramp: if the future
-  standalone tool wants the bare name `anthill`, does the launcher package want that name now, or a
-  distinct one to avoid a later rename?)
+- ~~**Launcher repo + package name.**~~ — **resolved:** repo created at
+  [github.com/ichabodcole/anthill-cli](https://github.com/ichabodcole/anthill-cli). Package `name`
+  = `anthill-cli` (don't claim the bare `anthill` package name — reserve it for the option-2 tool);
+  the `bin` **command** = `anthill` (what the user types). So: install `bun add -g
+github:ichabodcole/anthill-cli`, uninstall `bun remove -g anthill-cli`, run `anthill`.
 - **Launcher implementation form.** A `bin` pointing at a `.ts` run by Bun, or a thin `sh` wrapper
   that execs `bun`? (Both fine; the `.ts`-via-Bun form keeps it one language and testable.)
 - **PATH/bin dir.** Confirm `bun add -g` reliably lands the `bin` on PATH across the shells we care
