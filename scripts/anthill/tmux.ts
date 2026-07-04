@@ -99,6 +99,11 @@ export function switchClientArgs(name: string): string[] {
   return ["switch-client", "-t", name];
 }
 
+/** `list-sessions` printing one session name per line. */
+export function listSessionsArgs(): string[] {
+  return ["list-sessions", "-F", "#{session_name}"];
+}
+
 /** Dump a pane's visible buffer to stdout (verification / debugging). */
 export function capturePaneArgs(target: string): string[] {
   return ["capture-pane", "-t", target, "-p"];
@@ -157,6 +162,19 @@ function settle(ms: number): Promise<void> {
 /** True if a session with this name already exists. */
 export async function sessionExists(name: string): Promise<boolean> {
   return (await execTmux(hasSessionArgs(name))).ok;
+}
+
+/**
+ * Names of all running tmux sessions. Empty (never throws) when tmux is missing
+ * or has no server — `execTmux` degrades to `ok: false`, which we read as "none".
+ */
+export async function listSessions(): Promise<string[]> {
+  const res = await execTmux(listSessionsArgs());
+  if (!res.ok) return [];
+  return res.stdout
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
 }
 
 /**

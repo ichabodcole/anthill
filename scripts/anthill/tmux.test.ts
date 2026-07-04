@@ -5,6 +5,7 @@ import {
   hasSessionArgs,
   killSessionArgs,
   listPanesArgs,
+  listSessionsArgs,
   newSessionArgs,
   paneBorderArgs,
   paneBorderFormatArgs,
@@ -106,6 +107,10 @@ describe("tmux arg builders", () => {
 
   it("switchClientArgs targets the session", () => {
     expect(switchClientArgs("ah-team")).toEqual(["switch-client", "-t", "ah-team"]);
+  });
+
+  it("listSessionsArgs prints one session name per line", () => {
+    expect(listSessionsArgs()).toEqual(["list-sessions", "-F", "#{session_name}"]);
   });
 });
 

@@ -46,6 +46,12 @@ write a half-working config.
 - **tmux** (pane mode): `tmux -V`. Missing → `brew install tmux`. **Non-fatal** — without tmux you lose
   pane spawning but subagent mode still works; note the degradation and continue.
 
+> **Optional (mention, don't install):** a **human** `anthill` command for driving a session from a
+> terminal (`anthill attach`, `anthill status`) — `bun add -g github:ichabodcole/anthill-cli`. It's a
+> pointer to the installed plugin's CLI (nothing to keep in sync), and purely for the human; agents
+> don't need it. Surface it if `anthill` isn't already on PATH, but **never install it for them** —
+> a global install touches their machine, so it stays their call.
+
 ### 2. Light discovery
 
 - **Detect the repo's real grounding anchors** — don't assume `AGENTS.md` exists. Probe the usual

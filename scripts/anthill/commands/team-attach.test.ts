@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { resolveAttachAction } from "./team-attach.ts";
+import { formatNoProjectHint, resolveAttachAction } from "./team-attach.ts";
 
 // PURE decider: maps {isTty, insideTmux} → how to reach the session.
 describe("resolveAttachAction", () => {
@@ -15,5 +15,28 @@ describe("resolveAttachAction", () => {
 
   it("attaches when a TTY is outside tmux", () => {
     expect(resolveAttachAction({ isTty: true, insideTmux: false })).toBe("attach");
+  });
+});
+
+// PURE no-project hint: the friendly fallback shown when `attach` runs outside a
+// project with no `--session`.
+describe("formatNoProjectHint", () => {
+  it("names the searched cwd and points at the two ways forward", () => {
+    const msg = formatNoProjectHint("/tmp/x", []);
+    expect(msg).toContain("no .anthill/config.json found searching up from /tmp/x");
+    expect(msg).toContain("cd into your project");
+    expect(msg).toContain("--session <name>");
+  });
+
+  it("lists running sessions when there are any", () => {
+    const msg = formatNoProjectHint("/tmp/x", ["alpha", "beta"]);
+    expect(msg).toContain("Running tmux sessions:");
+    expect(msg).toContain("  - alpha");
+    expect(msg).toContain("  - beta");
+  });
+
+  it("says so when no sessions are running", () => {
+    const msg = formatNoProjectHint("/tmp/x", []);
+    expect(msg).toContain("(no tmux sessions are currently running)");
   });
 });

@@ -1,10 +1,12 @@
 import { spawnSync } from "node:child_process";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { ConfigError, findConfigFile } from "../config.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import {
   attachArgs,
   hasTmux,
+  listSessions,
   sanitizeSessionName,
   sessionExists,
   switchClientArgs,
@@ -24,6 +26,23 @@ export function resolveAttachAction(opts: { isTty: boolean; insideTmux: boolean 
   if (!opts.isTty) return "print";
   if (opts.insideTmux) return "switch";
   return "attach";
+}
+
+/**
+ * PURE message (a unit-test target): what to say when `attach` is run outside any
+ * anthill project and no `--session` was given — a friendly menu, not a bare error.
+ */
+export function formatNoProjectHint(cwd: string, sessions: string[]): string {
+  const lines = [
+    `not inside an anthill project — no .anthill/config.json found searching up from ${cwd}.`,
+    "cd into your project, or pass --session <name> to attach by name.",
+  ];
+  if (sessions.length > 0) {
+    lines.push("", "Running tmux sessions:", ...sessions.map((s) => `  - ${s}`));
+  } else {
+    lines.push("", "(no tmux sessions are currently running)");
+  }
+  return lines.join("\n");
 }
 
 interface AttachData {
@@ -52,9 +71,9 @@ export const teamAttachCommand = defineAnthillCommand({
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "attach");
+    const explicitSession = ctx.args.session as string | undefined;
 
-    // Preflight: no point computing an action if tmux is missing.
+    // Preflight: no point going further if tmux is missing.
     if (!hasTmux()) {
       emitError({
         format,
@@ -64,9 +83,32 @@ export const teamAttachCommand = defineAnthillCommand({
       process.exit(1);
     }
 
-    const sessionName = sanitizeSessionName(
-      (ctx.args.session as string | undefined) || config.channel,
-    );
+    // Resolve the target session. An explicit `--session` attaches by name from
+    // anywhere (no project needed); otherwise derive it from the project's channel.
+    // Run outside any project without `--session` → a friendly menu, not a bare
+    // "no config" error.
+    let sessionName: string;
+    if (explicitSession) {
+      sessionName = sanitizeSessionName(explicitSession);
+    } else {
+      let inProject = true;
+      try {
+        findConfigFile();
+      } catch (err) {
+        if (err instanceof ConfigError) inProject = false;
+        else throw err;
+      }
+      if (!inProject) {
+        emitError({
+          format,
+          command: "attach",
+          error: formatNoProjectHint(process.cwd(), await listSessions()),
+        });
+        process.exit(1);
+      }
+      // Found up-tree → parse it (requireConfig still surfaces a malformed config).
+      sessionName = sanitizeSessionName(requireConfig(format, "attach").channel);
+    }
 
     if (!(await sessionExists(sessionName))) {
       emitError({
