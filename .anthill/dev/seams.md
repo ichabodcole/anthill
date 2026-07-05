@@ -72,3 +72,34 @@ before a line was built.
 workspace fixture (2 apps + 1 shared package with a real edge) asserts the full `ScanReport` golden;
 a single-surface fixture asserts `workspace: null` + one root unit. _(Tests land with forager's lane;
 link the file here when green.)_
+
+## Contract 2 — the `anthill feedback` invocation contract
+
+**Owner:** forager · **Pointed at from:** weaver (the touchpoint prose tells agents how/when/who invokes it)
+
+**The contract, stated once:** `anthill feedback "<msg>" [--category bug|friction|idea|docs] [--skill
+<name>] [--submit]`. A **bare call composes + emits, sending nothing** (`{ok,data:{title,body,repo,issueUrl,submitCmd}}`);
+`--submit` runs `gh issue create … --label anthill-feedback` and on **any** failure degrades to
+`{ok,data:{title,body,issueUrl(prefilled)},warnings:[…]}` exit 0 — **never drops the report, never throws**.
+`title` = `[feedback/<category>] ` + first message line (≤~72c); `submitCmd` = the **self-re-invocation**
+`anthill feedback "…" --submit` (the string a seat hands the lead — NOT raw `gh`); `label
+anthill-feedback` is always applied (provenance, command-controlled); `body` carries the message + only
+non-sensitive env (never repo content).
+
+**The framing lives in two disjoint homes** (do not merge them): **command-facing** (what it's for —
+upstream, ideas-welcome, categories) is one generative-first sentence in the command `--help`
+(forager); **team-routing** (team-local vs. upstream; seats surface, the lead submits; solo = lead) is
+canonical in the SOP seed (weaver). The full team-routing framing must NOT be **restated** in `--help`
+— but `--help` may carry the same **terse danger-point echo** the skill pointers do ("on a team the
+lead submits; see your team SOP"), since `--submit` is read right at the danger moment. Point, don't
+restate.
+
+**Why it bites:** two failure modes the ratify caught — a raw-`gh` `submitCmd` is a shell footgun that
+bypasses the no-loss guards (→ self-re-invoke instead), and restating the team-routing framing in
+`--help` would duplicate a single-source (the command has no team concept — a terse pointer is the most
+it should carry). Duplicate issues are prevented by routing the submit through the lead, not the command.
+
+**Proof (green):** `plugin/scripts/anthill/feedback.test.ts` (golden tests for the pure
+`composeFeedbackBody`/`feedbackTitle`/`buildIssueUrl`/`interpretGhResult`, incl. a privacy assertion) +
+`plugin/scripts/anthill/commands/team-feedback.test.ts` (guard envelopes + stubbed-`gh()` success/failure
+branches with a `forbiddenGh` that throws if the default path ever calls it — no real network).

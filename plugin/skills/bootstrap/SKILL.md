@@ -212,6 +212,7 @@ confirmed — ready for `anthill:convene`.
 
 If this skill was rough — a preflight check that misfired, an archetype that didn't fit, a step unclear
 — jot it down and flag the human (or capture it for the first `anthill:finalize-session`). These skills improve by use.
+Something about **anthill itself** — a bug, rough edge, **or an idea to improve it**? → `anthill feedback` (on a team, surface it to the lead).
 
 **Reflective pass (not just "what broke"):** even when it ran clean, did anything you trusted **by
 default** — a path, a default, an assumption this skill left implicit — feel like it might not always

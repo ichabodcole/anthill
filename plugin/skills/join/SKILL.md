@@ -81,6 +81,7 @@ lane.
 
 If this skill was rough — a step unclear, an `anthill` command that misbehaved, a missing case — jot it
 to your scratch and raise it at `anthill:finalize-session` (or flag the lead). These skills improve by use.
+Something about **anthill itself** — a bug, rough edge, **or an idea to improve it**? → `anthill feedback` (on a team, surface it to the lead).
 
 **Reflective pass (not just "what broke"):** even when it ran clean, did anything you trusted **by
 default** — a path, a default, an assumption this skill left implicit — feel like it might not always

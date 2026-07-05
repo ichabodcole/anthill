@@ -40,6 +40,27 @@ the next instance follows**.
 **The one strict rule: defer to one source — don't restate shared truth.** Restating a contract in
 three docs guarantees drift. Everything else stays flexible.
 
+## Feedback — two homes (team-local vs. anthill-upstream)
+
+Feedback is **generative first**: an idea, a suggestion, a "here's a nicer way this could work" is as
+welcome as a bug report. Lead with the improvement, not just the friction — the corrective habit
+(paper-cuts, "what bit me") silently discards the ideas a maturing tool most wants.
+
+Route it by **where it lives**:
+
+- **About _your_ project / team** (friction in your code, an idea for this repo) → stays here: your
+  `anthill:finalize-session` synthesis or `paper-cuts.md`. It loops back into your own work.
+- **About _anthill itself_** — a bug, a rough edge, **or an idea to make anthill better** → send it
+  _home_ so every project that uses anthill benefits. The path is **`anthill feedback`** (run
+  `anthill feedback --help` for what it's for and how to invoke it — the command is the single source
+  for that; this doc doesn't restate it).
+
+**On a team, the lead owns the outward send.** A seat that hits anthill friction **surfaces** the
+candidate to the lead (on the vine, or as a `--submit`-ready draft) — it does **not** `anthill feedback
+--submit` itself. The lead **dedupes** (N seats hitting one bug shouldn't file N issues) and submits the
+deduped set, the same way the lead owns the atomic land and routes decisions to the human. **Solo?
+You're the lead** — compose, confirm with the human, submit.
+
 ## The seats
 
 See **`dev/README.md`** for the roster + division of labor. Each seat has its own living doc under

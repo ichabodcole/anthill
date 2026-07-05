@@ -22,7 +22,7 @@ _live_. Don't skip it on a real session.
 0. **Broadcast the start on the vine.** The seats are in **separate panes** — nothing makes them
    synthesize unless told. The lead posts on the channel: _"Finalizing — every seat run your
    `anthill:finalize-session` synthesis (steps 1–2) now and confirm on the vine when your seat doc is
-   landed."_ Then the lead **gathers confirmations** and does not proceed to land + teardown (step 5)
+   landed."_ Then the lead **gathers confirmations** and does not proceed to land + teardown (step 6)
    until **every present seat has confirmed** — knowledge capture is the whole point, and a torn-down
    pane can't synthesize.
 
@@ -39,8 +39,8 @@ _live_. Don't skip it on a real session.
    - **Does not commit** — the lead lands the seat-doc changes atomically with the rest.
 
    The lead's residual finalize then shrinks to what is inherently whole-session: the `seams.md` pass
-   (step 3), the structure reflection (step 4), and **folding in late, verification-driven lessons** a
-   seat couldn't have known when it finished — **the lead attributes these into the seat's doc
+   (step 3), the structure reflection (step 4), the anthill-upstream feedback aggregation (step 5), and
+   **folding in late, verification-driven lessons** a seat couldn't have known when it finished — **the lead attributes these into the seat's doc
    directly** (robust; the subagent has already returned), or `SendMessage`s the seat to append in its
    own voice _only if it's still resumable_. Then land + teardown.
 
@@ -89,9 +89,18 @@ _live_. Don't skip it on a real session.
    you reshape the roster, **re-run `anthill init`** to render any new seat docs (existing are never
    clobbered) and update the `dev/README.md` roster row by hand.
 
+5. **Aggregate the team's anthill-upstream feedback.** Beside the seams pass, do the same single-source
+   move for the feedback candidates the team surfaced this session about **anthill itself** (not this
+   project). Read the **same intake** you already swept — the vine, the seats' scratch, their finalize
+   returns (no separate store). **Dedupe** them (N seats hitting one bug is one issue, not N) and
+   **submit** the deduped set with `anthill feedback "…" --submit` — the outward send the lead owns,
+   mirroring how you single-source `seams.md` from the returns. _(Distinct from this ritual's own
+   feedback pointer below: that captures feedback about the finalize ritual; this aggregates the team's
+   feedback about anthill.)_
+
 ### Land + close — the lead
 
-5. **Stand the team down — the closing checklist.** End-of-session "we're done" momentum is exactly
+6. **Stand the team down — the closing checklist.** End-of-session "we're done" momentum is exactly
    when these get skipped, so run them as a list, in order:
    - ◻ **Every seat confirmed** its finalize on the vine (step 0). Knowledge capture is the whole
      point; a torn-down pane can't synthesize. _(Subagent mode: the seats' returned in-task syntheses
@@ -120,6 +129,7 @@ terminals close.
 
 If this ritual was rough — a step unclear, friction in the synthesis or the seams pass — capture it (a
 scratch note, or flag the lead / the human) so the next revision fixes it. The rituals improve by use.
+Something about **anthill itself** — a bug, rough edge, **or an idea to improve it**? → `anthill feedback` (on a team, surface it to the lead).
 
 **Reflective pass (not just "what broke"):** even when it ran clean, did anything you trusted **by
 default** — a step's assumption, a default this ritual left implicit — feel like it might not always
