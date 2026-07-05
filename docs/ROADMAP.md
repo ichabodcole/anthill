@@ -22,12 +22,15 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
   (`4f7bc0f` move · `9f77c39` drop-citty); verified by a zero-dep clean-room run; **awaiting human
   sign-off → develop**. [proposal](projects/plugin-distribution/proposal.md) ·
   [session](projects/plugin-distribution/sessions/2026-07-05-targeted-distribution.md).
-- 📋 **`anthill feedback` — upstream feedback path** — a first-class way for consuming projects to send
-  bugs **and ideas** home to the anthill repo (GitHub transport, `--submit`-gated, lead-owned, no
-  feedback lost). Proposal ready; **next up for `anthill:plan`**.
-  [proposal](projects/upstream-feedback/proposal.md).
-- ⬜ **Cut the `develop → main` release** — once the two above land. At release, run the **`git-subdir`
-  install check** (confirm a real install caches only `plugin/`) — the one thing not verifiable locally.
+- ✅ **`anthill feedback` — upstream feedback path** — **BUILT** 2026-07-05 (`6cb19c1`, on
+  `feat/upstream-feedback`; awaiting human sign-off → develop). A first-class way for consuming projects
+  to send bugs **and ideas** home to the anthill repo (GitHub transport, `--submit`-gated, lead-owned,
+  no feedback lost, provenance-labeled). The 2nd `anthill:plan` dogfood.
+  [proposal](projects/upstream-feedback/proposal.md) · [plan](projects/upstream-feedback/plan.md) ·
+  [session](projects/upstream-feedback/sessions/2026-07-05-feedback-dogfood.md).
+- ⬜ **Cut the `develop → main` release** — once feedback signs off. **Release-time steps:** run the
+  **`git-subdir` install check** (confirm a real install caches only `plugin/` — not verifiable
+  locally), and `gh label create anthill-feedback` (so `anthill feedback --submit` tags cleanly).
 
 1. ✅ **`anthill:plan` — the skeleton→ratify planning skill** — **SHIPPED** 2026-07-03 (`f6b34eb`,
    on `develop`). The lead scaffolds a thin skeleton (integration order + cross-seam contracts as

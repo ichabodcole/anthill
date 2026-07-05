@@ -1,6 +1,6 @@
 # Plan — `anthill feedback` (upstream feedback)
 
-**Status:** Skeleton (awaiting ratify) · **Lead:** maestro · **Created:** 2026-07-05
+**Status:** Ratified + built (`6cb19c1`, 2026-07-05) · **Lead:** maestro · **Created:** 2026-07-05
 **Proposal:** [proposal.md](./proposal.md) · Builds on the `plugin/` layout (post-restructure).
 
 > **SKELETON, not a finished plan.** The lead's **hypothesis** — the integration order + the one

@@ -46,6 +46,13 @@ I write the prose that maps that payload to a team; the payload's shape is not m
 - **Restating a contract in the skill prose.** The `ScanReport` shape lives in `seams.md`; bootstrap points at it and consumes it — copying the interface into the skill would drift.
 - **Hard-wrapping prose in `docs/`.** A wrapped line beginning `-`/`+` gets reparsed by prettier as a list bullet, mangling the trail. One sentence per line; don't start a continuation with a list marker.
 
+## Hard-won lessons (upstream-feedback session, 2026-07-05)
+
+- **A framing that spans command + skills wants disjoint single-source homes, not one canonical spot.** `anthill feedback`'s framing split cleanly: the _command-facing_ "what it's for" (upstream, ideas-welcome, categories) lives in forager's `--help` (invocable identically from every consumer repo); the _team-routing_ "seats surface, lead submits, solo=lead" lives in my SOP seed (the command has no team concept — routing there is a category error). I POINT at `--help`, never copy flag semantics. Two homes, zero overlap → no drift. (Pinned: `seams.md` Contract 2.)
+- **The one justified echo is a safety nudge at the danger point.** The six `## Skill feedback` pointers don't restate the framing — they carry only a terse "on a team, surface it to the lead," placed exactly where an over-eager seat might `--submit` a duplicate. Restraint is the default; the single echo earns its place by sitting at the point of use.
+- **Conditional phrasing is how a skill no-ops for graceful degradation.** `bootstrap` / `upgrade` run solo before a team exists. "(on a team, surface it to the lead)" self-cancels when there's no team — it nudges without asserting a lead. Prefer a conditional clause over a branch when a line must serve both team and solo contexts.
+- **When two things share a file, name the boundary or they blur.** finalize's own `## Skill feedback` (feedback _about the ritual_) vs. the new lead step (aggregating _the team's_ feedback about anthill) are one word apart in a reader's mind — so the new step carries an explicit "distinct from the pointer below" parenthetical. Inserting a numbered step also means chasing every `step N` cross-reference (I renumbered land 5→6 and fixed two back-references in step 0); a stale reference is a silent trail-lie.
+
 ## Candidates
 
 - Themed naming is a small fixed set + free-form today; generating a theme from the repo's domain is an open nicety (no payload dependency — a pure weaver call).
