@@ -1,6 +1,6 @@
 # Multi-surface archetype + candidate seatings
 
-**Status:** Draft
+**Status:** Approved (2026-07-05) — in planning; `anthill scan` pulled into MVP
 **Created:** 2026-07-04
 **Author:** Cole + forager
 
@@ -42,9 +42,10 @@ Both were seen live on media-buffet; the brief calls this "the #1 field friction
 
 ## Proposed Solution
 
-Three moves, almost entirely **skill-driven** — because archetypes today are agent-consumed templates
-(`templates/archetypes/*.json` read by the bootstrap skill), not code. There is no archetype "engine"
-to build; the work is a new template, a decision heuristic encoded in the bootstrap prose, and the way
+Three moves. The archetype itself stays **skill-driven** — archetypes today are agent-consumed
+templates (`templates/archetypes/*.json` read by the bootstrap skill), not code, so there is no
+archetype "engine" to build. The one real code slice is **`anthill scan`** (move 2's deterministic
+reading); the rest is a new template, a decision heuristic encoded in the bootstrap prose, and the way
 candidates are presented.
 
 ### 1. A `multi-surface` archetype template
@@ -57,10 +58,10 @@ is already roster-agnostic.
 
 ### 2. Discovery → candidate seatings (the core)
 
-Extend bootstrap's "light discovery" step: after detecting a **workspace layout** (`apps/*`,
-`packages/*`, or a `workspaces` manifest field) and sniffing each surface's stack, the skill surfaces
-its **reading of the repo's seams** as **2–3 candidate seatings**, each fold/split annotated with one
-clause of _why_ (seam strength). These are presented as **the start of a conversation, not a menu** —
+Extend bootstrap's "light discovery" step: **`anthill scan`** reports the **workspace layout**
+(`apps/*`, `packages/*`, or a `workspaces` manifest field) and each surface's sniffed stack as a
+structured payload; the skill reads that payload and surfaces its **reading of the repo's seams** as
+**2–3 candidate seatings**, each fold/split annotated with one clause of _why_ (seam strength). These are presented as **the start of a conversation, not a menu** —
 the agent leads with a concrete recommendation _and_ explicitly invites the human to correct the
 reading or add context (see "How the human experiences it"):
 
@@ -111,7 +112,12 @@ your team?", that conversation stays short.
 **In Scope (MVP):**
 
 - `templates/archetypes/multi-surface.json` (the by-surface seating primitive).
-- Bootstrap discovery upgrade: detect workspace layout + sniff stacks; emit 2–3 annotated candidate
+- **`anthill scan`** — a deterministic detection helper that reports surfaces / packages / stacks as a
+  structured `{ok, data}` payload, so bootstrap ratifies a machine reading instead of eyeballing the
+  layout. _(Pulled forward from Future during the 2026-07-05 plan phase: it is the natural
+  forager↔weaver seam that makes this a genuine multi-seat build — and a deterministic reading makes
+  the candidate seatings trustworthy from day one. See the [plan](./plan.md).)_
+- Bootstrap discovery upgrade: consume the `anthill scan` payload; emit 2–3 annotated candidate
   seatings with a recommended default; encode the fold-vs-split heuristic.
 - The spanning-warning on the layered candidate for multi-surface repos.
 - Themed-naming offer (a small built-in set + free-form).
@@ -119,8 +125,6 @@ your team?", that conversation stays short.
 
 **Out of Scope (at least initially):**
 
-- A deterministic detection **CLI engine** (e.g. `anthill scan`). The bootstrap agent already explores
-  the repo; MVP keeps detection agent-driven, matching how layered-app works today. (See Future.)
 - Auto-selecting a seating without human ratification — candidates are always hypotheses.
 - Archetypes beyond layered + multi-surface; exotic monorepo layouts (non-`apps/*`/`packages/*`).
 - Grounding-doc detection as _new_ work — it already landed in the bootstrap skill (the anchor-probe
@@ -128,9 +132,6 @@ your team?", that conversation stays short.
 
 **Future Considerations:**
 
-- **`anthill scan`** — a deterministic detection helper that reports surfaces/packages/stacks as a
-  structured `{ok,data}` payload, so the agent ratifies a machine reading instead of eyeballing. The
-  natural phase-2 slice once the skill-driven version proves the seatings are right.
 - More archetypes (CLI tool, library, service-mesh) as field patterns emerge.
 - Seatings informed by finalize's structure-reflection data (learned fold/split boundaries).
 
@@ -180,8 +181,9 @@ to invite correction — is a design problem, not a coding one.
   lead with a concrete recommendation and drive toward convergence — how is that balance encoded in the
   bootstrap prose (e.g. "recommend one, name the alternatives in a line each, ask one open question,
   then converge")? This is the piece to nail when the plan is authored.
-- **`anthill scan` — MVP or defer?** Recommendation: defer (agent-driven detection first), but worth a
-  gut-check — a deterministic reading might make the seatings more trustworthy from day one.
+- **`anthill scan` — MVP or defer? Resolved (Cole, 2026-07-05): MVP.** Pulled forward so the build has
+  a real forager↔weaver seam to ratify (the dogfood needs two owners) and the seatings rest on a
+  deterministic reading from day one. The [plan](./plan.md) owns the payload contract.
 - **Stack-sniffing depth:** package.json deps only, or also framework config files / file-extension
   census? How much signal is enough to name a surface's stack confidently?
 - **Themed naming:** ship a small fixed set of themes, or generate a theme on the fly from the repo's

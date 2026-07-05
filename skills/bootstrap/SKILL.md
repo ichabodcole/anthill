@@ -9,9 +9,10 @@ Install the anthill **team-OS** into this project: a `.anthill/config.json` (the
 reads) + a rendered `.anthill/` living-docs scaffold. This is the **one-time setup**; once it's done,
 `anthill:convene` / `anthill:join` / `anthill:finalize-session` run the actual sessions.
 
-**Slice-1 scope (thin):** instantiate the **layered-app** archetype and tailor it with the human.
-Full principles-driven discovery (deriving seats from the repo's real architecture) is a later slice —
-for now, propose-from-the-archetype and let the human ratify.
+**Scope:** read the repo's shape from a deterministic scan, propose the nearest archetype as **candidate
+seatings**, and let the human ratify. Single-surface repos get **layered-app**; a workspace of several
+apps + shared packages gets **multi-surface** (a seat per surface + the shared-contract seat). The
+archetype is a starting hypothesis, not a gate — the human always ratifies, corrects, or hand-tailors.
 
 > **The anthill CLI** — driven from the plugin (nothing installed in the target repo):
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below
@@ -58,23 +59,105 @@ write a half-working config.
   candidates (`AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/PROJECT-SUMMARY.md`, `docs/PROJECT_MANIFESTO.md`)
   and read the ones that are **actually present** to understand what this project is. The archetype's
   default `grounding: [AGENTS.md, README.md]` is only a guess — on a repo with no `AGENTS.md` it would
-  emit a dangling reference, so set `grounding` to the anchors you actually found (next steps).
-- **Confirm it's a layered app** (an engine/logic layer → a wire/state layer → a UI/surface layer, with
-  integration to verify). If it clearly isn't, say so and offer to proceed with a hand-tailored roster
-  anyway (the archetype is a starting point, not a gate).
+  emit a dangling reference, so set `grounding` to the anchors you actually found (step 3).
+- **Read the repo's shape deterministically:** run **`anthill scan`** and read the `ScanReport` it emits
+  (`{ ok, data }` — the `data` is the report). This is the machine reading you'll ratify with the human,
+  replacing eyeballing the layout. What matters:
+  - **`data.workspace`** — `null` ⇒ **single-surface** repo (one app); non-`null` ⇒ a **multi-surface**
+    workspace (several apps + shared packages). This one boolean picks the archetype.
+  - **`data.units[]`** — each workspace member: `name`, `path`, `kind` (`"app"`|`"package"` — a
+    best-effort hint you may overrule), `stack` (dep-derived, **dominant-first**, so `stack[0]` is the
+    unit's primary framework), `private`, and `internalDeps` (names of other units it depends on — the
+    edges).
+
+#### 2a. Single-surface (`data.workspace === null`) — layered-app, unchanged
+
 - **Load the draft:** read `${CLAUDE_PLUGIN_ROOT}/templates/archetypes/layered-app.json`. It seeds: a
   lead + engine / spine / surface seats + a verify seat (verifier `spawn:true`), with a `CHANGE-ME`
   channel placeholder and the default `grounding` / `paths` / `launch`.
 - **Lightly tailor** the seat scopes to what you actually saw (e.g. point the surface seat at the repo's
-  real components dir, the engine seat at its core package). Keep handles generic unless the human has
-  names in mind — they ratify next.
+  real components dir, the engine seat at its core package). The one unit's `stack[0]` names the
+  surface's stack — use it to make the surface-seat scope concrete. Keep handles generic unless the
+  human has names in mind — they ratify next.
+- Skip 2b entirely; go to step 3.
+
+#### 2b. Multi-surface (`data.workspace !== null`) — offer candidate seatings
+
+A workspace of several apps + shared packages has **vertical** seams (one seat per surface + the shared
+contract), not the horizontal layers `layered-app` assumes. Read the `ScanReport`, derive three facts,
+then open a conversation with **2–3 candidate seatings** — a recommendation the human steers, **not a
+pick-one form**.
+
+**Derive from the payload:**
+
+- **Surfaces** = the app-like units (`kind:"app"`; overrule a mislabel using `private` + a framework in
+  `stack`). Each surface is a candidate `surface` seat.
+- **The shared-contract seat** = the `kind:"package"` unit with **fan-in ≥ 2** — i.e. **two or more
+  surfaces name it in their `internalDeps`**. A package with low/zero fan-in is config/tooling — **do
+  not seat it**. Without the edges, "the package both surfaces use" is a guess the moment a repo has
+  more than one package, so drive this off `internalDeps`, not off the package's name.
+- **Seam strength — fold vs split** = **`stack[0]` equality** across surfaces (compare the _primary_
+  framework, not stack overlap — `[next,react]` and `[expo,react-native,react]` share `react` but are
+  **different** surfaces). Distinct `stack[0]` ⇒ **strong seam ⇒ split** (a seat each). Shared
+  `stack[0]` ⇒ **weak seam ⇒ fold** (one merged seat).
+
+**Guard — one real surface ⇒ treat as single-surface.** If the derive leaves only **one** `kind:"app"`
+surface (everything else is a package / tooling with low fan-in), this workspace is effectively
+single-surface — a workspace layout doesn't by itself make a multi-surface team. Don't force the
+candidates below; fall back to **2a / `layered-app`**, tailoring the surface seat to that one unit's
+`stack[0]`.
+
+**The three candidates** (load `${CLAUDE_PLUGIN_ROOT}/templates/archetypes/multi-surface.json` for
+candidate A's shape — it seeds lead + per-surface seats + the shared-contract `engine` seat + verify;
+fan the `surface` seats out to match the real surface count):
+
+- **A — vertical / by-surface:** lead + one `surface` seat per surface + the shared-contract seat +
+  verify. _Why: the package/app boundary is a stable contract two people can work against
+  semi-independently._ **Recommend A when surfaces have distinct `stack[0]`.**
+- **B — layered** (the `layered-app` archetype): engine / spine / surface. Offer it **with the
+  spanning-warning** — flag that a single `surface` seat would span surfaces whose `stack[0]` differ
+  (e.g. Vue + React Native in one seat), unrelated expertise tracks one seat can't hold well. _Why:
+  fine for one app; risky here._
+- **C — lean / merged:** the surfaces folded into one `app` seat + the shared-contract seat. _Why: if
+  the surfaces **share** `stack[0]` (one shell/stack) or the team is small, the seam is weak — fold._
+  **Recommend C when surfaces share `stack[0]`.**
+
+**Present it as a conversation-opener, not a menu.** Structure the message to converge:
+
+1. **State the reading** — "Here's how I'm reading your repo: a multi-surface workspace — _\<surface>_
+   (\<stack[0]>) + _\<surface>_ (\<stack[0]>) + a shared _\<package>_ both depend on."
+2. **Recommend one, with one clause of _why_** — lead with A (or C, per the seam-strength rule above).
+3. **Name the alternates in a line each** — including B's spanning-warning if the surfaces' `stack[0]`
+   differ.
+4. **Ask exactly one open question** — "Does that match how you think about this codebase — and what am
+   I missing?" — inviting the human to confirm, redirect, or feed in what detection can't see (a
+   deprecation in flight, a design-system package that's the _real_ seam, a "surface" that's actually
+   two).
+5. **Then converge** on one seating. The human reacts to a concrete reading rather than authoring from
+   scratch — that's what keeps this a one-pass ratify, not an open-ended "how do you want your team?".
+
+Weave those five beats into **natural prose**, not five labeled sections — the numbering is your
+checklist, not the human's. One worded opener to copy the register from:
+
+> _"You've got a Nuxt web app and an Expo mobile app sitting over a shared client SDK. I'd put one
+> owner on each surface plus a keeper for the SDK, since that package/app boundary is the stable
+> contract they'll meet at. I could also fold the two apps into one seat if you think of them as one
+> stack — or add a layer split if that's closer. Does that match how you hold this repo, and what am I
+> missing?"_
+
+**Themed naming (optional, offer once the shape is agreed).** Handles are free-form; offer a naming
+theme mapped onto the roles from a small fixed set (e.g. Arthurian, craft/optics, celestial) **or**
+free-form, and let the human decline (generic `surface` / `shared` / `verify` handles are fine). It
+reinforces the durable-seats-as-characters model, but it's a nicety — never block ratify on it.
 
 ### 3. Ratify with the human
 
-Present the proposed roster (handles · roles · scopes) and confirm — one focused round:
+For **single-surface** repos (2a) present the proposed roster (handles · roles · scopes) and confirm —
+one focused round. For **multi-surface** repos (2b) the candidate-seating conversation _is_ this round:
+once the human has steered you to one seating, treat it as the ratified roster and continue below.
 
 - **Seats:** rename / merge / split / re-scope, or drop a seat that doesn't fit. (e.g. no separate
-  engine layer → fold it into spine.)
+  engine layer → fold it into spine; or fold two same-stack surfaces into one `app` seat.)
 - **Channel:** replace `CHANGE-ME` with the team's grapevine channel name (default tmux session name
   too) — usually the project's short name.
 - **grounding / paths:** set `grounding` to the anchors you actually detected (step 2) — **drop any

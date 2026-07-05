@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "channel": "CHANGE-ME",
+  "lead": "maestro",
+  "seats": [
+    {
+      "handle": "maestro",
+      "role": "lead",
+      "scope": "orchestration, the file-scoped atomic land across surfaces, human liaison",
+      "spawn": false
+    },
+    {
+      "handle": "surface-a",
+      "role": "surface",
+      "scope": "the first app surface (rename per surface — e.g. the web app); owns its stack end-to-end",
+      "spawn": true
+    },
+    {
+      "handle": "surface-b",
+      "role": "surface",
+      "scope": "the second app surface (rename per surface — e.g. the mobile app); owns its stack end-to-end",
+      "spawn": true
+    },
+    {
+      "handle": "shared",
+      "role": "engine",
+      "scope": "the shared package both surfaces depend on — the contract seam between surfaces",
+      "spawn": true
+    },
+    {
+      "handle": "verify",
+      "role": "verify",
+      "scope": "integration across surfaces against the shared contract — drives the assembled surfaces",
+      "spawn": true
+    }
+  ],
+  "grounding": ["AGENTS.md", "README.md"],
+  "launch": "claude \"/anthill:join {handle}\""
+}
