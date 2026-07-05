@@ -43,6 +43,36 @@ in-repo — file it upstream and note the workaround here.
 
 ---
 
+## 2026-07-05 — multi-surface dogfood (maestro + forager/weaver/sentinel)
+
+### Tier 2 — recurring low tax
+
+1. **Grapevine daemon/CLI version skew** _(maestro; every `grapevine send` this session)._ The running
+   daemon (v1.14.0) lagged the CLI (v1.15.0), printing `daemon version differs from CLI version — some
+   features may silently degrade` on every send. Non-blocking here, but "silently degrade" is exactly
+   the kind of warning that hides a real bug later.
+   - **Fix:** upstream — lives in the **spellbook** grapevine, not this repo. The remedy is a
+     `grapevine roll` (stop + respawn + version-verify) on the operator's box; file/track upstream if it
+     recurs. Not ours to fix in-repo.
+   - **Workaround now:** ignore for correctness (sends succeed); run `grapevine roll` to align if a
+     feature actually misbehaves.
+
+2. **Prettier `-`/`+` wrapped-line reparse in `docs/`** _(weaver; writing bootstrap + plan prose)._ A
+   hard-wrapped prose line whose continuation begins with `-` or `+` gets reparsed by prettier as a
+   list bullet, mangling the trail. The SOP already says "one sentence per line" — this is the specific
+   failure mode that rule prevents.
+   - **Fix:** none needed (behavior is prettier's); it's a **discipline**, already in the SOP. Worth a
+     one-line callout in the docs-writing guidance so a new seat meets it before it bites.
+   - **Workaround now:** one sentence per line; never start a continuation line with a list marker.
+
+### Disposition (maestro) — 2026-07-05
+
+- ◻ **#1** — filed upstream (spellbook grapevine); operator-box `grapevine roll` is the remedy. Tracked.
+- ✅ **#2** — no code fix; discipline already in the SOP ("one sentence per line"). Both weaver + the
+  lead hit and avoided it this session; captured so it stays known.
+
+---
+
 ## <date> — <session label>
 
 _(append entries below as you hit friction; triage at finalize. Suggested shape:)_

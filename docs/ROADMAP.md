@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-04
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-05
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -32,17 +32,21 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Next
 
-3. **Multi-surface archetype + candidate seatings** — **proposal drafted**
-   ([proposal](projects/multi-surface-archetype/proposal.md) ·
-   [v0.2 feature 5](briefs/2026-06-30-anthill-v0.2-next-release.md)). The headline field fix from
-   media-buffet: a by-surface archetype + bootstrap that offers candidate seatings as a
-   conversation-opener (its visible reading of the repo's seams), ratify-not-reconstruct. Next: plan
-   (a strong #4 dogfood candidate).
-4. **First instrumented dogfood session** — build one of the above **with the convened anthill
-   team**: trace one decision vine→card→doc→code, baseline seat-doc token counts, run the
-   cold-read check. _Why here: it exercises `anthill:plan` for real and generates the empirical
-   data every memory upgrade below depends on
-   ([report rec 1](reports/2026-07-02-conceptual-implementation-review-report.md))._
+3. ✅ **Multi-surface archetype + candidate seatings** — **SHIPPED** 2026-07-05 (`de3aa58`, on
+   `feat/multi-surface-archetype`; awaiting human sign-off → `develop`). A by-surface archetype +
+   `anthill scan` (deterministic workspace detector) + bootstrap candidate seatings as a
+   conversation-opener, ratify-not-reconstruct. `anthill scan` was pulled into the MVP to give the
+   dogfood a real forager↔weaver seam. Validated on media-buffet (the origin repo): candidate A emerges
+   correctly, the shared SDK identified by dependency fan-in.
+   [proposal](projects/multi-surface-archetype/proposal.md) ·
+   [plan](projects/multi-surface-archetype/plan.md) ·
+   [session](projects/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md).
+4. ✅ **First instrumented dogfood session** — **SHIPPED** 2026-07-05. #3 above **was** the first real
+   `anthill:plan` run with the convened team (seats as subagents over a live vine + board). The ratify
+   gate caught **two load-bearing seam errors at zero rework cost** — the empirical data point the
+   memory work (#8–#10) is gated on. Trail is traceable end-to-end (vine #2→#5, board, `seams.md`
+   Contract 1, `de3aa58`); the four seat docs went scaffold-empty → first real content.
+   [session](projects/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md).
 5. ✅ **Ritual checklists baked into the lifecycle skills** — **SHIPPED** 2026-07-04 (`ead9e66`).
    The skills now **emit** skip-resistant checklists: `convene` (lead setup), `join` (member), and a
    `finalize-session` teardown checklist carrying the previously-missing **human sign-off gate before
