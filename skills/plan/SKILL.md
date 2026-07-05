@@ -69,7 +69,9 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
    **ratified** seams (the lane-authoring craft is in `methodology.md` — grounded paths, right-sized
    TDD tasks, no placeholders, self-review against the seams), then builds. Orchestrate per the SOP
    (vine = substance, board = state, file-scoped atomic land); at wrap, run
-   **`anthill:finalize-session`**. Verify → land → finalize are unchanged.
+   **`anthill:finalize-session`**. Verify → land → finalize are unchanged. _(Subagent build seats: bake
+   the finalize-capture into each build brief per `anthill:convene` — the seat self-synthesizes into
+   its seat doc as the final step of its task; mechanism in `anthill:finalize-session` step 0.)_
 
 ## Output
 

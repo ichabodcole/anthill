@@ -75,6 +75,10 @@ stay solo.
      directly** (dispatch → result); there are **no tails to wire** (a one-shot subagent can't hold a
      Monitor tail — that's the terminal-seat path). The seat still grounds via `anthill:join`, but
      skips the tail wiring. Good for a small single-session build.
+     - **Bake the finalize-capture into every subagent brief** — the one thing to remember when
+       dispatching seats. Make it the **final step of the task itself**: self-synthesize into your own
+       seat doc, **return** (don't write) any `seams.md` candidate, don't commit. The full spec — the
+       three-part split + the lead's residual pass — lives in `anthill:finalize-session` step 0.
 
 5. **Orchestrate** from here, per the SOP: the **vine** is discussion, the **board** is state; route the
    human's decisions through you; you own the **file-scoped atomic land** (`anthill commit -- <paths>`,

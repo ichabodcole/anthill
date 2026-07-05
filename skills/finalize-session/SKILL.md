@@ -19,13 +19,30 @@ _live_. Don't skip it on a real session.
 
 ### Kickoff — the lead triggers the ritual
 
-0. **Broadcast the start on the vine.** The seats are in **separate panes** (or subagents) — nothing
-   makes them synthesize unless told. The lead posts on the channel: _"Finalizing — every seat run your
+0. **Broadcast the start on the vine.** The seats are in **separate panes** — nothing makes them
+   synthesize unless told. The lead posts on the channel: _"Finalizing — every seat run your
    `anthill:finalize-session` synthesis (steps 1–2) now and confirm on the vine when your seat doc is
    landed."_ Then the lead **gathers confirmations** and does not proceed to land + teardown (step 5)
    until **every present seat has confirmed** — knowledge capture is the whole point, and a torn-down
-   pane can't synthesize. (In subagent mode, the lead invokes each seat's synthesis directly instead of
-   broadcasting.)
+   pane can't synthesize.
+
+   **Subagent-mode finalize (bake the capture into the task, don't chase it after).** A one-shot
+   `Task`/`Agent` subagent isn't on the vine waiting to be told to finalize. You _can_ resume it
+   (retain its id, `SendMessage` it back with context) — but that means holding every seat's id and
+   firing a second round at teardown, and a resumed agent may not outlive the session. Far simpler and
+   warmer: **the seat self-captures as the FINAL step of its own work task**, while its context is
+   freshest (bake this into the dispatch brief — see `anthill:convene`). That final step:
+   - **Writes durable lessons into its own seat doc** (`dev/<handle>.md`) directly — seat docs are
+     per-handle, so parallel seats never collide there.
+   - **Returns** (does not write) any `seams.md` boundary-truth candidate + a short synthesis summary —
+     `seams.md` is shared/single-owner, so the **lead** single-sources it from the returns.
+   - **Does not commit** — the lead lands the seat-doc changes atomically with the rest.
+
+   The lead's residual finalize then shrinks to what is inherently whole-session: the `seams.md` pass
+   (step 3), the structure reflection (step 4), and **folding in late, verification-driven lessons** a
+   seat couldn't have known when it finished — **the lead attributes these into the seat's doc
+   directly** (robust; the subagent has already returned), or `SendMessage`s the seat to append in its
+   own voice _only if it's still resumable_. Then land + teardown.
 
 ### Per seat — each agent does this for its own doc
 
@@ -77,7 +94,8 @@ _live_. Don't skip it on a real session.
 5. **Stand the team down — the closing checklist.** End-of-session "we're done" momentum is exactly
    when these get skipped, so run them as a list, in order:
    - ◻ **Every seat confirmed** its finalize on the vine (step 0). Knowledge capture is the whole
-     point; a torn-down pane can't synthesize.
+     point; a torn-down pane can't synthesize. _(Subagent mode: the seats' returned in-task syntheses
+     **are** the confirmation — no vine gate; the seat docs are already written.)_
    - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit -m "<msg>" <paths…>`**
      (never `git add -A`).
    - ◻ **Board settled** (cards → review/done).
