@@ -2,9 +2,8 @@
   "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
   "files": {
     "includes": [
-      "scripts/**/*.ts",
-      "scripts/**/*.json",
-      "templates/**/*.json",
+      "plugin/**/*.ts",
+      "plugin/**/*.json",
       ".claude-plugin/**/*.json",
       "*.ts",
       "*.json",

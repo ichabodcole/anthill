@@ -11,7 +11,11 @@
   "plugins": [
     {
       "name": "anthill",
-      "source": ".",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/ichabodcole/anthill.git",
+        "path": "plugin"
+      },
       "category": "development",
       "tags": [
         "team",
