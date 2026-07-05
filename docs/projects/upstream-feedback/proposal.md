@@ -61,6 +61,14 @@ is the forager↔weaver seam** the skill prose references — a natural second `
 - **Privacy: only the human-reviewed message carries project detail.** Auto-gathered context is limited
   to non-sensitive environment facts; the command never auto-includes the consumer repo's name, paths,
   or code.
+- **No feedback is lost — the send degrades, it never drops.** If `gh` fails (missing, unauthed,
+  offline), the command still returns the composed issue + a working prefilled URL + an actionable "this
+  needs a manual route" note. The tooling failing is _itself_ feedback-worthy; losing the report because
+  the reporter broke is the one outcome to design out.
+- **System provenance is machine-recognizable.** Every issue submitted through the command is
+  auto-tagged with a provenance label the agent does not choose — so feedback filed _via this pipe_ is
+  trivially distinguishable from an ordinary hand-filed GitHub issue (and a future `--list` can pull
+  exactly the system-originated set).
 
 ### 1. The `anthill feedback` CLI command
 
@@ -76,9 +84,12 @@ anthill feedback "<message>" [--category bug|friction|idea|docs] [--skill <name>
 - **Default (no `--submit`)** — composes an issue and **emits it, sending nothing**. Envelope:
   `{ok, data: {title, body, repo: "ichabodcole/anthill", submitCmd, issueUrl}}`. Safe to call to
   think-out-loud or to hand a draft up to the lead.
-- **`--submit`** — runs `gh issue create --repo ichabodcole/anthill --title … --body …`. If `gh` is
-  missing or unauthenticated, it **falls back gracefully**: emits the prefilled `issueUrl` +
-  `body` with a `warnings` entry and exits `ok` (never throws — house guard convention).
+- **`--submit`** — runs `gh issue create --repo ichabodcole/anthill --title … --body … --label
+anthill-feedback`. The **`anthill-feedback` provenance label is always applied by the command**, not
+  chosen by the agent — it marks the issue as system-originated. On any failure (`gh` missing, unauthed,
+  offline, API error) it **degrades without losing the report**: emits the prefilled `issueUrl`, the
+  full `body`, and an actionable "tooling failed → file this manually / hand to the lead / surface to the
+  human" note in `warnings`, exiting `ok` (never throws — house guard convention).
 - **The `--submit` gate is load-bearing.** A bare `anthill feedback "…"` _cannot_ send by construction,
   which is what lets a seat compose freely and route the draft to the lead without risk of an
   unintended issue.
@@ -111,11 +122,17 @@ feedback`, so every project benefits. On a team, surface it to the lead — don'
 
 ### 3. Triage in the anthill repo
 
-- A **`.github/ISSUE_TEMPLATE/anthill-feedback.md`** (or issue form) shaped for _all four_ categories —
-  a "what / why + which category" body, not a bug-report form — so the generative framing lands at the
-  receiving end too. `--submit` bodies match it, and manual filers use the same shape.
-- A **`feedback`** label. Feedback issues become a **convene-time triage input** — the lead reads them at
-  the roadmap gather-the-work step and they flow into the roadmap / backlog / paper-cuts like any input.
+- A **`.github/ISSUE_TEMPLATE/anthill-feedback.md`** (markdown, not an issue form — agent-ergonomic)
+  shaped for _all four_ categories — a "what / why + which category" body, not a bug-report form — so the
+  generative framing lands at the receiving end too. `--submit` bodies match it, and manual filers use
+  the same shape.
+- The **`anthill-feedback` provenance label** must exist in the repo (a one-time setup — `gh issue
+create --label` requires the label to pre-exist). The command always applies it; category rides the
+  title prefix (`[feedback/<category>]`), so one label covers provenance and the title covers kind — no
+  per-category labels needed for the MVP.
+- Feedback issues become a **convene-time triage input** — the lead reads them (filtered by the
+  provenance label) at the roadmap gather-the-work step, and they flow into the roadmap / backlog /
+  paper-cuts like any input.
 
 ## Scope
 
@@ -125,8 +142,9 @@ feedback`, so every project benefits. On a team, surface it to the lead — don'
   categories + title prefix), registered and tested.
 - The touchpoint reframe: single-source framing (help + SOP), the six skill pointers, the paper-cuts
   disposition, the finalize lead step.
-- `.github` issue template + `feedback` label.
-- Privacy line: never auto-include repo content.
+- `.github` markdown issue template + the auto-applied **`anthill-feedback` provenance label** (created
+  once in the repo).
+- Privacy line: never auto-include repo content; and the "no feedback is lost" degraded-send path.
 
 **Out of scope (at least initially):**
 
@@ -141,8 +159,10 @@ feedback`, so every project benefits. On a team, surface it to the lead — don'
 
 **Future considerations:**
 
-- `anthill feedback --list` of locally-pending candidates to help the lead's dedupe pass, if teams get
-  large enough that in-head aggregation strains.
+- `anthill feedback --list` — filtering the repo's issues by the `anthill-feedback` provenance label to
+  show the system-originated set (and/or locally-pending candidates to help the lead's dedupe pass, if
+  teams get large enough that in-head aggregation strains). The provenance label is what makes this
+  clean.
 - A same-machine grapevine `anthill-feedback` channel for the dreamwood ecosystem.
 
 ## Technical Approach
@@ -152,8 +172,9 @@ category, skill, version, platform, bunVersion})` → the markdown body; `feedba
 message)` → the prefixed title; `buildIssueUrl(repo, title, body)` → the prefilled
   `…/issues/new?title=…&body=…` URL. All pure, golden-testable.
 - **The command** is a thin `defineAnthillCommand` wrapper: gather env → call the pure composers → on
-  `--submit`, shell out to `gh` (detect availability first; on failure, emit the URL + `warnings` and
-  exit ok) → `emit` the envelope. Guards emit, never throw, in JSON mode.
+  `--submit`, **attempt** `gh issue create … --label anthill-feedback` and **catch** (no pre-check); on
+  any failure, emit the URL + full body + manual-route note in `warnings` and exit ok → `emit` the
+  envelope. Guards emit, never throw, in JSON mode.
 - **Version/env** reuse whatever `info-env` / the version resolver already expose (the CLI already prints
   its version in `--help`).
 - **No config change**, no coordination-layer (grapevine/bounty/tmux) change.
@@ -175,26 +196,36 @@ corrective-only touchpoints were suppressing.
 - _Leaking project detail upstream._ Mitigation: only the human-reviewed message carries project detail;
   auto-context is non-sensitive env only; the human sees the exact body before `--submit`.
 - _Duplicate issues from a team._ Mitigation: route through the lead; dedupe on the vine + at finalize.
-- _`gh` unavailable / unauthed._ Mitigation: graceful fallback to a prefilled URL + body; the feature
-  degrades to "the issue is pre-written for you," never errors.
+- _`gh` unavailable / unauthed / offline._ Mitigation: attempt-and-catch; the send degrades to a
+  prefilled URL + body + an actionable "file this manually" note, never errors and never drops the
+  report (the "no feedback is lost" principle).
 
 **Complexity:** **Low–Medium** — a small command + pure composers, and a set of surgical prose reframes.
 The subtle part is the framing voice (generative + audience-explicit + lead-routing), not the code.
 
-## Open Questions
+## Resolved decisions (from the 2026-07-05 brainstorm)
 
-- **`gh` detection depth:** check `gh auth status`, or just attempt and catch? (Lean: attempt-and-catch,
-  fall back on any failure — simplest and covers all failure modes.)
-- **Issue template form vs. markdown:** a GitHub _issue form_ (structured fields) makes the category a
-  dropdown but is more machinery; a markdown template is simpler. (Lean: markdown template MVP.)
-- **Should `--category` be required or inferred?** (Lean: optional, default `friction`; the agent/lead
-  usually knows the category from context.)
+- **`gh` handling — attempt-and-catch (resolved).** Don't pre-check `gh auth status`; just attempt
+  `gh issue create` and catch. **The failure path must not lose the feedback:** on any failure the
+  command returns the composed feedback plus an actionable fallback — the prefilled `issueUrl`, the full
+  `body`, and a clear note that _the tooling failed, so this needs a manual route_ (open the URL, or the
+  lead files it, or it goes into a report / to the human). Exit `ok` with `warnings`, never a bare
+  error. See the "no feedback is lost" principle.
+- **Issue template — markdown, on agent-ergonomic grounds (resolved).** This is an agent-ergonomics
+  question, not an aesthetic one: whatever is easiest for an agent to `--submit` against wins. A GitHub
+  _issue form_ imposes structured required fields the agent must satisfy exactly; a **markdown template**
+  is a free-form body the composer fills — lower friction for programmatic submission. Markdown template
+  for the MVP.
+- **`--category` — optional, but surfaced (resolved).** Not mandatory (default `friction`), but **the
+  help text and skill pointers explicitly note it's an available field** so an agent supplies it when it
+  can — most will if they know it exists. Optional-with-a-visible-affordance, not required.
 
 ## Success Criteria
 
 - From a consuming repo, `anthill feedback "<msg>" --category idea` composes a correct, generatively-framed
-  issue and, on `--submit` with `gh` available, files it to `ichabodcole/anthill`; without `gh`, prints a
-  working prefilled URL. A bare call (no `--submit`) files nothing.
+  issue and, on `--submit` with `gh` available, files it to `ichabodcole/anthill` **carrying the
+  `anthill-feedback` provenance label**; without `gh`, it returns a working prefilled URL + body + a
+  "file manually" note and **loses nothing**. A bare call (no `--submit`) files nothing.
 - A fresh agent reading any lifecycle skill can tell **anthill-upstream** feedback from **team-local**,
   knows ideas are welcome (not just bugs), and knows to **route through the lead** on a team.
 - The anthill repo receives feedback as labeled, template-shaped issues that triage into the roadmap at
