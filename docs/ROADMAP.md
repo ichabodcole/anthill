@@ -32,8 +32,12 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Next
 
-3. **Multi-surface archetype + candidate seatings** — [v0.2 feature 5](briefs/2026-06-30-anthill-v0.2-next-release.md)
-   (the headline field fix from media-buffet; visible seam-decisions, ratify-not-reconstruct).
+3. **Multi-surface archetype + candidate seatings** — **proposal drafted**
+   ([proposal](projects/multi-surface-archetype/proposal.md) ·
+   [v0.2 feature 5](briefs/2026-06-30-anthill-v0.2-next-release.md)). The headline field fix from
+   media-buffet: a by-surface archetype + bootstrap that offers candidate seatings as a
+   conversation-opener (its visible reading of the repo's seams), ratify-not-reconstruct. Next: plan
+   (a strong #4 dogfood candidate).
 4. **First instrumented dogfood session** — build one of the above **with the convened anthill
    team**: trace one decision vine→card→doc→code, baseline seat-doc token counts, run the
    cold-read check. _Why here: it exercises `anthill:plan` for real and generates the empirical
