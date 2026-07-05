@@ -118,7 +118,7 @@ export const teamSpawnCommand = defineAnthillCommand({
     const format = resolveFormat(ctx.args.format);
     const config = requireConfig(format, "spawn");
 
-    // citty collects trailing/unmatched positionals into `ctx.args._`.
+    // The runner collects trailing/unmatched positionals into `ctx.args._`.
     const requested = ((ctx.args._ as string[] | undefined) ?? []).map(String);
     const resolved = resolveSpawnHandles(requested, {
       roster: config.roster().map((s) => s.handle),

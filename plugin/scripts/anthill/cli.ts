@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+
 /**
  * anthill CLI — dual-audience entry point.
  *
@@ -10,15 +11,14 @@
  *
  * ---
  *
- * Wires the root citty command and installs interceptors for `help --json`
- * (machine manifest) and bare `<cli>` / `<cli> help` (grouped human help)
- * BEFORE citty's own dispatch.
+ * Wires the root command and installs interceptors for `help --json` (machine
+ * manifest), bare `<cli>` / `<cli> help` (grouped human help), `--version`, and
+ * `--help` (per-command usage) BEFORE the arg dispatcher.
  *
- * Gotcha: citty does NOT inherit root `args` into subcommands. Every subcommand
- * that wants `--format` must declare it locally.
+ * Gotcha: root `args` are NOT inherited into subcommands. Every subcommand that
+ * wants `--format` must declare it locally.
  */
 
-import { defineCommand, runMain } from "citty";
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
 import { teamCommitCommand } from "./commands/team-commit.ts";
@@ -30,10 +30,17 @@ import { teamMigrateCommand } from "./commands/team-migrate.ts";
 import { teamScanCommand } from "./commands/team-scan.ts";
 import { teamSpawnCommand } from "./commands/team-spawn.ts";
 import { teamStatusCommand } from "./commands/team-status.ts";
-import { renderGroupedHelp } from "./help-renderer.ts";
+import {
+  type AnyCommand,
+  CLIError,
+  defineCommand,
+  resolveSubCommand,
+  runCommand,
+} from "./define.ts";
+import { renderCommandUsage, renderGroupedHelp } from "./help-renderer.ts";
 import { buildManifest, type ScopeLabel } from "./manifest.ts";
 
-const main = defineCommand({
+const main: AnyCommand = defineCommand({
   meta: {
     name: "anthill",
     version: "1.2.0", // x-release-please-version
@@ -62,6 +69,7 @@ const main = defineCommand({
 });
 
 const argv = process.argv;
+const rawArgs = argv.slice(2);
 
 // Intercept `<cli> help --json` BEFORE the grouped-help interceptor. Ordering
 // matters: the bare-help check below also matches `argv[2] === "help"`, so if
@@ -74,9 +82,9 @@ if (argv[2] === "help" && argv.includes("--json")) {
 
 // Intercept bare `<cli>` and `<cli> help` for grouped human help.
 //
-// These interceptors bypass citty's own dispatch entirely, so any NEW root
-// flag you add later (e.g. `--verbose`) will not affect help output unless
-// you also parse it here.
+// These interceptors bypass arg dispatch entirely, so any NEW root flag you add
+// later (e.g. `--verbose`) will not affect help output unless you also parse it
+// here.
 if (argv.length === 2 || argv[2] === "help") {
   const i = argv.indexOf("--scope");
   const scope = i >= 0 ? (argv[i + 1] as ScopeLabel | undefined) : undefined;
@@ -84,4 +92,28 @@ if (argv.length === 2 || argv[2] === "help") {
   process.exit(0);
 }
 
-runMain(main);
+// `--version` / `-v` (root only, matching the old citty builtin).
+if (rawArgs.length === 1 && (rawArgs[0] === "--version" || rawArgs[0] === "-v")) {
+  process.stdout.write(`${main.meta?.version ?? ""}\n`);
+  process.exit(0);
+}
+
+// `--help` / `-h` anywhere → per-command usage for the resolved (sub)command.
+if (rawArgs.includes("--help") || rawArgs.includes("-h")) {
+  const [cmd, parent] = resolveSubCommand(main, rawArgs);
+  process.stdout.write(`${renderCommandUsage(cmd, parent)}\n`);
+  process.exit(0);
+}
+
+try {
+  await runCommand(main, rawArgs);
+} catch (err) {
+  if (err instanceof CLIError) {
+    const [cmd, parent] = resolveSubCommand(main, rawArgs);
+    process.stderr.write(`${renderCommandUsage(cmd, parent)}\n`);
+    process.stderr.write(`${err.message}\n`);
+  } else {
+    process.stderr.write(`${err instanceof Error ? (err.stack ?? err.message) : String(err)}\n`);
+  }
+  process.exit(1);
+}

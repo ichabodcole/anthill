@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { relative, resolve } from "node:path";
-import { defineCommand } from "citty";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { defineCommand } from "../define.ts";
 import { parseEnvFile } from "../env-file.ts";
 import { PROJECT_ROOT } from "../paths.ts";
 import { nowMillis } from "../runtime.ts";

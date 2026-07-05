@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { defineCommand } from "citty";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { defineCommand } from "../define.ts";
 import { PROJECT_PACKAGE_NAME, PROJECT_ROOT } from "../paths.ts";
 import { nowMillis } from "../runtime.ts";
 

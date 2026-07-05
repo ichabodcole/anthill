@@ -1,5 +1,5 @@
 /**
- * Walks the citty command tree and emits a JSON manifest. Agents call
+ * Walks the command tree and emits a JSON manifest. Agents call
  * `<cli> help --json` once per session to discover the surface instead of
  * scraping ANSI help text.
  *
@@ -13,13 +13,14 @@ import type { AnthillCommandScope } from "./define.ts";
 export type ScopeLabel = AnthillCommandScope;
 
 /**
- * Narrow, local shape for citty commands. citty doesn't export usable types
- * for arbitrary command definitions, so we do ONE boundary cast at the entry
- * (`root as CittyCommand`) and walk from there. Don't spread the cast inward.
+ * Narrow, local shape for walking arbitrary command definitions. We do ONE
+ * boundary cast at the entry (`root as WalkableCommand`) and walk from there;
+ * the `Resolvable` wrapper keeps the walker tolerant of lazy meta/subCommands.
+ * Don't spread the cast inward.
  */
 type Resolvable<T> = T | Promise<T> | (() => T | Promise<T>);
 
-interface CittyArg {
+interface WalkArg {
   type?: string;
   description?: string;
   default?: unknown;
@@ -28,17 +29,17 @@ interface CittyArg {
   required?: boolean;
 }
 
-interface CittyMeta {
+interface WalkMeta {
   name?: string;
   version?: string;
   description?: string;
   scope?: ScopeLabel;
 }
 
-interface CittyCommand {
-  meta?: Resolvable<CittyMeta>;
-  args?: Record<string, CittyArg>;
-  subCommands?: Record<string, Resolvable<CittyCommand>>;
+interface WalkableCommand {
+  meta?: Resolvable<WalkMeta>;
+  args?: Record<string, WalkArg>;
+  subCommands?: Record<string, Resolvable<WalkableCommand>>;
 }
 
 export interface ManifestFlag {
@@ -75,7 +76,7 @@ async function resolveValue<T>(v: Resolvable<T> | undefined): Promise<T | undefi
 
 async function buildCommandEntry(
   name: string,
-  cmd: CittyCommand,
+  cmd: WalkableCommand,
   path: string[],
   inheritedScope?: ScopeLabel,
 ): Promise<ManifestCommand> {
@@ -111,12 +112,12 @@ async function buildCommandEntry(
 }
 
 /**
- * Build a manifest from a citty root command. `root` is typed `unknown` because
- * citty's types aren't amenable to external walking — the cast happens here,
- * once.
+ * Build a manifest from a root command. `root` is typed `unknown` because the
+ * concrete command types aren't amenable to external walking — the cast happens
+ * here, once.
  */
 export async function buildManifest(root: unknown): Promise<Manifest> {
-  const rootCmd = root as CittyCommand;
+  const rootCmd = root as WalkableCommand;
   const meta = (await resolveValue(rootCmd.meta)) ?? {};
   const commands: ManifestCommand[] = [];
   for (const [name, sub] of Object.entries(rootCmd.subCommands ?? {})) {
