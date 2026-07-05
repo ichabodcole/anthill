@@ -72,8 +72,9 @@ is the forager↔weaver seam** the skill prose references — a natural second `
 
 ### 1. The `anthill feedback` CLI command
 
-`scripts/anthill/commands/team-feedback.ts` (matches the `team-*.ts` sibling naming), registered in
-`cli.ts`, emitting through the existing `agent-layer` `{ok, data, meta}` envelope.
+`plugin/scripts/anthill/commands/team-feedback.ts` (matches the `team-*.ts` sibling naming), registered
+in `plugin/scripts/anthill/cli.ts`, emitting through the existing `agent-layer` `{ok, data, meta}`
+envelope.
 
 Surface:
 
@@ -107,7 +108,7 @@ and the message is human-reviewed before send.
 ### 2. The touchpoint reframe (the adoption half — the actual gap)
 
 - **Single-source the "two audiences + generative" framing** in `anthill feedback --help` and one line
-  in the SOP seed (`templates/docs-team/README.md`): _friction or ideas about **your project/team** →
+  in the SOP seed (`plugin/templates/docs-team/README.md`): _friction or ideas about **your project/team** →
   your finalize / `paper-cuts.md`; a bug, rough edge, **or idea about anthill itself** → `anthill
 feedback`, so every project benefits. On a team, surface it to the lead — don't `--submit` yourself;
   the lead dedupes and sends. Solo? You're the lead — compose, confirm with the human, submit._
@@ -237,4 +238,4 @@ The subtle part is the framing voice (generative + audience-explicit + lead-rout
 **Related Documents:**
 
 - [ROADMAP](../../ROADMAP.md)
-- [paper-cuts seed](../../../templates/docs-team/paper-cuts.md)
+- [paper-cuts seed](../../../plugin/templates/docs-team/paper-cuts.md)
