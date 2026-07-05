@@ -17,4 +17,4 @@ isn't agent-actionable — `only-include-non-discoverable-information`).
 The friendlier fallback reaches real installs on the next `develop → main` release (the cache
 predates it). Deferred: lead-facing vine/board wrapper verbs; option-2 external-source-of-truth.
 
-**Docs:** [anthill-cli-launcher project](../projects/anthill-cli-launcher/) · [session](../projects/anthill-cli-launcher/sessions/2026-07-04-cli-launcher-build.md)
+**Docs:** [anthill-cli-launcher project](../projects/_archive/anthill-cli-launcher/) · [session](../projects/_archive/anthill-cli-launcher/sessions/2026-07-04-cli-launcher-build.md) _(archived)_

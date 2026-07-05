@@ -25,8 +25,8 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
    `bun add -g github:ichabodcole/anthill-cli`) that resolves the highest-semver plugin cache and
    delegates to _its_ `cli.ts` — one copy of CLI logic, zero skew. Plugin-side: `anthill attach
 --session` + a friendly no-project fallback; consent-gated bootstrap mention.
-   [proposal](projects/anthill-cli-launcher/proposal.md) · [plan](projects/anthill-cli-launcher/plan.md) ·
-   [session](projects/anthill-cli-launcher/sessions/2026-07-04-cli-launcher-build.md).
+   [proposal](projects/_archive/anthill-cli-launcher/proposal.md) · [plan](projects/_archive/anthill-cli-launcher/plan.md) ·
+   [session](projects/_archive/anthill-cli-launcher/sessions/2026-07-04-cli-launcher-build.md).
    _Deferred (out of the "light now" slice): lead-facing vine/board wrapper verbs — see
    [v0.2 brief, feature 3](briefs/2026-06-30-anthill-v0.2-next-release.md)._
 
@@ -47,12 +47,12 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
    The skills now **emit** skip-resistant checklists: `convene` (lead setup), `join` (member), and a
    `finalize-session` teardown checklist carrying the previously-missing **human sign-off gate before
    the feature branch merges to develop**.
-   [session](projects/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md).
+   [session](projects/_archive/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md).
 6. ✅ **Rail-guarding paper-cut fix — `anthill commit` × lint-staged** — **SHIPPED** 2026-07-04
    (`ee8b62d`). Stage → verify-index-is-exactly-our-paths → pathspec-less commit (runs the hook
    against the real index, dodging the temp-index corruption); unexpected staged content aborts.
    [paper-cuts](../.anthill/paper-cuts.md) ·
-   [session](projects/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md).
+   [session](projects/_archive/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md).
    _Still open (the other half): channel hygiene in convene/down (dream-flute paper-cut #14)._
 7. ✅ **Cheap ritual/SOP edits** — **SHIPPED** 2026-07-04 (`ead9e66`). Into the SOP seed:
    _no store without a named re-read moment_, _the vine evaporates_ (land decisions in an artifact),

@@ -20,4 +20,4 @@ Dual-reviewed (code: Yes; docs: With fixes → applied — de-scoped anthill voc
 README, and collapsed a single-source duplication so the SOP owns _route-at-synthesis_ and the skill
 points to it).
 
-**Docs:** [session](../projects/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md)
+**Docs:** [session](../projects/_archive/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md) _(archived)_
