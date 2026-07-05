@@ -14,6 +14,21 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Now
 
+**In flight (2026-07-05 session) — release-prep, sequenced 1→2→3:**
+
+- 🔨 **Targeted plugin distribution** — ship only the `plugin/` subtree (`git-subdir` source) + a
+  **zero-dep CLI** (dropped `citty` for in-house `parseArgs`), so consumers stop receiving our internal
+  `.anthill/`/`docs/`/dev-config and the CLI needs no runtime fetch. Built on `feat/plugin-distribution`
+  (`4f7bc0f` move · `9f77c39` drop-citty); verified by a zero-dep clean-room run; **awaiting human
+  sign-off → develop**. [proposal](projects/plugin-distribution/proposal.md) ·
+  [session](projects/plugin-distribution/sessions/2026-07-05-targeted-distribution.md).
+- 📋 **`anthill feedback` — upstream feedback path** — a first-class way for consuming projects to send
+  bugs **and ideas** home to the anthill repo (GitHub transport, `--submit`-gated, lead-owned, no
+  feedback lost). Proposal ready; **next up for `anthill:plan`**.
+  [proposal](projects/upstream-feedback/proposal.md).
+- ⬜ **Cut the `develop → main` release** — once the two above land. At release, run the **`git-subdir`
+  install check** (confirm a real install caches only `plugin/`) — the one thing not verifiable locally.
+
 1. ✅ **`anthill:plan` — the skeleton→ratify planning skill** — **SHIPPED** 2026-07-03 (`f6b34eb`,
    on `develop`). The lead scaffolds a thin skeleton (integration order + cross-seam contracts as
    claims), seats ratify the seams they touch, owners author their lanes. Self-contained. Archived:
