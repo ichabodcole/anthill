@@ -100,9 +100,14 @@ in-repo — file it upstream and note the workaround here.
 
 ### Disposition (maestro) — 2026-07-05
 
-- ◻ **#1** — open fix candidate: scrub `GIT_*` env in git-spawning tests (`team-commit.test.ts`).
-  Immediate lesson banked: land through `anthill commit`, never raw `git commit -- <path>`, in any
-  husky + lint-staged repo. Same family as ✅ 2026-07-02 #1 (`ee8b62d`).
+- ✅ **#1 → fixed** — the two suites that `git init` a scratch repo (`team-commit.test.ts`,
+  `team-migrate.test.ts`) now spawn every git/CLI child with a **GIT\_-stripped env** via a shared
+  `test-support.ts#cleanGitEnv()`. Key finding while fixing: a runtime `delete process.env.GIT_INDEX_FILE`
+  does **not** work — `Bun.spawn`/`Bun.spawnSync` inherit an environment snapshot taken at process
+  start and ignore later mutations, so an **explicit `env:`** is the only reliable scrub. Proven with a
+  red→green repro (`GIT_INDEX_FILE=/tmp/bogus bun test …` failed 3/14 → passes 14/14, robust to a bogus
+  `GIT_DIR` too). Immediate lesson still stands: land through `anthill commit`, never raw
+  `git commit -- <path>`, in any husky + lint-staged repo. Same family as ✅ 2026-07-02 #1 (`ee8b62d`).
 
 ---
 
