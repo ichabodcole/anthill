@@ -48,7 +48,7 @@ import { buildManifest, type ScopeLabel } from "./manifest.ts";
 export const main: AnyCommand = defineCommand({
   meta: {
     name: "anthill",
-    version: "1.2.0", // x-release-please-version
+    version: "1.3.0", // x-release-please-version
     description: "Project orchestration CLI",
   },
   args: {
