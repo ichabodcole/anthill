@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/ichabodcole/anthill/compare/anthill-v1.3.0...anthill-v1.3.1) (2026-07-06)
+
+
+### Bug Fixes
+
+* **test:** scrub GIT_* env in git-spawning command tests ([e80e786](https://github.com/ichabodcole/anthill/commit/e80e786f1c2bce15b2c7657db66a1027abc20383))
+
 ## [1.3.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.2.0...anthill-v1.3.0) (2026-07-06)
 
 
