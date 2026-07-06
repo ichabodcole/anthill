@@ -59,6 +59,11 @@ Reusable dev plans for recurring tasks or augmenting existing systems (e.g.,
 adding AI workflows, database entities). Playbooks codify proven approaches for
 tasks you've done 2-3 times, including phases, pitfalls, and validation steps.
 
+**A playbook must be pointed at from a durable doc that's actually re-read** — a
+plan, a README, an SOP. A playbook nothing re-reads is a lessons-learned-in-waiting;
+it only shapes work if some durable doc routes a reader to it at the moment it
+applies. When you write one, add the pointer where the relevant work begins.
+
 #### `/lessons-learned`
 
 Hard-won insights and non-obvious solutions discovered through experience.

@@ -33,6 +33,20 @@ for the full design.
 The only footprint in a consuming repo is the `.anthill/` root (config, living docs, and
 scratch) plus one `.gitignore` line — everything else lives in the plugin.
 
+## Optional: a human `anthill` command
+
+Agents drive the CLI through the plugin, so nothing is required on your PATH. For a **human** who
+wants to drive a running session from a terminal (`anthill attach`, `anthill status`), there's an
+optional launcher:
+
+```sh
+bun add -g github:ichabodcole/anthill-cli
+```
+
+It's a **pointer** to the installed plugin's CLI (the highest version you have), not a copy — so
+there's nothing to keep in sync, and a plugin upgrade needs no reinstall. See
+[anthill-cli](https://github.com/ichabodcole/anthill-cli).
+
 ## Dependencies
 
 - [spellbook](https://github.com/ichabodcole) — grapevine (discussion) + bounty (task board)

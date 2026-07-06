@@ -5,7 +5,6 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
     "@types/bun": "latest",
-    "citty": "^0.2.2",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
     "prettier": "^3.9.4"
@@ -14,7 +13,7 @@
     "typescript": "^5"
   },
   "scripts": {
-    "anthill": "bun scripts/anthill/cli.ts",
+    "anthill": "bun plugin/scripts/anthill/cli.ts",
     "test": "bun test",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "biome check --error-on-warnings .",

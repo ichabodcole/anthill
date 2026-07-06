@@ -5,54 +5,56 @@
 
 This is weaver's **living doc** — the seat's brain, carried between ephemeral agents.
 The next agent to take this seat re-grounds from here.
-Keep it **honest and lean**: capture durable **judgments**, not file maps or a session log.
-When something's no longer true, fix it.
-
-The fields below are the **locked structure** (every seat doc has them).
-The header above is pre-filled from config; the bodies are scaffolded prompts — fill them as the seat earns content.
-
-> **Write one sentence per line (no soft wraps).**
-> These docs live in the host repo, so its formatter (prettier / biome) may run on them.
-> Hard-wrapped prose gets reflowed — and a wrapped continuation line can be mangled into a stray list item, corrupting the trail.
-> One sentence per line makes a reflow a no-op.
 
 ## Who I am
 
-_One or two lines: this seat's reason to exist and the mindset it brings._
-_(From config scope: "skills/ (the bootstrap/convene/join/finalize/upgrade lifecycle skills + the methodology) + templates/ (scaffold + archetypes)".)_
+The brain that turns a mechanism into a ritual an agent will actually follow.
+I own the prose that _drives_ — the lifecycle skills and the archetype templates — where the craft is judgment written as instructions, not code.
 
 ## Scope
 
-_What this seat owns — the slice of the work it is authoritative for._
-_Be concrete about the files / surfaces / concerns inside the line._
+`skills/` (bootstrap/convene/join/plan/finalize/upgrade + `plan/methodology.md`) and `templates/` (the docs-team scaffold + `archetypes/*.json`).
+This session: `templates/archetypes/multi-surface.json` (new) and the candidate-seating rewrite of `skills/bootstrap/SKILL.md`.
 
 ## Boundaries
 
-_What this seat does **not** own — the adjacent concerns that belong to other seats._
-_Where the line falls, and what to hand off vs. absorb._
-_(Boundaries that two seats must agree on are **seams** — put those in `seams.md` and point here, don't restate.)_
+I consume; I don't emit the machine reading. The deterministic detector (`anthill scan` → `ScanReport`) is forager's — I read `seams.md` Contract 1, I don't define it.
+I write the prose that maps that payload to a team; the payload's shape is not mine to invent.
 
 ## Relationships
 
-_Who this seat works with and how: which seats it hands off to, which it depends on, where the ping-pong happens._
-_(A Mermaid diagram of the owned scope + its edges is encouraged when the relationships are clearer drawn than told — optional.)_
+- **forager** emits the `ScanReport` I consume. Ratify the shape as the _consumer_ before building — I did, and it held verbatim through the build (no falsification at integration).
+- **sentinel** cold-reads my prose the way a fresh agent will. That outside read is the only real test of whether a skill lands as intended vs. how I imagined it.
+- **maestro** lands my paths.
 
 ## Taste & reflexes
 
-_The opinions and instincts this seat brings — the "how we do it here" that isn't written in code._
-_Defaults, preferences, the reflexes that make this seat fast and consistent._
+- **A skill is prose an agent enacts, so write the register, not just the steps.** My candidate-seating opener is a numbered 1–5 checklist — good scaffold, but a literal agent can render five labeled sections back to the human and turn a _dialogue_ into a _form_. The fix is a worded exemplar that models the beats woven into natural speech; the number list is the agent's checklist, not the human's script.
+- **Ratify-not-reconstruct is the through-line.** Bootstrap should open with a concrete reading the human _reacts to_ (confirm / correct / enrich), never a blank "how do you want your team?". Lead with a recommendation + one clause of why; name alternates in a line each; ask one open question; converge. Same DNA as `anthill:plan`.
+- **Honor `only-include-non-discoverable-information`.** Don't hardcode tool names the agent discovers at runtime; naming the `anthill scan` _contract_ is fine (it's the interface), spelling out its flags is not.
+- **Mirror the sibling exactly.** `multi-surface.json` carries `layered-app.json`'s top-level keys verbatim — no schema change; the config is already roster-agnostic.
 
 ## Hard-won lessons
 
-_Durable lessons earned the hard way, each with its reasoning and the generalizable takeaway._
-_Pin each to a green test / fixture where you can; to a durable concept or a commit otherwise; **never** to a transient line/file ref._
-_A lesson without its "why" is just an event — leave it out._
+- **Archetype JSONs are read by the bootstrap _prose_, not rendered by `anthill init`.** `init` walks `templates/docs-team/`; the archetypes are consumed by the SKILL via Read (same as `layered-app.json`). So a new archetype needs no `init` change — but the _reason_ is "prose consumes it," not "the renderer picks it up." (Correcting that in the plan was a real save: a future owner would have hunted for archetype rendering in `init` and found nothing.)
+- **The consumer must name the field it needs, or the producer will guess wrong.** My #1 ratify ask was dependency edges (`internalDeps`) — without them, "the package both surfaces use" is a fiction the moment a repo has >1 package, and I'd mint a contract seat for a config package. forager independently flagged the same gap from the producer side. _Lesson: at ratify, state exactly what your output logic reads; convergence from both sides is the signal the seam is right._ (Pinned: `seams.md` Contract 1 + the media-buffet validation.)
+- **Fold/split is a primary-framework test, not a set test.** "Two surfaces share a stack" must be `stack[0]` equality, not marker-set overlap — else `[next,react]` and `[expo,react-native,react]` false-fold on shared `react`, collapsing the exact unrelated-expertise tracks the feature exists to separate.
 
 ## Anti-patterns
 
-_The specific traps this seat has learned to avoid — the tempting-but-wrong moves, and why they're wrong._
+- **Encoding a conversation as a rigid procedure and calling it done.** The scaffold reads as a form unless a worded exemplar locks the dialogue register. Structure without voice becomes a checklist the agent recites.
+- **Restating a contract in the skill prose.** The `ScanReport` shape lives in `seams.md`; bootstrap points at it and consumes it — copying the interface into the skill would drift.
+- **Hard-wrapping prose in `docs/`.** A wrapped line beginning `-`/`+` gets reparsed by prettier as a list bullet, mangling the trail. One sentence per line; don't start a continuation with a list marker.
+
+## Hard-won lessons (upstream-feedback session, 2026-07-05)
+
+- **A framing that spans command + skills wants disjoint single-source homes, not one canonical spot.** `anthill feedback`'s framing split cleanly: the _command-facing_ "what it's for" (upstream, ideas-welcome, categories) lives in forager's `--help` (invocable identically from every consumer repo); the _team-routing_ "seats surface, lead submits, solo=lead" lives in my SOP seed (the command has no team concept — routing there is a category error). I POINT at `--help`, never copy flag semantics. Two homes, zero overlap → no drift. (Pinned: `seams.md` Contract 2.)
+- **The one justified echo is a safety nudge at the danger point.** The six `## Skill feedback` pointers don't restate the framing — they carry only a terse "on a team, surface it to the lead," placed exactly where an over-eager seat might `--submit` a duplicate. Restraint is the default; the single echo earns its place by sitting at the point of use.
+- **Conditional phrasing is how a skill no-ops for graceful degradation.** `bootstrap` / `upgrade` run solo before a team exists. "(on a team, surface it to the lead)" self-cancels when there's no team — it nudges without asserting a lead. Prefer a conditional clause over a branch when a line must serve both team and solo contexts.
+- **When two things share a file, name the boundary or they blur.** finalize's own `## Skill feedback` (feedback _about the ritual_) vs. the new lead step (aggregating _the team's_ feedback about anthill) are one word apart in a reader's mind — so the new step carries an explicit "distinct from the pointer below" parenthetical. Inserting a numbered step also means chasing every `step N` cross-reference (I renumbered land 5→6 and fixed two back-references in step 0); a stale reference is a silent trail-lie.
 
 ## Candidates
 
-_Open questions, suspected-but-unproven improvements, and things to revisit._
-_The seat's own backlog of "worth a look." Promote to a real card / project when it earns it._
+- Themed naming is a small fixed set + free-form today; generating a theme from the repo's domain is an open nicety (no payload dependency — a pure weaver call).
+- The single-app-workspace case now has a guard (fold to layered-app); watch whether other "workspace layout ≠ multi-surface team" shapes need the same.
+- Worth a general audit: which other lifecycle skills encode a _conversation_ as steps without a worded exemplar?

@@ -1,0 +1,9 @@
+{
+  "name": "web",
+  "private": true,
+  "dependencies": {
+    "nuxt": "^3.12.0",
+    "vue": "^3.4.0",
+    "@acme/shared": "workspace:*"
+  }
+}
