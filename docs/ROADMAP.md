@@ -16,14 +16,14 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 **In flight (2026-07-05 session) — release-prep, sequenced 1→2→3:**
 
-- 🔨 **Targeted plugin distribution** — ship only the `plugin/` subtree (`git-subdir` source) + a
+- ✅ **Targeted plugin distribution** — ship only the `plugin/` subtree (`git-subdir` source) + a
   **zero-dep CLI** (dropped `citty` for in-house `parseArgs`), so consumers stop receiving our internal
   `.anthill/`/`docs/`/dev-config and the CLI needs no runtime fetch. Built on `feat/plugin-distribution`
-  (`4f7bc0f` move · `9f77c39` drop-citty); verified by a zero-dep clean-room run; **awaiting human
-  sign-off → develop**. [proposal](projects/plugin-distribution/proposal.md) ·
+  (`4f7bc0f` move · `9f77c39` drop-citty); verified by a zero-dep clean-room run; **landed on develop**
+  2026-07-05. [proposal](projects/plugin-distribution/proposal.md) ·
   [session](projects/plugin-distribution/sessions/2026-07-05-targeted-distribution.md).
-- ✅ **`anthill feedback` — upstream feedback path** — **BUILT** 2026-07-05 (`6cb19c1`, on
-  `feat/upstream-feedback`; awaiting human sign-off → develop). A first-class way for consuming projects
+- ✅ **`anthill feedback` — upstream feedback path** — **BUILT** 2026-07-05 (`6cb19c1`; **landed on
+  develop** `937ebae`). A first-class way for consuming projects
   to send bugs **and ideas** home to the anthill repo (GitHub transport, `--submit`-gated, lead-owned,
   no feedback lost, provenance-labeled). The 2nd `anthill:plan` dogfood.
   [proposal](projects/upstream-feedback/proposal.md) · [plan](projects/upstream-feedback/plan.md) ·
