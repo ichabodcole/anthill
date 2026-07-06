@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.2.0...anthill-v1.3.0) (2026-07-06)
+
+
+### Features
+
+* attach outside-project fallback + optional human CLI mention ([b8fe79d](https://github.com/ichabodcole/anthill/commit/b8fe79dfa92380959c72a8b3f043beadae9f2f4d))
+* **feedback:** anthill feedback — upstream feedback path (bugs AND ideas) ([6cb19c1](https://github.com/ichabodcole/anthill/commit/6cb19c132a38402ed5662abcd441f0f83e3aa320))
+* **multi-surface:** anthill scan + by-surface archetype & candidate seatings ([de3aa58](https://github.com/ichabodcole/anthill/commit/de3aa58abdd85b03cd5991bb7f6b621085671409))
+
+
+### Bug Fixes
+
+* **commit:** stage-verify-then-pathspec-less commit to dodge lint-staged corruption ([ee8b62d](https://github.com/ichabodcole/anthill/commit/ee8b62d94c8c0923650e90e2f3bef2a3b1be91e6))
+
 ## [1.2.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.1.0...anthill-v1.2.0) (2026-07-03)
 
 
