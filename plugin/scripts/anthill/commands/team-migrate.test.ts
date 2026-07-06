@@ -3,13 +3,20 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { cleanGitEnv } from "./test-support.ts";
 
 // Subprocess integration: the migrate executor does real `git mv` in a real repo,
 // so we drive the CLI against a seeded temp git repo and assert the on-disk result.
 const CLI = resolve(import.meta.dir, "..", "cli.ts");
 
+// git-inits a temp repo below. Give every git (and CLI) subprocess an env with
+// GIT_* stripped, so a leaked GIT_INDEX_FILE (e.g. from a pathspec-commit hook
+// running this suite) can't redirect them at the parent's index. See
+// test-support.ts / .anthill/paper-cuts.md (2026-07-05 #1).
+const GIT_ENV = cleanGitEnv();
+
 function sh(cmd: string[], cwd: string): { ok: boolean; stdout: string; stderr: string } {
-  const r = spawnSync(cmd[0] as string, cmd.slice(1), { cwd, encoding: "utf8" });
+  const r = spawnSync(cmd[0] as string, cmd.slice(1), { cwd, encoding: "utf8", env: GIT_ENV });
   return { ok: r.status === 0, stdout: (r.stdout ?? "").trim(), stderr: (r.stderr ?? "").trim() };
 }
 
@@ -17,7 +24,12 @@ async function runCli(
   args: string[],
   cwd: string,
 ): Promise<{ code: number; stdout: string; stderr: string }> {
-  const proc = Bun.spawn(["bun", CLI, ...args], { cwd, stdout: "pipe", stderr: "pipe" });
+  const proc = Bun.spawn(["bun", CLI, ...args], {
+    cwd,
+    stdout: "pipe",
+    stderr: "pipe",
+    env: GIT_ENV,
+  });
   const [stdout, stderr, code] = await Promise.all([
     new Response(proc.stdout).text(),
     new Response(proc.stderr).text(),

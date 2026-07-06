@@ -3,6 +3,13 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { unexpectedStaged } from "./team-commit.ts";
+import { cleanGitEnv } from "./test-support.ts";
+
+// This suite git-inits throwaway repos and commits inside them. Give every git
+// (and CLI) subprocess an env with GIT_* stripped, so a leaked GIT_INDEX_FILE
+// (e.g. from a pathspec-commit hook running this suite) can't redirect them at
+// the parent's index. See test-support.ts / .anthill/paper-cuts.md (2026-07-05 #1).
+const GIT_ENV = cleanGitEnv();
 
 // The commit guards live inside run(), so we assert the dual-audience envelope
 // end-to-end: run the CLI and check that --format json yields a clean {ok:false}
@@ -16,6 +23,7 @@ async function runCli(
   const proc = Bun.spawn(["bun", CLI, ...args], {
     stdout: "pipe",
     stderr: "pipe",
+    env: GIT_ENV,
     ...(cwd && { cwd }),
   });
   const [stdout, stderr, code] = await Promise.all([
@@ -27,7 +35,7 @@ async function runCli(
 }
 
 function sh(args: string[], cwd: string): void {
-  const r = Bun.spawnSync(args, { cwd });
+  const r = Bun.spawnSync(args, { cwd, env: GIT_ENV });
   if (r.exitCode !== 0) {
     throw new Error(`setup command failed: ${args.join(" ")}\n${r.stderr.toString()}`);
   }
@@ -49,7 +57,7 @@ function makeRepo(): string {
 }
 
 function stagedNames(dir: string): string[] {
-  const r = Bun.spawnSync(["git", "diff", "--cached", "--name-only"], { cwd: dir });
+  const r = Bun.spawnSync(["git", "diff", "--cached", "--name-only"], { cwd: dir, env: GIT_ENV });
   return r.stdout
     .toString()
     .split("\n")
@@ -112,7 +120,10 @@ describe("anthill commit — pathspec-less land in a real repo", () => {
       writeFileSync(join(dir, "mine.txt"), "mine\n");
       const { code } = await runCli(["commit", "-m", "add mine", "mine.txt"], dir);
       expect(code).toBe(0);
-      const log = Bun.spawnSync(["git", "log", "-1", "--name-only", "--pretty=%s"], { cwd: dir });
+      const log = Bun.spawnSync(["git", "log", "-1", "--name-only", "--pretty=%s"], {
+        cwd: dir,
+        env: GIT_ENV,
+      });
       const out = log.stdout.toString();
       expect(out).toMatch(/add mine/);
       expect(out).toMatch(/mine\.txt/);
@@ -128,10 +139,13 @@ describe("anthill commit — pathspec-less land in a real repo", () => {
       writeFileSync(join(dir, "peer.txt"), "peer\n"); // untracked, not ours
       const { code } = await runCli(["commit", "-m", "add mine", "mine.txt"], dir);
       expect(code).toBe(0);
-      const log = Bun.spawnSync(["git", "log", "-1", "--name-only", "--pretty=%s"], { cwd: dir });
+      const log = Bun.spawnSync(["git", "log", "-1", "--name-only", "--pretty=%s"], {
+        cwd: dir,
+        env: GIT_ENV,
+      });
       expect(log.stdout.toString()).not.toMatch(/peer\.txt/);
       // peer.txt is still there, still untracked.
-      const status = Bun.spawnSync(["git", "status", "--porcelain"], { cwd: dir });
+      const status = Bun.spawnSync(["git", "status", "--porcelain"], { cwd: dir, env: GIT_ENV });
       expect(status.stdout.toString()).toMatch(/\?\? peer\.txt/);
     } finally {
       rmSync(dir, { recursive: true, force: true });

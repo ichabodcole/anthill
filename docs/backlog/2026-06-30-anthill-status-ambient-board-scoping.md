@@ -1,7 +1,7 @@
 # `anthill status` surfaces ambient/unrelated bounty boards
 
 **Added:** 2026-06-30 · **Status:** Partially done (`95dfe31`) — remainder tracked in
-[`projects/anthill-footprint-migration`](../projects/anthill-footprint-migration/plan.md)
+[`projects/anthill-footprint-migration`](../projects/_archive/anthill-footprint-migration/plan.md)
 
 On a FRESH bootstrap, `anthill status` surfaced an ambient bounty board ("done:13") from
 a prior/other board, reading as if the new team already had history. Scope `status` to

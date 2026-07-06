@@ -14,23 +14,28 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Now
 
-**In flight (2026-07-05 session) — release-prep, sequenced 1→2→3:**
+**Nothing in flight.** The `v1.3.0` release-prep run (below) shipped and is cut; the next horizon is
+**Next** — dream-flute parity close-out (#12) and the memory bundle (#8–#10), now unblocked by the #4
+dogfood data. Pick the next slice from there.
+
+**✅ Shipped in `v1.3.0` (2026-07-05) — the release-prep run, sequenced 1→2→3:**
 
 - ✅ **Targeted plugin distribution** — ship only the `plugin/` subtree (`git-subdir` source) + a
   **zero-dep CLI** (dropped `citty` for in-house `parseArgs`), so consumers stop receiving our internal
-  `.anthill/`/`docs/`/dev-config and the CLI needs no runtime fetch. Built on `feat/plugin-distribution`
-  (`4f7bc0f` move · `9f77c39` drop-citty); verified by a zero-dep clean-room run; **landed on develop**
-  2026-07-05. [proposal](projects/plugin-distribution/proposal.md) ·
-  [session](projects/plugin-distribution/sessions/2026-07-05-targeted-distribution.md).
-- ✅ **`anthill feedback` — upstream feedback path** — **BUILT** 2026-07-05 (`6cb19c1`; **landed on
-  develop** `937ebae`). A first-class way for consuming projects
-  to send bugs **and ideas** home to the anthill repo (GitHub transport, `--submit`-gated, lead-owned,
-  no feedback lost, provenance-labeled). The 2nd `anthill:plan` dogfood.
-  [proposal](projects/upstream-feedback/proposal.md) · [plan](projects/upstream-feedback/plan.md) ·
-  [session](projects/upstream-feedback/sessions/2026-07-05-feedback-dogfood.md).
-- ⬜ **Cut the `develop → main` release** — once feedback signs off. **Release-time steps:** run the
-  **`git-subdir` install check** (confirm a real install caches only `plugin/` — not verifiable
-  locally), and `gh label create anthill-feedback` (so `anthill feedback --submit` tags cleanly).
+  `.anthill/`/`docs/`/dev-config and the CLI needs no runtime fetch. Verified by a zero-dep clean-room
+  run **and** a real cached install (`1.3.0/` holds only `.claude-plugin` + `scripts`/`skills`/`templates`).
+  Archived: [proposal](projects/_archive/plugin-distribution/proposal.md) ·
+  [session](projects/_archive/plugin-distribution/sessions/2026-07-05-targeted-distribution.md).
+- ✅ **`anthill feedback` — upstream feedback path** — a first-class way for consuming projects to send
+  bugs **and ideas** home to the anthill repo (GitHub transport, `--submit`-gated, lead-owned, no
+  feedback lost, provenance-labeled). The 2nd `anthill:plan` dogfood. `anthill-feedback` label created
+  on the repo. Archived: [proposal](projects/_archive/upstream-feedback/proposal.md) ·
+  [plan](projects/_archive/upstream-feedback/plan.md) ·
+  [session](projects/_archive/upstream-feedback/sessions/2026-07-05-feedback-dogfood.md).
+- ✅ **Cut the `develop → main` release** — `anthill-v1.3.0` tagged (release-please PR #9); `develop`
+  synced back. Post-release: the `git-subdir` install check passed on a real cache; the
+  `anthill-feedback` label exists. Follow-up fix landed post-release: `GIT_*`-env scrub in
+  git-spawning tests (paper-cut 2026-07-05 #1, `e80e786`).
 
 1. ✅ **`anthill:plan` — the skeleton→ratify planning skill** — **SHIPPED** 2026-07-03 (`f6b34eb`,
    on `develop`). The lead scaffolds a thin skeleton (integration order + cross-seam contracts as
@@ -55,16 +60,16 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
    `anthill scan` (deterministic workspace detector) + bootstrap candidate seatings as a
    conversation-opener, ratify-not-reconstruct. `anthill scan` was pulled into the MVP to give the
    dogfood a real forager↔weaver seam. Validated on media-buffet (the origin repo): candidate A emerges
-   correctly, the shared SDK identified by dependency fan-in.
-   [proposal](projects/multi-surface-archetype/proposal.md) ·
-   [plan](projects/multi-surface-archetype/plan.md) ·
-   [session](projects/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md).
+   correctly, the shared SDK identified by dependency fan-in. Archived:
+   [proposal](projects/_archive/multi-surface-archetype/proposal.md) ·
+   [plan](projects/_archive/multi-surface-archetype/plan.md) ·
+   [session](projects/_archive/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md).
 4. ✅ **First instrumented dogfood session** — **SHIPPED** 2026-07-05. #3 above **was** the first real
    `anthill:plan` run with the convened team (seats as subagents over a live vine + board). The ratify
    gate caught **two load-bearing seam errors at zero rework cost** — the empirical data point the
    memory work (#8–#10) is gated on. Trail is traceable end-to-end (vine #2→#5, board, `seams.md`
    Contract 1, `de3aa58`); the four seat docs went scaffold-empty → first real content.
-   [session](projects/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md).
+   [session](projects/_archive/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md).
 5. ✅ **Ritual checklists baked into the lifecycle skills** — **SHIPPED** 2026-07-04 (`ead9e66`).
    The skills now **emit** skip-resistant checklists: `convene` (lead setup), `join` (member), and a
    `finalize-session` teardown checklist carrying the previously-missing **human sign-off gate before
@@ -80,7 +85,7 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
    _no store without a named re-read moment_, _the vine evaporates_ (land decisions in an artifact),
    _one intake route at synthesis_; playbook-pointer rule into `docs/README.md`
    ([report recs 2, 6](reports/2026-07-02-conceptual-implementation-review-report.md);
-   [taxonomy next-steps](investigations/2026-07-02-docs-taxonomy-in-the-team-era.md)).
+   [taxonomy next-steps](investigations/_archive/2026-07-02-docs-taxonomy-in-the-team-era.md)).
 
 ## Later (order softens out here)
 
@@ -93,7 +98,8 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 10. **Task-conditioned grounding** — `applies-to` globs ∩ the claimed card
     ([report rec 5](reports/2026-07-02-conceptual-implementation-review-report.md)).
 11. **Docs-taxonomy dispositions** — archive hollow scaffolds, playbook-pointer rule
-    ([taxonomy investigation](investigations/2026-07-02-docs-taxonomy-in-the-team-era.md)); incremental.
+    ([taxonomy investigation](investigations/_archive/2026-07-02-docs-taxonomy-in-the-team-era.md)); incremental.
+    _Partly enacted 2026-07-05: the 3 shipped v1.3.0 projects + 3 concluded investigations archived._
 12. **dream-flute full parity close-out** — retire remaining `flute team-*` surface, confirm
     nothing was lost ([v0.2 feature 6](briefs/2026-06-30-anthill-v0.2-next-release.md); adoption
     already live, this is the audit).
@@ -103,7 +109,7 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 ## Parked (deliberate)
 
 - **Liveness watchdog / stall detector** — open question vs the session-bounded model; board
-  heartbeat covers the worst of it ([landscape investigation](investigations/2026-07-01-agentic-teams-memory-stigmergy-landscape.md)).
+  heartbeat covers the worst of it ([landscape investigation](investigations/_archive/2026-07-01-agentic-teams-memory-stigmergy-landscape.md)).
 - **Self-selection bounties** — the lead-bottleneck relief valve; no saturation signal yet.
 - **Semantic/embedding retrieval** — structure-before-search; revisit only if grep-over-structure
   measurably fails.

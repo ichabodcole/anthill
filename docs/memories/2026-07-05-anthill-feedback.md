@@ -27,7 +27,7 @@ nested-cwd, single-source cold-read — all confirmed, **no real `--submit` ever
 
 **Release-time setup:** `gh label create anthill-feedback` (command degrades gracefully without it).
 
-**Docs:** [proposal](../projects/upstream-feedback/proposal.md) ·
-[plan](../projects/upstream-feedback/plan.md) ·
-[session](../projects/upstream-feedback/sessions/2026-07-05-feedback-dogfood.md) ·
+**Docs:** [proposal](../projects/_archive/upstream-feedback/proposal.md) ·
+[plan](../projects/_archive/upstream-feedback/plan.md) ·
+[session](../projects/_archive/upstream-feedback/sessions/2026-07-05-feedback-dogfood.md) ·
 [seams.md Contract 2](../../.anthill/dev/seams.md)

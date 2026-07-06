@@ -1,6 +1,6 @@
 # Targeted plugin distribution — ship only the plugin, self-contained
 
-**Status:** Draft
+**Status:** Shipped in `v1.3.0` (2026-07-05) — archived. Targeted `git-subdir` distribution + zero-dep CLI.
 **Created:** 2026-07-05
 **Author:** Cole + maestro
 
