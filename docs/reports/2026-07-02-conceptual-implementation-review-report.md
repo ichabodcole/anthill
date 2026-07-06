@@ -528,13 +528,13 @@ time, and LLMs uniquely make the maintenance affordable ("LLMs don't get bored")
 
 - Design-of-record: [portable team-OS design](../architecture/2026-06-28-anthill-portable-team-os-design.md)
 - [v0.2 brief](../briefs/2026-06-30-anthill-v0.2-next-release.md)
-- Investigations this builds on: [agentic-teams landscape](../investigations/2026-07-01-agentic-teams-memory-stigmergy-landscape.md) ·
-  [codebase navigation](../investigations/2026-06-30-agent-codebase-navigation-state-of-the-art.md) ·
+- Investigations this builds on: [agentic-teams landscape](../investigations/_archive/2026-07-01-agentic-teams-memory-stigmergy-landscape.md) ·
+  [codebase navigation](../investigations/_archive/2026-06-30-agent-codebase-navigation-state-of-the-art.md) ·
   [file-activity heatmap](../investigations/2026-06-30-file-activity-heatmap.md)
 - [First external bootstrap lesson](../lessons-learned/2026-06-30-anthill-first-external-bootstrap.md)
 - [Lessons-learned touchpoint fragment](../fragments/2026-06-30-lessons-learned-touchpoint-in-the-team-model.md)
   (the origin of the read-trigger rule)
-- [team-dev-planning proposal](../projects/team-dev-planning/proposal.md)
+- [team-dev-planning proposal](../projects/_archive/team-dev-planning/proposal.md)
 
 ## Notes
 

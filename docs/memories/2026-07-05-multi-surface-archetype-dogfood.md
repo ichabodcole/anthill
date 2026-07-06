@@ -30,7 +30,7 @@ Verified (sentinel): gate green (129 pass), real-repo runs on media-buffet + dre
 (opener reads as dialogue after a worded exemplar was added). 4 minor fixes applied. Structure
 reflection: roster validated, no reshape.
 
-**Docs:** [proposal](../projects/multi-surface-archetype/proposal.md) ·
-[plan](../projects/multi-surface-archetype/plan.md) ·
-[session](../projects/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md) ·
+**Docs:** [proposal](../projects/_archive/multi-surface-archetype/proposal.md) ·
+[plan](../projects/_archive/multi-surface-archetype/plan.md) ·
+[session](../projects/_archive/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md) ·
 [seams.md Contract 1](../../.anthill/dev/seams.md)

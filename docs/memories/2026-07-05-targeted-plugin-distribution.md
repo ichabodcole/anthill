@@ -26,5 +26,5 @@ Forager-led (no owner↔owner seam → lighter than a full `anthill:plan`): lead
 forager the CLI rewrite, sentinel verified. First real exercise of the **subagent-finalize** fix —
 forager self-captured its lessons into its seat doc as its task's final step.
 
-**Docs:** [proposal](../projects/plugin-distribution/proposal.md) ·
-[session](../projects/plugin-distribution/sessions/2026-07-05-targeted-distribution.md)
+**Docs:** [proposal](../projects/_archive/plugin-distribution/proposal.md) ·
+[session](../projects/_archive/plugin-distribution/sessions/2026-07-05-targeted-distribution.md)

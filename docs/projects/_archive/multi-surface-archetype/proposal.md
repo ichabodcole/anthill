@@ -1,6 +1,6 @@
 # Multi-surface archetype + candidate seatings
 
-**Status:** Approved (2026-07-05) — in planning; `anthill scan` pulled into MVP
+**Status:** Shipped in `v1.3.0` (2026-07-05) — archived. Multi-surface archetype + `anthill scan`; 1st `anthill:plan` dogfood.
 **Created:** 2026-07-04
 **Author:** Cole + forager
 

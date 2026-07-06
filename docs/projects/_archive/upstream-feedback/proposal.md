@@ -1,6 +1,6 @@
 # Upstream feedback — `anthill feedback`
 
-**Status:** Draft
+**Status:** Shipped in `v1.3.0` (2026-07-05) — archived. `anthill feedback` upstream path; 2nd `anthill:plan` dogfood.
 **Created:** 2026-07-05
 **Author:** Cole + maestro
 
