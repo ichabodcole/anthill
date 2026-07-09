@@ -68,6 +68,10 @@ status`** shows who's on + the board.
 - ◻ **On the vine** — grapevine tail wrapped in Monitor, presence registered (terminal-seat path).
 - ◻ **On the board** — board tail wrapped in Monitor.
 - ◻ **Introduced** on the vine — a short "in, grounded, here's my lane".
+- ◻ **Code-bearing vine message? Send it safely.** Any grapevine `send` whose body carries
+  backticks or code MUST go via `--stdin` (or a quoted heredoc) — an un-quoted body is
+  command-substituted by bash (backticked spans get executed, apostrophes mangle) _before_
+  grapevine ever sees it, corrupting the message or partially running it.
 - ◻ **Scratch minted** — `.anthill/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
 - ◻ **Route through the lead — never block on the human.** The human may not be watching this pane;
   questions + decisions go to the lead/liaison on the vine, not direct.

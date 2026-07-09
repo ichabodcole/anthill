@@ -17,11 +17,17 @@ at [ichabodcole/spellbook#60](https://github.com/ichabodcole/spellbook/issues/60
 lands, this checklist mandate becomes a nicety rather than a necessity — but it's cheap
 insurance either way.
 
+## Status
+
+**Shipped 2026-07-08.** Added as a checklist beat in `plugin/skills/join/SKILL.md` (the "Join
+checklist" section). spellbook#60 (escape-by-default on the send path) also landed upstream, so this
+mandate is now the belt-and-suspenders half it was designed to be, not the sole line of defense.
+
 ## Acceptance Criteria
 
-- [ ] The join skill checklist explicitly requires `--stdin` or a quoted-heredoc for bodies
+- [x] The join skill checklist explicitly requires `--stdin` or a quoted-heredoc for bodies
       containing backticks / code.
-- [ ] The guidance names _why_ (bash command-substitution corrupts un-quoted code bodies).
+- [x] The guidance names _why_ (bash command-substitution corrupts un-quoted code bodies).
 
 ## References
 
