@@ -64,7 +64,7 @@ This is a skill/ritual edit only — no CLI change — and unblocks finalize imm
 the step-6 doc-land checklist — taken only when a red slice is detected, **not** the default finalize
 path (resolves the open question below). Closes #14.
 
-### B. Sanctioned harness scratch + gate scoping (structural — closes #16)
+### B. Sanctioned harness scratch + gate scoping (structural — addresses #16)
 
 **Chosen: B1 — a gitignored, gate-excluded scratch dir.** Sanction e.g. `.anthill/scratch/`
 (already gitignored) as the home for all verify/harness artifacts, and ensure the gate
@@ -77,11 +77,13 @@ _(The rejected alternative — an isolated per-seat worktree for verify — is r
 design commitment above: it isolates rather than makes the shared tree ergonomic.)_
 
 **✅ Shipped:** `tsconfig.json` now `exclude`s `.anthill/scratch` (tsc scanned it by default, so a stray
-scratch `.ts` failed the whole-tree gate); `biome.json` gains `vcs.useIgnoreFile` (skip gitignored
-paths); and the **join** skill documents `.anthill/scratch/` as the gate-safe home for _all_ throwaway
-artifacts (verify mints, screenshots, seeds), not just seat notes. Verified: a genuinely broken `.ts`
-(TS2322) + malformed `.json` planted in scratch leave `bun run check` green. Addresses the #16 mechanism;
-see the close-out note on #16 for why C is still wanted.
+scratch `.ts` failed the whole-tree gate). Biome needed no change — its `files.includes` is already
+scoped to `plugin/**` + root config, so it never descended into `.anthill/scratch` (an earlier
+`vcs.useIgnoreFile` addition proved redundant and was dropped). The **join** skill documents
+`.anthill/scratch/` as the gate-safe home for _all_ throwaway artifacts (verify mints, screenshots,
+seeds), not just seat notes. Verified: a genuinely broken `.ts` (TS2322) + malformed `.json` planted in
+scratch leave `bun run check` green, while a broken `.ts` under `plugin/` still fails. Addresses the #16
+mechanism; see the close-out note on #16 for why C is still wanted.
 
 ### C. Commit pre-flight — the shared tree made legible at the moment of the land
 
@@ -156,9 +158,10 @@ earlier; it needs a fast proxy (e.g. lock-holder + a red-marker) or an explicit 
 
 ## Open Questions
 
-- [x] Does scoping Biome to tracked files weaken the gate in any case we care about? **Resolved:** B1
-      shipped as `vcs.useIgnoreFile` (skip _gitignored_ paths) + a tsconfig `exclude` for scratch —
-      tracked code is still fully linted/typechecked, so the gate isn't weakened; only ignored
+- [x] Does scoping Biome to tracked files weaken the gate in any case we care about? **Resolved:** no
+      Biome change was needed — its `files.includes` is already scoped to `plugin/**` + root config and
+      never descends into `.anthill/scratch`. B1 shipped as a single `tsconfig` `exclude` for scratch;
+      tracked code is still fully linted/typechecked, so the gate isn't weakened — only ignored
       throwaways are skipped.
 - [x] Should red-tree finalize (A) also become the _default_ finalize path, or only a branch
       taken when a red slice is detected? **Resolved:** conditional branch only — no patch/restore

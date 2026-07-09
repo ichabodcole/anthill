@@ -109,20 +109,23 @@ _live_. Don't skip it on a real session.
      (never `git add -A`).
      - **Red tree? (a slice deliberately held red for an atomic land.)** The pre-commit gate runs the
        **whole** suite on every commit, so a held-red tree fails each seat-doc commit and **deadlocks
-       this step** — the docs can't land while the code is red. Don't fight the gate; clear the red,
-       land the docs green, then restore it:
-       1. **Preserve** the held slice. If the holder knows its paths, `git stash push -u -- <red-paths>`
-          is cleanest — the doc edits stay in the tree, and `-u` catches any brand-new untracked files
-          in the slice. Otherwise snapshot the whole diff — **including staged changes** (`git diff HEAD`,
-          not a bare `git diff`, which omits what's already staged) — to a patch under the (gitignored)
-          scratch dir first: `git diff HEAD > .anthill/scratch/<session>-held.patch`.
-       2. **Green the tree.** With the red slice stashed, only the doc edits remain (markdown → the gate
-          passes). If you patched-and-restored instead, restore to `HEAD` and have the seats re-surface
-          their doc content to the lead.
+       this step** — the docs can't land while the code is red. Don't fight the gate; park everything,
+       land the docs green against a clean tree, then restore the slice. You always know the **doc**
+       paths (the seat living docs), so pivot on those — no need to enumerate the red slice:
+       1. **Stash all uncommitted work** — `git stash push -u` (the `-u` sweeps in untracked red files
+          too, which a patch of `git diff HEAD` would silently drop). The tree is now at `HEAD`, so the
+          gate is green.
+       2. **Bring back only the docs** — `git checkout stash@{0} -- <doc-paths…>`. Now the tree holds
+          just the seat docs (markdown → the gate passes); the red slice stays parked in the stash.
        3. **Land all seat docs in ONE atomic commit** — the lead commits every seat's doc together
           (`anthill commit -m "…" <doc-paths…>`), not each seat self-committing against a red tree.
-       4. **Re-apply** the held slice — `git stash pop` (or `git apply <patch>`) — so the atomic code
-          land proceeds as planned.
+       4. **Restore the held slice** — `git stash pop`. The stash's doc hunks are already committed
+          verbatim, so they re-apply as a clean no-op; the red slice (tracked edits **and** untracked
+          new files) comes back intact, and the atomic code land proceeds as planned.
+
+       _(Know the red slice's exact paths? Skip the stash-all pivot and park just those:
+       `git stash push -u -- <red-paths…>` before step 3, `git stash pop` after — same result, as long
+       as `<red-paths…>` is disjoint from the doc paths so a doc edit isn't stashed away with it.)_
    - ◻ **Board settled — best-effort, never a gate** (cards → review/done). If the board idle-died or is
      unreachable, **don't block finalize on it**: the **git history and the grapevine ARE the session's
      durable record**. Attempt a settle once; if the board's gone, note it on the vine and move on.

@@ -35,4 +35,4 @@ that lands.
 - `plugin/skills/finalize-session/SKILL.md` (step-6 closing checklist)
 - Source: anthill issue [#15](https://github.com/ichabodcole/anthill/issues/15) (`anthill feedback`)
 - Upstream (board idle-death): [spellbook#64](https://github.com/ichabodcole/spellbook/issues/64)
-- Related cluster: [`projects/shared-tree-gate-tension`](../projects/shared-tree-gate-tension/proposal.md)
+- Related cluster: [`projects/shared-tree-gate-tension`](../../projects/shared-tree-gate-tension/proposal.md)
