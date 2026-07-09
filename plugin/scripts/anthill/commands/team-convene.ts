@@ -7,6 +7,7 @@ import { type BoardCounts, readBoardCounts, requireConfig } from "./team-support
 interface ConveneData {
   channel: string;
   channelOpened: boolean;
+  fresh: boolean;
   topicSet: boolean;
   board: BoardCounts | null;
   leadDoc: string;
@@ -32,6 +33,11 @@ export const teamConveneCommand = defineAnthillCommand({
       valueHint: "name",
     },
     topic: { type: "string", description: "Channel topic to set", valueHint: "text" },
+    fresh: {
+      type: "boolean",
+      description:
+        "Snapshot + clear a dormant channel's prior-session log before opening (safe no-op if seats are connected)",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
@@ -40,13 +46,14 @@ export const teamConveneCommand = defineAnthillCommand({
     const config = requireConfig(format, "convene");
     const channel = (ctx.args.channel as string | undefined) || config.channel;
     const topic = ctx.args.topic as string | undefined;
+    const fresh = ctx.args.fresh === true;
     const warnings: string[] = [];
 
     let channelOpened = false;
     let topicSet = false;
     try {
       const grapevineCli = resolveCoordCli("grapevine");
-      const open = await execCoord(grapevineCli, ["open", channel]);
+      const open = await execCoord(grapevineCli, ["open", channel, ...(fresh ? ["--fresh"] : [])]);
       if (open.ok) {
         channelOpened = true;
       } else {
@@ -76,6 +83,7 @@ export const teamConveneCommand = defineAnthillCommand({
     const data: ConveneData = {
       channel,
       channelOpened,
+      fresh,
       topicSet,
       board,
       leadDoc,
@@ -89,7 +97,7 @@ export const teamConveneCommand = defineAnthillCommand({
       startedAt: started,
       renderText: (d) => {
         const lines: string[] = [
-          `Channel "${d.channel}": ${d.channelOpened ? "up" : "NOT opened"}${d.topicSet ? " (topic set)" : ""}`,
+          `Channel "${d.channel}": ${d.channelOpened ? "up" : "NOT opened"}${d.fresh ? " (fresh — dormant log cleared)" : ""}${d.topicSet ? " (topic set)" : ""}`,
         ];
         if (d.board) {
           lines.push(

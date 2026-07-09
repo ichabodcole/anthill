@@ -48,6 +48,11 @@ stay solo.
 3. **Stand up coordination.**
    - **Channel:** run **`anthill convene --topic "<one-line framing>"`** to open the grapevine channel
      (idempotent) and report board state.
+     - **Reusing a channel from a prior session?** It still carries that session's messages — new work
+       inherits the old noise. Add **`--fresh`** to snapshot-then-clear the log before opening
+       (`anthill convene --fresh --topic "…"`). It's a **safe no-op if seats are already connected** (a
+       live session is never wiped), and the log is always archived to `~/.grapevine/archive/` first, so
+       nothing is lost. Do it **before** spawning seats, at the start of the session.
    - **Board:** convene _reports_ the bounty board but does **not** open it (bounty's `open` isn't
      idempotent). Open it yourself via the **`spellbook:bounty`** skill (it documents its own CLI): title
      it for this work (e.g. `<project> · <phase>`), then **seed one `todo` card per planned lane, in
