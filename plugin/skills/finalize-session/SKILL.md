@@ -107,7 +107,25 @@ _live_. Don't skip it on a real session.
      **are** the confirmation — no vine gate; the seat docs are already written.)_
    - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit -m "<msg>" <paths…>`**
      (never `git add -A`).
-   - ◻ **Board settled** (cards → review/done).
+     - **Red tree? (a slice deliberately held red for an atomic land.)** The pre-commit gate runs the
+       **whole** suite on every commit, so a held-red tree fails each seat-doc commit and **deadlocks
+       this step** — the docs can't land while the code is red. Don't fight the gate; clear the red,
+       land the docs green, then restore it:
+       1. **Preserve** the held slice. If the holder knows its paths, `git stash push -u -- <red-paths>`
+          is cleanest — the doc edits stay in the tree, and `-u` catches any brand-new untracked files
+          in the slice. Otherwise snapshot the whole diff — **including staged changes** (`git diff HEAD`,
+          not a bare `git diff`, which omits what's already staged) — to a patch under the (gitignored)
+          scratch dir first: `git diff HEAD > .anthill/scratch/<session>-held.patch`.
+       2. **Green the tree.** With the red slice stashed, only the doc edits remain (markdown → the gate
+          passes). If you patched-and-restored instead, restore to `HEAD` and have the seats re-surface
+          their doc content to the lead.
+       3. **Land all seat docs in ONE atomic commit** — the lead commits every seat's doc together
+          (`anthill commit -m "…" <doc-paths…>`), not each seat self-committing against a red tree.
+       4. **Re-apply** the held slice — `git stash pop` (or `git apply <patch>`) — so the atomic code
+          land proceeds as planned.
+   - ◻ **Board settled — best-effort, never a gate** (cards → review/done). If the board idle-died or is
+     unreachable, **don't block finalize on it**: the **git history and the grapevine ARE the session's
+     durable record**. Attempt a settle once; if the board's gone, note it on the vine and move on.
    - ◻ **Human sign-off before the code branch merges to `develop`.** Green tests and a checked-off
      board are the team's _own_ signals — but the human's look (UI bugs, the feel, feedback) is a gate
      the team **cannot run itself**. Get an explicit "yes, merge it" before you land the feature branch

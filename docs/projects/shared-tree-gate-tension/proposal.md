@@ -1,6 +1,6 @@
 # Shared-tree gate tension — the whole-tree pre-commit gate vs. a shared working tree
 
-**Status:** Draft
+**Status:** Partially shipped — moves **A** + **B1** landed on `develop` (2026-07-08); move **C** deferred
 **Created:** 2026-07-08
 **Author:** Cole + lead (triaged from field feedback)
 
@@ -60,6 +60,10 @@ Fold the already-proven workaround into the **finalize-session** skill:
 
 This is a skill/ritual edit only — no CLI change — and unblocks finalize immediately.
 
+**✅ Shipped** in `plugin/skills/finalize-session/SKILL.md` as a conditional _Red tree?_ branch under
+the step-6 doc-land checklist — taken only when a red slice is detected, **not** the default finalize
+path (resolves the open question below). Closes #14.
+
 ### B. Sanctioned harness scratch + gate scoping (structural — closes #16)
 
 **Chosen: B1 — a gitignored, gate-excluded scratch dir.** Sanction e.g. `.anthill/scratch/`
@@ -72,7 +76,19 @@ tree_ — from the commit to the gate.
 _(The rejected alternative — an isolated per-seat worktree for verify — is recorded under the
 design commitment above: it isolates rather than makes the shared tree ergonomic.)_
 
+**✅ Shipped:** `tsconfig.json` now `exclude`s `.anthill/scratch` (tsc scanned it by default, so a stray
+scratch `.ts` failed the whole-tree gate); `biome.json` gains `vcs.useIgnoreFile` (skip gitignored
+paths); and the **join** skill documents `.anthill/scratch/` as the gate-safe home for _all_ throwaway
+artifacts (verify mints, screenshots, seeds), not just seat notes. Verified: a genuinely broken `.ts`
+(TS2322) + malformed `.json` planted in scratch leave `bun run check` green. Addresses the #16 mechanism;
+see the close-out note on #16 for why C is still wanted.
+
 ### C. Commit pre-flight — the shared tree made legible at the moment of the land
+
+**⏳ Deferred** (not in the A+B1 batch): the open question below — _what is the cheap pre-flight proxy_
+— is genuinely unresolved, so building it now risks either re-running the full suite (just moving the
+cost earlier) or shipping a proxy we haven't validated. A + B1 remove the two hard freezes; C is the
+ergonomic polish and can wait for the proxy question to settle.
 
 The pull-shaped signal an agent actually acts on (see the
 [signal-hunger investigation](../../investigations/2026-07-08-agent-signal-hunger.md)):
@@ -140,9 +156,13 @@ earlier; it needs a fast proxy (e.g. lock-holder + a red-marker) or an explicit 
 
 ## Open Questions
 
-- [ ] Does scoping Biome to tracked files weaken the gate in any case we care about?
-- [ ] Should red-tree finalize (A) also become the _default_ finalize path, or only a branch
-      taken when a red slice is detected?
+- [x] Does scoping Biome to tracked files weaken the gate in any case we care about? **Resolved:** B1
+      shipped as `vcs.useIgnoreFile` (skip _gitignored_ paths) + a tsconfig `exclude` for scratch —
+      tracked code is still fully linted/typechecked, so the gate isn't weakened; only ignored
+      throwaways are skipped.
+- [x] Should red-tree finalize (A) also become the _default_ finalize path, or only a branch
+      taken when a red slice is detected? **Resolved:** conditional branch only — no patch/restore
+      overhead on the common green-tree finalize.
 - [ ] What is the _cheap_ pre-flight proxy for "tree can't pass right now" (C) — a lightweight
       red-marker a holder sets, vs. actually running the gate? (Ties to how a held red slice is
       represented in the first place.)

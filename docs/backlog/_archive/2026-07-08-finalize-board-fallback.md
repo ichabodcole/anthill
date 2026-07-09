@@ -15,12 +15,20 @@ This is the **anthill-side** half of the friction. The underlying board idle-dea
 spellbook/bounty daemon bug, filed upstream at
 [ichabodcole/spellbook#64](https://github.com/ichabodcole/spellbook/issues/64).
 
+## Status
+
+**Anthill half shipped 2026-07-08.** Reworded the step-6 "Board settled" checklist beat in
+`plugin/skills/finalize-session/SKILL.md` to "**best-effort, never a gate**", naming git history + the
+grapevine as the session's durable record. The underlying board idle-death is still open upstream at
+[spellbook#64](https://github.com/ichabodcole/spellbook/issues/64) — anthill issue #15 stays open until
+that lands.
+
 ## Acceptance Criteria
 
-- [ ] finalize-session step 6 names git + grapevine as the durable record of a session.
-- [ ] Card-settle is explicitly best-effort (attempt once; don't block finalize if the board
+- [x] finalize-session step 6 names git + grapevine as the durable record of a session.
+- [x] Card-settle is explicitly best-effort (attempt once; don't block finalize if the board
       is unreachable).
-- [ ] The ritual reads correctly whether or not the board survived the session.
+- [x] The ritual reads correctly whether or not the board survived the session.
 
 ## References
 
