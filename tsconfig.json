@@ -26,5 +26,9 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
-  }
+  },
+  // `exclude` overrides tsc's defaults, so node_modules must be re-listed.
+  // `.anthill/scratch` is the gitignored home for harness/verify throwaways — keeping it out of the
+  // typecheck stops a stray scratch `.ts` from failing the shared-tree commit gate for every seat.
+  "exclude": ["node_modules", ".anthill/scratch"]
 }

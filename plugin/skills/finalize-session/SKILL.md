@@ -107,7 +107,28 @@ _live_. Don't skip it on a real session.
      **are** the confirmation — no vine gate; the seat docs are already written.)_
    - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit -m "<msg>" <paths…>`**
      (never `git add -A`).
-   - ◻ **Board settled** (cards → review/done).
+     - **Red tree? (a slice deliberately held red for an atomic land.)** The pre-commit gate runs the
+       **whole** suite on every commit, so a held-red tree fails each seat-doc commit and **deadlocks
+       this step** — the docs can't land while the code is red. Don't fight the gate; park everything,
+       land the docs green against a clean tree, then restore the slice. You always know the **doc**
+       paths (the seat living docs), so pivot on those — no need to enumerate the red slice:
+       1. **Stash all uncommitted work** — `git stash push -u` (the `-u` sweeps in untracked red files
+          too, which a patch of `git diff HEAD` would silently drop). The tree is now at `HEAD`, so the
+          gate is green.
+       2. **Bring back only the docs** — `git checkout stash@{0} -- <doc-paths…>`. Now the tree holds
+          just the seat docs (markdown → the gate passes); the red slice stays parked in the stash.
+       3. **Land all seat docs in ONE atomic commit** — the lead commits every seat's doc together
+          (`anthill commit -m "…" <doc-paths…>`), not each seat self-committing against a red tree.
+       4. **Restore the held slice** — `git stash pop`. The stash's doc hunks are already committed
+          verbatim, so they re-apply as a clean no-op; the red slice (tracked edits **and** untracked
+          new files) comes back intact, and the atomic code land proceeds as planned.
+
+       _(Know the red slice's exact paths? Skip the stash-all pivot and park just those:
+       `git stash push -u -- <red-paths…>` before step 3, `git stash pop` after — same result, as long
+       as `<red-paths…>` is disjoint from the doc paths so a doc edit isn't stashed away with it.)_
+   - ◻ **Board settled — best-effort, never a gate** (cards → review/done). If the board idle-died or is
+     unreachable, **don't block finalize on it**: the **git history and the grapevine ARE the session's
+     durable record**. Attempt a settle once; if the board's gone, note it on the vine and move on.
    - ◻ **Human sign-off before the code branch merges to `develop`.** Green tests and a checked-off
      board are the team's _own_ signals — but the human's look (UI bugs, the feel, feedback) is a gate
      the team **cannot run itself**. Get an explicit "yes, merge it" before you land the feature branch

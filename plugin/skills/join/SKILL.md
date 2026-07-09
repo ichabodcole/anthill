@@ -46,6 +46,11 @@ status`** shows who's on + the board.
    **`.anthill/scratch/<handle>/<YYYY-MM-DD>-<slug>.md`** (it's gitignored — `anthill init` added the
    line). This is where you drop cheap notes as you work ("this just bit me", "this seam is fuzzy") —
    the raw material you'll synthesize at finalize. Start it now so capture is frictionless later.
+   - **`.anthill/scratch/` is also the gate-safe home for _throwaway artifacts_** — verify mints,
+     screenshots, seeds, any harness output. The commit gate skips it (gitignored + excluded from the
+     typecheck/lint), so a stray artifact dropped there never trips the shared tree and blocks another
+     seat's land. Don't scatter throwaways at the repo root or under `plugin/`, where the gate _will_
+     scan them.
 
 5. **Signal ready** on the vine (a short "in, grounded, here's my lane") and **claim your bounty card**
    (move it `todo→doing` when you actually start) — or await assignment from the lead.
@@ -68,6 +73,10 @@ status`** shows who's on + the board.
 - ◻ **On the vine** — grapevine tail wrapped in Monitor, presence registered (terminal-seat path).
 - ◻ **On the board** — board tail wrapped in Monitor.
 - ◻ **Introduced** on the vine — a short "in, grounded, here's my lane".
+- ◻ **Code-bearing vine message? Send it safely.** Any grapevine `send` whose body carries
+  backticks or code MUST go via `--stdin` (or a quoted heredoc) — an un-quoted body is
+  command-substituted by bash (backticked spans get executed, apostrophes mangle) _before_
+  grapevine ever sees it, corrupting the message or partially running it.
 - ◻ **Scratch minted** — `.anthill/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
 - ◻ **Route through the lead — never block on the human.** The human may not be watching this pane;
   questions + decisions go to the lead/liaison on the vine, not direct.
