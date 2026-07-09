@@ -12,16 +12,26 @@ The **anthill-side** fix: the **join** skill's checklist should _mandate_ a quot
 `--stdin` for any code-bearing body, so the safe path is the obvious one — belt-and-suspenders
 alongside the upstream fix.
 
-The robust half (escape-by-default on the send path) lives in spellbook and is filed upstream
-at [ichabodcole/spellbook#60](https://github.com/ichabodcole/spellbook/issues/60). If that
-lands, this checklist mandate becomes a nicety rather than a necessity — but it's cheap
-insurance either way.
+An upstream fix was filed at
+[ichabodcole/spellbook#60](https://github.com/ichabodcole/spellbook/issues/60). Note the original
+hope — "escape-by-default on the send path" — proved **impossible**: the shell command-substitutes
+the metacharacters _before_ grapevine's process starts, so the CLI can't escape an argument it never
+receives intact. This checklist mandate (use the shell-free `--stdin` / `--body-file` path) is
+therefore the _primary_ fix, not a nicety. See **Status** below.
 
 ## Status
 
 **Shipped 2026-07-08.** Added as a checklist beat in `plugin/skills/join/SKILL.md` (the "Join
-checklist" section). spellbook#60 (escape-by-default on the send path) also landed upstream, so this
-mandate is now the belt-and-suspenders half it was designed to be, not the sole line of defense.
+checklist" section).
+
+**Framing correction (after checking spellbook#60's actual resolution):** the mandate is the
+_primary_ caller-side fix, not "belt-and-suspenders." The corruption happens in **bash** —
+metacharacters are command-substituted _before_ grapevine's process starts — so grapevine can't
+escape an argument it never receives intact. True escape-by-default proved **impossible**; the
+upstream fix ([spellbook#60](https://github.com/ichabodcole/spellbook/issues/60), commit `cc35636`)
+is a **non-blocking stderr warning** that steers callers to `--stdin` / `--body-file`. So the
+shell-free send path this checklist mandates _is_ the fix; the upstream warning is the nudge toward
+it, not a replacement for it.
 
 ## Acceptance Criteria
 
