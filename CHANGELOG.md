@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.2](https://github.com/ichabodcole/anthill/compare/anthill-v1.3.1...anthill-v1.3.2) (2026-07-09)
+
+
+### Bug Fixes
+
+* **join:** mandate --stdin/heredoc for code-bearing vine messages ([9527c17](https://github.com/ichabodcole/anthill/commit/9527c170c3d3921e44c42870297dcf6a1493dfc0))
+* **shared-tree:** fix-forward review findings on A+B1 ([2fac0d8](https://github.com/ichabodcole/anthill/commit/2fac0d8e1e1d741a59b7a0ecc42d850d4d9da8d9))
+* **shared-tree:** red-tree finalize branch, board best-effort, gate-scope scratch ([2df7977](https://github.com/ichabodcole/anthill/commit/2df7977e8279a8040e1ebe9128eccde3a67a009e))
+
 ## [1.3.1](https://github.com/ichabodcole/anthill/compare/anthill-v1.3.0...anthill-v1.3.1) (2026-07-06)
 
 
