@@ -103,3 +103,23 @@ it should carry). Duplicate issues are prevented by routing the submit through t
 `composeFeedbackBody`/`feedbackTitle`/`buildIssueUrl`/`interpretGhResult`, incl. a privacy assertion) +
 `plugin/scripts/anthill/commands/team-feedback.test.ts` (guard envelopes + stubbed-`gh()` success/failure
 branches with a `forbiddenGh` that throws if the default path ever calls it — no real network).
+
+## Contract 3 — board-binding (every seat verb targets THIS team's board, ambiently)
+
+**Owner:** forager · **Pointed at from:** weaver (`convene` SKILL.md + `.anthill/README.md` SOP say the board is key-bound; they point here, never restate the mechanism)
+
+**The contract, stated once:** the bounty **session key = `config.channel`**.
+anthill binds every seat's bounty verbs to this team's board via **two ambient emitters**, and threads `--session` onto **no** individual verb:
+
+1. **`convene` opens the board keyed + pinned + headless** — `bounty open --session-key <channel> --pin --no-open` (`bountyOpenArgs`). `--pin` writes `.bounty-session` at the repo root; `--no-open` keeps it browser-free; keyed open is **idempotent** (re-attaches, never hijacks). Convene opens **before** it reads counts so `bounty state` resolves the pinned board.
+2. **`spawn` exports the key into each pane** — the launch line is prefixed `BOUNTY_SESSION_KEY=<channel> ` (`buildSeatLaunch`), so a spawned seat's improvised verbs inherit the binding with no flag.
+
+Resolution is **spellbook-side** (v1.16.0): a verb with no `--session` resolves the board by `.bounty-session` walk-up from cwd **or** `$BOUNTY_SESSION_KEY` in the env — so the **lead**, a **hand-started pane**, and a **seat-dispatched subagent** (none carry anthill's exported env) all resolve via the pinned file, while spawned seats also carry the env. **Seats and the lead NEVER pass `--session`** — the binding is ambient by construction. `init` gitignores `.bounty-session` (per-session/local state, never committed).
+
+**Scope bound (the binding is project-tree-local, not global).** The id spellbook derives is `k-<keyname>-<projecthash>` — **project-path-scoped**. Both the `.bounty-session` walk-up and the `$BOUNTY_SESSION_KEY` env-key derivation resolve **only from within the project tree**; the same key from an unrelated cwd (e.g. `/tmp`) resolves to "no session", never the team board. Correct in practice — seats always run inside the repo — but the guarantee is bounded to the tree, not the machine. (Proof: sentinel's Phase 5 — the env-decoy bound only from the repo; `anthill-dev` from `/tmp` → "no session".)
+
+**The key is shell-safe or it's a hard error.** `config.channel` is interpolated unquoted into a `BOUNTY_SESSION_KEY=<key>` prefix typed into a pane shell — so it is charset-guarded to `[A-Za-z0-9._-]` (`SAFE_SESSION_KEY`); a malformed channel fails clean at a `spawn` preflight (no half-spawn), never as an injection.
+
+**Why it bites:** without the key every un-flagged verb resolves the bounty daemon's global **`latest`** pointer — with two boards live, a seat silently reads/writes a **stranger's** board (anthill #23/#19; it froze live sessions). The failure is silent (`noop:true` the only tell) and hits exactly the **improvised** verbs a seat runs naturally, not just anthill's pre-emitted ones. Binding the _environment_ + the _directory_ (not each call) is what makes correctness require zero agent cognition.
+
+**Proof:** `plugin/scripts/anthill/commands/team-convene.test.ts` (`bountyOpenArgs` golden), `plugin/scripts/anthill/commands/team-spawn.test.ts` (`buildSeatLaunch` env-prefix + the 3 unsafe-key rejections), `plugin/scripts/anthill/commands/team-init.test.ts` (`planGitignore` reuse for `.bounty-session`, incl. the already-present-under-a-comment case). The live two-board hijack proof (a fresh stranger board as `latest`, an improvised `bounty update` from a seat pane STILL hitting ours) is sentinel's Phase 5 — the mechanism these unit seams compose can't be proven by a unit test.

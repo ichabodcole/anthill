@@ -7,11 +7,25 @@ import { type BoardCounts, readBoardCounts, requireConfig } from "./team-support
 interface ConveneData {
   channel: string;
   channelOpened: boolean;
+  boardOpened: boolean;
   fresh: boolean;
   topicSet: boolean;
   board: BoardCounts | null;
   leadDoc: string;
   warnings?: string[];
+}
+
+/**
+ * PURE: the `bounty open` argv that binds the team board to `channel`. Keyed
+ * (`--session-key`) so the board id is `(channel, repo-root)`-scoped; `--pin`
+ * writes `.bounty-session` at the repo root (the ambient floor the lead /
+ * hand-started panes / dispatched subagents resolve by walk-up); `--no-open`
+ * keeps convene headless-safe (no browser auto-launch — the human opens the URL
+ * when ready). Keyed open is idempotent: re-convening re-attaches, never hijacks.
+ * See seams.md — the board-binding contract (owner: forager).
+ */
+export function bountyOpenArgs(channel: string): string[] {
+  return ["open", "--session-key", channel, "--pin", "--no-open"];
 }
 
 // `anthill convene` — ensure the team infra is up: open the grapevine channel
@@ -73,6 +87,23 @@ export const teamConveneCommand = defineAnthillCommand({
       warnings.push(`grapevine CLI unresolved: ${(err as Error).message}`);
     }
 
+    // Own the board-open: keyed + pinned so every seat verb binds THIS team's
+    // board ambiently (via `.bounty-session` / `$BOUNTY_SESSION_KEY`), never a
+    // stranger's `latest`. Must run BEFORE readBoardCounts so the pinned board is
+    // what `bounty state` resolves. Keyed open is idempotent (re-attaches).
+    let boardOpened = false;
+    try {
+      const bountyCli = resolveCoordCli("bounty");
+      const openBoard = await execCoord(bountyCli, bountyOpenArgs(channel));
+      if (openBoard.ok) {
+        boardOpened = true;
+      } else {
+        warnings.push(`bounty open failed: ${firstErrorLine(openBoard.stderr, "unknown error")}`);
+      }
+    } catch (err) {
+      warnings.push(`bounty CLI unresolved: ${(err as Error).message}`);
+    }
+
     const { board, warning: boardWarning } = await readBoardCounts();
     if (boardWarning) warnings.push(boardWarning);
 
@@ -83,6 +114,7 @@ export const teamConveneCommand = defineAnthillCommand({
     const data: ConveneData = {
       channel,
       channelOpened,
+      boardOpened,
       fresh,
       topicSet,
       board,
@@ -101,10 +133,12 @@ export const teamConveneCommand = defineAnthillCommand({
         ];
         if (d.board) {
           lines.push(
-            `Board: todo ${d.board.todo} · doing ${d.board.doing} · review ${d.board.review} · done ${d.board.done}`,
+            `Board "${d.channel}" (key-bound): todo ${d.board.todo} · doing ${d.board.doing} · review ${d.board.review} · done ${d.board.done}`,
           );
         } else {
-          lines.push("Board: not running (open one via the bounty skill if needed)");
+          lines.push(
+            `Board: ${d.boardOpened ? "opened (key-bound) but not readable" : "NOT opened"}`,
+          );
         }
         lines.push(`Lead: read ${d.leadDoc} to take the lead seat.`);
         if (d.warnings?.length) {

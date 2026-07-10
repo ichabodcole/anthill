@@ -48,9 +48,9 @@ status`** shows who's on + the board.
      _now_ forward. To inherit the session's context, replay it with
      **`grapevine tail <channel> --from-start`** — because the lead clears the channel at convene
      (`--fresh`), "from start" is **this session**, not an archive of past ones, so it's usually the
-     right catch-up. On a long-running channel you can anchor at a known message id with `--since <id>`
-     instead; there's **no bounded "last N" catch-up yet**, so if the full log is too much, read the
-     tail's "N earlier exist" hint and pull selectively with `grapevine read <id>`.
+     right catch-up. On a long-running channel you can anchor at a known message id with `--since <id>`,
+     or pull just the **last N** messages with `--last <n>` for a bounded catch-up when the full log is
+     too much — then fill any gaps selectively with `grapevine read <id>`.
 
 4. **Mint your session scratch.** Create your running-capture file:
    **`.anthill/scratch/<handle>/<YYYY-MM-DD>-<slug>.md`** (it's gitignored — `anthill init` added the

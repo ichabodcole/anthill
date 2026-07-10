@@ -69,10 +69,12 @@ export function summarizeBoard(parsed: BoardState | null): BoardSummary | null {
  * throws) when the board isn't running / can't be read; the warning text is
  * returned alongside so callers can surface it in `data.warnings`.
  *
- * NOTE: `bounty state` (no `--session`) reads the daemon's global "latest" board,
- * which may belong to ANOTHER project. We can't yet scope to this team's own board
- * (anthill persists no board id — that lands with the `.anthill/` footprint work);
- * until then we return the `title` so callers can label which board this is.
+ * NOTE: `bounty state` (no `--session`) resolves the board AMBIENTLY. Once
+ * `anthill convene` has opened the board keyed + pinned (`--session-key <channel>
+ * --pin`), `.bounty-session` at the repo root binds this call to THIS team's board
+ * via walk-up — not the daemon's global "latest" (a stranger's). See seams.md, the
+ * board-binding contract (owner: forager). We still return the `title` so an
+ * unexpectedly-ambient read (convene never ran) is self-evidently labeled.
  */
 export async function readBoardCounts(): Promise<{
   board: BoardCounts | null;

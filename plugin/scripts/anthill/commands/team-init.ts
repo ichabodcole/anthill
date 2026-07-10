@@ -100,6 +100,12 @@ export function renderTemplates(opts: {
  * committed; the scratch under `.anthill/scratch/` is disposable, so it's ignored. */
 export const SCRATCH_GITIGNORE_LINE = ".anthill/scratch/";
 
+/** The second gitignore line init ensures: the pinned bounty-session marker.
+ * `anthill convene` writes `.bounty-session` at the repo root (`bounty open --pin`)
+ * to bind the team board; it's per-session/local state, so — like the scratch
+ * dir — it's ignored, never committed. See seams.md, the board-binding contract. */
+export const BOUNTY_SESSION_GITIGNORE_LINE = ".bounty-session";
+
 export interface GitignorePlan {
   action: "added" | "present";
   content: string;
@@ -146,7 +152,8 @@ interface InitData {
   teamDir: string;
   written: string[];
   skipped: string[];
-  gitignore: "added" | "present";
+  /** Per-line status for each gitignore line init ensures (scratch + bounty-session). */
+  gitignore: Array<{ line: string; action: "added" | "present" }>;
 }
 
 // `anthill init` — deterministic, idempotent renderer. Reads .anthill/config.json,
@@ -199,19 +206,23 @@ export const teamInitCommand = defineAnthillCommand({
     }
     const skipped = plan.skipped.map((rel) => relative(config.projectRoot, join(teamDir, rel)));
 
-    // Ensure the gitignored running-scratch line in the target repo (idempotent).
+    // Ensure the gitignored lines in the target repo (idempotent): the running
+    // scratch dir AND the pinned bounty-session marker. Chain planGitignore over
+    // the resulting content so both land in one write.
     const gitignorePath = join(config.projectRoot, ".gitignore");
-    const gi = planGitignore(
-      existsSync(gitignorePath) ? readFileSync(gitignorePath, "utf8") : null,
-      SCRATCH_GITIGNORE_LINE,
-    );
-    if (gi.action === "added") writeFileSync(gitignorePath, gi.content);
+    const before = existsSync(gitignorePath) ? readFileSync(gitignorePath, "utf8") : null;
+    const scratchGi = planGitignore(before, SCRATCH_GITIGNORE_LINE);
+    const bountyGi = planGitignore(scratchGi.content, BOUNTY_SESSION_GITIGNORE_LINE);
+    if (bountyGi.content !== (before ?? "")) writeFileSync(gitignorePath, bountyGi.content);
 
     const data: InitData = {
       teamDir: relative(config.projectRoot, teamDir),
       written,
       skipped,
-      gitignore: gi.action,
+      gitignore: [
+        { line: SCRATCH_GITIGNORE_LINE, action: scratchGi.action },
+        { line: BOUNTY_SESSION_GITIGNORE_LINE, action: bountyGi.action },
+      ],
     };
 
     emit({
@@ -230,11 +241,13 @@ export const teamInitCommand = defineAnthillCommand({
           for (const p of d.skipped) lines.push(`  · ${p}`);
         }
         if (!d.written.length && !d.skipped.length) lines.push("(no templates to render)");
-        lines.push(
-          d.gitignore === "added"
-            ? `.gitignore: added "${SCRATCH_GITIGNORE_LINE}"`
-            : `.gitignore: "${SCRATCH_GITIGNORE_LINE}" already present`,
-        );
+        for (const g of d.gitignore) {
+          lines.push(
+            g.action === "added"
+              ? `.gitignore: added "${g.line}"`
+              : `.gitignore: "${g.line}" already present`,
+          );
+        }
         return lines.join("\n");
       },
     });

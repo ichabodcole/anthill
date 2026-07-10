@@ -27,6 +27,32 @@ type ResolveResult = { handles: string[] } | { error: string };
 const SAFE_HANDLE = /^[a-zA-Z0-9_-]+$/;
 
 /**
+ * Conservative shell-safe session-key charset. The key (`config.channel`) is
+ * interpolated into a `BOUNTY_SESSION_KEY=<key>` env-assignment prefix that
+ * `launchInPane` types into a pane's shell — so an unquoted value carrying a
+ * space or shell metachar is an injection vector. Dots are allowed (channel
+ * names may carry them); everything outside `[A-Za-z0-9._-]` is rejected.
+ */
+const SAFE_SESSION_KEY = /^[a-zA-Z0-9._-]+$/;
+
+/**
+ * PURE: the pane launch line for one seat — the `config.launch` template with
+ * `{handle}` substituted, prefixed with `BOUNTY_SESSION_KEY=<sessionKey> ` so the
+ * spawned seat's improvised bounty verbs bind THIS team's board (the seat's Bash
+ * subshells inherit the exported var). The key is charset-guarded (never quoted
+ * into the line — a malformed channel is a hard error, not an injection). See
+ * seams.md — the board-binding contract (owner: forager).
+ */
+export function buildSeatLaunch(launch: string, handle: string, sessionKey: string): string {
+  if (!SAFE_SESSION_KEY.test(sessionKey)) {
+    throw new Error(
+      `unsafe bounty session key "${sessionKey}" — config.channel must match [A-Za-z0-9._-]. Rename the channel in .anthill/config.json.`,
+    );
+  }
+  return `BOUNTY_SESSION_KEY=${sessionKey} ${launch.replace(/\{handle\}/g, handle)}`;
+}
+
+/**
  * PURE handle resolution (no tmux) — the unit-test target. Config-driven: the
  * roster, the default spawn set, and the lead handle are all passed in (from
  * config.ts) rather than hardcoded.
@@ -141,6 +167,18 @@ export const teamSpawnCommand = defineAnthillCommand({
       process.exit(1);
     }
 
+    // Preflight: no half-spawn if the session key (config.channel) is unsafe to
+    // interpolate — buildSeatLaunch would throw mid-loop, leaving a partial tmux
+    // session. Fail cleanly here before any pane is created.
+    if (!SAFE_SESSION_KEY.test(config.channel)) {
+      emitError({
+        format,
+        command: "spawn",
+        error: `unsafe config.channel "${config.channel}" — the bounty session key must match [A-Za-z0-9._-]. Rename the channel in .anthill/config.json.`,
+      });
+      process.exit(1);
+    }
+
     const sessionName = sanitizeSessionName(
       (ctx.args.session as string | undefined) || config.channel,
     );
@@ -188,8 +226,10 @@ export const teamSpawnCommand = defineAnthillCommand({
       const paneId = paneIds[i] ?? null;
       if (paneId) {
         await labelPane(paneId, handle);
-        // Handle charset is validated in resolveSpawnHandles → safe to interpolate.
-        await launchInPane(paneId, config.launch.replace(/\{handle\}/g, handle));
+        // Handle charset is validated in resolveSpawnHandles; buildSeatLaunch
+        // guards the session key → safe to interpolate. The env prefix binds the
+        // seat's improvised bounty verbs to THIS team's board (seams.md).
+        await launchInPane(paneId, buildSeatLaunch(config.launch, handle, config.channel));
       } else {
         warnings.push(`seat "${handle}" got no pane — it was not launched`);
       }

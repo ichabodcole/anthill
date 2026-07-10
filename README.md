@@ -49,7 +49,11 @@ there's nothing to keep in sync, and a plugin upgrade needs no reinstall. See
 
 ## Dependencies
 
-- [spellbook](https://github.com/ichabodcole) — grapevine (discussion) + bounty (task board)
+- [spellbook](https://github.com/ichabodcole) **(≥ 1.16.0)** — grapevine (discussion) + bounty (task
+  board). The 1.16.0 floor is load-bearing: board session-binding relies on spellbook's caller-owned
+  bounty session key ([#69](https://github.com/ichabodcole/spellbook/issues/69)) and the bounded
+  `grapevine tail --last <n>` catch-up ([#68](https://github.com/ichabodcole/spellbook/issues/68)).
+  anthill resolves the highest cached spellbook, so keep your install current.
 - Bun · tmux · the `claude` CLI
 
 ## Lineage

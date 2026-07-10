@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import {
+  BOUNTY_SESSION_GITIGNORE_LINE,
   planGitignore,
   renderTemplates,
   SCRATCH_GITIGNORE_LINE,
@@ -124,5 +125,34 @@ describe("planGitignore (idempotent ensure-line)", () => {
     expect(planGitignore(existing, LINE)).toEqual({ action: "present", content: existing });
     // trailing whitespace variant still counts as present (no dupe)
     expect(planGitignore(`${LINE}  \n`, LINE).action).toBe("present");
+  });
+});
+
+describe("BOUNTY_SESSION_GITIGNORE_LINE (init also ignores the pinned board marker)", () => {
+  const BOUNTY = BOUNTY_SESSION_GITIGNORE_LINE;
+
+  it("is the repo-root `.bounty-session` marker (distinct from the scratch line)", () => {
+    expect(BOUNTY).toBe(".bounty-session");
+    expect(BOUNTY).not.toBe(SCRATCH_GITIGNORE_LINE);
+  });
+
+  it("adds the bounty line when absent", () => {
+    expect(planGitignore(null, BOUNTY)).toEqual({ action: "added", content: `${BOUNTY}\n` });
+  });
+
+  it("is a no-op when already present, even under a comment (the real repo state)", () => {
+    const existing = `.anthill/scratch/\n\n# anthill board-session pin (spellbook #69)\n${BOUNTY}\n`;
+    expect(planGitignore(existing, BOUNTY)).toEqual({ action: "present", content: existing });
+  });
+
+  it("chains after the scratch line so a fresh file ends with BOTH lines present", () => {
+    const afterScratch = planGitignore(null, SCRATCH_GITIGNORE_LINE);
+    const afterBounty = planGitignore(afterScratch.content, BOUNTY);
+    expect(afterScratch.action).toBe("added");
+    expect(afterBounty.action).toBe("added");
+    expect(afterBounty.content).toBe(`${SCRATCH_GITIGNORE_LINE}\n${BOUNTY}\n`);
+    // idempotent: a second pass over the result adds nothing
+    expect(planGitignore(afterBounty.content, SCRATCH_GITIGNORE_LINE).action).toBe("present");
+    expect(planGitignore(afterBounty.content, BOUNTY).action).toBe("present");
   });
 });

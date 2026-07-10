@@ -107,7 +107,7 @@ export const teamJoinCommand = defineAnthillCommand({
     const checklist = [
       `Monitor the grapevine — wrap with Monitor, filter keepalives: ${tailCommand} | grep '"from"'`,
       `Monitor your board lane — wrap with Monitor: ${boardTailCommand} | grep '"type":"(task|heartbeat|unblocked|closed)"'`,
-      "Own your card lifecycle: move it todo→doing when you start, →review when green.",
+      "Own your card lifecycle: advance with `bounty update <id> --status doing` when you start, `--status review` when green (the bounty CLI has no `move` verb).",
       "Commit file-scoped with an EXPLICIT pathspec (never a bare `git commit` / `git add -A`). On a shared tree, serialize: announce, commit, confirm landed, then the next seat goes — or hand maestro your paths for one atomic land.",
       `Finalize BEFORE you drop off: synthesize durable lessons into ${seatDocRel}, commit, THEN stand down.`,
       `Route questions + decisions to the lead${config.lead ? ` (${config.lead})` : ""} on the vine — not direct to the human.`,
