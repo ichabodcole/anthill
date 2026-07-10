@@ -18,6 +18,14 @@ title (`Board «<title>»: …`), so an ambient/stranger board is self-evidently
 session-scoping (showing _only_ this team's board) needs anthill to persist its own board id,
 which lands with the `.anthill/` footprint work — tracked in the footprint-migration project.
 
+**Update 2026-07-10 — likely delivered by board-session-binding.** The remainder ("persist its own
+board id" so status shows only this team's board) is essentially what **board-session-binding**
+shipped (`8a7471b`): convene now opens the board **keyed + pinned** (`bounty open --session-key
+<channel> --pin`, writing `.bounty-session`), and `bounty state`/`anthill status` resolve that pinned
+board by walk-up rather than the daemon's global `latest`. **To close:** confirm `anthill status` on a
+fresh team, with a stranger board live as `latest`, reports only this team's board — then archive.
+See [board-session-binding proposal](../projects/board-session-binding/proposal.md).
+
 ## References
 
 - `scripts/anthill/commands/team-status.ts` (wherever status resolves the board)
