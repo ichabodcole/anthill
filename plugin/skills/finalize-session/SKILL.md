@@ -67,6 +67,10 @@ _live_. Don't skip it on a real session.
    - If a lesson is really **shared truth** (about a boundary between seats), it belongs in `seams.md`
      (next), not your seat doc.
    - Your scratch is **disposable after synthesis** — the durable form is the seat doc.
+   - **Write your seat doc to disk, but do NOT commit it** — this holds for **terminal seats too**, not
+     just subagents. The lead lands every seat's doc in **one atomic commit** (see Land + close); a seat
+     self-committing its own doc breaks that atomic land (and reds a held-red tree). Leave the file
+     staged-or-dirty for the lead; don't `anthill commit` it yourself.
 
 ### Shared — the lead coordinates over the vine
 
