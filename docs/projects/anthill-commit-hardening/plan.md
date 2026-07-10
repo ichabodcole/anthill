@@ -28,10 +28,9 @@ dual-audience-envelope style (`unexpectedStaged`):
 **Why now / the "why" lives here:** the protected-trunk guard's rationale is in
 [`backlog/2026-07-10-anthill-commit-protected-trunk-guard.md`](../../backlog/2026-07-10-anthill-commit-protected-trunk-guard.md);
 C.1's is move C in
-[`shared-tree-gate-tension`](../shared-tree-gate-tension/proposal.md) (four field reports #14/#16/#24/#28
-
-- a first-party reproduction + a lead-blocks-seats instance). This plan implements both; it is not a new
-  proposal.
+[`shared-tree-gate-tension`](../shared-tree-gate-tension/proposal.md) (four field reports #14/#16/#24/#28,
+a first-party reproduction, and a lead-blocks-seats instance). This plan implements both; it is not a new
+proposal.
 
 ## Outcome & Success Criteria
 
