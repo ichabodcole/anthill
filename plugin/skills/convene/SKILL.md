@@ -62,12 +62,25 @@ stay solo.
      board is _state_; the vine is _substance_.
    - **`anthill status`** confirms the result (who's on the vine + the board column counts).
 
-4. **Brief the seats, then spawn them.** Post a framing opener on the channel (what we're building, the
-   lanes, where the plan lives). Then stand the seats up with one command:
-   **`anthill spawn <handles…>`** — it opens a tmux session (one `claude` pane per seat) and auto-fires
-   each seat's `anthill:join` (each boots, grounds, lands on the vine awaiting assignment). With no
-   handles it spawns the config's default set (`spawn:true` seats); it **never spawns the lead** (that's
-   you).
+4. **Confirm the branch, brief the seats, then spawn them.**
+
+   - **Confirm the working branch — _before_ spawn (the commit-power gate).** Spawn is the exact moment
+     seats gain the ability to commit to the shared tree, so **decide which branch those commits land on
+     before you spawn**, not after — landing on the wrong branch (e.g. straight onto a protected trunk)
+     is cheap to undo only until something is pushed. If the project has a **branch policy**, follow it —
+     read the specific rule from the **grounding docs** (e.g. `AGENTS.md`), don't invent one: the skill
+     supplies the trigger, the project supplies the content (anthill's _defer-to-one-source_ principle).
+     This is a **decision prompt, not an auto-cut** — never hard-code branch creation; that would force
+     gitflow on a trunk-based or solo repo and a naming scheme the skill can't know. Confirm you're on the
+     intended branch (switch/create per policy if not), _then_ spawn. _(Plan can legitimately precede a
+     branch — it commits no code; the enforcement point is here, pre-spawn.)_
+
+   - **Brief, then spawn.** Post a framing opener on the channel (what we're building, the
+     lanes, where the plan lives). Then stand the seats up with one command:
+     **`anthill spawn <handles…>`** — it opens a tmux session (one `claude` pane per seat) and auto-fires
+     each seat's `anthill:join` (each boots, grounds, lands on the vine awaiting assignment). With no
+     handles it spawns the config's default set (`spawn:true` seats); it **never spawns the lead** (that's
+     you).
    - **Verifier (and any seat) engagement is YOUR per-phase call.** Pull a verify seat in at the
      verification point the plan calls for — early (tests first), mid (prove a feature), or late — and
      let it ping-pong with the owning seat. Don't reserve it for the end.
@@ -102,6 +115,9 @@ The stand-up beats that get skipped when you're eager to spawn. Run them as a li
 - ◻ **Board open + seeded** — one `todo` card per planned lane, in owner lanes; **size** them where the
   work is known enough to size.
 - ◻ **Seats briefed** on the vine (what we're building, the lanes, where the plan lives).
+- ◻ **Working branch confirmed** — you're on the intended branch for this session's commits; if the
+  project has a branch policy (in the grounding docs), it's followed. _Do this **before** spawn — spawn
+  is when seats gain commit power._
 - ◻ **Seats spawned** — `anthill spawn <handles…>`; `anthill status` confirms who's on + the columns.
 
 ## Output
