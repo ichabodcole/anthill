@@ -33,6 +33,9 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
 
    Running **`anthill join <handle>`** prints this grounding manifest (the exact files, in order) plus
    your tail commands and an action checklist — use it as your source of truth; don't restate it.
+   - **Grounding is read-only-first _by design_** — every step here is a read, so a seat can fully
+     re-ground even under a Bash-permission outage or a locked-down sandbox. Don't reach for a write
+     (scratch mint, card claim) until you're grounded; the read-only spine is what makes join robust.
 
 3. **Get on the wires.** From the `anthill join <handle>` output, run the resolved **grapevine tail**
    and **board tail** commands — each wrapped with the **Monitor** tool (filter keepalives as the
@@ -41,6 +44,11 @@ status`** shows who's on + the board.
    - **Were you dispatched as a subagent** (not a terminal seat)? A one-shot subagent can't hold a
      Monitor tail — **skip the tail wiring**. The lead drives you directly (dispatch → result) and
      relays the vine. The tail wiring above is the **terminal-seat path**.
+   - **Joining mid-session? Backfill the vine history first.** A live tail only shows messages from
+     _now_ forward, and `grapevine read <id>` is per-message. To catch up on what you missed, replay
+     the channel with **`grapevine tail <channel> --from-start`** (whole log) or **`--since <id>`**
+     (from a known message id onward) before you start acting, so you inherit the session's context,
+     not just its tail.
 
 4. **Mint your session scratch.** Create your running-capture file:
    **`.anthill/scratch/<handle>/<YYYY-MM-DD>-<slug>.md`** (it's gitignored — `anthill init` added the
@@ -53,9 +61,11 @@ status`** shows who's on + the board.
      scan them.
 
 5. **Signal ready** on the vine (a short "in, grounded, here's my lane") and **claim your bounty card**
-   (move it `todo→doing` when you actually start) — or await assignment from the lead.
+   — advance it to `doing` when you actually start with **`bounty update <id> --status doing`** (the
+   bounty CLI has **no `move` verb** — `update <id> --status <col>` is how you change columns) — or
+   await assignment from the lead.
    - **Ratify your seams, then author your lane (the plan-phase gate).** If the lead posted a plan
-     **skeleton**, then _before_ you move a card `todo→doing`: (1) **ratify or falsify each cross-seam
+     **skeleton**, then _before_ you advance a card to `doing`: (1) **ratify or falsify each cross-seam
      contract your lane touches** — an explicit vine acknowledgement (_"ratified"_ / _"falsified —
      here's the correction"_), never silence; you hold your domain's reflexes, so catching a wrong
      seam now is the whole point. (2) **Author your own lane** — `plan/<seat>.md`, the file-level HOW
@@ -77,6 +87,9 @@ status`** shows who's on + the board.
   backticks or code MUST go via `--stdin` (or a quoted heredoc) — an un-quoted body is
   command-substituted by bash (backticked spans get executed, apostrophes mangle) _before_
   grapevine ever sees it, corrupting the message or partially running it.
+- ◻ **Resuming a preserved patch?** `git apply` resolves patch paths **relative to your CWD, not the
+  repo root** — apply from the repo root (or pass `--directory=<repo-root>`), or a patch preserved from
+  a subdir lands in the wrong place.
 - ◻ **Scratch minted** — `.anthill/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
 - ◻ **Route through the lead — never block on the human.** The human may not be watching this pane;
   questions + decisions go to the lead/liaison on the vine, not direct.
