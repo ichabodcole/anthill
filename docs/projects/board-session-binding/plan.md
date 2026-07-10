@@ -25,7 +25,7 @@ fixes, and tests around three small pure seams.
 **Definition of Done:**
 
 - [ ] `anthill convene` opens/attaches the team board via `bounty open --session-key <channel> --pin
-    --no-open` (idempotent; writes `.bounty-session` at repo root) and reports its counts.
+  --no-open` (idempotent; writes `.bounty-session` at repo root) and reports its counts.
 - [ ] `anthill spawn` launches each seat with `BOUNTY_SESSION_KEY=<channel>` in its pane environment.
 - [ ] With **two** boards live, a seat's _improvised_ `bounty update <id> --status doing` targets the
       **team's** board — no flag, no `latest` fallback, no `noop:true`.
@@ -142,7 +142,7 @@ bind the team board.
 **Key Changes:**
 
 - `team-join.ts:110`: reword the emitted checklist line from `"...move it todo→doing when you start,
-→review when green."` to reference the real verb, e.g. `"Own your card lifecycle: bunbounty update
+→review when green."` to reference the real verb, e.g. `"Own your card lifecycle: bounty update
 <id> --status doing when you start, --status review when green."` (match the skill's already-shipped
   wording; no `move` verb).
 - `plugin/skills/join/SKILL.md`: correct the backfill note — `grapevine tail --last <n>` now exists
