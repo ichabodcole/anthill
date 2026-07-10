@@ -45,10 +45,12 @@ status`** shows who's on + the board.
      Monitor tail — **skip the tail wiring**. The lead drives you directly (dispatch → result) and
      relays the vine. The tail wiring above is the **terminal-seat path**.
    - **Joining mid-session? Backfill the vine history first.** A live tail only shows messages from
-     _now_ forward, and `grapevine read <id>` is per-message. To catch up on what you missed, replay
-     the channel with **`grapevine tail <channel> --from-start`** (whole log) or **`--since <id>`**
-     (from a known message id onward) before you start acting, so you inherit the session's context,
-     not just its tail.
+     _now_ forward. To inherit the session's context, replay it with
+     **`grapevine tail <channel> --from-start`** — because the lead clears the channel at convene
+     (`--fresh`), "from start" is **this session**, not an archive of past ones, so it's usually the
+     right catch-up. On a long-running channel you can anchor at a known message id with `--since <id>`
+     instead; there's **no bounded "last N" catch-up yet**, so if the full log is too much, read the
+     tail's "N earlier exist" hint and pull selectively with `grapevine read <id>`.
 
 4. **Mint your session scratch.** Create your running-capture file:
    **`.anthill/scratch/<handle>/<YYYY-MM-DD>-<slug>.md`** (it's gitignored — `anthill init` added the
