@@ -14,7 +14,7 @@ I own the prose that _drives_ — the lifecycle skills and the archetype templat
 ## Scope
 
 `skills/` (bootstrap/convene/join/plan/finalize/upgrade + `plan/methodology.md`) and `templates/` (the docs-team scaffold + `archetypes/*.json`).
-This session: `templates/archetypes/multi-surface.json` (new) and the candidate-seating rewrite of `skills/bootstrap/SKILL.md`.
+Recent: board-session-binding Phase 4 docs — the `--last <n>` note fix, the convene/SOP key-bound rewrite, and the spellbook ≥ 1.16.0 floor.
 
 ## Boundaries
 
@@ -52,6 +52,25 @@ I write the prose that maps that payload to a team; the payload's shape is not m
 - **The one justified echo is a safety nudge at the danger point.** The six `## Skill feedback` pointers don't restate the framing — they carry only a terse "on a team, surface it to the lead," placed exactly where an over-eager seat might `--submit` a duplicate. Restraint is the default; the single echo earns its place by sitting at the point of use.
 - **Conditional phrasing is how a skill no-ops for graceful degradation.** `bootstrap` / `upgrade` run solo before a team exists. "(on a team, surface it to the lead)" self-cancels when there's no team — it nudges without asserting a lead. Prefer a conditional clause over a branch when a line must serve both team and solo contexts.
 - **When two things share a file, name the boundary or they blur.** finalize's own `## Skill feedback` (feedback _about the ritual_) vs. the new lead step (aggregating _the team's_ feedback about anthill) are one word apart in a reader's mind — so the new step carries an explicit "distinct from the pointer below" parenthetical. Inserting a numbered step also means chasing every `step N` cross-reference (I renumbered land 5→6 and fixed two back-references in step 0); a stale reference is a silent trail-lie.
+
+## Hard-won lessons (board-session-binding docs, 2026-07-10)
+
+- **The lifecycle skills are DISTRIBUTED — they cannot reference this repo's `.anthill/dev/seams.md`.**
+A cross-seat contract that spans a skill and the SOP gets a two-tier treatment.
+The distributed skill (`convene`/`join` SKILL.md) describes the behavior at **usage-altitude**, self-contained — what convene does, "never pass `--session`" — because it runs in any consumer repo that has no such seams.md.
+Only the repo-local SOP (`.anthill/README.md`) POINTS at the contract in `seams.md`.
+Same "point, don't restate" rule, but the skill can't even point: it must carry enough usage prose to stand alone. (Pinned: `seams.md` Contract 3's "Pointed at from" names convene SKILL.md + SOP, deliberately NOT the distributed-only join.)
+- **A doc task framed "add a note about X" often hides "the surrounding prose is now false."**
+The convene Board bullet still said "convene does NOT open the board (bounty's `open` isn't idempotent)" — Phase 1 made convene OWN the keyed+pinned open and 1.16.0 made keyed open idempotent, so "add a key-bound note" was really a rewrite of a now-wrong paragraph.
+Read the whole unit, not just the insertion point.
+- **A pointer and the contract it points at must land in the SAME commit, or the trail lies for that window.**
+My `.anthill/README.md` pointed at "the board-binding contract" before forager had authored it in `seams.md`; I flagged the coupling and maestro landed both atomically.
+A dangling pointer is a trail-lie even when it will resolve "soon."
+- **The pointing-doc owner is the natural auditor of a seam's "Pointed at from" line.**
+forager (Contract 3's owner) over-listed `join` SKILL.md as pointing at the contract — but my join edit was only the `--last <n>` note, no key-bound framing.
+The owner knows the mechanism; the pointer seat knows which docs actually point — so at seam ratify/land, cross-check the owner's pointed-at-from against what your docs really say.
+- **Reflective (trusted by default):** I trusted prettier's default `proseWrap: preserve` to leave my line breaks alone — it held (anthill has no `.prettierrc`), but that's a repo-config assumption.
+Hard-wrapped skill prose would reflow under `proseWrap: always`; one-sentence-per-line is the only universally reflow-safe form across formatting contexts I don't control.
 
 ## Candidates
 
