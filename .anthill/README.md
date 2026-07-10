@@ -50,7 +50,10 @@ direct.
 
 - **Bounty board** — task state (`todo → doing → review → done`). The **doer owns its card's
   lifecycle**; the lead creates + assigns (leaves in `todo`) and hands off on the vine; the reviewer
-  closes. The board is _state_.
+  closes. The board is _state_. **It's key-bound:** `convene` owns the board-open (keyed to the team
+  channel, pinned via `.bounty-session`), so every seat + the lead target this board **ambiently** —
+  no one ever threads `--session`. The mechanism lives once in the **board-binding contract** in
+  [`dev/seams.md`](./dev/seams.md); this points at it, never restates it.
 - **Grapevine (`anthill-dev`)** — the back-channel. Seats discuss, coordinate, reconcile. The vine is
   _substance_. Decisions route to the human **through maestro**, not direct.
 - **The CLI** — `anthill` (run from the plugin; `convene` / `join` / `spawn` / `status` / `commit` /

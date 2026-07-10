@@ -53,9 +53,11 @@ stay solo.
        (`anthill convene --fresh --topic "…"`). It's a **safe no-op if seats are already connected** (a
        live session is never wiped), and the log is always archived to `~/.grapevine/archive/` first, so
        nothing is lost. Do it **before** spawning seats, at the start of the session.
-   - **Board:** convene _reports_ the bounty board but does **not** open it (bounty's `open` isn't
-     idempotent). Open it yourself via the **`spellbook:bounty`** skill (it documents its own CLI): title
-     it for this work (e.g. `<project> · <phase>`), then **seed one `todo` card per planned lane, in
+   - **Board:** convene now **opens/attaches the team board itself** — keyed to the channel and pinned
+     (writes `.bounty-session` at the repo root), so every seat's + the lead's bounty verbs bind **this**
+     board by construction. The binding is **ambient**: no one ever passes `--session`. It's idempotent
+     and headless (`--no-open`), so a re-convene re-attaches rather than spawning a stranger board, and
+     the reported URL is yours to open when you want it. Then **seed one `todo` card per planned lane, in
      owner lanes** — the doer owns its card's lifecycle `todo→doing→review`, the reviewer closes. The
      board is _state_; the vine is _substance_.
    - **`anthill status`** confirms the result (who's on the vine + the board column counts).

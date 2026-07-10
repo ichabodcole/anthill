@@ -36,3 +36,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 *.local.json
 .operator
 .anthill/scratch/
+
+# anthill board-session pin (spellbook #69)
+.bounty-session
