@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.4.0...anthill-v1.5.0) (2026-07-10)
+
+
+### Features
+
+* **board-binding:** bind every seat verb to the team board via spellbook [#69](https://github.com/ichabodcole/anthill/issues/69) ([8a7471b](https://github.com/ichabodcole/anthill/commit/8a7471b243276a86a0ff637e5c877107b0ab5a35))
+
 ## [1.4.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.3.2...anthill-v1.4.0) (2026-07-10)
 
 
