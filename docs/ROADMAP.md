@@ -170,11 +170,9 @@ Triage at the next convene.
 - **Self-selection bounties** — the lead-bottleneck relief valve; no saturation signal yet.
 - **Semantic/embedding retrieval** — structure-before-search; revisit only if grep-over-structure
   measurably fails.
-- **Backlog minor items** — [status ambient-board scoping](backlog/2026-06-30-anthill-status-ambient-board-scoping.md):
-  **likely closeable** — its deferred remainder ("true session-scoping needs anthill to persist its own
-  board id") is essentially what **board-session-binding delivered** (the pinned `.bounty-session` /
-  keyed board now resolves _this_ team's board). Verify `anthill status` reads the bound board, then
-  archive. (Prettier-markdown-policy resolved 2026-07-03 — archived.)
+- **Backlog minor items** — none parked here now. (Status ambient-board scoping ✅ **closed +
+  archived** 2026-07-10 — board-session-binding delivered true session-scoping; verified live against a
+  stranger-as-`latest` board. Prettier-markdown-policy resolved 2026-07-03 — archived.)
 
 ---
 
