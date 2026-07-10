@@ -24,6 +24,14 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
   is each seat's living doc/brain; the roster is `.anthill/dev/README.md`). Substantial work is done
   by a lead + seats owning scopes, not a lone agent — run **`anthill:convene`** to start a session (or
   `anthill:join <handle>` to take a seat). Consider it for anything non-trivial.
+- **anthill adapts to the host project — it does not dictate its conventions.** Where a design
+  question is really _"what standard applies here?"_ (branch policy, naming, which trunk is
+  protected, a formatting rule), anthill's job is to create the **touch point where a team member
+  checks the project's _actual_ standard** — not to hard-code one. The system supplies the **trigger
+  to decide**; the project supplies the **content** (via config, or its grounding docs). A convention
+  baked into a skill or a command default is the anti-pattern — make it a _prompt + a config/grounding
+  hook_ instead. (The branch-flow rule just below is a concrete instance: convene _prompts_ the branch
+  decision and reads the policy from here; it never hard-codes one.)
 - **Branch flow + protected `main`.** Substantive work — a feature, or a fix/refactor of real
   scope — takes a **feature branch off `develop`** → merge to `develop` → PR `develop` → `main`.
   **Docs-only commits and very small fixes may commit directly to `develop`** — a single doc or
