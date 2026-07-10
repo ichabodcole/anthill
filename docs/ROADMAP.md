@@ -23,6 +23,11 @@ strengthened. Pick the next slice from there.
 
 **✅ Shipped since `v1.3.0` (on `develop` / released):**
 
+- ✅ **Convene pre-spawn branch-confirm beat** — **SHIPPED** 2026-07-10. A lightweight convene beat +
+  checklist line, fired **before spawn** (the moment seats gain commit power): confirm the working
+  branch, following the project's branch policy **read from the grounding docs** (AGENTS.md) — a decision
+  prompt, never an auto-cut. Fixes the "team landed 7 commits straight onto trunk" footgun. **Closes
+  #34.** ([convene SKILL.md](../plugin/skills/convene/SKILL.md)).
 - ✅ **Board-session-binding** — **SHIPPED** 2026-07-10 (`8a7471b` feat + `7bf6d18` docs), built and
   proven live by a convened team. anthill binds every seat's bounty verb to _this_ team's board by
   construction (convene opens keyed+pinned via `bounty open --session-key <channel> --pin --no-open`;
@@ -152,6 +157,11 @@ Triage at the next convene.
 - **convene/status coord-daemon version-skew detection** (backlog) — detect a stale daemon serving old
   resolution to a newer CLI (would silently reintroduce the board-hijack board-session-binding fixed);
   offer to align. [backlog](backlog/2026-07-10-convene-status-detect-coord-daemon-version-skew.md).
+- **Unowned-stray claim primitive** (backlog) — a stray with no card/owner has no claim primitive, so
+  seats race to fix it; the field convention (vine claim + provenance guess; creator self-claims;
+  reconciled layers) is captured. Shape (a) is a cheap SOP note; (b)/(c) are bounty upstream — needs a
+  design pass. Relates to the parked self-selection bounties.
+  [backlog](backlog/2026-07-10-unowned-stray-claim-primitive.md).
 
 ## Parked (deliberate)
 
