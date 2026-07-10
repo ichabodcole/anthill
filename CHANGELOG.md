@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.3.2...anthill-v1.4.0) (2026-07-10)
+
+
+### Features
+
+* **convene:** --fresh flag to clear a reused channel's prior-session log ([e71e348](https://github.com/ichabodcole/anthill/commit/e71e3480f52175ff59798cd54392bdeef87d957a))
+* **convene:** --fresh flag to clear a reused channel's prior-session… ([eb1723d](https://github.com/ichabodcole/anthill/commit/eb1723dc99db19296420f2555cb6bd9653852cf6))
+
 ## [1.3.2](https://github.com/ichabodcole/anthill/compare/anthill-v1.3.1...anthill-v1.3.2) (2026-07-09)
 
 
