@@ -24,9 +24,13 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
   is each seat's living doc/brain; the roster is `.anthill/dev/README.md`). Substantial work is done
   by a lead + seats owning scopes, not a lone agent — run **`anthill:convene`** to start a session (or
   `anthill:join <handle>` to take a seat). Consider it for anything non-trivial.
-- **Branch flow + protected `main`.** Feature branch off `develop` → merge to `develop` →
-  PR `develop` → `main`. `main` is branch-protected (PR + green CI required, admins
-  included) — never push to it directly; release-please cuts the release on merge to `main`.
+- **Branch flow + protected `main`.** Substantive work — a feature, or a fix/refactor of real
+  scope — takes a **feature branch off `develop`** → merge to `develop` → PR `develop` → `main`.
+  **Docs-only commits and very small fixes may commit directly to `develop`** — a single doc or
+  one-line fix doesn't warrant a branch. The judgment is _scope_: if it's a body of work, branch it;
+  if it's a paper-cut, land it. `main` is branch-protected (PR + green CI required, admins included) —
+  never push to it directly; release-please cuts the release on merge to `main`.
+  _(`anthill:convene`'s pre-spawn branch beat is the touchpoint to make this call before seats commit.)_
 - **Runtime is Bun** (not Node): use `bun` / `bunx`, and prefer Bun built-ins over npm
   equivalents.
 
