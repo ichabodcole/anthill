@@ -63,11 +63,20 @@ blocked by another lane's half-second of red, exactly as #24/#28 describe. Captu
 seat-doc lesson: _"a peer's half-second of red is a global stop-the-world on the shared index."_ First-
 party evidence that this recurs and reproduces — not a one-off from a single dogfood.
 
+**Lead-blocks-seats, and it isn't only _code_ red (another team, 2026-07-10, #28 follow-up).** In a
+different team's finalize, **two unformatted markdown files the _lead_ had written** blocked **all three
+seats'** seat-doc `anthill commit`s. Two things this adds: the coupling is **not only concurrent-lane**
+(any actor's stray file anywhere gates everyone, the lead included), and it bites hardest at the
+**finalize doc-land** — the exact ritual move A already special-cases — where the red is often just an
+unformatted markdown file, not a broken build.
+
 **What this does to move C's priority.** C was deferred as "ergonomic polish." The evidence base is now
-**four field reports (#14/#16/#24/#28) + one first-party reproduction, all one root cause** — recurring
-and reproducible, not incidental. **#28 also sharpens the deferred proxy question** (Open Questions
-below): "scope hook execution to the committed pathspec" is a concrete candidate for _how_ the gate
-becomes lane-aware, distinct from a red-marker proxy. Worth weighing C forward against this.
+**four field reports (#14/#16/#24/#28) + a first-party reproduction + a lead-blocks-seats finalize
+instance, all one root cause** — recurring and reproducible, not incidental. **#28 also sharpens the
+deferred proxy question** (Open Questions below): "scope hook execution to the committed pathspec" is a
+concrete candidate for _how_ the gate becomes lane-aware, distinct from a red-marker proxy. And the #28
+follow-up surfaces a **cheap, proxy-free increment of C that's buildable today** (see move C below).
+Worth weighing C forward against all of this.
 
 ## Proposed Solution
 
@@ -134,6 +143,17 @@ a push stream — so it can't become noise, and it needs no new event surface. I
 current failure mode (90s lock-wait → full-suite run → cryptic failure → "did _I_ break this?")
 into an immediate, legible answer. The investigation found this is the single highest-value
 "signal" for a builder, and that delivering it _as tooling_ beats broadcasting it.
+
+**C.1 — a cheap, proxy-free first increment (the #28 follow-up, buildable today).** C was deferred on
+_one_ hard question: what's the cheap proxy for "can the tree pass **right now**" _before_ attempting
+the land. But a large share of the value needs **no proxy at all** — it lives on the **failure** path,
+which already ran the gate. When `anthill commit`'s gate fails, it can **diff the red/offending paths
+against the set the seat actually committed**, and if the failure is on paths **outside** that set, say
+so: _"tree gate is red on `<other paths>`, not your commit."_ From a seat's chair the current failure is
+invisible-by-design — the red file is outside its pathspec, so "my own commit failed" is the only
+reading; this one diagnostic removes that confusion **without** solving the pre-flight proxy. It's a
+post-failure _diagnostic_, not a pre-flight _gate_ — strictly additive to the scope-to-pathspec fix
+(#24/#28) and to full C, and the natural **first slice** to ship while the proxy question settles.
 
 ## Scope
 

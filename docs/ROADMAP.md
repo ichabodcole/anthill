@@ -136,10 +136,15 @@ Triage at the next convene.
 
 - **Shared-tree move C — commit pre-flight / lane-aware gate.** The deferred third move of the
   shared-tree project: tell the agent _"tree is red, held by X — didn't attempt your land"_ at land time
-  instead of a 90s-lock-then-opaque-failure. **Evidence strengthened 2026-07-10** — now four field
-  reports (#14/#16/#24/#28) + a first-party in-house reproduction, all one root cause; #28 adds a
-  lane-aware-gate axis (scope hook execution to the committed pathspec). The strongest candidate to pull
-  forward. [proposal](projects/shared-tree-gate-tension/proposal.md).
+  instead of a 90s-lock-then-opaque-failure. **Evidence strengthened 2026-07-10** — four field reports
+  (#14/#16/#24/#28) + a first-party in-house reproduction + a lead-blocks-seats finalize instance, all
+  one root cause; #28 adds a lane-aware-gate axis (scope hooks to the committed pathspec). **Now has a
+  cheap, proxy-free first slice (C.1):** on a gate _failure_, diff the red paths against the committed
+  set and say _"red on `<other paths>`, not your commit"_ — no pre-flight proxy needed, buildable today.
+  The strongest candidate to pull forward. [proposal](projects/shared-tree-gate-tension/proposal.md).
+- **`anthill commit` protected-trunk guard** (backlog) — land-time backstop to the #34 convene beat:
+  refuse a direct commit to a **configurable** protected set (never a hard-coded `develop`/`main` — the
+  project supplies the branches), warn/`--force` escape hatch. [backlog](backlog/2026-07-10-anthill-commit-protected-trunk-guard.md).
 - **Per-seat model selection** (proposal) — set the model of a convened seat (`model?` on SeatConfig, a
   `{model}` launch placeholder, `claude --model`). Small, self-contained.
   [proposal](projects/per-seat-model-selection/proposal.md).
