@@ -23,7 +23,7 @@ own board id" so status shows only this team's board) is what **board-session-bi
 (`8a7471b`): convene opens the board **keyed + pinned** (`bounty open --session-key <channel> --pin`,
 writing `.bounty-session`), and `bounty state`/`anthill status` resolve that pinned board by walk-up
 rather than the daemon's global `latest`.
-See [board-session-binding proposal](../../projects/board-session-binding/proposal.md).
+See [board-session-binding proposal](../../projects/_archive/board-session-binding/proposal.md).
 
 **Verification (2026-07-10, the exact original-bug scenario).** Reproduced the bug's precondition — a
 **stranger board live as the global `latest`** (opened from `/tmp`, no pin, seeded a `done` card) — then

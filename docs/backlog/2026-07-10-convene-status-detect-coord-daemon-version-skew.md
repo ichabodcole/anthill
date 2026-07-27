@@ -43,5 +43,5 @@ coord **CLI** and the **running daemon**, and if they diverge, surface it — wi
 - `plugin/scripts/anthill/coord.ts` (`resolveCoordCli` — highest-cached-version resolution)
 - `plugin/scripts/anthill/commands/{team-convene,team-status}.ts` (the two surfaces)
 - Spellbook floor: board-session-binding requires spellbook ≥ 1.16.0
-  ([proposal](../projects/board-session-binding/proposal.md))
+  ([proposal](../projects/_archive/board-session-binding/proposal.md))
 - Same surface, related: [`2026-06-30-anthill-status-ambient-board-scoping.md`](./2026-06-30-anthill-status-ambient-board-scoping.md)

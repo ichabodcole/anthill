@@ -147,7 +147,7 @@ files exist from the 2026-07-10 board-session-binding run.
 
 - Everything shippable moved under `plugin/` (scripts, skills, templates, plugin manifest); the
   repo root now holds only dev-time config, `docs/`, and `.anthill/`.
-- Skills grew from 5 to **7**: `bootstrap`, `convene`, `join`, `plan` (+ `methodology.md`),
+- Skills grew from 5 to **6**: `bootstrap`, `convene`, `join`, `plan` (+ `methodology.md`),
   `finalize-session`, `upgrade` (+ `migrations/v1-to-v2.md`).
 - Archetypes grew from 1 to **2**: `layered-app.json`, `multi-surface.json`.
 
@@ -278,6 +278,25 @@ numbered **Next** items (#12 parity close-out, #8–#10 memory bundle) vs. the u
       records it SHIPPED 2026-07-10 (`8a7471b`). It is also a candidate for `_archive/`.
 - [ ] Consider promoting `anthill-commit-hardening` into the roadmap's **Now** section — it has a
       plan and unchecked DoD but no horizon placement.
+
+**Resolution (2026-07-27, same day):** all four were acted on immediately after this report.
+
+- ✅ Design-of-record revised — added a **§0 "How to read this doc"** that splits the historical
+  decision record (§1–4, §9–11, preserved) from the live contracts and maps (§5–§8, kept
+  current), with an explicit then→now drift table. §5 now documents the v2 `.anthill/` schema
+  and plugin defaults, §6 the `.anthill/` render target and scratch path, §8 the `plugin/`
+  layout and the full 11-command CLI set. D7's footprint claim annotated rather than rewritten.
+- ✅ `README.md` Status section rewritten (v0.2 shipped, not in progress); Lineage now records that
+  Citty was replaced by the in-house zero-dep layer.
+- ✅ `board-session-binding` marked Shipped and moved to `docs/projects/_archive/`; the three
+  inbound links updated. _Gap noted, not filled: unlike other archived projects it has no
+  `sessions/` doc — its finalize output went into the seat docs (`7bf6d18`)._
+- ✅ `anthill-commit-hardening` given a horizon — a **"Planned, ready to build"** block under
+  **Now** (kept distinct from "in flight", which it is not). The two "Recently captured"
+  bullets it absorbs now point at it, and move C proper is explicitly marked still deferred.
+
+_Correction applied post-write: the skill count above originally read "5 to 7"; the actual set is
+six (`bootstrap · convene · plan · join · finalize-session · upgrade`)._
 
 ---
 

@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-10
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-27
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -21,6 +21,19 @@ bundle (#8–#10), now unblocked by the #4 dogfood data. Also weigh the freshly-
 **Recently captured** (below **Later**) — notably **shared-tree move C**, whose evidence just
 strengthened. Pick the next slice from there.
 
+**📋 Planned, ready to build (not yet started):**
+
+- **`anthill commit` hardening** — has a written plan and an unchecked DoD; the only queued item that
+  needs no further design pass. Two independent land-time hardenings at the one interception point
+  every seat's commit already flows through: (1) a **protected-trunk guard** — refuse a direct commit
+  on a **project-configured** protected branch unless `--force` (the land-time backstop to the #34
+  convene beat; never a baked-in `develop`/`main`, per adapt-not-dictate), and (2) the
+  **foreign-red diagnostic** — shared-tree **move C.1**, the proxy-free slice: on a gate _failure_,
+  tell the seat if the red is on paths outside its commit. Scoped as a light single-seat build
+  (forager implements, sentinel verifies — no convene / ratify gate).
+  **Closes #34's land-time half; first real slice of move C.**
+  [plan](projects/anthill-commit-hardening/plan.md).
+
 **✅ Shipped since `v1.3.0` (on `develop` / released):**
 
 - ✅ **Convene pre-spawn branch-confirm beat** — **SHIPPED** 2026-07-10. A lightweight convene beat +
@@ -34,7 +47,7 @@ strengthened. Pick the next slice from there.
   spawn exports `BOUNTY_SESSION_KEY`), so the lead, spawned seats, and dispatched subagents all resolve
   the team board ambiently — no `--session` threading. Requires spellbook ≥ 1.16.0
   ([spellbook#69](https://github.com/ichabodcole/spellbook/issues/69)). **Closes #23, #19.**
-  [proposal](projects/board-session-binding/proposal.md) · [plan](projects/board-session-binding/plan.md).
+  [proposal](projects/_archive/board-session-binding/proposal.md) · [plan](projects/_archive/board-session-binding/plan.md).
 - ✅ **Shared-tree gate tension — moves A + B1** — **SHIPPED** 2026-07-08. Red-tree finalize mode baked
   into `finalize-session` (closes #14); scratch-dir gate exclusion so a seat's untracked throwaway can't
   red another seat's land (addresses #16). **Move C deferred** — see **Recently captured** below; its
@@ -141,10 +154,13 @@ Triage at the next convene.
   one root cause; #28 adds a lane-aware-gate axis (scope hooks to the committed pathspec). **Now has a
   cheap, proxy-free first slice (C.1):** on a gate _failure_, diff the red paths against the committed
   set and say _"red on `<other paths>`, not your commit"_ — no pre-flight proxy needed, buildable today.
-  The strongest candidate to pull forward. [proposal](projects/shared-tree-gate-tension/proposal.md).
+  The strongest candidate to pull forward. **C.1 → Planned** — folded into the commit-hardening plan
+  under **Now** (move 2); **C proper (the pre-flight / lane-aware gate) remains deferred.**
+  [proposal](projects/shared-tree-gate-tension/proposal.md).
 - **`anthill commit` protected-trunk guard** (backlog) — land-time backstop to the #34 convene beat:
   refuse a direct commit to a **configurable** protected set (never a hard-coded `develop`/`main` — the
-  project supplies the branches), warn/`--force` escape hatch. [backlog](backlog/2026-07-10-anthill-commit-protected-trunk-guard.md).
+  project supplies the branches), warn/`--force` escape hatch. **→ Planned** — folded into the
+  commit-hardening plan under **Now** (move 1). [backlog](backlog/2026-07-10-anthill-commit-protected-trunk-guard.md).
 - **Per-seat model selection** (proposal) — set the model of a convened seat (`model?` on SeatConfig, a
   `{model}` launch placeholder, `claude --model`). Small, self-contained.
   [proposal](projects/per-seat-model-selection/proposal.md).

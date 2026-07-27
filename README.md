@@ -14,13 +14,18 @@ distributed as its own plugin so it can evolve on its own.
 
 ## Status
 
-Slice 1 (walking skeleton) landed — the full loop runs end-to-end for the `layered-app`
-archetype in a non-dream-flute repo, and anthill now dogfoods its own team from `.anthill/`.
-Active work is on **v0.2**: the `anthill:plan` skeleton→ratify skill and the global `anthill`
-CLI (see [`docs/ROADMAP.md`](docs/ROADMAP.md)).
+Released and self-hosting. The v0.2 bundle has shipped in full — the `anthill:plan`
+skeleton→ratify skill, the optional global `anthill` CLI, `anthill scan` + the `multi-surface`
+archetype, ritual checklists baked into the lifecycle skills, and the first instrumented dogfood
+session. anthill dogfoods its own team from `.anthill/`, and consuming projects file field
+feedback home through `anthill feedback`.
+
+What's queued next lives in [`docs/ROADMAP.md`](docs/ROADMAP.md) — the single prioritized router
+over everything.
 
 See [`docs/architecture/2026-06-28-anthill-portable-team-os-design.md`](docs/architecture/2026-06-28-anthill-portable-team-os-design.md)
-for the full design.
+for the full design, and [`docs/PROJECT-SUMMARY.md`](docs/PROJECT-SUMMARY.md) for a synthesized
+snapshot of where things stand.
 
 ## How it works (target shape)
 
@@ -59,5 +64,6 @@ there's nothing to keep in sync, and a plugin upgrade needs no reinstall. See
 ## Lineage
 
 - CLI shell seeded from [`create-project-cli`](https://github.com/ichabodcole/seed-project-cli)
-  (dual-audience `{ok, data, meta}` Citty CLI).
+  (the dual-audience `{ok, data, meta}` envelope). The seed's Citty dependency was replaced in
+  v1.3.0 by an in-house `parseArgs` command layer, so the shipped CLI has **zero** runtime deps.
 - Team layer (skills, coordination facade, tmux, living-docs) generalized from `dream-flute`.

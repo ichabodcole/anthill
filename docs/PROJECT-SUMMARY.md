@@ -70,10 +70,10 @@ dev-time config, docs, and anthill's own team.
 - **Anthill Portable Team-OS (Design Spec)** — the design-of-record: the D1–D9 locked decisions,
   config schema, brain/hands split, "three homes for knowledge" (taste→seat doc, truth→`seams.md`,
   proof→tests), and the convene→work→finalize lifecycle. See
-  `docs/architecture/2026-06-28-anthill-portable-team-os-design.md`.
-  ⚠️ **This doc has drifted** — it still specifies `.team/config.json`, `docs/team/`, and a
-  top-level `scripts/anthill/`, all superseded by the v2 `.anthill/` footprint and the `plugin/`
-  layout. Read it for the _decisions_, not the paths.
+  `docs/architecture/2026-06-28-anthill-portable-team-os-design.md`. Revised 2026-07-27: its §0
+  explains the split — the decisions and rationale (§1–4, §9–11) are preserved as the approved
+  record, while the contracts and maps (§5 config schema, §6 scaffold, §7 skills, §8 layout) are
+  kept current, since `config.ts` and `paths.ts` cite "spec §5" directly.
 
 `docs/architecture/` otherwise holds only a README and a template — this one doc carries the
 substantive design.
@@ -121,25 +121,28 @@ times and is the single router over everything.
 
 **Active Projects:**
 
-- **anthill-commit-hardening** — _Draft plan, no proposal by design_ (a light single-seat build).
-  Two land-time hardenings of `anthill commit`: a **configurable** protected-trunk guard (never a
-  baked-in `develop`/`main`) and the foreign-red diagnostic — shared-tree move C.1. The most
-  build-ready item on the board. See `docs/projects/anthill-commit-hardening/plan.md`.
+- **anthill-commit-hardening** — _Planned, ready to build_ (a plan with no proposal, by design for
+  a light single-seat build). Two land-time hardenings of `anthill commit`: a **configurable**
+  protected-trunk guard (never a baked-in `develop`/`main`) and the foreign-red diagnostic —
+  shared-tree move C.1. The most build-ready item on the board, and the only queued item needing
+  no further design pass. See `docs/projects/anthill-commit-hardening/plan.md`.
 - **shared-tree-gate-tension** — _Partially shipped_ (moves A + B1 landed 2026-07-08). The
-  whole-tree pre-commit gate vs. a shared working tree. Move C deferred; its evidence keeps
-  strengthening.
+  whole-tree pre-commit gate vs. a shared working tree. Move C.1 is now folded into the
+  commit-hardening plan; **move C proper stays deferred**, its evidence still strengthening.
 - **research-probes** — _Draft_. A project-local rotating registry of pointed questions the team
   ritual collects signal on, governed by an observer-effect discipline.
 - **per-seat-model-selection** — _Draft_. Optional `model` on a seat so each runs on the model
   that fits its work.
-- **board-session-binding** — _shipped 2026-07-10_ (proposal still reads Draft; archival pending).
+
+_(board-session-binding shipped 2026-07-10 and was archived on 2026-07-27.)_
 
 **In Progress Investigations:**
 
 - Agent signal-hunger · Seat subagent orchestration (both _Monitor — validate in situ during the
   next instrumented dogfood_) · File-activity heatmap (_secondary_). See `docs/investigations/`.
 
-Per `docs/ROADMAP.md`, **nothing is currently in flight**. The roadmap's numbered **Next** holds
+Per `docs/ROADMAP.md`, **nothing is currently in flight**, but commit-hardening now sits under
+**Now** as _planned, ready to build_. The roadmap's numbered **Next** holds
 dream-flute parity close-out (#12) and the memory bundle (#8–#10) — now unblocked, since the
 instrumented dogfood produced the trail data they were gated on. Weighed against them is the
 "Recently captured" triage queue, where **shared-tree move C** carries the strongest evidence.
