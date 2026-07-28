@@ -3,8 +3,8 @@
 **Date Started:** 2026-07-27
 **Investigator:** Claude Code (maestro) + Cole, with first-hand answers from `sol` (lead, operator-mono)
 **Status:** Active
-**Outcome:** Characterization only — **deliberately no recommendation yet.** Four questions remain open;
-two are answerable only by measurement.
+**Outcome:** Characterization only — **deliberately no recommendation yet.** Eleven mechanisms separated; four questions remain open,
+two answerable only by measurement.
 
 ---
 
@@ -71,28 +71,29 @@ Four independent sources, deliberately chosen to cross-check each other:
 4. **Published practice** — OpenAI's [Symphony spec](https://github.com/openai/symphony/blob/main/SPEC.md),
    [Jcode Swarm](https://jcode.sh/swarm), and the worktree-isolation literature.
 
-### The eight mechanisms
+### The eleven mechanisms
 
 The central finding of this investigation. These have been lumped together; they have different
 causes, different severities, and different fixes.
 
-| ID      | Mechanism                                                          | Symptom                                                                  | Evidence                                                    |
-| ------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| **M1**  | One shared git **index**                                           | A seat's staged content blocks peers; a bounced commit strands the index | #55.1, #49, #60.1, dream-flute pc#2, sol Q2                 |
-| **M2**  | Hook reads the **whole tree**; the commit is file-scoped           | Any seat's dirty or red file blocks _everyone's_ land                    | #24, #28, #44, #50, #55.2, #60.2, media-buffet pc#3, sol Q1 |
-| **M3**  | Reading/building/testing a tree holding peers' **in-flight edits** | **Wrong verdicts, in both directions**                                   | dream-flute `prism.md`, #52                                 |
-| **M4**  | Machine-global **runtime** (ports, daemons, DBs, browser tabs)     | Verdict bound to the wrong _running_ artifact                            | #61, dream-flute "which-tree trap" forms 2–3                |
-| **M5**  | Commits land on the **integration branch**                         | ~50 commits on `develop` from one feature                                | #59                                                         |
-| **M6**  | Incompatible assumptions **merge clean**                           | Green build, contradictory behavior                                      | industry finding; anthill's own ratify gate                 |
-| **M7**  | **Livelock by politeness** — yielding recovery norms               | Everyone unstages, nobody drains; finished work sits                     | sol Q4 (emergent; not previously modelled)                  |
-| **M8**  | **Lead ruling latency** — single writer, multi-writer stream       | Rulings cross seats' messages; a lane gets rewritten                     | sol Q1b, Q4 (emergent; not previously modelled)             |
-| **M9**  | **Correct waiting has no stall signature**                         | A seat blocked on a human is invisible to board, tree and sweep          | sol finalize #3 (emergent; not previously modelled)         |
-| **M10** | **No trigger reconciles `plan.md` with mid-session rulings**       | The plan still asserts a design the team reversed                        | sol finalize #4 (emergent; not previously modelled)         |
+| ID      | Mechanism                                                          | Symptom                                                                  | Evidence                                                     |
+| ------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| **M1**  | One shared git **index**                                           | A seat's staged content blocks peers; a bounced commit strands the index | #55.1, #49, #60.1, dream-flute pc#2, sol Q2                  |
+| **M2**  | Hook reads the **whole tree**; the commit is file-scoped           | Any seat's dirty or red file blocks _everyone's_ land                    | #24, #28, #44, #50, #55.2, #60.2, media-buffet pc#3, sol Q1  |
+| **M3**  | Reading/building/testing a tree holding peers' **in-flight edits** | **Wrong verdicts, in both directions**                                   | dream-flute `prism.md`, #52                                  |
+| **M4**  | Machine-global **runtime** (ports, daemons, DBs, browser tabs)     | Verdict bound to the wrong _running_ artifact                            | #61, dream-flute "which-tree trap" forms 2–3                 |
+| **M5**  | Commits land on the **integration branch**                         | ~50 commits on `develop` from one feature                                | #59                                                          |
+| **M6**  | Incompatible assumptions **merge clean**                           | Green build, contradictory behavior                                      | industry finding; anthill's own ratify gate                  |
+| **M7**  | **Livelock by politeness** — yielding recovery norms               | Everyone unstages, nobody drains; finished work sits                     | sol Q4 (emergent; not previously modelled)                   |
+| **M8**  | **Lead ruling latency** — single writer, multi-writer stream       | Rulings cross seats' messages; a lane gets rewritten                     | sol Q1b, Q4 (emergent; not previously modelled)              |
+| **M9**  | **Correct waiting has no stall signature**                         | A seat blocked on a human is invisible to board, tree and sweep          | sol finalize #3 (emergent; not previously modelled)          |
+| **M10** | **No trigger reconciles `plan.md` with mid-session rulings**       | The plan still asserts a design the team reversed                        | sol finalize #4 (emergent; not previously modelled)          |
+| **M11** | **A scope so broad that undelivered work inside it is invisible**  | A seat's primary deliverable goes unbuilt while it looks on-track        | sol structure reflection (emergent; not previously modelled) |
 
-**M7–M10 were invisible to the issue tracker.** None has ever been filed. All four came from the
-live interview and the finalize report, and all four are _emergent coordination failures_ rather than
-git properties — which is precisely why no amount of git tooling would have surfaced them. **Four of
-ten mechanisms are not about git at all**, which is itself an argument against framing this whole
+**M7–M11 were invisible to the issue tracker.** None has ever been filed. All five came from the
+live interview, the finalize report and the structure reflection, and all five are _emergent coordination failures_ rather than
+git properties — which is precisely why no amount of git tooling would have surfaced them. **Five of
+eleven mechanisms are not about git at all**, which is itself an argument against framing this whole
 area as "the shared-tree problem."
 
 ### Which fixes cover which mechanisms
@@ -100,14 +101,14 @@ area as "the shared-tree problem."
 | Fix                                                   | Covers     | Does not cover                       |
 | ----------------------------------------------------- | ---------- | ------------------------------------ |
 | Serialize lock _(shipped)_                            | M1         | everything else                      |
-| **Staged-snapshot gate** _(new — see observation 10)_ | **M2**     | M1, M3–M10                           |
-| Per-seat worktree isolation                           | M1, M2, M3 | M4, M5, M7–M10 — **and degrades M6** |
+| **Staged-snapshot gate** _(new — see observation 10)_ | **M2**     | M1, M3–M11                           |
+| Per-seat worktree isolation                           | M1, M2, M3 | M4, M5, M7–M11 — **and degrades M6** |
 | Branch strategy _(session-branch-strategy)_           | M5         | everything else                      |
 | Contract-first: seams + ratify _(already have it)_    | M6         | everything else                      |
 | Per-resource lock                                     | M4         | everything else                      |
 | _(nothing proposed)_                                  | —          | **M7, M8, M9, M10**                  |
 
-**No candidate fix covers more than three of ten**, which is why "should we isolate?" was the wrong
+**No candidate fix covers more than three of eleven**, which is why "should we isolate?" was the wrong
 question to lead with. Four mechanisms have no proposed fix at all.
 
 ### Key Observations
@@ -258,6 +259,65 @@ The refinement, from their CLI seat, is sharp enough to act on independently:
 
 Tracked separately as [seam ratification granularity](../backlog/2026-07-28-seam-ratification-granularity.md).
 
+**13. The ratify gate's cost is set by the SHAPE of the skeleton it is handed.** From the structure
+reflection — reached by the coordinate seat from outside, confirmed by the engine seat from inside its
+own falsification:
+
+> **The five falsified seams specified a SOLUTION. The two that survived specified a CONTRACT or a
+> QUESTION.**
+
+An implementation-shaped claim (_"add these two columns, reuse `keyHash`, discriminate by `kind`"_)
+forces the owner to accept a design they did not make **or to do the archaeology to overturn it** —
+and five owners spent the session doing exactly that. Contract-shaped claims got _"cheaper sharper
+answers from the seats that owned them."_
+
+This reframes observation 12. The gate is not the expensive part; **badly-shaped input to the gate
+is.** Filed as
+[plan skeletons state contracts](../backlog/2026-07-28-plan-skeleton-states-contracts-not-implementations.md).
+
+**14. M11 — a scope can be correctly worded and still uninstrumentable.** The team's verify-seat scope
+was _"integration across surfaces against the shared contract"_ — a function rather than a tech stack,
+which is the shape anthill's own guidance recommends. It was nonetheless broad enough that the seat's
+**primary deliverable went entirely unbuilt** while _"no card, no board column and no staleness sweep
+could show it. It absorbed unlimited adjacent verification work and looked on-track throughout."_
+
+The general rule the team landed on after falsifying its own first attempt:
+
+> **A scope fails when a specific undelivered thing inside it is invisible from outside.**
+
+Sol's framing is the one to keep: **"That is an uninstrumented failure mode in the board model, not a
+personal lapse."** It is the sibling of M9 — M9 is a seat _waiting_ invisibly, M11 is a seat _working_
+invisibly on the wrong things. Neither has a signature the board can show.
+
+**15. Convergence is only a trust signal when it is against an EXTERNAL invariant.** The sharpest
+epistemic finding of the whole study, and it corrects something sol told me earlier. In the blind
+interview they named independent convergence as the team's _"strongest trust signal."_ The structure
+reflection then falsified the general form of their own scope finding — four seats had converged in
+ten minutes and all four withdrew it:
+
+> Four seats each read their **own** roster line and agreed on a generality **none of them had
+> tested.** Every convergence this team correctly trusted tonight was two seats verifying against an
+> invariant that existed **outside both**. **Agreement about a shared artifact is weaker than
+> agreement about an external invariant.**
+
+That distinction is the difference between the ratify gate working and **a room agreeing with
+itself** — and it is a live hazard for any multi-agent system that treats consensus as evidence.
+anthill currently has no language for it. Worth its own line in the SOP, independent of everything
+else in this investigation.
+
+**16. A postscript that lands on code shipped today.** From the session's last hour:
+
+> `anthill commit` mutating the index made **five seats read four contradictory `git status` results
+> within seconds, all correct at the moment taken.** Every seat that checked _content_
+> (`git show HEAD:<file>`) agreed. **Status is a moment; content is a fact.**
+
+`anthill commit` already mutated the index (stage → verify → commit); today's unstage-on-failure fix
+(`2170636`) adds mutation on the failure path too. It makes a bounced seat stop blocking peers, which
+is right — but it also means **`git status` is even less stable as a shared reference during a land
+window.** The reflex the team derived (_prefer content over status when establishing a fact_) belongs
+in the SOP next to their provenance-first convention, and this is a consequence of anthill's own
+design that we should state rather than let each team rediscover.
+
 ### Options Considered
 
 Deliberately **not** narrowed to a recommendation. Recorded so the eventual decision is an argument
@@ -290,7 +350,7 @@ rather than a preference:
    they address different mechanisms. _(Done 2026-07-27.)_
 4. **Treat M7/M8 as first-class.** They are unmodelled, unfiled, and one of them has a measured cost.
 
-**Rationale:** the deciding factor is that no candidate fix covers more than three of eight
+**Rationale:** the deciding factor is that no candidate fix covers more than three of eleven
 mechanisms, and the two most severe by consequence (M3 wrong verdicts, M8 lane rewrites) are
 addressed by _different_ fixes than the most frequent (M1/M2). A single structural change chosen now
 would be optimizing for the loudest mechanism rather than the costliest.
@@ -316,8 +376,20 @@ would be optimizing for the loudest mechanism rather than the costliest.
 - [ ] Open a line for **M10** — a "reconcile the plan" beat after any ruling that falsifies a seam.
       Note the shipped finalize owner-reread beat catches this only at the end, and only for
       seat-owned docs.
-- [ ] Land [seam ratification granularity](../backlog/2026-07-28-seam-ratification-granularity.md) —
-      independent of everything above, and cheap.
+- [ ] **Land the three ratify-gate sharpenings as one pass** — they are independent of the git
+      question and are the cheapest high-value work in the whole set:
+      [skeletons state contracts](../backlog/2026-07-28-plan-skeleton-states-contracts-not-implementations.md)
+      (_"would have saved most of a session"_) ·
+      [ratification granularity](../backlog/2026-07-28-seam-ratification-granularity.md) ·
+      [runtime claims need a repro](../backlog/2026-07-27-ratify-runtime-claims-need-repro.md).
+- [ ] **Give the SOP language for convergence (observation 15).** Agreement about a shared artifact
+      is not evidence; agreement against an external invariant is. anthill has no words for this and
+      it is a live hazard in any system that treats consensus as a signal.
+- [ ] **State the status-vs-content reflex (observation 16)** — a consequence of `anthill commit`'s
+      own index mutation, and something each team currently rediscovers.
+- [ ] **M11 needs a home.** A scope can be correctly worded (a function, not a stack) and still hide
+      an undelivered deliverable. Related to bootstrap's composition step and to the board model;
+      belongs with M9 in a coordination-instrumentation line, not with the git mechanisms.
 - [ ] Decide whether **option (c) — verify-only isolation** deserves its own slice, given it has
       two independent field requests and one unilateral adoption.
 - [ ] Instrument for rates (see open question 1) — likely via
