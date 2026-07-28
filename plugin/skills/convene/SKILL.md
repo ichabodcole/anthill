@@ -103,6 +103,23 @@ stay solo.
 5. **Orchestrate** from here, per the SOP: the **vine** is discussion, the **board** is state; route the
    human's decisions through you; you own the **file-scoped atomic land** (`anthill commit -- <paths>`,
    never `git add -A`). At wrap, run **`anthill:finalize-session`** for the team's knowledge.
+   - **Pacing — two field-proven moves worth reaching for:**
+     - **Flag-before-LAND, not before-work.** For dependency additions and shared-file changes, the
+       seat **builds while you ratify** and flags at the moment of landing — zero dead time. (Ran
+       three times in one session without a miss.) The boundary: this works because a _land_ is
+       reversible in practice and a half-built lane is not. It does **not** extend to **seam**
+       ratification, where the entire point is to falsify _before_ building.
+     - **Compact instead of respawn.** At a quality pause on a long lane, the **human** can fire
+       `/compact` at a seat's pane — restoring headroom while keeping the seat's in-context working
+       rhythm, where park-and-respawn discards it. Note the constraints: seats **cannot** self-trigger
+       it (it's a user-level command, and a lead's `send-keys` into a peer pane is classifier-blocked),
+       so no agent will discover this — you have to ask the human. Worth it for build seats carrying
+       long in-context state; roughly neutral for verify seats, whose state is externalized by design.
+   - **Running seats as SUBAGENTS? Re-dispatches route by _thread_, not by seat.** "Continue the
+     agent" resumes a conversation thread, and a thread is not a seat — a verify-seat re-gate has
+     misrouted into the builder's thread, caught only by the subagent's own honesty. Keep an explicit
+     thread→seat map and check it before continuing an agent; a misroute silently attributes one
+     seat's work to another, which then poisons that seat's living doc at finalize.
 
 ## Convene checklist (don't skip a setup beat)
 

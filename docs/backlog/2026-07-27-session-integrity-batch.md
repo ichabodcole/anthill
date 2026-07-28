@@ -1,7 +1,21 @@
 # Session-integrity batch — board destruction on re-open, and multi-session blindness
 
-**Added:** 2026-07-27 · **Status:** ready to build (item 1 needs a spellbook-side check first) ·
+**Added:** 2026-07-27 · **Status:** ✅ **SHIPPED (anthill's half)** 2026-07-27 (`3111f28`) ·
 **Seat:** forager
+
+> **Item 1 — the split was resolved as predicted.** Restoring a clobbered snapshot is spellbook's
+> side of the seam, so anthill shipped fixes (2) and (3): convene reads the key's saved task count
+> from `bounty sessions` **before** opening (after the open, a shadowing empty board is
+> indistinguishable from a genuinely empty one) and warns when the snapshot held more, telling the
+> lead explicitly **not to close the board** — the action that makes the loss permanent. **The
+> spellbook-side restore remains open.**
+>
+> **It fired on its first live run in this repo:** the `anthill-dev` snapshot holds 1 task while the
+> live board reads 0. The condition is present here, not hypothetical. This repo's board has been
+> left open deliberately.
+>
+> **Item 2 landed.** Sibling matching is exact: `operator2` is a different team, not `operator`'s
+> sibling. `status` / `down` multi-session awareness was **not** done — still open.
 
 Two defects in how a session's coordination surfaces are stood up and reached. Item 1 is a
 **data-loss bug** and is the highest-severity issue in the current feedback set.

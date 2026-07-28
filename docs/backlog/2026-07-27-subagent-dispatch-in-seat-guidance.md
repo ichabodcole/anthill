@@ -1,6 +1,11 @@
 # Name subagent dispatch as an available seat move — and fix thread↔seat misrouting
 
-**Added:** 2026-07-27 · **Status:** ready to build · **Seat:** weaver (skills text)
+**Added:** 2026-07-27 · **Status:** ✅ **SHIPPED** 2026-07-27 · **Seat:** weaver (skills text)
+
+> Item 1 landed in `join` (the cold-audit-before-you-post pattern, framed as option not mandate);
+> item 2 landed in `convene` (the thread≠seat routing hazard). **Still open:** moving the
+> [seat-subagent-orchestration investigation](../investigations/2026-07-09-seat-subagent-orchestration.md)
+> off _Monitor_ — #36 is the in-situ validation it was waiting for.
 
 Two related findings about seats and subagents.
 

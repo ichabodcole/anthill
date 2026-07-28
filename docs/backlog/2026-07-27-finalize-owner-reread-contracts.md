@@ -1,7 +1,12 @@
 # `finalize-session`: re-read every doc you own **as its authority** before landing it
 
-**Added:** 2026-07-27 · **Status:** ready to build · **Seat:** weaver
+**Added:** 2026-07-27 · **Status:** ✅ **SHIPPED** 2026-07-27 · **Seat:** weaver
 (`plugin/skills/finalize-session/SKILL.md`)
+
+> Landed as **step 2.5** plus a closing-checklist line. The consumer-lens pass shipped as an
+> explicit optional. Still open: whether this and the
+> [cold fresh-eyes review](2026-07-09-finalize-fresh-eyes-seat-doc-review.md) are one beat or two —
+> they land in the same step but catch different things (drift vs. incomprehensibility).
 
 Add an explicit finalize beat: **before landing, re-read every contract/doc you own as its
 authority and verify each claim against current code. Assume it has drifted, because it probably

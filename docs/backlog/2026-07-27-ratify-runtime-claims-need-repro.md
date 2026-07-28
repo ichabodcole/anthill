@@ -1,7 +1,11 @@
 # `anthill:plan` ratify: a runtime-behavior claim needs a measured repro, not pattern memory
 
-**Added:** 2026-07-27 · **Status:** ready to build · **Seat:** weaver
-(`plugin/skills/plan/SKILL.md` + `methodology.md`)
+**Added:** 2026-07-27 · **Status:** ✅ **SHIPPED (skill)** 2026-07-27 · **Seat:** weaver
+(`plugin/skills/plan/SKILL.md`)
+
+> The API-shape vs. runtime-behavior distinction landed in the plan skill's ratify step, with the
+> proportionality caveat intact. **Still open:** mirroring it into `methodology.md`, the portable
+> half.
 
 A seam clause was **ratified from pattern memory** — a claim about Bun `ReadableStream`
 enqueue-throw behavior on dead sockets — and **died on first contact mid-build**

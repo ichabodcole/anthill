@@ -59,6 +59,17 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
    - **Terminal seats:** post the skeleton on the vine; owners ratify/falsify over the vine.
    - **Subagent seats:** no tails — **dispatch each seat to ratify its seams** and **collect the
      verdicts** yourself.
+   - **A claim about RUNTIME BEHAVIOR needs a measured repro, not pattern memory.** Distinguish the
+     two kinds of claim a seam makes:
+     - **API shape** ("takes X, returns Y") — ratifiable by _reading_. Memory is usually reliable.
+     - **Runtime behavior** ("under condition C this throws / blocks / retries") — memory here is
+       plausible-sounding and frequently **wrong**, and it fails _mid-build_, which is exactly when
+       the gate was supposed to have saved you. A seam clause ratified from pattern memory (Bun
+       `ReadableStream` enqueue-throw on dead sockets) died on first contact in a real session.
+       **Spend the ~20 lines to measure it, then ratify.**
+
+     Keep the bar proportionate: "measure it, then ratify" for behavior claims, not "prove
+     everything". A gate expensive enough to route around costs more than the occasional bad clause.
 
 5. **Rule once on what's contested.** When owners disagree, do a **read-all-owners synthesis pass** —
    read every affected position, then **rule once**. Don't let the vine ping-pong. Then **promote

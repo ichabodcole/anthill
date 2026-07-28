@@ -1,7 +1,16 @@
 # `anthill:bootstrap`: adapt to the host's real formatter and hook setup
 
-**Added:** 2026-07-27 · **Status:** ready to build · **Seat:** weaver
+**Added:** 2026-07-27 · **Status:** ⚠️ **PARTIALLY SHIPPED** 2026-07-27 · **Seat:** weaver
 (`plugin/skills/bootstrap/SKILL.md`)
+
+> **Item 1 shipped** — step 4 now names the split-formatter case and says to work out which tool owns
+> JSON, plus how to _verify_ per tool (`prettier --file-info`, `biome check`) rather than adding a
+> redundant ignore. Checked against this repo: it is the split shape and is already covered (Prettier
+> ignores `.anthill/` explicitly; Biome's allowlist never reaches it) — so "add an ignore" is not
+> universally the right action, which the guidance now says.
+>
+> **Items 2 and 3 are still open** — tree-wide pre-commit hook detection at preflight, and wiring the
+> now-existing `placeholder.ts` helper into bootstrap so it offers to fill an unfilled template.
 
 Three bootstrap gaps, all the same species: bootstrap **assumes** a host convention instead of
 **detecting** it. That is the adapt-not-dictate principle failing at the one moment it matters most

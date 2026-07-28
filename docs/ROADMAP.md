@@ -24,42 +24,46 @@ four consuming projects were triaged into the four batches below — two of whic
 are actively breaking live sessions. **Start at Batch 1.** The memory bundle and parity close-out
 keep their place in **Next**, behind the triage.
 
-**📋 Planned, ready to build — the 2026-07-27 feedback triage, in order:**
+**📋 The 2026-07-27 feedback triage — Batches 1, 2 and 4 SHIPPED; Batch 3 is the open one.**
 
-> **29 open issues triaged 2026-07-27** into four batches + one proposal. Sequencing rationale:
-> the bug batches are actively costing live sessions and need no design, so they go first; the
-> structural proposal (#59) gets its design time while they land. Two items are flagged 🔴 — a
-> live regression we introduced, and a data-loss bug.
-> [Triage detail lives in the batch docs themselves.]
+> **29 open issues triaged 2026-07-27** into four batches + one proposal. The three
+> no-design batches were built the same day (`315fa56`, `2170636`, `3111f28`, plus the skills
+> pass); **Batch 3 — the structural proposal — is what remains.** Test count 157 → 202.
+> **The GitHub issues have NOT been closed** — do that when the fixes ship in a release.
 
-**Batch 1 — `anthill commit` correctness + session integrity** _(forager; no design needed)_
+**✅ Batch 1 — `anthill commit` correctness + session integrity** _(forager)_
 
-- **`anthill commit` hardening** — the existing plan's two land-time moves: (1) a **protected-trunk
-  guard** — refuse a direct commit on a **project-configured** protected branch unless `--force`
-  (never a baked-in `develop`/`main`, per adapt-not-dictate), and (2) the **foreign-red diagnostic**
-  (shared-tree move C.1). **Now needs a revision pass** to absorb four more field defects — see its
-  Intake section. [plan](projects/anthill-commit-hardening/plan.md).
-- **`anthill commit` correctness batch** — four defects at the land bottleneck: 🔴 **stage-before-verify
-  silently makes a bounced seat the index-holder for the whole team** (#55), can't stage deletions
-  (#48), dies on git-mv rename pairs (#51), no pre-flight warn before the shared gate (#50).
+- ✅ **`anthill commit` correctness** — `2170636`. Stage-before-verify no longer strands the team's
+  index (#55); deletions (#48) and git-mv rename pairs (#51) now land through the wrapper instead of
+  forcing a bypass; the **foreign-red diagnostic** names the dirty paths outside your commit on a
+  gate failure (#50, = shared-tree move C.1). **Found while fixing:** the sweep guard was blind to
+  renames — a seat committing a directory could silently land a peer's deletion of a path outside
+  its pathspec. Fixed, pinned by a test verified to fail without it.
   [backlog](backlog/2026-07-27-anthill-commit-correctness-batch.md).
-- **Session-integrity batch** — 🔴 **convene's idempotent board re-open can destroy a live board**
-  (#43 — a 9-task board was lost mid-session; recovery depended on luck), and `attach` is blind to
-  multi-session teams (#45). [backlog](backlog/2026-07-27-session-integrity-batch.md).
+- ✅ **Session integrity** — `3111f28`. Convene now warns when a keyed re-open may have shadowed a
+  live board, telling the lead not to close it (#43 — the destroy half is spellbook's, still open);
+  `attach` reveals every session bound to the team instead of silently taking the first (#45).
+  **The board warning fired on its first live run in this repo** — the condition is present here.
+  [backlog](backlog/2026-07-27-session-integrity-batch.md).
+- ⏭️ **Deferred: the protected-trunk guard** (plan move 1) — it is the land-time twin of Batch 3's
+  layer 1 and should be designed **with** it, not ahead of it.
+  [plan](projects/anthill-commit-hardening/plan.md).
 
-**Batch 2 — `anthill:join` onboarding** _(weaver; no design needed)_
+**✅ Batch 2 — `anthill:join` onboarding** _(weaver)_ — `315fa56`
 
-- 🔴 **A live regression, ours.** `08516ac` (2026-07-09) reframed join's backfill around
-  `grapevine tail --from-start`; it cannot work (grep block-buffers, tail never closes), so it
-  returns **zero output then times out, silently** — and a fresh seat concludes the channel is
-  empty. Reproduced independently by 3 seats in one session (#54), and by 2 more a week earlier
-  (#38). Still live in the shipped skill. Fix: recommend a **bounded** verb.
-- Plus five refinements: heartbeat noise (#39), stale-card claims (#40), unresolved card id + flagged
-  placeholder grounding docs (#56), read-only-first scoping and the "scratch does not survive the
-  session" line (#56/#58), ratify-gate pointer for mid-plan joiners (#42).
+- ✅ **The regression is fixed.** `08516ac` had reframed join's backfill around
+  `grapevine tail --from-start`, which cannot work (grep block-buffers, tail never closes): zero
+  output, then a timeout, read as "the channel is empty". Now `grapevine pull`, with the trap named
+  so nobody re-derives it. **Worse than filed:** the board Monitor filter used basic grep with an
+  alternation, so it matched **nothing** and sat permanently empty while looking wired (#39) — and
+  live tails were block-buffered. Both fixed and pinned.
+- ✅ Plus: fresh pre-claim board read (#40), resolved card command + **unfilled-template grounding
+  docs now flagged** via a shared `placeholder.ts` helper (#56 — zero false positives across all 110
+  repo docs), scoped read-only-first clause, the "scratch does not survive the session" line
+  (#56/#58), and the ratify-gate pointer for mid-plan joiners (#42).
   [backlog](backlog/2026-07-27-join-onboarding-batch.md).
 
-**Batch 3 — Session branch strategy** _(PROPOSAL — the structural one)_
+**Batch 3 — Session branch strategy** _(PROPOSAL — the structural one, and the open work)_
 
 - **Convene on a branch, consolidate at finalize, isolate when it pays.** Nine issues from four
   projects reduce to two root causes: the team commits on whatever branch convene ran on (one 4-seat
@@ -70,25 +74,27 @@ keep their place in **Next**, behind the triage.
   the twin of the protected-trunk guard in Batch 1; design them together.
   [proposal](projects/session-branch-strategy/proposal.md).
 
-**Batch 4 — Ritual & guidance pass** _(weaver; mostly skills text)_
+**✅ Batch 4 — Ritual & guidance pass** _(weaver; skills text)_ — landed 2026-07-27
 
-- **Finalize: re-read every doc you own as its authority** (#57) — the standout. Four seats did this
-  unprompted at finalize and **every one found drift**, including a proof line pointing at a deleted
-  artifact and two outright false statements. Nothing fails a gate; a confidently-wrong trail is
-  worse than no trail. [backlog](backlog/2026-07-27-finalize-owner-reread-contracts.md).
-- **Subagent dispatch as a named seat move** (#36/#47) — a 16-slice build produced **zero** dispatches
-  and neither seat consciously considered them. **This is the in-situ validation the
-  [seat-subagent-orchestration investigation](investigations/2026-07-09-seat-subagent-orchestration.md)
-  was waiting on** — it can come off _Monitor_.
+- ✅ **Finalize: re-read every doc you own as its authority** (#57) — the standout, now **step 2.5**
+  plus a checklist line. Four seats ran this unprompted and **every one found drift**, including a
+  proof pointing at a deleted artifact and two outright false statements. Nothing fails a gate; a
+  confidently-wrong trail is worse than no trail.
+  [backlog](backlog/2026-07-27-finalize-owner-reread-contracts.md).
+- ✅ **Subagent dispatch named as a seat move** (#36 → `join`, the cold-audit-before-you-post pattern)
+  and the **thread≠seat re-dispatch hazard** (#47 → `convene`).
   [backlog](backlog/2026-07-27-subagent-dispatch-in-seat-guidance.md).
-- **Bootstrap host-adaptation** (#53/#44/#56) — bootstrap assumes host conventions instead of
-  detecting them (a split-formatter repo leaves `config.json` unshielded). Adapt-not-dictate failing
-  at first contact. [backlog](backlog/2026-07-27-bootstrap-host-adaptation.md).
-- **Ratify runtime claims with a measured repro** (#46) · **session-pacing patterns** (#37/#41) ·
-  **shared live-service lock** (#61 — needs a design pass; a worktree isolates files, not ports).
-  [ratify](backlog/2026-07-27-ratify-runtime-claims-need-repro.md) ·
+- ✅ **Session-pacing patterns** (#37/#41 → `convene`) and ✅ **ratify runtime claims with a measured
+  repro** (#46 → `plan`; `methodology.md` mirror still open).
   [pacing](backlog/2026-07-27-session-pacing-patterns.md) ·
-  [live-service](backlog/2026-07-27-shared-live-service-lock.md).
+  [ratify](backlog/2026-07-27-ratify-runtime-claims-need-repro.md).
+- ⚠️ **Bootstrap host-adaptation** (#53/#44/#56) — **partially** shipped. The split-formatter guidance
+  landed (detect which tool owns JSON; verify per tool rather than adding a redundant ignore). **Still
+  open:** tree-wide pre-commit hook detection at preflight, and wiring the now-existing
+  `placeholder.ts` into bootstrap. [backlog](backlog/2026-07-27-bootstrap-host-adaptation.md).
+- 📋 **Shared live-service lock** (#61) — **not started; needs a design pass.** A worktree isolates
+  files, not ports — and the issue's own finding 4 says a remembered rule fails under load, which
+  argues against shipping this as prose at all. [backlog](backlog/2026-07-27-shared-live-service-lock.md).
 
 **✅ Shipped since `v1.3.0` (on `develop` / released):**
 

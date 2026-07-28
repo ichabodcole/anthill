@@ -101,6 +101,16 @@ status`** shows who's on + the board.
 6. **Work** your lane per the SOP + your seat doc. As you go, **capture ah-ha judgments to your
    scratch** (the reasoning + the generalizable lesson — not lesson-less events) for synthesis at
    finalize. Route questions + decisions to the lead on the vine, not direct to the human.
+   - **Dispatching a subagent is available to you — it just never occurs to seats.** A survey of two
+     implementation-heavy seats after a 16-slice build found **zero** dispatches, and neither seat had
+     _considered_ them: serial lanes, small per-step verdicts, and a peer verifier already acting as a
+     second pair of eyes made the option invisible rather than declined. This is an **option, not a
+     mandate** — but it should be a choice you actually make.
+   - **The one pattern both seats independently arrived at: a cold audit before you post a cut you
+     own.** Before publishing a classification, an enumeration, or a judgement that others will build
+     on, dispatch a **blank-context** subagent to re-derive it adversarially — _"here's the input and
+     the question; find what I missed."_ **Your framing is the blind spot, and fresh context is the
+     antidote.** A real 5-item under-enumeration in that session would have been caught pre-post.
 
 ## Join checklist (the beats that get skipped)
 

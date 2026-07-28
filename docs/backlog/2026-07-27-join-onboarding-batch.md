@@ -1,7 +1,16 @@
 # `anthill:join` onboarding batch — one live regression + five refinements
 
-**Added:** 2026-07-27 · **Status:** ready to build (no design needed) · **Seat:** weaver (single
-surface: `plugin/skills/join/SKILL.md`, plus the join payload from `team-join.ts`)
+**Added:** 2026-07-27 · **Status:** ✅ **SHIPPED** 2026-07-27 (`315fa56`) · **Seat:** weaver
+(`plugin/skills/join/SKILL.md` + the join payload in `team-join.ts`)
+
+> **All six landed.** Item 2 turned out to be worse than reported: the shipped board filter used
+> **basic** grep with an alternation, where `(a|b)` is a LITERAL — so it matched nothing at all and a
+> seat's board Monitor sat permanently empty while looking correctly wired. #39's reporter had
+> evidently already fixed the regex flavor by hand before hitting the heartbeat noise they filed.
+> Live tails were also block-buffered (`--line-buffered` now added), the same root cause as item 1.
+>
+> The placeholder detector shipped as a shared pure helper (`placeholder.ts`) so bootstrap can reuse
+> it; swept over all 110 repo docs it flags exactly the 3 unfilled templates, zero false positives.
 
 Six issues against the join path, filed by four different teams across July. All are skill-text or
 payload changes. **Item 1 is a live regression we introduced ourselves and should be fixed

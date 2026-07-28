@@ -1,6 +1,9 @@
 # Two session-pacing patterns worth naming in the docs
 
-**Added:** 2026-07-27 · **Status:** ready to build · **Seat:** weaver (skills text)
+**Added:** 2026-07-27 · **Status:** ✅ **SHIPPED** 2026-07-27 · **Seat:** weaver (skills text)
+
+> Both landed in `convene` step 5, with their boundaries stated: compact is a human-only move (seats
+> cannot self-trigger it), and flag-before-land explicitly does **not** extend to seam ratification.
 
 Two field-proven pacing patterns, both currently tribal knowledge. Grouped because they both belong
 in the same place: the convene/finalize docs' pacing section.

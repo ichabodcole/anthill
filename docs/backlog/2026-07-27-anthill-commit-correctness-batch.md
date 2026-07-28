@@ -1,7 +1,17 @@
 # `anthill commit` correctness batch — four field-reported defects at the land bottleneck
 
-**Added:** 2026-07-27 · **Status:** ready to build (no design needed) · **Seat:** forager (single
+**Added:** 2026-07-27 · **Status:** ✅ **SHIPPED** 2026-07-27 (`2170636`) · **Seat:** forager (single
 surface: `plugin/scripts/anthill/commands/team-commit.ts`)
+
+> **All four landed**, plus a fifth defect found while fixing them: the sweep guard was blind to
+> renames (git collapses `old -> new` into just `new`), so a seat committing a directory could
+> silently land a peer's deletion of a path outside its own pathspec. `--no-renames` on the cached
+> diffs closes it; pinned by a test verified to fail without the fix.
+>
+> **One deliberate carve-out:** #4's _pre-flight_ warning on unformatted/red staged files needs to
+> know the project's formatter and test runner, which anthill must not assume (adapt-not-dictate).
+> The failure-path half — the foreign-red diagnostic — shipped and carries the actionable value.
+> Revisit the pre-flight half only if a config surface for it appears.
 
 Four independent defects in the serialized land wrapper, all filed from live team sessions in
 July. None needs a design pass — each has a named repro and a named fix. They are grouped because
