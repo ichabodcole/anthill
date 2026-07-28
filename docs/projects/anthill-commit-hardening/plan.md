@@ -1,9 +1,36 @@
 # `anthill commit` hardening — Implementation Plan
 
-**Created:** 2026-07-10
-**Status:** Draft
+**Created:** 2026-07-10 · **Revised:** 2026-07-27
+**Status:** Draft — **needs a revision pass before pickup** (see Intake below)
 **Shape:** light build — single seat/surface (`plugin/scripts/anthill/`), no owner↔owner seam →
 forager implements, sentinel verifies, no full convene / ratify gate.
+
+---
+
+## Intake (2026-07-27) — four more defects arrived from the field
+
+The 2026-07-27 issue triage surfaced **four additional `anthill commit` defects**, all in this same
+file, all with named repros and named fixes. They belong in this plan as **moves 3–6**; the plan
+below still describes only moves 1–2 and should be extended before anyone picks it up.
+
+See [`backlog/2026-07-27-anthill-commit-correctness-batch.md`](../../backlog/2026-07-27-anthill-commit-correctness-batch.md)
+for the full write-ups. In short:
+
+3. **Stage-before-verify strands the index** ([#55](https://github.com/ichabodcole/anthill/issues/55)) —
+   a failed commit leaves your paths staged, silently making you the blocker for every other seat.
+   **Sharper and more urgent than either currently-planned move.**
+4. **Cannot stage deletions** ([#48](https://github.com/ichabodcole/anthill/issues/48)).
+5. **Dies on git-mv rename pairs** ([#51](https://github.com/ichabodcole/anthill/issues/51)) — likely
+   the same fix as 4; verify before writing two.
+6. **No pre-flight warning before the shared gate** ([#50](https://github.com/ichabodcole/anthill/issues/50)) —
+   check for overlap with move 2 (foreign-red diagnostic), which covers the _failure_ path where this
+   covers the _pre-flight_ path.
+
+**Sequencing note:** move 1 (protected-trunk guard) is the land-time twin of layer 1 in the new
+[session-branch-strategy proposal](../session-branch-strategy/proposal.md) — convene _offers_ the
+branch, the commit wrapper _refuses_ the protected one. Refusing a commit on a trunk is only humane
+if something offered a branch first, so **consider designing move 1 alongside that proposal** even
+though moves 3–6 can ship immediately and independently.
 
 ---
 
