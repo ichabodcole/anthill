@@ -76,34 +76,39 @@ Four independent sources, deliberately chosen to cross-check each other:
 The central finding of this investigation. These have been lumped together; they have different
 causes, different severities, and different fixes.
 
-| ID     | Mechanism                                                          | Symptom                                                                  | Evidence                                                    |
-| ------ | ------------------------------------------------------------------ | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| **M1** | One shared git **index**                                           | A seat's staged content blocks peers; a bounced commit strands the index | #55.1, #49, #60.1, dream-flute pc#2, sol Q2                 |
-| **M2** | Hook reads the **whole tree**; the commit is file-scoped           | Any seat's dirty or red file blocks _everyone's_ land                    | #24, #28, #44, #50, #55.2, #60.2, media-buffet pc#3, sol Q1 |
-| **M3** | Reading/building/testing a tree holding peers' **in-flight edits** | **Wrong verdicts, in both directions**                                   | dream-flute `prism.md`, #52                                 |
-| **M4** | Machine-global **runtime** (ports, daemons, DBs, browser tabs)     | Verdict bound to the wrong _running_ artifact                            | #61, dream-flute "which-tree trap" forms 2–3                |
-| **M5** | Commits land on the **integration branch**                         | ~50 commits on `develop` from one feature                                | #59                                                         |
-| **M6** | Incompatible assumptions **merge clean**                           | Green build, contradictory behavior                                      | industry finding; anthill's own ratify gate                 |
-| **M7** | **Livelock by politeness** — yielding recovery norms               | Everyone unstages, nobody drains; finished work sits                     | sol Q4 (emergent; not previously modelled)                  |
-| **M8** | **Lead ruling latency** — single writer, multi-writer stream       | Rulings cross seats' messages; a lane gets rewritten                     | sol Q1b, Q4 (emergent; not previously modelled)             |
+| ID      | Mechanism                                                          | Symptom                                                                  | Evidence                                                    |
+| ------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| **M1**  | One shared git **index**                                           | A seat's staged content blocks peers; a bounced commit strands the index | #55.1, #49, #60.1, dream-flute pc#2, sol Q2                 |
+| **M2**  | Hook reads the **whole tree**; the commit is file-scoped           | Any seat's dirty or red file blocks _everyone's_ land                    | #24, #28, #44, #50, #55.2, #60.2, media-buffet pc#3, sol Q1 |
+| **M3**  | Reading/building/testing a tree holding peers' **in-flight edits** | **Wrong verdicts, in both directions**                                   | dream-flute `prism.md`, #52                                 |
+| **M4**  | Machine-global **runtime** (ports, daemons, DBs, browser tabs)     | Verdict bound to the wrong _running_ artifact                            | #61, dream-flute "which-tree trap" forms 2–3                |
+| **M5**  | Commits land on the **integration branch**                         | ~50 commits on `develop` from one feature                                | #59                                                         |
+| **M6**  | Incompatible assumptions **merge clean**                           | Green build, contradictory behavior                                      | industry finding; anthill's own ratify gate                 |
+| **M7**  | **Livelock by politeness** — yielding recovery norms               | Everyone unstages, nobody drains; finished work sits                     | sol Q4 (emergent; not previously modelled)                  |
+| **M8**  | **Lead ruling latency** — single writer, multi-writer stream       | Rulings cross seats' messages; a lane gets rewritten                     | sol Q1b, Q4 (emergent; not previously modelled)             |
+| **M9**  | **Correct waiting has no stall signature**                         | A seat blocked on a human is invisible to board, tree and sweep          | sol finalize #3 (emergent; not previously modelled)         |
+| **M10** | **No trigger reconciles `plan.md` with mid-session rulings**       | The plan still asserts a design the team reversed                        | sol finalize #4 (emergent; not previously modelled)         |
 
-**M7 and M8 were invisible to the issue tracker.** Neither has ever been filed. Both came from the
-live interview, and both are _emergent coordination failures_ rather than git properties — which is
-precisely why no amount of git tooling would have surfaced them.
+**M7–M10 were invisible to the issue tracker.** None has ever been filed. All four came from the
+live interview and the finalize report, and all four are _emergent coordination failures_ rather than
+git properties — which is precisely why no amount of git tooling would have surfaced them. **Four of
+ten mechanisms are not about git at all**, which is itself an argument against framing this whole
+area as "the shared-tree problem."
 
 ### Which fixes cover which mechanisms
 
-| Fix                                                | Covers     | Does not cover                       |
-| -------------------------------------------------- | ---------- | ------------------------------------ |
-| Serialize lock _(shipped)_                         | M1         | M2–M8                                |
-| Per-seat worktree isolation                        | M1, M2, M3 | M4, M5, M7, M8 — **and degrades M6** |
-| Branch strategy _(session-branch-strategy)_        | M5         | everything else                      |
-| Contract-first: seams + ratify _(already have it)_ | M6         | M1–M5, M7, M8                        |
-| Per-resource lock                                  | M4         | everything else                      |
-| _(nothing proposed)_                               | —          | **M7, M8**                           |
+| Fix                                                   | Covers     | Does not cover                       |
+| ----------------------------------------------------- | ---------- | ------------------------------------ |
+| Serialize lock _(shipped)_                            | M1         | everything else                      |
+| **Staged-snapshot gate** _(new — see observation 10)_ | **M2**     | M1, M3–M10                           |
+| Per-seat worktree isolation                           | M1, M2, M3 | M4, M5, M7–M10 — **and degrades M6** |
+| Branch strategy _(session-branch-strategy)_           | M5         | everything else                      |
+| Contract-first: seams + ratify _(already have it)_    | M6         | everything else                      |
+| Per-resource lock                                     | M4         | everything else                      |
+| _(nothing proposed)_                                  | —          | **M7, M8, M9, M10**                  |
 
-**No candidate fix covers more than three of eight**, which is why "should we isolate?" was the wrong
-question to lead with.
+**No candidate fix covers more than three of ten**, which is why "should we isolate?" was the wrong
+question to lead with. Four mechanisms have no proposed fix at all.
 
 ### Key Observations
 
@@ -195,6 +200,64 @@ _"MUST NOT branch on provider-specific blocker semantics"_, and branching/mergin
 swarms"_ — replacing isolation with file-read tracking and notification. anthill is architecturally
 closer to Jcode (grapevine + bounty + seams) while its pain points argue for Symphony's isolation.
 
+**10. A cheaper fix for M2 exists, and it came from the team that has the problem.** _(operator-mono
+finalize, primed — but see the anti-priming note below.)_ Rather than changing the tree topology,
+change what the gate reads:
+
+> Run phase two against the **staged snapshot** (`git stash --keep-index` → `check` → restore),
+> which is what `lint-staged` already does for its own tasks. The property isn't leniency — it's
+> **"the gate verifies what you are committing"**, which is what pre-commit always meant.
+
+This addresses M2 — the mechanism sol's team ranks as by far the costliest — **without touching M1's
+plumbing, without provisioning worktrees, and without the M6 risk isolation carries.** It is also
+squarely a _host-project_ change (the hook is theirs), which per adapt-not-dictate means anthill's
+role would be to **recommend and detect**, not to rewrite. Two preconditions their verify seat
+flagged, both of which must be proven before recommending it:
+
+- it must nest safely with `lint-staged`'s own stash, and
+- restore must be safe on failure — **"a gate that can lose a peer's uncommitted work is worse than
+  the jam it fixes."**
+
+**⭐ This is also the strongest evidence that the priming did NOT contaminate the finding.** sol knew
+I was researching worktree isolation. Their team, at finalize, proposed **something else entirely** —
+a gate fix, not an isolation fix — and did not mention worktrees at all. A primed subject that
+declines the primed answer is more informative than a blind one that happens to agree.
+
+**11. Two more mechanisms, both of them about _absence of signal_.**
+
+- **M9 — correct waiting has no stall signature.** A seat sat blocked on a human answer, _"invisible
+  to the board, the tree, and my coordinate seat's sweep."_ It surfaced only because the seat
+  volunteered it. Compounding it, sol had told seven seats "the human isn't watching panes; he talks
+  to me" — which `anthill spawn` makes **false by construction**, since it creates one pane per seat
+  in a session the human can attach to at will. So this is two defects: a **model the skills imply
+  but the tmux topology contradicts**, and an **uninstrumented state**. It is adjacent to
+  [#58](https://github.com/ichabodcole/anthill/issues/58) (idle-lead stall) but sharper: #58 is about
+  a lead not responding; M9 is about _nothing anywhere being able to tell that a seat is waiting_.
+- **M10 — nothing reconciles `plan.md` with mid-session rulings.** Sol made ~15 rulings on the vine
+  and landed **none** into the plan; at finalize the document still asserted a design the team had
+  **reversed**. The SOP already says _the vine evaporates_ — but no ritual beat makes the lead
+  discharge that obligation for the plan while the session is live. (The finalize owner-reread beat
+  shipped today catches this only at the end, and only for docs a seat owns.)
+
+**12. The ratify gate's strongest result yet — and a precise refinement to it.** Reported unprompted
+as the thing that worked:
+
+> **Five of seven seams falsified**, including a privilege-escalation hole in my own skeleton that
+> would have made a read-only CLI key a full session credential on every `requireAuth` route — **with
+> no test failing.**
+
+A security defect, caught by ratification, that no test would have caught. Also: _"the seams that were
+negotiated fit at integration; the one shape a seat built past a contract was wrong in three places."_
+
+The refinement, from their CLI seat, is sharp enough to act on independently:
+
+> **A seam is ratified at a specific granularity, and building past it silently manufactures a new
+> one.** We ratified the response _envelope_; the seat built at the _field_ level and got shapes
+> wrong — the ratification _felt_ like a contract, so nobody noticed the boundary had been crossed.
+> **Say where a ratification ends.**
+
+Tracked separately as [seam ratification granularity](../backlog/2026-07-28-seam-ratification-granularity.md).
+
 ### Options Considered
 
 Deliberately **not** narrowed to a recommendation. Recorded so the eventual decision is an argument
@@ -234,18 +297,27 @@ would be optimizing for the loudest mechanism rather than the costliest.
 
 ## Next Steps
 
-> **More evidence is expected.** operator-mono's team is mid-flight; its
-> `anthill:finalize-session` will produce seat docs, a seams pass, a paper-cuts triage and a
-> **structure reflection** — the last being the only source we have on seat shape at 7. sol has been
-> asked to report there, with an explicit instruction to report **what the team found, not what bears
-> on this question** (a null result on the git setup would itself be informative). **Do not close
-> this investigation before that lands.**
+> **✅ operator-mono's finalize landed 2026-07-28** (grapevine `anthill-research` #6) and is folded
+> in: it added M9 and M10, the staged-snapshot gate option, and the seam-granularity refinement.
+> **Still not answered:** the two cost questions below. sol answered the finalize ask and did not
+> reach the provisioning questions — which is the right priority order on their side.
 
-- [ ] Await sol's answers on isolation provisioning cost in a 6-surface monorepo, and on whether
-      non-verify seats would keep worktree discipline under load. **Mark both as primed** (see the
-      caveat under Evidence Gathered).
-- [ ] Fold in operator-mono's finalize output when it lands — especially the structure reflection's
-      conclusion on the lead-bottleneck (M8), for which no other evidence exists.
+- [ ] **Evaluate the staged-snapshot gate (observation 10) before evaluating isolation.** It targets
+      the mechanism both teams rank costliest, at a fraction of isolation's cost. Prove the two
+      preconditions first — safe nesting with `lint-staged`'s own stash, and safe restore on failure.
+      **A gate that can lose a peer's uncommitted work is worse than the jam it fixes.**
+- [ ] Still open with sol: isolation provisioning cost in a 6-surface monorepo, and whether
+      non-verify seats would keep worktree discipline under load. **Mark both as primed** when they
+      arrive (see the caveat under Evidence Gathered).
+- [ ] **M9 has a documentation half that can ship immediately**, independent of the instrumentation
+      half: the skills imply the lead is an exclusive human channel, and `anthill spawn`'s tmux
+      topology makes that false by construction. Correct the claim; instrument the waiting state
+      separately.
+- [ ] Open a line for **M10** — a "reconcile the plan" beat after any ruling that falsifies a seam.
+      Note the shipped finalize owner-reread beat catches this only at the end, and only for
+      seat-owned docs.
+- [ ] Land [seam ratification granularity](../backlog/2026-07-28-seam-ratification-granularity.md) —
+      independent of everything above, and cheap.
 - [ ] Decide whether **option (c) — verify-only isolation** deserves its own slice, given it has
       two independent field requests and one unilateral adoption.
 - [ ] Instrument for rates (see open question 1) — likely via
