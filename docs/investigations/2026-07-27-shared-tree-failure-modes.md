@@ -57,6 +57,17 @@ Four independent sources, deliberately chosen to cross-check each other:
 3. **A live interview with `sol`**, lead of a **7-seat** operator-mono team, answered _mid-session_
    rather than retrospectively. Questions were deliberately blind — the shared tree was not named in
    any of them — per the [observer-effect discipline](../projects/research-probes/proposal.md).
+
+   > **⚠️ Priming caveat — weight the sources differently.** The blind condition holds for
+   > **grapevine msgs #2–#3 only**. sol then asked what the research was about and was told
+   > (worktree isolation), so **everything from msg #4 onward is primed** and cannot be treated as
+   > independent evidence for it. Every finding recorded in this document is drawn from the blind
+   > window. Answers arriving later — including the pending ones on provisioning cost and seat
+   > discipline — must be marked as primed when folded in, and are better treated as _expert opinion_
+   > than as observation. This is a live instance of exactly the contamination the research-probes
+   > proposal is designed to prevent, and it happened anyway, to someone who had read that proposal
+   > the same day.
+
 4. **Published practice** — OpenAI's [Symphony spec](https://github.com/openai/symphony/blob/main/SPEC.md),
    [Jcode Swarm](https://jcode.sh/swarm), and the worktree-isolation literature.
 
@@ -223,8 +234,18 @@ would be optimizing for the loudest mechanism rather than the costliest.
 
 ## Next Steps
 
+> **More evidence is expected.** operator-mono's team is mid-flight; its
+> `anthill:finalize-session` will produce seat docs, a seams pass, a paper-cuts triage and a
+> **structure reflection** — the last being the only source we have on seat shape at 7. sol has been
+> asked to report there, with an explicit instruction to report **what the team found, not what bears
+> on this question** (a null result on the git setup would itself be informative). **Do not close
+> this investigation before that lands.**
+
 - [ ] Await sol's answers on isolation provisioning cost in a 6-surface monorepo, and on whether
-      non-verify seats would keep worktree discipline under load.
+      non-verify seats would keep worktree discipline under load. **Mark both as primed** (see the
+      caveat under Evidence Gathered).
+- [ ] Fold in operator-mono's finalize output when it lands — especially the structure reflection's
+      conclusion on the lead-bottleneck (M8), for which no other evidence exists.
 - [ ] Decide whether **option (c) — verify-only isolation** deserves its own slice, given it has
       two independent field requests and one unilateral adoption.
 - [ ] Instrument for rates (see open question 1) — likely via
