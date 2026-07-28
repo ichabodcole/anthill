@@ -1,8 +1,39 @@
-# Session branch strategy — convene on a branch, consolidate at finalize, isolate when it pays
+# Session branch strategy — convene on a branch, merge at finalize
 
-**Status:** Draft
+**Status:** Draft — **design resolved 2026-07-27**, ready for a plan
 **Created:** 2026-07-27
 **Author:** Cole + maestro (triaged from nine field reports across four consuming projects)
+
+---
+
+## ⚠️ Scope correction (2026-07-27) — read this first
+
+This proposal originally bundled **two unrelated problems**: history noise on the base branch, and
+gate coupling on a shared tree. **They are now separated, and this document covers only the first.**
+
+A feature branch changes _where commits land_. It does **nothing** about a whole-tree pre-commit hook
+coupling independent lanes — those seats are all on one tree regardless of which branch it is on. The
+earlier claim that this work might "largely obviate" `shared-tree-gate-tension` move C was wrong.
+
+**Gate coupling and isolation now live in
+[the shared-tree failure-modes investigation](../../investigations/2026-07-27-shared-tree-failure-modes.md)**,
+which separates eight distinct mechanisms and deliberately reaches no recommendation pending
+measurement. This proposal addresses exactly one of them (**M5**) — the only one that is fully
+understood, has an unambiguous fix, and interacts with nothing else. It can ship without prejudging
+any of that.
+
+### Design decisions settled 2026-07-27
+
+| Question                        | Decision                                                                                                                                                                                                                                                                                     |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| What does "consolidate" mean?   | **A merge strategy, not history rewriting.** Squash-merge into the base. `consolidate-long-branch` is a human-supervised ritual requiring _contiguous_ chapters — and a shared tree interleaves seats by construction, so the grouping it needs is the property a convened session destroys. |
+| Who owns the branch?            | **The feature**, not the session. It survives across sessions; reconvening resumes it.                                                                                                                                                                                                       |
+| When does it merge?             | `finalize-session` **asks** whether the feature is done, and merges only on yes. Finalize stays about knowledge; merging is a question it poses, not a thing it assumes.                                                                                                                     |
+| Where does policy live?         | **One `branch{}` block** in `.anthill/config.json`, read by both `convene` and `anthill commit`. **Unset ⇒ off** — anthill never surprises a repo that didn't ask.                                                                                                                           |
+| Relationship to the trunk guard | This **unblocks it.** The protected-trunk guard (`anthill-commit-hardening` move 1) is the land-time twin of layer 1 and shares the same config block; design them together.                                                                                                                 |
+
+The layer 3 (isolation) material below is retained for context but is **out of scope here** — it
+belongs to the investigation.
 
 ---
 

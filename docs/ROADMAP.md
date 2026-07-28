@@ -65,14 +65,19 @@ keep their place in **Next**, behind the triage.
 
 **Batch 3 — Session branch strategy** _(PROPOSAL — the structural one, and the open work)_
 
-- **Convene on a branch, consolidate at finalize, isolate when it pays.** Nine issues from four
-  projects reduce to two root causes: the team commits on whatever branch convene ran on (one 4-seat
-  feature put **~50 commits straight onto `develop`** — #59), and a whole-tree gate over a shared
-  tree couples independent lanes (#55/#60/#44/#49/#28/#24, plus #52's artifact contamination).
-  **This reframes `shared-tree-gate-tension`**: the cheap complete fix is a better _branch_, not a
-  smarter _gate_ — so **move C should be re-evaluated after layers 1–2, not before**. Layer 1 is also
-  the twin of the protected-trunk guard in Batch 1; design them together.
-  [proposal](projects/session-branch-strategy/proposal.md).
+- **Convene on a branch, merge at finalize.** **Now scoped to history noise only** (#59 — one 4-seat
+  feature put ~50 commits straight onto `develop`). Design settled 2026-07-27: `convene` offers a
+  **feature-scoped** branch (surviving across sessions); `finalize` asks whether the feature is done
+  and **squash-merges** if so — a merge strategy, **not** history rewriting, since a shared tree
+  interleaves seats and `consolidate-long-branch` needs contiguous chapters. Policy lives in one
+  `branch{}` config block read by both convene and the commit guard — which **unblocks the deferred
+  protected-trunk guard**. [proposal](projects/session-branch-strategy/proposal.md).
+- 📋 **The gate/isolation question is now its own investigation, not part of the above.**
+  [Shared-tree failure modes](investigations/2026-07-27-shared-tree-failure-modes.md) — eight
+  mechanisms separated, four evidence sources (issues · four consuming projects' living docs · a live
+  7-seat interview · published practice). Headline: **the contention was on the index and the gate,
+  never on the files** — the ownership model held. Two mechanisms (**livelock by politeness**,
+  **lead ruling latency**) had never been filed by anyone. **No recommendation yet** — deliberately.
 
 **✅ Batch 4 — Ritual & guidance pass** _(weaver; skills text)_ — landed 2026-07-27
 
@@ -221,12 +226,14 @@ Not yet slotted into the numbered order above; each has a doc but hasn't been ar
   set and say _"red on `<other paths>`, not your commit"_ — no pre-flight proxy needed, buildable today.
   The strongest candidate to pull forward. **C.1 → Planned** — folded into the commit-hardening plan
   under **Now** (move 2); **C proper (the pre-flight / lane-aware gate) remains deferred.**
-  **⚠ REFRAMED 2026-07-27 — do not build C without reading this first.** Five more field reports
-  (#44/#49/#52/#55/#60) plus [#59](https://github.com/ichabodcole/anthill/issues/59) argue the cheap
-  complete fix is **a better branch, not a smarter gate** — convene on a session branch, consolidate
-  at finalize, and isolate where it pays. Move C may be largely obviated; **re-evaluate it after
-  Batch 3's layers 1–2 land.** [session-branch-strategy](projects/session-branch-strategy/proposal.md)
-  supersedes this framing · [original proposal](projects/shared-tree-gate-tension/proposal.md).
+  **⚠ CORRECTION 2026-07-27 — move C is NOT obviated by the branch work.** An earlier note here
+  claimed the branch strategy might supersede it. That was wrong: a feature branch changes _where
+  commits land_ and does nothing about a whole-tree gate coupling independent lanes. The two address
+  different mechanisms (**M5** vs **M1/M2** in the taxonomy below) and neither substitutes for the
+  other. **Read the [shared-tree failure-modes investigation](investigations/2026-07-27-shared-tree-failure-modes.md)
+  before building C** — it separates eight distinct mechanisms, shows no candidate fix covers more
+  than three, and leaves the isolation-vs-mitigation call deliberately open pending measurement.
+  [original proposal](projects/shared-tree-gate-tension/proposal.md).
 - **`anthill commit` protected-trunk guard** (backlog) — land-time backstop to the #34 convene beat:
   refuse a direct commit to a **configurable** protected set (never a hard-coded `develop`/`main` — the
   project supplies the branches), warn/`--force` escape hatch. **→ Planned** — folded into the
