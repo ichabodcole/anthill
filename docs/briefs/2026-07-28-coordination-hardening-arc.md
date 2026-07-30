@@ -128,6 +128,13 @@ Also fixes an epistemic bug in the harvest itself: `"N seats hitting one bug is 
 launders agreement into confidence, which is exactly what the convergence finding in phase 5 warns
 against.
 
+**Companion, deliberately not a phase:**
+[practice transmission between teams](../investigations/2026-07-28-practice-transmission-between-teams.md).
+Phase 6 improves how _problems_ travel upward. That investigation asks how evolved _practice_ does —
+and finds it currently doesn't at all: four verification practices have been independently derived
+twice, by two verify seats on different stacks, and anthill ships none of them. It needs an experiment
+before it needs a plan, so it stays out of the arc until the experiment runs.
+
 ---
 
 ## Explicitly NOT in this arc
