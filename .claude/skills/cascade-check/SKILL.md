@@ -119,7 +119,7 @@ The map is incomplete by construction. The method that finds the rest:
 5. **Ask: what does the checklist say?** Skills carry both prose and a checklist; they drift, and the
    checklist wins because it's what gets read under time pressure.
 
-**Interpret the hits; never bulk-fix them.** The greps produce false positives by design, and telling
+**Interpret every hit before acting on it.** The greps produce false positives by design, and telling
 them apart is the whole skill. From this map's own first run, searching for a stale CLI path:
 
 - `${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts` in six skills — **correct.** The plugin root _is_
@@ -130,6 +130,26 @@ them apart is the whole skill. From this map's own first run, searching for a st
   reads first.
 
 One genuine hit, nine correct ones. A lint would have "fixed" all ten.
+
+## Should you fan out subagents for this?
+
+**Usually no.** This skill's value is **interpretation**, not search — see the ten-hits-one-real
+example above. An explorer that reports _"found 10 references to X"_ without judgment invites exactly
+the bulk-fix failure that section warns against, and it can't judge relevance because it doesn't know
+what rule you just changed or why. Briefing it costs more than running the greps yourself. Most
+cascade checks are three to five targeted searches.
+
+**Two cases where it does pay:**
+
+1. **A release sweep over a large diff.** The surfaces are genuinely independent — templates, skill
+   rules, docs, tooling globs — so one explorer per surface parallelizes well. **Hard constraint:
+   explorers return LOCATED CANDIDATES WITH CONTEXT, never verdicts.** Ask for _"every place this
+   claim appears, quoted with its surrounding line"_ — not _"is this stale?"_ The interpretation stays
+   with you, or you have delegated away the only part that matters.
+2. **Checking the checker, on a large or subtle change.** Dispatch a **fresh** agent (never a fork —
+   a fork inherits your framing and will agree with you) to read the changed guidance cold and report
+   where it contradicts itself or assumes context. This is a different act from doing the cascade
+   check: it verifies the change, not the dependents.
 
 ---
 
@@ -175,14 +195,20 @@ you move them:
 - `docs/ROADMAP.md` **`Now`** — the lead reads this at convene. Does it describe what's actually next?
 - `docs/PROJECT-SUMMARY.md` — if it predates a structural shift, note it or refresh it.
 
-**◻ Dependency floors.** If anything ships that needs a newer **spellbook**, move the floor in
-`README.md`. The `≥ 1.16.0` floor is load-bearing (board session-binding, bounded vine catch-up), and
-wrong-footing a consumer on an older spellbook produces failures that look like anthill bugs.
+**◻ Dependency floors.** If anything ships that needs a newer **spellbook**, move the floor —
+`README.md` states the current one and why it's load-bearing. Wrong-footing a consumer on an older
+spellbook produces failures that look like anthill bugs, so the floor is a correctness claim, not
+documentation. _(Read the floor from the README rather than trusting any number quoted elsewhere,
+including here.)_
 
-**◻ DO NOT bump versions.** release-please owns `package.json`,
-`plugin/.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `cli.ts` (generic marker),
-`CHANGELOG.md`, `.release-please-manifest.json`. **Verify its PR touched all six** — a missing
-`extra-files` entry means a version location silently didn't move. Never edit them by hand.
+**◻ DO NOT bump versions — verify instead.** release-please owns every version location. **Read
+`release-please-config.json` for the current `extra-files` list** (plus `package.json`, `CHANGELOG.md`
+and `.release-please-manifest.json`, which the `node` release-type handles), then confirm its PR
+touched all of them. A location present in the config but absent from the PR means a version silently
+didn't move. Never edit any of them by hand.
+
+_(Enumerating them here would go stale the moment one is added — which is the failure this whole
+skill exists to prevent. Read the config.)_
 
 ## After a release
 
