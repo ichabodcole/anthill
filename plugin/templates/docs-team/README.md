@@ -67,6 +67,18 @@ See **`dev/README.md`** for the roster + division of labor. Each seat has its ow
 `dev/`. Decisions and questions route to the human **through {{lead}}** (the lead / liaison), not
 direct.
 
+> **The lead is the routing DEFAULT, not an exclusive channel — and don't tell seats otherwise.**
+> Routing through the lead exists so four seats' questions become one ruling-with-reasoning instead of
+> four uncoordinated pings. It is not a claim that the human can't see you: `anthill spawn` gives each
+> seat its own tmux pane in a session the human can attach to **at will**, so "the human isn't watching
+> — talk to me" is **false by construction** and a lead who asserts it is wrong.
+>
+> Why it matters: a lead who believes it is the only channel will not look for a seat that is stuck on
+> a human answer — and **a correctly-waiting seat produces no signal at all.** Not on the board, not in
+> the tree, not in any sweep. One session lost an unknown stretch to exactly this, surfacing only when
+> the seat volunteered it. **If you are waiting on a human, say so on the vine**; waiting silently is
+> indistinguishable from working.
+
 ## Tools
 
 - **Bounty board** — task state (`todo → doing → review → done`). The **doer owns its card's

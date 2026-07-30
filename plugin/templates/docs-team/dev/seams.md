@@ -37,10 +37,24 @@ _(none yet — accrete here as boundaries emerge. Suggested shape for each:)_
 ## Contract N — <short name>
 
 **Owner:** <handle>   ·   **Pointed at from:** <seats that defer to it>
+**Ratified at:** <the grain this was agreed at — envelope / field set / call signature / wire format>
 
-**The lesson, stated once:** <the invariant / shape / protocol, in prose>.
+**The lesson, stated once:** <the invariant / shape / protocol, in prose. State what must be TRUE
+ACROSS the boundary — the guarantee the other side may rely on — not how the owner satisfies it.>
 
 **Why it bites:** <the failure mode when the mirror lags>.
 
 **Proof:** <the test / fixture that guards it, or the durable concept if none yet>.
 -->
+
+> **Two things that make a contract here trustworthy.**
+>
+> **Say what it's true ABOUT, not how it's built.** A contract states the guarantee the other side may
+> rely on. Implementation belongs to the owning seat; writing it here freezes a choice that wasn't
+> yours and invites drift the moment the owner improves it.
+>
+> **Say where it ENDS — record the grain it was ratified at.** A contract confers confidence, and a
+> consumer that builds **past** the agreed grain has silently manufactured a new, unratified seam. One
+> team agreed a response _envelope_; a seat built at the _field_ level and got three shapes wrong —
+> the contract _felt_ like it covered them. If you need a finer grain than what's recorded, you've
+> found a **new seam**: say so rather than assuming.

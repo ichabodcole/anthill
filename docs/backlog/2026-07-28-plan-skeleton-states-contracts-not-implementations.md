@@ -1,6 +1,6 @@
 # `anthill:plan`: the skeleton must state the **contract**, not the implementation
 
-**Added:** 2026-07-28 · **Status:** ready to build · **Seat:** weaver
+**Added:** 2026-07-28 · **Status:** ✅ **SHIPPED** 2026-07-28 · **Seat:** weaver
 (`plugin/skills/plan/methodology.md` + `SKILL.md`)
 
 **The highest-leverage single line in the current feedback set.** From operator-mono's structure

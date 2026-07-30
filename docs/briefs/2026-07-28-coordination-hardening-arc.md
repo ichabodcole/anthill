@@ -44,7 +44,17 @@ when" costs exactly the judgment we are paying for.
 
 ---
 
-## Phase 1 — the ratify-gate pass (cheapest, highest yield, no dependencies)
+## ✅ Phase 1 — the ratify-gate pass — **SHIPPED 2026-07-28**
+
+> Landed on `feat/ratify-gate-sharpening`. All three items plus both one-liners: the
+> contract-not-implementation rule and the ratification-grain rule went into **both**
+> `methodology.md` (the portable half) and the skill, the `seams.md` scaffold now carries a
+> `Ratified at:` field so the convention propagates to every consuming repo, the runtime-claim
+> distinction got its missing `methodology.md` mirror, the SOP seed corrects the
+> exclusive-human-channel claim, and the structure reflection now asks which findings belong upstream.
+> Verified by rendering the templates through `anthill init` — tokens substitute, both new blocks survive.
+
+### Original entry
 
 Three items sharpening the mechanism that already works best. Independent of the entire git question;
 all are skill text. **Land as one pass.**

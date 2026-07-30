@@ -48,6 +48,16 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
    The skeleton can be drafted **before convene**. (Light feature? Collapse the lanes into one
    `plan.md` ending in an owner↔consumer seat-RATIFY table instead of separate lane files.)
 
+   - **⚠ State the CONTRACT, not the implementation — this is where skeletons go wrong.** A claim
+     says what must be **true across** the boundary (the invariant, the guarantee), or **poses the
+     choice as a question** the owner is best placed to answer. It does **not** say how the owner
+     should satisfy it — naming columns, fields, or which helper to reuse is the owner's call, and
+     pre-empting it turns ratification into **archaeology**.
+     **The test before you post:** _could the owner satisfy this three different ways?_ If not, it's a
+     solution wearing a contract's clothes. In one session, five falsified seams had all specified
+     solutions and five owners spent it reconstructing designs they hadn't made; the two that survived
+     stated a contract or a question. **The gate isn't the expensive part — badly-shaped input is.**
+
 3. **Get the team present.** Ratification needs the owners. If you haven't convened, run
    **`anthill:convene`** now. Convene does **not** require the skeleton to pre-exist — point the
    seats at it when it does, proceed without when it doesn't.
@@ -59,6 +69,13 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
    - **Terminal seats:** post the skeleton on the vine; owners ratify/falsify over the vine.
    - **Subagent seats:** no tails — **dispatch each seat to ratify its seams** and **collect the
      verdicts** yourself.
+   - **Record WHERE each ratification ends.** Not just _"ratified"_ but **_"ratified at \<grain\>"_** —
+     envelope, field set, call signature, wire format. A seam is ratified at a specific granularity,
+     and **building past it silently manufactures a new one**: one team ratified a response _envelope_,
+     a seat built at the _field_ level, and three shapes were wrong — the ratification _felt_ like a
+     contract, so nobody noticed the boundary had been crossed. A consumer needing a finer grain than
+     was ratified **has hit a new seam** and should say so; that's a falsification, which this gate
+     handles well. One clause per contract, in the owner's words — not a taxonomy exercise.
    - **A claim about RUNTIME BEHAVIOR needs a measured repro, not pattern memory.** Distinguish the
      two kinds of claim a seam makes:
      - **API shape** ("takes X, returns Y") — ratifiable by _reading_. Memory is usually reliable.

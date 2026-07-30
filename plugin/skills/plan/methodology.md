@@ -35,6 +35,34 @@ Without this framing the pattern degrades into "lead leaves blanks, seats fill t
 _worse_ than single-author planning. **The framing is the whole value.** The lead's north star:
 **don't dictate the interface — host it, and capture the ratified version.**
 
+### What a claim must LOOK like: state the contract, not the implementation
+
+Knowing the skeleton is a hypothesis is not enough — **a hypothesis has a shape.** Get the shape
+wrong and the gate still catches the error, but at many times the cost.
+
+- **A claim states what must be TRUE ACROSS the boundary** — the invariant, the guarantee, the shape
+  the other side can rely on. Or it **poses the choice as a question** the owner is best placed to
+  answer.
+- **A claim does NOT state HOW the owner should satisfy it.** Naming columns, fields, which existing
+  helper to reuse, or a discriminator is an _implementation_ — it is the owner's call, and
+  pre-empting it converts ratification into archaeology.
+
+**The test, before you post the skeleton:** _could the owner satisfy this claim three different
+ways?_ If not, it is probably a solution wearing a contract's clothes.
+
+**Why this is load-bearing, from the field.** One 7-seat session falsified **five of seven** seams —
+the gate worked, including catching a privilege-escalation hole that no test failed on. But the five
+that were falsified had been written as **solutions** ("add these two columns to this row, reuse
+`keyHash`, discriminate by `kind`"), and each forced its owner either to accept a design it hadn't
+made or to reconstruct the reasoning behind it well enough to argue. **Five owners spent the session
+doing archaeology.** The two seams that survived had been written as a contract or a question — and
+got cheaper, sharper answers from the seats that owned them. The lead's own conclusion:
+
+> The method already says the skeleton is a hypothesis to falsify. It doesn't say what a hypothesis
+> should look like.
+
+So the gate is not the expensive part. **Badly-shaped input to the gate is.**
+
 ## Roles
 
 - **Lead** — settles the design with the human and writes the proposal single-handed (design
@@ -73,7 +101,7 @@ split when lanes are substantial; the single file when they're light.)
 Each cross-seam contract is one subsection, marked with its owner and consumer and its ratify state:
 
 ```markdown
-### <owner> ↔ <consumer> — <contract name> (RATIFIED — <owner> × <consumer>)
+### <owner> ↔ <consumer> — <contract name> (RATIFIED at <grain> — <owner> × <consumer>)
 
 <the exact interface: signature, units, invariants, clamp rules — concrete enough that the
 consumer can build against it without guessing. e.g. set_play_range(start: usize, end: usize),
@@ -84,6 +112,26 @@ Before ratification the marker reads `(CLAIM — awaiting <owner>)`; the lead fl
 once the owner has ratified (or the corrected version is captured). **Don't guess each other's
 interface — settle it here first.** A ratified load-bearing contract is then promoted into
 `.anthill/dev/seams.md` (its durable single home), owned by the authoritative seat.
+
+**Say where the ratification ENDS.** A ratification is granted at a **specific grain** — an envelope,
+a field set, a call signature, a wire format — and the marker records which. This is not bookkeeping:
+
+> A seam is ratified at a specific granularity, and **building past it silently manufactures a new
+> one.** We ratified the response _envelope_; the seat built at the _field_ level and got three
+> shapes wrong. The ratification **felt** like a contract, so nobody noticed the boundary had been
+> crossed.
+
+That is the gate's own success turning into a hazard — a ratified seam confers confidence over a
+boundary nobody stated. The seat wasn't careless; it had a contract and built against it, and the
+contract was simply narrower than it looked. **More ratification does not fix this; stating scope
+does.**
+
+So: **a consumer that needs a grain finer than the ratified one has hit a NEW seam** and should say
+so. That's a falsification, which the gate already handles well — and it's much cheaper than
+discovering it at integration.
+
+Keep it proportionate. One clause per contract, in the owner's own words, is enough to make the
+boundary visible; this must not become a taxonomy exercise.
 
 ## The procedure
 
@@ -114,6 +162,20 @@ here's the correction"_ — never silence.
 
 **Contested seams settle with one ruling.** The lead does a **read-all-owners synthesis pass** —
 reads every affected owner's position, then **rules once** — rather than letting the vine ping-pong.
+
+**A claim about RUNTIME BEHAVIOR needs a measured repro; a claim about API SHAPE does not.** Two
+different kinds of claim hide inside one seam:
+
+- **API shape** — "takes X, returns Y." Ratifiable by _reading_. Memory is usually reliable here.
+- **Runtime behavior** — "under condition C this throws / blocks / retries." Memory here is
+  plausible-sounding and **frequently wrong**, and it fails _mid-build_ — which is exactly when the
+  gate was supposed to have saved you. A seam clause ratified from pattern memory (a stream's
+  enqueue-throw behavior on a dead socket) died on first contact in a real session.
+
+**Spend the ~20 lines to measure it, then ratify.** Keep the bar proportionate: _measure it, then
+ratify_, not _prove everything_. A gate expensive enough to route around costs more than the
+occasional bad clause — and the ratify gate's whole yield depends on owners being willing to engage
+it rather than nod it through.
 
 ## How each owner authors its lane
 

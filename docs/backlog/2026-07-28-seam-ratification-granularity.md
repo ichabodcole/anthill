@@ -1,6 +1,6 @@
 # `anthill:plan`: a ratification must say **where it ends**
 
-**Added:** 2026-07-28 · **Status:** ready to build · **Seat:** weaver
+**Added:** 2026-07-28 · **Status:** ✅ **SHIPPED** 2026-07-28 · **Seat:** weaver
 (`plugin/skills/plan/SKILL.md` + `methodology.md`)
 
 From operator-mono's finalize, reported by their CLI seat and endorsed by the lead:

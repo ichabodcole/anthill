@@ -115,6 +115,17 @@ artifact may have been moved or deleted since you wrote the line.
    you reshape the roster, **re-run `anthill init`** to render any new seat docs (existing are never
    clobbered) and update the `dev/README.md` roster row by hand.
 
+   - **Then ask the routing question: which of these findings are about anthill's MODEL, not this
+     team's shape?** Those go **upstream** (step 5), not just into local docs. A finding phrased as
+     _"our verify scope was too broad"_ is local; the same finding phrased as _"a scope can name a
+     function — the shape anthill recommends — and still hide an entirely undelivered deliverable,
+     with no card or board column able to show it"_ is about **anthill's model of scopes**, and every
+     future team has it too.
+     **This is a real leak, not a hypothetical.** A 7-seat team's reflection found exactly that, and
+     correctly named it _"an uninstrumented failure mode in the board model, not a personal lapse"_ —
+     and it still never reached anthill, because nothing in this ritual asked it to. **The reflection
+     produces the most valuable feedback anthill gets and currently routes none of it upstream.**
+
 5. **Aggregate the team's anthill-upstream feedback.** Beside the seams pass, do the same single-source
    move for the feedback candidates the team surfaced this session about **anthill itself** (not this
    project). Read the **same intake** you already swept — the vine, the seats' scratch, their finalize
