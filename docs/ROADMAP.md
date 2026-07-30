@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-27
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-28
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -93,7 +93,7 @@ state, not a defect queue to drain.
   `branch{}` config block read by both convene and the commit guard — which **unblocks the deferred
   protected-trunk guard**. [proposal](projects/session-branch-strategy/proposal.md).
 - 📋 **The gate/isolation question is now its own investigation, not part of the above.**
-  [Shared-tree failure modes](investigations/2026-07-27-shared-tree-failure-modes.md) — eight
+  [Shared-tree failure modes](investigations/2026-07-27-shared-tree-failure-modes.md) — eleven
   mechanisms separated, four evidence sources (issues · four consuming projects' living docs · a live
   7-seat interview · published practice). Headline: **the contention was on the index and the gate,
   never on the files** — the ownership model held. Two mechanisms (**livelock by politeness**,
