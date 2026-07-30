@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.5.0...anthill-v1.6.0) (2026-07-30)
+
+
+### Features
+
+* **convene:** add pre-spawn working-branch confirm beat ([4770e05](https://github.com/ichabodcole/anthill/commit/4770e05cf68ff1e0b2e30ad7c349f500ec9cde65))
+
+
+### Bug Fixes
+
+* **commit:** stop stranding the team's index; land deletions, renames, and name the foreign red ([2170636](https://github.com/ichabodcole/anthill/commit/2170636c583b69a09a4ef4684b3f08f177679b56))
+* **convene,attach:** warn on possible board loss; stop hiding half the team ([3111f28](https://github.com/ichabodcole/anthill/commit/3111f28545e7285af50e0d4c769f2e688dcc6024))
+* **join:** repair three silent onboarding failures + flag unfilled grounding ([315fa56](https://github.com/ichabodcole/anthill/commit/315fa56e26e50fb61813c7381ba6991a0ad6eaec))
+
 ## [1.5.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.4.0...anthill-v1.5.0) (2026-07-10)
 
 
