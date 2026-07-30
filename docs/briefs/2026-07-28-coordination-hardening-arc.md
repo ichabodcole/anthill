@@ -114,6 +114,20 @@ Cheap, and each has field evidence:
   `anthill commit`'s own index mutation.
 - **Provenance-first messaging.** Grown spontaneously and universally by one team, written nowhere.
 
+## Phase 6 — fix the instrument that missed all of this
+
+[The feedback instrument collects; it needs to elicit](../backlog/2026-07-28-feedback-instrument-elicits-not-collects.md).
+**Not one of M7–M11 arrived spontaneously** — every one required being asked. The category set is
+"corrective-heavy by design", and finalize's harvest reads existing intake rather than posing
+questions, so absences, inventions, corrected beliefs and self-implicating findings have no route in.
+
+Cheapest item first: **the structure reflection already found M11 and the ritual routed it nowhere
+near the feedback path.** That is a routing fix, not an elicitation one.
+
+Also fixes an epistemic bug in the harvest itself: `"N seats hitting one bug is one issue, not N"`
+launders agreement into confidence, which is exactly what the convergence finding in phase 5 warns
+against.
+
 ---
 
 ## Explicitly NOT in this arc
