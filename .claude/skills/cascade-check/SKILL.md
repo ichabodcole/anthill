@@ -5,9 +5,13 @@ description:
   skill, template, CLI behavior, config schema, or path — and always before cutting a release. anthill
   is a web of files that restate, render, or cite each other, and nothing enforces their consistency:
   no test fails when a skill contradicts a template, or when a rule ships that this repo itself does
-  not follow. Triggers on "cascade check", "what else needs updating", "consistency sweep", "release
-  preflight", "ready to cut a release", "did I miss anything". Internal to the anthill repo; never
-  shipped to consuming projects.
+  not follow. Fires for edits to skills, templates, CLI behavior, the config schema, moved paths,
+  archived docs, and the grounding docs that restate any of them (AGENTS.md, README.md, ROADMAP.md,
+  the design-of-record). Does NOT fire for a typo fix, a new test, a code change with no
+  documented contract, or a new doc that nothing else references yet. Triggers on "cascade check",
+  "what else needs updating", "consistency sweep", "release preflight", "ready to cut a release".
+  Only applies inside the anthill repo itself — it is internal tooling and is never shipped to
+  consuming projects.
 ---
 
 # Cascade check — what else has to move?
@@ -16,8 +20,9 @@ anthill's content is **referentially dependent and unenforced.** The same rule l
 template, a rendered copy of that template, and sometimes a spec section that code cites by number.
 Change one and the others are silently wrong.
 
-**Nothing catches this.** `bun run check` is green while a skill argues with a template. The type
-checker has no opinion about prose. So the only defense is knowing, for each kind of change, what
+**Nothing catches this.** `bun run check` is green while a skill argues with a template — the type
+checker has no opinion about prose. (`team-init.test.ts` does cover template _rendering_, so
+token-level breakage has some coverage; **prose consistency has none.**) So the only defense is knowing, for each kind of change, what
 travels with it.
 
 > **This is a judgment skill, not a lint.** Every rule below earned its place by actually failing.
@@ -34,10 +39,25 @@ Find the row for what you changed. Check every dependent.
 
 - ◻ **This repo's own `.anthill/`.** `anthill init` **never clobbers existing files** — by design, so
   a consumer's living docs are safe. The cost: our own footprint never receives template updates.
-  Mirror by hand, substituting `{{lead}}`, `{{channel}}`, `{{handle}}`.
+  Mirror by hand. **The full token set is in `team-init.ts`'s header — six, not three:**
+  `{{handle}}` as a _path_ token (fans a template out once per seat), `{{channel}}` / `{{lead}}` /
+  `{{rosterTable}}` as global content, and `{{handle}}` / `{{role}}` / `{{scope}}` inside a per-seat
+  template. **`{{rosterTable}}` is a generated markdown table** — hand-mirroring with a partial token
+  list leaves a literal `{{rosterTable}}` or a wrong roster. (Unknown tokens are left untouched by
+  design, which is what makes the `grep -rn '{{'` smoke below meaningful.)
 - ◻ **Any skill that describes what the template contains.** `bootstrap` renders it; `join` and
   `finalize-session` tell seats what's in it.
+- ◻ **Which direction wins? Neither, wholesale.** Mirror **shared guidance downward**
+  (template → footprint) — anything every team should have. But a footprint legitimately carries
+  **project-specific** content the template must not (this repo's `.anthill/README.md` points at its
+  own board-binding contract by number). So **a delta is expected and is not automatically drift.**
+  Diff the two, then classify each hunk: _shared guidance missing downstream_ (mirror it) vs. _local
+  specificity_ (leave it) vs. _genuine drift_ (reconcile). Scope your mirror to the change you made;
+  reconciling the whole file is a separate job.
 - ◻ **Render smoke** (see below) — tokens must survive verbatim.
+- ◻ **Renamed or deleted a template?** `init` skips existing files and **never deletes**, so a rename
+  leaves the old rendered copy orphaned in every footprint forever. Remove it by hand here; consuming
+  projects need a note in the release.
 
 > **Scar (v1.7.0).** A pass added a `Ratified at:` field to the `seams.md` scaffold plus a rule that
 > every ratification record its grain. This repo's own three ratified contracts recorded none. One
@@ -90,6 +110,19 @@ Find the row for what you changed. Check every dependent.
 > **Scar.** `AGENTS.md` cited `scripts/anthill/cli.ts` for weeks after the `plugin/` move — in the
 > file every agent reads **first**.
 
+### You **added or removed a skill, or a CLI command**
+
+- ◻ **`plugin/.claude-plugin/plugin.json`'s `description`** — it enumerates the lifecycle skills in
+  prose, and it is **consumer-visible**.
+- ◻ **`.claude-plugin/marketplace.json`'s description**, same reason.
+- ◻ **`AGENTS.md`** and `README.md` wherever they name the skill set or command set.
+- ◻ **The design-of-record §7/§8**, which list the skills and the CLI command set.
+
+> **Scar (found by a cold review of this very skill, 2026-07-28).** `plugin.json`'s description named
+> _"bootstrap / convene / plan / join / finalize-session"_ — omitting **`upgrade`**, which has existed
+> for weeks. A shipped, consumer-facing restatement of the skill set with nothing pointing at it. The
+> map had no row for this until the omission proved one was needed.
+
 ### You **archived or moved a doc**
 
 - ◻ **Inbound links.** A previous archiving pass left ~40 broken relative links, because a doc's depth
@@ -98,9 +131,16 @@ Find the row for what you changed. Check every dependent.
 
 ### You **shipped a fix for a filed issue**
 
-- ◻ The **issue** — close it, or comment if only partly fixed (see _After a release_).
 - ◻ The **backlog item's status field.** A shipped project read `Draft` for days.
 - ◻ The **brief / roadmap phase** it belongs to.
+- ◻ **The issue itself, once the fix is released** — and how you close it matters. This is **loop
+  health**, not bookkeeping: a team that files a careful report and sees nothing happen files fewer
+  next time, and those reports are the only real view we have into how teams use this.
+  - **Fully fixed** → close, naming what fixed it and the version.
+  - **Partly fixed** → comment with exactly what shipped and what remains; **leave it open.** Closing
+    a half-fix tells a team their problem is solved when it isn't, which costs more trust than silence.
+  - **Ours** → if it's a regression we introduced, say so. A closure implying the reporter found an
+    edge case teaches something different from one saying they caught our mistake.
 
 ---
 
@@ -172,19 +212,28 @@ bun run check                                   # typecheck + biome + tests
 **◻ Templates still render.** Token-bearing files must survive verbatim and stay formatter-ignored:
 
 ```sh
-cd "$(mktemp -d)" && git init -q . && mkdir -p .anthill
+REPO="$(git rev-parse --show-toplevel)"     # absolute — the next line leaves this directory
+SMOKE="$(mktemp -d)" && cd "$SMOKE" && git init -q . && mkdir -p .anthill
 cat > .anthill/config.json <<'JSON'
 { "version": 2, "channel": "smoke", "lead": "maestro",
   "seats": [ {"handle":"maestro","role":"lead","scope":"orchestration","spawn":false},
              {"handle":"forager","role":"engine","scope":"the engine","spawn":true} ] }
 JSON
-bun <repo>/plugin/scripts/anthill/cli.ts init
-grep -rn '{{' .anthill/ && echo "FAIL: unrendered tokens" || echo "ok"
+bun "$REPO/plugin/scripts/anthill/cli.ts" init
+grep -rn '{{' .anthill/ && echo "FAIL: unrendered tokens" || echo "ok: all tokens substituted"
+cd "$REPO"                                  # REQUIRED — see the trap below
 ```
+
+Then, **back in the repo**, confirm the formatter still can't reach them:
 
 ```sh
 bunx prettier --file-info plugin/templates/docs-team/dev/seams.md   # expect {"ignored":true}
 ```
+
+> **Trap, and it bites silently.** `prettier --file-info` on a path that **doesn't exist** prints
+> `{"ignored": false, …}` and **exits 0** — it does not error. So if you run this while still inside
+> the smoke directory, you get the exact opposite of the expected answer and conclude the templates
+> lost formatter protection. A fabricated defect from a missing `cd`. Always run it from the repo root.
 
 **◻ Docs that go stale by construction** — nothing in the work references these, so they only move if
 you move them:
@@ -204,23 +253,12 @@ including here.)_
 **◻ DO NOT bump versions — verify instead.** release-please owns every version location. **Read
 `release-please-config.json` for the current `extra-files` list** (plus `package.json`, `CHANGELOG.md`
 and `.release-please-manifest.json`, which the `node` release-type handles), then confirm its PR
-touched all of them. A location present in the config but absent from the PR means a version silently
-didn't move. Never edit any of them by hand.
+touched all of them. **Note the two mechanisms** — a missing `extra-files` entry explains a stale
+`plugin.json` / `marketplace.json` / `cli.ts`, but `package.json`, `CHANGELOG.md` and the manifest come
+from the release-type, so `extra-files` is the wrong place to look for those. Never edit any by hand.
 
 _(Enumerating them here would go stale the moment one is added — which is the failure this whole
 skill exists to prevent. Read the config.)_
-
-## After a release
-
-**Close the issues it fixed, naming the fix.** Not bookkeeping — **loop health.** A team that files a
-careful report and sees nothing happen files fewer next time, and those reports are the only real view
-we have into how teams use this.
-
-- **Fully fixed** → close, naming what fixed it and the version.
-- **Partially fixed** → comment with exactly what shipped and what remains; **leave it open.** Closing
-  a half-fix tells a team their problem is solved when it isn't, which costs more trust than silence.
-- **Ours** → if it's a regression we introduced, say so. A closure implying the reporter found an edge
-  case teaches something different from one saying they caught our mistake.
 
 ## Skill feedback
 
