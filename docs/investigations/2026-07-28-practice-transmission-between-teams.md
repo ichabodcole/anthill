@@ -127,6 +127,84 @@ evolved** — already written, already curated by the seat that learned it, alre
 No one has ever read those diffs looking for transmissible practice. That is the cheapest available
 harvest signal and it requires no cooperation from the teams at all.
 
+### The unit of transmission is the SCENARIO, not the principle
+
+This reframes the whole investigation, and it arrives from an existing skill —
+[`hivemind-capture`](https://github.com/ichabodcole) — which captures a human↔agent thinking delta
+**in the moment** as a three-part structure: the **context** (what was happening), the **delta**
+(what was assumed vs. what turned out to be true), and the **named takeaway**. Its Phase 3 aligns the
+draft with the human before writing, explicitly to catch reconstruction errors: _"be explicit about
+what is reconstructed vs. firsthand; the alignment pass is where reconstruction errors get caught."_
+
+The load-bearing claim: **a takeaway detached from its scenario degrades into pontification.** It
+reads as true, but a reader cannot evaluate whether it applies to them, because the conditions that
+produced it are gone. Worse, the takeaway may simply be wrong — and the only way to catch that is to
+inspect the scenario, which means the scenario has to still be attached.
+
+**Two observations make this immediately actionable here.**
+
+**(1) Seat docs already produce scenario-shaped entries, spontaneously.** Nobody instructed this. A
+survey of five seat docs across the two projects found ~20 entries carrying an explicit delta and its
+consequence:
+
+> `prism`: _"**My scar (#138):** I presented a non-same-wire diff as 'airtight live-vs-offline,' and a
+> wrong engine-unfreeze recommendation **rode it all the way to Cole** before fathom's same-wire
+> control [caught it]."_
+
+> `argus`: _"`apiKeyService.revoke(ownerId, id)` takes two strings in an easily-swapped order; my
+> swapped call matched no row, returned `null`, and **looked exactly like success** — I announced a key
+> was revoked when it wasn't, and caught it only by querying the database."_
+
+Both are complete scenarios: context, what was assumed, what was actually true, how it was caught,
+and the rule that came out of it. **The format is native to the ritual, not something to impose** —
+the scratch-during-work → synthesize-at-finalize flow already captures close to the event, which is
+the hard part.
+
+**(2) The scenario is stripped at the boundary, not at the source.** The seat doc keeps the scar. But
+`anthill feedback` takes **one free-text message plus a category** — there is no field for context, no
+field for the delta, no field for what corrected it. So the grounding stays in the seat doc and only
+the takeaway travels upward. **The loss is a shape mismatch at the interface, not a failure of
+capture.**
+
+That is a much cheaper problem than "practice is experiential."
+
+### Mechanical rules transmit on mechanism; judgment rules transmit on scar
+
+A useful distinction for deciding what a promoted practice must carry:
+
+- **Mechanical rule** — _"`grep` block-buffers, so a finite backfill never flushes."_ The mechanism IS
+  the justification. Anyone can verify it in ten seconds, and it costs nothing to comply. Ships fine
+  without a scenario, which is why the shell-escaping fix travelled successfully.
+- **Judgment rule** — _"every sha-bound verdict runs in a detached worktree."_ This asks a seat to
+  spend real effort **against its own instinct** (the shared tree is right there, and it looks clean).
+  Only a consequence justifies that cost. Strip the scar and it reads as fussiness; keep it and the
+  seat can weigh whether its own situation carries the same risk.
+
+**anthill's shipped guidance is mostly mechanism-only.** That is adequate for the mechanical half and
+structurally insufficient for the judgment half — which is precisely the half these four practices
+live in.
+
+### The probe pattern, validated twice in one session
+
+A fresh agent, holding **a methodology but no context**, interrogating the agent that had the
+experience. Today produced two working instances:
+
+- **The `sol` interview** — five questions that never named the subject, which is what made the
+  central reframe trustworthy.
+- **The three draft reviewers** — fresh instances, no shared context, each with a distinct lens. They
+  caught an overloaded term, an arithmetic error propagated across two documents, and a footer
+  claiming rigour it hadn't implemented.
+
+And critically, one of them performed the exact correction `hivemind-capture`'s alignment pass exists
+for: the editor found that the author's own scenario was **self-serving** — the admitted error had
+been quietly converted into a stronger result. That is the _"your scenario missed what came before
+it"_ failure, caught by a party who could not share the author's framing.
+
+**A probing agent must not be a fork of the experiencing agent.** A fork inherits the framing and
+will ratify it. This is the convergence finding (observation 15 of the
+[shared-tree investigation](2026-07-27-shared-tree-failure-modes.md)) applied to knowledge capture:
+the prober has to be the external invariant.
+
 ## Options Considered
 
 - **(a) Push — a finalize prompt.** The structure reflection asks: _"what practice did this team
@@ -143,6 +221,12 @@ harvest signal and it requires no cooperation from the teams at all.
 - **(d) Shared substrate — a practice library teams read AND write.** Bootstrap installs it; finalize
   appends candidates; it ships back down with the plugin. The destination if the loop proves out, but
   premature before we know what promotes.
+- **(f) Probe-based capture — a fresh agent interrogates the experiencing seat.** At finalize, a
+  freshly-started agent with a capture methodology but **no session context** probes each seat for
+  scenario + delta + takeaway, and flags where the seat's own framing looks self-serving. Validated
+  twice today (see above). **Strengths:** produces the scenario in the shape that transmits, catches
+  the wrong-takeaway failure the human currently catches by hand, and needs no new schema. **Costs:** a
+  per-seat agent dispatch at every finalize, and a scaling question — 7 seats means 7 probes.
 - **(e) Do nothing structural; let convergence surface during investigations.** Today's approach.
   Honest baseline — it worked once. Weakness: depends on somebody running an investigation for an
   unrelated reason, which is how these four surfaced.
@@ -183,10 +267,12 @@ end would be optimising the half we understand.
 
 ## Open Questions
 
-1. **Does a promoted practice actually transmit?** The core unknown. A verify seat reading _"bind your
-   verdict to a first-hand artifact"_ in a scaffold, without the scar that taught it, may simply not
-   feel it. Practice may be **irreducibly experiential** — in which case the honest deliverable is not
-   a practice library but a set of _prompts that provoke the derivation faster_.
+1. **Does a promoted practice transmit if the SCENARIO travels with it?** Substantially reframed
+   (2026-07-28). The earlier version of this question asked whether practice is _irreducibly
+   experiential_. The likelier answer is that it is **scenario-bound, not experience-bound** — the rule
+   transmits when the scar rides along, and degrades to pontification when it doesn't. That is
+   testable and cheap: ship `prism`'s same-wire rule **with** scar #138 and **without** it, and see
+   which changes a verify seat's behaviour. Do this before building any harvest pipeline.
 2. **What is the right grain?** `prism`'s same-wire rule is stack-specific in its detail and universal
    in its principle. Ship the principle and it is too vague to act on; ship the detail and it fits one
    project. The [seam-granularity finding](../backlog/2026-07-28-seam-ratification-granularity.md) is
