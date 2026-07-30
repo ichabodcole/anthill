@@ -188,6 +188,22 @@ once the human has steered you to one seating, treat it as the ratified roster a
   rewrite it. (If a `paths` override puts the docs elsewhere, ignore that dir too.) One-time setup;
   idempotent (skip if already ignored). No host formatter → nothing
   to do.
+  - **⚠ SPLIT-FORMATTER REPOS NEED TWO GUARDS — detect, don't assume.** "One `.prettierignore` line
+    covers it" only holds when a **single** formatter owns everything. Many repos split by file type:
+    e.g. **Biome** for ts/tsx/vue/json/jsonc/css and **Prettier** only for `*.md`. There, the
+    `.prettierignore` line shields the markdown living docs but **`.anthill/config.json` is Biome's
+    territory** and stays exposed — including to a lint-staged hook on staged `*.json`.
+    So: **work out which tool owns JSON in _this_ repo** (is there a `biome.json`? a Biome glob in
+    lint-staged?) and shield the config **there too** — for Biome that's `!!**/.anthill` in
+    `files.includes`. Ask "which tool owns each extension here?", not "does this repo use Prettier?".
+  - **An ignore rule isn't the only correct answer — check first, then act.** A formatter configured
+    as a narrow **allowlist** may already exclude `.anthill/` by construction, and adding a redundant
+    ignore is noise. Verify per tool rather than guessing: `prettier --file-info <path>` reports
+    `{"ignored":true|false}`, and `biome check <path>` says outright when a path "was provided but
+    ignored". Confirm **`.anthill/config.json` specifically** — it's the file the single-line
+    `.prettierignore` advice misses. _(anthill's own repo is this split shape and is already covered:
+    Prettier ignores `.anthill/` explicitly, while Biome's `files.includes` allowlist never reaches
+    it.)_
 - **Sanity check:** `anthill status` (or `anthill join <lead>`) resolves against the new config without
   error.
 - **Drop a discoverability pointer (consent-gated).** Offer to add a short **anthill methodology** note

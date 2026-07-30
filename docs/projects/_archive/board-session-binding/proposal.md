@@ -1,6 +1,7 @@
 # Board session binding — bind every seat to the team's bounty board by construction
 
-**Status:** Draft
+**Status:** Shipped — landed 2026-07-10 (`8a7471b` feat, `7bf6d18` finalize), built and proven
+live by a convened team. Requires spellbook ≥ 1.16.0. Closes #23, #19.
 **Created:** 2026-07-09
 **Author:** Cole + forager
 

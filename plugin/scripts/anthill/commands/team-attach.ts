@@ -45,10 +45,48 @@ export function formatNoProjectHint(cwd: string, sessions: string[]): string {
   return lines.join("\n");
 }
 
+/**
+ * PURE: every running tmux session bound to this team, given all session names.
+ *
+ * A team legitimately spans more than one tmux session: adding seats mid-session
+ * means `anthill spawn <seat> --session <channel>-p2`, because a plain re-spawn
+ * would need `--force` and kill the live panes. Both sessions join the same
+ * channel and board (binding is ambient), so they are ONE team — but `attach`
+ * used to silently take the first and never reveal the rest, leaving the human
+ * unable to reach half their own team (anthill#45).
+ *
+ * Convention: the base session is `<channel>`, siblings are `<channel>-<suffix>`.
+ * Sorted with the base first, then siblings alphabetically, so output is stable.
+ */
+export function relatedSessions(all: string[], channel: string): string[] {
+  const base = sanitizeSessionName(channel);
+  const hits = all.filter((s) => s === base || s.startsWith(`${base}-`));
+  return hits.sort((a, b) => {
+    if (a === base) return -1;
+    if (b === base) return 1;
+    return a.localeCompare(b);
+  });
+}
+
+/** PURE: the menu shown when a team spans several sessions and none was named. */
+export function formatMultiSessionHint(channel: string, sessions: string[]): string {
+  return [
+    `this team spans ${sessions.length} tmux sessions — not guessing which one you want.`,
+    "",
+    "Sessions bound to this project:",
+    ...sessions.map((s) => `  - ${s}`),
+    "",
+    `Pick one:  anthill attach --session ${sessions[1] ?? channel}`,
+  ].join("\n");
+}
+
 interface AttachData {
   session: string;
   action: AttachAction;
   attachCommand: string;
+  /** Present when the team spans more than one session, so a caller reading the
+   * JSON envelope can see the others rather than assuming the one it got. */
+  siblingSessions?: string[];
 }
 
 // `anthill attach [--session <name>]` — a human-facing convenience to attach to
@@ -107,7 +145,24 @@ export const teamAttachCommand = defineAnthillCommand({
         process.exit(1);
       }
       // Found up-tree → parse it (requireConfig still surfaces a malformed config).
-      sessionName = sanitizeSessionName(requireConfig(format, "attach").channel);
+      const channel = requireConfig(format, "attach").channel;
+      sessionName = sanitizeSessionName(channel);
+
+      // A team can span several tmux sessions (staged spawns). Attaching to the
+      // first and staying silent about the rest strands the human — so when there
+      // is genuine ambiguity, show the menu instead of guessing (anthill#45).
+      const bound = relatedSessions(await listSessions(), channel);
+      if (bound.length > 1) {
+        emitError({
+          format,
+          command: "attach",
+          error: formatMultiSessionHint(sessionName, bound),
+        });
+        process.exit(1);
+      }
+      // Exactly one bound session that isn't the base name (e.g. only `foo-p2`
+      // is up) — attach to it rather than reporting the base as missing.
+      if (bound.length === 1 && bound[0]) sessionName = bound[0];
     }
 
     if (!(await sessionExists(sessionName))) {

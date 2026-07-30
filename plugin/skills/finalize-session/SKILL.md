@@ -72,6 +72,28 @@ _live_. Don't skip it on a real session.
      self-committing its own doc breaks that atomic land (and reds a held-red tree). Leave the file
      staged-or-dirty for the lead; don't `anthill commit` it yourself.
 
+2.5. **Re-read every doc you OWN as its authority — and assume it has drifted.**
+Before you hand anything to the lead, go back through each contract and doc you own and **verify
+every claim against the current code**. Not "skim for anything I'd change" — read it _as the
+authority for that boundary_ and check each statement, **proofs especially**: a pinned test or
+artifact may have been moved or deleted since you wrote the line.
+
+- **Why this is a step and not a nicety.** Docs get written mid-build, when the reasoning is warm
+  but the surrounding code is still moving. By finalize the code has moved under them and the prose
+  quietly lies — a proof points at a file deleted two commits later; a "lives in `X()`" became
+  `Y()`. **None of it fails any gate.** It is invisible until someone reads it as the authority and
+  checks.
+- **The evidence.** One session ran this pass with four seats. **Every single seat found drift** —
+  three corrections in `seams.md` including a proof pointing at a deleted probe artifact; **two
+  outright false statements** in another contract (wrong function named as a field's home, plus a
+  wiring claim that no longer held); three stale statements in a third; and two seat docs that had
+  restated shared truth, violating the one strict rule. A fifth pass read a contract as its
+  **consumer** and caught an unverified claim about to ship as a bogus proof.
+- **Consumer lens (optional, cheap).** For a contract you _consume_ rather than own: the producer can
+  confirm what's emitted, but only you can confirm it's what you actually read.
+- Stigmergy is the whole thesis here: a trail that confidently points the wrong way is **worse than
+  no trail**, because the next ephemeral agent has no way to know it's being misled.
+
 ### Shared — the lead coordinates over the vine
 
 3. **Seams pass.** As a team, look at `.anthill/dev/seams.md`: did we learn anything at the **team
@@ -109,6 +131,9 @@ _live_. Don't skip it on a real session.
    - ◻ **Every seat confirmed** its finalize on the vine (step 0). Knowledge capture is the whole
      point; a torn-down pane can't synthesize. _(Subagent mode: the seats' returned in-task syntheses
      **are** the confirmation — no vine gate; the seat docs are already written.)_
+   - ◻ **Every seat re-read the docs it owns as their authority** (step 2.5) and verified each claim
+     — proofs especially — against current code. Assume drift; the one session that measured this
+     found it in **every** seat's docs.
    - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit -m "<msg>" <paths…>`**
      (never `git add -A`).
      - **Red tree? (a slice deliberately held red for an atomic land.)** The pre-commit gate runs the

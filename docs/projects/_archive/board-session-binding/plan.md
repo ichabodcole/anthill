@@ -2,7 +2,7 @@
 
 **Created:** 2026-07-09
 **Related Proposal:** [proposal.md](./proposal.md)
-**Status:** Draft
+**Status:** Shipped 2026-07-10 (`8a7471b`)
 
 ---
 
@@ -25,7 +25,7 @@ fixes, and tests around three small pure seams.
 **Definition of Done:**
 
 - [ ] `anthill convene` opens/attaches the team board via `bounty open --session-key <channel> --pin
-  --no-open` (idempotent; writes `.bounty-session` at repo root) and reports its counts.
+--no-open` (idempotent; writes `.bounty-session` at repo root) and reports its counts.
 - [ ] `anthill spawn` launches each seat with `BOUNTY_SESSION_KEY=<channel>` in its pane environment.
 - [ ] With **two** boards live, a seat's _improvised_ `bounty update <id> --status doing` targets the
       **team's** board — no flag, no `latest` fallback, no `noop:true`.

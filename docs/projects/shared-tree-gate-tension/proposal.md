@@ -1,6 +1,8 @@
 # Shared-tree gate tension — the whole-tree pre-commit gate vs. a shared working tree
 
-**Status:** Partially shipped — moves **A** + **B1** landed on `develop` (2026-07-08); move **C** deferred
+**Status:** Partially shipped — moves **A** + **B1** landed on `develop` (2026-07-08); move **C**
+deferred. Evidence for **C** strengthened 2026-07-10 (two more field reports #24/#28 + a first-party
+in-house reproduction — see Problem Statement).
 **Created:** 2026-07-08
 **Author:** Cole + lead (triaged from field feedback)
 
@@ -37,6 +39,44 @@ team breaks that assumption:
 
 Common root: **the gate sees the whole tree, but a seat only owns part of it.** One seat's
 mess is everyone's block.
+
+**Two more field reports of the same root cause (2026-07-10) — they broaden it past finalize/scratch
+to _any_ multi-lane additive land:**
+
+- **[#24](https://github.com/ichabodcole/anthill/issues/24) — additive land blocked by a peer's WIP.**
+  `anthill commit`'s gate "cannot distinguish _my staged additive files are clean_ from _the tree is
+  red with a peer's WIP_." Purely-additive corpus JSONs were blocked on a peer's mid-flight rename —
+  **twice** in one session. Suggests scoping the gate to staged paths, or documenting the
+  hand-to-lead-for-the-atomic-land fallback (extends #14's patch-and-restore).
+- **[#28](https://github.com/ichabodcole/anthill/issues/28) — whole-repo hook vs. the committed
+  pathspec.** `anthill commit` runs the husky pre-commit hook whole-repo **regardless of the committed
+  pathspec**, so on a multi-lane refactor a peer's mid-slice dirty file reds **every** seat's commit —
+  false coupling between independent lanes. Proposes scoping hook execution to the committed pathspec
+  (or a `--scope-hooks` opt-in), keeping file-scoped commits independently landable while preserving
+  coverage for the files actually committed.
+
+**Live in-house reproduction (2026-07-10, the board-session-binding session).** This tension is no
+longer only a field report from other repos — the anthill team **felt it first-hand while building
+unrelated work**: the lead's purely-additive `.gitignore` land bounced because forager was mid-refactor
+with a transiently-red `team-init.ts` (a scalar→array edit in flight). An independent lane's land was
+blocked by another lane's half-second of red, exactly as #24/#28 describe. Captured as a maestro
+seat-doc lesson: _"a peer's half-second of red is a global stop-the-world on the shared index."_ First-
+party evidence that this recurs and reproduces — not a one-off from a single dogfood.
+
+**Lead-blocks-seats, and it isn't only _code_ red (another team, 2026-07-10, #28 follow-up).** In a
+different team's finalize, **two unformatted markdown files the _lead_ had written** blocked **all three
+seats'** seat-doc `anthill commit`s. Two things this adds: the coupling is **not only concurrent-lane**
+(any actor's stray file anywhere gates everyone, the lead included), and it bites hardest at the
+**finalize doc-land** — the exact ritual move A already special-cases — where the red is often just an
+unformatted markdown file, not a broken build.
+
+**What this does to move C's priority.** C was deferred as "ergonomic polish." The evidence base is now
+**four field reports (#14/#16/#24/#28) + a first-party reproduction + a lead-blocks-seats finalize
+instance, all one root cause** — recurring and reproducible, not incidental. **#28 also sharpens the
+deferred proxy question** (Open Questions below): "scope hook execution to the committed pathspec" is a
+concrete candidate for _how_ the gate becomes lane-aware, distinct from a red-marker proxy. And the #28
+follow-up surfaces a **cheap, proxy-free increment of C that's buildable today** (see move C below).
+Worth weighing C forward against all of this.
 
 ## Proposed Solution
 
@@ -104,6 +144,17 @@ current failure mode (90s lock-wait → full-suite run → cryptic failure → "
 into an immediate, legible answer. The investigation found this is the single highest-value
 "signal" for a builder, and that delivering it _as tooling_ beats broadcasting it.
 
+**C.1 — a cheap, proxy-free first increment (the #28 follow-up, buildable today).** C was deferred on
+_one_ hard question: what's the cheap proxy for "can the tree pass **right now**" _before_ attempting
+the land. But a large share of the value needs **no proxy at all** — it lives on the **failure** path,
+which already ran the gate. When `anthill commit`'s gate fails, it can **diff the red/offending paths
+against the set the seat actually committed**, and if the failure is on paths **outside** that set, say
+so: _"tree gate is red on `<other paths>`, not your commit."_ From a seat's chair the current failure is
+invisible-by-design — the red file is outside its pathspec, so "my own commit failed" is the only
+reading; this one diagnostic removes that confusion **without** solving the pre-flight proxy. It's a
+post-failure _diagnostic_, not a pre-flight _gate_ — strictly additive to the scope-to-pathspec fix
+(#24/#28) and to full C, and the natural **first slice** to ship while the proxy question settles.
+
 ## Scope
 
 **In Scope (MVP):**
@@ -168,7 +219,10 @@ earlier; it needs a fast proxy (e.g. lock-holder + a red-marker) or an explicit 
       overhead on the common green-tree finalize.
 - [ ] What is the _cheap_ pre-flight proxy for "tree can't pass right now" (C) — a lightweight
       red-marker a holder sets, vs. actually running the gate? (Ties to how a held red slice is
-      represented in the first place.)
+      represented in the first place.) **#28 adds a second axis:** rather than only _detecting_ an
+      unsafe tree, should the gate become **lane-aware** — scope hook execution to the committed
+      pathspec so independent lanes stop coupling at all? (Structural fix vs. C's pre-flight signal;
+      they compose — a lane-scoped gate would rarely be red for someone else's reason.)
 
 ## Success Criteria
 
@@ -182,7 +236,12 @@ earlier; it needs a fast proxy (e.g. lock-holder + a red-marker) or an explicit 
 **Related Documents:**
 
 - Field feedback: anthill issues [#14](https://github.com/ichabodcole/anthill/issues/14),
-  [#16](https://github.com/ichabodcole/anthill/issues/16) (filed via `anthill feedback`).
+  [#16](https://github.com/ichabodcole/anthill/issues/16) (the founding pair),
+  [#24](https://github.com/ichabodcole/anthill/issues/24),
+  [#28](https://github.com/ichabodcole/anthill/issues/28) (same root cause, later session) — all
+  filed via `anthill feedback`.
+- First-party reproduction: the board-session-binding session (2026-07-10) — see maestro's seat-doc
+  hard-won lessons (`.anthill/dev/maestro.md`).
 - Sibling finalize friction: [#15](https://github.com/ichabodcole/anthill/issues/15)
   (board-fallback — tracked as a backlog item).
 - Premise for move C + the deferred event surface:

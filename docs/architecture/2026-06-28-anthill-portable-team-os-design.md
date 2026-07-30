@@ -1,10 +1,37 @@
 # Anthill — Portable Team-OS Plugin (Design Spec)
 
-**Date:** 2026-06-28
-**Status:** Design approved; Slice 1 ready for planning
+**Date:** 2026-06-28 · **Revised:** 2026-07-27
+**Status:** Design approved; Slice 1 **shipped**. Sections 5, 6 and 8 track the current
+implementation; sections 1–4 and 9–11 are preserved as the approved design record.
 **Author:** brainstormed with Cole (maestro)
-**Lives at (target repo):** `/Users/colereed/Projects/dreamwood/anthill` (new, sibling of dream-flute)
-**Spec home:** authored in dream-flute (`docs/superpowers/specs/`) because that's the working repo; the implementation lands in the new `anthill` repo.
+**Spec home:** authored in dream-flute (`docs/superpowers/specs/`) because that was the working
+repo at the time; it now lives here, in the implementation's own repo.
+
+---
+
+## 0. How to read this doc
+
+This is the **design-of-record**: it carries the thesis, the three stigmergy principles, the
+D1–D9 locked decisions, and the config schema. Two different kinds of content live here, and
+they age differently:
+
+- **The decisions and rationale (§1–§4, §9–§11)** are a historical record of what was approved
+  on 2026-06-28 and why. They are _not_ rewritten as the implementation moves; where reality has
+  since diverged, a dated note says so.
+- **The contracts and maps (§5 config schema, §6 scaffold, §7 skills, §8 repo layout)** are
+  reference material that code and agents actually key off — `config.ts` and `paths.ts` both cite
+  "spec §5". These **are** kept current, because a stale contract misleads more than it records.
+
+**What changed after approval** (each is reflected in the sections above, and noted inline):
+
+| Then (as approved)                            | Now                                                               | When          |
+| --------------------------------------------- | ----------------------------------------------------------------- | ------------- |
+| `.team/config.json` + `docs/team/`            | a single consolidated `.anthill/` root (footprint **v2**)         | v1→v2         |
+| config `version: 1`                           | `version: 2`; v1 configs still load and are migrated by `upgrade` | v1→v2         |
+| top-level `skills/`, `scripts/`, `templates/` | all under `plugin/` — the only shipped subtree                    | 2026-07-05    |
+| CLI shell built on Citty                      | zero-dependency in-house `parseArgs` command layer                | 2026-07-05    |
+| 4 lifecycle skills                            | 6 — `plan` and `upgrade` added                                    | 2026-07-03/04 |
+| 1 archetype (`layered-app`)                   | 2 — `multi-surface` added, with `anthill scan`                    | 2026-07-05    |
 
 ---
 
@@ -28,17 +55,17 @@ dream-flute onto the plugin in this slice (that's a later dogfood milestone).
 
 ## 2. Key Decisions (locked)
 
-| #   | Decision                                                 | Rationale                                                                                                                                                                                                                                                                                                            |
-| --- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D1  | **Standalone plugin + own marketplace** (repo `anthill`) | Matches how spellbook / project-docs ship; gives independent versioning so it can "evolve on its own."                                                                                                                                                                                                               |
-| D2  | **Composition = principles + archetype seeds**           | Opinionated enough to be fast, flexible enough to fit any project. Discovery proposes a draft from the nearest archetype, then the human ratifies/tailors. (Full discovery intelligence is a later slice.)                                                                                                           |
-| D3  | **Execution = both, tmux-first**                         | Primary path is tmux panes (visible, attachable, persistent); subagent mode is the documented lightweight fallback. Matches how dream-flute actually runs.                                                                                                                                                           |
-| D4  | **Build = walking skeleton**                             | Slice 1 gets the full loop running end-to-end for ONE archetype (layered-app), then later slices add discovery intelligence + more archetypes + dogfood. De-risks the portability contract early.                                                                                                                    |
-| D5  | **Brain/hands split**                                    | The **skill** (`anthill:bootstrap`) decides the config (judgment: explore → converse → compose). The **CLI** (`anthill init`) deterministically renders templates from that config (mechanical). No external cookiecutter dependency — the agent is the smart templating engine; the CLI is the idempotent renderer. |
-| D6  | **CLI seeded from `create-project-cli`**                 | anthill's CLI shell is generated via `bunx github:ichabodcole/seed-project-cli anthill --no-api --no-auth` (all commands are `workspace` scope). We layer the team commands on top, lifting/generalizing flute's team layer. No hand-porting of CLI boilerplate.                                                     |
-| D7  | **Zero target-repo footprint**                           | Skills resolve + drive the plugin's CLI straight from the plugin cache (the way flute drives spellbook). A consuming repo gets only `.team/config.json`, `docs/team/`, and one `.gitignore` line.                                                                                                                    |
-| D8  | **Depends on spellbook + Bun + tmux**                    | spellbook (grapevine + bounty) is the coordination layer; Bun runs the CLI; tmux runs pane mode. `anthill:bootstrap` preflights all three and guides install if missing.                                                                                                                                             |
-| D9  | **Reflection folds into finalize for Slice 1**           | A mid-session / between-phases retro is noted as the next evolution, not built yet.                                                                                                                                                                                                                                  |
+| #   | Decision                                                 | Rationale                                                                                                                                                                                                                                                                                                                               |
+| --- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | **Standalone plugin + own marketplace** (repo `anthill`) | Matches how spellbook / project-docs ship; gives independent versioning so it can "evolve on its own."                                                                                                                                                                                                                                  |
+| D2  | **Composition = principles + archetype seeds**           | Opinionated enough to be fast, flexible enough to fit any project. Discovery proposes a draft from the nearest archetype, then the human ratifies/tailors. (Full discovery intelligence is a later slice.)                                                                                                                              |
+| D3  | **Execution = both, tmux-first**                         | Primary path is tmux panes (visible, attachable, persistent); subagent mode is the documented lightweight fallback. Matches how dream-flute actually runs.                                                                                                                                                                              |
+| D4  | **Build = walking skeleton**                             | Slice 1 gets the full loop running end-to-end for ONE archetype (layered-app), then later slices add discovery intelligence + more archetypes + dogfood. De-risks the portability contract early.                                                                                                                                       |
+| D5  | **Brain/hands split**                                    | The **skill** (`anthill:bootstrap`) decides the config (judgment: explore → converse → compose). The **CLI** (`anthill init`) deterministically renders templates from that config (mechanical). No external cookiecutter dependency — the agent is the smart templating engine; the CLI is the idempotent renderer.                    |
+| D6  | **CLI seeded from `create-project-cli`**                 | anthill's CLI shell is generated via `bunx github:ichabodcole/seed-project-cli anthill --no-api --no-auth` (all commands are `workspace` scope). We layer the team commands on top, lifting/generalizing flute's team layer. No hand-porting of CLI boilerplate.                                                                        |
+| D7  | **Zero target-repo footprint**                           | Skills resolve + drive the plugin's CLI straight from the plugin cache (the way flute drives spellbook). A consuming repo gets only the config, the living docs, and one `.gitignore` line. _(As approved that meant `.team/config.json` + `docs/team/`; footprint **v2** consolidated both under a single `.anthill/` root — see §5.)_ |
+| D8  | **Depends on spellbook + Bun + tmux**                    | spellbook (grapevine + bounty) is the coordination layer; Bun runs the CLI; tmux runs pane mode. `anthill:bootstrap` preflights all three and guides install if missing.                                                                                                                                                                |
+| D9  | **Reflection folds into finalize for Slice 1**           | A mid-session / between-phases retro is noted as the next evolution, not built yet.                                                                                                                                                                                                                                                     |
 
 ---
 
@@ -91,7 +118,7 @@ Five pieces (plus a later dogfood milestone). Slice 1 touches all of them thinly
 
 | Piece                    | What                                                                                         | Source material                            |
 | ------------------------ | -------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| 1. Foundation            | `anthill` repo + `marketplace.json`/`plugin.json` + `.team/config.json` schema + CLI shell   | `create-project-cli` (shell)               |
+| 1. Foundation            | `anthill` repo + `marketplace.json`/`plugin.json` + the config schema (§5) + CLI shell       | `create-project-cli` (shell)               |
 | 2. Portable CLI commands | convene/join/spawn/attach/down/status/commit/**init** + `tmux.ts` + `coord.ts` + `config.ts` | flute `team-*.ts` + `tmux.ts` (generalize) |
 | 3. Scaffold templates    | `docs/team/` skeletons (SOP, seams, seat-doc, roster, paper-cuts)                            | dream-flute `docs/team/` (strip domain)    |
 | 4. Lifecycle skills      | `anthill:convene` / `join` / `finalize-session`, config-driven                               | the three flute skills                     |
@@ -100,16 +127,23 @@ Five pieces (plus a later dogfood milestone). Slice 1 touches all of them thinly
 
 ---
 
-## 5. The `.team/config.json` contract (keystone)
+## 5. The `.anthill/config.json` contract (keystone)
 
-The single file that replaces all of dream-flute's hardcoded specifics. The CLI and all three
-skills **read** it; `anthill:bootstrap` **writes** it. **Its location is the project-root marker**
-(walk up from cwd) — this removes flute's brittle `package.json`-name matching.
+> **Current.** This section tracks the implementation (`plugin/scripts/anthill/config.ts`, which
+> cites it back). As approved on 2026-06-28 the file lived at `.team/config.json` with
+> `version: 1` and `docs/team/` paths; footprint **v2** consolidated everything under a single
+> `.anthill/` root. v1 configs still load (an unstamped `version` resolves to 1) and are migrated
+> by `anthill migrate` / `anthill:upgrade`.
+
+The single file that replaces all of dream-flute's hardcoded specifics. The CLI and every
+lifecycle skill **read** it; `anthill:bootstrap` **writes** it. **Its location is the project-root
+marker** (walk up from cwd for `.anthill/config.json`) — this removes flute's brittle
+`package.json`-name matching.
 
 ```jsonc
-// <project>/.team/config.json
+// <project>/.anthill/config.json
 {
-  "version": 1,
+  "version": 2,
   "channel": "myproject", // grapevine channel + default tmux session name
   "lead": "maestro", // the lead handle — orchestrates, never spawned
   "seats": [
@@ -146,13 +180,18 @@ skills **read** it; `anthill:bootstrap` **writes** it. **Its location is the pro
   ],
   "grounding": ["AGENTS.md", "docs/PROJECT-SUMMARY.md"], // product-context reads, in order, before team docs
   "paths": {
-    "teamDir": "docs/team", // SOP = teamDir/README.md
-    "seatDir": "docs/team/dev", // seat docs + seams.md
-    "seams": "docs/team/dev/seams.md",
+    "teamDir": ".anthill", // SOP = teamDir/README.md
+    "seatDir": ".anthill/dev", // seat docs + seams.md
+    "seams": ".anthill/dev/seams.md",
   },
   "launch": "claude \"/anthill:join {handle}\"", // per-pane spawn command template
 }
 ```
+
+**Plugin defaults** (a minimal config is just `channel` + `seats`): `grounding` defaults to
+`["AGENTS.md", "README.md"]`; `paths` to the `.anthill/` triple above; `launch` to the
+plugin-namespaced join; `version` to `1` when unstamped, while a fresh bootstrap stamps the
+current footprint version (`2`).
 
 **Field rules:**
 
@@ -168,7 +207,11 @@ skills **read** it; `anthill:bootstrap` **writes** it. **Its location is the pro
 
 ---
 
-## 6. `docs/team/` scaffold templates (Piece 3)
+## 6. `.anthill/` scaffold templates (Piece 3)
+
+> **Current.** Source lives at `plugin/templates/docs-team/`; it renders into the consuming
+> repo's `.anthill/` root (`README.md`, `dev/`, `paper-cuts.md`). As approved, the render target
+> was `docs/team/`.
 
 What `anthill init` renders into a target repo. Generalized from dream-flute, with the three
 principles written in and all domain (wall/seam/engine) stripped.
@@ -181,10 +224,10 @@ principles written in and all domain (wall/seam/engine) stripped.
 | `dev/README.md`   | Roster table generated from `config.seats`.                                                                                                                                                                       | Generated                             |
 | `paper-cuts.md`   | Friction log: append-during-session, triage-by-cost, track-disposition (fixed / filed upstream / graduated to a project).                                                                                         | Template + method                     |
 
-**Running scratch:** per-session, append-only, gitignored — `.team/scratch/<handle>/<date>-<slug>.md`.
+**Running scratch:** per-session, append-only, gitignored — `.anthill/scratch/<handle>/<date>-<slug>.md`.
 `anthill:join` mints the session file; the seat appends as it works; `anthill:finalize-session`
 curates it into the seat doc. Disposable after synthesis. `anthill init` adds the
-`.team/scratch/` gitignore line.
+`.anthill/scratch/` gitignore line.
 
 ---
 
@@ -213,32 +256,50 @@ finalize-session`. The lead scaffolds a plan **skeleton** (integration order + c
 > It ships as the **`anthill:plan`** skill + a bundled `methodology.md` (universal → plugin), pointed
 > at from the SOP and `convene`; the ratify is a light vine-acknowledgement gate before `todo→doing`,
 > not a bounty schema change. Scoped to multi-seat features — solo work uses single-agent planning.
-> See `docs/projects/team-dev-planning/`.
+> Shipped 2026-07-03 (`f6b34eb`); see `docs/projects/_archive/team-dev-planning/`.
+
+> **Addendum (2026-07-27) — the skill set is now six.** Beyond the three above and `plan`,
+> **`anthill:upgrade`** was added to drive footprint migrations (D-series §5, `migrations/`), and
+> **`anthill:bootstrap`** (Piece 5, §9) is itself a lifecycle skill. Current set:
+> `bootstrap · convene · plan · join · finalize-session · upgrade`.
 
 ---
 
 ## 8. Plugin/repo structure + CLI (Pieces 1–2)
 
+> **Current.** Everything shippable moved under `plugin/` on 2026-07-05 so a consuming repo
+> receives only that subtree (a `git-subdir` marketplace source), and the CLI shell dropped Citty
+> for an in-house zero-dependency `parseArgs` layer. As approved, `skills/`, `scripts/`, and
+> `templates/` sat at the repo root.
+
 ```
 anthill/
 ├─ .claude-plugin/
-│   ├─ marketplace.json        # add anthill as a marketplace
-│   └─ plugin.json             # plugin manifest
-├─ skills/
-│   ├─ bootstrap/  convene/  join/  finalize-session/
-├─ scripts/anthill/            # CLI — seeded from create-project-cli (--no-api --no-auth)
-│   ├─ cli.ts  define.ts  agent-layer.ts  manifest.ts  help-renderer.ts  paths.ts  …  (generated)
-│   ├─ config.ts               # find + parse .team/config.json (root marker)   [added]
-│   ├─ coord.ts                # resolveCoordCli/execCoord — spellbook facade     [added]
-│   ├─ tmux.ts                 # generic tmux helper (lift from flute)            [added]
-│   └─ commands/               # convene join spawn attach down status commit init [added]
-└─ templates/
-    ├─ docs-team/              # the §6 scaffold templates
-    └─ archetypes/
-        └─ layered-app.json    # the Slice-1 archetype (lead + engine/spine/surface + verify)
+│   └─ marketplace.json        # add anthill as a marketplace (points at plugin/ via git-subdir)
+├─ plugin/                     # ← THE SHIPPED SUBTREE; nothing outside it reaches a consumer
+│   ├─ .claude-plugin/
+│   │   └─ plugin.json         # plugin manifest
+│   ├─ skills/
+│   │   └─ bootstrap/ convene/ join/ plan/ finalize-session/ upgrade/
+│   ├─ scripts/anthill/        # CLI — zero-dependency (in-house parseArgs layer)
+│   │   ├─ cli.ts  define.ts  agent-layer.ts  manifest.ts  help-renderer.ts  paths.ts  …
+│   │   ├─ config.ts           # find + parse .anthill/config.json (root marker)
+│   │   ├─ coord.ts            # resolveCoordCli/execCoord — spellbook facade
+│   │   ├─ scan.ts             # deterministic workspace/surface detector
+│   │   ├─ migrate.ts          # pure, deterministic migration planner (no IO)
+│   │   ├─ tmux.ts             # generic tmux helper (lift from flute)
+│   │   └─ commands/           # the command set below
+│   └─ templates/
+│       ├─ docs-team/          # the §6 scaffold templates
+│       └─ archetypes/
+│           ├─ layered-app.json    # the Slice-1 archetype (lead + engine/spine/surface + verify)
+│           └─ multi-surface.json  # by-surface seating, paired with `anthill scan`
+├─ docs/                       # design-of-record, projects, investigations, ROADMAP
+└─ .anthill/                   # anthill's OWN team footprint (self-host dogfood)
 ```
 
-**CLI command set (Slice 1):**
+**CLI command set** (Slice 1 shipped `convene`…`init`; `scan`, `feedback`, and `migrate` were
+added in later slices):
 
 - `anthill convene [--topic]` — grapevine open + topic + bounty state
 - `anthill join <handle>` — emit grounding manifest + tail commands
@@ -246,9 +307,13 @@ anthill/
 - `anthill attach` / `anthill down` — session lifecycle (down keeps the presence guard)
 - `anthill status` — who's on the vine + board counts
 - `anthill commit` — file-scoped, serialized commit (carries the shared-index-race fix)
-- `anthill init` — **deterministic renderer**: given `.team/config.json`, render `templates/`
+- `anthill init` — **deterministic renderer**: given `.anthill/config.json`, render `templates/`
   into the target repo (idempotent; re-runnable when the team reshapes — renders new seat docs
   without clobbering existing ones)
+- `anthill scan` — deterministic workspace/surface detection, feeding bootstrap's candidate seatings
+- `anthill feedback` — send a bug or idea upstream to the anthill repo
+- `anthill migrate` — apply a footprint version migration (v1 → v2), planned purely by `migrate.ts`
+- `anthill info` — environment/config introspection
 
 **Generalizations from flute:** config-driven (no hardcoded channel/seats/paths); self-locating
 (CLI lives in plugin cache, resolves spellbook from _its_ cache via the `resolveCoordCli` pattern).
@@ -264,7 +329,7 @@ than doing full discovery).
 2. **Light discovery** — read the repo's grounding docs, confirm layered-app, propose the
    layered-app seats (lead + engine/spine/surface + verify) with scopes drafted from what it sees.
 3. **Ratify** — human renames/merges/re-scopes seats, sets the channel.
-4. **Write + render** — emit `.team/config.json`, run `anthill init`, add the gitignore line.
+4. **Write + render** — emit `.anthill/config.json`, run `anthill init`, add the gitignore line.
 5. **Proof run** — `anthill:convene` → `anthill spawn` opens panes, seats auto-join → one tiny
    real task → `anthill:finalize-session`.
 
