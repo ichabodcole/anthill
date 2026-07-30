@@ -100,7 +100,9 @@ status`** shows who's on + the board.
 
 6. **Work** your lane per the SOP + your seat doc. As you go, **capture ah-ha judgments to your
    scratch** (the reasoning + the generalizable lesson — not lesson-less events) for synthesis at
-   finalize. Route questions + decisions to the lead on the vine, not direct to the human.
+   finalize. Route questions + decisions to the lead on the vine, not direct to the human — the lead
+   is the routing **default**, not proof the human isn't watching. **Blocked on a human? Say so on the
+   vine** — waiting silently looks exactly like working.
    - **Dispatching a subagent is available to you — it just never occurs to seats.** A survey of two
      implementation-heavy seats after a 16-slice build found **zero** dispatches, and neither seat had
      _considered_ them: serial lanes, small per-step verdicts, and a peer verifier already acting as a
@@ -133,8 +135,13 @@ status`** shows who's on + the board.
   repo root** — apply from the repo root (or pass `--directory=<repo-root>`), or a patch preserved from
   a subdir lands in the wrong place.
 - ◻ **Scratch minted** — `.anthill/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
-- ◻ **Route through the lead — never block on the human.** The human may not be watching this pane;
-  questions + decisions go to the lead/liaison on the vine, not direct.
+- ◻ **Route through the lead — and SAY when you're waiting.** Questions + decisions go to the
+  lead/liaison on the vine, not direct to the human. But routing through the lead is a **default, not
+  an exclusive channel** — the human can attach to your pane at any time, so never assume you're
+  unobservable. And if you end up **blocked waiting on a human answer, post that on the vine**:
+  correct waiting produces no signal anywhere — not on the board, not in the tree, not in any sweep —
+  so a silently-waiting seat is indistinguishable from a working one. One team lost an unknown stretch
+  to exactly this.
 
 ## Output
 

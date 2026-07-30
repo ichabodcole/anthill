@@ -108,8 +108,9 @@ consumer can build against it without guessing. e.g. set_play_range(start: usize
 frame units, 0 ≤ start ≤ end ≤ total_frames.>
 ```
 
-Before ratification the marker reads `(CLAIM — awaiting <owner>)`; the lead flips it to `RATIFIED`
-once the owner has ratified (or the corrected version is captured). **Don't guess each other's
+Before ratification the marker reads `(CLAIM — awaiting <owner>)`; the lead flips it to
+`RATIFIED at <grain>` once the owner has ratified (or the corrected version is captured) — **the grain
+is part of the flip, not an optional extra** (see below). **Don't guess each other's
 interface — settle it here first.** A ratified load-bearing contract is then promoted into
 `.anthill/dev/seams.md` (its durable single home), owned by the authoritative seat.
 

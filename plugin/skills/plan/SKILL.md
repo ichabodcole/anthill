@@ -64,8 +64,8 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
 
 4. **Host the ratify — the mandatory gate.** Each owner **ratifies or falsifies each seam it touches
    _before_ it moves its card `todo→doing`** — an explicit acknowledgement (_"ratified"_ /
-   _"falsified — here's the correction"_), never silence. Flip each seam's marker to `RATIFIED` as it
-   settles. Two paths (mirror `convene`/`join`):
+   _"falsified — here's the correction"_), never silence. Flip each seam's marker to
+   **`RATIFIED at <grain>`** as it settles — the grain is part of the flip. Two paths (mirror `convene`/`join`):
    - **Terminal seats:** post the skeleton on the vine; owners ratify/falsify over the vine.
    - **Subagent seats:** no tails — **dispatch each seat to ratify its seams** and **collect the
      verdicts** yourself.
