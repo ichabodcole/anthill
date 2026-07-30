@@ -244,21 +244,34 @@ you move them:
 - `docs/ROADMAP.md` **`Now`** — the lead reads this at convene. Does it describe what's actually next?
 - `docs/PROJECT-SUMMARY.md` — if it predates a structural shift, note it or refresh it.
 
-**◻ Dependency floors.** If anything ships that needs a newer **spellbook**, move the floor —
-`README.md` states the current one and why it's load-bearing. Wrong-footing a consumer on an older
-spellbook produces failures that look like anthill bugs, so the floor is a correctness claim, not
-documentation. _(Read the floor from the README rather than trusting any number quoted elsewhere,
-including here.)_
+**◻ Dependency floors.** If anything ships that needs a newer **spellbook**, move the floor.
+`README.md` holds it — **`≥ 1.16.0` at the time of writing**, load-bearing for board session-binding
+and bounded vine catch-up. Treat that number as an anchor and the README as authoritative. The floor is
+a **correctness claim, not documentation**: wrong-footing a consumer on an older spellbook produces
+failures that look like anthill bugs.
 
-**◻ DO NOT bump versions — verify instead.** release-please owns every version location. **Read
-`release-please-config.json` for the current `extra-files` list** (plus `package.json`, `CHANGELOG.md`
-and `.release-please-manifest.json`, which the `node` release-type handles), then confirm its PR
-touched all of them. **Note the two mechanisms** — a missing `extra-files` entry explains a stale
-`plugin.json` / `marketplace.json` / `cli.ts`, but `package.json`, `CHANGELOG.md` and the manifest come
-from the release-type, so `extra-files` is the wrong place to look for those. Never edit any by hand.
+**◻ DO NOT bump versions — verify instead.** release-please owns every version location, by **two
+different mechanisms**, and knowing which is which is how you diagnose a stale one:
 
-_(Enumerating them here would go stale the moment one is added — which is the failure this whole
-skill exists to prevent. Read the config.)_
+- **`extra-files` in `release-please-config.json`** — at the time of writing: `plugin/.claude-plugin/plugin.json`,
+  `.claude-plugin/marketplace.json`, and `plugin/scripts/anthill/cli.ts` (a generic marker comment).
+- **The `node` release-type, implicitly** — `package.json`, `CHANGELOG.md`, `.release-please-manifest.json`.
+
+**The config is authoritative; the list above is an anchor, not the source.** Read it if the PR looks
+wrong — and note that a missing `extra-files` entry cannot explain a stale `package.json`, because that
+one never came from `extra-files`. Confirm the release PR touched every location. Never edit one by hand.
+
+## Close the loop on the check itself
+
+**Note what this pass caught — even when it caught nothing.** Two lines in the commit body, or a
+`docs/backlog/` entry if it found something structural. Right now nothing records whether running this
+pays for itself, which means the map can only grow and never earn its keep:
+
+- **Caught something?** That row is load-bearing — say so, and it stops looking like ceremony to the
+  next reader.
+- **Caught nothing across several passes?** That row may be dead weight, or the trigger may be firing
+  too broadly. Either is worth knowing.
+- **Caught something the map has no row for?** That's the important case — add the row.
 
 ## Skill feedback
 
