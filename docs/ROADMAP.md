@@ -14,15 +14,35 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Now
 
-**Nothing in flight.** The `v1.3.0` release-prep run (below) shipped and is cut, and two follow-on
-projects have landed since (shared-tree gate tension A+B1, and board-session-binding — see the shipped
-block just below). The next horizon is **Next** — dream-flute parity close-out (#12) and the memory
-bundle (#8–#10), now unblocked by the #4 dogfood data.
+**In flight: unreleased fixes on `develop` awaiting a release cut.** The 2026-07-27/28 feedback
+triage took 29 open issues from four consuming projects and shipped three of its four batches the
+same day (`315fa56`, `2170636`, `3111f28`, `37852c2`). Test count 157 → 202.
 
-**But the 2026-07-27 feedback triage supersedes that as the near-term order.** 29 open issues from
-four consuming projects were triaged into the four batches below — two of which contain items that
-are actively breaking live sessions. **Start at Batch 1.** The memory bundle and parity close-out
-keep their place in **Next**, behind the triage.
+### ▶ Do these next, in this order
+
+1. **Cut a release.** Four batches of fixes are sitting on `develop`, including a live regression
+   that has been mis-teaching every late joiner since 2026-07-09 and a warning for a board-destroying
+   data-loss bug. Consuming teams cannot benefit until this ships.
+2. **Close the fixed issues as part of the cut.** Several of the 29 are now fixed. This is not
+   bookkeeping — a team that files a report and sees nothing visibly happen stops filing, which is
+   the same feedback-loop health problem
+   [phase 6](briefs/2026-07-28-coordination-hardening-arc.md) is about.
+3. **Phase 1 of the arc — the ratify-gate pass.** Three skill-text items, no design needed, no
+   dependencies, and the strongest field evidence in the set (_"would have saved most of a session"_).
+   Plus two one-liners worth folding in: correct the exclusive-human-channel claim (**M9**'s doc half)
+   and route the structure reflection upstream (**phase 6 item 2** — the cheapest item anywhere here).
+4. **Then pick ONE experiment**, not a build. Recommended: the
+   [scar test](investigations/2026-07-28-practice-transmission-between-teams.md) — ship a judgment
+   rule with its originating scenario and without it, and see which changes a seat's behaviour. It is
+   the cheapest experiment available and it gates the entire practice-transmission loop.
+
+**Deliberately held:** per-seat worktree isolation (pending the staged-snapshot evaluation, phase 2),
+and the memory bundle (#8–#10) / parity close-out (#12), which keep their place in **Next** behind the
+triage.
+
+**The governing constraint on all of it** — [constrain the plumbing, leave the collaboration
+fuzzy](briefs/2026-07-28-coordination-hardening-arc.md). Some fuzziness is a healthy team's working
+state, not a defect queue to drain.
 
 **📋 The 2026-07-27 feedback triage — Batches 1, 2 and 4 SHIPPED; Batch 3 is the open one.**
 
