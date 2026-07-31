@@ -52,7 +52,7 @@ The blind condition leaked all three times it was attempted. The method that wor
 - **Give one exact command that fetches exactly one message** — `grapevine read <channel> <id> --text`.
   Never a range plus a caveat. Any window ending at "now" contains the newest peer answer.
 - **Whichever command we name is the one that gets run** — see
-  [agreement is not evidence](../lessons-learned/2026-07-31-agreement-is-not-evidence.md). The
+  [only execution dislodges an installed frame](../lessons-learned/2026-07-31-only-execution-dislodges-an-installed-frame.md). The
   instruction determines the behaviour more than the tool's affordances do, so the instrument is a
   design surface, not a wrapper.
 - **Ask for behaviour, not opinion.** "How many did you pull in full" produced the round's best
@@ -77,6 +77,33 @@ almost no theory of. Open questions worth putting to a team that has just follow
 
 **These findings are HiveMind-bound**, not anthill-bound — principles about writing instructions for
 agents generalise past this plugin. See the lesson above; expect more.
+
+## The third thing: what would count as flocking evidence
+
+**A standing observation without an instance yet.** Agents appear to coalesce — treating the fact of
+agreement as the evidence, rather than checking what the agreement is grounded in. It has been seen in
+projects; **this week's data is not an example of it**, and we nearly captured it as one. What the
+StoryLoom round actually shows is _frame persistence_ (an instruction installs an assumption, repairs
+search inside it) — adjacent, and not the same claim. Recording the distinction so we can recognise a
+real instance instead of reaching for the nearest story.
+
+**What would count.** All three, ideally in one incident:
+
+1. **Two or more seats independently assert the same claim** — not one asserting and others assenting.
+2. **Nobody executed anything between the first assertion and the agreement.** This is the load-bearing
+   part; agreement following a check is just a check.
+3. **Execution later contradicts it.** Without this, we have consensus that happened to be right, which
+   is indistinguishable from competence.
+
+**Where to look during dev work.** The **ratify gate** is the obvious candidate and could not fire
+usefully during planning: a ratified contract that the implementation then falsifies is exactly the
+shape. Also: a green gate everyone believes in that nobody re-ran; a shared assumption about an
+interface that no seat has called.
+
+**How to ask, given the round-two lesson.** Do not ask "do you think you agree too readily" — that is
+an opinion question, it will produce agreement about agreeing, and it primes the answer. Ask for the
+incident: _what did the team ratify that turned out to be wrong, and who had run what before it was
+ratified?_
 
 ## Acceptance Criteria
 
