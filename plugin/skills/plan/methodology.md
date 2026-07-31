@@ -161,8 +161,21 @@ here's the correction"_ — never silence.
 - **Subagent seats:** no tails — the lead **dispatches each seat to ratify its seams** and
   **collects the verdicts** (mirrors how `convene`/`join` handle the subagent path).
 
-**Contested seams settle with one ruling.** The lead does a **read-all-owners synthesis pass** —
-reads every affected owner's position, then **rules once** — rather than letting the vine ping-pong.
+**Say what you had read when you ratified** — _"ratified as of #14."_ Verdicts cross: on a live vine,
+one owner can ratify a contract that another owner's in-flight message has **already falsified**, and
+neither can tell. It happened at least four times in one planning session, once with a seat ratifying
+a strategy the falsification of which was already sent. **Volume is not the cause — a single message
+can cross**, and nothing in the channel marks a message as in flight. A read-watermark costs four
+words and lets the other owner see instantly that your verdict predates their evidence, instead of
+both sides discovering it later. (New convention — report whether it earned its keep.)
+
+**Contested seams settle with one ruling** — and **the ruling must name what it did _not_ settle.** The
+lead does a **read-all-owners synthesis pass** — reads every affected owner's position, then **rules
+once** — rather than letting the vine ping-pong. But a long, authoritative ruling that silently omits
+someone's item is **indistinguishable from one that resolved it**: a seat read a substantial rulings
+message, registered "ruled", and moved on with both of his asks unaddressed, discovering it much later
+by re-reading his own list. Silence and resolution look the same, so list the open items you are
+deliberately **not** deciding yet.
 
 **A claim about RUNTIME BEHAVIOR needs a measured repro; a claim about API SHAPE does not.** Two
 different kinds of claim hide inside one seam:

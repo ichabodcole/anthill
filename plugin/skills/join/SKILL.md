@@ -137,7 +137,9 @@ status`** shows who's on + the board.
   it means nobody wrote it yet. Say so to the lead rather than inferring from it.
 - ◻ **Caught up** if you joined mid-session — `grapevine pull <channel>` (finite). **Never**
   `tail --from-start | grep` for backfill: it returns nothing and then times out, which reads as
-  "empty channel".
+  "empty channel". For **one specific message**, use `grapevine read <channel> <id>` — channel _and_
+  id, no `--as`; a bare `read <id>` exits non-zero with a usage line that is easy to misread as a
+  broken tool.
 - ◻ **On the vine** — grapevine tail wrapped in Monitor, presence registered (terminal-seat path).
 - ◻ **On the board** — board tail wrapped in Monitor. Use the filter **verbatim from your join
   output**: it needs `grep -E` (plain `grep` treats `(a|b)` as a literal, so the Monitor stays

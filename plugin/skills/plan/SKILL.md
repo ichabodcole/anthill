@@ -76,6 +76,15 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
      contract, so nobody noticed the boundary had been crossed. A consumer needing a finer grain than
      was ratified **has hit a new seam** and should say so; that's a falsification, which this gate
      handles well. One clause per contract, in the owner's words — not a taxonomy exercise.
+   - **Say what you had read when you ratified** — _"ratified as of #14."_ Verdicts cross: an owner
+     can ratify a contract another owner's in-flight message has **already falsified**, and neither
+     can tell. Four crossings in one session, one of them exactly that. **Volume isn't the cause — a
+     single message can cross**, and nothing marks a message as in flight. Four words; the other owner
+     sees at once that your verdict predates their evidence.
+   - **Your ruling must name what it did NOT settle.** A long, authoritative ruling that silently omits
+     an item is **indistinguishable from one that resolved it** — a seat read the rulings message,
+     registered "ruled", and moved on with both of his asks unaddressed. List what you are
+     deliberately leaving open.
    - **A claim about RUNTIME BEHAVIOR needs a measured repro, not pattern memory.** Distinguish the
      two kinds of claim a seam makes:
      - **API shape** ("takes X, returns Y") — ratifiable by _reading_. Memory is usually reliable.
