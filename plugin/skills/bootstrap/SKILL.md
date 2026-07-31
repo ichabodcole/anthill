@@ -27,9 +27,13 @@ Before anything, check for an existing footprint: if **`.anthill/config.json`** 
 **`.team/config.json`** already exists (here or up the tree), this repo is **already bootstrapped** —
 do NOT re-bootstrap (you'd double-write or clobber). Instead:
 
-- on the **current** version → run **`anthill:convene`** to start a session;
 - on an **older** version (e.g. the legacy `.team/` layout) → run **`anthill:upgrade`** to migrate it
   to the current `.anthill/` layout (history-preserving). `anthill migrate --dry-run` reports which.
+- on the **current** version → run **`anthill:convene`** to start a session. **But if the plugin was
+  just updated, run `anthill:upgrade` first even though the version matches** — the stamped version
+  tracks _layout_, and a release can change the SOP and team guidance without moving it. Living docs
+  are written once at bootstrap and never refreshed automatically, so `migrate`'s _"nothing to
+  migrate"_ does not mean the team is current.
 
 Only continue below when there's no footprint yet.
 
