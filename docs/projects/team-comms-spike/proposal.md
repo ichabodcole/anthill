@@ -135,6 +135,40 @@ spike:
   [practice-transmission investigation](../../investigations/2026-07-28-practice-transmission-between-teams.md).)
 - **Log it in this project folder**, not in `paper-cuts.md`, until we know the ritual holds.
 
+## One perishable input, before the build starts
+
+A **brand-new team** has just started on the version shipped this week. That is worth one cheap,
+time-boxed capture — **not a study** — for a reason that expires:
+
+**All existing evidence comes from teams under load.** M7 (livelock), M8 (lead latency), the board
+dying four times — every one is a mature-team-at-volume finding. **We have no first-contact data at
+all**, and first contact is a different question: what was confusing, what was hard to discover, what
+did they expect that wasn't there.
+
+**And the window closes within a session or two.** The strongest methodological finding from the
+[shared-tree investigation](../../investigations/2026-07-27-shared-tree-failure-modes.md): a team that
+has absorbed a workaround **stops experiencing it as friction** — it is paid for once and amortised.
+One studied team had grown a universal provenance-prefix convention that existed in no document and
+that nobody could see any more. That is what a settled team looks like, and a fresh one becomes one
+fast.
+
+They are also the last **unprimed** subjects — every other team has been through feedback loops and
+knows what we care about.
+
+**Two hard constraints on doing it:**
+
+- **Ask blind. Do not mention the spike, or grapevine-vs-something-else.** Priming a fresh team would
+  contaminate the only clean first-contact data available, and worse, could change how they _use_ the
+  tools. Ask what happened, not what they think of the tooling.
+- **Use elicitation, not collection.** Of five coordination mechanisms found this week, **not one
+  arrived spontaneously** — every one required being asked. So: what did you have to work around, what
+  did you want to know and couldn't, what did you invent that isn't written down, and what surprised
+  you in the first hour.
+
+**What it cannot tell us:** anything about volume, attention, or lead bottleneck — those need a mature
+team under load, which is what the spike's own sessions will provide. This answers first contact and
+nothing else, which is precisely the gap.
+
 ## Open Questions
 
 1. **What is genuinely minimal?** Slice one above is a guess. If a session runs fine on less, build
@@ -150,6 +184,8 @@ spike:
 
 ## Success Criteria
 
+- **A first-contact capture from the new team**, taken blind and before the build starts — the one
+  input that expires.
 - **One real convened session runs on it**, end to end, with the team's actual work.
 - **A written list of frictions from that session**, in scenario form.
 - **At least one thing we were sure we'd need turns out to be unnecessary** — that is the signal the
