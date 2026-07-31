@@ -3,13 +3,22 @@ name: upgrade
 description: Bring this project's anthill footprint up to date with the installed plugin — detect the repo's version, preview and apply any structural migration via `anthill migrate`, then reconcile the living docs against the current templates so the team actually receives guidance later releases added. Use when the human says "upgrade anthill", "migrate the team to the new layout", "anthill says my footprint is outdated", after installing a new anthill release, or when a release changed the SOP / team guidance even if the footprint version did NOT move — living docs are written once at bootstrap and are never refreshed automatically, so a content-only release still needs this skill. DISTINCT from bootstrap (first-time setup) — this updates an existing team without losing content.
 ---
 
-# anthill: Upgrade (migrate an existing team to the current footprint)
+# anthill: Upgrade (bring an existing team up to date with the plugin)
 
-Move a project that **already has** an anthill team onto the current footprint version, after a
-plugin release changed the consumer-repo files. This skill is the **brain** over the deterministic
-**`anthill migrate`** CLI: the CLI does the mechanical, history-preserving moves; this skill
-detects, gets consent, sequences, handles the judgement the CLI can't, and verifies. First-time
-setup is **`anthill:bootstrap`**, not this.
+Bring a project that **already has** an anthill team up to date after a plugin release. That is **two
+jobs, and the second one runs far more often than the first**:
+
+1. **Structure** — relocate the footprint if the release moved files (`anthill migrate`).
+2. **Guidance** — reconcile the living docs against the current templates, because **nothing updates
+   them automatically, ever.**
+
+Most releases need only (2), and **nothing in the tooling will tell you so** — `migrate` reports on
+layout and `status` says nothing about content. Treat "no migration needed" as the _start_ of this
+skill, not the end of it.
+
+This skill is the **brain** over the deterministic **`anthill migrate`** CLI: the CLI does the
+mechanical, history-preserving moves; this skill detects, gets consent, sequences, handles the
+judgement the CLI can't, and verifies. First-time setup is **`anthill:bootstrap`**, not this.
 
 > **The anthill CLI** — driven from the plugin:
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`**
@@ -98,6 +107,9 @@ The general discipline, for migrations that _do_ change content: if a migration 
 the team has edited, surface the conflict to the human and resolve it together rather than
 overwriting. The per-migration guide flags when a step needs this.
 
+#### 4c. Reconcile the root methodology pointer — only if files moved
+
+- **Skip this on a content-only release** (nothing relocated, so no pointer can be stale).
 - **Reconcile the root methodology pointer (if any).** `migrate` moves files but doesn't touch the
   repo's root `AGENTS.md` / `CLAUDE.md`. If one carries an anthill methodology pointer that names the
   **old** team-docs location ("team docs live in `docs/team/`"), update it to where the docs now live
