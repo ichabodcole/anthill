@@ -196,6 +196,33 @@ default launch becomes `claude {model} "/anthill:join {handle}"`). Small; the de
   consequence, not a porting detail — and it interacts with **A** above, since a seat that cannot hold
   a tail has different attention needs by construction.
 
+### A′. Field evidence for (A), arriving unprompted — 2026-07-31
+
+The attention-management section above was reasoning. It now has evidence, and **none of it was asked
+for** — comms was never mentioned in any question put to StoryLoom (see
+[the intake report](../reports/2026-07-31-story-loom-first-contact-intake.md), Finding 7):
+
+> `hurston`: This channel had **~126 messages in one session**; I posted maybe a dozen… I started
+> running `grapevine read <id> --text | grep -in "hurston\|studio\|surface\|UI"` to decide whether
+> to read a message at all. It's a crude hack, **it would miss a message that concerns me without
+> naming me**, and I used it anyway because reading everything in full doesn't scale. **Nothing in
+> anthill addresses "is this message for me."** A four-seat team generates cross-talk that's
+> individually valuable and **collectively unreadable**, and the only tool is a linear channel.
+
+And on the same axis, from the lead: a genuinely valuable practice (the sweep reflex) whose
+**announcements compounded** — each report prompting another seat to sweep and report — capped by
+ruling _"sweep once, land silently, post nothing."_
+
+**Both are inventions, not complaints**, so neither would ever have been filed. Three things follow:
+
+1. **The volume problem is real at four seats**, not seven. Earlier estimates were low.
+2. **hurston's hack is a role-scoped view, hand-rolled** — and she names its exact failure mode: it
+   misses messages that concern her without naming her. That is empirical support for the
+   default-view-never-partition constraint, from someone who built the partition and distrusted it.
+3. **The lead's fix was to suppress reporting.** Capping announcements is attention management
+   implemented as _social rule_ because no mechanism exists — and it trades away exactly the
+   cross-seat visibility that (A)'s constraint says must be preserved.
+
 ### H. What stays with grapevine
 
 **Cross-project agent contact.** It is genuinely good at this and the job is genuinely different — a
