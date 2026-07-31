@@ -1,6 +1,7 @@
 # The feedback instrument collects; it needs to **elicit**
 
-**Added:** 2026-07-28 · **Status:** ready to build (items 1–3); item 4 needs a judgment call ·
+**Added:** 2026-07-28 · **Status:** ⚠️ **item 2 SHIPPED** 2026-07-28 (the reflection now routes
+model-level findings upstream); **items 1, 3, 4 still open** ·
 **Seat:** weaver (`plugin/skills/finalize-session/SKILL.md`) + forager (the category set)
 
 ## The evidence

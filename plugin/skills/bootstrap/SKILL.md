@@ -27,9 +27,13 @@ Before anything, check for an existing footprint: if **`.anthill/config.json`** 
 **`.team/config.json`** already exists (here or up the tree), this repo is **already bootstrapped** —
 do NOT re-bootstrap (you'd double-write or clobber). Instead:
 
-- on the **current** version → run **`anthill:convene`** to start a session;
 - on an **older** version (e.g. the legacy `.team/` layout) → run **`anthill:upgrade`** to migrate it
   to the current `.anthill/` layout (history-preserving). `anthill migrate --dry-run` reports which.
+- on the **current** version → run **`anthill:convene`** to start a session. **But if the plugin was
+  just updated, run `anthill:upgrade` first even though the version matches** — the stamped version
+  tracks _layout_, and a release can change the SOP and team guidance without moving it. Living docs
+  are written once at bootstrap and never refreshed automatically, so `migrate`'s _"nothing to
+  migrate"_ does not mean the team is current.
 
 Only continue below when there's no footprint yet.
 
@@ -178,6 +182,11 @@ once the human has steered you to one seating, treat it as the ratified roster a
 - **Render:** run **`anthill init`**. It reads the config and deterministically renders `.anthill/`
   (the SOP, `seams.md`, the roster `dev/README.md`, one `dev/<handle>.md` per seat) and ensures the
   `.anthill/scratch/` line in `.gitignore`. It's idempotent — re-running never clobbers existing docs.
+  - **That is a file-level guarantee, and it cuts both ways.** An existing doc is **skipped**, so
+    re-running is safe — and also **inert**: it will never bring a doc up to date with a newer
+    template. Your living docs are yours from this moment on, and refreshing shared guidance later is
+    a hand reconcile (`anthill:upgrade` says how). `init` adds missing files; it does not update
+    present ones.
 - **Shield the living docs from the host's formatter (if it has one).** The `.anthill/` docs are prose
   pheromone living in the repo, so a host formatter (prettier / biome) will reflow them on commit —
   churn at best, and a reflow can mangle a hand-wrapped line into a stray list bullet. If the repo uses

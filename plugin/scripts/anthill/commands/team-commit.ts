@@ -366,8 +366,10 @@ export const teamCommitCommand = defineAnthillCommand({
         const staleNote =
           preStaged.length > 0
             ? ""
-            : "\n\nYour index has been restored (your paths are unstaged), so you are not blocking " +
-              "other seats' commits.";
+            : "\n\nYour index has been restored, so you are not blocking other seats' commits. " +
+              "This is an INDEX-level restore only: your working-tree edits are untouched and still " +
+              "present. It does NOT isolate your work — a peer who commits a file you have edits in " +
+              "will still carry them.";
         throw new Error(`git commit failed:\n${detail}${hint}${staleNote}`);
       }
       const sha = git(["rev-parse", "--short", "HEAD"], root);

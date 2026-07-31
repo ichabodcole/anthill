@@ -52,7 +52,17 @@ status`** shows who's on + the board.
      **`grapevine pull <channel>`** — finite, it prints the history and **exits**. Because the lead
      clears the channel at convene (`--fresh`), that history is **this session**, not an archive of
      past ones, so it's usually the right catch-up. Anchor at a known message id with `--since <id>`
-     on a long-running channel, then fill gaps selectively with `grapevine read <id>`.
+     on a long-running channel, then fill gaps selectively with
+     **`grapevine read <channel> <id>`** — note it takes the **channel _and_ the id**, and does not
+     take `--as`. A bare `grapevine read <id>` exits non-zero with a usage line. A seat who mis-called
+     it once read the non-zero exit as "this command is broken", fell back to `pull --since | head -c`
+     for an entire session, and reported the tool as defective — with the correct usage sitting in his
+     own scrollback. **A usage error and a broken tool look identical if you don't read the output.**
+     - **`read <channel> <id>` is the only way to fetch exactly one message**, and that matters more
+       than gap-filling: it is not a narrower range, it is _not a range_. Any `--since` window runs to
+       _now_, so on a channel peers are actively writing to it will eventually contain a peer's
+       message. When you need one specific message and nothing else, no choice of `--since` gets you
+       there.
      - **NEVER use `tail` to catch up — use it only for the live Monitor.** `grapevine tail
 --from-start | grep …` looks like the obvious backfill and is **broken by construction**:
        `grep` block-buffers so a finite backfill never flushes, and a live `tail` holds the pipe
@@ -69,11 +79,17 @@ status`** shows who's on + the board.
      untracked file until you synthesize it, so an abrupt session-end evaporates the whole trail —
      precisely the loss anthill exists to prevent. Synthesize into your seat doc at finalize, **or
      earlier, whenever the reasoning is warm**. Earlier is not jumping the gun; it's insurance.
-   - **`.anthill/scratch/` is also the gate-safe home for _throwaway artifacts_** — verify mints,
-     screenshots, seeds, any harness output. The commit gate skips it (gitignored + excluded from the
-     typecheck/lint), so a stray artifact dropped there never trips the shared tree and blocks another
-     seat's land. Don't scatter throwaways at the repo root or under `plugin/`, where the gate _will_
-     scan them.
+   - **`.anthill/scratch/` is the right home for _throwaway artifacts_** — verify mints, screenshots,
+     seeds, any harness output. It is **gitignored, and excluded from the typecheck/lint target set**,
+     so a stray artifact dropped there never trips the shared tree and blocks another seat's land.
+     Don't scatter throwaways at the repo root or under `plugin/`, where the gate _will_ scan them.
+     - **⚠ That protection holds for files the gate _scans_. It does not hold for files a tool
+       _discovers on its own_.** Config files are the exception and you must treat them as one: a
+       `biome.json` (or `tsconfig.json`, `.eslintrc`, `vitest.config.ts` …) dropped in scratch is
+       still found, because formatters and type-checkers walk the filesystem for nested configs and
+       **never consult gitignore for discovery**. A seat did exactly this and **took the gate down for
+       the whole team** — from a directory the docs had called safe. Put throwaway _configs_ outside
+       the repo entirely.
 
 5. **Signal ready** on the vine (a short "in, grounded, here's my lane") and **claim your bounty card**
    — advance it to `doing` when you actually start with **`bounty update <id> --status doing`** (the
@@ -100,7 +116,9 @@ status`** shows who's on + the board.
 
 6. **Work** your lane per the SOP + your seat doc. As you go, **capture ah-ha judgments to your
    scratch** (the reasoning + the generalizable lesson — not lesson-less events) for synthesis at
-   finalize. Route questions + decisions to the lead on the vine, not direct to the human.
+   finalize. Route questions + decisions to the lead on the vine, not direct to the human — the lead
+   is the routing **default**, not proof the human isn't watching. **Blocked on a human? Say so on the
+   vine** — waiting silently looks exactly like working.
    - **Dispatching a subagent is available to you — it just never occurs to seats.** A survey of two
      implementation-heavy seats after a 16-slice build found **zero** dispatches, and neither seat had
      _considered_ them: serial lanes, small per-step verdicts, and a peer verifier already acting as a
@@ -119,7 +137,9 @@ status`** shows who's on + the board.
   it means nobody wrote it yet. Say so to the lead rather than inferring from it.
 - ◻ **Caught up** if you joined mid-session — `grapevine pull <channel>` (finite). **Never**
   `tail --from-start | grep` for backfill: it returns nothing and then times out, which reads as
-  "empty channel".
+  "empty channel". For **one specific message**, use `grapevine read <channel> <id>` — channel _and_
+  id, no `--as`; a bare `read <id>` exits non-zero with a usage line that is easy to misread as a
+  broken tool.
 - ◻ **On the vine** — grapevine tail wrapped in Monitor, presence registered (terminal-seat path).
 - ◻ **On the board** — board tail wrapped in Monitor. Use the filter **verbatim from your join
   output**: it needs `grep -E` (plain `grep` treats `(a|b)` as a literal, so the Monitor stays
@@ -133,8 +153,13 @@ status`** shows who's on + the board.
   repo root** — apply from the repo root (or pass `--directory=<repo-root>`), or a patch preserved from
   a subdir lands in the wrong place.
 - ◻ **Scratch minted** — `.anthill/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
-- ◻ **Route through the lead — never block on the human.** The human may not be watching this pane;
-  questions + decisions go to the lead/liaison on the vine, not direct.
+- ◻ **Route through the lead — and SAY when you're waiting.** Questions + decisions go to the
+  lead/liaison on the vine, not direct to the human. But routing through the lead is a **default, not
+  an exclusive channel** — the human can attach to your pane at any time, so never assume you're
+  unobservable. And if you end up **blocked waiting on a human answer, post that on the vine**:
+  correct waiting produces no signal anywhere — not on the board, not in the tree, not in any sweep —
+  so a silently-waiting seat is indistinguishable from a working one. One team lost an unknown stretch
+  to exactly this.
 
 ## Output
 

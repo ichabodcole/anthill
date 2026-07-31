@@ -45,4 +45,18 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
 ## Commands
 
 - `bun run check` — the full gate (typecheck + biome + tests); the husky pre-commit runs it.
-- `bun test` — tests · `bun run anthill <cmd>` — the CLI (`scripts/anthill/cli.ts`).
+- `bun test` — tests · `bun run anthill <cmd>` — the CLI (`plugin/scripts/anthill/cli.ts`).
+
+## When you change something, something else probably has to change too
+
+anthill's content is **referentially dependent and unenforced**: the same rule lives in a skill, a
+template, a rendered copy of that template, and sometimes a spec section that code cites by number.
+`bun run check` is green while a skill argues with a template — nothing catches it.
+
+Run the **`cascade-check`** skill (`.claude/skills/cascade-check/`) after any substantive edit to a
+skill, template, CLI behavior, config schema, or path — and always before cutting a release. It carries
+a map of what travels with what, and every entry earned its place by actually failing. It never bumps
+versions; release-please owns those.
+
+_(That skill lives in `.claude/skills/`, not `plugin/skills/` — the latter is discovered by directory
+and ships to every consuming project, so internal tooling must never go there.)_

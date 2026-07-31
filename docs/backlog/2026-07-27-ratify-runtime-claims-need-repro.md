@@ -1,7 +1,7 @@
 # `anthill:plan` ratify: a runtime-behavior claim needs a measured repro, not pattern memory
 
-**Added:** 2026-07-27 · **Status:** ✅ **SHIPPED (skill)** 2026-07-27 · **Seat:** weaver
-(`plugin/skills/plan/SKILL.md`)
+**Added:** 2026-07-27 · **Status:** ✅ **SHIPPED (complete)** — skill 2026-07-27, `methodology.md`
+mirror 2026-07-28 · **Seat:** weaver
 
 > The API-shape vs. runtime-behavior distinction landed in the plan skill's ratify step, with the
 > proportionality caveat intact. **Still open:** mirroring it into `methodology.md`, the portable

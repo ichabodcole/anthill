@@ -31,6 +31,7 @@
 ## Contract 1 — the `anthill scan` payload (`ScanReport`)
 
 **Owner:** forager · **Pointed at from:** weaver (`skills/bootstrap` consumes it to render candidate seatings)
+**Ratified at:** the full `ScanReport` **field set + semantics** — every field's type, its null-meaning, and resolution order. A consumer needing a field not listed here has hit a new seam.
 
 **The contract, stated once:** `anthill scan` emits `{ ok, data: ScanReport }` where
 
@@ -76,6 +77,7 @@ link the file here when green.)_
 ## Contract 2 — the `anthill feedback` invocation contract
 
 **Owner:** forager · **Pointed at from:** weaver (the touchpoint prose tells agents how/when/who invokes it)
+**Ratified at:** the **invocation surface + the degradation guarantee** — flags, envelope shape, and never-drop/never-throw behavior. NOT the issue body's internal layout, which forager may change freely.
 
 **The contract, stated once:** `anthill feedback "<msg>" [--category bug|friction|idea|docs] [--skill
 <name>] [--submit]`. A **bare call composes + emits, sending nothing** (`{ok,data:{title,body,repo,issueUrl,submitCmd}}`);
@@ -107,6 +109,7 @@ branches with a `forbiddenGh` that throws if the default path ever calls it — 
 ## Contract 3 — board-binding (every seat verb targets THIS team's board, ambiently)
 
 **Owner:** forager · **Pointed at from:** weaver (`convene` SKILL.md + `.anthill/README.md` SOP say the board is key-bound; they point here, never restate the mechanism)
+**Ratified at:** the **binding mechanism** — key identity (`= config.channel`) and the two ambient emitters. NOT spellbook's internal session-storage format, which is upstream's to change.
 
 **The contract, stated once:** the bounty **session key = `config.channel`**.
 anthill binds every seat's bounty verbs to this team's board via **two ambient emitters**, and threads `--session` onto **no** individual verb:
