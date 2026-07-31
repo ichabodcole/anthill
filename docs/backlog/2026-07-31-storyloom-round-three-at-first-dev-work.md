@@ -113,12 +113,15 @@ ratified?_
       **labelled as planning-scoped**.
 - [ ] At least one instruction-quality finding captured in a form that would transfer to a project that
       is not anthill.
+- [ ] The flocking question asked as an **incident** request, and answered either with a case meeting
+      all three criteria or with an explicit "no instance" — **not** left open a third time.
 
 ## References
 
 - [Comms round](../reports/2026-07-31-story-loom-comms-round.md) — the findings this round tests.
 - [First-contact intake](../reports/2026-07-31-story-loom-first-contact-intake.md).
-- [Agreement is not evidence](../lessons-learned/2026-07-31-agreement-is-not-evidence.md).
+- [Only execution dislodges an installed frame](../lessons-learned/2026-07-31-only-execution-dislodges-an-installed-frame.md)
+  — and what it is explicitly **not** evidence of.
 - [Shared-tree failure modes](../investigations/2026-07-27-shared-tree-failure-modes.md) — M1–M11, the
   mature-team mechanisms that a planning session cannot exercise.
 - [Team comms spike](../projects/team-comms-spike/proposal.md).
