@@ -97,9 +97,14 @@ Then **classify each hunk** — never sync wholesale:
 - **Token lines** (`{{channel}}`, `{{lead}}`, `{{rosterTable}}`) render per-project and are **supposed**
   to differ. Never "fix" these.
 
+**The diff is the authority here — not a changelog.** anthill's `CHANGELOG.md` is **not** part of the
+shipped plugin, so from inside a consuming project you generally cannot read it. Don't go looking for
+release notes to tell you what changed; the shipped template versus the footprint **is** the record,
+and it is always current. If the human does have the release notes to hand, they're useful colour for
+_why_ a hunk changed — never a prerequisite.
+
 **Show the human the diff before applying it** — these are their team's standing rules, and some of
-what looks stale may be a deliberate local choice you don't have the context for. Read the release
-notes for template changes to know what's worth pulling down.
+what looks stale may be a deliberate local choice you don't have the context for.
 
 #### 4b. Never clobber a hand-edited doc
 
