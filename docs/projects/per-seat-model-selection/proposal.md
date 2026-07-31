@@ -1,6 +1,12 @@
 # Per-seat model selection — pick the Claude model each seat runs on
 
-**Status:** Draft
+**Status:** Draft — **priority raised 2026-07-31.** This is the blocking primitive for the
+model-diversity experiment in
+[team-native coordination layer](../../investigations/2026-07-31-team-native-coordination-layer.md) (G):
+`config.launch` is currently **global**, so a mixed team is structurally impossible. **Consider
+generalising `model?` to a per-seat `launch?`** — a launch string can carry `--model`, so one primitive
+unblocks both mixed-model and mixed-**harness** (opencode, Codex). Keep `model?` as the ergonomic
+constrained case; add `launch?` as the general escape hatch.
 **Created:** 2026-07-09
 **Author:** Cole + forager
 

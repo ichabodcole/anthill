@@ -159,6 +159,43 @@ is**, so convergence can be weighed rather than counted. Two different models ag
 external invariant is the strongest signal a team can produce; two instances of one model agreeing
 about a shared document is nearly worthless. Today a lead judges that by feel.
 
+#### But this is not one cheap experiment — it is two, at very different prices
+
+An earlier draft of this document called a mixed-model session "one session to test." **That was
+wrong**, and the mechanism is worth stating because it also names what would have to be built.
+
+**Today `config.launch` is GLOBAL, not per-seat** (`SeatConfig` carries only `handle` / `role` /
+`scope` / `spawn`, and `buildSeatLaunch` substitutes `{handle}` alone). Two consequences:
+
+- **A homogeneous non-Claude team is ALREADY possible** — point the global `launch` at another
+  harness and the whole team runs on it. **Nobody has tried this.** Cheapest available step; costs no
+  code.
+- **A mixed team is structurally impossible.** One launch template, one harness, one model — and the
+  mix is exactly what the anti-groupthink argument needs.
+
+So the experiment splits in two:
+
+**A — same harness, different model.** `claude --model <model>` exists, and `--settings` advertises
+third-party providers, so Claude Code can plausibly drive a non-Claude model. Needs `model?` on
+`SeatConfig` plus `{model}` substitution — **already fully specified** in the Draft
+[per-seat model selection](../projects/per-seat-model-selection/proposal.md) proposal (its option A:
+default launch becomes `claude {model} "/anthill:join {handle}"`). Small; the design work is done.
+
+**B — different harnesses** (opencode, Codex, …). Needs more:
+
+- **Per-seat `launch`.** It **subsumes** per-seat `model` — a launch string can carry `--model` — so
+  one primitive serves both experiments. Keep `model?` as the ergonomic constrained case; add
+  `launch?` as the general escape hatch.
+- **A harness-portable grounding path.** Better news than expected: `anthill join <handle>` already
+  renders a **plain-text manifest** — files in order, resolved tail commands, an action checklist —
+  with nothing Claude-specific in it. **The CLI is the portable surface; the `anthill:join` skill is
+  the Claude Code wrapper around it.** A foreign harness can run the CLI and follow its output.
+- **Per-harness affordance gaps — the real cost.** The join checklist assumes a **Monitor-wrapped
+  tail**, a Claude Code tool. A harness without an equivalent cannot hold a live tail, which puts a
+  foreign seat closer to the existing **subagent path** (no tails; the lead relays). That is a design
+  consequence, not a porting detail — and it interacts with **A** above, since a seat that cannot hold
+  a tail has different attention needs by construction.
+
 ### H. What stays with grapevine
 
 **Cross-project agent contact.** It is genuinely good at this and the job is genuinely different — a
@@ -180,15 +217,18 @@ _doesn't_ know about rosters). Nothing here argues for replacing that.
 
 ## Recommendation
 
-**Do not choose yet.** Two cheap things first, because both could change the answer:
+**Do not choose yet.** Three things first, in ascending cost — the first two need no new code:
 
-1. **Run a mixed-model team.** The anti-groupthink argument (G) is currently _reasoning_, not
-   evidence, and it is one of the main justifications for this whole direction. It costs one session
-   to test and would be the first real data on whether heterogeneous seats behave differently at all.
-2. **Test one attention mechanism cheaply, before designing for it.** Heads-down mute is the safest
-   (it delays rather than drops) and the most likely to be wanted by seats themselves. If seats simply
-   widen any scoped view back to everything within a session, that is worth knowing before it becomes
-   architecture.
+1. **Test one attention mechanism.** Heads-down mute is the safest (it delays rather than drops) and
+   the most likely to be wanted by seats themselves. **The genuinely cheap one — no new primitive.**
+   If seats just widen any scoped view back to everything within a session, that is worth knowing
+   before it becomes architecture.
+2. **Run an all-one-harness NON-Claude team** — possible **today** via the global `launch`, at zero
+   build cost, and never attempted. It does not test model diversity, but it tests everything else
+   about a foreign harness: whether the CLI manifest is sufficient grounding on its own, and what
+   breaks when a seat cannot hold a Monitor tail. **That is most of B's risk, discovered for free.**
+3. **Then model diversity** (G) — which needs the per-seat primitive first, so it is a small build
+   rather than a session.
 
 **Then** decide between (b) and (c) — and the deciding question is E and F, because durability classes
 and one-surface-vs-two are the two things you genuinely cannot do without owning the store.
@@ -199,8 +239,11 @@ less than the wrong answer to that.
 
 ## Next Steps
 
-- [ ] Run a mixed-model session (G). Even one seat on a different model is informative.
-- [ ] Trial an attention mechanism — heads-down mute first, as the fail-safe option.
+- [ ] Trial an attention mechanism — heads-down mute first, as the fail-safe option. No new primitive.
+- [ ] Run an **all-one-harness non-Claude team** via the existing global `launch`. Zero build cost,
+      never tried, surfaces most of B's unknowns.
+- [ ] Land **per-seat `launch`** (generalising the drafted per-seat `model`) — the single primitive
+      that unblocks both mixed-model and mixed-harness, and the current hard blocker on (G).
 - [ ] Enumerate what the roster already makes computable, since that bounds the cheap wins (D is
       likely the largest and needs nothing but config + classification).
 - [ ] Decide (b) vs (c) on the strength of E/F, not on the strength of the friction list.
