@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.7.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.6.0...anthill-v1.7.0) (2026-07-31)
+
+
+### Features
+
+* **internal:** add the cascade-check skill — what else must change when you change something ([1a845b2](https://github.com/ichabodcole/anthill/commit/1a845b2006cbfebb9858043fb8a98767a375b34b))
+* **plan:** sharpen the ratify gate — claim shape, ratification grain, runtime repro ([89c8297](https://github.com/ichabodcole/anthill/commit/89c829728b0c097cfbfed8a16294f43529f78f1a))
+
+
+### Bug Fixes
+
+* **dogfood:** finish syncing our footprint — the previous commit's count was wrong ([2985aab](https://github.com/ichabodcole/anthill/commit/2985aab6a68b059ae26ded530ec32bce1fa70eb1))
+* **internal:** cascade-check review fixes — plus the two defects the review found ([daa8ccd](https://github.com/ichabodcole/anthill/commit/daa8ccdbee3641a742800de05cea9418189de20f))
+* **skills:** cascade fixes for the language-and-promises pass ([c06d086](https://github.com/ichabodcole/anthill/commit/c06d086ffa18ba749f0094b0ed618547ec4f4ecc))
+* **skills:** correct a wrong command, and name what our promises actually cover ([88bc62c](https://github.com/ichabodcole/anthill/commit/88bc62c7de90248ae7e7ebab518d6192d83c471f))
+* **skills:** remove the old framing that contradicted the ratify-gate pass ([82de478](https://github.com/ichabodcole/anthill/commit/82de47869b6718e07513df5af177047a443db474))
+* **skills:** the granularity audit — two more promises, one of them live ([9f34164](https://github.com/ichabodcole/anthill/commit/9f34164282d26ac092dea1d2ee4a5c4662cfc334))
+* **upgrade:** a content-only release still needs an upgrade — route to it ([a4cccb6](https://github.com/ichabodcole/anthill/commit/a4cccb671b1a9580e216af64beddda37c0e4932d))
+* **upgrade:** the reconcile can't depend on release notes consumers can't read ([70c4820](https://github.com/ichabodcole/anthill/commit/70c48209a670d42676511879fdb258a08c48241e))
+
 ## [1.6.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.5.0...anthill-v1.6.0) (2026-07-30)
 
 
