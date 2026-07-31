@@ -123,6 +123,27 @@ Find the row for what you changed. Check every dependent.
 > for weeks. A shipped, consumer-facing restatement of the skill set with nothing pointing at it. The
 > map had no row for this until the omission proved one was needed.
 
+### You wrote a **promise** — "safe", "protects", "isolated", "never …", "guarantees"
+
+Not a cascade so much as a lens, but it belongs here because release time is when it fires.
+
+- ◻ **Name the granularity the promise holds at**, in the sentence itself. _"Gitignored and excluded
+  from the lint target set"_ is true and unmisleadable; _"gate-safe"_ is shorter and wrong.
+- ◻ **Ask where someone will rely on it one level finer.** File → content. Index → working tree.
+  Envelope → field. Scan-set → filesystem discovery. That finer reading is the one that bites, and
+  **the natural verification returns clean** — the failure is invisible to whoever caused it.
+- ◻ **Is the guarantee actually ours?** If it's a dependency's behavior we forward, attribute it.
+  Stating spellbook's guarantee in anthill's voice makes us silently wrong when upstream changes.
+- ◻ **Does a protection also freeze something?** A no-clobber guarantee protects content _and_ makes
+  it inert. Say both.
+
+> **Scar (2026-07-31).** Five instances, four surfaces, two teams — and **two were found by predicting
+> from the pattern, not by a report** (a shipped failure message that read as isolation; and
+> `init`'s "never clobbers", which is true at file level and false as "upgrading brings my footprint
+> current" — meaning template improvements reach **no existing team**, discovered in the same pass
+> that wrote new template guidance). The reporting team's own prescription is the whole rule:
+> **a promise without a stated granularity is a promise at the coarsest reading.**
+
 ### You **archived or moved a doc**
 
 - ◻ **Inbound links.** A previous archiving pass left ~40 broken relative links, because a doc's depth

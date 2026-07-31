@@ -75,6 +75,27 @@ it together rather than overwriting. The per-migration guide flags when a step n
   - **`anthill init`** _clobbers nothing_ — every existing doc is **skipped**. It MAY **add** a scaffold
     file a newer release introduced (or a doc a seat was missing); that's expected, not a failure —
     fold any additions into the commit below.
+  - **⚠ "Skipped" protects your content and freezes it. Upgrading does NOT bring your living docs
+    current.** The no-clobber guarantee holds at the **file** level: nothing you wrote is destroyed.
+    It does **not** mean your footprint tracks the plugin. An existing `.anthill/README.md` (the SOP)
+    or seat doc is **never updated by any release, ever** — so a team that bootstrapped on an older
+    version keeps that version's guidance permanently, including guidance later releases corrected.
+    **Migrations move files; they do not refresh content.**
+    - **So reconcile by hand, once per upgrade**, for the docs that carry _shared_ guidance — the SOP
+      is the one that matters, since it's the team's standing rules:
+
+      ```sh
+      diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" .anthill/README.md
+      ```
+
+      Then classify every hunk rather than syncing wholesale: **shared guidance you're missing**
+      (mirror it down), **your own local specificity** (keep it — a footprint legitimately says things
+      the template must not), or **genuine drift** (reconcile). Token lines (`{{channel}}`, `{{lead}}`,
+      `{{rosterTable}}`) render per-project and are expected to differ.
+
+    - **Check the release notes for template changes specifically.** They are the only signal that a
+      reconcile is worth doing — nothing in the tooling will tell you your SOP is out of date, and
+      `anthill status` will not warn you.
   - Spot-check a relocated seat doc reads correctly.
   - **If the repo has a code formatter** (prettier / biome), make sure the whole `.anthill/` footprint is
     in its ignore now that config + docs live there — that includes **`.anthill/config.json`** (JSON a

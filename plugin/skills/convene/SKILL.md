@@ -50,9 +50,14 @@ stay solo.
      (idempotent) and report board state.
      - **Reusing a channel from a prior session?** It still carries that session's messages — new work
        inherits the old noise. Add **`--fresh`** to snapshot-then-clear the log before opening
-       (`anthill convene --fresh --topic "…"`). It's a **safe no-op if seats are already connected** (a
-       live session is never wiped), and the log is always archived to `~/.grapevine/archive/` first, so
-       nothing is lost. Do it **before** spawning seats, at the start of the session.
+       (`anthill convene --fresh --topic "…"`). Per grapevine, it's a **no-op if seats are already
+       connected** (a live session is not wiped) and the log is archived to `~/.grapevine/archive/`
+       first. **Both are spellbook's guarantees, not anthill's** — `--fresh` is forwarded straight
+       through — so treat them as the dependency's to keep, and don't rely on them for anything you
+       couldn't recover from the archive. Do it **before** spawning seats, at the start of the session.
+       - **"Nothing is lost" means the log is recoverable, not that seats still see it.** After a
+         clear, a seat that backfills reads an empty channel — which is why this belongs at the start
+         of a session and not in the middle of one.
    - **Board:** convene now **opens/attaches the team board itself** — keyed to the channel and pinned
      (writes `.bounty-session` at the repo root), so every seat's + the lead's bounty verbs bind **this**
      board by construction. The binding is **ambient**: no one ever passes `--session`. It's idempotent
