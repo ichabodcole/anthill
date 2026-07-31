@@ -54,6 +54,12 @@ Find the row for what you changed. Check every dependent.
   Diff the two, then classify each hunk: _shared guidance missing downstream_ (mirror it) vs. _local
   specificity_ (leave it) vs. _genuine drift_ (reconcile). Scope your mirror to the change you made;
   reconciling the whole file is a separate job.
+- ◻ **Every existing team is now behind — and nothing tells them.** `init` skips existing docs, so a
+  template improvement reaches **new teams only**. Live teams keep their bootstrap-version guidance
+  until a human runs the reconcile in `anthill:upgrade` §4a, and no signal prompts them to. So: **say
+  it in the release notes**, in the words a reconciler needs (_which_ doc, _what_ guidance), and
+  expect the change to land slowly. If the change is a **correction** rather than an addition — a rule
+  we got wrong — that lag is a live wrong-guidance window, and it may deserve more than a note.
 - ◻ **Render smoke** (see below) — tokens must survive verbatim.
 - ◻ **Renamed or deleted a template?** `init` skips existing files and **never deletes**, so a rename
   leaves the old rendered copy orphaned in every footprint forever. Remove it by hand here; consuming
