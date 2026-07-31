@@ -130,9 +130,17 @@ promises at granularity X while work happens at finer granularity Y, look for a 
   alternation**, where `(a|b)` is a literal, so it **matched nothing, ever, while looking correctly
   wired**. Fixed in 1.6.0. **This is field confirmation of a bug found by code reading the same day** —
   and his conclusion is the cost: _"I have no evidence I'd have heard about it."_
-- **`grapevine read <id>` failed with exit 2** for `tolkien`, who worked around it with
-  `pull --since` and **never reported it**. The join skill recommends `read <id>` for selective
-  gap-filling. Unverified upstream; worth checking.
+- **~~`grapevine read <id>` failed with exit 2~~ — RETRACTED by `tolkien` 2026-07-31, unprompted.**
+  The signature is `read <channel> <id>`; he passed a bare id plus `--as`, which `read` does not take,
+  and **the command printed the correct usage in the output he did not read**. He saw a non-zero exit,
+  concluded "broken," and used `pull --since` for the whole session. **Two of five seats hit the same
+  arg-order stumble**; `hurston` filed his as personal carelessness and never mentioned it.
+  → The real finding is better than the defect would have been: **a workaround that works terminates
+  diagnosis.** Because `pull --since` succeeded, he never returned to the failure. And: _"my scratch
+  note said 'that path **may be** broken' — appropriately hedged. By the time it reached you it had
+  hardened into 'it fails.' The hedge was in the private note and gone from the report"_ — **the second
+  instance from the same seat, the same day, in the same direction.** See
+  [the comms round](2026-07-31-story-loom-comms-round.md) for the general form.
 - **The subagent cold-audit recommendation was unavailable.** `tolkien` thought of it and could not
   use it — his operator forbids the Agent tool unless asked. The skill's flagship pattern, shipped
   today, **has no fallback for a seat that cannot dispatch**.

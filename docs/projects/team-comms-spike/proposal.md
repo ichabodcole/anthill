@@ -129,13 +129,63 @@ spike:
 
 - **Every session that uses the tool ends by answering three questions**, with "nothing" a valid
   answer: _what did you have to work around? what did you want to know and couldn't? what did you
-  invent that isn't written down?_
+  invent that isn't written down?_ **Ask for behaviour, not opinion** — the StoryLoom round got its
+  best material from "how many did you pull in full" and its weakest from anything resembling "what
+  would you want." Two seats used the "nothing" option, which is the signal the framing is holding.
+- **Say explicitly that there is no message budget.** Two seats independently rationed themselves
+  against a limit no tool imposes — one buried a possible sixth defect site in a subordinate clause
+  _"because I'd used up my sense of message budget,"_ and it died there.
 - **Capture the scenario, not just the takeaway.** A friction report without what-was-assumed and
   what-turned-out-true is a preference; with them, it is evidence. (Same reasoning as the
   [practice-transmission investigation](../../investigations/2026-07-28-practice-transmission-between-teams.md).)
 - **Log it in this project folder**, not in `paper-cuts.md`, until we know the ritual holds.
 
+## What the StoryLoom round already settled
+
+**Done — the perishable capture below was taken**, in two rounds:
+[first contact](../../reports/2026-07-31-story-loom-first-contact-intake.md) and
+[a targeted comms round](../../reports/2026-07-31-story-loom-comms-round.md). It changes this
+proposal in three ways.
+
+**1. The wedge may be smaller than "own the layer."** Three of five seats independently showed that
+**the instruction determined behaviour more than the tool's affordances did** — one seat used the
+command that solved his problem thirteen times that session and still didn't reach for it when told to
+run something else. The generalisation, from their lead:
+
+> **Where a skill names a command, it is choosing the shape of every fix that follows.**
+
+anthill's product is instruction text, so this is the cheapest lever we have and we already own it. It
+does not remove the case for the spike, but it means **any candidate feature must be compared against
+"say it differently in the skill,"** which is free and is now evidenced to work.
+
+**2. Two design-space items are argued against by field behaviour, not by taste.**
+
+- **Debounce/bundle.** Notifications arrive **between** tool calls, never during one — three seats
+  said so unprompted, so the interruption cost this would fix does not exist. It worsens the cost that
+  does (_"a message competing for attention with two others is read at preview depth only — that's
+  where things get lost"_), and in one concrete case **co-arrival was the only thing that detected a
+  live collision** between two seats claiming the same file.
+- **Role-scoped views.** Two seats independently: the informal version already caused a near-miss
+  (addressing _taught a seat to skip_ a falsification that hit his lane), and _"'relevant to my lane'
+  is the wrong cut — plenty of messages I never acted on still changed what I believed."_ If
+  addressing is built, make it **additive** (salience) and never **subtractive** (suppression).
+
+**3. Two candidates got stronger, and neither was on the list.**
+
+- **In-flight / stale-state awareness** — the most-cited cost, named by all four seats, and the only
+  one nobody could work around: _"neither of us could have prevented it by reading more carefully —
+  the information didn't exist yet when we each decided."_ Note it is **not a volume problem**; a
+  single message can cross.
+- **The ~200-character preview is where every read/skip decision is actually made**, and nothing in
+  anthill or grapevine controls what lands there. Seats invented verdict-shaped headlines and
+  `## sender → recipient:` arrows purely to colonise it. One seat came within one message of verdicting
+  the wrong artifact, saved by _"pure luck of where the 200-character cut fell."_
+
+Slice one is unchanged. This narrows what earns a place in slice two.
+
 ## One perishable input, before the build starts
+
+**(Taken 2026-07-31 — see above. Retained for the reasoning, which still governs future captures.)**
 
 A **brand-new team** has just started on the version shipped this week. That is worth one cheap,
 time-boxed capture — **not a study** — for a reason that expires:
@@ -184,8 +234,10 @@ nothing else, which is precisely the gap.
 
 ## Success Criteria
 
-- **A first-contact capture from the new team**, taken blind and before the build starts — the one
-  input that expires.
+- ~~**A first-contact capture from the new team**, taken blind and before the build starts~~ —
+  **done 2026-07-31**, in two rounds. The blind condition leaked all three times it was attempted; see
+  the [comms round](../../reports/2026-07-31-story-loom-comms-round.md) for the working method
+  (**one exact command that fetches exactly one message** — never a range plus a caveat).
 - **One real convened session runs on it**, end to end, with the team's actual work.
 - **A written list of frictions from that session**, in scenario form.
 - **At least one thing we were sure we'd need turns out to be unnecessary** — that is the signal the
