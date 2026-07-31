@@ -336,6 +336,29 @@ describe("anthill commit — a bounced commit must not strand the index (anthill
     }
   });
 
+  // Field regression (StoryLoom, 2026-07-31): the restore note used to read
+  // "your paths are unstaged", which a seat understood as "your work is
+  // isolated" and reported to his team as status. It means only that the INDEX
+  // was restored; the working-tree edits stay, and a peer who commits a file you
+  // have edits in still carries them. The note must not imply isolation.
+  test("the restore note scopes itself to the index and disclaims isolation", async () => {
+    const dir = makeRepo();
+    try {
+      installFailingHook(dir);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code, stderr, stdout } = await runCli(["commit", "-m", "add mine", "mine.txt"], dir);
+      expect(code).not.toBe(0);
+      const out = stderr + stdout;
+      expect(out).toMatch(/index/i);
+      expect(out).toMatch(/working[- ]tree edits are untouched/i);
+      expect(out).toMatch(/does NOT isolate your work/i);
+      // The exact phrasing that caused the misread must not come back.
+      expect(out).not.toMatch(/your paths are unstaged/i);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   test("names the FOREIGN dirty paths so the seat doesn't debug its own clean lane", async () => {
     const dir = makeRepo();
     try {

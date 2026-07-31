@@ -1,6 +1,7 @@
 # Name the granularity of every safety promise anthill makes
 
-**Added:** 2026-07-31 · **Status:** ready to build (the audit is the work) · **Seat:** weaver + forager
+**Added:** 2026-07-31 · **Status:** ⚠️ **three instances SHIPPED** on `feat/language-and-promises`;
+**the audit pass is still open** · **Seat:** weaver + forager
 
 Two of anthill's stated guarantees are **true at one granularity and relied on at a finer one**. Both
 were reported by StoryLoom and **independently reproduced** before write-up. The team's lead
@@ -62,9 +63,15 @@ level finer?_ Candidate surfaces:
 
 ## Acceptance Criteria
 
-- [ ] The three confirmed instances say what is actually true, at the granularity it holds.
-- [ ] `anthill commit`'s failure envelope no longer implies isolation it does not provide.
+- [x] The three confirmed instances say what is actually true, at the granularity it holds.
+      — scratch gate-safety and the commit pathspec both now name the exception; see
+      `plugin/skills/join/SKILL.md` and `plugin/templates/docs-team/README.md`.
+- [x] `anthill commit`'s failure envelope no longer implies isolation it does not provide.
+      — rewritten to scope itself to the index and disclaim isolation explicitly, with a
+      **regression guard** (`team-commit.test.ts`) verified to fail against the old wording.
 - [ ] An audit pass over the surfaces above, with each promise either qualified or confirmed exact.
+      **← the remaining work.** Three instances were found by field report; the point of the item is
+      that the shape predicts more, and nobody has swept for them yet.
 - [ ] The rule is stated once, somewhere a future author will meet it — **a promise without a stated
       granularity is a promise at the coarsest reading.**
 

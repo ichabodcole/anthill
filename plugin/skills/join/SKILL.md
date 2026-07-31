@@ -52,7 +52,17 @@ status`** shows who's on + the board.
      **`grapevine pull <channel>`** — finite, it prints the history and **exits**. Because the lead
      clears the channel at convene (`--fresh`), that history is **this session**, not an archive of
      past ones, so it's usually the right catch-up. Anchor at a known message id with `--since <id>`
-     on a long-running channel, then fill gaps selectively with `grapevine read <id>`.
+     on a long-running channel, then fill gaps selectively with
+     **`grapevine read <channel> <id>`** — note it takes the **channel _and_ the id**, and does not
+     take `--as`. A bare `grapevine read <id>` exits non-zero with a usage line. A seat who mis-called
+     it once read the non-zero exit as "this command is broken", fell back to `pull --since | head -c`
+     for an entire session, and reported the tool as defective — with the correct usage sitting in his
+     own scrollback. **A usage error and a broken tool look identical if you don't read the output.**
+     - **`read <channel> <id>` is the only way to fetch exactly one message**, and that matters more
+       than gap-filling: it is not a narrower range, it is _not a range_. Any `--since` window runs to
+       _now_, so on a channel peers are actively writing to it will eventually contain a peer's
+       message. When you need one specific message and nothing else, no choice of `--since` gets you
+       there.
      - **NEVER use `tail` to catch up — use it only for the live Monitor.** `grapevine tail
 --from-start | grep …` looks like the obvious backfill and is **broken by construction**:
        `grep` block-buffers so a finite backfill never flushes, and a live `tail` holds the pipe
@@ -69,11 +79,17 @@ status`** shows who's on + the board.
      untracked file until you synthesize it, so an abrupt session-end evaporates the whole trail —
      precisely the loss anthill exists to prevent. Synthesize into your seat doc at finalize, **or
      earlier, whenever the reasoning is warm**. Earlier is not jumping the gun; it's insurance.
-   - **`.anthill/scratch/` is also the gate-safe home for _throwaway artifacts_** — verify mints,
-     screenshots, seeds, any harness output. The commit gate skips it (gitignored + excluded from the
-     typecheck/lint), so a stray artifact dropped there never trips the shared tree and blocks another
-     seat's land. Don't scatter throwaways at the repo root or under `plugin/`, where the gate _will_
-     scan them.
+   - **`.anthill/scratch/` is the right home for _throwaway artifacts_** — verify mints, screenshots,
+     seeds, any harness output. It is **gitignored, and excluded from the typecheck/lint target set**,
+     so a stray artifact dropped there never trips the shared tree and blocks another seat's land.
+     Don't scatter throwaways at the repo root or under `plugin/`, where the gate _will_ scan them.
+     - **⚠ That protection holds for files the gate _scans_. It does not hold for files a tool
+       _discovers on its own_.** Config files are the exception and you must treat them as one: a
+       `biome.json` (or `tsconfig.json`, `.eslintrc`, `vitest.config.ts` …) dropped in scratch is
+       still found, because formatters and type-checkers walk the filesystem for nested configs and
+       **never consult gitignore for discovery**. A seat did exactly this and **took the gate down for
+       the whole team** — from a directory the docs had called safe. Put throwaway _configs_ outside
+       the repo entirely.
 
 5. **Signal ready** on the vine (a short "in, grounded, here's my lane") and **claim your bounty card**
    — advance it to `doing` when you actually start with **`bounty update <id> --status doing`** (the
