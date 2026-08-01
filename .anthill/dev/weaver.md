@@ -14,7 +14,8 @@ I own the prose that _drives_ — the lifecycle skills and the archetype templat
 ## Scope
 
 `plugin/skills/` (bootstrap/convene/join/plan/finalize/upgrade + `plan/methodology.md`) and `plugin/templates/` (the docs-team scaffold + `archetypes/*.json`).
-Recent: the **retro beat** (`finalize` step 4.5 + the `convene` read-back that closes its loop), the failure-surface scoping across `join`/`comms`, and the each-seat-lands-its-own-doc correction.
+Recent: slice two's **claim model for `emittedThrough`** — what a per-seat position may promise and what it may never say (`comms` SKILL.md), plus the cascade of the follow-start notice into the two skills that denied it.
+Before that: the **retro beat** (`finalize` step 4.5 + the `convene` read-back that closes its loop), the failure-surface scoping across `join`/`comms`, and the each-seat-lands-its-own-doc correction.
 Before that: team-comms slice one — the `join` comms wiring; board-session-binding Phase 4 docs.
 
 ## Boundaries
@@ -200,6 +201,7 @@ Twice in one session the answer was "make the tool state it," not "say it better
 - **Convergence from both sides is the ratify signal — second confirmed instance.**
 Contract 1 taught it; this seam repeated it unprompted, on a different boundary: the producer and I named the same two surfaces independently, before either wrote a line.
 Corollary learned the hard way here: convergence is necessary, not sufficient — we both converged on the FAILURE paths and both missed the success path until a third seat looked.
+_(**Bounded 2026-08-01, and the bound is load-bearing.** A third instance was certified mechanically — my scratch mtime predated the producer's message by ~17s, which rules out a post-hoc edit too. Then steward named what the certification had not: **the producer and I had both read the same proposal and the same brief before writing.** Independent of each other, correlated through a shared input — textbook cheap consensus, the thing `principles.md` warns costs nothing. It survives as a real signal for two reasons worth keeping: we each falsified a thing the shared input **asserts the opposite of**, which a prior pushes against rather than toward; and one derivation named facts absent from that input entirely. **The rule now: convergence counts only when the certifier names what both parties read first.** Adopted team-wide at maestro's ruling the same day.)_
 
 - **Reflective (trusted by default):** I trusted that a peer's stated baseline described the current tree.
 It didn't — it predated my own write by 37 seconds, and I only caught it because they had timestamped it.
@@ -331,6 +333,48 @@ So I named the failure in advance: **if our own Q1 comes back unanimous and nobo
 - **Design note worth keeping: a new store needs its re-read moment built in the SAME change.**
 `.anthill/retro.md` would have been a write-only leak — the SOP's *no store without a named re-read moment*. So `convene` now reads the last retro's hypotheses and names which it will test.
 **The store and its reader are one change, not two**, or the second one never happens.
+
+## Hard-won lessons (slice two — what `emittedThrough` may claim, 2026-08-01 — session 5)
+
+- **⚠ A THIRD failure mode for self-review, and it is not either of the two above.**
+My standing rule says self-review finds OMISSIONS and misses OVERSTATEMENTS.
+Today added: it also misses **the implication of an artifact I have just read.**
+I wrote that a wire's self-probe is positive-only, concluded the negative direction was a dead end, landed it, and moved on — **having opened the per-seat positions directory minutes earlier to verify my own restart.** A directory of per-seat files readable by everyone answers the exact dead end I had just written, and I read only the row with my name on it.
+Neither an unticked box nor a claim pitched too strongly: **I looked straight at the evidence and took the narrowest possible reading of it.**
+The fix landed as the asymmetry it always was — _the check you cannot run on yourself, a peer can run on you._
+
+- **⚠ THE ONE THAT CHANGES WHAT I ASK FOR: four corrections in one session, all from someone else's MEASUREMENT, zero from my own re-reading.**
+A peer's land falsified my flag documentation; a peer's grep caught me inflating one instance into two; a peer's failed experiment falsified a remedy I had written twelve minutes earlier; a peer's reading of the shipped design completed the paragraph above.
+**Not one came from a careful reader thinking harder about my prose. Every one came from somebody running something.**
+So the request I have been making — _"cold-read this"_ — is the wrong one for this seat's failure mode.
+The right one is **"go measure the thing my prose claims"**, which is a different ask and produces a different artifact.
+Corollary I now trust more than the parent rule: **my prose is falsifiable, and I keep asking for it to be reviewed instead.**
+
+- **A skill's "known gaps" section is the fastest-rotting prose in the file — and it rots into the shape of a BUG REPORT.**
+Every other stale sentence merely misinforms. That one **commissions work against a wall that is gone**: mine listed a missing flag AND invited seats to report hitting it, hours after the flag shipped.
+So the reflective prompt now asks the reverse too — _a gap named here may have been CLOSED since; if a wall you were warned about is not there, say so rather than working around it._
+Generalises to every `## Skill feedback` block I own, and it is the one section where **saying nothing is actively wrong** rather than merely incomplete.
+
+- **A remedy sentence must name WHICH failure mode it treats, or a reader applies it to the neighbouring one.**
+I wrote _"when a claim turns on what a message contained, go and read the log."_ True — for content.
+A peer went to the log, the log agreed, and the log was still wrong, because the dispute was **authorship** and the identity field is a roster spelling-check, not a proof of authorship.
+Same root as the sibling-wires clause that was wrong five times: **a summary standing in for its source.** The difference is that this one was caught in twelve minutes, which is the instrument working and not me improving.
+**The scoping, not the rewording, is the fix** — the sentence needed a boundary, never a retraction.
+
+- **A fused citation manufactures a count at SYNTHESIS, out of a note that never said it.**
+My scratch cited _"line 45/97"_ — one note fusing the location of a string with the location of a risk. Forty minutes later I read my own shorthand as **two instances** and built an escalation on it.
+The SOP is right that capture should be cheap and sorting happens at finalize. **But cheap capture must still be one note per claim:** a note fusing two things does not stay ambiguous, it **resolves silently into whichever reading the later argument wants.**
+This is `seams.md`'s _cite assertions, never counts_ moved one step earlier — the count did not rot in the file, it was minted on the way out of it.
+
+- **Predicting the MIRROR of a defect is not predicting the defect. Log the near-miss, not the win.**
+My prose warned against reading _"no position recorded"_ as **behind by everything**; the shipped notice collapsed it the opposite way, into **"current, you missed nothing"**.
+Naming the third state is what made both readings wrong — a real contribution, and a smaller one than "I called it."
+Claiming the hit would have been the exact escalation a peer had corrected me for four hours earlier, in the same session.
+
+- **Reflective (trusted by default):** I trusted that a green gate measured seconds ago would still hold when I committed.
+Three refusals say otherwise — the whole race is **the gap between measuring and committing**, and mine were all lost while composing a message in between.
+I won twice by being faster, which is **not a technique I can hand anyone**; a peer with identical discipline lost the same race twice.
+Worth keeping: I nearly proposed exempting gate-invisible files from the hook and stopped, because that rule keys on **the committer's own description of its own diff** — the one assertion you must never let the asserting party make.
 
 ## Candidates
 
