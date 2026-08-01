@@ -2,10 +2,13 @@ import { describe, expect, test } from "bun:test";
 import {
   buildCommsIncantation,
   commsLogPath,
+  commsPositionPath,
   encodeMessage,
   nextMessageId,
   parseLog,
+  positionState,
   resolveSeatIdentity,
+  type SeatPosition,
 } from "./comms.ts";
 
 /**
@@ -239,5 +242,74 @@ describe("commsLogPath", () => {
     // A channel name reaches this from config and from `--channel`; a traversal
     // would write the log wherever the caller pointed it.
     expect(() => commsLogPath("/repo/.anthill", "../../etc/passwd")).toThrow();
+  });
+});
+
+describe("positionState — the slice-two primitive's discriminator", () => {
+  const pos = (emittedThrough: number): SeatPosition => ({
+    handle: "forager",
+    channel: "anthill-dev",
+    emittedThrough,
+    at: 1_785_621_000_000,
+    pid: 4242,
+  });
+
+  /**
+   * THREE distinguishable values, asserted as a set. Any one of these alone is
+   * satisfied by a hardcoded return, so the discriminator is only proven by
+   * showing the same function produce all three from different inputs — the
+   * shape Contract 4's assertion (4) exists to enforce.
+   */
+  test("distinguishes never-followed, current and behind", () => {
+    const states = [
+      positionState(10, null),
+      positionState(10, pos(10)),
+      positionState(10, pos(7)),
+    ].map((s) => s.state);
+    expect(states).toEqual(["never-followed", "current", "behind"]);
+    expect(new Set(states).size).toBe(3);
+  });
+
+  test("behind reports HOW FAR behind, not just that it is", () => {
+    const s = positionState(10, pos(7));
+    expect(s).toEqual({ state: "behind", emittedThrough: 7, behindBy: 3 });
+  });
+
+  test("never-followed is NOT behind-by-everything", () => {
+    // A seat that never started a follow and a seat whose follow died at #3 are
+    // different facts. Collapsing them is the ambiguity that made a NaN --since
+    // indistinguishable from a quiet channel.
+    expect(positionState(10, null)).toEqual({ state: "never-followed" });
+    expect(positionState(10, null)).not.toHaveProperty("behindBy");
+  });
+
+  test("a QUIET channel leaves every live follower current — the control that fails if lag is measured by clock", () => {
+    // The design's load-bearing claim. Wall-clock freshness would report this
+    // follower stale purely because nobody has spoken; head-lag reports current
+    // no matter how old `at` is, because the head has not moved either.
+    const ancient = { ...pos(10), at: 0 };
+    expect(positionState(10, ancient).state).toBe("current");
+  });
+
+  test("a follower AHEAD of the head is current, not negatively behind", () => {
+    // Reachable in practice: the follower emits, then reads the head an instant
+    // before another append. `behindBy: -1` would be a number nobody can act on.
+    expect(positionState(9, pos(10)).state).toBe("current");
+  });
+});
+
+describe("commsPositionPath — it becomes a filename", () => {
+  test("puts each seat in its own file under the channel's positions dir", () => {
+    const p = commsPositionPath("/team", "anthill-dev", "forager");
+    expect(p.endsWith("/comms/anthill-dev.positions/forager.json")).toBe(true);
+  });
+
+  test("refuses a handle that would escape the comms dir", () => {
+    // The handle comes from the roster, not argv — but "it came from config" is
+    // not a charset guarantee, and this value is concatenated into a path.
+    expect(() => commsPositionPath("/team", "anthill-dev", "../../etc/passwd")).toThrow(
+      /unsafe seat handle/,
+    );
+    expect(() => commsPositionPath("/team", "../evil", "forager")).toThrow(/unsafe channel/);
   });
 });

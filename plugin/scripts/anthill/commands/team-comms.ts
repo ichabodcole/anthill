@@ -20,18 +20,28 @@
  * lives in `comms.ts` and the contract lives there; this file wires them to argv.
  */
 
-import { appendFileSync, existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname } from "node:path";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import {
   buildCommsIncantation,
   type CommsMessage,
   commsLogPath,
+  commsPositionPath,
   encodeMessage,
   type IdentityResult,
   nextMessageId,
   parseLog,
   resolveSeatIdentity,
+  type SeatPosition,
 } from "../comms.ts";
 import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
 import { defineAnthillCommand, defineCommand } from "../define.ts";
@@ -485,6 +495,37 @@ const readCommand = defineCommand({
 
 const POLL_MS = 400;
 
+/**
+ * Record how far this follower has EMITTED. Written atomically (tmp + rename)
+ * because `follow` is long-lived and can be killed at any instant — including
+ * mid-write, which is the exact scenario this whole primitive exists to make
+ * visible. A torn position file would make the instrument fail in the same way
+ * as the thing it measures, and be indistinguishable from it.
+ *
+ * Failure here is deliberately SWALLOWED. Position is diagnostic metadata; the
+ * stream is the product. A read-only or full disk must not take down a seat's
+ * wire in order to protect the ability to notice that a seat's wire went down.
+ */
+function recordPosition(teamDir: string, channel: string, handle: string, emittedThrough: number) {
+  try {
+    const path = commsPositionPath(teamDir, channel, handle);
+    mkdirSync(dirname(path), { recursive: true });
+    const position: SeatPosition = {
+      handle,
+      channel,
+      emittedThrough,
+      // Epoch, NOT `nowMillis()` — see the SeatPosition docblock.
+      at: Date.now(),
+      pid: process.pid,
+    };
+    const tmp = `${path}.${process.pid}.tmp`;
+    writeFileSync(tmp, `${JSON.stringify(position)}\n`, "utf8");
+    renameSync(tmp, path);
+  } catch {
+    // Intentionally silent: see above.
+  }
+}
+
 const followCommand = defineCommand({
   meta: {
     name: "follow",
@@ -515,7 +556,8 @@ const followCommand = defineCommand({
       process.exit(1);
     }
 
-    const path = commsLogPath(config.teamDirPath(), channel);
+    const teamDir = config.teamDirPath();
+    const path = commsLogPath(teamDir, channel);
     // Start from the current end: `follow` shows what happens FROM NOW. It has
     // no flag to replay history — that is `read`'s job, and the separation is
     // the point.
@@ -546,6 +588,7 @@ const followCommand = defineCommand({
       if (lastNewline < offset) continue;
       const chunk = buf.subarray(offset, lastNewline + 1).toString("utf8");
       offset = lastNewline + 1;
+      let highestEmitted = 0;
       for (const message of parseLog(chunk).messages) {
         // Stream through `emit`, NOT `encodeMessage`. A raw record has no `ok`
         // and no `meta`, so an agent branching on `.ok` gets `undefined` on every
@@ -565,7 +608,14 @@ const followCommand = defineCommand({
           data: message,
           renderText: (m) => `#${m.id} ${m.from} (${m.role}):\n${m.text}\n`,
         });
+        if (message.id > highestEmitted) highestEmitted = message.id;
       }
+      // AFTER the emits, and only on a real delta — never on a timer. A position
+      // written before the message it claims would assert an emit that had not
+      // happened yet, which is the delivered-vs-emitted error one layer down.
+      // Once per batch rather than once per message: same final value, and it
+      // keeps a burst of traffic from becoming a burst of fsyncs.
+      if (highestEmitted > 0) recordPosition(teamDir, channel, identity.handle, highestEmitted);
     }
   },
 });

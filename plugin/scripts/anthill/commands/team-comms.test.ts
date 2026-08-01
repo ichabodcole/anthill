@@ -16,6 +16,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { positionState } from "../comms.ts";
 import { cleanGitEnv } from "./test-support.ts";
 
 const CLI = resolve(import.meta.dir, "..", "cli.ts");
@@ -583,4 +584,71 @@ describe("comms diagnostics: send --dry-run, read --last", () => {
     expect(followHelp).not.toContain("--last");
     expect(run(dir, ["comms", "read", "--last", "1"]).code).toBe(0);
   });
+});
+
+/**
+ * The primitive, proven against a REAL follower rather than against the pure
+ * function. `positionState` can be perfect while nothing ever calls
+ * `recordPosition` — a green unit suite is exactly what would not notice, so
+ * this spawns `follow`, sends to it, and reads the file off disk.
+ */
+describe("comms follow records emittedThrough (the slice-two primitive)", () => {
+  test("a live follower records what it emitted, and read records nothing", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "anthill-comms-pos-"));
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      readFileSync(join(teamDir, ".anthill", "config.json"), "utf8"),
+    );
+    const posPath = join(dir, ".anthill", "comms", "test-channel.positions", "weaver.json");
+
+    const follower = Bun.spawn(
+      ["bun", CLI, "comms", "follow", "--as", "weaver", "--format", "json"],
+      { cwd: dir, env: cleanGitEnv(), stdout: "pipe", stderr: "ignore" },
+    );
+    const drain = (async () => {
+      for await (const _ of follower.stdout as ReadableStream<Uint8Array>) {
+        /* consume */
+      }
+    })();
+
+    await Bun.sleep(400);
+    // NOTHING recorded yet: a follower that has emitted nothing has no position,
+    // and "never followed" must not be forged into "current at 0".
+    expect(existsSync(posPath)).toBe(false);
+
+    run(dir, ["comms", "send", "one", "--as", "forager"]);
+    run(dir, ["comms", "send", "two", "--as", "forager"]);
+    await Bun.sleep(900);
+
+    expect(existsSync(posPath)).toBe(true);
+    const p = JSON.parse(readFileSync(posPath, "utf8"));
+    expect(p.handle).toBe("weaver");
+    expect(p.emittedThrough).toBe(2);
+    expect(p.pid).toBe(follower.pid);
+    // Epoch, not ms-since-process-start. `lock.ts` shipped a stale-steal that
+    // never fired once because it confused exactly these two clocks, so this
+    // asserts the ORDER OF MAGNITUDE rather than trusting the field name.
+    expect(p.at).toBeGreaterThan(1_700_000_000_000);
+
+    // `read` is identity-free by Contract 4(c-bis) and must leave no trace.
+    const before = readFileSync(posPath, "utf8");
+    run(dir, ["comms", "read"]);
+    expect(readFileSync(posPath, "utf8")).toBe(before);
+    expect(
+      existsSync(join(dir, ".anthill", "comms", "test-channel.positions", "forager.json")),
+    ).toBe(false);
+
+    // A KILLED follower falls behind: the head moves and its position does not.
+    // This is the negative direction the send-echo can never provide.
+    follower.kill();
+    await drain.catch(() => {});
+    run(dir, ["comms", "send", "three", "--as", "forager"]);
+    await Bun.sleep(600);
+    const after = JSON.parse(readFileSync(posPath, "utf8"));
+    expect(after.emittedThrough).toBe(2);
+    expect(positionState(3, after)).toEqual({ state: "behind", emittedThrough: 2, behindBy: 1 });
+
+    rmSync(dir, { recursive: true, force: true });
+  }, 15_000);
 });

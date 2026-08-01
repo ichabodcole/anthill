@@ -205,3 +205,85 @@ export function nextMessageId(existing: CommsMessage[]): number {
   for (const m of existing) if (m.id > max) max = m.id;
   return max + 1;
 }
+
+// ---------------------------------------------------------------------------
+// Per-seat position — the slice-two primitive.
+//
+// THE SEAM, and it is the whole reason this is not called `deliveredThrough`:
+// the tool can only observe what it EMITTED — a write to its own stdout. What
+// arrived at the agent is downstream of a pipe buffer, the harness, and its
+// batching, none of which this process can see. `emittedThrough` is an
+// artifact; what a seat has READ stays testimony and stays hand-written.
+// Ruled on comms #151. Contract 4 in `.anthill/dev/seams.md` owns the wording.
+//
+// Only `follow` records. `read` deliberately records NOTHING: it is
+// identity-free by Contract 4(c-bis), so it has no seat to attribute a position
+// to, and inventing one would be the ambient-identity fallback that contract
+// forbids. The cost is real and accepted — a seat that only ever reads has no
+// position at all, which is why "never followed" is its own state below and not
+// a null.
+// ---------------------------------------------------------------------------
+
+/** Where one seat's position lives. Per-seat FILE, deliberately: each follower
+ * writes only its own, so concurrent followers never contend and this needs no
+ * lock at all. A single shared positions file would reintroduce the
+ * read-compute-write race that duplicate message ids already cost us. */
+export function commsPositionPath(teamDir: string, channel: string, handle: string): string {
+  if (!SAFE_CHANNEL.test(channel)) {
+    throw new Error(`unsafe channel name "${channel}" — it becomes a filename`);
+  }
+  // The handle becomes a filename too. It arrives from the roster rather than
+  // from argv, but "it came from config" is not a charset guarantee, and a
+  // handle of `../../x` would escape the comms dir entirely.
+  if (!SAFE_CHANNEL.test(handle)) {
+    throw new Error(`unsafe seat handle "${handle}" — it becomes a filename`);
+  }
+  return resolve(teamDir, COMMS_DIR, `${channel}.positions`, `${handle}.json`);
+}
+
+export interface SeatPosition {
+  handle: string;
+  channel: string;
+  /** Highest message id this seat's `follow` has WRITTEN TO STDOUT. Not read. */
+  emittedThrough: number;
+  /** Epoch ms — `Date.now()`, NEVER `nowMillis()`. `nowMillis()` is ms since
+   * PROCESS START, and `lock.ts` shipped a stale-steal that never once fired
+   * because it compared exactly those two clocks. A timestamp that will be
+   * compared against anything outside this process must be epoch. */
+  at: number;
+  /** The recording follower's pid, so a stale position can be told apart from a
+   * live one that is merely idle. Advisory: pids are reused, so this narrows a
+   * question rather than answering it. */
+  pid: number;
+}
+
+export type PositionState =
+  | { state: "never-followed" }
+  | { state: "current"; emittedThrough: number }
+  | { state: "behind"; emittedThrough: number; behindBy: number };
+
+/**
+ * Where a seat stands, as THREE distinguishable states rather than one nullable
+ * number.
+ *
+ * Measured as lag against the log head, NOT as wall-clock freshness of `at`.
+ * Freshness measures the TRAFFIC, not the wire: on a quiet channel no position
+ * moves, so every healthy follower would look equally dead — during exactly the
+ * silent stretch where a real drop is hardest to notice. Head-lag is 0 for every
+ * live follower no matter how quiet it is, and grows only for one that has
+ * actually stopped consuming.
+ *
+ * Its honest limit: it can only convict a follower once SOMEONE SENDS. A dead
+ * wire on a silent channel is invisible to this and to everything else we have.
+ *
+ * "never-followed" is not "behind by everything". A seat that never started a
+ * follow and a seat whose follow died at message 3 are different facts, and
+ * collapsing them is the same ambiguity that made `--since` garbage look like a
+ * quiet channel.
+ */
+export function positionState(head: number, position: SeatPosition | null): PositionState {
+  if (position === null) return { state: "never-followed" };
+  const behindBy = head - position.emittedThrough;
+  if (behindBy <= 0) return { state: "current", emittedThrough: position.emittedThrough };
+  return { state: "behind", emittedThrough: position.emittedThrough, behindBy };
+}
