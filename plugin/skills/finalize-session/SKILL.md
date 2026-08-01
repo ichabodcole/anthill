@@ -152,6 +152,44 @@ rule in the very commit that creates the truth being restated.
      and it still never reached anthill, because nothing in this ritual asked it to. **The reflection
      produces the most valuable feedback anthill gets and currently routes none of it upstream.**
 
+4.5. **Retro — three questions, answered as a team, written to `.anthill/retro.md` (newest first).**
+Distinct from step 4: the structure reflection asks about the team's **shape**; the retro asks for
+**judgement about the session**. Also distinct from the friction sweep in step 1 — that collects what
+happened, this evaluates it.
+
+1.  **What went well?**
+2.  **What didn't go well?**
+3.  **What would you change for the next round?**
+
+Two rules do all the work here. Without them a retro produces a mood, and a mood cannot be checked.
+
+- **Q3 answers are HYPOTHESES the next session can test, or they are not answers.** _"We should
+  communicate better"_ is untestable and dies in the doc. _"Announcing a shared-file hold before
+  editing will eliminate collision rework — if it doesn't, the hazard isn't announcement latency"_
+  can come back wrong, and a prediction that fails precisely teaches more than one that survives.
+  **A change you cannot test is a preference wearing evidence's clothes.**
+- **Ask of every Q1/Q2 answer: what is behind this besides us agreeing?** A retro is the most
+  consensus-prone thing the team does — it asks agents who shared a session, a channel and a frame
+  to evaluate it, and convergence will feel like validation when it is just the expected output of
+  shared priors.
+  - **Claims about ARTIFACTS are executable** — _"the gate is green"_, _"follow doesn't backfill"_,
+    _"3 of 3 proof citations are wrong"_. **Run it.** When an artifact answers, nobody agreed with
+    anything and shared priors cannot degrade it.
+  - **Claims about US are testimony** — _"coordination went well"_, _"the ratify saved rework"_.
+    Not worthless, but **label them**, and prefer the version carrying a number, a timestamp, a diff
+    or a count. **Convert where you can:** _"the ratify saved rework"_ is testimony; _"the contract
+    found three pre-existing violations on first use"_ is the same claim with an artifact behind it.
+- **A unanimous Q1 is a smell, not a result.** If everyone names the same success, ask what would
+  have had to happen for anyone to notice otherwise — and write **that** down too.
+- **The lead is in scope, and a retro where the lead comes out clean is a retro that did not run.**
+  Q2 is not a politeness exercise. Deference is the specific failure this format is exposed to: on
+  one team, three seats accepted the lead's correction on sight and each amplified it against
+  themselves — and part of it was wrong. **Unanimous deference would have carried a false claim
+  into a document with nothing to check it against.**
+
+Keep it small. Three questions and these two rules are the whole ritual — **if it needs a taxonomy,
+it has gone wrong.**
+
 5. **Aggregate the team's anthill-upstream feedback.** Beside the seams pass, do the same single-source
    move for the feedback candidates the team surfaced this session about **anthill itself** (not this
    project). Read the **same intake** you already swept — the vine, the seats' scratch, their finalize
@@ -174,6 +212,11 @@ rule in the very commit that creates the truth being restated.
    - ◻ **Every seat reconciled its doc against contracts that CHANGED this session** (step 3.5) —
      restatement replaced with a pointer. The ordering makes this violation the default, not the
      exception: a four-seat team hit it in all five docs at once.
+   - ◻ **Retro written to `.anthill/retro.md`** (step 4.5), newest first — and **every Q3 answer is a
+     hypothesis the next convene can test**, not a preference. Check one thing before you land it:
+     **is any Q1/Q2 answer carried only by everyone agreeing?** If it has no artifact, no number and
+     no count behind it, either attach one or label it as testimony. A retro that skips this is the
+     one that reads well and cannot be checked.
    - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit --as <lead> -m "<msg>" <paths…>`**
      (never `git add -A`) — the `--as` stamps the seat trailer so the atomic land is attributable.
      - **Red tree? (a slice deliberately held red for an atomic land.)** The pre-commit gate runs the

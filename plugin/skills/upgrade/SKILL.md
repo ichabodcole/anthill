@@ -133,7 +133,8 @@ and the docs look fine because they are perfectly valid — just old.
 diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" .anthill/README.md
 ```
 
-Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`.
+Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
+`retro.md`.
 
 Then **classify each hunk** — never sync wholesale:
 

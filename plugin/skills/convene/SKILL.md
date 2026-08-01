@@ -43,6 +43,12 @@ stay solo.
      seat scopes against what this phase actually needs — if a scope has drifted or doesn't fit, **split
      / merge / re-draw it now** (and `anthill init` any new seat doc). This is the forward half of the
      finalize re-scope reflection: last session's captured misfit is this session's signal to act on.
+   - **Read the last retro's Q3 hypotheses (`.anthill/retro.md`, newest first) and say which ones this
+     session will test.** They were written to be falsifiable; a hypothesis nobody checks is the same
+     shape as an untested backup — it reads as protection and has never once been exercised. **Name
+     them in the convene brief**, so the seats know what they're testing, and carry the verdict into
+     the next retro. **A prediction that comes back _wrong_ is the valuable outcome**, not a failure of
+     the previous team — say so when you brief it, or seats will quietly protect it.
    - Anything constraining: what's already in flight, deadlines, sensitivities.
 
 3. **Stand up coordination.**

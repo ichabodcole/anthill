@@ -239,6 +239,20 @@ Its output flows to seat docs, `seams.md`, and **occasionally the roster/config 
 `anthill init` after a reshape to render new seat docs (existing ones are never clobbered). The
 anthill is yours to re-shape.
 
+Then the **retro** — _what went well · what didn't · what would you change_ — written to
+`.anthill/retro.md`, newest first. It differs from the reflection above by asking for **judgement**
+rather than shape, and two rules are what make it more than a mood:
+
+- **Every "what would you change" is a HYPOTHESIS the next session can test**, or it isn't an answer.
+  The next convene reads them back and says which it will test — so a prediction that comes back
+  **wrong** is the valuable outcome, not a failure of the team that wrote it.
+- **Agreement is not truth: ask what is behind each answer besides everyone agreeing.** Claims about
+  **artifacts** are executable — run them, and nobody had to agree with anything. Claims about **us**
+  are testimony; label them, and prefer the version carrying a number, a diff or a count. A retro of
+  agents who shared one session and one frame will converge, and that convergence is the expected
+  output of shared priors rather than evidence. **A unanimous "what went well" is a smell.**
+  **The lead is in scope** — a retro where the lead comes out clean is a retro that did not run.
+
 ## Onboarding a fresh agent
 
 Ground in the **product** first (the `grounding` docs in `.anthill/config.json`), then: this SOP →
