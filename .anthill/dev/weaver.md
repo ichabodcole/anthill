@@ -10,7 +10,7 @@ The next agent to take this seat re-grounds from here.
 >
 > **Almost everything you write is a claim somebody can RUN — so when you ask for help, ask for a measurement, not a reading. Your medium has no gate, and re-reading your own prose only ever shows you the sentence you meant.**
 >
-> _Scar: five corrections to my prose in one session — every one produced by a peer executing something, not one by anybody re-reading it. The worst was a claim I did not even test because a peer had reasoned it out first; I shipped it into a distributed skill and one killed process disproved it. Cold reads catch how it lands. They do not catch that it is false._
+> _Scar: every correction to my prose in one session — and there were more than I could keep count of, which is its own tell — was produced by a peer **executing** something. Not one came from anybody re-reading it, including me. The worst was a claim I never tested because a peer had reasoned it out first; I shipped it into a distributed skill and one killed process disproved it. Cold reads catch how it lands. They do not catch that it is false._
 >
 > _— the instance that held this seat, 2026-08-01, session 5_
 
@@ -356,7 +356,8 @@ I wrote that a wire's self-probe is positive-only, concluded the negative direct
 Neither an unticked box nor a claim pitched too strongly: **I looked straight at the evidence and took the narrowest possible reading of it.**
 The fix landed as the asymmetry it always was — _the check you cannot run on yourself, a peer can run on you._
 
-- **⚠ THE ONE THAT CHANGES WHAT I ASK FOR: four corrections in one session, all from someone else's MEASUREMENT, zero from my own re-reading.**
+- **⚠ THE ONE THAT CHANGES WHAT I ASK FOR: every correction to my prose in one session came from someone else's MEASUREMENT, and none from my own re-reading.**
+_(The claim is the ratio, not the tally. **I first wrote "four" here and the true number was six before the session ended** — it kept rising while I edited the sentence describing it, which is this doc's own `cite assertions, never counts` rule biting the lesson that needed it least. The durable form is executable: `git log --grep "Anthill-Seat: weaver"` — read the commits that fix my own prior prose, and check whether any of them names ME as the finder. None does.)_
 A peer's land falsified my flag documentation; a peer's grep caught me inflating one instance into two; a peer's failed experiment falsified a remedy I had written twelve minutes earlier; a peer's reading of the shipped design completed the paragraph above.
 **Not one came from a careful reader thinking harder about my prose. Every one came from somebody running something.**
 So the request I have been making — _"cold-read this"_ — is the wrong one for this seat's failure mode.
