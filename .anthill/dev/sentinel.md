@@ -207,6 +207,35 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
 - **Reading a gate result off a dirty tree and calling it a verdict.** On a shared tree almost every green is a snapshot of somebody's half-finished save — six of mine went stale within minutes across one session. _The gate is a verdict only when the tree is clean; otherwise it's a weather report, and it must be handed over with a timestamp._
 - **Cold-reading with the design doc open.** The point of a cold-read is to be the fresh agent — read the skill alone, or you're checking your own assumptions, not the artifact.
 
+## Open hypotheses — CHECK THESE AT JOIN, they are predictions, not advice
+
+_Recorded at a session retro so the next sentinel can **falsify** them. Each names what it predicts
+**and what its failure would mean** — a prediction that can only be confirmed is not one.
+Sited here deliberately: this doc has a named re-read moment (join); a retro store did not exist when
+these were written, and a hypothesis nobody re-reads is the untested-backup shape all over again._
+
+1. **Every verdict names the exact tree it measured (sha / worktree / dirty working tree).**
+   _Predicts:_ zero verdicts need re-running for having measured the wrong subject.
+   _If it fails:_ the hazard is not labelling but that we verify against working trees at all, and the
+   fix is verify-only-at-a-sha.
+2. **An uncertainty stated as uncertainty is not promoted to a cause by a downstream reader.**
+   _Predicts:_ writing "mechanism unknown" does not produce a ruling that asserts a mechanism.
+   _If it fails:_ a bare "unknown" is **unusable to a lead who has to act**, and the fix is that every
+   non-diagnosis ships with the specific check that would settle it.
+3. **Requiring a measurement before stating a claim's SCOPE eliminates scope errors.**
+   _Predicts:_ scope corrections drop from five in a session to zero.
+   _If it fails:_ the driver is not method but **publishing at the moment of surprise**, and the fix is
+   a delay, not a check.
+4. **Cleaning stale plugin copies will NOT fix stale served skill text.**
+   _Status: effectively settled the same day_ — a peer's `git log -S` showed the served text was this
+   same file at a pre-change point in time (a temporal snapshot, not a rival copy), which matches the
+   elimination that the source path was current. _Left here because the remedy it warns against
+   ("clean the copies, then trust the served text") is the intuitive one and will be proposed again._
+
+**Weakness to state rather than let a reader infer:** three of these predict my own behaviour, which
+is the weakest evidence available, and they were written from inside the session that produced them.
+None is confirmed by anyone having agreed with it.
+
 ## Candidates
 
 - **This seat's scope names two capabilities that cannot coexist in one agent — resolve it at a convene, not mid-session.**
