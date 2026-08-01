@@ -39,7 +39,9 @@ import {
   encodeMessage,
   type IdentityResult,
   nextMessageId,
+  type PositionState,
   parseLog,
+  positionState,
   resolveSeatIdentity,
   type SeatPosition,
 } from "../comms.ts";
@@ -506,6 +508,52 @@ const POLL_MS = 400;
  * stream is the product. A read-only or full disk must not take down a seat's
  * wire in order to protect the ability to notice that a seat's wire went down.
  */
+/** This seat's last recorded position, or null if it has never followed. A
+ * damaged file is treated as null: an unreadable position is not evidence of a
+ * position, and the notice below must not report a gap it invented. */
+function readPosition(teamDir: string, channel: string, handle: string): SeatPosition | null {
+  try {
+    const path = commsPositionPath(teamDir, channel, handle);
+    if (!existsSync(path)) return null;
+    return JSON.parse(readFileSync(path, "utf8")) as SeatPosition;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * What `follow` announces before it streams a single message.
+ *
+ * The failure this closes, stated as it was costed: *a re-armed monitor cannot
+ * tell whether it missed nothing or missed forty messages.* That is an
+ * INFORMATION gap, not a replay gap — so `follow` reports it and `read` fills
+ * it. `follow` still cannot terminate and still cannot serve a range.
+ *
+ * Deliberately NOT `follow --since <id>`: a bounded-looking flag on an endless
+ * stream is the anthill#54 trap, where catch-up returns nothing and then times
+ * out, which reads as an empty channel. The guardrail lives in the verb surface
+ * precisely because prose warnings against it have already failed.
+ *
+ * `catchUpWith` is a fully-resolved command string, not a description
+ * (Contract 4(d): exemplify the dialogue, never the invocation). It is
+ * explicitly `null` rather than omitted when there is no gap — "told there is
+ * none" and "wasn't told anything" must not look alike.
+ */
+interface FollowStartData {
+  notice: "follow-start";
+  channel: string;
+  from: string;
+  role: string;
+  /** never-followed · current · behind — the same three states as the primitive. */
+  position: PositionState["state"];
+  /** Highest id in the log at the instant this follower attached. */
+  head: number;
+  previousPosition: number | null;
+  /** How many messages this seat has not been emitted. 0 when there is no gap. */
+  gap: number;
+  catchUpWith: string | null;
+}
+
 function recordPosition(teamDir: string, channel: string, handle: string, emittedThrough: number) {
   try {
     const path = commsPositionPath(teamDir, channel, handle);
@@ -562,6 +610,40 @@ const followCommand = defineCommand({
     // no flag to replay history — that is `read`'s job, and the separation is
     // the point.
     let offset = existsSync(path) ? statSync(path).size : 0;
+
+    // Announce the gap BEFORE streaming. This is the whole of `t-892c1d8e`:
+    // a re-armed follower must not be unable to tell "missed nothing" from
+    // "missed forty". It reports; it does not replay.
+    {
+      const head = nextMessageId(readChannel(teamDir, channel).messages) - 1;
+      const previous = readPosition(teamDir, channel, identity.handle);
+      const state = positionState(head, previous);
+      const gap = state.state === "behind" ? state.behindBy : 0;
+      const start: FollowStartData = {
+        notice: "follow-start",
+        channel,
+        from: identity.handle,
+        role: identity.role,
+        position: state.state,
+        head,
+        previousPosition: previous?.emittedThrough ?? null,
+        gap,
+        catchUpWith:
+          gap > 0 && previous
+            ? `anthill comms read --channel ${channel} --since ${previous.emittedThrough}`
+            : null,
+      };
+      emit({
+        format,
+        command: "comms follow",
+        data: start,
+        renderText: (d) =>
+          d.gap > 0
+            ? `following ${d.channel} as ${d.from} — YOU MISSED ${d.gap} message(s) ` +
+              `(#${d.previousPosition} → #${d.head}).\ncatch up with: ${d.catchUpWith}\n`
+            : `following ${d.channel} as ${d.from} — no gap (${d.position}, head #${d.head}).\n`,
+      });
+    }
 
     // No keepalive frames. A quiet channel is simply quiet, so the emitted
     // incantation needs no filter and "run it verbatim" is literally true.

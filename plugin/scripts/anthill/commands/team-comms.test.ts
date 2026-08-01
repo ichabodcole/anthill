@@ -375,17 +375,33 @@ describe("M1 — follow emits ENVELOPES under json, not raw records", () => {
 
     const lines = seen.join("").trim().split("\n").filter(Boolean);
     expect(lines.length).toBeGreaterThan(0);
-    for (const line of lines) {
-      const env = JSON.parse(line);
-      // Pre-fix these three are all undefined: the record was written straight
-      // to stdout via `encodeMessage`, so an agent branching on `.ok` got
-      // `undefined` on every message of the most-executed comms command.
+    const envs = lines.map((l) => JSON.parse(l));
+
+    // M1's ACTUAL claim, and it holds for every line whatever its payload: each
+    // one is a real `{ok,data,meta}` envelope. Pre-fix all three are undefined,
+    // because records went straight to stdout via `encodeMessage`.
+    for (const env of envs) {
       expect(env.ok).toBe(true);
       expect(env.meta.command).toBe("comms follow");
+    }
+
+    // The stream now carries TWO payload shapes, so assert the PARTITION rather
+    // than one rule over both. This test previously said "every line has
+    // data.id" — true only while messages were the entire set, which made it
+    // read as an invariant about the stream when it was an invariant about
+    // messages. The first new shape falsified it, exactly as `team-join.test.ts`
+    // was falsified by the first filter-free wire. Key the assertion on the
+    // thing that causes the requirement.
+    const notices = envs.filter((e) => e.data.notice === "follow-start");
+    const messages = envs.filter((e) => e.data.notice === undefined);
+    expect(notices).toHaveLength(1);
+    expect(envs[0]?.data.notice).toBe("follow-start"); // it must come FIRST
+    expect(messages.length).toBeGreaterThan(0);
+    for (const env of messages) {
       expect(typeof env.data.id).toBe("number");
       expect(typeof env.data.text).toBe("string");
     }
-    expect(lines.some((l) => JSON.parse(l).data.text === "shape probe")).toBe(true);
+    expect(messages.some((e) => e.data.text === "shape probe")).toBe(true);
     rmSync(dir, { recursive: true, force: true });
   });
 });
@@ -651,4 +667,108 @@ describe("comms follow records emittedThrough (the slice-two primitive)", () => 
 
     rmSync(dir, { recursive: true, force: true });
   }, 15_000);
+});
+
+/**
+ * t-892c1d8e — `follow` announces its gap instead of silently starting from now.
+ *
+ * Built as announce-the-gap rather than the card's literal `follow --since
+ * <position>`: a bounded-looking flag on an endless stream is the anthill#54
+ * trap. Ruled on comms #180. `follow` reports the gap; `read` fills it.
+ */
+describe("comms follow announces its gap (H8's falsifier)", () => {
+  const spawnFollower = (dir: string, as: string) =>
+    Bun.spawn(["bun", CLI, "comms", "follow", "--as", as, "--format", "json"], {
+      cwd: dir,
+      env: cleanGitEnv(),
+      stdout: "pipe",
+      stderr: "ignore",
+    });
+
+  const firstEnvelope = async (proc: Bun.Subprocess): Promise<Record<string, unknown>> => {
+    for await (const part of proc.stdout as ReadableStream<Uint8Array>) {
+      const line = new TextDecoder().decode(part).trim().split("\n").filter(Boolean)[0];
+      if (line) return JSON.parse(line);
+    }
+    throw new Error("follower emitted nothing");
+  };
+
+  test("a re-armed follower names the exact gap AND the command that fills it", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "anthill-comms-gap-"));
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      readFileSync(join(teamDir, ".anthill", "config.json"), "utf8"),
+    );
+
+    // CONTROL FIRST — a fresh seat has never followed, and must be TOLD that
+    // rather than shown an empty gap. "Told there is none" and "wasn't told
+    // anything" must not look alike.
+    const first = spawnFollower(dir, "weaver");
+    const opening = await firstEnvelope(first);
+    const openingData = opening.data as Record<string, unknown>;
+    expect(openingData.notice).toBe("follow-start");
+    expect(openingData.position).toBe("never-followed");
+    expect(openingData.gap).toBe(0);
+    expect(openingData.catchUpWith).toBe(null); // explicitly null, not absent
+    expect(openingData).toHaveProperty("catchUpWith");
+
+    // Let it record a position, then kill it — the dying follower.
+    run(dir, ["comms", "send", "one", "--as", "forager"]);
+    await Bun.sleep(900);
+    first.kill();
+    await new Promise((r) => setTimeout(r, 200));
+
+    // Three messages arrive while it is down.
+    for (const t of ["two", "three", "four"]) run(dir, ["comms", "send", t, "--as", "forager"]);
+
+    const rearmed = spawnFollower(dir, "weaver");
+    const notice = (await firstEnvelope(rearmed)).data as Record<string, unknown>;
+    rearmed.kill();
+
+    expect(notice.notice).toBe("follow-start");
+    expect(notice.position).toBe("behind");
+    expect(notice.previousPosition).toBe(1);
+    expect(notice.head).toBe(4);
+    expect(notice.gap).toBe(3); // the number, not merely "there is a gap"
+    // A fully-resolved command, not a description of one (Contract 4(d)).
+    expect(notice.catchUpWith).toBe("anthill comms read --channel test-channel --since 1");
+
+    rmSync(dir, { recursive: true, force: true });
+  }, 25_000);
+
+  test("the gap command actually WORKS and returns exactly the missed messages", async () => {
+    // The notice could name a plausible command that returns the wrong set. This
+    // runs the string the tool emitted, verbatim, and checks what comes back —
+    // the difference between a proof and a well-formed suggestion.
+    const dir = mkdtempSync(join(tmpdir(), "anthill-comms-gapcmd-"));
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      readFileSync(join(teamDir, ".anthill", "config.json"), "utf8"),
+    );
+
+    const f = spawnFollower(dir, "weaver");
+    await firstEnvelope(f);
+    run(dir, ["comms", "send", "seen", "--as", "forager"]);
+    await Bun.sleep(900);
+    f.kill();
+    await new Promise((r) => setTimeout(r, 200));
+    for (const t of ["missed-a", "missed-b"]) run(dir, ["comms", "send", t, "--as", "forager"]);
+
+    const again = spawnFollower(dir, "weaver");
+    const notice = (await firstEnvelope(again)).data as Record<string, unknown>;
+    again.kill();
+
+    // Re-run the emitted command by parsing it back into argv — no hand-built
+    // arguments, so a wrong string fails here rather than being papered over.
+    const argv = String(notice.catchUpWith)
+      .replace(/^anthill /, "")
+      .split(" ");
+    const caught = parse(run(dir, argv).stdout);
+    const texts = (caught.data?.messages as Array<{ text: string }>).map((m) => m.text);
+    expect(texts).toEqual(["missed-a", "missed-b"]);
+
+    rmSync(dir, { recursive: true, force: true });
+  }, 25_000);
 });
