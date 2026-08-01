@@ -4,7 +4,7 @@
     "name": "Cole Reed"
   },
   "metadata": {
-    "description": "LOCAL beta channel for the team-comms spike. Serves anthill from this working tree (feat/team-comms-slice-one), which is the only place `comms` exists. Not for distribution.",
+    "description": "TEMPLATE for the local beta channel (team-comms spike). Copied to ~/.claude/anthill-beta-channel/ at setup \u2014 it must live OUTSIDE the repo, because the ./plugin symlink it needs would otherwise give every tool a duplicate copy of plugin/. See README.md.",
     "version": "0.0.0-local"
   },
   "plugins": [
