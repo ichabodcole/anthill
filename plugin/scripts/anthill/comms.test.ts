@@ -6,7 +6,6 @@ import {
   nextMessageId,
   parseLog,
   resolveSeatIdentity,
-  unknownFlags,
 } from "./comms.ts";
 
 /**
@@ -226,41 +225,6 @@ describe("buildCommsIncantation — the emitted value the consumer renders verba
 
   test("is a single line an agent can run as-is", () => {
     expect(buildCommsIncantation(base).includes("\n")).toBe(false);
-  });
-});
-
-describe("unknownFlags — a typo must never pass silently", () => {
-  const known = ["as", "channel", "format", "stdin"];
-
-  test("accepts a declared flag", () => {
-    expect(unknownFlags(["--as", "forager"], known)).toEqual([]);
-  });
-
-  test("reports an undeclared flag", () => {
-    expect(unknownFlags(["--as", "forager", "--totally-bogus"], known)).toEqual([
-      "--totally-bogus",
-    ]);
-  });
-
-  test("reports a flag borrowed from another tool's signature", () => {
-    // The real mistake: reaching for grapevine's `--since` on a comms verb.
-    expect(unknownFlags(["--since", "3"], known)).toEqual(["--since"]);
-  });
-
-  test("handles --flag=value form", () => {
-    expect(unknownFlags(["--nope=1"], known)).toEqual(["--nope"]);
-  });
-
-  test("ignores positionals and values that look like words", () => {
-    expect(unknownFlags(["hello world", "--as", "forager"], known)).toEqual([]);
-  });
-
-  test("stops treating tokens as flags after --", () => {
-    expect(unknownFlags(["--", "--not-a-flag"], known)).toEqual([]);
-  });
-
-  test("a negative number is a value, not a flag", () => {
-    expect(unknownFlags(["--as", "forager", "-1"], known)).toEqual([]);
   });
 });
 

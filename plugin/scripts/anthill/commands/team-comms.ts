@@ -35,6 +35,7 @@ import {
 } from "../comms.ts";
 import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
 import { defineAnthillCommand, defineCommand } from "../define.ts";
+import { acquireLock, releaseLock } from "../lock.ts";
 import { nowMillis } from "../runtime.ts";
 
 /**
@@ -137,12 +138,10 @@ const sendCommand = defineCommand({
 
     const teamDir = config.teamDirPath();
     let path: string;
-    let existing: CommsMessage[];
     let warnings: string[];
     try {
       const log = readChannel(teamDir, channel);
       path = log.path;
-      existing = log.messages;
       warnings = log.warnings;
     } catch (err) {
       emitError({ format, command: "comms send", error: (err as Error).message });
@@ -165,17 +164,33 @@ const sendCommand = defineCommand({
       process.exit(1);
     }
 
-    const message: CommsMessage = {
-      id: nextMessageId(existing),
-      channel,
-      from: identity.handle,
-      role: identity.role,
-      text,
-      ts: Date.now(),
-    };
-
     mkdirSync(dirname(path), { recursive: true });
-    appendFileSync(path, `${encodeMessage(message)}\n`, "utf8");
+
+    // SERIALIZE the read-compute-append. The id is `max(existing) + 1`, decided
+    // from a READ that precedes the APPEND — so two seats sending at the same
+    // instant both read the same log and both claim the same id. `O_APPEND`
+    // protects the bytes; it does nothing for a value decided beforehand.
+    // Reproduced before fixing: six concurrent sends yielded 1,2,3,4,4,5,5,6,7.
+    // A duplicate id breaks `read <channel> <id>` and the read-watermark
+    // convention ("ratified as of #14"), which is what stable ids are FOR.
+    // The lock also removes any chance of two large appends interleaving.
+    const lock = `${path}.lock`;
+    acquireLock(lock, { waitMs: 10_000, staleMs: 30_000, pollMs: 25 });
+    let message: CommsMessage;
+    try {
+      // Re-read INSIDE the lock: the copy taken before it may already be stale.
+      message = {
+        id: nextMessageId(readChannel(teamDir, channel).messages),
+        channel,
+        from: identity.handle,
+        role: identity.role,
+        text,
+        ts: Date.now(),
+      };
+      appendFileSync(path, `${encodeMessage(message)}\n`, "utf8");
+    } finally {
+      releaseLock(lock);
+    }
 
     const data: SendData = {
       id: message.id,
@@ -344,8 +359,20 @@ const followCommand = defineCommand({
         if (size < offset) offset = size;
         continue;
       }
-      const chunk = readFileSync(path, "utf8").slice(offset);
-      offset = size;
+      // Read as BYTES and slice by BYTES. `statSync().size` is a byte count;
+      // `readFileSync(path,"utf8").slice(n)` indexes UTF-16 code units. Those
+      // agree only while every byte written is ASCII — so the FIRST message
+      // containing an emoji, accent or non-Latin script pushed the offset past
+      // the end of the decoded string and `follow` returned "" forever. Silent,
+      // permanent, and indistinguishable from a quiet channel.
+      const buf = readFileSync(path);
+      // Consume only up to the last COMPLETE line: a partial trailing line is a
+      // write still in flight, not corruption. Leave it for the next poll
+      // rather than hand `parseLog` a truncated record it would drop.
+      const lastNewline = buf.lastIndexOf(0x0a);
+      if (lastNewline < offset) continue;
+      const chunk = buf.subarray(offset, lastNewline + 1).toString("utf8");
+      offset = lastNewline + 1;
       for (const message of parseLog(chunk).messages) {
         process.stdout.write(
           format === "text"

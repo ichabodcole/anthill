@@ -208,3 +208,99 @@ describe("the verb surface cannot express the mistake", () => {
     expect(help(["comms", "read"])).not.toContain("--follow");
   });
 });
+
+describe("regressions — the two concurrency bugs found in review", () => {
+  // Both were reproduced BEFORE they were fixed. Each test below fails against
+  // the pre-fix code, which is the only thing that makes it a regression test.
+
+  test("send: concurrent sends never reuse a message id", async () => {
+    // Pre-fix: `id: nextMessageId(existing)` was computed from a read that
+    // PRECEDED the append, so simultaneous senders read the same log and both
+    // claimed the same number. Six concurrent sends produced 1,2,3,4,4,5,5,6,7.
+    // `O_APPEND` protects the bytes; it does nothing for a value decided before
+    // the write. A duplicate breaks `read <channel> <id>` and the read-watermark
+    // convention ("ratified as of #14") — the whole point of stable ids.
+    const dir = mkdtempSync(join(tmpdir(), "anthill-comms-race-"));
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      readFileSync(join(teamDir, ".anthill", "config.json"), "utf8"),
+    );
+
+    const N = 10;
+    await Promise.all(
+      Array.from(
+        { length: N },
+        (_, i) =>
+          Bun.spawn(
+            ["bun", CLI, "comms", "send", `race ${i}`, "--as", i % 2 ? "weaver" : "forager"],
+            { cwd: dir, env: cleanGitEnv(), stdout: "ignore", stderr: "ignore" },
+          ).exited,
+      ),
+    );
+
+    const ids = readFileSync(join(dir, ".anthill", "comms", "test-channel.ndjson"), "utf8")
+      .trim()
+      .split("\n")
+      .filter(Boolean)
+      .map((l) => JSON.parse(l).id as number);
+
+    expect(ids).toHaveLength(N);
+    expect(new Set(ids).size).toBe(N); // the assertion that failed pre-fix
+    expect([...ids].sort((a, b) => a - b)).toEqual(Array.from({ length: N }, (_, i) => i + 1));
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  test("follow: a multi-byte message does not deafen the tail", async () => {
+    // Pre-fix: the resume offset was a BYTE length from `statSync`, but the
+    // chunk was sliced off a decoded STRING. One em dash makes those disagree
+    // (byte 306 vs char 296) and `slice(offset)` then returns "" forever — the
+    // follower goes permanently deaf with no error and no way to tell it apart
+    // from a quiet channel. Anthill's own docs are full of em dashes and arrows,
+    // so this fires on ordinary use, not an exotic edge case.
+    //
+    // This drives the REAL `follow` process rather than re-deriving its
+    // arithmetic in the test: the bug was that the shipped loop disagreed with
+    // itself about units, which an arithmetic-only test cannot see.
+    const dir = mkdtempSync(join(tmpdir(), "anthill-comms-utf8-"));
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      readFileSync(join(teamDir, ".anthill", "config.json"), "utf8"),
+    );
+
+    const follower = Bun.spawn(
+      ["bun", CLI, "comms", "follow", "--as", "weaver", "--format", "json"],
+      {
+        cwd: dir,
+        env: cleanGitEnv(),
+        stdout: "pipe",
+        stderr: "ignore",
+      },
+    );
+
+    const seen: string[] = [];
+    const drain = (async () => {
+      for await (const part of follower.stdout as ReadableStream<Uint8Array>) {
+        seen.push(new TextDecoder().decode(part));
+      }
+    })();
+
+    await Bun.sleep(400); // let it establish its start-from-now offset
+    // FIRST a multi-byte message: this is what desynced the offset. THEN a plain
+    // one — the second is the canary. Pre-fix the first arrives and every
+    // message after it is swallowed.
+    run(dir, ["comms", "send", "seam ratified — envelope grain → field grain", "--as", "forager"]);
+    await Bun.sleep(400);
+    run(dir, ["comms", "send", "the canary, pure ascii", "--as", "weaver"]);
+    await Bun.sleep(600);
+
+    follower.kill();
+    await drain.catch(() => {});
+
+    const out = seen.join("");
+    expect(out).toContain("envelope grain");
+    expect(out).toContain("the canary, pure ascii"); // the assertion that failed pre-fix
+    rmSync(dir, { recursive: true, force: true });
+  });
+});

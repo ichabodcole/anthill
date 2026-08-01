@@ -1,16 +1,9 @@
 import { spawnSync } from "node:child_process";
-import {
-  closeSync,
-  existsSync,
-  openSync,
-  readFileSync,
-  statSync,
-  unlinkSync,
-  writeSync,
-} from "node:fs";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
+import { acquireLock, releaseLock } from "../lock.ts";
 import { nowMillis } from "../runtime.ts";
 import { requireConfig } from "./team-support.ts";
 
@@ -56,59 +49,6 @@ function lockPath(root: string): string {
   const common = git(["rev-parse", "--git-common-dir"], root);
   const dir = common.ok && common.stdout ? join(root, common.stdout) : join(root, ".git");
   return join(dir, "anthill-team-commit.lock");
-}
-
-function sleep(ms: number): void {
-  // Synchronous wait — this CLI is a one-shot; a blocking poll keeps the lock
-  // logic simple + deterministic.
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
-
-/** Acquire the serialize lock (atomic O_EXCL create), waiting for a peer to
- * release. Steals a stale lock (crashed holder). Returns the wait time, or
- * throws on timeout. */
-function acquireLock(path: string): number {
-  const startedAt = nowMillis();
-  for (;;) {
-    try {
-      const fd = openSync(path, "wx");
-      writeSync(fd, `${process.pid} ${new Date(nowMillis()).toISOString()}\n`);
-      closeSync(fd);
-      return nowMillis() - startedAt;
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code !== "EEXIST") throw err;
-      // Held — steal if stale, else wait.
-      try {
-        if (nowMillis() - statSync(path).mtimeMs > LOCK_STALE_MS) {
-          unlinkSync(path);
-          continue;
-        }
-      } catch {
-        // Lock vanished between the open and the stat — just retry.
-      }
-      if (nowMillis() - startedAt > LOCK_WAIT_MS) {
-        let holder = "unknown";
-        try {
-          holder = readFileSync(path, "utf8").trim();
-        } catch {
-          // ignore
-        }
-        throw new Error(
-          `timed out after ${LOCK_WAIT_MS}ms waiting for the team-commit lock (held by: ${holder}). ` +
-            `If that peer crashed, remove ${path}.`,
-        );
-      }
-      sleep(LOCK_POLL_MS);
-    }
-  }
-}
-
-function releaseLock(path: string): void {
-  try {
-    unlinkSync(path);
-  } catch {
-    // already gone — fine
-  }
 }
 
 /**
@@ -264,7 +204,11 @@ export const teamCommitCommand = defineAnthillCommand({
 
     const root = repoRoot(process.cwd());
     const lock = lockPath(root);
-    const waitedMs = acquireLock(lock);
+    const waitedMs = acquireLock(lock, {
+      waitMs: LOCK_WAIT_MS,
+      staleMs: LOCK_STALE_MS,
+      pollMs: LOCK_POLL_MS,
+    });
 
     // Which of OUR paths were ALREADY staged before we touched the index? We must
     // know this to put the index back exactly as we found it if we bail — see

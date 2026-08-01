@@ -162,20 +162,6 @@ export function buildCommsIncantation(i: {
  * Pure so the tokenizing rules (`--flag=value`, the `--` terminator, negative
  * numbers) are pinned rather than argued about.
  */
-export function unknownFlags(rawArgs: string[], known: string[]): string[] {
-  const out: string[] = [];
-  for (const arg of rawArgs) {
-    if (arg === "--") break;
-    if (!arg.startsWith("--")) continue;
-    const name = arg.slice(2).split("=")[0] ?? "";
-    if (name === "") continue;
-    if (!known.includes(name) && !known.includes(name.replace(/^no-/, ""))) {
-      out.push(`--${name}`);
-    }
-  }
-  return out;
-}
-
 // ---------------------------------------------------------------------------
 // The log. NDJSON, append-only: one message per line, never rewritten.
 // ---------------------------------------------------------------------------

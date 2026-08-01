@@ -77,7 +77,7 @@ status`** shows who's on + the board.
      it once read the non-zero exit as "this command is broken", fell back to `pull --since | head -c`
      for an entire session, and reported the tool as defective — with the correct usage sitting in his
      own scrollback. **A usage error and a broken tool look identical if you don't read the output.**
-     - **Every wire needs this, not just the vine.** If your manifest gave you a `comms` wire, it has
+     - **Every wire needs this, not just the vine.** Your `comms` wire has
        its own catch-up verb and the same rule applies: **a finite read to catch up, the live follow
        only for the Monitor.** Reach for `--help` on the wire you're actually using rather than
        assuming its verbs match the one you learned first — **these tools are siblings, not clones.**

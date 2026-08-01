@@ -156,9 +156,16 @@ export function planV1ToV2(scan: RepoScan): MigrationPlan {
   ops.push({ kind: "gitignore", remove: `${configDir}/scratch/`, add: `${ANTHILL_DIR}/scratch/` });
   notes.push(`gitignore: ${configDir}/scratch/ → ${ANTHILL_DIR}/scratch/`);
 
-  // The comms message log is per-session local state, same genre as scratch, and
-  // an EXISTING team would otherwise get the ignore line only if something
-  // happened to re-run `init` — invisible until they upgrade and commit a log.
+  // The comms message log is per-session local state, same genre as scratch.
+  //
+  // ⚠ SCOPE, stated plainly because an earlier commit message claimed more:
+  // this op lives in the v1→v2 plan, and `MIGRATIONS` holds only that one step
+  // while `CURRENT_VERSION` is 2. A team ALREADY on v2 — which is every team
+  // that has run `anthill:upgrade` — gets an empty plan and never sees it.
+  // Only teams still on v1 are covered here; for everyone else the line
+  // arrives via `anthill init` or the upgrade skill's reconcile step.
+  // Exposure is small (a stray untracked `.anthill/comms/*.ndjson`); the
+  // belief that it was already handled was the actual risk. Caught in review.
   // Spelled as an ensure (`remove` === `add`) rather than a pure add: the
   // executor filters lines equal to `remove`, so an empty `remove` would match
   // every BLANK line and silently reflow the consumer's `.gitignore`.
