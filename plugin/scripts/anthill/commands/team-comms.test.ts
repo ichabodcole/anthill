@@ -57,9 +57,29 @@ function run(cwd: string, args: string[]) {
   };
 }
 
+/**
+ * Parse the envelope, ASSERTING it is the only thing on the stream.
+ *
+ * This deliberately does NOT take `.at(-1)`. Picking the last line makes the
+ * helper tolerate exactly the defect these tests exist to catch: prose (a usage
+ * block, a warning, a stray log) emitted alongside the envelope. An agent does
+ * `JSON.parse(stderr)` on the WHOLE stream and gets a syntax error, while a
+ * last-line helper reports a clean pass — so the suite would stay green while
+ * every real caller broke. Cold review found exactly that leak on `comms
+ * follow` (M1) after this helper had been green over it all along.
+ *
+ * Same shape as `cli.test.ts`'s single-line assertion; that file is the
+ * precedent, this one is catching up to it.
+ */
 function parse(text: string): { ok: boolean; error?: string; data?: Record<string, unknown> } {
-  const line = text.trim().split("\n").filter(Boolean).at(-1) ?? "{}";
-  return JSON.parse(line);
+  const lines = text.trim().split("\n").filter(Boolean);
+  if (lines.length !== 1) {
+    throw new Error(
+      `expected exactly ONE envelope line, got ${lines.length}:\n${text}\n` +
+        "(a second line means something is leaking onto the stream beside the envelope)",
+    );
+  }
+  return JSON.parse(lines[0] as string);
 }
 
 const logPath = () => join(teamDir, ".anthill", "comms", "test-channel.ndjson");
