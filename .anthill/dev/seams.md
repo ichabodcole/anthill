@@ -237,3 +237,42 @@ Note the direction — **the tool got better and the documentation became wrong*
 (b) and (c) are **prose constraints with no mechanical trigger**, and stating that plainly is the point: this file's own rule is *pin to proof where you can*, and here we cannot.
 Per Contract 4's authoring note, the guard is a **named re-read moment** rather than a fake assertion — whoever changes the envelope re-reads the two skills' failure-surface claims in the same change, because that is the only trigger that exists.
 Do not later paper this over with an assertion that merely greps the prose for a forbidden string; that would give the appearance of proof for a claim it does not test, which is the failure mode Contract 4 records against itself.
+
+## Contract 6 — the per-seat position: what `emittedThrough` contains and what it may never claim
+
+**Owner:** forager · **Pointed at from:** weaver (`skills/comms` + `skills/join` tell a consumer-repo seat what a position and a gap MEAN)
+**Ratified at:** which tier the value lives in, what it claims, and the three-state distinction below.
+**NOT** the storage layout, the file-per-seat choice, the poll interval, or the field names — those are the owner's to change freely.
+Ratified on the wire ahead of the code (`#139` brief → `#143` falsification → `#151` ruling), with **two of the lead's stated contents falsified before a line was built** and both corrections adopted.
+
+**The contract, stated once.**
+
+**(a) The tool observes EMITTED. Not delivered, and never read. Three tiers, not two.**
+`follow` stamps the position at the moment it writes a message to **its own stdout**. Between that write and the agent sit a pipe buffer, the harness, and its batching — none of which this process can see. So:
+
+- **emitted** — a byte left this process. **Artifact.** This is the only one the tool has.
+- **delivered** — it arrived at the consuming agent. **Not observable from inside the tool.** A seat can establish it *about itself* by watching its own send echo back through its own follow; nobody can establish it about anyone else.
+- **read** — the agent took it in before forming a view. **Testimony**, and it stays hand-written (*"reading as of #N"*), which is what `--as-of` mechanises without ever inferring.
+
+The brief proposed naming the artifact tier `deliveredThrough`. That was falsified and the reason is the whole point: **the gap between emitted and delivered is zero in the normal case and unbounded in the dying-follower case** — the one case the primitive exists to detect. A field named for delivery, stamped at emit time, would report a seat as current at the precise instant its wire died.
+
+**(b) `follow` records; `read` records NOTHING, and that is a decision.**
+`read` is identity-free under Contract 4(c-bis) — `--as` is declared-and-refused with a teaching error, because `read` is the verb a joining seat runs before it knows its seat. Recording a per-seat position needs a seat, so the proposal's *"read records on exit"* could only be built by either undoing 4(c-bis) or degrading to an ambient identity, which 4(c) forbids outright.
+**The accepted cost, stated so it is not rediscovered as a bug:** a seat that only ever reads has **no position at all**.
+
+**(c) THREE states, and they may never be collapsed into a number.**
+`never-followed` (no record) · `current` (lag 0) · `behind` (lag N). The consumer-facing gap is correspondingly **`null` / `0` / `N`**.
+**`null` is not a rounded-down zero.** With no recorded position the tool has no idea what that seat has seen — it may have read the entire log via `read`. Reporting `0` there asserts *"you missed nothing"*, which is the one claim it is not entitled to make, **on the wire whose entire purpose is to stop silence being mistaken for safety**.
+This clause exists because the first shipped version got it wrong: the producer was honest and its **consumer flattened two states one file away**, which no type check and no gate could see. Caught by the lead against running code.
+
+**(d) Position is measured as LAG AGAINST THE HEAD, never as freshness of a timestamp.**
+`head - emittedThrough`, not `now - at`. A clock measures the **traffic**, not the wire: on a quiet channel no position moves, so every healthy follower looks equally dead — during exactly the silence in which a real drop is hardest to notice.
+**Its honest limit, which belongs in the contract rather than in a footnote:** head-lag can only convict a follower **once somebody sends**. A dead wire on a silent channel remains invisible to this and to everything else we have.
+
+**Why it bites.** Every failure this primitive addresses is one where **an absence and a healthy quiet look identical** — a dead follower, a seat that never joined, a message written against a moved view. Every clause above is a place where a plausible simplification would restore exactly that ambiguity, and each would still read as correct: name the field for delivery, let `read` record too, collapse `null` into `0`, measure freshness instead of lag. **Three of those four were proposed in good faith during this feature's own design.**
+
+**Proof — named assertions, never counts** (per Contract 4's second authoring note; every numeric citation in this file has been wrong at least once).
+- (a)/(b): the `emittedThrough` field name and `readCommand`'s `refused:` string, both in the tree; and the real-follower test asserting **a live follower records what it emitted while `read` leaves the position byte-identical**.
+- (c): the **three-value discriminator** — one function, three inputs, `[null, 0, 1]` asserted **as a set**. Any single case passes against a hardcoded value; the set does not. Plus the never-followed control asserting the position file **does not exist** before the first emit.
+- (d): the **quiet-channel control** — a position with an arbitrarily ancient `at` is still `current` when the head has not moved. **This is the assertion that fails if anyone ever "simplifies" this to wall-clock freshness**, and it is the clause most likely to erode, because freshness is the obvious implementation.
+- The negative direction end-to-end: a follower **killed by PID** falls behind while the head advances, and the emitted `catchUpWith` command, **run verbatim**, returns exactly the missed messages.
