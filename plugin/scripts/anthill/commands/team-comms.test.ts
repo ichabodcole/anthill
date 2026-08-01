@@ -838,3 +838,110 @@ describe("follow-start gap is a three-value discriminator", () => {
     rmSync(dir, { recursive: true, force: true });
   }, 30_000);
 });
+
+/**
+ * t-edfdcf56 — send-time staleness. Six crossings happened on this team in one
+ * session while every seat used the read-watermark convention correctly, which
+ * is H1's cleanest case: the prose guard was followed and could not fire,
+ * because a watermark diagnoses a crossing and cannot prevent one.
+ */
+describe("comms send --as-of refuses a stale send", () => {
+  let dir: string;
+  const dLog = () => join(dir, ".anthill", "comms", "test-channel.ndjson");
+
+  beforeAll(() => {
+    dir = mkdtempSync(join(tmpdir(), "anthill-comms-stale-"));
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      readFileSync(join(teamDir, ".anthill", "config.json"), "utf8"),
+    );
+    run(dir, ["comms", "send", "m1", "--as", "forager"]); // #1
+    run(dir, ["comms", "send", "m2", "--as", "weaver"]); // #2
+  });
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  test("refuses, names what was crossed and by whom, and sends NOTHING", () => {
+    const before = readFileSync(dLog());
+    const r = run(dir, ["comms", "send", "crossing", "--as", "forager", "--as-of", "1"]);
+    expect(r.code).not.toBe(0);
+    const error = parse(r.stderr).error ?? "";
+    expect(error).toContain("#2");
+    expect(error).toContain("weaver"); // WHO crossed you, not just how many
+    expect(error).toContain("--since 1"); // a resolved command, not a description
+    // The half that matters: a refusal that still appended would be the guard
+    // wearing a hat.
+    expect(readFileSync(dLog()).equals(before)).toBe(true);
+  });
+
+  test("the verb is EMITTED, never READ — the tool may not claim what you took in", () => {
+    const error =
+      parse(run(dir, ["comms", "send", "x", "--as", "forager", "--as-of", "1"]).stderr).error ?? "";
+    expect(error).toContain("emitted to you");
+    // Ban the CLAIM, not the word. A first pass banned /\bread\b/ outright and
+    // failed on the emitted `anthill comms read --since 1` — matching prose that
+    // NAMES a command is indistinguishable from matching a claim, which is
+    // already an anti-pattern in this seat's doc and is why the assertion is
+    // keyed on the assertion-shaped phrases instead.
+    expect(error).not.toMatch(/you (?:have |had )?read|since you last read|you['’]ve read/i);
+  });
+
+  test("CONTROL: a CURRENT --as-of sends normally", () => {
+    // Without this, every assertion above is satisfied by a command that refuses
+    // unconditionally.
+    const r = run(dir, ["comms", "send", "current send", "--as", "forager", "--as-of", "2"]);
+    expect(r.code).toBe(0);
+    expect(parse(r.stdout).data?.id).toBe(3);
+  });
+
+  test("CONTROL: your OWN messages never make you stale", () => {
+    // #3 above was forager's. An --as-of of 2 is now behind the head, but the
+    // only thing after it is forager's own message — counting it would make the
+    // check fire on every second message a seat writes, which is the road to
+    // the heartbeat failure.
+    const r = run(dir, ["comms", "send", "still fine", "--as", "forager", "--as-of", "2"]);
+    expect(r.code).toBe(0);
+  });
+
+  test("--anyway sends AND records the crossing rather than hiding it", () => {
+    run(dir, ["comms", "send", "peer speaks", "--as", "weaver"]);
+    const r = run(dir, [
+      "comms",
+      "send",
+      "deliberate",
+      "--as",
+      "forager",
+      "--as-of",
+      "2",
+      "--anyway",
+    ]);
+    expect(r.code).toBe(0);
+    const data = parse(r.stdout).data as Record<string, unknown>;
+    expect(data.staleness).toEqual({ asOf: 2, crossed: 1 });
+  });
+
+  test("--dry-run REPORTS staleness and never refuses on it", () => {
+    // Refusing here would make the safe way to check a crossing the one way you
+    // cannot check it.
+    const r = run(dir, ["comms", "send", "probe", "--as", "forager", "--as-of", "1", "--dry-run"]);
+    expect(r.code).toBe(0);
+    const data = parse(r.stdout).data as Record<string, unknown>;
+    expect(data.dryRun).toBe(true);
+    expect((data.staleness as { crossed: number }).crossed).toBeGreaterThan(0);
+  });
+
+  test("--as-of garbage fails loudly and never leaks NaN", () => {
+    const r = run(dir, ["comms", "send", "x", "--as", "forager", "--as-of", "nonsense"]);
+    expect(r.code).not.toBe(0);
+    expect(parse(r.stderr).error).toMatch(/message id/);
+    expect(r.stderr).not.toContain("NaN");
+  });
+
+  test("#-prefixed ids work — the convention writes them that way", () => {
+    // "reading as of #14" is how every seat writes it, so `--as-of '#14'` is
+    // what muscle memory supplies. A NaN here would be silent staleness.
+    expect(
+      run(dir, ["comms", "send", "hashform", "--as", "forager", "--as-of", "#1"]).code,
+    ).not.toBe(0);
+  });
+});

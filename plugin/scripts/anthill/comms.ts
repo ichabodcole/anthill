@@ -47,6 +47,22 @@ export interface CommsMessage {
   role: string;
   text: string;
   ts: number;
+  /**
+   * How far the SENDER had been emitted when it wrote this — artifact tier, and
+   * the only field here that describes the sender's state rather than the
+   * message's.
+   *
+   * Optional because the log is append-only and never rewritten: every record
+   * written before this field existed lacks it, and `undefined` here means
+   * "written by an older binary", NOT "the sender had seen nothing". Those must
+   * not be conflated — the same never-followed-vs-zero distinction the
+   * follow-start notice already carries.
+   *
+   * It makes a crossing diagnosable from the log ALONE, after the fact, with no
+   * live process involved — which is the property a `meta` field could never
+   * have had, since `meta` is never stored.
+   */
+  emittedThrough?: number;
 }
 
 /** The three distinguishable ways identity resolution can end. */

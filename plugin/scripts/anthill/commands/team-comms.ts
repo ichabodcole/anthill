@@ -102,6 +102,9 @@ interface SendData {
    * seat-identity wedge, and without it a send that read the roster and a send
    * that echoed the caller's string are indistinguishable from outside. */
   identity: IdentityResult["outcome"];
+  /** Present ONLY when `--as-of` was stale and `--anyway` overrode the refusal —
+   * a deliberate crossing, recorded so it is visible rather than silent. */
+  staleness?: { asOf: number; crossed: number };
   warnings?: string[];
 }
 
@@ -120,6 +123,9 @@ interface DryRunData {
   /** The body that WOULD be stored, echoed so a caller can audit shell mangling. */
   text: string;
   wouldAppendTo: string;
+  /** A dry run REPORTS staleness and never refuses on it: refusing would make
+   * the safe way to check a crossing the one way you cannot check it. */
+  staleness?: { asOf: number; crossed: number };
   warnings?: string[];
 }
 
@@ -148,6 +154,15 @@ const sendCommand = defineCommand({
     "dry-run": {
       type: "boolean",
       description: "Resolve and validate everything, then STOP before the write — appends nothing",
+    },
+    "as-of": {
+      type: "string",
+      description: "The message id your view was formed as of — refuses the send if it is stale",
+      valueHint: "id",
+    },
+    anyway: {
+      type: "boolean",
+      description: "Send even though --as-of is stale (you have decided the crossing is fine)",
     },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
@@ -249,6 +264,77 @@ const sendCommand = defineCommand({
      * is exactly the defect the delivered-vs-emitted seam exists to prevent.
      * `wouldAppendTo` and the echoed `text` are facts; the id is not one yet.
      */
+    /**
+     * SEND-TIME STALENESS — the only moment a crossing is preventable.
+     *
+     * A crossing is not a wire failure: every message arrives. It is a message
+     * WRITTEN against a view that has already moved. Six happened on this team
+     * in one session, each costing at least a message and one costing a full
+     * retraction of a sound finding — and every seat was using the read-watermark
+     * convention correctly throughout. **A watermark diagnoses a crossing after
+     * the fact; it cannot prevent one.** That is H1: the prose guard was followed
+     * and did not fire.
+     *
+     * So this promotes the convention a seat already writes by hand — *"reading
+     * as of #195"* — into a value the tool can check, and checks it against the
+     * log at the instant of the send.
+     *
+     * WHY THE ANCHOR MUST COME FROM THE SENDER, and why the recorded position
+     * cannot replace it: a live follower's `emittedThrough` tracks the head
+     * continuously, so by send time it is almost always current — the messages
+     * WERE emitted to the seat, just not before it started composing. The tool
+     * cannot observe when composing began. Only the sender knows, and `--as-of`
+     * is them saying so. This is the delivered/read seam paying out: the
+     * artifact (`emittedThrough`) and the testimony (`--as-of`) answer different
+     * questions and neither substitutes for the other.
+     *
+     * Fires on a REAL DELTA — ids that exist, written by someone else — never on
+     * a timer or an age. A prompt on a timer becomes the heartbeat, and an alarm
+     * that is usually ignorable trains its audience to discard the channel,
+     * which is worse than the gap it closes.
+     */
+    const crossedIds: number[] = [];
+    let staleness: { asOf: number; crossed: number } | null = null;
+    if (ctx.args["as-of"] !== undefined) {
+      const raw = String(ctx.args["as-of"]);
+      const asOf = Number(raw.replace(/^#/, ""));
+      if (!Number.isInteger(asOf) || asOf < 0) {
+        emitError({
+          format,
+          command: "comms send",
+          error: `--as-of needs a message id, got "${raw}". Ids are whole numbers — "--as-of 195" or "--as-of #195".`,
+        });
+        process.exit(1);
+      }
+      // Only OTHER seats' messages count. Your own send cannot cross you, and
+      // counting it would make the check fire on every second message you write.
+      for (const m of readChannel(teamDir, channel).messages) {
+        if (m.id > asOf && m.from !== identity.handle) crossedIds.push(m.id);
+      }
+      if (crossedIds.length > 0) {
+        staleness = { asOf, crossed: crossedIds.length };
+        if (!ctx.args.anyway && !ctx.args["dry-run"]) {
+          const who = [
+            ...new Set(
+              readChannel(teamDir, channel)
+                .messages.filter((m) => crossedIds.includes(m.id))
+                .map((m) => m.from),
+            ),
+          ].join(", ");
+          emitError({
+            format,
+            command: "comms send",
+            error:
+              `stale: ${crossedIds.length} message(s) were added after #${asOf} was emitted to you ` +
+              `(#${crossedIds.join(", #")} — from ${who}). Nothing was sent. ` +
+              `Read them with: anthill comms read --channel ${channel} --since ${asOf} ` +
+              "— then re-send with an updated --as-of, or pass --anyway to send regardless.",
+          });
+          process.exit(1);
+        }
+      }
+    }
+
     if (ctx.args["dry-run"]) {
       const data: DryRunData = {
         dryRun: true,
@@ -258,6 +344,7 @@ const sendCommand = defineCommand({
         identity: identity.outcome,
         text,
         wouldAppendTo: path,
+        ...(staleness ? { staleness } : {}),
         ...(warnings.length > 0 && { warnings }),
       };
       emit({
@@ -289,6 +376,7 @@ const sendCommand = defineCommand({
     let message: CommsMessage;
     try {
       // Re-read INSIDE the lock: the copy taken before it may already be stale.
+      const myPosition = readPosition(teamDir, channel, identity.handle);
       message = {
         id: nextMessageId(readChannel(teamDir, channel).messages),
         channel,
@@ -296,6 +384,10 @@ const sendCommand = defineCommand({
         role: identity.role,
         text,
         ts: Date.now(),
+        // Omitted entirely when this seat has no recorded position, rather than
+        // written as 0. `undefined` already means "unknown" for older records;
+        // a 0 would mean "had seen nothing", which is a different claim.
+        ...(myPosition ? { emittedThrough: myPosition.emittedThrough } : {}),
       };
       appendFileSync(path, `${encodeMessage(message)}\n`, "utf8");
     } finally {
@@ -308,6 +400,7 @@ const sendCommand = defineCommand({
       from: message.from,
       role: message.role,
       identity: identity.outcome,
+      ...(staleness ? { staleness } : {}),
       ...(warnings.length > 0 && { warnings }),
     };
     emit({
