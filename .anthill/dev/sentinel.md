@@ -181,12 +181,20 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
 - **This seat's scope names two capabilities that cannot coexist in one agent — resolve it at a convene, not mid-session.**
   The scope promises _"fresh-context cold-reads"_. A verify seat that joins the seam ratification **is not fresh** by the time the artifact exists — and being in the ratify is what let me catch a contract's missing success-path proof before a line was written, the highest-leverage thing I did all session.
   **Participating trades cold-read capability for falsification capability.** Both are real; they don't compose within one agent, and the scope line reads as though they do.
-  _Options: dispatch a **blank-context subagent** for the cold-read (the join skill recommends exactly this and notes seats never think of it — it wasn't available to me this session, which is itself worth knowing), or split the scope so cold-reads are named as **requiring a fresh reader** rather than implied to be native to the seat._
+  _Options: dispatch a **blank-context subagent** for the cold-read (the join skill recommends exactly this and notes seats never think of it), or split the scope so cold-reads are named as **requiring a fresh reader** rather than implied to be native to the seat._
+  **⚠ Update — the evidence got stronger and it kills the obvious fix.** The session after this note was written, the capability **was** available to me all session and I **still** dispatched zero subagents — having re-grounded that morning in this very paragraph, which warns about this exact failure.
+  _So "remind the seat" is disproven as a remedy: the reminder was in my own file, freshly read, and it did not fire. **A warning I have read and agree with does not become an action.** It needs a **beat in the ritual** — something convene or plan makes me do — or it will keep not happening._
+  _This is the house lesson (*a contract is a description, not a trigger*) turned on the seat's own doc: **the living doc can describe a reflex it cannot cause.**_
   _Raised upstream too: phrased as "anthill's seat-scope model lets a seat name two capabilities that cannot coexist, and nothing in convene/plan/finalize surfaces the conflict," it belongs to every team with a verify seat._
 
 - **UNRULED and ownerless — the `seams.md` proof-pointer practice.** 3 of 3 count citations were wrong (Contracts 1 and 4); the recommendation is named assertions over counts, weaver agreed on the merits and had the file open, and the lead went absent before ruling.
   It needs a decision from someone, and with no lead that is the human's rather than a seat's to self-authorise.
   _Recorded here so it survives the session; the exact replacement text was never spent because the ruling never came._
+
+- **The TTY half of any CLI matrix is structurally weaker than the piped half, and nothing says so.**
+  `Bun.spawnSync` is always a pipe, so TTY-dependent behaviour cannot be pinned in the suite at all; the two columns where a **human** meets an error are verified only by a seat's manual `script -q /dev/null` runs, which vanish with the session.
+  That emulation also **merges stdout and stderr** (and injects `^D`, which broke my own output classifier until I noticed), so **TTY rows can never verify stream separation** — the exact property a "the envelope must not leak onto stdout" regression needs.
+  _State which columns are pinned and which are hand-run when handing over a matrix. A matrix presented as uniform coverage, five of whose seven columns are real, is the representativeness failure in my own deliverable._
 
 - **My clean-room gate is TEST-ONLY, and I should stop implying otherwise.** A detached worktree has no `node_modules`, so `bun run check` dies at `TS2688: Cannot find type definition file for 'bun'` before biome or tests run.
   I verified a landed commit with `bun test` alone and said so — but the honest phrasing is "test leg on a clean checkout", not "the gate on a clean checkout".
