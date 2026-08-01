@@ -52,82 +52,104 @@ reconverging. `dev` and `support` are bound to one repo by construction; researc
 
 > **Handle:** `steward` · **Tier:** support · **Reports:** to the lead · **Does not:** write product code
 
-### Scope
+### What it is: the lead's assistant. Justified on CAPACITY, not on checking.
 
-Takes work off the lead's plate so the lead can hold the shape of the session, rule on what's
-contested, and talk to the human. Two halves, and **they are the same activity**:
+**An earlier draft framed this as a checker with errands attached. That was backwards, and the
+justification was wrong.**
 
-1. **Errands** — "go find out whether X is true", "read this and tell me what it actually says",
-   "hold this context so I don't have to." Anything the lead would otherwise stop to check.
-2. **Standing checks** — watches comms and the tree, and verifies premises nobody asked it to.
+**It is not a response to a verification gap, because there is no verification gap.** `sentinel` is
+the verify seat and it is **succeeding** — in one session it called the stop that killed the lead's
+own prescription, mutation-tested four guards and falsified an outside reviewer 4-for-4, insisted on
+measuring fixes at the commit rather than the dirty tree, and caught that the lead's CLI was running
+a stale binary. Peers caught the rest. **Building a seat aimed at that behaviour would be exactly the
+mistake StoryLoom's lead warned about** — a mandate targeting something already saturated.
 
-The insight that makes this one role rather than two: **when the errand is a check, delegation and
-independent verification are the same act.** A deputy that merely executes inherits the lead's
-framing; a deputy whose executions are verifications does not.
+**What actually failed was the lead's throughput inside one context window.** From one session:
 
-### The disposition — trust but check
+- Rulings crossed three in-flight messages, **twice** — composing while traffic arrived.
+- A `grep -c` was run and its result asserted **in the same breath**, before it was read.
+- A peer team's finding was relayed to the human **before its scope was verified**, and over-read.
+- The lead's own monitors were lost **twice**, once by a command that killed the whole team's.
+
+**None of those is a missed check. Every one is a symptom of holding too many threads at once — and
+the checking that existed caught them all.** So the lever is capacity.
+
+**An assistant with its own context window is capacity, not labour.** That is the whole argument.
+
+### Scope — what it takes off the lead's plate
+
+Concretely, from a real session, the lead's attention went to these and they are all delegable:
+
+- **Reading long messages and returning the decision** — the lead read 3–6k-character seat messages
+  in full, repeatedly, to extract one ruling each.
+- **State checks** — board, gate, tree, wire counts, presence. Run ~15 times by hand.
+- **Fetching and digesting outside reviews** — two, each thousands of words.
+- **Feasibility probes** — e.g. "will these commits cherry-pick to `develop`", which is bounded,
+  mechanical, and answerable without judgement.
+- **Holding context the lead would otherwise carry** — the single scarcest resource in a long session.
+
+**What does NOT delegate**, and is the reason the lead exists: rulings, framing a seam, deciding
+scope, and talking to the human.
+
+### Checking is a by-product, and worth keeping as one
+
+**When an errand IS a check, delegation and independent verification are the same act.** "Go find
+out whether X is true" is both. That is a genuine property of the role and it means steward will
+catch things — but **it is a consequence of doing the work, not the reason for the seat.**
+
+Go **light** on this deliberately. A seat that arrives believing its job is to audit the team will
+duplicate `sentinel` and irritate everyone; a seat that arrives to help and verifies as a matter of
+course will not.
+
+### The disposition it still needs
 
 > **Trust but check. Assume good faith and verify anyway — including, and especially, the lead.**
 
-This is the whole role in one line, and it is deliberately **dispositional rather than
-situational**. Session 4 produced evidence in both directions on which kinds of instruction hold:
+This stays, and it is cheap, because **it costs nothing when there is nothing wrong.** It exists for
+one narrow, measured case: the lead's claims are the one source a rigorous team was observed _not_
+to check. Three seats accepted a wrong correction from the lead on sight; twelve hours later, after
+the exemption was named out loud, the same three checked one. **Naming it is the whole intervention.**
 
-- **Dispositional instructions held.** Naming the deference problem on the wire changed behaviour
-  within one session — three seats went from accepting the lead's wrong correction on sight to
-  checking a wrong ruling before complying. Same team, same day.
-- **Situational warnings failed 0-for-4.** They require recognising that the current moment is an
-  instance of the warned-about class, and every failure was in the recognition, not the compliance.
-
-**Why the lead is named explicitly:** generic verification was already happening. The seats
-mutation-tested a reviewer's claim, re-probed each other's tables, and verified reachability before
-building on it. **The one source nobody checked was the lead.** An instruction that says "verify
-claims" would have changed nothing; the asymmetry has to be named.
+It is **dispositional, not situational** — a standing posture with no recognition step, which is the
+kind of instruction observed to hold.
 
 ### Boundary against `sentinel`
 
 - **sentinel verifies artifacts** — does the fix work, do the tests fail pre-fix, is the gate green.
-- **steward verifies premises** — is the cited thing real, does that number support the sentence
-  around it, is the assumption under this work true.
-
-Session 4's clearest illustration: sentinel proved the parser fix worked; a blank-context reader
-found the _retro's own numbers_ did not support its claims. Different acts.
+  **It is good at this and this is not being taken from it.**
+- **steward, incidentally, verifies premises** — is the cited thing real, does that number support
+  the sentence around it. Only where an errand happens to be one.
 
 ### ⚠ Precondition — measure the baseline before adding this seat
 
-**From StoryLoom's lead, unprompted, and it is a warning about a mistake she made:** she mandated
-that each seat read a peer's recent work at every pause. **It changed nothing measurable — because
-cross-lane referencing was already 97–99%.** She had written a protocol step targeting a behaviour
-whose baseline she had never measured.
+**From StoryLoom's lead, unprompted, and a warning about a mistake she made:** she mandated that each
+seat read a peer's recent work at every pause. **It changed nothing measurable — cross-lane
+referencing was already 97–99%.** She had targeted a behaviour whose baseline she never measured.
 
 > _"A seat whose job is 'read more' is redundant; a seat whose job is 'reproduce claims before they
 > are acted on' is not. Those are different jobs and I conflated them."_
 
-**So before steward is created, measure what is already happening.** If seats already cross-check at
-saturation, **the lever is not attention** and a seat framed around noticing more is redundant. The
-job that is _not_ redundant is **reproducing claims before they are acted on** — which is why this
-role is scoped to premises rather than to vigilance.
+**Applied here, honestly: our checking baseline is good, which is why this seat is not justified on
+checking.** The baseline that is _bad_ is the lead's spare capacity, and that is what it is for.
 
-> **This correction also has a provenance worth recording.** The lead relayed her finding as _"a
-> checker seat changed nothing"_ — an over-read of a narrower result, accepted on sight from a
+> **This correction has a provenance worth recording.** The lead relayed her finding to the human as
+> _"a checker seat changed nothing"_ — an over-read of a narrower result, accepted on sight from a
 > credible source and amplified. **She caught it; the lead did not.** Same shape as the deference
-> failure this proposal exists to address, in the third-party direction, hours after the principle
-> about it was written.
+> failure above, in the third-party direction, hours after the principle about it was written.
 
 ### Standing authority — the anti-capture clause
 
-The lead does not set its whole agenda. **A meaningful share of steward's attention is
-self-directed** — it checks things nobody asked about, and reports what it finds to the lead **and
-to the human**, not through the lead. Without this the role is the lead's instrument and its
-independence is bounded by the lead's framing, which is the original problem wearing a new hat.
+The lead does not set its whole agenda. **A share of steward's attention is self-directed**, and
+anything it finds goes to the lead **and** the human rather than through the lead. Without this the
+role is purely the lead's instrument and inherits the lead's framing — which is the original problem
+wearing a new hat.
 
 ### Deliberately NOT doing
 
 **No instruction is added anywhere telling the seats that steward handles checking**, and none
 telling them they must keep checking. The human's hypothesis, adopted: **absent an instruction to
 change, existing behaviour continues** — and a clause about it is itself an intervention that could
-cause the diffusion it warns against. Testable; see below.
-
----
+cause the diffusion it warns against. Testable; see N1.
 
 ## Role B — `scout` (research tier)
 
@@ -287,6 +309,10 @@ lacks it. Small, well-defined, and a slice-two candidate alongside presence.
 
 ## Hypotheses this proposal makes, for the retro to test
 
+- **N0 — An assistant increases the lead's effective capacity.** _Measured by the throughput
+  failures it is meant to remove: crossed rulings, claims asserted before their check was read,
+  findings relayed before their scope was verified. Falsified if those persist at the same rate with
+  steward present._ **This is the seat's actual justification and the first thing to test.**
 - **N1 — Adding steward does not reduce peer checking.** _Falsified if the rate of seat-on-seat
   corrections drops in the first session with steward present._ No instruction is changed anywhere,
   which is what makes this a real test rather than an assumption.
