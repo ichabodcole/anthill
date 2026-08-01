@@ -54,6 +54,19 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
   The lead ran `bounty --help` (full usage, TRUE); a peer ran `bounty state --help` (returns the board, FALSE). Neither was a bad probe — `--help` is honoured at **tool** level and swallowed at **verb** level.
   Completing the matrix settled it: all three sibling wires honour `--help` at tool level; only the one we built honours it at verb level.
   _Lesson: when two seats' runs conflict, suspect **different referents** before suspecting a bad run — and resolve it by completing the matrix rather than re-running whichever probe you trust. Also: a rule tested across the complete current set ("ask the tool, not the verb") has genuinely better standing than one inferred from a single member — but it is still only true until the set grows, so state it as a tested observation, never a law._
+- **A defect's NAME selects the PROBE, one step before it selects the fix — so the evidence agrees with the name and the gap never surfaces.**
+  An item filed as _"parser errors ignore `--format json`"_ had every probe on the team — the lead's brief, the backlog's repro, my own first pass — testing with an explicit `--format json`.
+  Probing the **dimension** instead (how does format get decided at all?) showed parser errors ignored format resolution _entirely_, including the **no-flag piped** case that is what agents actually run.
+  The prescribed fix would have repaired the named case and left the commonest one silently broken.
+  _The name and the test agreeing is not corroboration; it is one assumption counted twice. Enumerate the inputs of the function that actually decides, not the flag in the title._
+- **Before "is this answer surprising?", ask "did my probe REACH what I'm measuring?" — including when nothing errored.**
+  I probed a missing-required-positional and got a clean envelope, and was one keystroke from posting that the lead's ruling was wrong.
+  The positional was declared `required: false`; an in-run guard caught it, so the parser was never reached and I had measured a control.
+  _My seat doc already had this for the case where a **masking error** fires first. The harder case is this one: **nothing failed**, the output was well-formed, and the invocation was correctly constructed. Absence of an error is not evidence the probe landed._
+  _Mirror worth its own line: that confound pointed at **a peer being wrong**, which is the flattering direction. I audit claims that indict me; I nearly shipped one that flattered me._
+- **Prove the comparison harness can detect DIFFERENCE before you report "identical".**
+  Verifying a "text mode is byte-unchanged" claim, the load-bearing step was not the six `cmp`s that said _same_ — it was showing the same harness reports **DIFF** on the JSON cells.
+  _A "same" from an instrument that cannot demonstrate "different" is worth nothing, and it fails in the direction that feels like success. Same family as a `grep -o ""` that matches anything: the instrument silently agreeing with whatever you hoped._
 - **Kill the confound before you claim the pass — make the fallback point _away_.** When proving a selection mechanism (which board? which config? which route?), a default/fallback can hand you the right answer for the wrong reason. Before asserting the mechanism works, arrange the world so the fallback would give a _different_ answer; a green both the mechanism and its fallback would produce proves nothing. This is the active form of the representativeness reflex, not just a caveat.
 
 ## Hard-won lessons
@@ -121,6 +134,40 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
   _Lesson: enumeration is the **camouflage**, not the cause. The checkable trigger is not "did I list failures?" (fires on everything) but **"did this clause change after I wrote its proof?"** (rare, and therefore actually usable). Re-derive a proof list from the final clause; never carry it forward across a strengthening._
   _Method note: what made this promotable was **two independent clean negatives**, not the three positives — spend the probe on artifacts formed before the hypothesis existed._
 
+- **A test COUNT is a worse proof pointer than none — it raised a false alarm while being structurally incapable of raising a true one.**
+  `seams.md` cited "35 tests" and "18"; actual was 28 and 20. Sweeping the file: Contract 1 cited 25 where actual was 20.
+  **3 of 3 count citations wrong**, and only one was noticed — by the seat who happened to be working in that area.
+  Contract 4's count had gone **down** by 7, which is the shape of _assertions were deleted_, and the number cannot tell you whether that happened: I had to enumerate test names by hand to confirm all four ratified assertions survived (they did).
+  _So the pointer generated a false alarm **and** could not have raised a true one. It drifts on every commit, no gate catches it, and even when correct it answers a question nobody asks._
+  _The fix is **named assertions**, not current numbers — updating the numbers re-arms the same bomb. Honest limit, which belongs in the recommendation: a name is still prose, still un-gated, and a rename breaks it silently; it converts rot-that-is-continuous into rot-on-rename, which is a large improvement and not a fix._
+  _weaver's mechanism is the durable form and better than my evidence-counting: **a count is a claim that goes stale on a commit that has nothing to do with it, while a named assertion can only go stale when someone deletes the assertion — which is exactly the moment you want the contract re-read.** That is the SOP's "no store without a named re-read moment", applied to proof pointers._
+  _Method note on my own reasoning: I had 3-of-3 evidence and reached for **more instances** to make it stick, when the stronger move was the mechanism. Findings get durability from the mechanism, not the sample size — mildly funny, in a finding about counts being weak evidence._
+- **My own finding degraded between two of MY messages — and the message carrying the correct version alongside the wrong one did not save it.**
+  I stated an invariant correctly (_"the **format decision** must not depend on where the error was raised"_), then restated it four messages later as _"the output **shape** must be identical"_ — which correct code violates, since text mode deliberately renders differently on the two paths.
+  The builder implemented the correct property and silently fixed my spec; I found it only by reading his test.
+  **The restatement contained both forms** — the degraded one led, the correct one sat one line below, intact and inert — because the team's own rule is that the first ~200 characters are the only part that lands.
+  _Three things, each usable: (1) **a spec I hand a builder is my artifact and inherits none of the verification of the findings that motivated it**; (2) **a message carrying its own correction does not self-correct — the lead sentence wins**, so "restate carefully and keep the precise version nearby" is a non-guard; (3) the working guard is **re-read the message you first stated a finding in, before restating it.**_
+  _And the meta-failure: I first diagnosed this as "an unverified rider, I reasoned where I should have executed" — a cause that selects the useless fix (**execute more**) when I had already executed and the correct version was upstream in my own output. **My own doc's "the name you give a defect selects the family of fixes" — committed against myself, one message after invoking it about someone else's label.**_
+  _Shape to remember: restatement drift, **one author, no adversary, correct version upstream, lossy version newest** — so the lossy one is what travels. Every guard this team has assumes drift between two artifacts or two people; none cover this._
+- **`git apply` from a subdirectory SKIPS the patch and exits 0 — and the shipped skill described a milder, safer bug.**
+  `join/SKILL.md` warned that a patch applied from a subdir *"lands in the wrong place"*.
+  Measured (git 2.55.0, clean worktree, reset between runs): from the repo root it applies; **from a subdir the bare form, `--directory=.`, and `-p1` all produce no output, change nothing, and return 0**; `--directory=../` is a hard usage error. `--verbose` reveals the hidden `Skipped patch '<path>'.`
+  _A patch that lands in the wrong place leaves an artifact you can find. A patch **skipped with exit 0** leaves no file, no error, no diff and a success code — and the natural reading of "ran it, it succeeded, nothing changed" is **"it must already be applied,"** at which point you delete the patch._
+  _So the skill's remedy (`--directory=<repo-root>`) fails in exactly the silent way its own warning is about. **Apply from the repo root, and verify by CONTENT — grep for a string you know is in the patch — never by exit code.**_
+  _Generalisable past git: **when prose warns you about a failure, the warning names a consequence, and the named consequence can itself be wrong in the safe direction.** Test the warning before relaying it; I was one sentence from repeating this one as fact._
+  _And the tell that it was worth testing at all: this is recovery-path guidance, read **only** when work is already at risk._
+- **A READY expires, and the producer is the worst-placed party to notice.**
+  A builder announced READY at 317 tests; I measured 319 — his test file had been modified two minutes _after_ the announcement, and again later.
+  Nothing was red and both edits were for good reasons; his own words are the finding: _"both times I'd have described the set as stable if asked."_
+  _This seat has now seen three forms: **receiving** a spurious RED, **generating** one and not reporting it, and now **a READY that keeps moving after it is announced.** Verify a READY by bracketing the announcement's timestamp against the mtimes of the READY set — and give the lander the re-run instruction, because it is the only thing that closes the window._
+- **On a wire with no presence, a participant leaving produces ZERO signal — including the lead.**
+  A session run with `comms` as the primary wire lost its lead for 18 messages and ~40 minutes with nobody noticing: comms has **no presence tracking at all**, so a lead reading quietly and a lead whose pane is gone are byte-identical there.
+  The one instrument that shows it (`anthill status`, which reports the **grapevine** roster) I ran at join and had no reason to run again.
+  _Reflex: on a presence-less wire, **re-run the presence check on a schedule rather than on a prompt** — the prompt never comes, because silence is what both states look like. And when the missing party is the **lead**, the SOP's route-through-the-lead default is itself the thing that is broken; that is a human escalation, not a case to improvise around._
+- **The moment three seats agree the tree is green is exactly when "I verify, I don't commit" stops being ceremony.**
+  With the lead gone and a verified fix sitting uncommitted, landing it myself would have been easy and defensible-sounding.
+  _A verifier who lands his own verdict has destroyed the independence that made the verdict worth anything. Uncommitted green work is safe; an unreviewable land is not._
+
 ## Anti-patterns
 
 - **Trusting the pass count as the verdict.** A full green says the code does what the tests say — not that the tests say the right thing, nor that the feature works on a real repo. _(Deliberately not quoting a number: the count changes every session, and a stale one invites the next agent to compare against it as if it meant something.)_
@@ -134,6 +181,14 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
   **Participating trades cold-read capability for falsification capability.** Both are real; they don't compose within one agent, and the scope line reads as though they do.
   _Options: dispatch a **blank-context subagent** for the cold-read (the join skill recommends exactly this and notes seats never think of it — it wasn't available to me this session, which is itself worth knowing), or split the scope so cold-reads are named as **requiring a fresh reader** rather than implied to be native to the seat._
   _Raised upstream too: phrased as "anthill's seat-scope model lets a seat name two capabilities that cannot coexist, and nothing in convene/plan/finalize surfaces the conflict," it belongs to every team with a verify seat._
+
+- **UNRULED and ownerless — the `seams.md` proof-pointer practice.** 3 of 3 count citations were wrong (Contracts 1 and 4); the recommendation is named assertions over counts, weaver agreed on the merits and had the file open, and the lead went absent before ruling.
+  It needs a decision from someone, and with no lead that is the human's rather than a seat's to self-authorise.
+  _Recorded here so it survives the session; the exact replacement text was never spent because the ruling never came._
+
+- **My clean-room gate is TEST-ONLY, and I should stop implying otherwise.** A detached worktree has no `node_modules`, so `bun run check` dies at `TS2688: Cannot find type definition file for 'bun'` before biome or tests run.
+  I verified a landed commit with `bun test` alone and said so — but the honest phrasing is "test leg on a clean checkout", not "the gate on a clean checkout".
+  _Either install into the worktree, or say which legs ran. The distribution/clean-room lesson above has this same shape and I did not connect them in the moment._
 
 - A consumer-integration test (scan output → candidate-seating derivation) would pin the fan-in path in code, not just in a hand-trace. Currently the trace is manual (mine).
 - The single-app-workspace edge got a prose guard this session; worth a fixture that exercises it.
