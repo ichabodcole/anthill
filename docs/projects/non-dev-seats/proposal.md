@@ -157,32 +157,49 @@ leading questions. **After it ends,** scout is a full participant — interviews
 Its presence is stated once at convene and then ambient. Not hidden; seats performing for an
 observer is itself an observable.
 
-### In the retro: the lead runs it, scout supplements — and gets a real turn
+### In the retro: **steward runs it**, the lead answers, scout supplements
 
-**The lead leads.** Running the retro costs the exact attention that makes an observer useful —
-tracking turns, coverage, what to write down. A scout that runs it stops noticing, which is the one
-thing it is for.
+**steward leads the retro. The lead becomes a respondent.**
 
-**But scout is not an iceberg.** It is in the room and in the process, with standing permission to
-interject at any point: _"you did that, I noticed this, ask them about it."_ The most valuable thing
-it contributes is likely **the follow-up question the lead did not think to ask** — because the lead
-has a frame and is busy running the process. A blank-context reader asking _"does that number
-support the sentence around it?"_ is exactly the shape, and no insider asked it.
+This is not workload relief, it is the fix for what actually went wrong. In session 4 the lead was
+**both the largest subject of the retro and its curator** — and the blank-context reader's finding
+was exactly that: _the collected answers were sound, the curation was not._ Having the agent most
+implicated in the findings run the process is the defect. Separating those two is cleaner than any
+clause asking the lead to be honest about itself.
 
-**Sequencing matters and is the part that is easy to get wrong.** scout speaks **after the seats
-answer and before the lead's synthesis is fixed.**
+It also frees the lead to do the thing it could not do while directing: **watch.** A third
+perspective on the session, from the seat that was inside it, costs nothing once someone else is
+holding the process.
 
-- Too early, and it is just another respondent whose answer the lead then curates.
-- Too late — commenting on a finished write-up — and it is reviewing a conclusion instead of shaping
-  one, which is strictly weaker.
+**steward is the right one to hold it** — support tier, no product lane to defend, and its standing
+disposition is already _trust but check, including and especially the lead._ A retro is where that
+disposition is worth the most.
 
-Session 4's failure was **curation**, not collection: the seats' answers were checked, the lead's
-selection of them was not. **scout's turn lands precisely there**, and it is the only turn positioned
-to catch that class.
+**Who does what:**
+
+|             | role in the retro                                                                  |
+| ----------- | ---------------------------------------------------------------------------------- |
+| **steward** | runs it, asks the three questions, **writes `.anthill/retro.md`**                  |
+| **seats**   | answer, independently where possible                                               |
+| **lead**    | **answers as a participant** — does not curate, does not select                    |
+| **scout**   | observes throughout; **speaks after the answers and before the write-up is fixed** |
+
+**scout is not an iceberg.** Standing permission to interject at any point: _"you did that, I noticed
+this, ask them about it."_ Its highest-value contribution is likely **the follow-up question nobody
+running the process would think to ask** — a blank-context reader asking _"does that number support
+the sentence around it?"_ is exactly the shape, and no insider asked it.
 
 **Its live divergence check is worth more in the room than in a later report.** When a seat says X
-and the tree says Y, scout says so while everyone is still present and can respond — rather than
-filing it after the team is gone.
+and the tree says Y, saying so while everyone can still respond beats filing it after the team is gone.
+
+> **⚠ Cascade:** `finalize-session` currently names **the lead** as the retro's writer — added today
+> in `81c9991`, because weaver found the store had no named writer at all. This proposal supersedes
+> that. **Do not fix one without the other**: a store with two claimed writers is worse than one with
+> none, and this is exactly the class of wire-ruling-mutates-a-document defect recorded as H2.
+
+> **Reporting line, so it does not quietly reintroduce the problem:** steward reports to the lead in
+> general, but **its retro write-up goes to the human directly, uncurated by the lead.** Otherwise the
+> lead is back to selecting the account of a session in which it is the largest entry.
 
 ### Output and the decision forum
 
