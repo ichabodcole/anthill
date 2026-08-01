@@ -157,8 +157,13 @@ export function foreignDirtyPaths(porcelain: string, ourPaths: string[]): string
   const out: string[] = [];
   for (const raw of porcelain.split("\n")) {
     if (raw.trim().length === 0) continue;
-    // Status is the first 2 cols, then a space, then the path(s).
-    const body = raw.slice(3).trim();
+    // Status is 2 cols then a space — BUT this string may have been trimmed on
+    // the way in, and an unstaged status leads with a space (" M path"), so the
+    // FIRST line can arrive as "M path" with the column already eaten. A fixed
+    // slice(3) then removes the path's first character, and only on that line —
+    // the reported "corrupts the first path, conditionally". Match the status
+    // instead of counting characters: 1-2 non-space status chars, then space(s).
+    const body = (/^\s{0,2}\S{1,2}\s+(.*)$/.exec(raw)?.[1] ?? raw.slice(3)).trim();
     if (body.length === 0) continue;
     const parts = body.includes(" -> ") ? body.split(" -> ") : [body];
     for (const part of parts) {

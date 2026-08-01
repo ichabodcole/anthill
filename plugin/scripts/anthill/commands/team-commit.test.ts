@@ -123,6 +123,39 @@ describe("unexpectedStaged", () => {
 
 // PURE: the foreign-red diagnostic (anthill#50/#24/#28/#55) — on a gate failure,
 // which dirty paths lie OUTSIDE the commit the seat just attempted?
+// Field report (StoryLoom, 2026-08-01, three independent witnesses): the FIRST
+// path in the foreign-dirty list loses its first character, and only sometimes.
+// Cause: git() trims stdout. Porcelain's status column is two chars, so an
+// UNSTAGED modification is " M path" with a LEADING SPACE — trim eats it, the
+// line becomes "M path", and slice(3) removes "M a" instead of " M ".
+// It survives when the first line is "?? path" or "M  path" (no leading space),
+// which is exactly the reported "conditional, not universal".
+// Severity: this corrupts the one line whose whole job is preventing false
+// attribution. Their lead grepped it for his own path, missed, and blamed peers
+// for his own failure four times.
+describe("foreignDirtyPaths — trimmed porcelain (StoryLoom field report)", () => {
+  test("does NOT eat the first character when the leading status space is gone", () => {
+    // Exactly what git() hands it after .trim(): first line's leading space lost.
+    const trimmed = ["M apps/api/foo.test.ts", " M apps/api/foo.ts", "?? apps/api/bar.ts"].join(
+      "\n",
+    );
+    expect(foreignDirtyPaths(trimmed, ["mine.ts"])).toEqual([
+      "apps/api/foo.test.ts",
+      "apps/api/foo.ts",
+      "apps/api/bar.ts",
+    ]);
+  });
+
+  test("still parses untrimmed porcelain identically", () => {
+    const raw = [" M apps/api/foo.test.ts", " M apps/api/foo.ts", "?? apps/api/bar.ts"].join("\n");
+    expect(foreignDirtyPaths(raw, ["mine.ts"])).toEqual([
+      "apps/api/foo.test.ts",
+      "apps/api/foo.ts",
+      "apps/api/bar.ts",
+    ]);
+  });
+});
+
 describe("foreignDirtyPaths", () => {
   test("names a peer's dirty file, ignoring our own", () => {
     const porcelain = [" M src/mine.ts", " M src/peer.ts", "?? scratch/probe.txt"].join("\n");
