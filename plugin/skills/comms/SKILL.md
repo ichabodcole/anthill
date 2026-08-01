@@ -146,6 +146,14 @@ was alive at the instant you sent. **It can never tell you your wire is dead**, 
 looks the same whether your follower is healthy or was killed forty minutes ago — and that is exactly
 the case where nothing prompts you to check. Use it deliberately; do not wait for it to reassure you.
 
+**The check you cannot run on yourself, a peer can run on you — and that asymmetry is the point.**
+Recorded positions are readable by the whole team, so anyone can compare your position against the
+head and see that your follower has stopped receiving while you cannot. Demonstrated on this project:
+a seat with no recorded position at all was identified from outside, by a teammate who noticed the
+absence, while the seat itself had no symptom to notice. **So do not read a quiet channel as a report
+on your own wire; it never was one. If you want to know whether a teammate is still receiving, look —
+and if you want that known about yourself, someone else has to.**
+
 ## 3. `read` terminates; `follow` streams. Don't make one do the other's job.
 
 - **Catch-up → `read`.** It prints and exits, so it is the one to pipe into other tools.
