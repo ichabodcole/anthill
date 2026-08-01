@@ -212,6 +212,25 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
     if (def.default !== undefined) defaults[name] = def.default;
   }
 
+  // Short alias → long name, so a dash-leading VALUE can be re-attached below.
+  const shortToName = new Map<string, string>();
+  for (const [name, opt] of Object.entries(options)) {
+    if (opt.short) shortToName.set(opt.short, name);
+  }
+
+  /** If `tok` is a STRING flag that takes a separate value, its long name. */
+  const stringFlagName = (tok: string): string | undefined => {
+    if (tok.startsWith("--")) {
+      const n = tok.slice(2);
+      return strings.has(n) ? n : undefined;
+    }
+    if (tok.startsWith("-") && tok.length === 2) {
+      const n = shortToName.get(tok.slice(1));
+      return n !== undefined && strings.has(n) ? n : undefined;
+    }
+    return undefined;
+  };
+
   // Strip `--no-<flag>` negations (node:util doesn't know them) and record them.
   const processed: string[] = [];
   const negated = new Set<string>();
@@ -224,6 +243,19 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
     }
     if (arg.startsWith("--no-")) {
       negated.add(arg.slice(5));
+      continue;
+    }
+    // A VALUE beginning with `-` is not a flag. Under `strict: true` node reads
+    // `-m "-fix thing"` as short options and reports "did you forget the option
+    // argument for '-m'?" — so a commit message starting with a dash became
+    // unusable in the command every seat runs. The `--name=value` form is immune,
+    // so re-attach it that way before the parser tokenizes. Only for STRING
+    // flags: a boolean takes no value, and `--` must stay a terminator.
+    const flagName = stringFlagName(arg);
+    const next = rawArgs[i + 1];
+    if (flagName && next?.startsWith("-") && next !== "--") {
+      processed.push(`--${flagName}=${next}`);
+      i++;
       continue;
     }
     processed.push(arg);

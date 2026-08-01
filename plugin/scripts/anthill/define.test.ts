@@ -73,3 +73,67 @@ describe("parseArgs — the shapes strict mode must NOT break", () => {
     expect(parseArgs(["--", "--weird-file-name"], SPEC)._).toEqual(["--weird-file-name"]);
   });
 });
+
+// Regression from the `strict: true` flip (shipped 1.7.1). A VALUE that starts
+// with `-` is not a flag, but node's parser under strict reads `-m "-fix thing"`
+// as short options and reports "did you forget the option argument for '-m'?".
+// So a commit message beginning with a dash became unusable — in the command
+// every seat runs. `strict: false` tolerated this by accident, which is why it
+// only appeared once strictness landed.
+//
+// Verified against the cached 1.7.0 CLI: `commit -m "-fix thing"` worked there
+// and broke on 1.7.1, so this is a regression rather than a pre-existing gap.
+// (`feedback "-1 star"` is broken on BOTH and is a separate, older issue.)
+describe("parseArgs — a dash-leading VALUE is a value, not a flag", () => {
+  const SPEC = {
+    message: { type: "string" as const, alias: "m" },
+    as: { type: "string" as const },
+    force: { type: "boolean" as const },
+    path: { type: "positional" as const, required: false },
+  };
+
+  test("short alias accepts a value starting with a dash", () => {
+    expect(parseArgs(["-m", "-fix the thing"], SPEC).message).toBe("-fix the thing");
+  });
+
+  test("long flag accepts a value starting with a dash", () => {
+    expect(parseArgs(["--message", "-fix the thing"], SPEC).message).toBe("-fix the thing");
+  });
+
+  test("a value that is only a dash-number still works", () => {
+    expect(parseArgs(["--message", "-1"], SPEC).message).toBe("-1");
+  });
+
+  test("the `=` form was always safe and stays safe", () => {
+    expect(parseArgs(["--message=-fix"], SPEC).message).toBe("-fix");
+  });
+
+  test("a dash value does not swallow a following positional", () => {
+    const r = parseArgs(["-m", "-fix", "src/a.ts"], SPEC);
+    expect(r.message).toBe("-fix");
+    expect(r._).toEqual(["src/a.ts"]);
+  });
+
+  test("`--` stays a terminator, and a dash-leading PATH after it survives", () => {
+    const r = parseArgs(["-m", "msg", "--", "-weird-file-name"], SPEC);
+    expect(r.message).toBe("msg");
+    expect(r._).toEqual(["-weird-file-name"]);
+  });
+
+  test("a flag with NO value still errors — the fix must not invent one", () => {
+    // `-m --` means the message is missing. Node calls that ambiguous, which is
+    // correct: silently treating `--` as the message would be far worse.
+    // (This assertion replaced one that wrongly expected this to succeed.)
+    expect(() => parseArgs(["-m", "--", "src/a.ts"], SPEC)).toThrow();
+  });
+
+  test("a genuinely unknown flag is STILL rejected (the fix must not re-open the swallow)", () => {
+    expect(() => parseArgs(["--totally-bogus"], SPEC)).toThrow(CLIError);
+    expect(() => parseArgs(["-m", "ok", "--totally-bogus"], SPEC)).toThrow(CLIError);
+  });
+
+  test("a boolean flag does not absorb a following dash token", () => {
+    // `--force` takes no value, so `-1` after it must not be swallowed as one.
+    expect(() => parseArgs(["--force", "-1"], SPEC)).toThrow(CLIError);
+  });
+});
