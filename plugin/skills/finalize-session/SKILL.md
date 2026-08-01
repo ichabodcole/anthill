@@ -215,6 +215,18 @@ Two rules do all the work here. Without them a retro produces a mood, and a mood
   themselves — and part of it was wrong. **Unanimous deference would have carried a false claim
   into a document with nothing to check it against.**
 
+**4. Did this session produce a PRINCIPLE?** Asked once, at the end, and **usually the answer is
+no.** A principle is a claim about **how work goes wrong**, general enough to survive a change of
+tool, stack or team — not a convention and not a mechanic. It goes in `.anthill/principles.md`
+**with the scar that paid for it**: a principle without its experience is a slogan, and the
+experience is what makes it hold when following it costs something.
+
+- **A principle needs a scar, not a case.** A good argument is not enough. If nothing has gone wrong
+  yet it is a hypothesis, and Q3 is where hypotheses go.
+- **Never add one mid-session.** The pressure to generalise peaks exactly when you have just been
+  burned, which is when the generalisation is worst.
+- **If it only holds for this tool or this repo, it is a practice** — those live in the SOP.
+
 Keep it small. Three questions and these two rules are the whole ritual — **if it needs a taxonomy,
 it has gone wrong.**
 
