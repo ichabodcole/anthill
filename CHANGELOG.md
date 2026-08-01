@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.2](https://github.com/ichabodcole/anthill/compare/anthill-v1.7.1...anthill-v1.7.2) (2026-08-01)
+
+
+### Bug Fixes
+
+* **cli:** a value starting with a dash is a value, not a flag ([a13b7f1](https://github.com/ichabodcole/anthill/commit/a13b7f146dcd78595d1a6fd5f21034026ba90cb3))
+* **upgrade:** a stale CLAUDE_PLUGIN_ROOT makes the reconcile report clean and skip the release ([32e819a](https://github.com/ichabodcole/anthill/commit/32e819a0324c4715577d8fcd390457135bfab123))
+
 ## [1.7.1](https://github.com/ichabodcole/anthill/compare/anthill-v1.7.0...anthill-v1.7.1) (2026-08-01)
 
 
