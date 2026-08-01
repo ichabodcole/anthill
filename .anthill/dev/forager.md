@@ -98,6 +98,11 @@ The honest locator already existed in `ConfigError`'s own message ("could not fi
 _Lesson: re-deriving a value invents a second answer to a question that already has one, and the invented one is the one that lies._
 **The operational form, added after it recurred THREE times in one day, all on my own evidence:
 never re-type an identifier or a quotation — copy it, or cite the command that produced it.**
+**⚠ THAT RULE IS NOT SUFFICIENT, and instance (5) is the proof — it would not have fired.** I put the sha `4a3f7a1` into a message announcing a commit; the sha does not exist (`git cat-file -t` → *not a valid object name*); the real one was `e14c0b2`. **I did not re-type anything.** I wrote the message body into a file **before running the commit**, with the sha already in it — so there was **nothing to copy, because the artifact did not exist yet.**
+**Call it PRE-transcription: asserting an identifier for a thing you have not made.** "Copy, don't retype" is defined over a source, and here there was no source — which is why the rule sailed past it.
+**It is also the most dangerous shape.** A mis-typed sha is one character off and reads as a typo; a pre-invented one is a **well-formed seven-hex string that resolves to nothing**, which reads as *"that commit was rewritten"* rather than *"that reference was never real."*
+**The rule that actually covers it: emit the message AFTER the artifact exists, or leave the identifier out.** Never compose a claim around a value the world has not produced yet.
+_Where it happened is the part to keep: in the message ACCEPTING a peer's falsification of my clause for being one notch too wide, in which I wrote that an over-wide claim "does not read as wrong, it reads as clean" — and then shipped one that read as clean. Caught only because my own message echoed back through my Monitor and I read the sha against the terminal above it. **No gate, no reviewer and no verifier could have caught it**, since the wire is gitignored and outside every check we run._
 (1) I put a **fabricated sha** (`d3ac6dd` — **intentionally unresolvable; it IS the example, so any
 sha-audit over this file will flag it and should not report it as a new defect**) into a durable
 message whose subject was
