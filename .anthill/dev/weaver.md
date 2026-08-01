@@ -172,6 +172,16 @@ My instinct was to keep mine and call it reinforcement. **That instinct is the d
 What survived the cut is the only thing prose can do that an error cannot: **an error corrects one command; a model predicts the verbs you haven't tried yet.** So keep the model (*identity binds writing, not reading*), delete the correction and the reassurance.
 Ask at every review: *has the tool started saying this better than I do?* If yes, cut — don't reinforce.
 
+- **⚠ The counterweight to "generalise past the single tool" — over-generalising is the SYMMETRIC failure, and I hit both in one session.**
+Read this next to the tool-scoping lesson above; **neither is safe alone.**
+Too narrow: a warning filed under one tool's name doesn't fire when you reach for its sibling (the lead's `bounty tail` slip).
+Too broad: the class rule you reach for to fix that is *false about the siblings* (my `--as` clause).
+**One clause about three sibling wires was wrong FIVE times, by four authors** — each fix correct in intent, each smaller than the last, each written by someone actively holding this failure in mind. **The convergence never reached zero.**
+The mechanism (the lead's framing, better than mine): **a summary standing in for its source.** The semantics genuinely differ per tool per verb, so *any* sentence summarising them is lossy by construction — and the loss is exactly where the falsehood lives.
+**The rule I'm keeping: when successive attempts at a cross-tool claim keep getting falsified, stop refining and stop making the claim.** I kept reading each falsification as *"the rule needs to be more precise"* when the truth was *"there is no rule."*
+Tell the reader the tools differ, name the trap, and **point at the resolved commands rather than teaching them to derive their own** — every failure here was guidance for a seat improvising *beyond* the manifest, and mostly they shouldn't.
+Also load-bearing: **say WHICH level a claim is about.** The lead and I contradicted each other on `--help` until we noticed he'd tested it at the *tool* level (works) and I at the *verb* level (silently swallowed). Both true; the sentence never said which.
+
 - **Report the non-instance — it is what buys the finding its credibility.**
 When I posted the generator above I audited my own draft for the same shape, found it clean, and said so rather than quietly omitting it (*"n=3 with a checked negative beats n=4 assembled by squinting"*).
 sentinel named that as the reason he spent a probe on it at all — and the probe is what produced the sharpened form.
