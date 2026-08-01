@@ -299,13 +299,16 @@ anthill/
 ```
 
 **CLI command set** (Slice 1 shipped `convene`…`init`; `scan`, `feedback`, and `migrate` were
-added in later slices):
+added in later slices; `field-notes` later still):
 
 - `anthill convene [--topic]` — grapevine open + topic + bounty state
 - `anthill join <handle>` — emit grounding manifest + tail commands
 - `anthill spawn [handles…]` — tmux panes, one per seat, auto-fire `/anthill:join`
 - `anthill attach` / `anthill down` — session lifecycle (down keeps the presence guard)
 - `anthill status` — who's on the vine + board counts
+- `anthill field-notes` — print anthill's cross-team observations (needs no config; the doc ships
+  in the plugin, deliberately, so it is current for whoever has the plugin rather than frozen into a
+  footprint at bootstrap)
 - `anthill commit` — file-scoped, serialized commit (carries the shared-index-race fix)
 - `anthill init` — **deterministic renderer**: given `.anthill/config.json`, render `templates/`
   into the target repo (idempotent; re-runnable when the team reshapes — renders new seat docs
