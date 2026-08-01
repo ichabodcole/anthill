@@ -100,6 +100,32 @@ artifact may have been moved or deleted since you wrote the line.
    level** — a contract that shifted, a boundary that moved? If so, update it **single-source** (the
    owning seat edits; the others point). Don't restate it across seat docs.
 
+3.5. **Reconcile beat — re-read your seat doc against any contract that CHANGED in step 3, and replace
+restatement with a pointer.** Every seat, after the seams pass, before the lead lands.
+
+**This is a step because the ordering guarantees the violation, not because seats are careless.** At
+step 2 the lesson genuinely _was_ yours — there was no `seams.md` entry to point at, so writing it out
+in full was correct. Step 3 then promotes some of those lessons into contracts. **By the time the lead
+lands, docs that were right when written are restating shared truth**, breaking the SOP's one strict
+rule in the very commit that creates the truth being restated.
+
+- **The evidence.** A four-seat team ran this ritual exactly as written and **all four seat docs plus
+  the lead's restated a contract created in the same commit.** Nobody erred; the order produced it.
+- **⚠ Do NOT "fix" this by running the seams pass first.** That was the obvious repair and it is
+  wrong: **the seat-doc synthesis is what SURFACES the contract candidates** — two of that team's three
+  came out of it — so swapping the steps starves the pass. The dependency is circular; **ordering alone
+  cannot fix it, which is why this is a third beat rather than a reorder.**
+- **The inverse confirms the mechanism.** A second team, different codebase, did **not** hit this —
+  because its contracts were landed **as they were ratified**, mid-session, so by synthesis time there
+  was already something to point at. So: **land a contract when it's ratified, not at finalize.** That
+  removes most of the exposure for free — but not all of it, because a contract that changes _late_
+  still needs this beat.
+- **How it was caught, which is worth copying:** not by the lead and not by any check. One seat
+  re-read her own landed doc against the just-written contracts and **posted a finding about her own
+  file rather than quietly fixing it.** The other three then ran the same check on themselves and all
+  three found violations — including the two seats who had personally authored the contracts they were
+  restating.
+
 4. **Structure reflection** — turn the lens on the team itself (the anthill adapts to the work):
    - **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)
    - **What were the natural seams?** (the contracts that actually emerged vs. the ones we guessed.)
@@ -145,6 +171,9 @@ artifact may have been moved or deleted since you wrote the line.
    - ◻ **Every seat re-read the docs it owns as their authority** (step 2.5) and verified each claim
      — proofs especially — against current code. Assume drift; the one session that measured this
      found it in **every** seat's docs.
+   - ◻ **Every seat reconciled its doc against contracts that CHANGED this session** (step 3.5) —
+     restatement replaced with a pointer. The ordering makes this violation the default, not the
+     exception: a four-seat team hit it in all five docs at once.
    - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit -m "<msg>" <paths…>`**
      (never `git add -A`).
      - **Red tree? (a slice deliberately held red for an atomic land.)** The pre-commit gate runs the

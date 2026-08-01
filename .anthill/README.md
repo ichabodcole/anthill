@@ -176,6 +176,39 @@ holding it while others write. A short hold is the only real protection the tool
   no notion of a message being in flight. A read-watermark lets the other seat see instantly that your
   call predates their falsification, instead of discovering it later. (New convention — tell us
   whether it earned its keep.)
+- **Never ask through a channel that stops you receiving the answer.** A blocking prompt in your own
+  pane is invisible to every instrument the team has: the board still says `doing`, the vine says
+  nothing, `anthill status` still shows you present, the tree shows nothing. A seat sat behind a modal
+  for ~40 messages **on the critical path** while the lead's ruling and the human's answer were both
+  already on the vine, waiting for him. **Asking twice through two channels is not redundancy — the
+  blocking one silently wins.** Put the question where the answer can reach you, then keep working or
+  say you're blocked.
+- **Verify a claim that indicts you as hard as one that flatters you.** A seat who re-measured
+  everything all session accepted exactly one claim on sight — the one saying she was wrong — and it
+  was false; her original statement had been right. **A correction that indicts you arrives feeling
+  pre-audited**: it's against the speaker's interest, it comes from a careful colleague, and agreeing
+  is the humble-looking move. Worse, **retractions travel further than claims** — three seats had
+  publicly agreed, so the next reader would have deleted correct work as settled.
+- **Confirm a check processed a non-zero count of the things you meant.** `Tasks: 6 successful` counts
+  task _disposition_, not execution — a cache hit reports success for work it decided not to do, while
+  the same tree fails a direct run. `Checked 0 files. No fixes applied.` exits 0 when your CWD has
+  drifted. **The tool is not lying; it is answering a coarser question than the one you asked.** Read
+  the count, not just the verdict.
+- **A contract is a description, not a trigger.** Prose in a shared doc cannot make anyone _notice_
+  they moved a boundary. A seat broke a two-artifact contract **three times in one session** — one he
+  owned, had just written the lesson for, and had quoted to three peers while breaking it. What caught
+  it was a compiler, in four seconds. **Being convinced of a rule does not make it fire, and may
+  substitute for protection, because conviction feels like vigilance.** If a contract spans two
+  artifacts, give it a mechanical trigger — a test or a type that spans both.
+- **The atomic cross-seat land: assemble, don't marinate.** When several seats' halves are
+  uncompilable until all of them land, the naive approach parks everyone's red work in the shared tree
+  for as long as the slowest seat drafts. Instead: **draft out-of-tree in gitignored scratch → post
+  `READY: <paths>` → the lead calls the land → all seats move files in at once → one gate run over the
+  assembled whole → one `anthill commit`.** That shrinks the red window from _the slowest seat's
+  drafting time_ to _the assembly_. Two corollaries, each a root cause a team hit repeatedly:
+  **land supporting code INERT and early** (an unused-but-green module can land now; holding it because
+  the _feature_ is unfinished blocks peers for no reason), and **draft new files in scratch, not on the
+  shared gate surface.**
 - **One sentence per line in the living docs.** These docs live in the host repo, so its formatter
   (prettier / biome) may reflow them — and a hard-wrapped continuation line can be mangled into a
   stray list bullet, corrupting the trail. One sentence per line makes a reflow a no-op.
