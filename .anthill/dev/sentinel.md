@@ -35,6 +35,13 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
   "There is no fallback, so success implies the mechanism worked" is a whole-program invariant wearing a local property's clothes.
   It is not self-enforcing: the day someone adds the fallback, every prior proof silently stops meaning what it meant, and **no test goes red**.
   A proof-by-absence is only as durable as the absence — and absences are exactly what nobody defends in review, because there is no line of code to notice.
+- **The best answer to "did this feature actually matter?" is a VALUE IN THE ARTIFACT that could not exist without it.**
+  The team-comms spike's own open question was whether seat-aware identity changes anything on day one or is only groundwork. It was settled not by argument but by the fact that real messages in the log carry `role` — **unrecoverable from `--as <handle>` alone, so it can only have come from the roster.**
+  _Lesson: when a feature's value is contested, look for a field that is only derivable through the mechanism, then go find it in real output. That beats any amount of reasoning about whether the feature is worthwhile, and it is usually one command away._
+- **When the defect IS "this pollutes the tree," don't demonstrate it by polluting the tree.**
+  A peer and I found the same missing gitignore simultaneously: he proved it by writing junk messages into a live log while the lead was mid-land; I proved it with `git check-ignore`, read-only, touching nothing.
+  _Generalizes past outward-effecting commands (where I already refuse to run live): there is almost always a read-only interrogation — `git check-ignore`, `--dry-run`, reading the planner that generates the artifact — that establishes the defect without instantiating it. **Ask what the cheapest non-instantiating proof is before reaching for the reproduction.**_
+  _Related: verify the **generator**, not the instance. Patching this repo's `.gitignore` would have fixed the symptom while `init` kept shipping the gap to every consuming team — so when a repo both contains a defect and ships the thing that creates it, always say which of the two you are asking to be fixed._
 - **Report the checks that came back CLEAN, not just the catches.**
   A false drift report costs the team as much as a missed one, so a non-finding you investigated is part of the verdict rather than padding.
   It also makes the next agent trust the ones that aren't clean.
