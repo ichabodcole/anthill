@@ -1,0 +1,18 @@
+{
+  "name": "anthill-beta",
+  "owner": {
+    "name": "Cole Reed"
+  },
+  "metadata": {
+    "description": "LOCAL beta channel for the team-comms spike. Serves anthill from this working tree (feat/team-comms-slice-one), which is the only place `comms` exists. Not for distribution.",
+    "version": "0.0.0-local"
+  },
+  "plugins": [
+    {
+      "name": "anthill",
+      "source": "./plugin",
+      "description": "anthill @ team-comms-slice-one \u2014 adds the comms wire and the anthill:comms skill",
+      "category": "development"
+    }
+  ]
+}
