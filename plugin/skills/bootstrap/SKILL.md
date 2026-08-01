@@ -180,7 +180,8 @@ once the human has steered you to one seating, treat it as the ratified roster a
   unstamped config reads as the legacy v1 (`.team/` + `docs/team/`) layout. Write it to
   `<repo-root>/.anthill/config.json`.
 - **Render:** run **`anthill init`**. It reads the config and deterministically renders `.anthill/`
-  (the SOP, `seams.md`, the roster `dev/README.md`, one `dev/<handle>.md` per seat) and ensures the
+  (the SOP, `principles.md` — **empty by design**, `seams.md`, the roster `dev/README.md`, one
+  `dev/<handle>.md` per seat) and ensures the
   `.anthill/scratch/` line in `.gitignore`. It's idempotent — re-running never clobbers existing docs.
   - **That is a file-level guarantee, and it cuts both ways.** An existing doc is **skipped**, so
     re-running is safe — and also **inert**: it will never bring a doc up to date with a newer
@@ -226,6 +227,13 @@ once the human has steered you to one seating, treat it as the ratified roster a
 
 Tell the human the team is ready: the roster (handles + roles), where the docs landed (`.anthill/`),
 and the next step — **"run `anthill:convene` to start a working session."** Optionally suggest they
+**Before you hand over, show them the field notes once.** Run **`anthill field-notes`** and point at
+what's in it. `principles.md` ships **empty on purpose** — a team's principles are the ones it earns,
+and seeding them with ours hands over conclusions whose scars belong to somebody else. The field
+notes are the other half of that: _here is what other teams found, with the evidence; take what
+fits._ **Say plainly that it is not a list they are expected to adopt** — and that if one of them
+turns out to be wrong for them, `anthill feedback` is how we find out.
+
 commit `.anthill/config.json` + `.anthill/` (the scaffold is durable; `.anthill/scratch/` stays gitignored).
 
 ## Output

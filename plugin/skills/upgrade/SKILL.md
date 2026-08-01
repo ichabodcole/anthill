@@ -84,8 +84,23 @@ prints the migration plan **without touching anything**.
   opinion about guidance**, and neither does `anthill status`.
   → Skip steps 2–3 (there is no migration to consent to or apply) and **go to step 4** — the living-doc
   reconcile is the whole job on a content-only release, and it is the common case.
+
+> **Run `anthill field-notes` as part of this step.** anthill's cross-team observations live in the
+> **plugin**, not in your footprint — deliberately, because `init` never updates a file you already
+> have, so anything copied into `.anthill/` reaches you once and never again. Reading them here is
+> the only touch point where they are current. **They are observations, not requirements**; if one
+> contradicts what your team learned, your `principles.md` wins and `anthill feedback` is how you
+> tell us.
+
+> **A release can add a NEW living doc, not just edit one.** `anthill init` **creates files that do
+> not exist** while skipping ones that do — so re-running it is how a new team doc reaches an
+> **existing** footprint, and it cannot clobber your content. **Verified:** `principles.md` (added
+> 2026-08-01) arrives this way. So the reconcile has two halves: **diff the docs you already have,
+> and check whether the templates gained one you don't.**
+
 - **Behind** → it prints plain-language **notes** summarizing each move (config relocate, docs
-  relocate, gitignore swap, version stamp). The structured op list is available with `--format json`.
+  relocate, gitignore swap, version stamp); the structured op list comes back in the same envelope
+  everything else does.
   Read the matching guide in `${CLAUDE_PLUGIN_ROOT}/skills/upgrade/migrations/` (e.g. `v1-to-v2.md`)
   so you understand each step.
 
@@ -132,7 +147,8 @@ and the docs look fine because they are perfectly valid — just old.
 diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" .anthill/README.md
 ```
 
-Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`.
+Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
+`retro.md`.
 
 Then **classify each hunk** — never sync wholesale:
 

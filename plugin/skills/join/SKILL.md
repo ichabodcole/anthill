@@ -26,6 +26,8 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
 2. **Re-ground in your seat (the heart of this).** Read, in order (paths from `.anthill/config.json`):
    - the **`grounding`** docs (the _product_ context) — your seat doc assumes you know it;
    - `.anthill/README.md` — the **SOP** (how the team works, the rituals, commit discipline);
+   - `.anthill/principles.md` — **what this team learned the hard way**, each with its scar. Short,
+     and the highest-leverage read here;
    - `.anthill/dev/seams.md` — the shared inter-seat **contracts**. You **defer** to these; you never
      restate them in your own doc;
    - `.anthill/dev/<handle>.md` — **your own living doc**: scope, boundaries, relationships, reflexes,
@@ -132,7 +134,8 @@ status`** shows who's on + the board.
 
 ## Join checklist (the beats that get skipped)
 
-- ◻ **Grounded** in your seat (grounding docs → SOP → seams → your seat doc). A doc flagged
+- ◻ **Grounded** in your seat (grounding docs → SOP → **principles** → seams → your seat doc).
+  `.anthill/principles.md` is short and is the highest-leverage read in that list. A doc flagged
   **⚠ unfilled template** in your join output is _not_ evidence the project lacks that content —
   it means nobody wrote it yet. Say so to the lead rather than inferring from it.
 - ◻ **Caught up** if you joined mid-session — `grapevine pull <channel>` (finite). **Never**

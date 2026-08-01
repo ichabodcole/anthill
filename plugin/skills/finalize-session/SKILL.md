@@ -1,6 +1,6 @@
 ---
 name: finalize-session
-description: The end-of-session KNOWLEDGE ritual for the project's agent team — each seat synthesizes what it learned into its own living doc, a shared pass over seams.md captures team-level truth, a structure reflection asks whether the team shape still fits, and the lead lands the doc commits and tears the session down. Use at session wrap when the human says "finalize the team session", "wind down the team", "wrap up the team", or work is ending. DISTINCT from landing the code — this captures the team's knowledge so it isn't lost.
+description: The end-of-session KNOWLEDGE ritual for the project's agent team — each seat synthesizes what it learned into its own living doc, a shared pass over seams.md captures team-level truth, a structure reflection asks whether the team shape still fits, a retro records testable hypotheses for next session, and each seat lands its own doc before the lead tears the session down. Use at session wrap when the human says "finalize the team session", "wind down the team", "wrap up the team", or work is ending. DISTINCT from landing the code — this captures the team's knowledge so it isn't lost.
 ---
 
 # anthill: Finalize Session (the knowledge ritual)
@@ -36,7 +36,8 @@ _live_. Don't skip it on a real session.
      per-handle, so parallel seats never collide there.
    - **Returns** (does not write) any `seams.md` boundary-truth candidate + a short synthesis summary —
      `seams.md` is shared/single-owner, so the **lead** single-sources it from the returns.
-   - **Does not commit** — the lead lands the seat-doc changes atomically with the rest.
+   - **Does not commit** — a one-shot subagent may not outlive the session, so the **lead** lands its
+     seat doc on its behalf. (A _terminal_ seat lands its own; see step 2.)
 
    The lead's residual finalize then shrinks to what is inherently whole-session: the `seams.md` pass
    (step 3), the structure reflection (step 4), the anthill-upstream feedback aggregation (step 5), and
@@ -66,11 +67,31 @@ _live_. Don't skip it on a real session.
      never to a transient line/file reference.
    - If a lesson is really **shared truth** (about a boundary between seats), it belongs in `seams.md`
      (next), not your seat doc.
+   - **A HYPOTHESIS is not a lesson — hold it for the retro (step 4.5).** A lesson says what you now
+     know; a hypothesis says what you predict and how it could be proven wrong, and the next convene
+     has to read it back. **`.anthill/retro.md` does not exist yet at this step**, which is exactly
+     why this line is here: two seats on the ritual's first run independently wrote their hypotheses
+     into their seat docs, from correct reasoning — a hypothesis nobody re-reads is worthless, and at
+     step 2 the seat doc is the only home with a re-read moment. **The ordering created the
+     violation, not the seats.**
+     The split that resolves it: **team-level hypotheses → `retro.md`** (the lead collects them at
+     4.5, and convene reads them back); **a hypothesis only you will act on → your seat doc**, which
+     you re-read at join. Either way, **state it once** — a prediction copied into two homes drifts,
+     and a stale prediction is worse than a stale lesson because it commissions work against a world
+     that has already moved.
    - Your scratch is **disposable after synthesis** — the durable form is the seat doc.
-   - **Write your seat doc to disk, but do NOT commit it** — this holds for **terminal seats too**, not
-     just subagents. The lead lands every seat's doc in **one atomic commit** (see Land + close); a seat
-     self-committing its own doc breaks that atomic land (and reds a held-red tree). Leave the file
-     staged-or-dirty for the lead; don't `anthill commit` it yourself.
+   - **Land your own seat doc yourself** — `anthill commit --as <you> -m "…" .anthill/dev/<you>.md`.
+     It has exactly one possible author, no seam, and no other seat's paths in it, so there is nothing
+     for a cross-seat land to coordinate. Two things follow, and both were paid for:
+     - **The `Anthill-Seat` trailer records who RAN the command, not who authored.** Lead-lands-everything
+       stamps every seat's knowledge work with the lead's handle, and _"whose judgment produced this?"_
+       stops being answerable. Landing your own makes the trailer **correct by construction**.
+     - **It removes the lead as a single point of failure.** One team's lead went quiet and seven paths
+       sat uncommitted for **10.2 hours**, one of them untracked — 250 lines of a fix's proof that had
+       never been in git. **An absent lead is a normal event; the rule had no answer for it.**
+       The old hazard here was a bare `git commit` sweeping a peer's staged file. **`anthill commit` is
+       file-scoped and refuses to run without an explicit pathspec** — the guard moved into the CLI, and
+       this prose is the last place it hadn't.
 
 2.5. **Re-read every doc you OWN as its authority — and assume it has drifted.**
 Before you hand anything to the lead, go back through each contract and doc you own and **verify
@@ -152,6 +173,63 @@ rule in the very commit that creates the truth being restated.
      and it still never reached anthill, because nothing in this ritual asked it to. **The reflection
      produces the most valuable feedback anthill gets and currently routes none of it upstream.**
 
+4.5. **Retro — three questions, answered as a team. THE LEAD WRITES `.anthill/retro.md` (newest first)
+before teardown, from the seats' answers on the wire.**
+Name the writer or the file does not get written: seats answer, and every one of them can follow
+this step exactly while the artifact still fails to exist. **The first run of this ritual produced
+no file for exactly that reason** — the step said what and where, and nobody owned the act.
+Capture what you have rather than holding teardown for completeness: **the vine evaporates**, so a
+partial retro that exists beats a complete one that died with the panes — and _"two seats did not
+answer"_ is itself a result about the ritual, not an embarrassment to paper over.
+Distinct from step 4: the structure reflection asks about the team's **shape**; the retro asks for
+**judgement about the session**. Also distinct from the friction sweep in step 1 — that collects what
+happened, this evaluates it.
+
+1.  **What went well?**
+2.  **What didn't go well?**
+3.  **What would you change for the next round?**
+
+Two rules do all the work here. Without them a retro produces a mood, and a mood cannot be checked.
+
+- **Q3 answers are HYPOTHESES the next session can test, or they are not answers.** _"We should
+  communicate better"_ is untestable and dies in the doc. _"Announcing a shared-file hold before
+  editing will eliminate collision rework — if it doesn't, the hazard isn't announcement latency"_
+  can come back wrong, and a prediction that fails precisely teaches more than one that survives.
+  **A change you cannot test is a preference wearing evidence's clothes.**
+- **Ask of every Q1/Q2 answer: what is behind this besides us agreeing?** A retro is the most
+  consensus-prone thing the team does — it asks agents who shared a session, a channel and a frame
+  to evaluate it, and convergence will feel like validation when it is just the expected output of
+  shared priors.
+  - **Claims about ARTIFACTS are executable** — _"the gate is green"_, _"follow doesn't backfill"_,
+    _"3 of 3 proof citations are wrong"_. **Run it.** When an artifact answers, nobody agreed with
+    anything and shared priors cannot degrade it.
+  - **Claims about US are testimony** — _"coordination went well"_, _"the ratify saved rework"_.
+    Not worthless, but **label them**, and prefer the version carrying a number, a timestamp, a diff
+    or a count. **Convert where you can:** _"the ratify saved rework"_ is testimony; _"the contract
+    found three pre-existing violations on first use"_ is the same claim with an artifact behind it.
+- **A unanimous Q1 is a smell, not a result.** If everyone names the same success, ask what would
+  have had to happen for anyone to notice otherwise — and write **that** down too.
+- **The lead is in scope, and a retro where the lead comes out clean is a retro that did not run.**
+  Q2 is not a politeness exercise. Deference is the specific failure this format is exposed to: on
+  one team, three seats accepted the lead's correction on sight and each amplified it against
+  themselves — and part of it was wrong. **Unanimous deference would have carried a false claim
+  into a document with nothing to check it against.**
+
+**4. Did this session produce a PRINCIPLE?** Asked once, at the end, and **usually the answer is
+no.** A principle is a claim about **how work goes wrong**, general enough to survive a change of
+tool, stack or team — not a convention and not a mechanic. It goes in `.anthill/principles.md`
+**with the scar that paid for it**: a principle without its experience is a slogan, and the
+experience is what makes it hold when following it costs something.
+
+- **A principle needs a scar, not a case.** A good argument is not enough. If nothing has gone wrong
+  yet it is a hypothesis, and Q3 is where hypotheses go.
+- **Never add one mid-session.** The pressure to generalise peaks exactly when you have just been
+  burned, which is when the generalisation is worst.
+- **If it only holds for this tool or this repo, it is a practice** — those live in the SOP.
+
+Keep it small. Three questions and these two rules are the whole ritual — **if it needs a taxonomy,
+it has gone wrong.**
+
 5. **Aggregate the team's anthill-upstream feedback.** Beside the seams pass, do the same single-source
    move for the feedback candidates the team surfaced this session about **anthill itself** (not this
    project). Read the **same intake** you already swept — the vine, the seats' scratch, their finalize
@@ -174,8 +252,24 @@ rule in the very commit that creates the truth being restated.
    - ◻ **Every seat reconciled its doc against contracts that CHANGED this session** (step 3.5) —
      restatement replaced with a pointer. The ordering makes this violation the default, not the
      exception: a four-seat team hit it in all five docs at once.
-   - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit --as <lead> -m "<msg>" <paths…>`**
-     (never `git add -A`) — the `--as` stamps the seat trailer so the atomic land is attributable.
+   - ◻ **Principle question asked** (Q4) — did this session produce one? **Usually no.** If yes it
+     goes to `.anthill/principles.md` **with its scar**; if it has no scar it is a Q3 hypothesis, and
+     if it only holds for this tool it is an SOP practice.
+   - ◻ **Retro written to `.anthill/retro.md` BY THE LEAD** (step 4.5), newest first — the seats
+     answered on the wire; **the wire evaporates and the file is the only thing that survives.**
+     **Every Q3 answer is a
+     hypothesis the next convene can test**, not a preference. Check one thing before you land it:
+     **is any Q1/Q2 answer carried only by everyone agreeing?** If it has no artifact, no number and
+     no count behind it, either attach one or label it as testimony. A retro that skips this is the
+     one that reads well and cannot be checked.
+   - ◻ **Every seat landed its OWN doc** — `anthill commit --as <you> -m "<msg>" <your paths…>`, never
+     `git add -A`. The `--as` stamps the seat trailer, and because each seat runs its own commit the
+     trailer names the actual author rather than whoever happened to hold the land.
+   - ◻ **The lead landed anything CROSS-SEAT atomically** — a `seams.md` contract plus the skill that
+     points at it, a CLI change plus the doc describing it. **This is what lead-owns-the-land is for:**
+     work spanning owners that would, landed in pieces, leave a trail asserting something untrue for
+     as long as the gap lasts. It is a reason, not a blanket — a single-author file is not cross-seat
+     work.
      - **Red tree? (a slice deliberately held red for an atomic land.)** The pre-commit gate runs the
        **whole** suite on every commit, so a held-red tree fails each seat-doc commit and **deadlocks
        this step** — the docs can't land while the code is red. Don't fight the gate; park everything,
@@ -186,8 +280,9 @@ rule in the very commit that creates the truth being restated.
           gate is green.
        2. **Bring back only the docs** — `git checkout stash@{0} -- <doc-paths…>`. Now the tree holds
           just the seat docs (markdown → the gate passes); the red slice stays parked in the stash.
-       3. **Land all seat docs in ONE atomic commit** — the lead commits every seat's doc together
-          (`anthill commit --as <lead> -m "…" <doc-paths…>`), not each seat self-committing against a red tree.
+       3. **Land the docs against the now-green tree** — each seat commits its own
+          (`anthill commit --as <you> -m "…" <your doc>`); the lead lands only genuinely cross-seat
+          docs together. The pivot exists to make the tree green, not to move authorship.
        4. **Restore the held slice** — `git stash pop`. The stash's doc hunks are already committed
           verbatim, so they re-apply as a clean no-op; the red slice (tracked edits **and** untracked
           new files) comes back intact, and the atomic code land proceeds as planned.

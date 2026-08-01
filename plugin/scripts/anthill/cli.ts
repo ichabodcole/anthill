@@ -19,12 +19,14 @@
  * wants `--format` must declare it locally.
  */
 
+import { emitError, resolveFormat, sniffFormatFlag } from "./agent-layer.ts";
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
 import { teamCommitCommand } from "./commands/team-commit.ts";
 import { teamConveneCommand } from "./commands/team-convene.ts";
 import { teamDownCommand } from "./commands/team-down.ts";
 import { teamFeedbackCommand } from "./commands/team-feedback.ts";
+import { fieldNotesCommand } from "./commands/team-field-notes.ts";
 import { teamInitCommand } from "./commands/team-init.ts";
 import { teamJoinCommand } from "./commands/team-join.ts";
 import { teamMigrateCommand } from "./commands/team-migrate.ts";
@@ -69,6 +71,7 @@ export const main: AnyCommand = defineCommand({
     scan: teamScanCommand,
     commit: teamCommitCommand,
     feedback: teamFeedbackCommand,
+    "field-notes": fieldNotesCommand,
     init: teamInitCommand,
     migrate: teamMigrateCommand,
   },
@@ -121,12 +124,43 @@ async function runCli(): Promise<void> {
   try {
     await runCommand(main, rawArgs);
   } catch (err) {
+    // Errors raised INSIDE a command already emit a proper envelope via
+    // `emitError`. This site handles the ones raised by the PARSER — an unknown
+    // flag, a missing required positional, an unknown command — which is the
+    // class an agent hits most, since a wrong flag is the commonest way an agent
+    // gets a command wrong. Those errors used to render a usage block
+    // unconditionally, so under `--format json` (and, worse, piped with no flag)
+    // an agent got ~26 lines of human help where an envelope was promised.
+    //
+    // The invariant: the format decision must NOT depend on where the error was
+    // raised. So resolve it the same way a command body would — same resolver,
+    // TTY heuristic included — off the `--format` value recovered from argv.
+    const [cmd, parent] = resolveSubCommand(main, rawArgs);
+    const format = resolveFormat(sniffFormatFlag(rawArgs));
+    const command = cmd.meta?.name ?? main.meta?.name ?? "anthill";
+
     if (err instanceof CLIError) {
-      const [cmd, parent] = resolveSubCommand(main, rawArgs);
-      process.stderr.write(`${renderCommandUsage(cmd, parent)}\n`);
-      process.stderr.write(`${err.message}\n`);
+      if (format === "text") {
+        // Byte-unchanged for humans: a usage block is the right answer here.
+        process.stderr.write(`${renderCommandUsage(cmd, parent)}\n`);
+        process.stderr.write(`${err.message}\n`);
+      } else {
+        emitError({ format, command, error: err.message });
+      }
     } else {
-      process.stderr.write(`${err instanceof Error ? (err.stack ?? err.message) : String(err)}\n`);
+      const stack = err instanceof Error ? (err.stack ?? err.message) : String(err);
+      if (format === "text") {
+        // Debuggability must not regress: the human path keeps the raw stack.
+        process.stderr.write(`${stack}\n`);
+      } else {
+        // ...and the agent path preserves it on `meta` rather than dropping it.
+        emitError({
+          format,
+          command,
+          error: err instanceof Error ? err.message : String(err),
+          stack,
+        });
+      }
     }
     process.exit(1);
   }
