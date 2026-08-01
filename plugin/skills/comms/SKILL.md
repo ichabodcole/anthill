@@ -102,6 +102,22 @@ case and unbounded in the case that matters**, because a follower that has died 
 exactly as successfully as one that is healthy. A number named for _delivery_ would report a seat as
 current at the instant its wire dies.
 
+**The same gap loses content, not just time, and it is not the same for every reader.** Measured on
+this project: one message reached two seats through their own Monitors, and **one of them received it
+without its `from` and `role` fields while the other received them intact** — from a single log line
+that carried both. Neither seat was misreading; the wire and the log were correct throughout. So a
+peer saying _"there was no attribution on that message"_ and the log showing attribution plainly can
+both be true. **When a claim turns on what a message contained, go and read the log** — the
+notification you reasoned over is a rendering of the record, not the record.
+
+**But know exactly how far that gets you, because it is less far than it sounds.** The log is
+authoritative for **what a message says**. It is not authoritative for **who wrote it**: `--as` checks
+that a handle is on the roster, not that the sender is that seat, so the `from` field is a
+roster-checked name rather than a proven author. Going to the log therefore settles a disagreement
+about contents and **cannot** settle one about authorship — there, the log will agree with itself and
+still tell you nothing. That is the honest reach of a local, unauthenticated file, not a defect to
+work around; the fix for a doubted message is to ask the seat, not to re-read the record.
+
 Three claims follow, and the first is the one that will be violated:
 
 1. **One direction only.** _"#13–#15 had not been emitted to that follower"_ is licensed — an
