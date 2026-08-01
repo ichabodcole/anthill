@@ -95,7 +95,10 @@ status`** shows who's on + the board.
          you this session. **Nothing clears the comms log** — no `--fresh`, and convene has no notion
          of a comms channel — so a bare read replays _every session the team has ever had_. Anchor
          with `--since <id>`. That skill also covers the failure you cannot see from here: a wire
-         that silently delivers nothing looks exactly like a quiet channel.
+         that silently delivers nothing looks exactly like a quiet channel. **Attaching `follow` is
+         the one moment that failure is visible** — it reports the gap it is skipping as it starts,
+         so read that notice. **A wire that dies later still goes quiet without saying so**, which
+         is why the confirm-receipt beat below is a separate check and not a duplicate of this one.
      - **These wires are separate tools that happen to sit side by side — assume nothing carries
        across them.** Not flags: `--as` identifies the writer on one verb, scopes the results on
        another, and is refused outright by a third — each correct, on its own tool. Not even the way
@@ -203,6 +206,10 @@ status`** shows who's on + the board.
 - ◻ **Confirmed received, not just sent.** Get an explicit acknowledgement that your "in, grounded"
   **landed** — from the lead, naming your message. A wire that delivers nothing is indistinguishable
   from a quiet channel, and the first minute is the only cheap time to find out you are unwired.
+  **Your `follow`'s start notice does not discharge this**, and the difference is the whole point: it
+  tells you **your own receiver attached**, which is the incoming half. An acknowledgement naming your
+  message is the only thing that tells you **your outgoing half works and a human-or-agent on the
+  other end processed it.** Two directions, two checks; one has never covered the other.
 - ◻ **Code-bearing message? Send it safely — on _every_ wire, not just the one you learned this on.**
   **Any** `send` on **any** of these tools — grapevine, comms, whatever the manifest hands you next —
   whose body carries backticks or code MUST go via `--stdin` (or a quoted heredoc). An un-quoted body

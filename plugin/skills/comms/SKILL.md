@@ -152,6 +152,12 @@ the case where nothing prompts you to check. Use it deliberately; do not wait fo
 - **Live → `follow`.** It never exits, and it **starts from the current end** — it replays nothing,
   so it is not a catch-up tool and has no flag to make it one. Backfill with `read` first, then
   attach `follow`.
+  **It does, however, tell you what it is skipping.** On attach it emits a start notice with where
+  your seat was, where the log head is, and the catch-up command to run — so a re-armed follower
+  reports its gap instead of resuming silently. **Read that notice; it is the one moment the wire
+  volunteers what you missed.** Where the gap cannot be known — a seat that has never followed — it
+  says so rather than reporting zero, and **zero and unknown are different answers**: the first says
+  you missed nothing, the second says nobody can tell you.
 - **Never add a `grep` filter to a `follow`.** Unlike the other wires, **`comms` emits no
   keepalives**, so there is nothing to strip — a filter carried over from the vine out of habit
   removes real messages and leaves you silently missing team traffic. This is the one place that
