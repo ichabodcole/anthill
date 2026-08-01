@@ -14,8 +14,8 @@ I own the prose that _drives_ — the lifecycle skills and the archetype templat
 ## Scope
 
 `plugin/skills/` (bootstrap/convene/join/plan/finalize/upgrade + `plan/methodology.md`) and `plugin/templates/` (the docs-team scaffold + `archetypes/*.json`).
-Recent: team-comms slice one — the `join` comms wiring (single-branch, names no command; see the 2026-07-31 lessons).
-Before that: board-session-binding Phase 4 docs — the `--last <n>` note fix, the convene/SOP key-bound rewrite, and the spellbook ≥ 1.16.0 floor.
+Recent: the **retro beat** (`finalize` step 4.5 + the `convene` read-back that closes its loop), the failure-surface scoping across `join`/`comms`, and the each-seat-lands-its-own-doc correction.
+Before that: team-comms slice one — the `join` comms wiring; board-session-binding Phase 4 docs.
 
 ## Boundaries
 
@@ -26,7 +26,7 @@ I write the prose that maps that payload to a team; the payload's shape is not m
 
 - **forager** emits the `ScanReport` I consume. Ratify the shape as the _consumer_ before building — I did, and it held verbatim through the build (no falsification at integration).
 - **sentinel** cold-reads my prose the way a fresh agent will. That outside read is the only real test of whether a skill lands as intended vs. how I imagined it.
-- **maestro** lands my paths.
+- **maestro** rules; he lands only genuinely **cross-seat** work. **I land my own paths** — that changed this session (`4f88ac3`), and the old line here said otherwise until the 2.5 pass caught it.
 
 ## Taste & reflexes
 
@@ -291,6 +291,46 @@ Also: **a preservation patch is a point-in-time snapshot that ages silently.** M
 `git diff -- <my paths> > <outside-the-tree>/x.patch`, then **prove it round-trips** with `git apply --check` against a pristine `git archive HEAD` export.
 No commit, no index write, no collision with any seat — it converts *"lost if the pane dies"* into *"one command to restore"*, and it is available when the lead is absent and you have no authority to land.
 Keep it **outside the repo**, not in `.anthill/scratch/`: gitignore does not stop tools that *discover* files by walking the filesystem.
+
+## Hard-won lessons (cold review + the retro beat, 2026-08-01 — session 4 cont.)
+
+- **⚠ When a comment contradicts code, the COMMENT is not automatically what's wrong.**
+Filed to me as *"comment-contradicts-code, weaver's lane"*: `agent-layer.ts` documents `meta.stack` as *"an UNEXPECTED throw (a bug)"*, and `comms follow` was attaching it to a **validated user-input** error.
+The reflex — change the comment — would have weakened the doc to *"may also appear on validated errors"*, **corrupting Contract 5(a)'s rationale to accommodate a bug.**
+The doc was the specification; the code was the deviation, in a file I don't own.
+**Owning a medium includes refusing to make your artifact true.** Say the fix belongs elsewhere; don't edit around it.
+_(Mechanism, and it is Contract 5(b)'s defect expressed in code: `read` catches the `commsLogPath` throw, `follow` lets it reach the bug-fallback. Two sibling verbs, one shared helper, divergent contracts — nothing individually wrong, the composition wrong.)_
+
+- **⚠ A comment goes stale in the one way that makes it look SAFE TO DELETE.**
+An orphaned docblock documented a deleted function and explained its hazard via `strict: false` — now `strict: true`. Every stated fact false, so a reader concludes the concern is obsolete.
+**It wasn't:** the hazard was live and reachable (`send "a" b c` stored `"a"`), and **`--` did not rescue it**.
+**The mechanism it named was closed; the hazard walked around it.**
+→ When deleting a stale comment, ask **"is the CONCERN obsolete, or only the EXPLANATION?"** — they rot independently and only one is visible.
+→ **A rationale belongs on the guard that enforces it**, not on whatever function happened to sit underneath when its own was deleted. I moved it onto the new guard rather than deleting it, and sequenced my deletion *after* that guard landed so no window existed where nothing stated the hazard.
+
+- **Ask whether a case can be made IMPOSSIBLE before asking how to test it.**
+I told the guard's owner the `--` terminator case needed a test. He checked against `_` instead — which holds every positional however it arrived — making the case **unreachable by construction** rather than asserted by a test that could drift.
+Better than my suggestion, and the same shape as why the comment above died: **a rule that names a mechanism dies when the mechanism moves; a rule that cannot be violated does not.**
+
+- **⚠ THE CASCADE MAP'S BLIND SPOT: a ruling on the wire mutates documents and touches no file, so nothing greps.**
+The lead ruled seats land their own docs; all three seats did it; `finalize-session` still forbade it in four places including its consumer-visible description.
+**My cascade pass missed it while I was editing that very file** — the stale rule sat twelve lines from my edit, about a thing I had personally done four hours earlier — because I grepped *the concept I changed*, and this one changed by **ruling**, not by editing.
+**The cheap tell: when the team does something the docs forbid and nobody objects, the doc is stale — the behaviour is the evidence.** Three commits of it sat in `git log` for hours.
+
+- **⚠ "Run it and see what the error says" is NOT safe on a command that MUTATES.**
+My commit was refused twice; **I read the tail of the output both times, where the explanation lives, and never the head, where the verdict lives.** So I ran a third with the message `"probe"`, expecting a third failure I could finally read.
+**It succeeded** — a peer had gone green in between — and I landed a commit messaged `probe`, then rewrote history to fix it.
+**For a read, the failure case is the point; for a write, the SUCCESS case is the hazard** — and success is the case I was not planning for. I had built a command whose only safeguard was my confidence that it would fail.
+_(Third instance of read-the-coarse-part-not-the-answer in one session: pipeline exit codes, `git apply --check`, and now output position. **The verdict is at the head; the explanation is at the tail; I keep reading the tail.**)_
+
+- **I shipped a ritual I cannot test, and said so with a falsifiable prediction attached.**
+The retro beat is prose; biome ignores markdown; *"ask what's behind this besides us agreeing"* has no mechanical trigger — Contract 5(b)/(c)'s class exactly.
+So I named the failure in advance: **if our own Q1 comes back unanimous and nobody can say what would have had to happen to notice otherwise, the smell rule didn't fire and the wording is too soft.**
+**Predicting your own artifact's failure mode before it runs is the only verification available when the medium has no gate** — and it converts "I think this is good" into something the next session can hold me to.
+
+- **Design note worth keeping: a new store needs its re-read moment built in the SAME change.**
+`.anthill/retro.md` would have been a write-only leak — the SOP's *no store without a named re-read moment*. So `convene` now reads the last retro's hypotheses and names which it will test.
+**The store and its reader are one change, not two**, or the second one never happens.
 
 ## Candidates
 
