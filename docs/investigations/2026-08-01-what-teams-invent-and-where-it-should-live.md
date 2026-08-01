@@ -70,6 +70,65 @@ strong argument for a shape where teams **consult a live source** rather than **
 **A store you consult and a template you received have completely different staleness properties**,
 and this project has now been bitten twice by the second one.
 
+## The loop, stated once
+
+Collection, synthesis and delivery are one cycle, and **the delivery half is what makes the collection
+half worth doing.** A store nobody reads back is the write-only leak anthill's own SOP forbids.
+
+> **collect** (channel + field study) → **synthesize** (triage: tool / guidance / local) → **deliver**
+> (a touch point that fires on its own) → teams act → **collect**
+
+### Collection — two instruments, and they catch different things
+
+**a. A pro-tips grapevine channel — the substrate for now, and the reason is pragmatic.** A channel is
+trivial to stand up, several teams can post to one, and it works as a **posting board** rather than
+only as real-time messaging. It is not the eventual shape, but it costs nothing and it starts
+accumulating today. **Its known limits are already documented from the field:** append-only, and **no
+content search** — a gap that _hides itself_ behind a citation convention, so nobody notices wanting
+it. Practice needs to be **found**, not replayed.
+
+**b. A field-study skill — this is the piece that doesn't exist and should.** Formalize what we are
+doing with StoryLoom right now: **read a team's artifacts, then interview, in that order.** The
+ordering is the method, not a preference — reading first is what let us check a lead's account against
+what the team actually wrote, and the two differed.
+
+Its strongest property: **it does not need the team to be live.** `seams.md`, seat docs,
+`paper-cuts.md`, scratch and commit history are durable artifacts. A study can run cold, months later,
+on a team that has since disbanded — which is precisely the case the settled-team problem makes most
+valuable, since **a team that has absorbed a workaround stops experiencing it as friction** and can no
+longer report it, while the artifact still shows it.
+
+_Constraint, stated honestly:_ it assumes the studied project is **on this machine.** True for now,
+and it bounds the skill to the maintainers rather than making it shippable. Internal, like
+`cascade-check`.
+
+### Delivery — the touch point is the whole game
+
+Guidance that ships via templates **reaches new teams only** (see the constraint above). So the
+delivery has to be a **touch point that fires on its own**, and StoryLoom's lead already argued where:
+
+> **convene** — once per session rather than once per seat, the human is present to consent, and it
+> fires **before the seats are briefed**, which is the moment stale guidance starts costing something.
+> `join` would ask N seats one shared question and surface it to agents with no standing to act.
+
+**Chain the two checks at that one touch point:** _are you on the current version?_ **and** _have you
+seen the current practice?_ They have the same trigger, the same audience, and the same remedy
+(reconcile), and neither fires today. The version half is already specified in
+[the staleness backlog item](../backlog/2026-07-31-nothing-tells-a-team-its-guidance-is-stale.md);
+this adds the practice half to the same hook rather than inventing a second one.
+
+Later, the highest-value practice graduates further down the chain — into the templates and the
+bootstrap seed — so a **new** team starts with what five teams learned. **The touch point serves
+existing teams; the seed serves future ones. Both are needed and they are not substitutes.**
+
+### The eventual shape — online, not local
+
+Everything above is single-machine. The end state is a **shared store anthill teams can reach**,
+where practice accumulates across projects that never share a filesystem, is synthesized, and is
+**read back into how anthill is delivered.** Not urgent, and worth naming so the local version is
+built as a step toward it rather than a thing to throw away — the pro-tips channel and the field-study
+skill both produce content that would migrate cleanly.
+
 ## Open questions — deliberately unanswered
 
 1. **Does anyone read it?** The failure mode of every knowledge store is write-only. anthill's own SOP
@@ -77,9 +136,10 @@ and this project has now been bitten twice by the second one.
    convene? join? the shape check? Without one, this becomes the thing it was built to prevent.
 2. **Who curates?** Five teams' raw practice is noise. HiveMind has a digest step for exactly this;
    an anthill equivalent needs one or it accumulates contradictions.
-3. **Is a grapevine channel the right substrate, or does this want the comms tool?** A channel is
-   append-only and has no query. Practice needs to be _found_, not _replayed_ — which is the same
-   "no search" gap StoryLoom hit, and it hid itself behind a citation convention.
+3. ~~**Is a grapevine channel the right substrate?**~~ **Answered for now: yes, provisionally.** Cheap
+   to stand up, multi-team, works as a posting board. Its append-only/no-search limits are real and
+   documented; revisit when finding a practice costs more than posting one. **Do not build a store to
+   fix a gap the channel has not yet caused.**
 4. **Does it overlap HiveMind enough to just be a HiveMind folder?** Cheaper if yes. The argument for
    separate: HiveMind is engineering knowledge for humans-and-agents building software; this is
    coordination practice for agent teams, and the audience is every anthill team automatically.
