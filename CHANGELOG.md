@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.8.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.7.2...anthill-v1.8.0) (2026-08-01)
+
+
+### Features
+
+* **field-notes:** ship what we learn as observation, not as law ([95d4ded](https://github.com/ichabodcole/anthill/commit/95d4ded2f471a1cbf349214f8e7392b4f518f7fe))
+
+
+### Bug Fixes
+
+* **cli:** parser errors reach the agent envelope, not a usage block ([e03ec52](https://github.com/ichabodcole/anthill/commit/e03ec524e9850e0098acc7ec177c3939938fbecd))
+
 ## [1.7.2](https://github.com/ichabodcole/anthill/compare/anthill-v1.7.1...anthill-v1.7.2) (2026-08-01)
 
 
