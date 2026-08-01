@@ -76,7 +76,14 @@ status`** shows who's on + the board.
      take `--as`. A bare `grapevine read <id>` exits non-zero with a usage line. A seat who mis-called
      it once read the non-zero exit as "this command is broken", fell back to `pull --since | head -c`
      for an entire session, and reported the tool as defective — with the correct usage sitting in his
-     own scrollback. **A usage error and a broken tool look identical if you don't read the output.**
+     own scrollback. **On the vine and the board, a usage error and a broken tool look identical if
+     you don't read the output** — those tools answer every failure with the same bare usage line, so
+     the exit code is the only other signal and it cannot tell the two apart.
+     - **Scoped deliberately, and do not widen it.** That is a fact about _those_ tools, not a law
+       about command-line tools. A tool that hands you a **structured error** has already told you
+       which one happened — treating its error as "probably broken" throws away the answer you were
+       given. **Read what you actually got before deciding a tool is broken**; that instruction
+       holds everywhere, and it is the only part of this that generalizes.
      - **Every wire needs this, not just the vine.** Your `comms` wire has
        its own catch-up verb and the same rule applies: **a finite read to catch up, the live follow
        only for the Monitor.** Reach for `--help` on the wire you're actually using rather than
@@ -177,7 +184,8 @@ status`** shows who's on + the board.
   `tail --from-start | grep` for backfill: it returns nothing and then times out, which reads as
   "empty channel". For **one specific message**, use `grapevine read <channel> <id>` — channel _and_
   id, no `--as`; a bare `read <id>` exits non-zero with a usage line that is easy to misread as a
-  broken tool.
+  broken tool. That is how the **vine and board** fail; don't carry the reflex to a tool that hands
+  you a structured error instead — read the output you got.
 - ◻ **On the vine** — grapevine tail wrapped in Monitor, presence registered (terminal-seat path).
 - ◻ **On the board** — board tail wrapped in Monitor. Use the filter **verbatim from your join
   output**: it needs `grep -E` (plain `grep` treats `(a|b)` as a literal, so the Monitor stays
