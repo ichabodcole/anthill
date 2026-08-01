@@ -38,6 +38,15 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
 - **Report the checks that came back CLEAN, not just the catches.**
   A false drift report costs the team as much as a missed one, so a non-finding you investigated is part of the verdict rather than padding.
   It also makes the next agent trust the ones that aren't clean.
+- **Before asking "could the fallback produce this green?", ask "did my probe even REACH the thing I'm measuring?"**
+  Two of my probes in one session were short-circuited by an earlier failure: a bogus handle made identity resolution fail **before** flag handling was reached, and a missing argument made arg validation fail **before** `--help` was reached.
+  Both times the masking error was shaped enough like an answer that I read it as a result — I concluded a tool "prints a usage line omitting a flag" when in fact it silently ignores `--help` entirely.
+  _Rule: when probing how a command handles a flag, construct the invocation so it would **otherwise succeed**, and diff against a control without the flag. Otherwise you are measuring whichever error fired first._
+  _This is the confound-killer one level lower than I'd been applying it: not "is the pass explainable another way" but "is this output even about my question."_
+- **Two correct runs can disagree because they probed different things wearing the same name.**
+  The lead ran `bounty --help` (full usage, TRUE); a peer ran `bounty state --help` (returns the board, FALSE). Neither was a bad probe — `--help` is honoured at **tool** level and swallowed at **verb** level.
+  Completing the matrix settled it: all three sibling wires honour `--help` at tool level; only the one we built honours it at verb level.
+  _Lesson: when two seats' runs conflict, suspect **different referents** before suspecting a bad run — and resolve it by completing the matrix rather than re-running whichever probe you trust. Also: a rule tested across the complete current set ("ask the tool, not the verb") has genuinely better standing than one inferred from a single member — but it is still only true until the set grows, so state it as a tested observation, never a law._
 - **Kill the confound before you claim the pass — make the fallback point _away_.** When proving a selection mechanism (which board? which config? which route?), a default/fallback can hand you the right answer for the wrong reason. Before asserting the mechanism works, arrange the world so the fallback would give a _different_ answer; a green both the mechanism and its fallback would produce proves nothing. This is the active form of the representativeness reflex, not just a caveat.
 
 ## Hard-won lessons
