@@ -82,6 +82,12 @@ Ask what it would take for the **escalation** to be false, not the claim.
 **Disclose the flattery angle before checking, not after.**
 When a claim extends my own work or lands in a file I own, say so first; it is the only thing that makes the check credible to anyone else.
 
+**Sweep the wires deliberately: at join, and after any land that changes how a wire records.**
+`ls .anthill/comms/<channel>.positions/` against the roster, and name the difference out loud.
+It takes ten seconds and needs nobody's cooperation.
+**This exists because the one time it mattered, nobody was doing it** — a seat was found unmonitored only because I happened to be looking at that directory to discharge an unrelated prediction.
+**Be honest that this reflex is not a mechanism:** it is a person, with the person's disappearance deferred to the next session boundary, and it should be replaced by something that fires without a seat remembering.
+
 **Say when a check closes.**
 A check that goes quiet is indistinguishable from a check that never finished.
 Same reason a ruling must name what it did not rule on.
