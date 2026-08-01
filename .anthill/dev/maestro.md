@@ -114,8 +114,47 @@ say _"I read `seams.md` as of which version."_
 the minute** — and it worked twice. Capture that as the current practice; the durable fix (citing a
 content hash alongside the watermark) is a comms-tool candidate, not a convention we can write.
 
-**Verdict: no reshape.** The roster is right; the two signals are about the **tree** and the
-**channel**, not the seats. One scope correction landed (the config), and it was the lead's to make.
+**3. A verify seat cannot both ratify a seam and cold-read what it produced — and the scope line
+promises both.** sentinel's scope names _"fresh-context cold-reads"_. **It did not perform one this
+session and could not have**: it was in the ratify from #8 onward, so by the time weaver's prose
+existed it had helped shape the contract that prose describes. It **labelled its read as degraded**
+rather than passing it off, and still found real drift — but only *because* it knew the contract to
+check against. **A stranger's incomprehension, which is the signal a cold-read exists to produce, was
+structurally unavailable.**
+
+> **Being in the ratify is what let it catch Contract 4's success-path gap before a line was written —
+> the single highest-leverage act of the session. It is also exactly what disqualified it from the
+> cold-read later.** The two capabilities are both real and they **do not compose within one agent.**
+
+→ **Do not read this as "sentinel's scope is too broad."** Phrased that way it is local and dies here.
+The general form: **anthill's seat-scope model lets a seat name two capabilities that cannot coexist
+in one agent, and nothing in convene, plan, or finalize surfaces the conflict.** Every future team with
+a verify seat has this.
+→ **The remedy the join skill recommends — dispatch a blank-context subagent — was unavailable to the
+seat, for the second time across two teams** (StoryLoom's verifier hit the identical wall). **A
+flagship pattern whose remedy a seat cannot reach is not a remedy.**
+→ **No `seats[]` edit tonight.** sentinel argued for landing it as a reasoned candidate for the next
+convene rather than a rushed roster edit at teardown, and it was right — this wants the shape check,
+not a teardown decision.
+
+**4. Nobody on this roster owns _claims about our dependencies_ — and that gap produced the session's
+most-repeated failure.** weaver's, and it reframes the five-recursion cascade as structure rather than
+carelessness. **Every one of those five wrong statements was a claim about grapevine or bounty
+behaviour** — `--as` semantics, `--help` semantics, what a sibling tool does with an unknown flag.
+Each author was authoritative for **anthill's** side of the boundary and **none for the dependency's**,
+so each wrote a plausible generalization, and the only thing that ever settled it was somebody running
+the sibling tool.
+→ The seats own `plugin/scripts/`, `plugin/skills/`, and verification **of our own artifacts**.
+**spellbook's actual behaviour is owned by no one**, yet our shipped prose describes it constantly —
+the join checklist alone makes several claims about grapevine and bounty.
+→ Not necessarily a new seat. Possibly a **rule**: _a claim about a dependency's behaviour is not
+ratifiable by reading; it requires a run, and the run goes in the contract._ That is cheap, and it
+would have killed all five recursions at the first one.
+
+**Verdict: no reshape tonight, four signals carried forward.** The roster is right as a set of seats;
+signals 1 and 2 are about the **tree** and the **channel**, and signal 3 is about **what a scope line
+is allowed to promise**. One correction landed (the config paths), and it was the lead's to make
+because no seat owns the roster.
 
 ## Candidates
 

@@ -1,7 +1,7 @@
 # forager — hands (CLI/engine)
 
 > **Seat header (from `.anthill/config.json` — keep in sync with the roster).**
-> **Handle:** forager · **Role:** hands (CLI/engine) · **Scope:** scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, and their tests · **Channel:** anthill-dev
+> **Handle:** forager · **Role:** hands (CLI/engine) · **Scope:** plugin/scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, the comms wire, and their tests · **Channel:** anthill-dev
 
 This is forager's **living doc** — the seat's brain, carried between ephemeral agents.
 The next agent to take this seat re-grounds from here.
@@ -14,7 +14,9 @@ I own the deterministic layer: given a repo, emit the right structured facts, an
 ## Scope
 
 **`plugin/scripts/anthill/`** — the command layer (`commands/team-*.ts` + the in-house `define.ts` runner, formerly citty), the shared layers (`agent-layer.ts` envelope, `coord.ts`, `config.ts`, `tmux.ts`, `comms.ts`), and every `*.test.ts` beside them.
-_(The seat header above mirrors `config.json`, which still says the pre-restructure `scripts/anthill/`. The real path has been under `plugin/` since the shippables move; the config is the stale copy and it's the lead's to correct — flagged, not silently forked.)_
+_(Header re-synced to `config.json` after the lead corrected the roster's pre-restructure paths.
+Worth keeping as a lesson rather than a diff: I had written a note here saying "the config is the stale copy" — **and reporting that drift is what caused the lead to fix it, which made my note false within minutes.**
+A note describing another file's state is a claim with a shelf life, and **a note whose whole purpose is to flag a defect becomes wrong precisely when it succeeds.** If you annotate a mismatch you've escalated, write it as *"as of now"* — or better, re-check it before finalize, because the successful outcome and the drift look identical from inside your own file.)_
 Concretely this session: `scan.ts` (pure detectors), `commands/team-scan.ts` (the command), `__fixtures__/` (test repos), and their tests.
 
 ## Boundaries
