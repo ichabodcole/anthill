@@ -1,6 +1,6 @@
 ---
 name: finalize-session
-description: The end-of-session KNOWLEDGE ritual for the project's agent team — each seat synthesizes what it learned into its own living doc, a shared pass over seams.md captures team-level truth, a structure reflection asks whether the team shape still fits, and the lead lands the doc commits and tears the session down. Use at session wrap when the human says "finalize the team session", "wind down the team", "wrap up the team", or work is ending. DISTINCT from landing the code — this captures the team's knowledge so it isn't lost.
+description: The end-of-session KNOWLEDGE ritual for the project's agent team — each seat synthesizes what it learned into its own living doc, a shared pass over seams.md captures team-level truth, a structure reflection asks whether the team shape still fits, a retro records testable hypotheses for next session, and each seat lands its own doc before the lead tears the session down. Use at session wrap when the human says "finalize the team session", "wind down the team", "wrap up the team", or work is ending. DISTINCT from landing the code — this captures the team's knowledge so it isn't lost.
 ---
 
 # anthill: Finalize Session (the knowledge ritual)
@@ -36,7 +36,8 @@ _live_. Don't skip it on a real session.
      per-handle, so parallel seats never collide there.
    - **Returns** (does not write) any `seams.md` boundary-truth candidate + a short synthesis summary —
      `seams.md` is shared/single-owner, so the **lead** single-sources it from the returns.
-   - **Does not commit** — the lead lands the seat-doc changes atomically with the rest.
+   - **Does not commit** — a one-shot subagent may not outlive the session, so the **lead** lands its
+     seat doc on its behalf. (A _terminal_ seat lands its own; see step 2.)
 
    The lead's residual finalize then shrinks to what is inherently whole-session: the `seams.md` pass
    (step 3), the structure reflection (step 4), the anthill-upstream feedback aggregation (step 5), and
@@ -67,10 +68,18 @@ _live_. Don't skip it on a real session.
    - If a lesson is really **shared truth** (about a boundary between seats), it belongs in `seams.md`
      (next), not your seat doc.
    - Your scratch is **disposable after synthesis** — the durable form is the seat doc.
-   - **Write your seat doc to disk, but do NOT commit it** — this holds for **terminal seats too**, not
-     just subagents. The lead lands every seat's doc in **one atomic commit** (see Land + close); a seat
-     self-committing its own doc breaks that atomic land (and reds a held-red tree). Leave the file
-     staged-or-dirty for the lead; don't `anthill commit` it yourself.
+   - **Land your own seat doc yourself** — `anthill commit --as <you> -m "…" .anthill/dev/<you>.md`.
+     It has exactly one possible author, no seam, and no other seat's paths in it, so there is nothing
+     for a cross-seat land to coordinate. Two things follow, and both were paid for:
+     - **The `Anthill-Seat` trailer records who RAN the command, not who authored.** Lead-lands-everything
+       stamps every seat's knowledge work with the lead's handle, and _"whose judgment produced this?"_
+       stops being answerable. Landing your own makes the trailer **correct by construction**.
+     - **It removes the lead as a single point of failure.** One team's lead went quiet and seven paths
+       sat uncommitted for **10.2 hours**, one of them untracked — 250 lines of a fix's proof that had
+       never been in git. **An absent lead is a normal event; the rule had no answer for it.**
+       The old hazard here was a bare `git commit` sweeping a peer's staged file. **`anthill commit` is
+       file-scoped and refuses to run without an explicit pathspec** — the guard moved into the CLI, and
+       this prose is the last place it hadn't.
 
 2.5. **Re-read every doc you OWN as its authority — and assume it has drifted.**
 Before you hand anything to the lead, go back through each contract and doc you own and **verify
@@ -217,8 +226,14 @@ it has gone wrong.**
      **is any Q1/Q2 answer carried only by everyone agreeing?** If it has no artifact, no number and
      no count behind it, either attach one or label it as testimony. A retro that skips this is the
      one that reads well and cannot be checked.
-   - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit --as <lead> -m "<msg>" <paths…>`**
-     (never `git add -A`) — the `--as` stamps the seat trailer so the atomic land is attributable.
+   - ◻ **Every seat landed its OWN doc** — `anthill commit --as <you> -m "<msg>" <your paths…>`, never
+     `git add -A`. The `--as` stamps the seat trailer, and because each seat runs its own commit the
+     trailer names the actual author rather than whoever happened to hold the land.
+   - ◻ **The lead landed anything CROSS-SEAT atomically** — a `seams.md` contract plus the skill that
+     points at it, a CLI change plus the doc describing it. **This is what lead-owns-the-land is for:**
+     work spanning owners that would, landed in pieces, leave a trail asserting something untrue for
+     as long as the gap lasts. It is a reason, not a blanket — a single-author file is not cross-seat
+     work.
      - **Red tree? (a slice deliberately held red for an atomic land.)** The pre-commit gate runs the
        **whole** suite on every commit, so a held-red tree fails each seat-doc commit and **deadlocks
        this step** — the docs can't land while the code is red. Don't fight the gate; park everything,
@@ -229,8 +244,9 @@ it has gone wrong.**
           gate is green.
        2. **Bring back only the docs** — `git checkout stash@{0} -- <doc-paths…>`. Now the tree holds
           just the seat docs (markdown → the gate passes); the red slice stays parked in the stash.
-       3. **Land all seat docs in ONE atomic commit** — the lead commits every seat's doc together
-          (`anthill commit --as <lead> -m "…" <doc-paths…>`), not each seat self-committing against a red tree.
+       3. **Land the docs against the now-green tree** — each seat commits its own
+          (`anthill commit --as <you> -m "…" <your doc>`); the lead lands only genuinely cross-seat
+          docs together. The pivot exists to make the tree green, not to move authorship.
        4. **Restore the held slice** — `git stash pop`. The stash's doc hunks are already committed
           verbatim, so they re-apply as a clean no-op; the red slice (tracked edits **and** untracked
           new files) comes back intact, and the atomic code land proceeds as planned.

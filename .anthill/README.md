@@ -106,9 +106,9 @@ direct.
 - **Work** — builders build against the ratified seams; the lead and seats watch for **structure
   signals** (toe-stepping, a renegotiated seam, an overloaded/idle seat, a verify finding that
   bounces work back).
-- **Finalize (+ reflection)** — each seat curates its scratch → seat doc; a shared `seams.md` pass;
-  then the **structure reflection** (below). The lead lands the doc commits and tears down the
-  session.
+- **Finalize (+ reflection)** — each seat curates its scratch → seat doc and **lands its own**; a
+  shared `seams.md` pass; then the **structure reflection** and the **retro** (below). The lead lands
+  what is genuinely cross-seat and tears down the session.
 
 **Verification is dynamic, not end-of-line.** A verify seat engages at **verification points** —
 which may be early (we need tests before building further), mid (prove a feature), or late — and
