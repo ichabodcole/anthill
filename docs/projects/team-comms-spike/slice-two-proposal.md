@@ -167,6 +167,47 @@ _(The claim that this string also appears inside the risk paragraph was **withdr
 
 `--since` is **exclusive** (`--since 139` returns `[140,…]`). This already cost the team one off-by-one, in the lead's own joining instructions. **Open: the owner states the rule for both verbs before the second is built.**
 
+### R9 — the verdict on Success Criterion 1, and the refinement that changes what to build next
+
+**Success Criterion 1 — _"a seat can tell whether its own wire is alive, without an external notification"_ — is NOT MET.**
+
+We built **peer**-observability. The evidence is the session's own record: forager's follower ran pre-primitive for ~40 minutes, streaming correctly and recording nothing. He could not tell — not from `ps` (the process was alive), not from his stream (messages arrived), not from the position file (its absence is also what a dead follower produces). **A peer told him**, which is the external notification the criterion forbids.
+
+**Recorded as a failure rather than a nuance because the drift was available and cheap:** the criterion would have survived being restated as _"a team can tell whether a seat's wire is alive"_ — true, useful, shipped, and not what was written down. A scorecard drifts by restatement, not by lying.
+
+**THE REFINEMENT (sentinel, measured — it qualifies the verdict without softening it):**
+
+| property                      | verdict                                                                                                                                                                                                   |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **passively** self-observable | **NO.** Silence and death are identical from the inside; no stored position changes that.                                                                                                                 |
+| **actively** self-probeable   | **YES.** Measured: a seat's own `send` returns through its own follow — alive → echo, killed → no echo, **with both sends confirmed present in the log** so the probe measures the wire and not the send. |
+
+**So _"a seat cannot know"_ is false; _"a seat is never told"_ is true.** The gap is not knowledge — **nothing prompts the question.** Same shape as this team's standing scar that correct waiting produces no signal.
+
+**That makes the follow-up a TRIGGER, not an instrument** — materially different from "build more observability", and the reason this refinement is worth more than the verdict it qualifies.
+
+**THE SHARPER VERDICT (scout, timestamped) — and it is the one to carry:**
+
+    steward demonstrates echo-as-liveness   comms #144   ts 1785621340.981
+    8d4569d (the primitive) committed                    ts 1785621853
+    the technique predates the primitive by             ~8.5 minutes
+
+**The echo round-trip needed no part of slice two.** It existed in slice one, was demonstrated on the wire at join, and **three seats independently confirmed their own wires with it before the primitive existed.**
+
+So the honest three-part verdict:
+
+1. **The primitive does not meet SC1.** Unchanged.
+2. **SC1 was already satisfiable at session start**, by a capability the team held and never recognised as the answer. **We spent a session building toward a criterion a technique already in our hands satisfied.**
+3. **The gap was never capability. It was that nobody named what they already had, and nothing prompts the question.**
+
+**What today actually added is sentinel's control** — both sends present in the log while only the live follower echoed — which converts a habit into an instrument. **The technique existed; the proof that it measures the wire rather than the send did not.**
+
+**Also measured: `send --dry-run` provably cannot serve as the probe.** Fresh live follower — dry run → no echo; real send seconds later on the same follower → echo. The dry run genuinely never traverses the follow loop. **Price of a real probe: one permanent line in a log nothing ever clears.** No cheaper instrument exists in the current surface.
+
+**H8 survives and should be kept.** The probe does not falsify it — the wire still reports nothing on its own; something _outside_ the wire can interrogate it, which is a different and arguably more useful claim.
+
+**Falsifier for the refinement:** _a seat that runs the echo probe after any suspicious quiet period detects a dead wire in one round-trip, every time._ If that fails, the probe is unreliable and the verdict stands unqualified.
+
 ### Team rule adopted this session (not comms-specific)
 
 **Whoever certifies a convergence names the shared input both parties read first.** Producer/consumer convergence is this team's ratify signal; an unqualified convergence claim is the "agreement is not truth" failure wearing a ratify badge. Adopted after a convergence was certified by timestamp without naming that both parties had read the same proposal — and then re-committed by the lead one message later.

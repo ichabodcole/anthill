@@ -76,6 +76,34 @@ and `.claude/skills/cascade-check` says plainly: _DO NOT bump versions — verif
 > **Before this branch merges, reset the version to whatever `main` carries and let release-please own
 > it again.** If a release PR ever looks wrong on this branch, check this first.
 
+### ⚠ There is a DIVERGENT on-disk copy at exactly the pinned version (measured 2026-08-01, session 5)
+
+    ~/.claude/plugins/cache/anthill-beta/anthill/1.8.0-beta.1/     a real directory, NOT a symlink
+
+It differs from the working tree on **precisely this spike's surface** — `comms.ts`,
+`commands/team-comms.ts`, `cli.ts`, `agent-layer.ts`, `define.ts`, `lock.ts`, and **6 of 6 shipped
+`SKILL.md` files** (bootstrap, comms, convene, finalize-session, join, upgrade). Six further historical
+copies sit alongside it (1.5.0 → 1.8.0) plus a marketplaces checkout — **nine independent copies of this
+CLI on one machine, none of them symlinks.**
+
+**Nothing resolved there during the session, and nothing prevents it either.** The hazard is the
+coincidence: the stale copy is parked at the _same version string_ `plugin.json` is hand-pinned to, so
+it is a plausible resolution target for exactly as long as the pin exists. **Reset the pin and the
+coincidence goes away** — which is one more reason not to leave the teardown undone.
+
+### ⚠ A long-running process is a snapshot of the code as of its own start
+
+The symlink serving the working tree means an _installed_ skew is visible (`cmp` against the tree). **An
+in-memory skew is not.** Every seat's `comms follow` was started at join; when the primitive landed
+mid-session, all six kept executing pre-primitive code — **same file, same symlink, same everything a
+path check measures, and the check was correct when it ran.** The tell was indirect: five seats began
+recording positions after restarting and the sixth did not.
+
+**`ps` cannot catch this** — the path is right and the bytes behind it moved. **After any land that
+changes a wire, restart the wire**: note the head id, kill your own follower by PID (never by pattern —
+`pkill -f "comms follow"` matches every seat on the machine and has taken down three at once), re-arm,
+then `read --since <head>` to fill the gap.
+
 ## Setup
 
 ```sh
