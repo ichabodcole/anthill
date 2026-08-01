@@ -27,6 +27,8 @@ stay solo.
    - the **`grounding`** docs in `.anthill/config.json` (the _product_ context — e.g. `AGENTS.md`,
      `README.md`) so you can judge what you're building;
    - `.anthill/README.md` — the **SOP** (how the team works, the principles, the rituals);
+   - `.anthill/principles.md` — **what this team learned the hard way**, each with the scar that
+     paid for it. Short, and the highest-leverage read here;
    - `.anthill/dev/seams.md` — the shared inter-seat **contracts**;
    - your own **lead seat doc** `.anthill/dev/<lead>.md` (your orchestration reflexes + scars).
      You are now the **lead**.

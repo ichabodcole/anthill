@@ -26,6 +26,8 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
 2. **Re-ground in your seat (the heart of this).** Read, in order (paths from `.anthill/config.json`):
    - the **`grounding`** docs (the _product_ context) — your seat doc assumes you know it;
    - `.anthill/README.md` — the **SOP** (how the team works, the rituals, commit discipline);
+   - `.anthill/principles.md` — **what this team learned the hard way**, each with its scar. Short,
+     and the highest-leverage read here;
    - `.anthill/dev/seams.md` — the shared inter-seat **contracts**. You **defer** to these; you never
      restate them in your own doc;
    - `.anthill/dev/<handle>.md` — **your own living doc**: scope, boundaries, relationships, reflexes,

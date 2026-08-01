@@ -147,17 +147,12 @@ holding it while others write. A short hold is the only real protection the tool
 
 ## Shared practices (true for every seat)
 
-- **Root-cause before cutting.** Report the root cause with evidence _before_ editing a fix — don't
-  cut a phantom, don't assert a cause you haven't proven.
-- **Verify the real artifact, not a proxy.** Trust the rendered output; distrust the measurement or
-  the stub. A proxy will eventually lie.
-- **The vine evaporates — land decisions in an artifact.** The grapevine is substance _in the
-  moment_, but it's not durable: a decision that outlives the session (a ratified seam, a chosen
-  approach, a rejected option + why) must be written into an artifact — `seams.md`, a seat doc, the
-  plan, a project doc — **before finalize**, or it's gone when the panes close.
-- **No store without a named re-read moment.** Every place knowledge is written must have a moment it
-  is _read back_ (join re-grounds in the seat doc; convene reads the roadmap; finalize reads the
-  scratch). A store nothing re-reads is a write-only leak — don't create one.
+> **The team's PRINCIPLES live in [`principles.md`](./principles.md), not here** — the hard-won
+> claims about how work goes wrong, each with the scar that paid for it. **Read them at convene and
+> at join.** What stays below is *mechanics*: how this team formats, addresses, and lands things.
+> The split exists because the two accrete differently — a principle is earned once and travels to
+> other teams; a practice is local and changes with the tooling.
+
 - **Write for the preview — the first ~200 characters are the only part that reliably lands.** Peers
   receive your message as a truncated notification and decide from that whether to fetch the rest.
   Most messages are never fetched in full. So lead with the **verdict, not the setup**: what you
@@ -169,44 +164,11 @@ holding it while others write. A short hold is the only real protection the tool
   headline or it lands below the cut. And **do not use a peer's arrow to decide to skip**: a seat who
   did that nearly shipped a broken test, because a falsification addressed to the lead was about his
   lane. Read on topic, not on address.
-- **A ruling must name what it did _not_ rule on.** A long, authoritative message that silently omits
-  someone's item is indistinguishable from one that resolved it — silence and resolution look
-  identical, and a seat registered "ruled" and moved on with both of his asks unaddressed. If you're
-  the one ruling, list the open items you are **not** deciding yet.
-- **There is no message budget.** Nothing in the tooling limits how much you send, and seats
-  nonetheless ration themselves and start compressing. That compression is where findings die: what
-  gets cut is the second-most-important thing you know. A real finding buried as a subordinate clause
-  in a message about something else **is a finding you did not send** — one died exactly that way.
-  If it deserves attention, give it its own message.
 - **When you ratify or post a verdict, name the last message id you had read** — _"ratifying as of
   #14."_ Messages cross: two seats can ratify contradictory things simultaneously, and the channel has
   no notion of a message being in flight. A read-watermark lets the other seat see instantly that your
   call predates their falsification, instead of discovering it later. (New convention — tell us
   whether it earned its keep.)
-- **Never ask through a channel that stops you receiving the answer.** A blocking prompt in your own
-  pane is invisible to every instrument the team has: the board still says `doing`, the vine says
-  nothing, `anthill status` still shows you present, the tree shows nothing. A seat sat behind a modal
-  for ~40 messages **on the critical path** while the lead's ruling and the human's answer were both
-  already on the vine, waiting for him. **Asking twice through two channels is not redundancy — the
-  blocking one silently wins.** Put the question where the answer can reach you, then keep working or
-  say you're blocked.
-- **Verify a claim that indicts you as hard as one that flatters you.** A seat who re-measured
-  everything all session accepted exactly one claim on sight — the one saying she was wrong — and it
-  was false; her original statement had been right. **A correction that indicts you arrives feeling
-  pre-audited**: it's against the speaker's interest, it comes from a careful colleague, and agreeing
-  is the humble-looking move. Worse, **retractions travel further than claims** — three seats had
-  publicly agreed, so the next reader would have deleted correct work as settled.
-- **Confirm a check processed a non-zero count of the things you meant.** `Tasks: 6 successful` counts
-  task _disposition_, not execution — a cache hit reports success for work it decided not to do, while
-  the same tree fails a direct run. `Checked 0 files. No fixes applied.` exits 0 when your CWD has
-  drifted. **The tool is not lying; it is answering a coarser question than the one you asked.** Read
-  the count, not just the verdict.
-- **A contract is a description, not a trigger.** Prose in a shared doc cannot make anyone _notice_
-  they moved a boundary. A seat broke a two-artifact contract **three times in one session** — one he
-  owned, had just written the lesson for, and had quoted to three peers while breaking it. What caught
-  it was a compiler, in four seconds. **Being convinced of a rule does not make it fire, and may
-  substitute for protection, because conviction feels like vigilance.** If a contract spans two
-  artifacts, give it a mechanical trigger — a test or a type that spans both.
 - **The atomic cross-seat land: assemble, don't marinate.** When several seats' halves are
   uncompilable until all of them land, the naive approach parks everyone's red work in the shared tree
   for as long as the slowest seat drafts. Instead: **draft out-of-tree in gitignored scratch → post
