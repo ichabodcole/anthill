@@ -110,40 +110,69 @@ cause the diffusion it warns against. Testable; see below.
 
 ## Role B — `scout` (research tier)
 
-> **Handle:** `scout` · **Tier:** research · **Reports:** to the human · **Never intervenes**
+> **Handle:** `scout` · **Tier:** research · **Reports:** to the lead **and** the human, as a
+> conversation · **Does not intervene during a session**
+
+### Why this role exists — the failure it prevents
+
+**A single agent that develops, leads, judges its own work, and then writes the account of it has no
+point in the chain where a different frame enters.** Each layer validates the one before it, and the
+errors compound rather than cancel.
+
+Session 4 is a mild, documented instance: the lead ran the session and wrote its retro, and the
+retro was **wrong in ways that flattered the team, in its numbers as well as its framing** — the same
+window booked as both resilience and failure. **Four agents inside the session found none of it.** A
+blank-context reader found all of it in one pass.
+
+The goal is therefore **not observational purity. It is that no single frame is the only frame.**
 
 ### Scope
 
-Studies **how the team works**, not what it builds. Closest existing analogue is a UX or
-team-interaction researcher: watches the coordination channels, reads the tree for what actually
-changed, and produces observations, patterns, and **experiments worth running**.
+Studies **how the team works**, not what it builds. Two inputs, and it needs both:
 
-### Method — artifact-first, because we have measured the alternative
+1. **The record** — comms history, the vine, commits, diffs, timings, test counts.
+2. **The team** — it **interviews the seats**, which is a distinct instrument from reading their output.
 
-Watching the channel alone produces testimony. Session 4's retro marked wire-only events as
-`artifact:` and a blank-context reader took it apart on exactly that: _the grapevine leaves no log
-in the tree, and quoting our own messages is quoting ourselves._
+**Interviewing is evidenced, not speculative.** The StoryLoom rounds produced their best material
+that way, and the strongest material came from **behavioural** questions (_"how many did you pull in
+full"_) rather than preference ones (_"what would you want"_).
 
-So scout's conclusions carry **repo evidence** — shas, diffs, timings, test counts — or they are
-labelled as impressions. **A claim about the team supported only by what the team said is testimony,
-however many members said it.**
+**But testimony is not the finding.** scout cross-checks what the seats say against what the tree
+says. When they disagree, the disagreement _is_ the finding — and today's retro is exactly that case.
 
-### Non-participation is structural
+### Non-intervention — narrowed, and only where it is load-bearing
 
-scout never rules, never assigns, never corrects a seat mid-flight. If it sees the team heading
-into a wall, it records that and reports to the human. **This will feel wrong in the moment and is
-the point** — an observer that intervenes has changed the thing it is measuring, and we have already
-recorded that priming a behavioural question taints the answer.
+The earlier draft made scout inert on purity grounds. That was over-drawn. The real constraint is
+narrow and evidenced:
 
-Its presence is stated once at convene and then ambient. **Not hidden** — that would be worse, and
-seats performing for an observer is itself an observable.
+> **Do not ask a behavioural question while the behaviour is still available to change.**
+
+Priming during a session taints it — the StoryLoom rounds lost the blind condition all three times
+it was attempted. Priming _after_ costs nothing, which is why the retro interview is the right
+instrument and why it belongs at the end.
+
+So: **during the session** scout observes and does not rule, assign, correct, or ask the seats
+leading questions. **After it ends,** scout is a full participant — interviews, reports, argues.
+
+Its presence is stated once at convene and then ambient. Not hidden; seats performing for an
+observer is itself an observable.
+
+### Output and the decision forum
+
+A **report or investigation in anthill's own docs**, carrying its evidence: what it observed, where
+the record and the testimony diverge, and **hypotheses for what to change**.
+
+Then a **three-way conversation — human, lead, scout** — about which experiment the next session
+runs. Everyone brings context to that conversation, including the lead, and **that is fine**: the
+point is multiple perspectives against shared evidence, not a clean room. **What works works.** A
+hypothesis that comes back wrong is more evidence, not a failure of the person who proposed it.
 
 ### Cross-project, in parallel
 
-One instance per live session — one watching StoryLoom, one watching this repo — with a
-**reconvergence pass** where instances compare notes. Cross-team patterns are the thing we have
-never been able to get: every finding to date is single-team and reconstructed after the fact.
-HiveMind is the natural home for whatever survives reconvergence.
+One instance per live session — one on StoryLoom, one here — with a **reconvergence pass** where
+instances compare notes. Cross-team patterns are the thing we have never been able to get: every
+finding to date is single-team and reconstructed after the fact. HiveMind is the natural home for
+whatever survives reconvergence.
 
 ### The tooling gap this exposes
 
@@ -151,8 +180,6 @@ HiveMind is the natural home for whatever survives reconvergence.
 resolved seat; `read` deliberately does not. So an observer **can already catch up but cannot watch
 live** — precisely backwards for an observer. Grapevine's guest model is the right shape and comms
 lacks it. Small, well-defined, and a slice-two candidate alongside presence.
-
----
 
 ## Hypotheses this proposal makes, for the retro to test
 
@@ -171,8 +198,11 @@ lacks it. Small, well-defined, and a slice-two candidate alongside presence.
 
 1. **Does steward want splitting later?** Possibly two roles — a pure checker and a pure assistant.
    Starting with one, on the argument that the errands _are_ checks. Revisit if the halves pull apart.
-2. **Who does scout report to when the human is away?** Reporting to the lead reintroduces the
-   framing problem; queuing until the human returns risks the finding going stale.
-3. **Does scout need the retro at all**, or does its existence make part of the retro redundant?
+2. **Does scout replace part of the retro, or run it?** Current draft has it _conducting_ the retro
+   interview rather than the team self-reporting. That is a bigger change to `finalize-session` than
+   it looks, and the retro beat shipped four hours ago.
+3. **What happens to a scout finding when the human is unavailable for the three-way conversation?**
+   Queuing risks staleness; the lead deciding alone reintroduces the single-frame problem the role
+   exists to prevent.
 4. **Naming.** `steward` and `scout` are placeholders chosen to fit the existing register
    (`forager`, `weaver`, `sentinel` are ant castes; `maestro` already breaks it). Easily changed.
