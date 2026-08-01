@@ -150,23 +150,32 @@ _Lesson: near-miss examples inflate n without adding evidence, and they are most
 
 - **Leaving a decision unstated in a contract.** `comms read` is identity-free on purpose — identity binds the verbs that _attribute_ (`send`, `follow`), not the ones that observe. But I never wrote that down, and a cold read couldn't tell the decision from an oversight. _An unstated decision and a gap are identical from outside; if you chose it, say you chose it._ (Pinned: Contract 4 clause (c-bis).)
 
-## Open hypotheses (2026-08-01 retro) — discharge or falsify these, don't just read them
+## Open hypotheses — SEAT-SCOPED (F-numbered). Team-level ones live in `.anthill/retro.md`.
 
-Recorded here because the retro's own store (`.anthill/retro.md`) did not exist when the session
-closed, and the vine evaporates. These are **mine** — the session-level ones live wherever the lead
-lands the retro. A hypothesis with no test is a preference; each of these names its falsifier.
+**Checked against `.anthill/retro.md` after it landed: none of these three are in it.** The lead
+curated that file to **team-level** hypotheses (H1–H7); these are seat-scoped and were left out, so
+this is **not** a restatement and converting it to a pointer would have deleted them. Verified before
+acting on a ruling that assumed otherwise — see the deletion trap below.
 
-- **H1 — at least one more wall-vs-monotonic clock confusion survives in `plugin/scripts/anthill/`.**
+**Renamed F1/F4/F5 → F-numbers deliberately:** `retro.md` also numbers its hypotheses `H1…H7`, with
+different content. Two files, same labels, different claims is a citation collision waiting to happen
+("as H1 predicts…" resolves to two things). Use `F` for seat-scoped, `H` for team-level.
+
+Read `.anthill/retro.md` for the session-level set; the ownership of these three stays here, because
+a seat doc is what `anthill join` re-reads. A hypothesis with no test is a preference; each names its
+falsifier.
+
+- **F1 — at least one more wall-vs-monotonic clock confusion survives in `plugin/scripts/anthill/`.**
   `lock.ts` had **three in one file** (`nowMillis()` is ms since process start; it was being compared
   against epoch `mtimeMs`, and also written into the lock file as a human-readable stamp reading 1970).
   **Test:** grep every `nowMillis()` call site and classify each as a *duration* or a *timestamp*.
   **Falsified if** every remaining site is a duration. _I predict at least one more._
-- **H4 — cold-review findings under-scope more often than they over-scope.**
+- **F2 — cold-review findings under-scope more often than they over-scope.**
   This round: m7 (filed as a timing window, actually a dead branch) and M4 (named `--since`, missed
   `--id` leaking `NaN`) both under-scoped; **zero over-scoped.** n=2 one-way is a hypothesis, not a law.
   **Test:** classify the next round's findings under / over / exact. **Falsified if** over ≥ under.
   _Why it matters: a fix that satisfies an under-scoped report closes the card and leaves the defect._
-- **H5 — the two recorded-but-uncarded defects below (`--format <unrecognised>`, ambient `isTTY`) will
+- **F3 — the two recorded-but-uncarded defects below (`--format <unrecognised>`, ambient `isTTY`) will
   NOT be re-found by the next cold review.**
   **Test:** do they appear in it? **Falsified if** they do — which would be good news, and would mean
   cold review catches *recorded known* gaps and not only fresh reading. _I predict it misses both,
