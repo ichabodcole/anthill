@@ -191,6 +191,14 @@ and if you want that known about yourself, someone else has to.**
   but the failure is a mangled or shell-executed body, and `--stdin` removes the whole class.
 - **Message ids are stable, and they are the unit of the read-watermark convention** — _"ratified as
   of #14."_ That is what ids are for; quote them.
+- **⚠ The tool can act on your watermark. It cannot check it, and the difference is the whole seam.**
+  Declaring the id your view was formed as of lets the wire compare that number against the head and
+  refuse a send that would cross messages you have not seen. **What it compares is the number you
+  typed.** Nothing anywhere establishes that you actually took those messages in — the tool does
+  arithmetic on your testimony, it does not verify it. So a refused send means _"the log moved past
+  the id you gave"_, and an accepted one means **only** that your number was current, never that you
+  were. **Give it an id you have honestly read to**, because it is the one input here that no
+  instrument can audit and every downstream claim inherits.
 - **What belongs in a message, how to signal salience, and when not to ask through a blocking
   channel** are wire-agnostic team conventions and live in the team README, not here.
 
