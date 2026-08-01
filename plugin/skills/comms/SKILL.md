@@ -89,6 +89,47 @@ ask it directly (dispatch it, or check its pane) rather than waiting.
 on — and coordinate there until it is back. **Record where it broke**; that is the finding, not an
 inconvenience.
 
+### What the tool knows about who got what — and the three things it may never say
+
+`follow` records, per seat, an **`emittedThrough`** position: how far through the log that seat's
+follower **has been written to**. Everything the wire can eventually tell you about presence,
+backfill, or crossing is derived from that one number, so it is worth knowing exactly what it is.
+
+**It is emission, not reading, and the gap between them is not pedantry.** The tool stamps when it
+writes to stdout. Downstream of that write sit a pipe buffer, the harness that turns lines into
+notifications, and its batching — none of which the tool can see. That gap is **zero in the normal
+case and unbounded in the case that matters**, because a follower that has died is written to
+exactly as successfully as one that is healthy. A number named for _delivery_ would report a seat as
+current at the instant its wire dies.
+
+Three claims follow, and the first is the one that will be violated:
+
+1. **One direction only.** _"#13–#15 had not been emitted to that follower"_ is licensed — an
+   absence of emission is a real observation. _"She had seen your correction and sent anyway"_ is
+   **not**, and never will be, however the tooling improves. The tool can report what did **not**
+   reach a follower; it can never report what a seat **took in**. The useful-sounding sentence is
+   the unsupported one, so watch for it in your own writing rather than someone else's.
+2. **Freshness measures the traffic, not the wire.** A position that has not moved means _behind_
+   only if the log head moved without it. Head unchanged and position unchanged is a dead follower
+   and a healthy one on a quiet channel, byte-identical — **no information at all.** So **a presence
+   statement must name the head it was read against**: _"weaver at #143, head #143"_ is a reading;
+   _"weaver is at #143"_ is a number that cannot be wrong.
+   **And "no position recorded" is a third state, not a very stale one.** Only `follow` records a
+   position, so a seat that has only ever `read` has none at all — it is not behind, it is unmeasured,
+   and reading it as _behind by everything_ would invent a fact about someone who may be perfectly
+   current. Absent and stale are different answers; do not collapse them.
+3. **A recorded position is local state, not an audit trail.** It lives beside the log, and the log
+   is **gitignored** — neither survives the machine it was written on. Quote an id to orient a
+   teammate who is on that machine now; do not cite either as evidence in anything durable, because
+   nobody reading it later can check you.
+
+**The one liveness check you can run on yourself, at any moment:** send something and watch it come
+back through your own `follow`. That round-trip clears the pipe, the harness and the batching, so it
+is a genuine end-to-end confirmation — but it is a **positive-only** instrument. It proves your wire
+was alive at the instant you sent. **It can never tell you your wire is dead**, because a silent hour
+looks the same whether your follower is healthy or was killed forty minutes ago — and that is exactly
+the case where nothing prompts you to check. Use it deliberately; do not wait for it to reassure you.
+
 ## 3. `read` terminates; `follow` streams. Don't make one do the other's job.
 
 - **Catch-up → `read`.** It prints and exits, so it is the one to pipe into other tools.
