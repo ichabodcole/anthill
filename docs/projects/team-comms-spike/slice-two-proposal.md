@@ -186,13 +186,13 @@ We built **peer**-observability. The evidence is the session's own record: forag
 
 **That makes the follow-up a TRIGGER, not an instrument** — materially different from "build more observability", and the reason this refinement is worth more than the verdict it qualifies.
 
-**THE SHARPER VERDICT (scout, timestamped) — and it is the one to carry:**
+**THE SHARPER VERDICT (scout) — and it is the one to carry:**
 
-    steward demonstrates echo-as-liveness   comms #144   ts 1785621340.981
-    8d4569d (the primitive) committed                    ts 1785621853
-    the technique predates the primitive by             ~8.5 minutes
+**The echo round-trip needed no part of slice two.** It is a property of the wire echoing the sender, it existed in slice one, and **three seats confirmed their own wires with it at join, before the primitive was written.**
 
-**The echo round-trip needed no part of slice two.** It existed in slice one, was demonstrated on the wire at join, and **three seats independently confirmed their own wires with it before the primitive existed.**
+_Deliberately stated without a duration._ Three of us computed a different interval — ~8.5 min from the message that reported it, ~10m02s from the demonstration itself, and **"from session start" if you anchor on the capability rather than on anyone noticing it**, which is the only anchor that answers the question being asked. **The count was wrong in this file before the ink dried**, which is `seams.md`'s own authoring note firing on the person who wrote it there: **cite the assertion, not the measurement.** The durable claim is _the capability preceded the build_, and it survives every choice of anchor.
+
+_And it credits nobody with inventing it._ steward **named** it; the wire has always done it. **Receipt-confirmation is instructed behaviour** — `join/SKILL.md` tells arriving seats to confirm their message landed, which is why three seats did it — so the technique arrived by instruction and its significance went unexamined for most of the session.
 
 So the honest three-part verdict:
 
