@@ -118,3 +118,30 @@ describe("buildChecklist — shape", () => {
     expect(buildChecklist(base)).toEqual(buildChecklist(base));
   });
 });
+
+// `anthill commit` gained `--as <handle>` + an `Anthill-Seat:` trailer, requested
+// independently by all four seats of a consuming team: git records the HUMAN as
+// the author of every seat's commit, so "who landed this?" was unanswerable and
+// their lead had to ask the channel to identify one.
+//
+// The feature ships DEAD unless something tells a seat to use it. Contract 4's
+// own rule applies — emit the RESOLVED incantation, don't make the consumer
+// compose it — and this checklist is the seat-resolved surface that gets read.
+describe("buildChecklist — the commit incantation carries the seat (attribution)", () => {
+  test("emits `anthill commit --as <handle>` fully resolved, not a template", () => {
+    const l = line("Commit file-scoped");
+    expect(l).toContain(`anthill commit --as ${base.handle}`);
+    expect(l).not.toContain("<handle>");
+    expect(l).not.toContain("{handle}");
+  });
+
+  test("still forbids the bare-git escape hatches", () => {
+    const l = line("Commit file-scoped");
+    expect(l).toContain("git add -A");
+    expect(l).toContain("EXPLICIT pathspec");
+  });
+
+  test("says WHY, so a seat that drops the flag knows the cost", () => {
+    expect(line("Commit file-scoped")).toMatch(/who landed this/i);
+  });
+});

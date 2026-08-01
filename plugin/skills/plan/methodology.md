@@ -169,6 +169,21 @@ can cross**, and nothing in the channel marks a message as in flight. A read-wat
 words and lets the other owner see instantly that your verdict predates their evidence, instead of
 both sides discovering it later. (New convention — report whether it earned its keep.)
 
+**A contract that spans two artifacts needs a MECHANICAL trigger, not just a clause.** A ratified seam
+is a _description_; it cannot make anyone notice they moved the boundary. From the field: an owner
+broke a two-artifact contract **three times in one session** — one he owned, had just written the
+lesson for, and had **quoted to three peers while breaking it.** Break 1 was found by accident. Break 2
+was caught in four seconds **by a compiler.** Break 3 repeated the same direction.
+
+> **Being convinced of a rule does not make it fire, and may substitute for protection, because
+> conviction feels like vigilance.**
+
+So when you ratify a contract whose two sides must agree, **ask what will fail when they stop
+agreeing** — a test spanning both, a shared type, an exhaustiveness check. If the honest answer is
+"someone will notice," the contract is unenforced and should say so. This is the same reason a proof
+is required rather than encouraged: **satisfying one half of a two-artifact contract leaves the other
+UNVERIFIED, not still-fine.**
+
 **Contested seams settle with one ruling** — and **the ruling must name what it did _not_ settle.** The
 lead does a **read-all-owners synthesis pass** — reads every affected owner's position, then **rules
 once** — rather than letting the vine ping-pong. But a long, authoritative ruling that silently omits

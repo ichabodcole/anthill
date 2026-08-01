@@ -38,6 +38,19 @@ interface BaseArgDef<T extends ArgType, VT extends boolean | string> {
   alias?: string | string[];
   default?: VT;
   required?: boolean;
+  /** A flag the command RECOGNISES but deliberately REFUSES. Distinct from an
+   * unknown flag: `--as` on `comms read` is not a typo, it is a coherent thing to
+   * try that this verb does not do. The generic "Unknown option" is correct and
+   * useless there — it names the valid set but not WHY yours was refused, which
+   * is the inference that makes a seat conclude the tool is broken (anthill#54).
+   *
+   * A refused arg is REGISTERED with the parser (so it never reads as "unknown")
+   * and EXCLUDED from the advertised valid set (so we don't offer a flag we
+   * reject) — but it is NOT rejected here. The value reaches `ctx.args` and the
+   * command refuses it through its own dual-audience envelope, because a usage
+   * error under `--format json` must stay a clean `{ok:false}` envelope rather
+   * than becoming usage text. */
+  refused?: string;
 }
 
 export type BooleanArgDef = Omit<BaseArgDef<"boolean", boolean>, never>;
@@ -178,10 +191,16 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
   const booleans = new Set<string>();
   const strings = new Set<string>();
   const positionals: Array<{ name: string; def: PositionalArgDef }> = [];
+  const refused = new Set<string>();
 
   for (const [name, def] of Object.entries(argsDef)) {
     if (def.type === "positional") {
       positionals.push({ name, def });
+      continue;
+    }
+    if ((def as StringArgDef | BooleanArgDef).refused !== undefined) {
+      options[name] = { type: "string" };
+      refused.add(name);
       continue;
     }
     const type: "string" | "boolean" = def.type === "boolean" ? "boolean" : "string";
@@ -212,13 +231,47 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
 
   let parsed: { values: Record<string, unknown>; positionals: string[] };
   try {
+    // STRICT on purpose. With `strict: false` every command silently accepted
+    // every unknown flag and exited 0 — a typo like `--fromat json` quietly fell
+    // back to the default, and a flag a command doesn't have (`--as` on an older
+    // `commit`) had its VALUE fall through as a positional, producing
+    // "path(s) not found: aesop". That turns a usage error into a silent wrong
+    // result, and it is the amplifier for every missing-flag defect: a seat that
+    // follows our own instructions on a command lacking that flag gets no error
+    // at all. anthill#54's shape — a usage error and a broken tool are
+    // indistinguishable unless the output disambiguates them.
     parsed = nodeParseArgs({
       args: processed,
       options: Object.keys(options).length > 0 ? options : undefined,
       allowPositionals: true,
-      strict: false,
+      strict: true,
     }) as { values: Record<string, unknown>; positionals: string[] };
-  } catch {
+  } catch (err) {
+    // An unknown/misused flag must surface as a USAGE error naming the valid
+    // set — never as a crash, and never (the old behaviour of this catch) by
+    // silently reclassifying every argument as a positional, which would have
+    // been strictly worse than the swallow it replaced.
+    const code = (err as NodeJS.ErrnoException | undefined)?.code;
+    if (
+      code === "ERR_PARSE_ARGS_UNKNOWN_OPTION" ||
+      code === "ERR_PARSE_ARGS_INVALID_OPTION_VALUE"
+    ) {
+      // Refused args are registered so they don't read as "unknown", but they are
+      // NOT valid to pass — advertising one would offer a flag we reject.
+      const valid = Object.keys(options)
+        .filter((n) => !refused.has(n))
+        .sort()
+        .map((n) => `--${n}`);
+      const detail =
+        err instanceof Error
+          ? err.message.replace(/\s*To specify.*$/s, "").replace(/\.\s*$/, "")
+          : "";
+      throw new CLIError(
+        `${detail.trim() || "invalid option"}${
+          valid.length > 0 ? `. Valid flags: ${valid.join(", ")}` : ""
+        }`,
+      );
+    }
     parsed = { values: {}, positionals: processed };
   }
 

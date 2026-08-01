@@ -32,7 +32,6 @@ import {
   nextMessageId,
   parseLog,
   resolveSeatIdentity,
-  unknownFlags,
 } from "../comms.ts";
 import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
 import { defineAnthillCommand, defineCommand } from "../define.ts";
@@ -70,36 +69,6 @@ function identify(config: ResolvedConfig | null, configSearch: string, handle: u
 function resolveChannel(config: ResolvedConfig | null, flag: unknown): string | null {
   if (typeof flag === "string" && flag.trim() !== "") return flag;
   return config ? config.channel : null;
-}
-
-/**
- * Reject undeclared flags before ANY side effect. `strict: false` on the shared
- * parser means an unknown flag is otherwise dropped and the verb reports
- * success — so the guard has to live at the top of each verb, and it has to
- * name the valid flags (a bare rejection is the anthill#54 shape again).
- */
-function rejectUnknownFlags(
-  format: ReturnType<typeof resolveFormat>,
-  command: string,
-  rawArgs: string[],
-  known: string[],
-): void {
-  const bad = unknownFlags(rawArgs, known);
-  if (bad.length === 0) return;
-  // `--as` on a non-attributing verb is the ONE rejection a seat will read as a
-  // lost capability rather than a mistake — every neighbouring tool (grapevine,
-  // bounty) takes `--as` on every verb, so reaching for it here is a reasonable
-  // analogy, not carelessness. It was previously swallowed in silence, which
-  // made the call LOOK seat-scoped when it never was. So this one explains.
-  const why = bad.includes("--as")
-    ? " — `--as` is not accepted here: reads are not attributed to a seat (identity binds sending and following, not observing), so drop the flag and the command works unchanged"
-    : "";
-  emitError({
-    format,
-    command,
-    error: `unknown flag(s): ${bad.join(", ")}. Valid flags: ${known.map((k) => `--${k}`).join(", ")}${why}`,
-  });
-  process.exit(1);
 }
 
 function readChannel(teamDir: string, channel: string) {
@@ -150,7 +119,6 @@ const sendCommand = defineCommand({
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    rejectUnknownFlags(format, "comms send", ctx.rawArgs, ["as", "channel", "stdin", "format"]);
     const { config, configSearch } = loadTeam();
 
     const identity = identify(config, configSearch, ctx.args.as);
@@ -249,11 +217,30 @@ const readCommand = defineCommand({
     since: { type: "string", description: "Only messages after this id", valueHint: "id" },
     id: { type: "string", description: "Fetch EXACTLY ONE message by id", valueHint: "id" },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
+    // RECOGNISED and REFUSED, not unknown. Every sibling wire takes `--as` on a
+    // read verb, so muscle memory supplies it — and `read` is the one verb a
+    // JOINING seat runs before it knows its seat.
+    as: {
+      type: "string",
+      refused:
+        "reads are not attributed to a seat (identity binds sending and following, not observing)",
+    },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    rejectUnknownFlags(format, "comms read", ctx.rawArgs, ["channel", "since", "id", "format"]);
+    // `--as` is DECLARED-AND-REFUSED on this verb (see its args). The shared
+    // parser now rejects genuinely unknown flags globally and names the valid
+    // set, so the only rejection left to own here is the one that must TEACH.
+    if (ctx.args.as !== undefined) {
+      emitError({
+        format,
+        command: "comms read",
+        error:
+          "`--as` is not accepted here: reads are not attributed to a seat (identity binds sending and following, not observing), so drop the flag and the command works unchanged",
+      });
+      process.exit(1);
+    }
     const { config, configSearch } = loadTeam();
     const channel = resolveChannel(config, ctx.args.channel);
     if (!config || !channel) {
@@ -326,7 +313,6 @@ const followCommand = defineCommand({
   },
   async run(ctx) {
     const format = resolveFormat(ctx.args.format);
-    rejectUnknownFlags(format, "comms follow", ctx.rawArgs, ["as", "format"]);
     const { config, configSearch } = loadTeam();
 
     const identity = identify(config, configSearch, ctx.args.as);

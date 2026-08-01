@@ -1,6 +1,8 @@
 # `finalize-session` step 2.5: two gaps found by running it
 
-**Added:** 2026-08-01 · **Status:** ready to build (both are wording) · **Seat:** weaver · **Found:**
+**Added:** 2026-08-01 · **Status:** ⚠️ **PARTIAL** — the reconcile beat (a THIRD gap, found later by
+StoryLoom) shipped 2026-08-01 (`f5668cb`) as step 3.5; **Gaps 1 and 2 below are still open** ·
+**Seat:** weaver · **Found:**
 team-comms session 1, by running the drift pass for the first time
 
 Step 2.5 — _"re-read every doc you own as its authority and assume it has drifted"_ — **earned itself
@@ -59,6 +61,12 @@ already running.** Established by comparing panes, not inferred:
 
 So this is not a broken cache; it is **a session holding the version it started with.** Caught only
 because the skill prints its own path at load.
+
+**Confirmed later the same day, and it is stronger than first written.** The lead's session was still
+resolving **1.5.0** after **three** further plugin updates (1.6.0, 1.7.0, 1.7.1 — all four cached on
+disk, 1.7.1 installed). So it is not _"an update mid-session doesn't reach it"_; it is **no number of
+updates reach it.** Only a restart does. The pin was tested deliberately by invoking a skill and
+reading the base directory it reported — which is the only available check.
 
 **Consequence, and it is asymmetric in the worst way: the stale session was the LEAD's.** The 1.5.0
 finalize skill **has no step 2.5 at all** — so the agent running the ritual for the whole team had the
