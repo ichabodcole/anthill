@@ -12,19 +12,19 @@
     {
       "handle": "forager",
       "role": "hands (CLI/engine)",
-      "scope": "scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, and their tests",
+      "scope": "plugin/scripts/anthill/ \u2014 the CLI commands, config/coord/tmux, the migration engine, the comms wire, and their tests",
       "spawn": true
     },
     {
       "handle": "weaver",
       "role": "brain (skills/methodology)",
-      "scope": "skills/ (the bootstrap/convene/join/finalize/upgrade lifecycle skills + the methodology) + templates/ (scaffold + archetypes)",
+      "scope": "plugin/skills/ (the bootstrap/convene/join/plan/finalize/upgrade lifecycle skills + the methodology) + plugin/templates/ (scaffold + archetypes)",
       "spawn": true
     },
     {
       "handle": "sentinel",
       "role": "verify",
-      "scope": "cross-cutting verification — the quality gate (typecheck/biome/bun test), fresh-context cold-reads, and real-repo/consumer validation",
+      "scope": "cross-cutting verification \u2014 the quality gate (typecheck/biome/bun test), fresh-context cold-reads, and real-repo/consumer validation",
       "spawn": true
     }
   ]

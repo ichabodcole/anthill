@@ -75,6 +75,48 @@ I don't author lane detail or verify my own work; those are the owners' and sent
 - **Who owned what vs. roster:** matched, with ONE drift — weaver's lane is `skills/`+`templates/`, but the spellbook ≥1.16.0 dependency floor reached root `README.md` (consumer-facing = product territory).
 - **Verdict: no reshape.** One **scope note** (not a `seats[]` edit, ratified by all three seats): product/root-facing docs (`README`/`AGENTS`) default to **maestro** (lead/product-liaison); weaver owns `skills` + `templates` + the SOP (`.anthill/README.md`). The next convene applies it at the shape check.
 
+## Structure reflection (2026-08-01, session 3 — team-comms slice one)
+
+- **Did the composition fit?** Yes, and this was the first session where the **verify seat carried the
+  session** rather than closing it. sentinel caught five recursions of one clause, ran the probe that
+  falsified a teammate's generalization, verified the wedge live, and refused to run an effecting path
+  on a shared tree. **No seat idle, none overloaded.** Pulling join-wiring forward at the shape check
+  is what created the forager↔weaver seam — the same move as session 1's `anthill scan`, and it worked
+  the same way. **That reflex is now proven twice; treat it as standard, not clever.**
+- **Natural seams vs. guessed:** Contract 4 emerged exactly where the opener named it (incantation +
+  identity resolution) and **both owners converged on it independently before either wrote a line.**
+  But the guess was wrong about its *contents* — the explicitly-absent branch was ratified twice and
+  turned out unbuildable. Same pattern as session 1's `ScanReport`: **right about where, wrong about
+  what.** That's the ratify's job and it did it.
+- **Who owned what vs. the roster:** matched, with **one drift worth acting on** — the roster's scope
+  fields had gone stale in *every* seat (`scripts/anthill/`, `skills/`, `templates/`; none exist since
+  the `plugin/` move, and weaver's omitted `plan`). Fixed here. **The lead owns the roster and no seat
+  does, so no seat's own 2.5 pass can catch it** — seat headers mirror it and were faithfully
+  reproducing a config pointing at nothing.
+
+### ⚠ Two signals for the NEXT convene — both structural, both with evidence
+
+**1. A whole-tree gate couples every seat's landability to the noisiest seat's edit cycle.** sentinel
+timestamped three reds (`00:08:44Z`, `00:14:46Z`, `00:14:54Z`); **every one was a single seat's
+in-flight work while every other seat's paths were clean.** TDD's red phase guarantees there will
+always be such a seat. **A prose-only seat is maximally exposed — it can never cause the red and can
+always be blocked by it**, which is exactly what happened to a markdown-only land of mine.
+→ This is not a paper-cut and not a `seats[]` edit. It is the **shared-tree model itself**, and it is
+the strongest field argument yet for the worktree-isolation material in the
+[shared-tree investigation](../../docs/investigations/2026-07-27-shared-tree-failure-modes.md).
+**Decide it at a convene, not mid-session.**
+
+**2. Crossing happens between FILES, and our convention only covers messages.** Six instances,
+including one that caught the land itself: a verdict rendered on prose that changed before the commit.
+`ratified as of #14` works because a message has a **stable id**; **a file has none**, so no seat can
+say _"I read `seams.md` as of which version."_
+→ The team invented a mitigation mid-session without being asked — **announcing post-land edits within
+the minute** — and it worked twice. Capture that as the current practice; the durable fix (citing a
+content hash alongside the watermark) is a comms-tool candidate, not a convention we can write.
+
+**Verdict: no reshape.** The roster is right; the two signals are about the **tree** and the
+**channel**, not the seats. One scope correction landed (the config), and it was the lead's to make.
+
 ## Candidates
 
 - The dogfood generated the first real trail data (this session's docs + the `ScanReport` seam). The memory-mechanism work (roadmap #8–#10) now has an actual episode to design against.

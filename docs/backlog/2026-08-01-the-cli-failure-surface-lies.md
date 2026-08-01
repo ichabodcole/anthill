@@ -14,7 +14,7 @@ same day, by the people who wrote them.
 
 ## Defect 1 — every command silently swallows every unknown flag
 
-`plugin/scripts/anthill/define.ts:219` passes **`strict: false`** to Bun's `parseArgs`. Unknown flags
+`plugin/scripts/anthill/define.ts` passes **`strict: false`** to Bun's `parseArgs` (single call site). Unknown flags
 are parsed into `values` and ignored. **No error, no warning, exit 0.**
 
 Reproduced on a read-only path:
@@ -54,17 +54,27 @@ envelope, burying the one line the reader needs — the foreign-red diagnostic t
 yours_.
 
 **The regression guard exists and is correctly written:**
-`expect(stderr).not.toMatch(/at run \(/)` — `team-commit.test.ts:98` and `:108`. **Both sit on the
-argument-validation paths, which exit through the envelope and never throw.** The path that throws is
-unguarded.
+`expect(stderr).not.toMatch(/at run \(/)` — both instances live in
+`describe("anthill commit — guard envelopes (--format json)")`, on the **no-message** and **no-paths**
+tests. **Both are argument-validation paths, which exit through the envelope and never throw.** The
+path that throws is unguarded.
 
-→ **Fix: one line**, added to a test that already exists. `team-commit.test.ts:344` and `:362` already
-capture `stderr` and already drive a genuine throw via `installFailingHook`. No new fixture, no new
-repo.
+→ **Fix: one line**, added to a test that already exists. In
+`describe("anthill commit — a bounced commit must not strand the index (anthill#55)")`, the tests
+**_"the restore note scopes itself to the index and disclaims isolation"_** and **_"names the FOREIGN
+dirty paths so the seat doesn't debug its own clean lane"_** both already capture `stderr` and already
+drive a genuine throw via `installFailingHook`. No new fixture, no new repo.
+
 → **File it at that size.** The verifier rescoped this before it was filed, and the reasoning
 generalizes: _"'add a regression test for the gate-failure path' and 'add one assertion' get scoped and
 deferred differently, and this one should not survive a second session."_ **Filing something as bigger
 than it is defers it.**
+
+_(Pinned to test names, not line numbers — the SOP's rule, which **this doc violated within hours of
+being written**: the numbers first cited had already shifted, because a test was inserted above them
+by the same author who then cited them. Caught by the finalize drift pass, which is exactly what that
+pass is for. The `team-commit.ts:373:19` above is **quoted output**, not a pointer — it records what
+the error actually printed and is expected to go stale.)_
 
 ---
 
@@ -96,4 +106,5 @@ The generalized trigger, from the same session:
   distinction between tool gaps, anthill defects, and operator errors.
 - [StoryLoom comms round](../reports/2026-07-31-story-loom-comms-round.md) — the `--stdin` warning's
   field evidence, and anthill#54's usage-error-vs-broken-tool shape.
-- `plugin/scripts/anthill/define.ts:219`, `plugin/scripts/anthill/commands/team-commit.test.ts:344`.
+- `plugin/scripts/anthill/define.ts` (the `parseArgs` call), `plugin/scripts/anthill/commands/team-commit.test.ts`
+  (`describe("… must not strand the index (anthill#55)")`).

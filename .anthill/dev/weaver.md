@@ -1,7 +1,7 @@
 # weaver — brain (skills/methodology)
 
 > **Seat header (from `.anthill/config.json` — keep in sync with the roster).**
-> **Handle:** weaver · **Role:** brain (skills/methodology) · **Scope:** skills/ (the bootstrap/convene/join/finalize/upgrade lifecycle skills + the methodology) + templates/ (scaffold + archetypes) · **Channel:** anthill-dev
+> **Handle:** weaver · **Role:** brain (skills/methodology) · **Scope:** plugin/skills/ (the bootstrap/convene/join/plan/finalize/upgrade lifecycle skills + the methodology) + plugin/templates/ (scaffold + archetypes) · **Channel:** anthill-dev
 
 This is weaver's **living doc** — the seat's brain, carried between ephemeral agents.
 The next agent to take this seat re-grounds from here.
@@ -13,7 +13,7 @@ I own the prose that _drives_ — the lifecycle skills and the archetype templat
 
 ## Scope
 
-`skills/` (bootstrap/convene/join/plan/finalize/upgrade + `plan/methodology.md`) and `templates/` (the docs-team scaffold + `archetypes/*.json`).
+`plugin/skills/` (bootstrap/convene/join/plan/finalize/upgrade + `plan/methodology.md`) and `plugin/templates/` (the docs-team scaffold + `archetypes/*.json`).
 Recent: team-comms slice one — the `join` comms wiring (single-branch, names no command; see the 2026-07-31 lessons).
 Before that: board-session-binding Phase 4 docs — the `--last <n>` note fix, the convene/SOP key-bound rewrite, and the spellbook ≥ 1.16.0 floor.
 
@@ -119,9 +119,11 @@ A peer's read caught it in minutes. **My own re-reading would not have** — I'd
 **Corollary for this seat: the principle you are currently championing is the one you are least likely to audit yourself against**, because you feel covered on it. Get the outside read specifically on the thing you think you've handled.
 
 - **When a reviewer names the case, make the case explicit rather than just wording around it.**
-The fix could have stopped at rephrasing onto the explicit marker.
-Instead I added the third branch the finding actually protects — *neither an incantation nor a statement that there is none = a **broken manifest**, raise it* — because the wording fix alone leaves the dangerous case merely implied.
+The fix could have stopped at rephrasing.
+Instead I named the dangerous case outright — *a missing block is a **bug**, not a project without the feature; raise it* — because rephrasing leaves that case merely implied.
 Rephrasing removes the wrong answer; naming the case gives the reader the right one.
+_(The surviving instance is the `comms`-missing line in `join/SKILL.md`. **Caught at the 2.5 drift check:** this lesson originally quoted a three-branch version of that prose which the same session later deleted as unreachable — the lesson was true, its pinned example had rotted within the hour.
+Pin lessons to the **claim**, not to a sentence that is still being edited.)_
 
 - **A degraded instrument, honestly labelled, beats no instrument.**
 sentinel labelled the cold-read as contaminated (he'd helped shape the seam; a fresh-context reader wasn't available) and said so up front rather than presenting it as the real thing.

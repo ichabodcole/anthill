@@ -88,7 +88,8 @@ team cannot cite a gate result; it can only cite a gate result _at an instant_.*
 ## B. anthill defects surfaced (backlog, not spike)
 
 **B1. `anthill commit` leaks a raw Bun stack trace on the gate-failure path — shipped in 1.7.0.**
-Five frames starting `at run (…/team-commit.ts:373:19)` land beneath an otherwise excellent envelope,
+Five frames starting `at run (…/team-commit.ts:373:19)` — **quoted output, not a pointer; expected to
+go stale** — land beneath an otherwise excellent envelope,
 burying the one line the reader needs. **The regression guard exists, is correctly written
 (`not.toMatch(/at run \(/)`), and is applied to the two argument-validation paths that never throw.**
 The path that throws is unguarded.
@@ -98,7 +99,7 @@ added to that failure path the same morning, and the guard was not extended to t
 
 → **Rescoped by the verifier before filing, and the rescope matters:** the fix is **one line**
 (`expect(stderr).not.toMatch(/at run \(/)`) added to a test that **already exists** at
-`team-commit.test.ts:344`/`:362` — both already capture `stderr` and already drive a genuine throw
+`team-commit.test.ts` — the restore-note and foreign-dirty-paths tests both already capture `stderr` and drive a genuine throw
 via `installFailingHook`. No new fixture, no new repo. _"File it as a one-line assertion, not as 'add
 a regression test for the gate-failure path.' Those get scoped and deferred differently, and this one
 should not survive a second session."_ **Filing something as bigger than it is defers it.**

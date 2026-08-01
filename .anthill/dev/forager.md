@@ -13,7 +13,8 @@ I own the deterministic layer: given a repo, emit the right structured facts, an
 
 ## Scope
 
-`scripts/anthill/` — the command layer (`commands/team-*.ts` + the in-house `define.ts` runner, formerly citty), the shared layers (`agent-layer.ts` envelope, `coord.ts`, `config.ts`, `tmux.ts`), and every `*.test.ts` beside them.
+**`plugin/scripts/anthill/`** — the command layer (`commands/team-*.ts` + the in-house `define.ts` runner, formerly citty), the shared layers (`agent-layer.ts` envelope, `coord.ts`, `config.ts`, `tmux.ts`, `comms.ts`), and every `*.test.ts` beside them.
+_(The seat header above mirrors `config.json`, which still says the pre-restructure `scripts/anthill/`. The real path has been under `plugin/` since the shippables move; the config is the stale copy and it's the lead's to correct — flagged, not silently forked.)_
 Concretely this session: `scan.ts` (pure detectors), `commands/team-scan.ts` (the command), `__fixtures__/` (test repos), and their tests.
 
 ## Boundaries
@@ -95,4 +96,4 @@ _Lesson: on a shared tree, "I found the real root cause" is not automatically au
 - Framework-marker table is hand-maintained (`FRAMEWORK_MARKERS`) — `elysia` was missing and bit the house Bun stack (added). A dreamwood-era backend sweep is worth a follow-up.
 - pnpm negation globs (`!packages/x`) are parsed-and-dropped in v1, not applied as excludes. Fine for seating; revisit if a real repo leans on them.
 - `stack` is deps-only in v1 — no language/runtime breakout (deferred at ratify). Config-file/`tsconfig` sniffing is the phase-2 lever if a consumer ever needs `language`.
-- **`release-please-config.json`'s generic version-marker path looks stale post-restructure** — it points at `scripts/anthill/cli.ts` but the file now lives at `plugin/scripts/anthill/cli.ts` (the `.claude-plugin/*` extra-files likely moved under `plugin/` too). So the `x-release-please-version` marker in `cli.ts` may no longer be bumped on release. Out of my lane to fix, but the `feedback` body's `anthill:` version rides `main.meta.version` (that marker), so a stale marker = a stale reported version. Flagged to the lead.
+- ~~`release-please-config.json`'s version-marker path looks stale post-restructure.~~ **RESOLVED — verified at finalize, not assumed.** `release-please-config.json` now points at `plugin/scripts/anthill/cli.ts`, and the `x-release-please-version` marker is live there (`version: "1.7.0"`). Someone fixed it after I flagged it. _Kept as a struck line rather than deleted, because the lesson is the pattern: **a concern you raise and hand off will be silently resolved by someone else, and your doc keeps asserting it is open.** A candidate is a claim about the present and rots exactly like a proof does — re-check candidates at finalize, not just lessons._
