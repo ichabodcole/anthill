@@ -103,9 +103,9 @@ direct.
 - **Work** — builders build against the ratified seams; the lead and seats watch for **structure
   signals** (toe-stepping, a renegotiated seam, an overloaded/idle seat, a verify finding that
   bounces work back).
-- **Finalize (+ reflection)** — each seat curates its scratch → seat doc; a shared `seams.md` pass;
-  then the **structure reflection** (below). The lead lands the doc commits and tears down the
-  session.
+- **Finalize (+ reflection)** — each seat curates its scratch → seat doc and **lands its own**; a
+  shared `seams.md` pass; then the **structure reflection** and the **retro** (below). The lead lands
+  what is genuinely cross-seat and tears down the session.
 
 **Verification is dynamic, not end-of-line.** A verify seat engages at **verification points** —
 which may be early (we need tests before building further), mid (prove a feature), or late — and
@@ -144,17 +144,12 @@ holding it while others write. A short hold is the only real protection the tool
 
 ## Shared practices (true for every seat)
 
-- **Root-cause before cutting.** Report the root cause with evidence _before_ editing a fix — don't
-  cut a phantom, don't assert a cause you haven't proven.
-- **Verify the real artifact, not a proxy.** Trust the rendered output; distrust the measurement or
-  the stub. A proxy will eventually lie.
-- **The vine evaporates — land decisions in an artifact.** The grapevine is substance _in the
-  moment_, but it's not durable: a decision that outlives the session (a ratified seam, a chosen
-  approach, a rejected option + why) must be written into an artifact — `seams.md`, a seat doc, the
-  plan, a project doc — **before finalize**, or it's gone when the panes close.
-- **No store without a named re-read moment.** Every place knowledge is written must have a moment it
-  is _read back_ (join re-grounds in the seat doc; convene reads the roadmap; finalize reads the
-  scratch). A store nothing re-reads is a write-only leak — don't create one.
+> **The team's PRINCIPLES live in [`principles.md`](./principles.md), not here** — the hard-won
+> claims about how work goes wrong, each with the scar that paid for it. **Read them at convene and
+> at join.** What stays below is *mechanics*: how this team formats, addresses, and lands things.
+> The split exists because the two accrete differently — a principle is earned once and travels to
+> other teams; a practice is local and changes with the tooling.
+
 - **Write for the preview — the first ~200 characters are the only part that reliably lands.** Peers
   receive your message as a truncated notification and decide from that whether to fetch the rest.
   Most messages are never fetched in full. So lead with the **verdict, not the setup**: what you
@@ -166,44 +161,11 @@ holding it while others write. A short hold is the only real protection the tool
   headline or it lands below the cut. And **do not use a peer's arrow to decide to skip**: a seat who
   did that nearly shipped a broken test, because a falsification addressed to the lead was about his
   lane. Read on topic, not on address.
-- **A ruling must name what it did _not_ rule on.** A long, authoritative message that silently omits
-  someone's item is indistinguishable from one that resolved it — silence and resolution look
-  identical, and a seat registered "ruled" and moved on with both of his asks unaddressed. If you're
-  the one ruling, list the open items you are **not** deciding yet.
-- **There is no message budget.** Nothing in the tooling limits how much you send, and seats
-  nonetheless ration themselves and start compressing. That compression is where findings die: what
-  gets cut is the second-most-important thing you know. A real finding buried as a subordinate clause
-  in a message about something else **is a finding you did not send** — one died exactly that way.
-  If it deserves attention, give it its own message.
 - **When you ratify or post a verdict, name the last message id you had read** — _"ratifying as of
   #14."_ Messages cross: two seats can ratify contradictory things simultaneously, and the channel has
   no notion of a message being in flight. A read-watermark lets the other seat see instantly that your
   call predates their falsification, instead of discovering it later. (New convention — tell us
   whether it earned its keep.)
-- **Never ask through a channel that stops you receiving the answer.** A blocking prompt in your own
-  pane is invisible to every instrument the team has: the board still says `doing`, the vine says
-  nothing, `anthill status` still shows you present, the tree shows nothing. A seat sat behind a modal
-  for ~40 messages **on the critical path** while the lead's ruling and the human's answer were both
-  already on the vine, waiting for him. **Asking twice through two channels is not redundancy — the
-  blocking one silently wins.** Put the question where the answer can reach you, then keep working or
-  say you're blocked.
-- **Verify a claim that indicts you as hard as one that flatters you.** A seat who re-measured
-  everything all session accepted exactly one claim on sight — the one saying she was wrong — and it
-  was false; her original statement had been right. **A correction that indicts you arrives feeling
-  pre-audited**: it's against the speaker's interest, it comes from a careful colleague, and agreeing
-  is the humble-looking move. Worse, **retractions travel further than claims** — three seats had
-  publicly agreed, so the next reader would have deleted correct work as settled.
-- **Confirm a check processed a non-zero count of the things you meant.** `Tasks: 6 successful` counts
-  task _disposition_, not execution — a cache hit reports success for work it decided not to do, while
-  the same tree fails a direct run. `Checked 0 files. No fixes applied.` exits 0 when your CWD has
-  drifted. **The tool is not lying; it is answering a coarser question than the one you asked.** Read
-  the count, not just the verdict.
-- **A contract is a description, not a trigger.** Prose in a shared doc cannot make anyone _notice_
-  they moved a boundary. A seat broke a two-artifact contract **three times in one session** — one he
-  owned, had just written the lesson for, and had quoted to three peers while breaking it. What caught
-  it was a compiler, in four seconds. **Being convinced of a rule does not make it fire, and may
-  substitute for protection, because conviction feels like vigilance.** If a contract spans two
-  artifacts, give it a mechanical trigger — a test or a type that spans both.
 - **The atomic cross-seat land: assemble, don't marinate.** When several seats' halves are
   uncompilable until all of them land, the naive approach parks everyone's red work in the shared tree
   for as long as the slowest seat drafts. Instead: **draft out-of-tree in gitignored scratch → post
@@ -213,6 +175,15 @@ holding it while others write. A short hold is the only real protection the tool
   **land supporting code INERT and early** (an unused-but-green module can land now; holding it because
   the _feature_ is unfinished blocks peers for no reason), and **draft new files in scratch, not on the
   shared gate surface.**
+- **Baseline at join, baseline at close.** Post the gate's numbers when you arrive and again when you
+  leave, so the session's delta is a **measurement rather than an impression**. (A session reported a
+  wrong gate delta in its own retro for exactly this lack.)
+- **Mark an absence of verification explicitly — `UNVERIFIED`, or `UNVERIFIED-BY-CONSTRUCTION`** when
+  the thing cannot be checked from where you stand. An unmarked claim reads as measured; **hoping the
+  reader notices the gap is not a signal.**
+- **A seat silent while holding a `doing` card is different from a seat quiet between tasks.**
+  Roughly ten messages of the former is the cue to look at its pane — a blocked seat produces no
+  output and every other surface reads normal.
 - **One sentence per line in the living docs.** These docs live in the host repo, so its formatter
   (prettier / biome) may reflow them — and a hard-wrapped continuation line can be mangled into a
   stray list bullet, corrupting the trail. One sentence per line makes a reflow a no-op.
@@ -228,6 +199,13 @@ work_ — don't stop mid-task to decide whether a note is a seat-doc lesson, a s
 paper-cut. The genre-sorting happens **here, at finalize**, when you route each captured note to its
 durable home. Sorting-while-working is a tax that suppresses capture.
 
+**A hypothesis is a fourth home, and it is the one the routing list keeps missing.** A lesson says
+what you now know; a **hypothesis** says what you predict and what would prove it wrong — so it goes
+to the **retro** (team-level, where the next convene reads it back) or to your **seat doc** (personal,
+re-read at join), and to exactly one of them. State it once: a prediction copied into two homes
+drifts, and a **stale prediction is worse than a stale lesson** because it commissions work against a
+world that has already moved.
+
 Then the **structure reflection** — the team turns the lens on itself:
 
 - **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)
@@ -238,6 +216,20 @@ Then the **structure reflection** — the team turns the lens on itself:
 Its output flows to seat docs, `seams.md`, and **occasionally the roster/config itself** — re-run
 `anthill init` after a reshape to render new seat docs (existing ones are never clobbered). The
 anthill is yours to re-shape.
+
+Then the **retro** — _what went well · what didn't · what would you change_ — written to
+`.anthill/retro.md`, newest first. It differs from the reflection above by asking for **judgement**
+rather than shape, and two rules are what make it more than a mood:
+
+- **Every "what would you change" is a HYPOTHESIS the next session can test**, or it isn't an answer.
+  The next convene reads them back and says which it will test — so a prediction that comes back
+  **wrong** is the valuable outcome, not a failure of the team that wrote it.
+- **Agreement is not truth: ask what is behind each answer besides everyone agreeing.** Claims about
+  **artifacts** are executable — run them, and nobody had to agree with anything. Claims about **us**
+  are testimony; label them, and prefer the version carrying a number, a diff or a count. A retro of
+  agents who shared one session and one frame will converge, and that convergence is the expected
+  output of shared priors rather than evidence. **A unanimous "what went well" is a smell.**
+  **The lead is in scope** — a retro where the lead comes out clean is a retro that did not run.
 
 ## Onboarding a fresh agent
 

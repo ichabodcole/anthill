@@ -1,0 +1,10 @@
+{"id":1,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"hello","ts":1785601934215}
+{"id":2,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"m1probe","ts":1785601950845}
+{"id":3,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"m1verify","ts":1785602120201}
+{"id":4,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"textmode","ts":1785602122637}
+{"id":5,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"textcheck","ts":1785602148598}
+{"id":6,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"zeta eta theta","ts":1785602191617}
+{"id":7,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"via stdin body\n","ts":1785602191759}
+{"id":8,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"solo body","ts":1785602201033}
+{"id":9,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"-dash body","ts":1785602632258}
+{"id":10,"channel":"fgtest","from":"forager","role":"hands (CLI/engine)","text":"-dash body\n","ts":1785602632282}
