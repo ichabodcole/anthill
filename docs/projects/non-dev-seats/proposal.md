@@ -92,6 +92,27 @@ claims" would have changed nothing; the asymmetry has to be named.
 Session 4's clearest illustration: sentinel proved the parser fix worked; a blank-context reader
 found the _retro's own numbers_ did not support its claims. Different acts.
 
+### ⚠ Precondition — measure the baseline before adding this seat
+
+**From StoryLoom's lead, unprompted, and it is a warning about a mistake she made:** she mandated
+that each seat read a peer's recent work at every pause. **It changed nothing measurable — because
+cross-lane referencing was already 97–99%.** She had written a protocol step targeting a behaviour
+whose baseline she had never measured.
+
+> _"A seat whose job is 'read more' is redundant; a seat whose job is 'reproduce claims before they
+> are acted on' is not. Those are different jobs and I conflated them."_
+
+**So before steward is created, measure what is already happening.** If seats already cross-check at
+saturation, **the lever is not attention** and a seat framed around noticing more is redundant. The
+job that is _not_ redundant is **reproducing claims before they are acted on** — which is why this
+role is scoped to premises rather than to vigilance.
+
+> **This correction also has a provenance worth recording.** The lead relayed her finding as _"a
+> checker seat changed nothing"_ — an over-read of a narrower result, accepted on sight from a
+> credible source and amplified. **She caught it; the lead did not.** Same shape as the deference
+> failure this proposal exists to address, in the third-party direction, hours after the principle
+> about it was written.
+
 ### Standing authority — the anti-capture clause
 
 The lead does not set its whole agenda. **A meaningful share of steward's attention is
@@ -197,6 +218,21 @@ and the tree says Y, saying so while everyone can still respond beats filing it 
 > that. **Do not fix one without the other**: a store with two claimed writers is worse than one with
 > none, and this is exactly the class of wire-ruling-mutates-a-document defect recorded as H2.
 
+**The retro document goes to a blank-context reviewer before it is filed.** Not optional, and not
+the lead's discretionary call — a step.
+
+This is the only instrument that has actually caught a bad retro. Session 4's was corrected by one,
+and StoryLoom's lead, on hearing that, checked her own and found the identical structure:
+
+> _"I wrote our retro. I curated it. I set its falsifier. I was its largest subject. And nobody
+> blank-context reviewed it. We ran independent review on our CODE and it found two things the whole
+> team was structurally incapable of finding. **We ran no independent review on our CONCLUSIONS.**
+> The asymmetry was invisible to me until you described yours."_
+
+**Two teams, both reviewing their code and neither reviewing their conclusions.** Moving the retro to
+steward removes the conflict of interest; it does not supply an outside frame. **These are different
+fixes and both are needed.**
+
 > **Reporting line, so it does not quietly reintroduce the problem:** steward reports to the lead in
 > general, but **its retro write-up goes to the human directly, uncurated by the lead.** Otherwise the
 > lead is back to selecting the account of a session in which it is the largest entry.
@@ -217,6 +253,30 @@ One instance per live session — one on StoryLoom, one here — with a **reconv
 instances compare notes. Cross-team patterns are the thing we have never been able to get: every
 finding to date is single-team and reconstructed after the fact. HiveMind is the natural home for
 whatever survives reconvergence.
+
+### Why cross-project is the point, not a bonus — teams are not equivalent instruments
+
+**StoryLoom runs larger, ships more, and hits things first.** More seats and more dev throughput
+means they encounter coordination failures earlier and have to solve them for real rather than in
+principle. That makes them a **leading indicator**, not merely a peer:
+
+- **Convergence is strong evidence the gap is in the tool.** Both teams independently invented
+  read-watermarks, `## seat → seat:` headings, verdict-first messages, and shared-file hold
+  announcements — **with no contact.** Their lead's read: _"two teams independently inventing
+  read-watermarks is the strongest evidence either of us has that the gap is in the tool and not in
+  our taste."_
+- **Divergence is a forecast.** Where they hit something we have not, it is usually volume, and it
+  reaches us later. Their heartbeat finding needed a 14-hour session and a multi-hour lane card; ours
+  would have taken months to produce.
+
+**A single-team observer cannot see either.** Both signals only exist in the comparison, which is why
+this tier is cross-project by construction.
+
+> **Pre-evidence for N4/N5, before the seat exists.** A blind cross-team check-in run today produced
+> findings **neither team's record contained** — the heartbeat defect, and _"the lead is the only
+> seat nobody audits — it's topology, not carelessness."_ It also cost the lead a large share of a
+> session **and produced one over-read** (see steward's precondition). **That is the argument for it
+> being a role rather than a lead duty.**
 
 ### The tooling gap this exposes
 
