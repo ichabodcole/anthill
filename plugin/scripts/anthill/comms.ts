@@ -149,19 +149,6 @@ export function buildCommsIncantation(i: {
   return `bun ${i.cliPath} comms follow ${i.channel} --as ${i.handle}`;
 }
 
-/**
- * Flags the caller passed that this verb doesn't declare.
- *
- * The CLI's parser runs `strict: false`, so an undeclared flag is silently
- * swallowed and the command reports `ok: true`. On a send verb that is the worst
- * possible shape of wrong: a seat reaching for a flag it half-remembers from a
- * neighbouring tool gets no error, and its positional lands somewhere it didn't
- * intend — one real case stored a CHANNEL NAME as the message body and reported
- * success. The seat believes it sent a paragraph and has shipped one word.
- *
- * Pure so the tokenizing rules (`--flag=value`, the `--` terminator, negative
- * numbers) are pinned rather than argued about.
- */
 // ---------------------------------------------------------------------------
 // The log. NDJSON, append-only: one message per line, never rewritten.
 // ---------------------------------------------------------------------------
