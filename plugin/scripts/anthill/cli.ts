@@ -19,7 +19,7 @@
  * wants `--format` must declare it locally.
  */
 
-import { emitError, resolveFormat } from "./agent-layer.ts";
+import { emit, emitError, resolveFormat } from "./agent-layer.ts";
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
 import { teamCommitCommand } from "./commands/team-commit.ts";
@@ -41,7 +41,7 @@ import {
   runCommand,
 } from "./define.ts";
 import { renderCommandUsage, renderGroupedHelp } from "./help-renderer.ts";
-import { buildManifest, type ScopeLabel } from "./manifest.ts";
+import { buildManifest, type ManifestCommand, type ScopeLabel } from "./manifest.ts";
 
 // Exported so sibling modules (e.g. `commands/team-feedback.ts`) can read
 // `main.meta.version` — the release-please-tracked CLI version. The top-level
@@ -133,6 +133,43 @@ export function commandPath(cmd: AnyCommand, parent?: AnyCommand): string {
 }
 
 /**
+ * Find a command's manifest entry by its resolved path (`["comms","read"]`), so
+ * `--help --format json` can hand an agent the FLAGS AS DATA instead of a
+ * rendered usage block it would have to re-parse.
+ */
+function findManifestCommand(
+  commands: ManifestCommand[],
+  path: string[],
+): ManifestCommand | undefined {
+  for (const cmd of commands) {
+    if (cmd.path.length === path.length && cmd.path.every((p, i) => p === path[i])) return cmd;
+    const nested = cmd.subcommands && findManifestCommand(cmd.subcommands, path);
+    if (nested) return nested;
+  }
+  return undefined;
+}
+
+/**
+ * rawArgs with any `--format` (both spellings) removed, so the interceptors can
+ * ask "is this argv ONLY `--version`?" without the format flag defeating the
+ * match. `--version --format json` is one intent, not two.
+ */
+function withoutFormat(rawArgs: string[]): string[] {
+  const out: string[] = [];
+  for (let i = 0; i < rawArgs.length; i++) {
+    const arg = rawArgs[i];
+    if (arg === undefined) continue;
+    if (arg.startsWith("--format=")) continue;
+    if (arg === "--format") {
+      i++;
+      continue;
+    }
+    out.push(arg);
+  }
+  return out;
+}
+
+/**
  * The CLI entry routine. Wrapped in a function (not bare top-level) so this
  * module can be imported for its `main` export without executing — only a direct
  * run (`import.meta.main`) invokes it. That importability is what lets
@@ -142,9 +179,20 @@ async function runCli(): Promise<void> {
   const argv = process.argv;
   const rawArgs = argv.slice(2);
 
+  // The help/usage interceptors run BEFORE arg dispatch, so they never saw
+  // `ctx.args.format` and wrote prose to stdout under `--format json` — the same
+  // defect as the parser-error path, on the success side. Resolve the verdict
+  // once, here, from the same sniffer + the same `resolveFormat`.
+  const format = resolveFormat(sniffFormatValue(rawArgs));
+
   // Intercept `<cli> help --json` BEFORE the grouped-help interceptor. Ordering
   // matters: the bare-help check below also matches `argv[2] === "help"`, so if
   // you flip these the JSON manifest path will never be reached.
+  //
+  // `--json` keeps emitting the BARE manifest, pretty-printed. That is a shipped
+  // contract with existing consumers, so it is deliberately NOT enveloped;
+  // `--format json` below is the enveloped spelling. Two spellings, two shapes,
+  // both honoured — the defect was one being silently ignored, not both existing.
   if (argv[2] === "help" && argv.includes("--json")) {
     const manifest = await buildManifest(main);
     process.stdout.write(`${JSON.stringify(manifest, null, 2)}\n`);
@@ -159,19 +207,53 @@ async function runCli(): Promise<void> {
   if (argv.length === 2 || argv[2] === "help") {
     const i = argv.indexOf("--scope");
     const scope = i >= 0 ? (argv[i + 1] as ScopeLabel | undefined) : undefined;
+    if (format === "json") {
+      emit({
+        format,
+        command: "help",
+        data: await buildManifest(main),
+        renderText: () => "",
+      });
+      process.exit(0);
+    }
     process.stdout.write(`${await renderGroupedHelp(main, { scope })}\n`);
     process.exit(0);
   }
 
-  // `--version` / `-v` (root only, matching the old citty builtin).
-  if (rawArgs.length === 1 && (rawArgs[0] === "--version" || rawArgs[0] === "-v")) {
-    process.stdout.write(`${main.meta?.version ?? ""}\n`);
+  // `--version` / `-v` (root only, matching the old citty builtin). Matched
+  // against argv with `--format` stripped: `--version --format json` is one
+  // intent, and the un-stripped length check silently failed to match it, so an
+  // agent asking for the version as JSON fell through to the dispatcher.
+  const versionArgs = withoutFormat(rawArgs);
+  if (versionArgs.length === 1 && (versionArgs[0] === "--version" || versionArgs[0] === "-v")) {
+    const version = main.meta?.version ?? "";
+    emit({
+      format,
+      command: "version",
+      data: { version },
+      renderText: () => version,
+    });
     process.exit(0);
   }
 
   // `--help` / `-h` anywhere → per-command usage for the resolved (sub)command.
   if (rawArgs.includes("--help") || rawArgs.includes("-h")) {
     const [cmd, parent] = resolveSubCommand(main, rawArgs);
+    if (format === "json") {
+      // The MANIFEST entry, not the rendered usage block. An agent asking for
+      // help wants the flags as data; rendered usage in a JSON field is the
+      // thing Contract 5 forbids, and it would be prose an agent must re-parse.
+      const path = commandPath(cmd, parent);
+      const manifest = await buildManifest(main);
+      const entry = findManifestCommand(manifest.commands, path.split(" "));
+      emit({
+        format,
+        command: path,
+        data: entry ?? { name: cmd.meta?.name ?? "", description: cmd.meta?.description ?? "" },
+        renderText: () => "",
+      });
+      process.exit(0);
+    }
     process.stdout.write(`${renderCommandUsage(cmd, parent)}\n`);
     process.exit(0);
   }

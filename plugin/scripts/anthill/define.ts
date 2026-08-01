@@ -298,10 +298,23 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
         err instanceof Error
           ? err.message.replace(/\s*To specify.*$/s, "").replace(/\.\s*$/, "")
           : "";
+      // A VALUE that begins with `-` is read as a cluster of short options, so
+      // `comms send "-dash body"` fails with "Unknown option 'd'" — an error
+      // about a letter inside the user's own sentence, which names neither the
+      // cause nor either escape. Both escapes are real and were measured:
+      // `-- "<body>"` and (where the command has it) `--stdin`.
+      const dashValue = processed.find(
+        (a) => a.startsWith("-") && !a.startsWith("--") && a.length > 2 && !stringFlagName(a),
+      );
+      const escapes = ["put it after `--`"];
+      if (Object.hasOwn(argsDef, "stdin")) escapes.push("or pass it on --stdin");
+      const hint = dashValue
+        ? `. If "${dashValue}" was meant as a VALUE rather than flags, ${escapes.join(" ")}`
+        : "";
       throw new CLIError(
         `${detail.trim() || "invalid option"}${
           valid.length > 0 ? `. Valid flags: ${valid.join(", ")}` : ""
-        }`,
+        }${hint}`,
       );
     }
     parsed = { values: {}, positionals: processed };
@@ -393,6 +406,17 @@ export async function runCommand(cmd: AnyCommand, rawArgs: string[]): Promise<vo
     if (name) {
       const sub = subCommands[name];
       if (!sub) throw new CLIError(`Unknown command ${name}`);
+      // Validate the tokens BEFORE the subcommand against this level's spec.
+      // They were previously dropped on the floor: only `rawArgs.slice(idx + 1)`
+      // was ever parsed, so `anthill --nope status` exited 0 with `ok:true`.
+      // That is precisely the silent-fallback failure `strict: true` exists to
+      // prevent (see the long note in `parseArgs`), surviving in the one
+      // position nobody probed — a typo is as likely before the subcommand as
+      // after it, and only one of the two was ever checked.
+      //
+      // Reuses the same strict parser rather than a second, laxer check, so a
+      // flag is judged by one rule wherever it appears.
+      parseArgs(rawArgs.slice(0, idx), argsDef);
       await runCommand(sub, rawArgs.slice(idx + 1));
       return;
     }

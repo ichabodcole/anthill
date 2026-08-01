@@ -248,3 +248,76 @@ describe("--format text is unchanged — a usage block is the right answer for a
     expect(stderr).toMatch(/Project orchestration CLI/);
   });
 });
+
+describe("M3 — the help/usage interceptors honour the format verdict", () => {
+  test("--help --format json gives the manifest entry, NOT a rendered usage block", () => {
+    const { stdout, stderr, exitCode } = run(["comms", "read", "--help", "--format", "json"]);
+    expect(exitCode).toBe(0);
+    expect(stderr).toBe("");
+    const env = JSON.parse(stdout);
+    expect(env.ok).toBe(true);
+    expect(env.meta.command).toBe("comms read");
+    // Flags as DATA. Rendered usage in a JSON field is what Contract 5 forbids,
+    // and it would be prose the agent has to re-parse to find a flag name.
+    expect(env.data.name).toBe("read");
+    expect(Array.isArray(env.data.flags)).toBe(true);
+    expect(stdout).not.toMatch(/USAGE/);
+  });
+
+  test("--help with no --format still renders usage for a human (text path intact)", () => {
+    const { stdout } = run(["comms", "read", "--help", "--format", "text"]);
+    expect(stdout).toMatch(/USAGE/);
+    expect(() => JSON.parse(stdout)).toThrow();
+  });
+
+  test("--version --format json is one intent, not two", () => {
+    // The old length check (`rawArgs.length === 1`) silently failed to match
+    // once --format was present, so the version request fell through entirely.
+    const env = JSON.parse(run(["--version", "--format", "json"]).stdout);
+    expect(env.ok).toBe(true);
+    expect(env.data.version).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+
+  test("bare `help` under json emits the manifest as an ENVELOPE", () => {
+    const env = JSON.parse(run(["help", "--format", "json"]).stdout);
+    expect(env.ok).toBe(true);
+    expect(Array.isArray(env.data.commands)).toBe(true);
+  });
+
+  test("CONTROL: `help --json` keeps emitting the BARE manifest", () => {
+    // A shipped contract with existing consumers. Two spellings, two shapes,
+    // both honoured — the defect was one being silently ignored, not both
+    // existing. If this ever starts returning an envelope, that is a break.
+    const out = JSON.parse(run(["help", "--json"]).stdout);
+    expect(out.ok).toBeUndefined();
+    expect(out.name).toBe("anthill");
+    expect(Array.isArray(out.commands)).toBe(true);
+  });
+});
+
+describe("M5 — a flag BEFORE the subcommand is parsed, not dropped on the floor", () => {
+  test("an unknown flag before the subcommand is refused", () => {
+    // Previously exited 0 with ok:true: only rawArgs.slice(idx+1) was ever
+    // parsed, so `strict: true`'s whole promise was void in this position. A
+    // typo is as likely before the subcommand as after it; only one was checked.
+    const { stderr, exitCode } = run(["--nope", "status"]);
+    expect(exitCode).toBe(1);
+    const env = JSON.parse(stderr);
+    expect(env.ok).toBe(false);
+    expect(env.error).toMatch(/--nope/);
+  });
+
+  test("the same flag after the subcommand behaves identically — position is not a loophole", () => {
+    const before = JSON.parse(run(["--nope", "status"]).stderr);
+    const after = JSON.parse(run(["status", "--nope"]).stderr);
+    expect(before.ok).toBe(after.ok);
+    expect(before.ok).toBe(false);
+  });
+
+  test("CONTROL: a VALID root flag before the subcommand still dispatches", () => {
+    // `--format` is declared on the root, so it must not be rejected by the new
+    // validation — only unknown flags are.
+    const { exitCode } = run(["--format", "json", "status"]);
+    expect(exitCode).toBe(0);
+  });
+});
