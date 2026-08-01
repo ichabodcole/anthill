@@ -30,7 +30,7 @@ does not.
 ## 2026-08-01 · Session 5 — slice two: the `emittedThrough` primitive
 
 **Seats:** maestro (lead), forager, weaver, sentinel, **steward** and **scout** (both new, first run)
-**Landed:** every commit seat-stamped · 6 feat/fix, the rest docs · gate **352 → 390, 0 fail**
+**Landed:** every commit seat-stamped · 6 feat/fix, the rest docs · gate **352 → 390, 0 fail** (join → close, same command)
 _Counts deliberately omitted — re-run them: `git log 655b3b8..HEAD --oneline | wc -l`, and `--format='%(trailers:key=Anthill-Seat)' | grep -c` for the stamp. **The first version of this line said "25 commits, 25/25 seat-stamped" and was wrong within the hour** — finalize kept landing. A count is a measurement with a shelf life no gate checks and every commit invalidates; re-numbering buys one session of accuracy and re-arms the trap. The curator wrote a rotting count into the retro that records the team learning not to, which is the fourth instance of that class this session and the only one in a committed file._
 **Curated by:** steward. The lead answered as a participant (human's ruling; the shipped skill says the lead writes this file).
 
@@ -39,7 +39,7 @@ _Counts deliberately omitted — re-run them: `git log 655b3b8..HEAD --oneline |
 > **Answers were collected BEFORE seat-doc synthesis** (a deliberate inversion of the skill's order, granted at the curator's request) — **and the wire silently voided it.**
 > Every seat runs a live `comms follow`; answers were **pushed** as they landed. weaver and sentinel each disclosed receiving headlines of earlier answers while composing.
 > **Contamination therefore decreased monotonically with answer order, and the curator answered first** — so the one seat holding the pen is the one seat with none. That is a worse arrangement than not ordering at all, and it was not what the ordering was meant to buy.
-> **What the ordering genuinely bought:** cross-reading of the *syntheses* was blocked. **What it did not:** ~230 messages of shared analysis every seat had already read, including the observer's and the support seat's — the two seats with no delivery lane, whose only output was framing.
+> **What the ordering genuinely bought:** cross-reading of the *syntheses* was blocked. **What it did not:** the shared analysis every seat had already read — **~230 messages as of the first retro answer**, and still climbing while these were written, including the observer's and the support seat's — the two seats with no delivery lane, whose only output was framing.
 > **So: answers here are "separately written", not "separately formed."** Discount convergence accordingly, and discount the curator's own answers as first-mover.
 > **The cold reviewer is the one instrument this does not touch — give it the TREE, not the wire.** The comms log is gitignored, so a reviewer working from a clone cannot reach it *unless someone pastes it in*. That failure mode requires a positive action, which is why it needs naming (scout).
 
@@ -55,7 +55,7 @@ _Counts deliberately omitted — re-run them: `git log 655b3b8..HEAD --oneline |
 
 **The anti-unanimous answer, offered by weaver and kept because a clean Q1 is a smell:**
 
-> **The correction culture is real and its VOLUME has never been priced.** ~105 comms messages against six work cards; sentinel counted 91 of 107 messages carrying correction/falsification language (with positive and negative controls — and then **labelled his own measurement NON-ARTIFACT because he ran it against the gitignored log**). **Both readings fit the same number: a team that catches itself constantly, or a team generating enough errors to need to.** Nobody inside can separate them. **Self-correction is the most flattering activity available to a team that values rigour**, and "we corrected ourselves a lot" is exactly the Q1 answer that would survive unchallenged in a room of instances of one model.
+> **The correction culture is real and its VOLUME has never been priced.** **Measured at the retro-collection point, not at close** (it kept climbing): ~105 comms messages against six work cards, and sentinel counted 91 of 107 carrying correction/falsification language (with positive and negative controls — and then **labelled his own measurement NON-ARTIFACT because he ran it against the gitignored log**). **Both readings fit the same number: a team that catches itself constantly, or a team generating enough errors to need to.** Nobody inside can separate them. **Self-correction is the most flattering activity available to a team that values rigour**, and "we corrected ourselves a lot" is exactly the Q1 answer that would survive unchallenged in a room of instances of one model.
 
 ### Q2 — what did not
 
