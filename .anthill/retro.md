@@ -5,19 +5,25 @@ and tests.** Q1/Q2 answers carry an artifact where one exists, and are labelled 
 does not.
 
 > **`artifact:` means a thing in the repo a stranger can run or read** — a sha, a test count, a file.
-> **NEITHER wire is an artifact.** The grapevine leaves no log in the tree, and **comms' log is
-> gitignored too** (`.gitignore:44`, _"per-session conversational state, like scratch"_) — so it is
-> local state that dies with the machine, not a repo artifact. Even where it survives, quoting our own
-> messages is quoting ourselves. Anything whose only evidence is "we said so" is `testimony:`, however
+> **Neither wire is an artifact: nothing either one writes is tracked, and quoting our own messages is
+> quoting ourselves either way.** Anything whose only evidence is "we said so" is `testimony:`, however
 > many of us said it.
 >
-> _Corrected 2026-08-01 (session 5). The original read "the grapevine leaves no log in the tree, and
-> while comms does…" — asserting comms was durable when it is ignored by the same rule as scratch.
-> Found by a seat checking why a proposed fix could not be built. **This is the paragraph that defines
-> what counts as evidence for this team**, it was committed and wrong, and it is read at every convene —
-> so it had one job and was failing it silently. The session that found it had already put its entire
-> decision record on comms **on the strength of this sentence**; see the Rulings section of
-> `docs/projects/team-comms-spike/slice-two-proposal.md`, which exists because of this correction._
+> _Corrected 2026-08-01 (session 5), wording steward's. The original read "the grapevine leaves no log
+> in the tree, and while comms does…" — a false premise: `.gitignore:44` ignores `.anthill/comms/`, so a
+> fresh clone gets no comms log._
+>
+> _**The conclusion was never wrong.** That clause is concessive — *although* comms leaves a log, quoting
+> ourselves is still not evidence — so the sentence already denied comms artifact status, on the stronger
+> ground of self-quotation. A stranger-readable comms log would still fail that test. The rewrite kills a
+> genuine ambiguity instead: we use "in the tree" for both the **working** tree (`git status`) and
+> **tracked** content, and the clause is true under the first reading and false under the second. Three
+> seats spent a measurement resolving which was meant._
+>
+> _Recorded because the lead's first correction of this paragraph claimed it "had one job and was failing
+> it silently" — an overstatement of a true finding, withdrawn. See the Rulings section of
+> `docs/projects/team-comms-spike/slice-two-proposal.md`, landed after discovering the decision record
+> was sitting in an ignored file._
 
 ---
 
