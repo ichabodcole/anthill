@@ -55,6 +55,20 @@ it declined to do. `Checked 0 files. No fixes applied.` exits 0 when your direct
 Report the root cause with evidence *before* editing a fix — don't cut a phantom, don't assert a
 cause you haven't proven.
 
+**Dispatch an outside reviewer to FIND, never to DESIGN — and reproduce before acting, in either
+direction.**
+A blank-context reviewer sees what the team structurally cannot. It also does not know what the code
+is for, so its *remedy* is guesswork wearing the same confident voice as its *finding*.
+_Scar, two teams independently. One: in four of four cases where a seat checked a reviewer's proposed
+fix, the reviewer had the defect right and the repair wrong — one remedy would have introduced a
+worse bug than it closed, another generalised from a branch that cannot fire. Two: a reviewer called
+three of our tests vacuous; mutation-testing all four guards caught 4-for-4 and falsified the finding
+outright. **And the other tail is real** — a seat who reproduced three findings before fixing them
+reported that verifying made two of them **worse** than reported._
+**It only works if findings reach the owners, who have standing to refuse them.** A lead who absorbs
+review findings applies remedies against code other people understand better, with nobody positioned
+to object.
+
 ## On instruments
 
 **An instrument can answer a different question than the one you asked, and look right doing it.**

@@ -175,6 +175,15 @@ holding it while others write. A short hold is the only real protection the tool
   **land supporting code INERT and early** (an unused-but-green module can land now; holding it because
   the _feature_ is unfinished blocks peers for no reason), and **draft new files in scratch, not on the
   shared gate surface.**
+- **Baseline at join, baseline at close.** Post the gate's numbers when you arrive and again when you
+  leave, so the session's delta is a **measurement rather than an impression**. (A session reported a
+  wrong gate delta in its own retro for exactly this lack.)
+- **Mark an absence of verification explicitly — `UNVERIFIED`, or `UNVERIFIED-BY-CONSTRUCTION`** when
+  the thing cannot be checked from where you stand. An unmarked claim reads as measured; **hoping the
+  reader notices the gap is not a signal.**
+- **A seat silent while holding a `doing` card is different from a seat quiet between tasks.**
+  Roughly ten messages of the former is the cue to look at its pane — a blocked seat produces no
+  output and every other surface reads normal.
 - **One sentence per line in the living docs.** These docs live in the host repo, so its formatter
   (prettier / biome) may reflow them — and a hard-wrapped continuation line can be mangled into a
   stray list bullet, corrupting the trail. One sentence per line makes a reflow a no-op.
