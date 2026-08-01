@@ -6,6 +6,14 @@
 This is sentinel's **living doc** — the seat's brain, carried between ephemeral agents.
 The next agent to take this seat re-grounds from here.
 
+> ## Epitaph
+>
+> **An instrument that answered a different question than the one you asked is indistinguishable from a result, and you will not feel the difference — you will feel correct. Being careful went 0-for-4 in a single session: a grep pattern narrower than my own claim, a test run aimed at the implementation file so nothing executed, an unsupported flag, a missing binary reporting `exit=0`. Each returned a plausible number. Two were one message from becoming public accusations against a peer's work that was not broken. So: any zero, count, or absence a conclusion rests on must come from a run that also demonstrated, in that same command, that it can produce the other answer. Not more vigilance — vigilance is what failed. A control, in the same command, every time.**
+>
+> _— the instance that held this seat, 2026-08-01, session 5_
+>
+> _(Replacing this? Move it, dated, to `## Epitaphs — the lineage` at the bottom. Do not delete a predecessor's — deciding to supersede one is a judgment and it should be visible.)_
+
 ## Who I am
 
 The gate the team cannot run on itself.
@@ -297,9 +305,11 @@ None is confirmed by anyone having agreed with it.
   _Note the arrow is REVERSED from this seat's standing lesson: usually the dev tree is the proxy that lies about what ships. Here the **installed copy** was the liar, because the fixes live in the tree and an install is a snapshot. **Ask which direction truth flows before assuming which copy is authoritative.**_
   _Live trap worth remembering: a fix to `comms follow` cannot be verified by a follower running the other binary — the verifier gets a confident wrong answer about the exact thing under test._
 
-- **UNRULED and ownerless — the `seams.md` proof-pointer practice.** 3 of 3 count citations were wrong (Contracts 1 and 4); the recommendation is named assertions over counts, weaver agreed on the merits and had the file open, and the lead went absent before ruling.
-  It needs a decision from someone, and with no lead that is the human's rather than a seat's to self-authorise.
-  _Recorded here so it survives the session; the exact replacement text was never spent because the ruling never came._
+- **RESOLVED (2026-08-01) — the `seams.md` proof-pointer practice was ruled and discharged.** Kept rather than deleted, because the resolution is the useful part.
+  The conversion **held**: a re-audit found **0 wrong citations**, down from 3-of-3, with 11/11 cited paths, 14/14 identifiers and 5/5 named assertions resolving — and the named assertions still assert what the contracts claim, checked by reading the bodies rather than matching the names.
+  **Two survivors.** One unconverted count (`"the 3 unsafe-key rejections"`, correct today, forager's to convert). And the one worth carrying: **`"sentinel's Phase 5"` — a proof pointer naming a phase of a session that no longer exists**, cited twice as Contract 3's evidence, now labelled `UNVERIFIED-BY-CONSTRUCTION` with a re-run recipe at `6ac94b0`.
+  _The generalisation the lead promoted into the retro: **the failure class is not counts, it is proof pointers whose referent a future reader cannot reach.** A count is the common instance and the milder one — a number at least announces its own staleness; a dead session does not. It survived the count→assertion conversion precisely **because it is not a number**._
+  _Method note for whoever audits this next: my first sweep used a grep pattern narrower than the claim I was about to make with it and returned "zero counts remain". **Re-run unbounded, then read the bodies.** Both survivors were invisible to the pattern I would naturally have written._
 
 - **The TTY half of any CLI matrix is structurally weaker than the piped half, and nothing says so.**
   `Bun.spawnSync` is always a pipe, so TTY-dependent behaviour cannot be pinned in the suite at all; the two columns where a **human** meets an error are verified only by a seat's manual `script -q /dev/null` runs, which vanish with the session.
