@@ -231,6 +231,13 @@ work_ — don't stop mid-task to decide whether a note is a seat-doc lesson, a s
 paper-cut. The genre-sorting happens **here, at finalize**, when you route each captured note to its
 durable home. Sorting-while-working is a tax that suppresses capture.
 
+**A hypothesis is a fourth home, and it is the one the routing list keeps missing.** A lesson says
+what you now know; a **hypothesis** says what you predict and what would prove it wrong — so it goes
+to the **retro** (team-level, where the next convene reads it back) or to your **seat doc** (personal,
+re-read at join), and to exactly one of them. State it once: a prediction copied into two homes
+drifts, and a **stale prediction is worse than a stale lesson** because it commissions work against a
+world that has already moved.
+
 Then the **structure reflection** — the team turns the lens on itself:
 
 - **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)

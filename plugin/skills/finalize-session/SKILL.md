@@ -67,6 +67,18 @@ _live_. Don't skip it on a real session.
      never to a transient line/file reference.
    - If a lesson is really **shared truth** (about a boundary between seats), it belongs in `seams.md`
      (next), not your seat doc.
+   - **A HYPOTHESIS is not a lesson — hold it for the retro (step 4.5).** A lesson says what you now
+     know; a hypothesis says what you predict and how it could be proven wrong, and the next convene
+     has to read it back. **`.anthill/retro.md` does not exist yet at this step**, which is exactly
+     why this line is here: two seats on the ritual's first run independently wrote their hypotheses
+     into their seat docs, from correct reasoning — a hypothesis nobody re-reads is worthless, and at
+     step 2 the seat doc is the only home with a re-read moment. **The ordering created the
+     violation, not the seats.**
+     The split that resolves it: **team-level hypotheses → `retro.md`** (the lead collects them at
+     4.5, and convene reads them back); **a hypothesis only you will act on → your seat doc**, which
+     you re-read at join. Either way, **state it once** — a prediction copied into two homes drifts,
+     and a stale prediction is worse than a stale lesson because it commissions work against a world
+     that has already moved.
    - Your scratch is **disposable after synthesis** — the durable form is the seat doc.
    - **Land your own seat doc yourself** — `anthill commit --as <you> -m "…" .anthill/dev/<you>.md`.
      It has exactly one possible author, no seam, and no other seat's paths in it, so there is nothing
