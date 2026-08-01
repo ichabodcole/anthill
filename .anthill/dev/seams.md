@@ -69,7 +69,7 @@ limitation:** pnpm negation globs (`!packages/x`) are parsed-and-dropped, not ap
 contract seat for a config package or picks the wrong one. Both failures were caught at the ratify,
 before a line was built.
 
-**Proof (green):** `plugin/scripts/anthill/scan.test.ts` — 25 tests over in-tree fixtures at `plugin/scripts/anthill/__fixtures__/`.
+**Proof (green):** `plugin/scripts/anthill/scan.test.ts` over in-tree fixtures at `plugin/scripts/anthill/__fixtures__/` — the pure detectors (`sniffStack` dominant-first ordering, `classifyUnit` position-primary, `internalDepsOf` fan-in, `parseWorkspaceGlobs`) plus a full `ScanReport` golden.
 A `workspace-repo` fixture (2 apps + 1 shared package with a real edge) asserts the full `ScanReport` golden; a `single-surface-repo` fixture asserts `workspace: null` + one root unit.
 _(Corrected at a finalize drift-check: the fixture path still read `scripts/anthill/__fixtures__/`, which stopped existing when the shippables moved under `plugin/`, and "link the file here when green" had gone undischarged long after the tests were green.
 **Neither failed any gate** — a proof pointing at a directory that no longer exists is invisible to `bun run check`, and an undischarged TODO sitting inside a Proof section reads as a proof to anyone skimming.)_
@@ -174,11 +174,18 @@ The resolution-outcome field is proven as a **discriminator, not a constant** �
 (3) `--as` omitted → error, not an ambient identity;
 (4) a **successful** send from a valid seat emits `resolved-from-roster` in the envelope — asserted **positively on the happy path**, never inferred from the absence of an error.
 Assertion (4) is the one that proves the headline of clause (c), and it is the one that is easiest to lose: (1)–(3) can all be green while the success field was never implemented or was dropped in a later refactor, and nothing would notice the wedge had disappeared.
-**Green in:** `plugin/scripts/anthill/comms.test.ts` (35 tests — the pure resolver, incl. the three-distinct-outcomes discriminator check) and `plugin/scripts/anthill/commands/team-comms.test.ts` (18 tests — the real-tree runs: assertion (2) executes from a genuinely config-less tree rather than a simulated `roster: null`, and assertion (1) asserts the log is byte-identical after a rejected send).
+**Green in:** `plugin/scripts/anthill/comms.test.ts` (the pure resolver, incl. the three-distinct-outcomes discriminator check) and `plugin/scripts/anthill/commands/team-comms.test.ts` (the real-tree runs: assertion (2) executes from a genuinely config-less tree rather than a simulated `roster: null`, and assertion (1) asserts the log is byte-identical after a rejected send).
 
 **Authoring note — how (4) went missing, because the mechanism recurs.** Assertions (1)–(3) were written in the same vine message that *withdrew* the success-path ask; the clause was then strengthened from two other directions, and the proof list was carried forward unchanged from before the strengthening.
 The contract text advanced and its own proof did not — **clause-vs-its-own-proof drift, inside a single file, introduced at authoring time.** Not doc-vs-code drift, and no gate catches it.
 The cheap guard: after strengthening any clause here, re-read the Proof section and ask which assertion would fail if the new words were false.
+
+**Second authoring note — cite ASSERTIONS, never COUNTS. Adopted after the counts rotted a third time.**
+Every numeric proof citation in this file has been wrong at least once: Contract 1 said 25 tests (actual 20), Contract 4 said 35 and 18 (actual 28 and 28).
+The last of those decayed **during the session that found it** — a verifier measured 18→20 in the morning and the owner's own new tests made it 28 by the afternoon, so the correction would have shipped stale.
+**A count is a measurement with a shelf life that no gate checks and that every commit invalidates**; re-numbering buys one session of accuracy and re-arms the same trap.
+A named assertion ("the three-distinct-outcomes discriminator", "the log is byte-identical after a rejected send") survives adding tests, and a reader can go and check it — which is what a proof pointer is for.
+Note the asymmetry this exposes: the parts of these contracts written as **arguments** have aged well, and every part written as a **measurement** has rotted. Prefer the durable form.
 
 ## Contract 5 — the CLI failure surface: what the envelope carries, and what our prose may promise about it
 
