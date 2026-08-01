@@ -160,3 +160,50 @@ because no seat owns the roster.
 
 - The dogfood generated the first real trail data (this session's docs + the `ScanReport` seam). The memory-mechanism work (roadmap #8–#10) now has an actual episode to design against.
 - Watch whether future features are genuinely multi-seat or need a slice pulled forward to become so — that shape-check is now a named reflex.
+
+## Structure reflection (2026-08-01, session 4 — parser-envelope, first session run ON comms)
+
+- **Did the composition fit?** Yes, and the shape check paid a third time: the work looked
+  forager-dominant, and naming the **failure-surface boundary** (what an agent is promised on a
+  failed parse) created a real forager↔weaver seam that produced Contract 5. **That reflex is now
+  proven three times — stop treating it as clever.**
+- **Natural seams vs. guessed:** right about where, wrong about what — for the third session
+  running. I named the boundary correctly and was wrong about its contents twice over: I predicted
+  weaver's `comms/SKILL.md` clause was at risk (it wasn't — checked negative), and I ratified a fix
+  shape that sentinel's probe then invalidated. **The ratify is doing its job; my prediction record
+  inside it is now 0 for 3 on contents.**
+- **Who owned what vs. the roster:** matched. No drift.
+
+### ⚠ The lead-shaped findings, which are mine and not the roster's
+
+**1. I was the only participant not registered on the presence instrument — and I own the land.**
+Presence registers via the *tail*, and I never wired one; I polled the log by hand all session. So
+`anthill status` correctly omitted me, my rulings crossed three messages twice, and when my session
+was restarted the team had **no signal at all** — 10.2 hours, three cards parked, one untracked
+file. **The seat whose absence stalls everything was invisible by construction, and the thing that
+finally surfaced it was the human telling me my monitor was missing.**
+→ Wire the lead's own tails *first*, before the opener. Not a preference — presence is a side
+effect of tailing, so an unwired lead is an unmonitorable lead.
+
+**2. A true cause offered for the wrong magnitude is worse than no explanation.** I returned and
+wrote *"I was never gone,"* explaining minutes of polling latency against a ten-hour absence that
+two seats had already written as "~10h" in plain text. It closes the question instead of opening
+it. **Check the instrument before asserting about yourself; I had the timestamps and didn't look.**
+
+**3. My correction was accepted on sight by three seats for three — including the wrong half.**
+These are seats that verified *everything* independently all session, and deference to the lead
+bypassed that discipline in one move. **A lead's correction needs the same "verify, don't relay"
+that a lead demands of seats** — and I should say so explicitly when issuing one, because they will
+not apply it unprompted to me.
+
+**4. An unscoped instruction froze the team.** *"I own the land; you don't commit"* was meant as the
+atomic cross-seat land. Read literally under an absent lead it left seven paths uncommitted, one
+untracked, for ten hours. weaver held **while agreeing on the merits that it probably didn't cover
+him** — *"the instruction probably didn't mean me" is the reasoning that dissolves an instruction* —
+which is the right call and indicts my wording, not his compliance.
+→ **Scope every prohibition to the failure it prevents.** Corrected on the wire to: *each seat lands
+its own files; the lead owns the atomic cross-seat land.*
+
+**Verdict: no reshape.** Four findings, all about how the lead *operates*, none about the seats[].
+The roster is right for a fourth session running; the lead's instrumentation and wording are what
+failed.
