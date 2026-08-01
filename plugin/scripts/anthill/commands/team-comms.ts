@@ -549,8 +549,21 @@ interface FollowStartData {
   /** Highest id in the log at the instant this follower attached. */
   head: number;
   previousPosition: number | null;
-  /** How many messages this seat has not been emitted. 0 when there is no gap. */
-  gap: number;
+  /**
+   * How many messages this seat was not emitted — `0` when provably none, a
+   * count when behind, and **`null` when it cannot be known**.
+   *
+   * `null` is the `never-followed` case and it is not a rounding-down of zero.
+   * With no recorded position the tool has no idea what this seat has seen: it
+   * may have read the whole log with `read`, which records nothing by design
+   * (Contract 4 c-bis). Reporting `gap: 0` there would assert *"you missed
+   * nothing"* — the one claim the tool is not entitled to make, on the wire
+   * whose entire purpose is to stop silence being mistaken for safety.
+   * Caught by maestro on comms #184 against the first shipped version, which
+   * flattened three states into a number: `positionState` was honest and this
+   * notice was not.
+   */
+  gap: number | null;
   catchUpWith: string | null;
 }
 
@@ -618,7 +631,10 @@ const followCommand = defineCommand({
       const head = nextMessageId(readChannel(teamDir, channel).messages) - 1;
       const previous = readPosition(teamDir, channel, identity.handle);
       const state = positionState(head, previous);
-      const gap = state.state === "behind" ? state.behindBy : 0;
+      // never-followed ⇒ null (unknowable), current ⇒ 0 (provably none),
+      // behind ⇒ the count. Three states in, three values out — the notice must
+      // not collapse what the primitive distinguishes.
+      const gap = state.state === "behind" ? state.behindBy : state.state === "current" ? 0 : null;
       const start: FollowStartData = {
         notice: "follow-start",
         channel,
@@ -628,8 +644,13 @@ const followCommand = defineCommand({
         head,
         previousPosition: previous?.emittedThrough ?? null,
         gap,
+        // STRICTLY "the command that fetches exactly what you missed". Null
+        // whenever that set is not computable — including never-followed, where
+        // offering a `--last N` here would look like the missed set and be a
+        // guess wearing the same clothes. The text rendering suggests how to
+        // establish an anchor; this field never guesses.
         catchUpWith:
-          gap > 0 && previous
+          gap !== null && gap > 0 && previous
             ? `anthill comms read --channel ${channel} --since ${previous.emittedThrough}`
             : null,
       };
@@ -637,11 +658,26 @@ const followCommand = defineCommand({
         format,
         command: "comms follow",
         data: start,
-        renderText: (d) =>
-          d.gap > 0
-            ? `following ${d.channel} as ${d.from} — YOU MISSED ${d.gap} message(s) ` +
-              `(#${d.previousPosition} → #${d.head}).\ncatch up with: ${d.catchUpWith}\n`
-            : `following ${d.channel} as ${d.from} — no gap (${d.position}, head #${d.head}).\n`,
+        // Three states, three sentences. The human-facing rendering is where a
+        // collapse is least visible and most consequential, so `null` gets its
+        // own wording rather than falling into the "no gap" branch.
+        renderText: (d) => {
+          const lead = `following ${d.channel} as ${d.from}`;
+          if (d.gap === null) {
+            return (
+              `${lead} — NO RECORDED POSITION (head #${d.head}).\n` +
+              "This tool cannot tell you what you have already seen, and is not going to guess.\n" +
+              `Establish an anchor with: anthill comms read --channel ${d.channel} --last 20\n`
+            );
+          }
+          if (d.gap > 0) {
+            return (
+              `${lead} — YOU MISSED ${d.gap} message(s) (#${d.previousPosition} → #${d.head}).\n` +
+              `catch up with: ${d.catchUpWith}\n`
+            );
+          }
+          return `${lead} — up to date, nothing missed (head #${d.head}).\n`;
+        },
       });
     }
 

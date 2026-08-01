@@ -709,7 +709,14 @@ describe("comms follow announces its gap (H8's falsifier)", () => {
     const openingData = opening.data as Record<string, unknown>;
     expect(openingData.notice).toBe("follow-start");
     expect(openingData.position).toBe("never-followed");
-    expect(openingData.gap).toBe(0);
+    // `gap` is NULL, not 0. With no recorded position the tool has no idea what
+    // this seat has seen — it may have read the whole log via `read`, which
+    // records nothing by design. `gap: 0` would assert "you missed nothing",
+    // which is the one claim it is not entitled to make. The first shipped
+    // version DID say 0; maestro caught it on comms #184, and this assertion is
+    // what stops it coming back.
+    expect(openingData.gap).toBe(null);
+    expect(openingData).toHaveProperty("gap");
     expect(openingData.catchUpWith).toBe(null); // explicitly null, not absent
     expect(openingData).toHaveProperty("catchUpWith");
 
@@ -771,4 +778,63 @@ describe("comms follow announces its gap (H8's falsifier)", () => {
 
     rmSync(dir, { recursive: true, force: true });
   }, 25_000);
+});
+
+/**
+ * The notice's THIRD value. `gap` is null / 0 / N across never-followed /
+ * current / behind, and the set is what proves it — any single one of the three
+ * is satisfied by a hardcoded value. maestro's #184 defect was precisely a
+ * collapse of two of these onto one number, and it survived the first round of
+ * tests because nothing asserted them together.
+ */
+describe("follow-start gap is a three-value discriminator", () => {
+  test("null when unknowable, 0 when provably none, N when behind", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "anthill-comms-gap3-"));
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      readFileSync(join(teamDir, ".anthill", "config.json"), "utf8"),
+    );
+
+    const spawnF = () =>
+      Bun.spawn(["bun", CLI, "comms", "follow", "--as", "weaver", "--format", "json"], {
+        cwd: dir,
+        env: cleanGitEnv(),
+        stdout: "pipe",
+        stderr: "ignore",
+      });
+    const firstOf = async (p: Bun.Subprocess): Promise<Record<string, unknown>> => {
+      for await (const part of p.stdout as ReadableStream<Uint8Array>) {
+        const l = new TextDecoder().decode(part).trim().split("\n").filter(Boolean)[0];
+        if (l) return JSON.parse(l).data;
+      }
+      throw new Error("nothing emitted");
+    };
+
+    const a = spawnF();
+    const neverFollowed = await firstOf(a);
+    run(dir, ["comms", "send", "m1", "--as", "forager"]);
+    await Bun.sleep(900);
+    a.kill();
+    await new Promise((r) => setTimeout(r, 200));
+
+    // Restart with NOTHING new since it last emitted → provably up to date.
+    const b = spawnF();
+    const current = await firstOf(b);
+    b.kill();
+    await new Promise((r) => setTimeout(r, 200));
+
+    run(dir, ["comms", "send", "m2", "--as", "forager"]);
+    const c = spawnF();
+    const behind = await firstOf(c);
+    c.kill();
+
+    expect([neverFollowed.gap, current.gap, behind.gap]).toEqual([null, 0, 1]);
+    expect([neverFollowed.position, current.position, behind.position]).toEqual([
+      "never-followed",
+      "current",
+      "behind",
+    ]);
+    rmSync(dir, { recursive: true, force: true });
+  }, 30_000);
 });
