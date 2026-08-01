@@ -11,6 +11,14 @@ does not.
 **Seats:** maestro (lead), forager, weaver, sentinel · **Duration:** 22:43 → ~10:30 (incl. a 10.2h
 lead outage) · **Landed:** 20+ commits, gate 319 → 343 · **Wire:** 114 comms messages, ~13 vine
 
+### Method note — how this retro was produced
+
+**forager wrote his answers before reading weaver's or sentinel's**, deliberately, and said so. That
+is the agreement rule applied to the retro itself, unprompted, and it is what makes the overlap below
+worth anything: where three seats converge here, at least one arrived independently. The lead
+assembled this file from the seats' wire answers **after** they were written, not by polling for
+consensus.
+
 ### Q1 — What went well?
 
 - **The dual-wired protocol paid for itself, once, exactly as designed.** `artifact:` the lead ran
@@ -32,6 +40,19 @@ lead outage) · **Landed:** 20+ commits, gate 319 → 343 · **Wire:** 114 comms
   then landed his own paths; sentinel authorised and post-verified from a clean checkout; weaver held,
   insured the work outside the repo, and ran a real restore drill — which is how the `git apply`
   silent-partial-apply bug was found at all.
+
+- **Announce-before-holding a shared file worked every time it was used.** `artifact:` sentinel
+  announced `team-comms.test.ts`, forager waited, sentinel released at `1192ee3`, forager built on
+  top; weaver announced `seams.md`, forager announced it later. **Zero collision rework all session.**
+  The one collision we did hit (`index.lock`) was on the path where announcement does not apply.
+- **Verification changed the fix twice rather than confirming it.** `artifact:` sentinel's row-3
+  finding turned forager's adopted fix from one that would have shipped the commonest agent case
+  still broken; m7 turned out to be dead code, not a timing window. `f89686c` fails **11** pre-fix
+  tests the as-filed fixes would never have created. **forager's note, and it is the sharper half:
+  this is the strongest thing the team did and it is not visible on the board.**
+- **Corrections were frequent and cheap.** `artifact:` forager counts **nine** self- or peer-
+  corrections that changed a conclusion, none costing more than a message. **The cheapness is the
+  achievement, not the count.**
 
 > **Unanimity check (the smell test):** all four of us would say "verification discipline went well."
 > What would have had to happen for us to notice otherwise? **It did happen** — see Q2's prose-guard
