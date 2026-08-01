@@ -10,9 +10,11 @@ grapevine.
 | Handle | Role | Scope |
 | --- | --- | --- |
 | maestro | lead | orchestration, the file-scoped atomic land, human liaison |
-| forager | hands (CLI/engine) | scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, and their tests |
-| weaver | brain (skills/methodology) | skills/ (the bootstrap/convene/join/finalize/upgrade lifecycle skills + the methodology) + templates/ (scaffold + archetypes) |
+| forager | hands (CLI/engine) | plugin/scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, the comms wire, and their tests |
+| weaver | brain (skills/methodology) | plugin/skills/ (the bootstrap/convene/join/plan/finalize/upgrade lifecycle skills + the methodology) + plugin/templates/ (scaffold + archetypes) |
 | sentinel | verify | cross-cutting verification — the quality gate (typecheck/biome/bun test), fresh-context cold-reads, and real-repo/consumer validation |
+| steward | support (the lead's capacity) | errands the lead would otherwise stop to do — go find out whether X is true, read this and return the decision, hold context. Verifies premises as a by-product, never product code. Disposition: trust but check, including and especially the lead. |
+| scout | research (how the team works) | observes the session and reports on how the team actually behaves — grounded in the tree, not the wire. Never rules, assigns, or corrects mid-session; full participant after it ends. Reports to the lead AND the human. |
 
 ## How work divides
 
