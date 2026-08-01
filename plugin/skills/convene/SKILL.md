@@ -66,6 +66,12 @@ stay solo.
      owner lanes** — the doer owns its card's lifecycle `todo→doing→review`, the reviewer closes. The
      board is _state_; the vine is _substance_.
    - **`anthill status`** confirms the result (who's on the vine + the board column counts).
+   - **⚠ `status` does NOT tell you who is on `comms`.** It reports the grapevine roster; comms has
+     no presence at all, so a seat can be wired to the vine, visible in `status`, and receiving
+     nothing on comms — with no symptom. **Confirm it by hand: after the seats introduce
+     themselves, count the "in, grounded" messages you actually received on comms and name anyone
+     missing.** If you convened four and can name three, the fourth is not quiet, it is missing.
+     One minute here, or an hour of a seat working from stale context. See **`anthill:comms`**.
 
 4. **Confirm the branch, brief the seats, then spawn them.**
 
@@ -141,6 +147,8 @@ The stand-up beats that get skipped when you're eager to spawn. Run them as a li
   project has a branch policy (in the grounding docs), it's followed. _Do this **before** spawn — spawn
   is when seats gain commit power._
 - ◻ **Seats spawned** — `anthill spawn <handles…>`; `anthill status` confirms who's on + the columns.
+- ◻ **Every seat accounted for on `comms`** — `status` does **not** cover this wire (comms has no
+  presence). Count the "in, grounded" messages you actually received and name anyone missing.
 
 ## Output
 

@@ -81,6 +81,12 @@ status`** shows who's on + the board.
        its own catch-up verb and the same rule applies: **a finite read to catch up, the live follow
        only for the Monitor.** Reach for `--help` on the wire you're actually using rather than
        assuming its verbs match the one you learned first — **these tools are siblings, not clones.**
+       - **On `comms` specifically, catching up is not the same job as on the vine, and
+         `anthill:comms` is the skill for it.** The lead clears the vine at convene, so `pull` gives
+         you this session. **Nothing clears the comms log** — no `--fresh`, and convene has no notion
+         of a comms channel — so a bare read replays _every session the team has ever had_. Anchor
+         with `--since <id>`. That skill also covers the failure you cannot see from here: a wire
+         that silently delivers nothing looks exactly like a quiet channel.
      - **These wires are separate tools that happen to sit side by side — assume nothing carries
        across them.** Not flags: `--as` identifies the writer on one verb, scopes the results on
        another, and is refused outright by a third — each correct, on its own tool. Not even the way
@@ -180,7 +186,12 @@ status`** shows who's on + the board.
   given — **no `grep` filter on this one; it emits no keepalives, and a filter here drops real
   messages.** Never reconstruct the command, and never go looking for the tool to decide.
   **`comms` missing from the manifest is a bug — raise it**, don't carry on unwired.
+  Catching up on comms is **not** the vine's procedure — nothing clears that log, so a bare read
+  replays every past session. Anchor with `--since <id>`; see **`anthill:comms`**.
 - ◻ **Introduced** on the vine — a short "in, grounded, here's my lane".
+- ◻ **Confirmed received, not just sent.** Get an explicit acknowledgement that your "in, grounded"
+  **landed** — from the lead, naming your message. A wire that delivers nothing is indistinguishable
+  from a quiet channel, and the first minute is the only cheap time to find out you are unwired.
 - ◻ **Code-bearing message? Send it safely — on _every_ wire, not just the one you learned this on.**
   **Any** `send` on **any** of these tools — grapevine, comms, whatever the manifest hands you next —
   whose body carries backticks or code MUST go via `--stdin` (or a quoted heredoc). An un-quoted body
