@@ -324,3 +324,140 @@ describe("regressions — the two concurrency bugs found in review", () => {
     rmSync(dir, { recursive: true, force: true });
   });
 });
+
+// ---------------------------------------------------------------------------
+// Cold-review majors M1, M2, M4.
+//
+// The pre-existing `follow` test above asserts only SUBSTRINGS of the message
+// text ("envelope grain", "the canary"). Those appear in a raw record and in an
+// envelope alike, so it is shape-BLIND: it passed identically before and after
+// M1 was fixed. It was never encoding the bug — it simply could not see it,
+// which is worse, because a green test over the exact path implies coverage.
+// The rule from `cli.test.ts`: a harness must be shown able to report the
+// difference it claims is absent.
+// ---------------------------------------------------------------------------
+
+describe("M1 — follow emits ENVELOPES under json, not raw records", () => {
+  test("every streamed line is {ok,data,meta} — the assertion that fails pre-fix", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "anthill-m1-"));
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      JSON.stringify({
+        version: 2,
+        channel: "test-channel",
+        seats: [{ handle: "forager", role: "hands", scope: "s/", spawn: true }],
+      }),
+    );
+
+    const follower = Bun.spawn(
+      ["bun", CLI, "comms", "follow", "--as", "forager", "--format", "json"],
+      {
+        cwd: dir,
+        env: cleanGitEnv(),
+        stdout: "pipe",
+        stderr: "ignore",
+      },
+    );
+    const seen: string[] = [];
+    const drain = (async () => {
+      for await (const part of follower.stdout as ReadableStream<Uint8Array>) {
+        seen.push(new TextDecoder().decode(part));
+      }
+    })();
+
+    await Bun.sleep(400);
+    run(dir, ["comms", "send", "shape probe", "--as", "forager"]);
+    await Bun.sleep(600);
+    follower.kill();
+    await drain.catch(() => {});
+
+    const lines = seen.join("").trim().split("\n").filter(Boolean);
+    expect(lines.length).toBeGreaterThan(0);
+    for (const line of lines) {
+      const env = JSON.parse(line);
+      // Pre-fix these three are all undefined: the record was written straight
+      // to stdout via `encodeMessage`, so an agent branching on `.ok` got
+      // `undefined` on every message of the most-executed comms command.
+      expect(env.ok).toBe(true);
+      expect(env.meta.command).toBe("comms follow");
+      expect(typeof env.data.id).toBe("number");
+      expect(typeof env.data.text).toBe("string");
+    }
+    expect(lines.some((l) => JSON.parse(l).data.text === "shape probe")).toBe(true);
+    rmSync(dir, { recursive: true, force: true });
+  });
+});
+
+describe("M2 — a message is ONE positional; surplus is refused, never dropped", () => {
+  test("surplus positionals are refused AND nothing is written", () => {
+    const before = readFileSync(logPath());
+    const r = run(teamDir, ["comms", "send", "hello", "there", "world", "--as", "forager"]);
+    expect(r.code).not.toBe(0);
+    const env = parse(r.stderr);
+    expect(env.ok).toBe(false);
+    expect(env.error).toMatch(/one argument/);
+    // The refusal must not half-send. An error envelope that still appended
+    // would be the silent truncation wearing a hat.
+    expect(readFileSync(logPath()).equals(before)).toBe(true);
+  });
+
+  test("the `--` terminator does NOT rescue it — the careful caller's defence fails too", () => {
+    const r = run(teamDir, ["comms", "send", "--as", "forager", "--", "alpha", "beta"]);
+    expect(r.code).not.toBe(0);
+    expect(parse(r.stderr).ok).toBe(false);
+  });
+
+  test("CONTROL: a correctly quoted body still sends verbatim", () => {
+    const r = run(teamDir, ["comms", "send", "zeta eta theta", "--as", "forager"]);
+    expect(r.code).toBe(0);
+    const env = parse(r.stdout);
+    expect(env.ok).toBe(true);
+    const last = readFileSync(logPath(), "utf8").trim().split("\n").at(-1) as string;
+    expect(JSON.parse(last).text).toBe("zeta eta theta");
+  });
+});
+
+describe("M4 — an unparseable id is refused, not silently answered with nothing", () => {
+  test('--since "#14" is ACCEPTED — the watermark convention is written that way', () => {
+    // "ratifying as of #14" is the team's own convention, so pasting it is the
+    // natural input, not an exotic typo.
+    // Asserting "it succeeds" would be TOOTHLESS: pre-fix `--since "#1"` also
+    // exited 0 with ok:true — it just silently returned nothing. So compare the
+    // hash form against the numeric form and require the SAME messages. Pre-fix
+    // the two diverge (hash → empty, numeric → the real window), which is the
+    // whole defect; post-fix they are identical by construction.
+    const hash = parse(run(teamDir, ["comms", "read", "--since", "#1"]).stdout);
+    const plain = parse(run(teamDir, ["comms", "read", "--since", "1"]).stdout);
+    expect(hash.ok).toBe(true);
+    const hashMsgs = (hash.data?.messages ?? []) as unknown[];
+    expect(hashMsgs.length).toBeGreaterThan(0);
+    expect(JSON.stringify(hashMsgs)).toBe(JSON.stringify(plain.data?.messages ?? []));
+  });
+
+  test("--since garbage FAILS LOUDLY instead of returning zero messages with ok:true", () => {
+    // Pre-fix: Number("abc") → NaN → every `m.id > NaN` false → {"ok":true,
+    // messages:[]} exit 0, byte-indistinguishable from a quiet channel. On this
+    // wire that is the one failure mode that cannot be allowed to look like success.
+    const r = run(teamDir, ["comms", "read", "--since", "abc"]);
+    expect(r.code).not.toBe(0);
+    const env = parse(r.stderr);
+    expect(env.ok).toBe(false);
+    expect(env.error).toMatch(/message id/);
+  });
+
+  test("no error message ever leaks the string NaN", () => {
+    // `--id` DID fail pre-fix, but reported `no message #NaN` — the failure of
+    // the parse dressed up as the id you asked for.
+    for (const flag of ["--since", "--id"]) {
+      const r = run(teamDir, ["comms", "read", flag, "#nonsense"]);
+      expect(r.stderr).not.toContain("NaN");
+      expect(r.stdout).not.toContain("NaN");
+    }
+  });
+
+  test("CONTROL: a plain numeric id still works on both flags", () => {
+    expect(parse(run(teamDir, ["comms", "read", "--since", "0"]).stdout).ok).toBe(true);
+    expect(parse(run(teamDir, ["comms", "read", "--id", "1"]).stdout).ok).toBe(true);
+  });
+});

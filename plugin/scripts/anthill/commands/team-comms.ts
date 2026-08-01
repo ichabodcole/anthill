@@ -148,6 +148,37 @@ const sendCommand = defineCommand({
       process.exit(1);
     }
 
+    /**
+     * A message is ONE positional. Surplus positionals are refused rather than
+     * dropped.
+     *
+     * `send "hello there" world` used to store `"hello there"` and discard
+     * `world`, reporting ok:true — the seat believes it sent a paragraph and has
+     * shipped one word. Two real cases: a seat reaching for a neighbouring tool's
+     * signature stored a CHANNEL NAME as the body; another lost every word after
+     * the first while probing this very defect.
+     *
+     * The `--` terminator does NOT rescue it (`send -- "a" b` dropped `b` the
+     * same way), so the defence a careful caller reaches for failed identically
+     * to no defence at all — which is why this is a refusal and not a doc note.
+     *
+     * Checked against `_`, not against raw argv: `_` holds every positional
+     * whichever way it arrived, so the `--` path is covered by construction
+     * rather than by a second rule that could drift from this one.
+     */
+    const positionals = ((ctx.args._ as string[] | undefined) ?? []).filter((p) => p.length > 0);
+    if (!ctx.args.stdin && positionals.length > 1) {
+      emitError({
+        format,
+        command: "comms send",
+        error:
+          `a message is one argument, but ${positionals.length} were given ` +
+          `(${positionals.map((p) => JSON.stringify(p)).join(", ")}). ` +
+          `Quote the whole body — send "…" — or use --stdin. Nothing was sent.`,
+      });
+      process.exit(1);
+    }
+
     // `--stdin` exists because bash gets the body BEFORE this process does: an
     // unquoted message carrying backticks is command-substituted by the shell,
     // so no amount of downstream care can recover it. A dev team's messages are
@@ -283,7 +314,30 @@ const readCommand = defineCommand({
     // Exactly-one is a first-class operation, not a range with a caveat: any
     // `--since` window runs to now, so on a channel peers are still writing to
     // it will eventually contain someone else's message.
-    const one = ctx.args.id === undefined ? undefined : Number(ctx.args.id);
+    // Both id flags are VALIDATED before use. `Number("#14")` is NaN, and NaN
+    // poisons the two flags in opposite ways: `--id` reported `no message #NaN`
+    // (leaking the failure of the parse as if it were the id you asked for),
+    // while every `m.id > NaN` is false, so `--since "#14"` returned zero
+    // messages with `ok:true` and exit 0 — **byte-indistinguishable from a quiet
+    // channel**, which is the one failure this wire cannot afford.
+    //
+    // `#14` is not an exotic typo: the team's read-watermark convention is
+    // written exactly that way ("ratifying as of #14"), so pasting it is the
+    // natural mistake. Accept it, rather than only rejecting it.
+    const readId = (raw: string, flag: string): number => {
+      const n = Number(raw.trim().replace(/^#/, ""));
+      if (!Number.isInteger(n) || n < 0) {
+        emitError({
+          format,
+          command: "comms read",
+          error: `${flag} needs a message id, got "${raw}". Ids are whole numbers — "${flag} 14" or "${flag} #14".`,
+        });
+        process.exit(1);
+      }
+      return n;
+    };
+
+    const one = ctx.args.id === undefined ? undefined : readId(String(ctx.args.id), "--id");
     if (one !== undefined) {
       const found = messages.find((m) => m.id === one);
       if (!found) {
@@ -292,7 +346,7 @@ const readCommand = defineCommand({
       }
       messages = [found];
     } else if (ctx.args.since !== undefined) {
-      const since = Number(ctx.args.since);
+      const since = readId(String(ctx.args.since), "--since");
       messages = messages.filter((m) => m.id > since);
     }
 
@@ -374,11 +428,24 @@ const followCommand = defineCommand({
       const chunk = buf.subarray(offset, lastNewline + 1).toString("utf8");
       offset = lastNewline + 1;
       for (const message of parseLog(chunk).messages) {
-        process.stdout.write(
-          format === "text"
-            ? `#${message.id} ${message.from} (${message.role}):\n${message.text}\n\n`
-            : `${encodeMessage(message)}\n`,
-        );
+        // Stream through `emit`, NOT `encodeMessage`. A raw record has no `ok`
+        // and no `meta`, so an agent branching on `.ok` gets `undefined` on every
+        // message — and this is the most-executed comms command in the product:
+        // `buildCommsIncantation` emits it with no `--format`, `join` puts that
+        // string in every seat's manifest, and piped ⇒ json. The whole team was
+        // consuming non-envelopes.
+        //
+        // One envelope PER MESSAGE (NDJSON), which is what a stream of
+        // independent records means here — not one envelope wrapping the stream,
+        // which could only be closed when the stream ends, and this one never does.
+        // No `startedAt`: a per-message `durationMs` measured from process start
+        // would grow without bound and describe the wait, not the work.
+        emit({
+          format,
+          command: "comms follow",
+          data: message,
+          renderText: (m) => `#${m.id} ${m.from} (${m.role}):\n${m.text}\n`,
+        });
       }
     }
   },
