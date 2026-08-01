@@ -67,6 +67,15 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
 - **Prove the comparison harness can detect DIFFERENCE before you report "identical".**
   Verifying a "text mode is byte-unchanged" claim, the load-bearing step was not the six `cmp`s that said _same_ — it was showing the same harness reports **DIFF** on the JSON cells.
   _A "same" from an instrument that cannot demonstrate "different" is worth nothing, and it fails in the direction that feels like success. Same family as a `grep -o ""` that matches anything: the instrument silently agreeing with whatever you hoped._
+- **"Can this test fail?" is answered by MUTATION, never by reading it.**
+  A cold reviewer called three negative-assertion tests vacuous. Reading them, the claim was plausible; the stated mechanism (a help fallback) turned out not to reproduce.
+  So I injected the exact regression each test claims to catch — `--since`, `--last`, `--from-start` on `follow`, `--follow` on `read` — in a detached worktree. **Four for four went red. The guards work.**
+  _Negative assertions are a legitimate **smell**, and a smell is a reason to run the mutation, not a finding. Recommend "no change" with the mutation table attached, so the next reader doesn't re-open it._
+  **⚠ And mutation testing has its own failure mode: three of my mutations in one task silently did not land.** A hyphenated unquoted JS key (never applied), a leak on a code path no test exercises (present, zero effect — reads exactly like "the guard is broken"), and one injected mid-import that produced a syntax error I could have mistaken for a caught defect.
+  _So: **confirm the mutation is visible on the surface you are measuring** (grep the rendered help, run the command, read the output) **before believing what the tests say about it.** Every one of those three would have produced a confident wrong answer, in a task whose entire subject was tests that lie._
+- **When you harden a test helper, prove the OLD one passed on the same input.**
+  Hardening `parse()` to assert a single output line, the assertion that mattered was not "the new one throws" — it was the before/after on an **identical** injected leak: old helper **20 pass / 0 fail** (leak invisible), hardened **14 pass / 6 fail**.
+  _"It rejects bad input" is not evidence of an improvement; only the old one **accepting** that same input is. Otherwise you have shipped a stricter-looking helper with no idea whether it caught anything._
 - **Kill the confound before you claim the pass — make the fallback point _away_.** When proving a selection mechanism (which board? which config? which route?), a default/fallback can hand you the right answer for the wrong reason. Before asserting the mechanism works, arrange the world so the fallback would give a _different_ answer; a green both the mechanism and its fallback would produce proves nothing. This is the active form of the representativeness reflex, not just a caveat.
 
 ## Hard-won lessons
@@ -158,6 +167,16 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
   **⚠ How I got this wrong first, which is the more useful half.** I tested a **one-file** patch, saw nothing applied, and reported *"`git apply` skips the patch"* — a claim about the tool from a sample of one file. Two peers reproduced the real per-file behaviour; I confirmed it independently and amended this entry.
   _My own doc already said a rule tested across the **complete set** beats one inferred from a single member, and I never tested the only case that distinguishes the two (a patch with >1 path). Third wrong generalisation from a correct observation in one session._
   _The pattern is structural, not careless: **I generalise at the moment the observation is most surprising** — when the urge to state the rule is strongest and the sample is smallest. Surprise is the signal to widen the sample, not to publish._
+- **My generalisations fail at the moment of SURPRISE, and the confidence marker is the tell.**
+  Four times in one session I stated something correctly observed and wrongly generalised: "git apply skips the patch" (from a one-file patch), "the tests are vacuous" (from a mutation that never applied), "maestro is gone from the roster" (wrong noun for a right measurement), and — the clearest — a wire-failure claim built on four "independent" instances, **three of which shared one `pkill` I could not see.**
+  _On that last one I wrote, verbatim: **"the generalisation, which I think is now earned rather than asserted."** It was falsified within two minutes._
+  **The usable tell is the phrase itself.** I reach for an explicit confidence marker exactly when I have pattern-matched instead of counted; **a claim that needs me to vouch for its epistemic status is one I have not checked**, because the checked ones just carry their evidence.
+  _Second, separable check that would have caught the wire one: **before treating N instances as N evidence, ask whether they share a cause.** Three of mine shared a process-kill. I never asked._
+  _Why this is structural rather than sloppiness: surprise is exactly when the urge to state the rule is strongest and the sample is smallest. **Surprise is the signal to widen the sample, not to publish.**_
+- **Blank-context review and an executing seat catch DIFFERENT things — the pairing is the mechanism, not a ranking.**
+  A cold reviewer found M1 (`comms follow` emitting raw records, not envelopes) — which I had received ~70 times through my own Monitor without seeing. The same review asserted m6, which I killed in four mutations.
+  _**Blank context buys what familiarity blinds you to; it costs what only execution can settle.** A reader with no context cannot run the suite against a mutated tree; a seat inside the session stops seeing the shape of its own wire._
+  _So: cold review to **generate** candidates, an executing seat to **kill** the false ones. A team that treats the cold read as authoritative will "fix" things that are not broken — one false major shipped in that review, and it was aimed at the test file._
 - **A READY expires, and the producer is the worst-placed party to notice.**
   A builder announced READY at 317 tests; I measured 319 — his test file had been modified two minutes _after_ the announcement, and again later.
   Nothing was red and both edits were for good reasons; his own words are the finding: _"both times I'd have described the set as stable if asked."_
@@ -186,6 +205,14 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
   _So "remind the seat" is disproven as a remedy: the reminder was in my own file, freshly read, and it did not fire. **A warning I have read and agree with does not become an action.** It needs a **beat in the ritual** — something convene or plan makes me do — or it will keep not happening._
   _This is the house lesson (*a contract is a description, not a trigger*) turned on the seat's own doc: **the living doc can describe a reflex it cannot cause.**_
   _Raised upstream too: phrased as "anthill's seat-scope model lets a seat name two capabilities that cannot coexist, and nothing in convene/plan/finalize surfaces the conflict," it belongs to every team with a verify seat._
+
+- **Nothing reports WHICH BINARY a participant is running, and a whole session ran with the lead on different code.**
+  Found by accident while checking an unrelated process count: `ps` showed the lead's `comms follow` resolving to `~/.claude/plugins/cache/<plugin>/<version>/` — **a real directory, not a symlink**, an independent stale copy — while all three seats resolved to the working tree.
+  The lead's CLI did not contain the fix the session had shipped that day (`sniffFormatValue`: 0 occurrences vs 3; the headline cell emitted pre-fix usage text through his binary and the envelope through ours).
+  _The seats were fine only because `~/.claude/<beta-channel>/plugin` **is** a symlink to the tree, byte-identical — so the manifest handed us live code and the lead's path was the odd one out._
+  _**`anthill status` reports presence, the board reports state, the manifest reports paths — none report the binary.** It is checkable in one `ps` and no amount of team agreement would ever surface it._
+  _Note the arrow is REVERSED from this seat's standing lesson: usually the dev tree is the proxy that lies about what ships. Here the **installed copy** was the liar, because the fixes live in the tree and an install is a snapshot. **Ask which direction truth flows before assuming which copy is authoritative.**_
+  _Live trap worth remembering: a fix to `comms follow` cannot be verified by a follower running the other binary — the verifier gets a confident wrong answer about the exact thing under test._
 
 - **UNRULED and ownerless — the `seams.md` proof-pointer practice.** 3 of 3 count citations were wrong (Contracts 1 and 4); the recommendation is named assertions over counts, weaver agreed on the merits and had the file open, and the lead went absent before ruling.
   It needs a decision from someone, and with no lead that is the human's rather than a seat's to self-authorise.
