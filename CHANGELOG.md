@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.7.1](https://github.com/ichabodcole/anthill/compare/anthill-v1.7.0...anthill-v1.7.1) (2026-08-01)
+
+
+### Bug Fixes
+
+* **commit,cli:** StoryLoom's field defects, and the regression review caught ([f5668cb](https://github.com/ichabodcole/anthill/commit/f5668cb34a33726cdb94ce785757d0d03f04a0b8))
+* **commit:** stop eating the first character of the first foreign dirty path ([a2bd484](https://github.com/ichabodcole/anthill/commit/a2bd484f9c5c5acb473908b81278bb48dd94a558))
+* **join,skills:** tell seats to use --as, or the trailer ships dead ([8908e6a](https://github.com/ichabodcole/anthill/commit/8908e6a81860d71a67bbf144d43beae3fbaed763))
+
 ## [1.7.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.6.0...anthill-v1.7.0) (2026-07-31)
 
 
