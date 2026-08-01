@@ -179,3 +179,43 @@ Assertion (4) is the one that proves the headline of clause (c), and it is the o
 **Authoring note — how (4) went missing, because the mechanism recurs.** Assertions (1)–(3) were written in the same vine message that *withdrew* the success-path ask; the clause was then strengthened from two other directions, and the proof list was carried forward unchanged from before the strengthening.
 The contract text advanced and its own proof did not — **clause-vs-its-own-proof drift, inside a single file, introduced at authoring time.** Not doc-vs-code drift, and no gate catches it.
 The cheap guard: after strengthening any clause here, re-read the Proof section and ask which assertion would fail if the new words were false.
+
+## Contract 5 — the CLI failure surface: what the envelope carries, and what our prose may promise about it
+
+**Owner:** forager · **Pointed at from:** weaver (`skills/join` + `skills/comms` make claims about how these tools fail)
+**Status:** DRAFT — weaver drafting per maestro's ruling (comms #12 §2), forager to ratify. Do not treat as ratified until forager says so on the wire.
+**Ratified at:** the **tier rule** (a) and the **two prose constraints** (b), (c). NOT field names, NOT `meta.stack`'s shape, NOT the format-sniffing implementation — those are the owner's to change freely.
+
+**Why this is one contract and not two.** forager's rule about the envelope's *shape* and weaver's rule about what prose may *promise* are the same boundary seen from each end.
+Splitting them would put the promise and the thing promised in two places, which is the drift this file exists to prevent.
+
+**(a) Top-level envelope fields are TOTAL; `meta` is the variable bag.**
+`ErrorEnvelope = {ok:false, error:string, meta:{command}}`.
+Every top-level field has the same shape on **every** error path; a value only one path can produce lives on `meta`, which is already optional and already varies (`durationMs` comes and goes).
+This is why `validFlags` was declined and why a stack rides on `meta` rather than becoming a top-level field.
+The reasoning is Contract 4(b)'s, applied to a new surface: **an optional top-level field populated on one path makes its absence unreadable** — an agent cannot distinguish *"absent because inapplicable"* from *"absent because unpopulated"*.
+Doing it honestly would need an error-**kind** discriminator; that door is deliberately left open, and walking through it is a CLI-wide change, not a clause amendment.
+
+**(b) Prose must not state a local truth as a general one — and where a claim keeps needing precision, stop making the claim.**
+These tools' failure surfaces genuinely differ, per tool AND per path within a tool, so any sentence summarising them across a boundary is lossy by construction and the loss is where the falsehood lives.
+Two paths inside `comms` already carry **different kinds of reason**: a refused arg has an authored *why* (a coherent thing to try, and why this verb won't), an unknown flag has none (**a typo has no why**) and can honestly promise only *"it names what you typed and the flags that exist."*
+**Never write one sentence covering both.**
+The failure mode is not a wrong sentence — it is a **true sentence read as a general rule**, which is how `join/SKILL.md`'s *"a usage error and a broken tool look identical"* went from true-everywhere to true-of-the-vine-and-board-only.
+History: one clause about three sibling wires was wrong **five times, by four authors**, each fix smaller than the last, and convergence never reached zero.
+So the remedy is scoping, not rewording: name the tools the claim is about, tell the reader the tools differ, and point at the commands the CLI already resolved rather than teaching anyone to derive their own.
+
+**(c) Prose may not condition a promise about the envelope on a flag the CLI's own emitted commands do not pass.**
+The envelope is **not** conditional on `--format json`; it is conditional on **not being a TTY** (`resolveFormat`: an explicit `json`/`text` wins, otherwise `isTTY ? text : json`).
+A piped agent that passes no flag already gets JSON, and **every incantation anthill emits — the two tail commands and `comms follow` — passes no `--format`.**
+So prose saying *"pass `--format json` to get an envelope"* would be wrong three ways: false as a condition, contradicted by our own emitted output, and an invocation rather than a dialogue (Contract 4(d)).
+**The honest form is format-agnostic: an agent gets a parseable envelope; it does not ask for one.**
+This clause was added because the sentence it forbids was one draft away from being written — by the seat that authored 4(d).
+
+**Why it bites.** The class this guards is **prose going quietly false while still reading fine**, which no gate catches and which the fix itself can cause: forager's change makes anthill's CLI disambiguate a failure that its sibling wires still do not, so a sentence true when written becomes a wrong reflex the moment the CLI improves.
+Note the direction — **the tool got better and the documentation became wrong**, which is the case nobody watches for.
+
+**Proof — and the honest part is that (b) and (c) have none.**
+(a) is pinned by forager's tests, whose load-bearing assertion is sentinel's invariant: **the format decision must not depend on where the error was raised** — better than per-cell goldens because it survives any field names chosen.
+(b) and (c) are **prose constraints with no mechanical trigger**, and stating that plainly is the point: this file's own rule is *pin to proof where you can*, and here we cannot.
+Per Contract 4's authoring note, the guard is a **named re-read moment** rather than a fake assertion — whoever changes the envelope re-reads the two skills' failure-surface claims in the same change, because that is the only trigger that exists.
+Do not later paper this over with an assertion that merely greps the prose for a forbidden string; that would give the appearance of proof for a claim it does not test, which is the failure mode Contract 4 records against itself.

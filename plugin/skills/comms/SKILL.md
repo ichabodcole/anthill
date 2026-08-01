@@ -20,7 +20,14 @@ flag below, it is because the flag needs a reason attached, not because the list
 > **The verbs are siblings, not clones.** `--as` is **required** on `send` and `follow` (identity is
 > never inferred) and **refused** on `read` (reads are not attributed — you are observing, not
 > writing). That is three verbs and three different answers, so check rather than generalise from the
-> one you learned first. The tool says so at the point you get it wrong, with the reason.
+> one you learned first.
+>
+> **Get `--as` wrong and the tool tells you why** — that a read is not attributed to a seat, that
+> identity is never inferred — because each of those refusals has an authored reason behind it.
+> **Get a flag NAME wrong and there is no why to give you**, so don't expect one: what you get is
+> what you typed and the flags that exist, which is all a typo can honestly be answered with. Two
+> different kinds of wrong, two different kinds of answer; reading the first as a promise of the
+> second is how you end up thinking the tool is being unhelpful when it is being exact.
 
 ## 1. The log is CUMULATIVE. Nothing clears it. This breaks the habit you brought.
 
