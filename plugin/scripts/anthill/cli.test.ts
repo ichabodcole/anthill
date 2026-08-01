@@ -61,6 +61,34 @@ const PARSER_ERRORS: Array<{ label: string; argv: string[]; expect: RegExp }> = 
   },
 ];
 
+describe("a repeated --format resolves the way the real parser resolves it", () => {
+  // Ported from develop, where the same sniffer was written independently and
+  // returned the FIRST match — so the same argv got two verdicts depending on
+  // which code path saw it. This branch's implementation already accumulates
+  // (last wins) and never had the bug; these guard it against a later
+  // "simplification" back to an early return.
+
+  test("last --format wins, so a parser error agrees with a successful parse", () => {
+    const r = run(["status", "--nope", "--format", "text", "--format", "json"]);
+    expect(r.stderr.trimEnd().split("\n")).toHaveLength(1);
+    expect(JSON.parse(r.stderr.trim()).ok).toBe(false);
+    expect(r.stdout).toBe("");
+  });
+
+  test("and the reverse order picks text, not json", () => {
+    // Guards the obvious wrong fix: always preferring "json" passes the test
+    // above while still ignoring what the caller asked for last.
+    const r = run(["status", "--nope", "--format", "json", "--format", "text"]);
+    expect(r.stderr).not.toStartWith("{");
+    expect(r.stderr).toContain("USAGE");
+  });
+
+  test("the equals form is subject to the same rule", () => {
+    const r = run(["status", "--nope", "--format=text", "--format=json"]);
+    expect(JSON.parse(r.stderr.trim()).ok).toBe(false);
+  });
+});
+
 describe("sniffFormatValue — recovers the --format VALUE, never a decision", () => {
   test("spaced form", () => {
     expect(sniffFormatValue(["comms", "read", "--format", "json"])).toBe("json");

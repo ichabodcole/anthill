@@ -85,6 +85,13 @@ prints the migration plan **without touching anything**.
   → Skip steps 2–3 (there is no migration to consent to or apply) and **go to step 4** — the living-doc
   reconcile is the whole job on a content-only release, and it is the common case.
 
+> **Run `anthill field-notes` as part of this step.** anthill's cross-team observations live in the
+> **plugin**, not in your footprint — deliberately, because `init` never updates a file you already
+> have, so anything copied into `.anthill/` reaches you once and never again. Reading them here is
+> the only touch point where they are current. **They are observations, not requirements**; if one
+> contradicts what your team learned, your `principles.md` wins and `anthill feedback` is how you
+> tell us.
+
 > **A release can add a NEW living doc, not just edit one.** `anthill init` **creates files that do
 > not exist** while skipping ones that do — so re-running it is how a new team doc reaches an
 > **existing** footprint, and it cannot clobber your content. **Verified:** `principles.md` (added

@@ -27,6 +27,7 @@ import { teamCommsCommand } from "./commands/team-comms.ts";
 import { teamConveneCommand } from "./commands/team-convene.ts";
 import { teamDownCommand } from "./commands/team-down.ts";
 import { teamFeedbackCommand } from "./commands/team-feedback.ts";
+import { fieldNotesCommand } from "./commands/team-field-notes.ts";
 import { teamInitCommand } from "./commands/team-init.ts";
 import { teamJoinCommand } from "./commands/team-join.ts";
 import { teamMigrateCommand } from "./commands/team-migrate.ts";
@@ -72,6 +73,7 @@ export const main: AnyCommand = defineCommand({
     scan: teamScanCommand,
     commit: teamCommitCommand,
     feedback: teamFeedbackCommand,
+    "field-notes": fieldNotesCommand,
     init: teamInitCommand,
     migrate: teamMigrateCommand,
   },
