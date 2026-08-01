@@ -86,6 +86,15 @@ consensus.
   the lead's `grep -c` returning **identical counts across a rule that had inverted**, while checking a
   correction. `testimony:` that this is now a *pattern* rather than eight coincidences.
 
+- **The ritual's own step ordering forced a restatement violation — twice, independently.**
+  `artifact:` sentinel (`5458342`) and forager (`3a26419`) each put team Q3 hypotheses into their
+  **seat docs**, in the same window, for the same correct reason: step 3.5 has seats synthesise
+  before `.anthill/retro.md` exists, and a hypothesis with nowhere to go goes somewhere. **Two seats
+  reaching the identical violation from identical sound reasoning is a defect in the ordering, not a
+  lapse by either.** weaver had already found the same hole from the other end (`#115`: the store had
+  no named writer) and fixed that half in `81c9991`. **The ritual's first run surfaced both its
+  missing writer and its duplication pressure** — which is more than the ritual was designed to do.
+
 ### Q3 — What would you change? (hypotheses the next convene must test)
 
 - **H1 — Mechanical guards beat prose guards, and we should stop paying for prose.** *Prediction: in
