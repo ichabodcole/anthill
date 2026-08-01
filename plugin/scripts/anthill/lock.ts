@@ -11,6 +11,22 @@
  *
  * Timeouts are parameters because the two callers want different ones — a gate
  * run can legitimately hold for a minute, a log append cannot.
+ *
+ * ## Scope limit — this serialises `anthill commit` against `anthill commit`
+ *
+ * It is an anthill-owned lock file. It CANNOT serialise against a peer's raw
+ * `git commit`, `git add`, or `git commit --amend`: those take git's own
+ * `.git/index.lock` directly and never consult this one. So the guarantee is
+ * real but narrower than the SOP sentence ("concurrent seats queue instead of
+ * racing") reads — it protects the path everyone is told to use, and an
+ * unguarded path exists beside it on the same shared tree.
+ *
+ * Observed once, live: a seat's `anthill commit` failed with `Unable to create
+ * '.git/index.lock': File exists` while another amended a commit. That is the
+ * BEST version of this failure — a clean hard error with a good message and a
+ * successful retry — and it is worth naming precisely because the same race
+ * could instead leave a partially-staged index. Whether to add a retry on
+ * git's lock is an open call, deliberately not made off one data point.
  */
 import { closeSync, openSync, readFileSync, statSync, unlinkSync, writeSync } from "node:fs";
 import { nowMillis } from "./runtime.ts";
