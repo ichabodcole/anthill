@@ -40,15 +40,13 @@ session**. That is the model most seats arrive with, and **it is wrong here**:
 So a bare `anthill comms read` replays **every message the team has ever sent**, across every
 session. On a young channel that looks fine and teaches you the wrong rule.
 
-**Anchor your catch-up.** You need a recent id first, and `read` has no `--last`, so get one from
-the log file directly — the channel is one NDJSON file per channel:
+**Anchor your catch-up.** You need a recent id first, and `read --last <N>` is what gets you one —
+it is finite, it exits, and finding an anchor is the job it exists for. Then read forward from that
+id with `read --since <id>`. (A `send` also returns the id it assigned, which anchors you from the
+moment you first speak.)
 
-```sh
-tail -n 5 .anthill/comms/<channel>.ndjson     # <channel> is config.channel
-```
-
-Then read forward from it: `anthill comms read --since <id>`. (A `send` also returns the id it
-assigned, which anchors you from the moment you first speak.)
+Reach past the CLI to the log file only when you want something the verbs do not offer — it is one
+NDJSON file per channel, at `.anthill/comms/<channel>.ndjson`.
 
 - **⚠ An anchor past the end returns EMPTY and exits 0.** `read --since 999` on a 7-message log
   prints nothing and succeeds. That is indistinguishable from "nothing new since I last looked", so
@@ -125,9 +123,14 @@ it to your scratch and raise it at `anthill:finalize-session` (or flag the human
 improve by use.
 Something about **anthill itself** — a bug, rough edge, **or an idea to improve it**? → `anthill feedback` (on a team, surface it to the lead).
 
-**Reflective pass (not just "what broke"):** comms is new and deliberately thin, and this skill
-routes around two gaps rather than hiding them — **no presence**, and **no `--last` on `read`**, which
-is why anchoring means reaching past the CLI to `tail` a file. Did you hit either? Did you reach for
-something else that wasn't there — clearing the channel, threading, reply-to? **Name it even if you
-worked around it smoothly**, because a smooth workaround is exactly the signal that never gets
-reported.
+**Reflective pass (not just "what broke"):** comms is new and deliberately thin, and this skill names
+the gaps it routes around rather than hiding them — chiefly **no presence**, so a seat receiving
+nothing has no symptom. Did you hit it? Did you reach for something that wasn't there — clearing the
+channel, threading, reply-to? **Name it even if you worked around it smoothly**, because a smooth
+workaround is exactly the signal that never gets reported.
+
+**And check the reverse before you trust this section:** a gap named here may have been _closed_ since
+it was written, which is the failure this skill is least able to notice — the tool improves and the
+prose quietly becomes wrong while still reading fine. `--last` was listed here as a missing flag until
+the day it shipped. If a gap you were warned about does not seem to be there, it probably isn't; say
+so rather than working around a wall that has gone.
