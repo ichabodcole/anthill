@@ -183,8 +183,9 @@ The cheap guard: after strengthening any clause here, re-read the Proof section 
 ## Contract 5 — the CLI failure surface: what the envelope carries, and what our prose may promise about it
 
 **Owner:** forager · **Pointed at from:** weaver (`skills/join` + `skills/comms` make claims about how these tools fail)
-**Status:** DRAFT — weaver drafting per maestro's ruling (comms #12 §2), forager to ratify. Do not treat as ratified until forager says so on the wire.
 **Ratified at:** the **tier rule** (a) and the **two prose constraints** (b), (c). NOT field names, NOT `meta.stack`'s shape, NOT the format-sniffing implementation — those are the owner's to change freely.
+Ratified by forager on the wire (comms #27, as of #26), against the code as it stands post-fix rather than as designed — including an explicit ratify of the Proof section's **absence** of a mechanical trigger for (b) and (c) **as a decision, not a gap** (same discipline as Contract 4(c-bis): a cold reader must not be able to mistake *"we couldn't pin this"* for *"nobody thought about pinning it"*).
+The owner corrected clause (c)'s evidence at ratify; see the note there.
 
 **Why this is one contract and not two.** forager's rule about the envelope's *shape* and weaver's rule about what prose may *promise* are the same boundary seen from each end.
 Splitting them would put the promise and the thing promised in two places, which is the drift this file exists to prevent.
@@ -206,7 +207,9 @@ So the remedy is scoping, not rewording: name the tools the claim is about, tell
 
 **(c) Prose may not condition a promise about the envelope on a flag the CLI's own emitted commands do not pass.**
 The envelope is **not** conditional on `--format json`; it is conditional on **not being a TTY** (`resolveFormat`: an explicit `json`/`text` wins, otherwise `isTTY ? text : json`).
-A piped agent that passes no flag already gets JSON, and **every incantation anthill emits — the two tail commands and `comms follow` — passes no `--format`.**
+A piped agent that passes no flag already gets JSON, and **the anthill-CLI invocations we emit pass no `--format`** — `comms follow` in the join manifest, and `submitCmd` in `feedback` (Contract 2), which is the stronger case because it is a string we hand a seat to **re-invoke**, so it will actually produce an envelope when run.
+The join manifest's other two commands are **spellbook's** (grapevine, bounty), not anthill's CLI, so they have no anthill envelope to promise and are not evidence here.
+That exclusion is stated rather than left silent because it is clause (b) applied to this clause's own footnotes: an earlier draft counted all three, **inflating n=1 to n=3** — an overstated claim inside the contract against overstated claims, caught by the owner at ratify.
 So prose saying *"pass `--format json` to get an envelope"* would be wrong three ways: false as a condition, contradicted by our own emitted output, and an invocation rather than a dialogue (Contract 4(d)).
 **The honest form is format-agnostic: an agent gets a parseable envelope; it does not ask for one.**
 This clause was added because the sentence it forbids was one draft away from being written — by the seat that authored 4(d).

@@ -85,7 +85,8 @@ prints the migration plan **without touching anything**.
   → Skip steps 2–3 (there is no migration to consent to or apply) and **go to step 4** — the living-doc
   reconcile is the whole job on a content-only release, and it is the common case.
 - **Behind** → it prints plain-language **notes** summarizing each move (config relocate, docs
-  relocate, gitignore swap, version stamp). The structured op list is available with `--format json`.
+  relocate, gitignore swap, version stamp); the structured op list comes back in the same envelope
+  everything else does.
   Read the matching guide in `${CLAUDE_PLUGIN_ROOT}/skills/upgrade/migrations/` (e.g. `v1-to-v2.md`)
   so you understand each step.
 

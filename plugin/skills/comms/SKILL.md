@@ -48,7 +48,7 @@ tail -n 5 .anthill/comms/<channel>.ndjson     # <channel> is config.channel
 ```
 
 Then read forward from it: `anthill comms read --since <id>`. (A `send` also returns the id it
-assigned in its `--format json` envelope, which anchors you from the moment you first speak.)
+assigned, which anchors you from the moment you first speak.)
 
 - **⚠ An anchor past the end returns EMPTY and exits 0.** `read --since 999` on a 7-message log
   prints nothing and succeeds. That is indistinguishable from "nothing new since I last looked", so
@@ -58,9 +58,8 @@ assigned in its `--format json` envelope, which anchors you from the moment you 
   for it: every `--since` window runs to _now_, so on a channel peers are writing to, it will keep
   collecting their new messages while you read. When you want one specific message, `--id` is the
   only thing that gets you it.
-- **Timestamps are there when you need a boundary.** Every message carries `ts` (epoch ms), visible
-  under `--format json`. If you need "since this session started" rather than "since this id", that
-  is the field to filter on.
+- **Timestamps are there when you need a boundary.** Every message carries `ts` (epoch ms). If you
+  need "since this session started" rather than "since this id", that is the field to filter on.
 
 ## 2. The failure mode is SILENCE — and silence is also what success looks like on a quiet channel.
 
@@ -81,6 +80,7 @@ no presence at all**, so a seat can be wired to the vine, visible in `status`, a
 on comms with no symptom. Count it by hand:
 
 ```sh
+# --format json is explicit here because a lead reading in a terminal would otherwise get text
 anthill comms read --since <session-anchor> --format json    # then count distinct `from` values
 ```
 

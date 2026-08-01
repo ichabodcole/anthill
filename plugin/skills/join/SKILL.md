@@ -212,9 +212,14 @@ status`** shows who's on + the board.
     _other_ tool's `tail` because the warning he had written named only the first — and lost time to
     a mistake his own prose was meant to prevent. **A warning filed under one tool's name does not
     fire when you reach for the tool beside it.**
-- ◻ **Resuming a preserved patch?** `git apply` resolves patch paths **relative to your CWD, not the
-  repo root** — apply from the repo root (or pass `--directory=<repo-root>`), or a patch preserved from
-  a subdir lands in the wrong place.
+- ◻ **Resuming a preserved patch? Apply it from the repo ROOT — nowhere else.** Run from a
+  subdirectory, `git apply` **silently applies only the hunks under that directory and drops every
+  other one — and still exits 0.** It does not error, and it does not misplace the files; it
+  half-restores your work and reports success. Measured: a patch touching `plugin/` and `.anthill/`,
+  applied from `plugin/`, restored the `plugin/` file and left the `.anthill/` one untouched, exit 0
+  both times. **A recovery that looks clean and is half-missing is worse than one that fails**, and
+  the file you lose is whichever one you weren't looking at. `cd` to the root first, then apply, then
+  **diff what you got against what you preserved** rather than trusting the exit code.
 - ◻ **Scratch minted** — `.anthill/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
 - ◻ **Route through the lead — and SAY when you're waiting.** Questions + decisions go to the
   lead/liaison on the vine, not direct to the human. But routing through the lead is a **default, not
