@@ -32,17 +32,30 @@ the one in use.
 
 Outside the repo, the symlink is invisible to `bun test`, `biome`, `prettier`, and `git`.
 
-### ⚠ Correction: the install is NOT a self-contained copy
+### ⚠ The install IS a copy — and the source symlink must ALSO persist
 
-An earlier commit message on this branch says it is. **It is not.** There is a populated cache dir at
-`~/.claude/plugins/cache/anthill-beta/anthill/<version>/`, but the loader **re-resolves the source
-path at load time** — delete the symlink and the plugin fails with
-`Plugin directory not found at path: …`, while still listing as installed. **The symlink must
-persist for as long as the channel is in use.**
+**Both halves are true, and I got this wrong twice before landing on it.** Verified three ways:
 
-The upside of the same fact: because it resolves the live tree, edits to `plugin/` are picked up
-without reinstalling. Only the _manifest_ is cached, so a `plugin.json` version change still needs a
-`marketplace update`.
+```sh
+ls -ld ~/.claude/plugins/cache/anthill-beta/anthill/<version>   # a real directory, NOT a symlink
+diff <cache>/scripts/anthill/commands/team-comms.ts plugin/scripts/anthill/commands/team-comms.ts
+grep -c 'emit(' <cache>/…/team-comms.ts   vs   the same file in plugin/
+```
+
+- **The cache is a genuine copy, frozen at install time.** Edits to `plugin/` do **NOT** reach it.
+  A running session will happily serve pre-fix code while the working tree is three commits ahead,
+  and nothing says so — the two produce identically-plausible output.
+- **The source symlink must still exist**, because the loader _validates the source path_ at load
+  time even though it serves the copy. Delete it and the plugin fails with
+  `Plugin directory not found at path: …` while still listing as installed.
+
+> **Two earlier versions of this file asserted the opposite in each direction** — first "it's a
+> self-contained copy, delete the symlink", then "it resolves the live tree, edits are picked up
+> live." Each was inferred from a single failure mode rather than measured, and each was written as
+> a confident correction of the last. **The measurement that settles it is `diff`, not a story about
+> why something broke.**
+
+**To pick up changes you must bump the version and reinstall** (see below) — there is no live path.
 
 ## ⚠ `plugin/.claude-plugin/plugin.json` version is hand-edited
 
@@ -93,8 +106,8 @@ set with no indication. Verify with `claude plugin list` — the beta must read 
 
 ## Picking up changes to `plugin/`
 
-Skills and scripts resolve live through the symlink, so most edits need nothing. Only a
-`plugin.json` change needs:
+**Every change needs a reinstall — nothing is live.** And the version must change first, or the
+install is silently skipped:
 
 ```sh
 # bump plugin.json's version FIRST — same-version installs are skipped, silently
