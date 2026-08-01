@@ -59,7 +59,7 @@
 
 `artifact:` `.gitignore:44` ignores `.anthill/comms/`; `git ls-files .anthill/comms/` returns nothing; the log on disk is ~550KB. `.anthill/scratch/` likewise (`.gitignore:38`). **The `positions/` files are gitignored too.**
 
-**A stranger cloning this repo gets 32 commits and no evidence that any of the reasoning happened.** Four seats re-scored their own retro `artifact:` labels mid-ritual once this was named. **I include myself: most of what I observed is testimony.**
+**A stranger cloning this repo gets the commits and no evidence that any of the reasoning behind them happened.** _(This sentence carried a count — "32 commits" — until the pin in §1 made it inconsistent with the report's own anchor. **Fourth instance in this document of a number aging faster than the prose around it.** The assertion, which does not age: the reasoning is not in the repo at all.)_ Four seats re-scored their own retro `artifact:` labels mid-ritual once this was named. **I include myself: most of what I observed is testimony.**
 
 **One accidental consequence is protective and worth keeping deliberately:** a blank-context reviewer working from a clone **cannot reach the wire**, so it cannot inherit my framings — unless someone pastes them in. **That failure mode requires a positive action, which is why it needs naming in the finalize instructions rather than assuming.**
 
