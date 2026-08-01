@@ -17,7 +17,7 @@ I own the deterministic layer: given a repo, emit the right structured facts, an
 _(Header re-synced to `config.json` after the lead corrected the roster's pre-restructure paths.
 Worth keeping as a lesson rather than a diff: I had written a note here saying "the config is the stale copy" — **and reporting that drift is what caused the lead to fix it, which made my note false within minutes.**
 A note describing another file's state is a claim with a shelf life, and **a note whose whole purpose is to flag a defect becomes wrong precisely when it succeeds.** If you annotate a mismatch you've escalated, write it as *"as of now"* — or better, re-check it before finalize, because the successful outcome and the drift look identical from inside your own file.)_
-Concretely this session: `scan.ts` (pure detectors), `commands/team-scan.ts` (the command), `__fixtures__/` (test repos), and their tests.
+_(Do not list "this session's files" here — that line went stale the moment the session ended and was still naming `scan.ts` three sessions later. Scope is the durable statement; the session's files are in the commits.)_
 
 ## Boundaries
 
@@ -32,7 +32,9 @@ Clauses (b) and (c) are weaver's prose constraints; they have **no mechanical tr
 
 - **weaver** consumes what I emit (`anthill scan` → `ScanReport`). We meet at Contract 1. Ratify the shape with weaver _before_ building — a shape wrong at the seam is a fiction weaver builds against.
 - **sentinel** verifies my slice against the real world (runs my command on real repos), not just my goldens. Its cold-read/real-repo pass is the check my unit tests structurally can't be.
-- **maestro** lands my paths (file-scoped); I don't commit in a shared-tree session.
+- **maestro** routes decisions and owns the ATOMIC CROSS-SEAT land (several seats' halves that are uncompilable apart).
+**I land my own paths** — `anthill commit --as forager -m "…" <paths…>`, explicit pathspec, gate green first.
+_(Corrected at the 2026-08-01 finalize: this line said "maestro lands my paths; I don't commit in a shared-tree session." The lead ruled the opposite mid-session — each seat lands its own files and its own seat doc — and I had already landed six commits under that ruling while my own doc still forbade it. **A relationship line describes a policy, and policies are exactly what a lead changes without touching your file.**)_
 
 ## Taste & reflexes
 
@@ -44,25 +46,19 @@ Clauses (b) and (c) are weaver's prose constraints; they have **no mechanical tr
 
 ## Hard-won lessons
 
-> **⚠ CURATION DEBT — read this before adding another.** This section is at **23 lessons** and is over
-> the line the SOP draws (*"a lean, true trail beats an exhaustive, rotting one"*). Session 4 added
-> nine and pruned none, which is half the ritual.
-> **Deliberately not pruned under pressure:** that session ended with the lead absent and work
-> unlanded, and pruning is the one operation that *loses* signal — adding was insurance, deleting is
-> its opposite, and I had been wrong three times that day. Curation is a **finalize** job, done with
-> the structure reflection and the team, not a solo call made at speed.
-> **The merge candidates, so the next pass starts warm:** several entries below are one lesson seen
-> from different angles — *emit the evidence even when certain*, *a harness must be shown able to
-> report DIFF*, *predict which tests survive a falsification run*, and *verify by count, not verdict*
-> are all **"an instrument you have not tested against a known-positive cannot support a negative."**
-> Merge them into one; do **not** delete the individual pinned proofs when you do.
+> **Curation note.** The verification-instrument lessons were merged at the 2026-08-01 finalize
+> (four angles → one, each keeping its own proof), discharging the debt recorded at the previous
+> finalize. Next reader: the bar is a lean, true trail — if you add without pruning twice running,
+> merge before you add a third time.
 
 - **Resolve the repo root from what exists at call time, not what you wish existed.** `anthill scan` runs during bootstrap's _light discovery_ — **before** `.anthill/config.json` is written (bootstrap bails if it already exists). So the config walk-up (`findConfigFile`/`loadConfig`) would _throw_ at scan time. Root must come from a pre-bootstrap marker: nearest `.git`, else topmost `package.json`, else cwd, with a `--root` override for fixtures. _Lesson: a helper's "obvious" root resolver encodes an assumption about WHEN it runs — check the lifecycle, not just the code._ (Pinned: `resolveScanRoot` + its temp-tree tests in `scan.test.ts`; caught at the plan ratify before a line was built.)
-- **Emit the evidence even when the verdict IS certain — certainty is exactly what an outsider cannot distinguish from luck.**
-This supersedes the narrower rule below ("when a classifier can't be certain, emit the evidence"): that one only fires on ambiguity, and the dangerous case is the confident one.
-Building comms identity I was going to state the resolution outcome only on FAILURE, which would have left the success path unfalsifiable — a send that read the roster and a send that echoed the caller's string emit the identical green, so the seat-identity wedge (the entire premise of the slice) would have been unverifiable from outside the process.
-The fix is one field on every path, proven as a **discriminator, not a constant**: one field, three distinguishable values, asserted across the whole set, because any single assertion in isolation is satisfied by a hardcoded string.
-_Lesson: if your output can't distinguish "I did the work" from "I took what I was handed", nobody outside can either — and no amount of verification effort closes that from the outside._ (Pinned: `comms.test.ts` assertions (1)–(4) + `seams.md` Contract 4.)
+- **An instrument you have not tested against a known-positive cannot support a negative — and the strongest case is the CONFIDENT one.**
+_(Merged at finalize from three lessons that were one lesson seen from three angles. Each kept its own proof.)_
+**(a) Emit the evidence even when the verdict IS certain.** Building comms identity I was going to state the resolution outcome only on FAILURE, leaving the success path unfalsifiable — a send that read the roster and a send that echoed the caller's string emit the identical green. The fix is one field on every path, proven as a **discriminator, not a constant**: one field, three distinguishable values, asserted across the whole set, because any single assertion in isolation is satisfied by a hardcoded string. (Pinned: `comms.test.ts` assertions (1)–(4) + `seams.md` Contract 4.) This supersedes the narrower "when a classifier can't be certain, emit the evidence" below — that one only fires on ambiguity, and the dangerous case is the confident one.
+**(b) A comparator must be shown able to report DIFFERENT.** I proved text mode byte-unchanged with `cmp` over 5 cells; the verifier ran 6 **and demonstrated his harness reports DIFF on the json cells**, which mine never did. A "same" from a comparator that cannot say "different" is indistinguishable from a broken comparator.
+**(c) A falsification run should produce a PREDICTED MIX, not uniform red.** Mine gave 9 fail / 3 pass, and the 3 were the `--format text` controls that *must* pass on both sides; a clean 0→22 would have meant the "unchanged" claim was never tested.
+**(d) The case that proves the whole rule — assert the POSITIVE behaviour, or you will test a dead branch.** `lock.ts` compared `nowMillis()` (ms since **process start**) against an epoch `mtimeMs`, giving an age of ≈ −1.78e12, so `age > staleMs` was **never true in any run**: the stale-lock steal — the entire crash-recovery path — had never once fired, and a crashed holder wedged the lock permanently, the precise opposite of the module header's promise. Every anthill command is a fresh one-shot process, so it failed **100% of the time in production while reading as correct in review**. I found it only because the test asserted *a stale lock is actually stolen* rather than *the timeout message looks right* — the message half passed happily over dead code. **My own first fix for it computed the age the same wrong way and would have shipped the broken premise inside a commit claiming to fix it.**
+_Lesson: if your output cannot distinguish "I did the work" from "I took what I was handed", nobody outside can either — and neither can your own tests. Exercise the instrument against a known-positive first._ (Pinned: `lock.test.ts` "a stale lock is stolen even when the process has just started"; commit `f89686c`.)
 
 - **Don't re-derive a value another layer already computed — thread the original through.**
 For comms' no-config error I rebuilt an absolute path (`resolve(cwd, ".anthill/config.json")`) and reported "looked for _that_". But `findConfigFile` walks UP: it checks many places and singles out none, so my message asserted a specific location as if it had been checked. **Precision-shaped fabrication — worse than vague, because vague is at least honest about its ignorance.**
@@ -105,11 +101,6 @@ _Lesson: the affordance being correct is not enough; it has to arrive before the
 My invariant test compared the two throw sites cell-for-cell (`isJson(parser) === isJson(inRun)`). The verifier spotted that this passes in a both-broken world: `false === false`, and the helper also returns `false` when the JSON parse *itself* fails, so two distinct failure modes collapse onto the value that satisfies the test. It was only meaningful because *sibling* tests asserted the positive case.
 _Lesson: any test whose subject is equality between two things must positively pin at least one side **within the same test** — the sibling it silently leans on is exactly what a later refactor deletes, and the suite stays green while asserting nothing._ (This is Contract 4's assertion-(4) shape generalised: the positive anchor always goes first.)
 
-- **A verification harness must be shown capable of reporting the difference it claims is absent.**
-I proved text mode byte-unchanged with `cmp` over 5 cells. The verifier ran 6 **and demonstrated his harness reports DIFF on the json cells**; mine never did. A "same" from a comparator that cannot show "different" is indistinguishable from a broken comparator.
-Related, same session: **predict which tests should SURVIVE a falsification run.** Running my new suite against pre-fix code gave 9 fail / 3 pass — and the 3 passing were the `--format text` controls, which *must* pass on both sides. A 0→22 result would have meant my "text mode unchanged" claim was never actually tested.
-_Lesson: exercise the instrument against a known-positive before trusting a negative, and expect a falsification run to produce a specific MIX, not uniform red._
-
 - **A scope constraint you can only satisfy by duplicating a single source is a constraint to renegotiate, not obey.**
 The lead scoped me to `cli.ts` + its test; preserving a stack in the JSON path required `agent-layer.ts`, because `emitError` builds the envelope. Obeying literally meant hand-rolling a **second definition of the envelope shape inside the fix for envelope divergence**.
 _Lesson: surface it with the reason and let the lead rule — but recognise the shape early, because the compliant-looking option is the one that plants the bug._ (Complements the blast-radius rule below: that one says don't widen; this one says say so when you must.)
@@ -127,6 +118,15 @@ I missed it because I had built from the earlier, correct message and skimmed th
 `join/SKILL.md` warned that `git apply` *"resolves patch paths relative to your CWD, not the repo root"*. The advice (apply from the repo root) is right; the mechanism is not. git resolves against the **repo root** and then **silently discards the parts of the patch outside your CWD** — so applying from a subdir gives a **partial** restore at **exit 0**, and `--check` also exits 0 while `--stat` cheerfully lists only the surviving files.
 **My first reproduction attempt said there was no bug**, because my test patch touched only files *under* the CWD, which applies perfectly. **The trigger is not "am I in a subdir" — it is "does the patch span outside my CWD"**, which is exactly the shape a multi-tree preservation snapshot has. I nearly posted a refutation of a real defect.
 _Lesson: when you inherit a warning, test the MECHANISM it claims and not just the outcome it predicts — a wrong reason routes you to the passing case. And distrust exit 0 from any tool that can do part of a job: verify by **count** of things changed, not by the verdict._ (Three seats reproduced this independently, two of us inconclusive on the first attempt.)
+
+- **A cold reviewer's FRAMING can be narrower than the defect, in the direction that makes it look already-understood.**
+m7 was filed as a `waitMs < staleMs` dead window — real arithmetic, plausible, and **unreachable**, because the branch it gated was dead (see the clock lesson above). Had I implemented the filed fix I'd have shipped a commit that named the right file, changed the right function, and left a 100%-failing mechanism failing.
+The same round: M4 named `--since` and missed that `--id` leaked `NaN` into user-facing prose; the reviewer's quote I nearly called a misquote was real and one line past where I stopped reading.
+_Lesson: a review finding is a hypothesis with a file attached. Reproduce the MECHANISM, not just the symptom — a fix that satisfies the report and not the defect is the hardest kind to catch later, because the item is closed._ (Pinned: `f89686c`; `lock.test.ts`'s dead-branch guard.)
+
+- **A test can be BLIND to the thing it covers, and a green test over the exact path implies coverage it never had.**
+The pre-existing `comms follow` test asserted only substrings of the message *text*. Those appear in a raw record and in an envelope alike, so it passed identically before and after M1 — it was never encoding the bug, it simply could not see it. Cold review called it "a regression test that encodes the violation"; measured, it was worse than that.
+_Lesson: ask of every test, "what would this still pass over?" A substring assertion over a structured payload almost always answers "the structure."_ (Pinned: the shape assertions in `commands/team-comms.test.ts` M1 block, which fail pre-fix.)
 
 - **Check that each instance you count is actually in the claim's DOMAIN.**
 A peer's contract cited *"all three emitted incantations pass no `--format`"*; two of the three are **spellbook** commands that cannot pass anthill's flag and emit no anthill envelope. n=1 presented as n=3, inside the contract about overstated claims. (Replacement I supplied: Contract 2's `submitCmd`, a genuine second anthill-CLI string and a stronger one, since it is re-invoked and does produce an envelope.)
