@@ -156,6 +156,19 @@ export function planV1ToV2(scan: RepoScan): MigrationPlan {
   ops.push({ kind: "gitignore", remove: `${configDir}/scratch/`, add: `${ANTHILL_DIR}/scratch/` });
   notes.push(`gitignore: ${configDir}/scratch/ → ${ANTHILL_DIR}/scratch/`);
 
+  // The comms message log is per-session local state, same genre as scratch, and
+  // an EXISTING team would otherwise get the ignore line only if something
+  // happened to re-run `init` — invisible until they upgrade and commit a log.
+  // Spelled as an ensure (`remove` === `add`) rather than a pure add: the
+  // executor filters lines equal to `remove`, so an empty `remove` would match
+  // every BLANK line and silently reflow the consumer's `.gitignore`.
+  ops.push({
+    kind: "gitignore",
+    remove: `${ANTHILL_DIR}/comms/`,
+    add: `${ANTHILL_DIR}/comms/`,
+  });
+  notes.push(`gitignore: ensure ${ANTHILL_DIR}/comms/ (team comms log — never committed)`);
+
   // 4. Remove the vacated config dir (only the disposable, gitignored scratch
   //    remains in it). An active session's scratch is transient by design.
   ops.push({ kind: "rm", path: configDir });

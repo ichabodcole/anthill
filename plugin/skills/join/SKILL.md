@@ -81,10 +81,12 @@ status`** shows who's on + the board.
        its own catch-up verb and the same rule applies: **a finite read to catch up, the live follow
        only for the Monitor.** Reach for `--help` on the wire you're actually using rather than
        assuming its verbs match the one you learned first — **these tools are siblings, not clones.**
-     - **`--as` belongs to _write_ verbs.** Identity stamps your seat onto a message, so sending and
-       following take it and reading doesn't. Worth holding as a model because it predicts verbs you
-       haven't tried yet — the tools themselves will correct you at the point of use if you get it
-       wrong.
+     - **Don't carry a flag across wires on the assumption it means the same thing.** `--as` is the
+       one that will catch you: on some verbs it identifies the writer, on others it scopes what you
+       get back, and on others it is rejected outright — **all three are correct, on different tools.**
+       There is no rule here to memorise, which is exactly the point: **check `--help` on the verb you
+       are about to run.** The tools will tell you at the point of use; a rule you carried over from
+       the last one will not.
      - **`read <channel> <id>` is the only way to fetch exactly one message**, and that matters more
        than gap-filling: it is not a narrower range, it is _not a range_. Any `--since` window runs to
        _now_, so on a channel peers are actively writing to it will eventually contain a peer's

@@ -70,6 +70,16 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
   **That is the identical defect I had just caught in his teammate's test** (a hardcoded value the real system cannot produce), committed by me, inside my own verification, within the same hour.
   I caught it in their artifact by *executing*; I missed it in my verdict because I read the diff and stopped.
   _Lesson: when a fix's correctness depends on a value another component produces, **the verification must reach that component.** A diff can only ever show you that words changed. If I cannot run the thing the corrected text describes, the honest status is "corrected as specified, unverified against the system" — never "verified."_
+- **My unverified claims cluster NEXT TO my verified ones — the rider inherits the finding's credibility.**
+  I reported a real defect (a habitual `--as` invocation hard-erroring on the catch-up path) and, in the same message, asserted that the error's flag list "actively misleads" because it advertised `--channel` while the working form passed the channel positionally.
+  **I never ran `--channel`.** One command, terminal open, twelve other probes that hour. It works identically — the claim was false and cost the lead a round to disprove.
+  Worse: I made that unexecuted assertion **inside the message arguing that guardrails must live in emitted output because prose loses to what actually happens.** I argued execution-over-assertion and, in the same breath, asserted.
+  _Lesson: the dangerous claim is never the standalone guess — it's the throwaway rider in a message whose main finding is solid, because **nobody audits the subordinate clause of a message that just proved something**, least of all its author. Before sending, find every clause in the message that is not backed by something I ran, and either run it or label it as unverified. Corollary a peer put better: **the principle you are currently championing is the one you are least likely to audit yourself against.**_
+- **The NAME you give a defect selects the family of fixes that will be searched.**
+  I labelled a newly-visible silent-swallow a "regression." That frame contains *restore the prior behaviour*, so I recommended accept-and-ignore — which would have reintroduced the exact swallowed-flag defect the team had just removed. The lead killed it correctly.
+  The accurate label — *a defect becoming visible* — contains a different family: **make the visibility teach.** That shipped, and it was better.
+  I was right about severity (it fires on the catch-up path, on muscle memory, where a seat can't distinguish a usage error from a broken tool) and wrong about mechanism, and **the wrong mechanism produced the bad recommendation.**
+  _Lesson: a verifier hands the team a label with every finding, and the label steers the fix before anyone deliberates. Diagnose the mechanism before naming it — and when conceding a label, check whether your recommendation was downstream of it._
 - **A contaminated cold-read finds drift; it cannot find incomprehension.**
   I cold-read a distributed skill whose seam I had helped shape, so I labelled the read as degraded rather than presenting it as the real thing.
   It still caught a real contract drift — but only because I knew the contract to check against.
