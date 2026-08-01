@@ -27,6 +27,42 @@ judgement the CLI can't, and verifies. First-time setup is **`anthill:bootstrap`
 
 ## Steps
 
+### 0. ⚠ FIRST — is `${CLAUDE_PLUGIN_ROOT}` even the version that's installed?
+
+**`${CLAUDE_PLUGIN_ROOT}` resolves to the version YOUR SESSION loaded, not the version installed.** A
+session pins the plugin it started with and **no number of updates reach it** — only a restart does.
+So if your session predates the release you are upgrading _to_, every path in this skill points at the
+**old** plugin: the CLI you run, the migration guides you read, and — worst — **the templates step 4a
+diffs against.**
+
+**That failure is silent and it inverts the result.** Diffing a footprint against a stale template
+reports **"already current, nothing to reconcile"** — correctly, against the wrong baseline — and
+skips the entire release. Reported from the field: a team upgrading to 1.7.1 from a 1.7.0-pinned
+session would have measured **zero drift** and silently dropped all 41 lines of new guidance,
+including the `--as` requirement the release existed to deliver.
+
+**Check it before anything else:**
+
+```sh
+ROOT="${CLAUDE_PLUGIN_ROOT}"
+CACHE="$(dirname "$ROOT")"
+LOADED="$(basename "$ROOT")"
+NEWEST="$(ls "$CACHE" | sort -V | tail -1)"
+echo "session loaded: $LOADED   newest installed: $NEWEST"
+[ "$LOADED" = "$NEWEST" ] && echo "OK — proceed" || echo "STALE — stop and restart the session"
+```
+
+- **They match** → proceed; `${CLAUDE_PLUGIN_ROOT}` is safe to use throughout.
+- **They differ** → **STOP. Tell the human to restart this session, then re-run the skill.** Do not
+  "work around it" by substituting the newer path into one step — the CLI, the guides and the
+  templates are all stale, and a partial substitution produces a result that looks right and isn't.
+- **Cannot resolve the cache layout?** Then **say so and fall back to reporting the loaded version to
+  the human**, who knows whether they updated recently. An unverifiable baseline must be surfaced, not
+  assumed good.
+
+**This ordering is not optional: plugin currency GATES content drift.** A drift report that does not
+know its own plugin might be stale converts _"I don't know"_ into a green tick.
+
 ### 1. Detect — what version is this repo, and what's the plan?
 
 Run **`anthill migrate --dry-run`**. It walks up for the footprint marker (`.anthill/config.json`,
@@ -83,6 +119,8 @@ and the docs look fine because they are perfectly valid — just old.
 **This is the main event on a content-only release.** Reconcile by hand:
 
 ```sh
+# `${CLAUDE_PLUGIN_ROOT}` is only safe here because step 0 confirmed it matches
+# the installed version. If you skipped step 0, this diff lies.
 diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" .anthill/README.md
 ```
 
