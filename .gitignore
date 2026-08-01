@@ -42,3 +42,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # anthill team comms log (per-session conversational state, like scratch)
 .anthill/comms/
+
+# Local beta channel symlink (see docs/projects/team-comms-spike/beta-channel/README.md).
+# It points at ./plugin, so tracking it would give every tool a DUPLICATE copy of the
+# whole plugin tree to traverse — `bun test` went 22 files -> 44 the moment it landed.
+docs/projects/team-comms-spike/beta-channel/plugin

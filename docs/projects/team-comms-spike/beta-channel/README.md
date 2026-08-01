@@ -32,19 +32,34 @@ and `.claude/skills/cascade-check` says plainly: _DO NOT bump versions — verif
 > **Before this branch merges, reset the version to whatever `main` carries and let release-please own
 > it again.** If a release PR ever looks wrong on this branch, check this first.
 
-### 2. `./plugin` is a symlink into the working tree
+### 2. `./plugin` is a symlink into the working tree — **created for the install, then deleted**
 
-`plugin -> ../../../../plugin`. A relative source that **escapes** the marketplace root is rejected
+A relative source that **escapes** the marketplace root is rejected outright
 (`This plugin uses a source type your Claude Code version does not support`), and the docs' own local
-example keeps plugins inside the marketplace directory — so the symlink is how the path stays inside
+example keeps plugins inside the marketplace directory. So the symlink is how the path stays inside
 while still serving the live tree.
+
+**It is gitignored and must not be left lying around.** It is a second path to the entire `plugin/`
+tree, so every tool that walks the repo sees a duplicate: `bun test` went from **22 files to 44** the
+moment it landed, and `prettier --file-info` reported the duplicated copy as **not ignored** — which
+would break the cascade check's own template-protection probe, since the same file now answers
+differently depending on which path you ask about. Scoping the test script does **not** fix it
+(`bun test plugin` is a substring filter and matches `…/beta-channel/plugin/…` too).
+
+The install is a **copy**, so the symlink is only needed while `install` runs. Setup creates it,
+teardown removes it — see below. `.gitignore` and `.prettierignore` carry entries for it as a guard
+for the window when it does exist.
 
 ## Setup (already done — recorded so it can be repeated)
 
+Run from the repo root:
+
 ```sh
+cd docs/projects/team-comms-spike/beta-channel && ln -sfn ../../../../plugin plugin && cd -
 claude plugin marketplace add ./docs/projects/team-comms-spike/beta-channel --scope local
 claude plugin install anthill@anthill-beta --scope local
 claude plugin disable anthill@anthill-marketplace --scope local
+rm docs/projects/team-comms-spike/beta-channel/plugin      # REQUIRED — see rule-break 2
 ```
 
 **`--scope local` is the whole point.** It writes to `.claude/settings.local.json`, which is
@@ -64,9 +79,12 @@ Cached at `~/.claude/plugins/cache/anthill-beta/anthill/1.8.0-beta.1/`. **Edits 
 session do not reach running seats.** To pick up changes:
 
 ```sh
-# bump the beta version first — same-version installs are skipped, silently
+# 1. bump plugin.json's version first — same-version installs are skipped, SILENTLY
+# 2. recreate the symlink, install, then delete it again
+cd docs/projects/team-comms-spike/beta-channel && ln -sfn ../../../../plugin plugin && cd -
 claude plugin marketplace update anthill-beta
 claude plugin install anthill@anthill-beta --scope local
+rm docs/projects/team-comms-spike/beta-channel/plugin
 ```
 
 Forgetting the bump is the failure this whole file exists to prevent: it looks like it worked.
