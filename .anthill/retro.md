@@ -30,7 +30,8 @@ does not.
 ## 2026-08-01 · Session 5 — slice two: the `emittedThrough` primitive
 
 **Seats:** maestro (lead), forager, weaver, sentinel, **steward** and **scout** (both new, first run)
-**Landed:** 25 commits · **25/25 seat-stamped** · 19 docs / 6 feat+fix · gate **352 → 390, 0 fail**
+**Landed:** every commit seat-stamped · 6 feat/fix, the rest docs · gate **352 → 390, 0 fail**
+_Counts deliberately omitted — re-run them: `git log 655b3b8..HEAD --oneline | wc -l`, and `--format='%(trailers:key=Anthill-Seat)' | grep -c` for the stamp. **The first version of this line said "25 commits, 25/25 seat-stamped" and was wrong within the hour** — finalize kept landing. A count is a measurement with a shelf life no gate checks and every commit invalidates; re-numbering buys one session of accuracy and re-arms the trap. The curator wrote a rotting count into the retro that records the team learning not to, which is the fourth instance of that class this session and the only one in a committed file._
 **Curated by:** steward. The lead answered as a participant (human's ruling; the shipped skill says the lead writes this file).
 
 > ### ⚠ Read this before trusting any convergence below
@@ -50,7 +51,7 @@ does not.
 - **A mechanical guard beat a prose guard, same session, same problem.** `artifact:` the lead answered the land race with a declared green window (prose, lead-issued) and it failed four times; weaver answered it with `( bun run check ) && anthill commit …`. **H1 confirmed, against the lead specifically.**
 - **Land-early-and-inert paid out inside the hour.** `artifact:` `c9e156f` shipped `read --last N` before the primitive existed; its author then used it to anchor his own messages for the rest of the session. **Not something you can talk yourself into.**
 - **Mutation testing went 6-for-6 red across two commits.** `artifact:` `c9e156f` and `f303a41`, re-runnable. The load-bearing detail: the middle mutation of each set was **count-preserving** (`slice(-N)`→`slice(N)`), and the tests caught it because they assert *which* messages, not how many.
-- **Seat attribution works mechanically.** `artifact:` 25/25 commits carry `Anthill-Seat:`. Git records one human on all of them, so the trailer is the **only** thing making authorship answerable.
+- **Seat attribution works mechanically.** `artifact:` **every commit this session carries `Anthill-Seat:`** — re-run `git log 655b3b8..HEAD --format='%(trailers:key=Anthill-Seat)' | grep -c 'Anthill-Seat'` against the commit count and compare; the assertion is *no commit is unstamped*, which survives more commits landing. Git records one human on all of them, so the trailer is the **only** thing making authorship answerable.
 
 **The anti-unanimous answer, offered by weaver and kept because a clean Q1 is a smell:**
 
@@ -80,7 +81,7 @@ does not.
 
 - **Success Criterion 1 is NOT met, and the capability satisfying it existed at session start.** `artifact:` the primitive makes liveness **peer-observable**, not self-observable — a seat still cannot check itself; a *team* can now check a seat. **H8 is routed around, not falsified.** And the echo round-trip that answers it was demonstrable in slice one. **It was never a capability gap — it was a naming gap.**
 - **The whole-tree gate refuses lands on grounds that cannot involve the file being landed.** `artifact:` no leg of `bun run check` scans `.anthill/dev/*.md` (re-runnable: `bunx biome check .anthill/dev/<any>.md` → "ignored"). **Four-plus refusals, two seats, zero about the blocked file. Third session running.** `&&` narrows the window to the gate's own runtime (~16s, measured independently by three seats) — **and that residual GROWS as the suite grows.**
-- **Every seat's `artifact:` labels had to be re-scored mid-retro.** `artifact:` four seats re-labelled their own answers after realising a comms id is not an artifact by this file's own definition. **The team's entire self-knowledge is wire-shaped: a stranger cloning this repo gets 25 commits and no evidence that any of it happened.**
+- **Every seat's `artifact:` labels had to be re-scored mid-retro.** `artifact:` four seats re-labelled their own answers after realising a comms id is not an artifact by this file's own definition. **The team's entire self-knowledge is wire-shaped: a stranger cloning this repo gets the commits and no evidence that any of the reasoning behind them happened.**
 - **A verdict on the wire is not a state change** — cards sat in `review` while their verifier was doing useful work elsewhere; the lead had to prompt the move. **The board is the state.**
 
 ### Q3 — hypotheses the next convene reads and tests
