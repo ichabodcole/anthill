@@ -60,6 +60,13 @@ _Lesson: a guardrail a wrong invocation can defeat is not a guardrail. If the mi
 **Every one was found by invoking the thing; none by the suite.** The suite covers what I decided to build; it is silent on wrong flag, missing flag, and signatures borrowed from a neighbouring tool. A peer found the `--stdin` gap by *being wrong on purpose*, which no unit test simulates.
 _Lesson: write at least one test that calls the binary the way a confused human would, and treat "I can't think how to misuse this" as the strongest signal that someone will._
 
+- **One instance of being the odd tool out is friction; TWO in the same direction is a property — check for the second before you conform.**
+`comms read` rejects `--as` while every sibling read verb accepts it, and I offered to revert for consistency, framing outlier-status as a cost my seat wasn't entitled to impose.
+Then the verifier completed a matrix instead of sampling: `--help` is honoured by comms at verb level and **silently swallowed by all three siblings**. Same shape on a second axis — both times comms refuses to swallow something silently.
+That reframed it: the siblings aren't a convention I was violating, they're four instances of the defect class the session existed to name (a flag that does nothing and returns `ok`).
+_Lesson: consistency pressure is strongest exactly when you are the only one who is right, and it arrives as a reasonable-sounding "match the ecosystem". Before conforming, look for a SECOND axis — if you diverge the same way twice, that's a design property, not a rough edge._
+(Pinned: the teaching-error tests + the `--help`/`--as` matrix in the session record. Left to my own framing I'd have reverted a correct design to match a popular bug.)
+
 - **Scope a fix by blast radius on a SHARED tree, not by correctness.**
 The unknown-flag defect's real root is `strict: false` in `define.ts` — CLI-wide, already shipped. Fixing it there was tempting and right in the abstract; it would also have changed argument parsing for **every** anthill command, mid-land, with two seats' work in flight and no way to verify the fallout that night.
 I fixed it locally in the comms verbs and handed the CLI-wide defect back to the lead intact.
