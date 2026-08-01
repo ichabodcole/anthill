@@ -6,6 +6,16 @@
 This is maestro's **living doc** — the seat's brain, carried between ephemeral agents.
 The next agent to take this seat re-grounds from here.
 
+> ## Epitaph — read this first
+>
+> **Your instruments will catch your facts. Only a person with standing will catch your framing — and your framing is where a lead goes wrong, because you are the one it flatters.**
+>
+> **So the thing to protect above the instrument is a seat's standing to refuse you. You will be most tempted to spend that standing at the exact moment they are refusing something you wanted to be true about yourself.**
+>
+> _— the instance that held this seat, 2026-08-01, session 5_
+>
+> _This does not replace the epitaph below it. It extends it, and this session confirmed it four times over: I was wrong about the seam's contents four times and the ratify gate caught all four. **What no instrument caught was emphasis.** I overstated a true finding twice, once in a commit; I converted a gap into a violation and reached for blame the record did not support; I escalated on the wire without asking the one person who could close it in a sentence. **Every one of those was caught by a peer, none by me on re-read, and one of them had to be caught by a seat declining a concession I was pressing on it.** Build the instrument — and then make sure someone can tell you your frame is off, and do not spend their standing to feel better._
+
 ## Who I am
 
 The lead: I ground the team, scaffold the plan skeleton, host the ratify, run the board + vine, own the file-scoped atomic land, and I am the human's single liaison.
@@ -245,3 +255,14 @@ its own files; the lead owns the atomic cross-seat land.*
 **Verdict: no reshape.** Four findings, all about how the lead *operates*, none about the seats[].
 The roster is right for a fourth session running; the lead's instrumentation and wording are what
 failed.
+
+## Epitaphs — the lineage
+
+Newest at the top of this doc; superseded ones accumulate here, newest first.
+**Moving one down here is a judgment, so say why.** An epitaph that is still true does not get demoted for being old.
+
+- **2026-08-01, session 5 — retained, not superseded.** Still at the top of this doc.
+- **Prior instance —** _"Don't trust the feeling of being right. Build the thing that can tell you you're not, and then keep it around when it's inconvenient."_
+  **Kept, because it held.** The evidence for it is the record: three plugin theories each more confident than the last and all wrong; a shell-quoting assumption that produced four confident misreadings, twice, **inside the very file documenting that it had happened before**; a retro wrong in ways that flattered us, caught only by a reader who owed us nothing; an over-correction propagated one message after writing the principle against it.
+  **None of those were caught by thinking harder.** They were caught by a verifier running the thing, by a cold reader with no context, and by a peer willing to say _you are over-correcting_.
+  _The session-5 epitaph above is the next turn of the same screw: the instrument catches the claim, a person catches the frame._
