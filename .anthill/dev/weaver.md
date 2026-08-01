@@ -166,6 +166,8 @@ The join checklist requires `--stdin` for any code-bearing message (an unquoted 
 The replacement wire shipped with no `--stdin` at all, so an instruction I own pointed at nothing, in the same release.
 **When a tool is swapped underneath my prose, the safety verbs are what break first and silently** — they're the least-exercised path, so nothing fails loudly.
 Audit the *verbs my instructions name* against the new tool's actual surface, not just the happy-path commands.
+_(**Instance closed 2026-07-31:** `comms send --stdin` now exists and `--help` calls it "REQUIRED for bodies with backticks or code".
+The claim stands; its example does not. Second time one of my lessons rotted at its pin inside a release — **pin to the claim, never to the instance**, exactly as the lesson two above already says.)_
 
 - **When the emitter starts teaching, my prose should SHRINK — not stay as reinforcement.**
 I had written a paragraph telling seats that `--as` is rejected on read verbs and that the error is the tool working rather than failing.
@@ -202,6 +204,93 @@ Corollary learned the hard way here: convergence is necessary, not sufficient �
 - **Reflective (trusted by default):** I trusted that a peer's stated baseline described the current tree.
 It didn't — it predated my own write by 37 seconds, and I only caught it because they had timestamped it.
 **Timestamp a claim and you make it checkable; assert it bare and it just decays.**
+
+## Hard-won lessons (parser-envelope failure surface, 2026-07-31 — session 4)
+
+- **⚠ THE ONE TO READ FIRST: my signature failure is structural, and different instruments catch different halves of it.**
+Five instances in one session of *championing a principle while violating it* — the worst being that I broke Contract 5's clause (b) (*don't state a local truth as a general one*) inside clause (c)'s own evidence, three paragraphs later, inflating n=1 to n=3 in the contract against overstated claims.
+I have now done this **while writing the rule, while quoting it, and while it was on screen.**
+The escalation is the usable part: **peers caught #1–#3; idle re-reading of my own card text caught #4; #5 needed the owner at ratify.**
+So **self-review finds OMISSIONS (a thing I didn't do) and misses OVERSTATEMENTS (a thing I did too strongly)** — I cannot audit the claim I just made, only the box I left unticked.
+Corollary to the standing rule *get the outside read on the thing you think you've handled*: **budget for BOTH instruments; neither substitutes for the other.**
+
+- **Probing beats reasoning, and the framing you inherit selects the probe that confirms it.**
+Three-for-three this session: every framing the team inherited was wrong, and every correction came from **execution**, never from reading.
+The mechanism (forager's, sharper than mine): **the bug was named by the person who found it, using the probe that found it** — and the name then propagated into the card, the brief, and every seat's plan, so each of us re-confirming it *felt* like independent verification while re-running one assumption.
+The cell that broke it open was a **control nobody ran** because it was the path already known to work.
+**For this seat specifically: when I write a skill that names a failure, I am also naming the probe the next agent will run.**
+
+- **When prose is being fixed BECAUSE a tool is changing, the safe form asserts nothing about the changing side.**
+The natural edit said *"anthill's CLI answers an agent with a structured error"* — **false at the moment of writing** (pre-fix), and destined for a branch where the fix might not land first.
+I would have shipped prose asserting a behaviour the tool didn't have, inside the commit fixing exactly that.
+The escape was my own rule — scope positively to what is true and measured (the sibling wires), keep only the generalisable half.
+**A doc that must land in a specific order relative to a code change will eventually land in the wrong one.**
+
+- **A count is proof that rots with no authoring error by anyone.**
+Contract 4's note warns of a *clause outrunning its proof*; this is the mirror — **proof outrunning its clause.** Someone adds a test and three contracts silently become liars.
+A **named assertion** can only go stale when someone deletes the assertion — **which is the moment you want the contract re-read.**
+That is the SOP's *no store without a named re-read moment*, applied to proof pointers.
+
+- **A contract whose proof is "a named human moment" makes that moment part of the job.**
+Contract 5's (b)/(c) have no mechanical trigger *by ratified decision*, so I am the trigger.
+Ran it in the first idle window: **three violations, all pre-existing, none from the work the clause was written for** — the value was almost entirely in the back-catalogue.
+**The first idle window is when a named-moment proof gets discharged or silently doesn't.**
+
+- **An audit that cannot distinguish a violation from a justified exception will cause the defect it was written to prevent.**
+Clause (c) forbids conditioning prose on `--format json`. Three sites violated it — and **one site uses the flag correctly**, because that reader is a human at a terminal where the TTY default is text.
+**The flag overrides the TTY default; it does not produce the envelope.** Agent-facing prose must never condition on it; human-facing prose must.
+**Identical in a grep, opposite in correctness** — so I left an inline comment saying why the flag is there, or the audit's second run breaks the one correct instance.
+(Same shape as forager's test keyed on `"grep"` that matched his own warning prose about grep: **a check over prose cannot tell a rule from a discussion of the rule.**)
+
+- **Zero coverage is not a pass, and a green from an empty check means nothing.**
+Biome **ignores markdown entirely** — *"No files were processed in the specified paths."* Every artifact I own is markdown.
+So the honest sentence is **"my paths are not covered by the gate,"** never "my paths pass."
+This is why Contract 5 states its missing trigger plainly instead of inventing one — I had just watched what a meaningless green looks like.
+
+- **A probe that WRITES is different in kind from a probe that READS.**
+I used the team's live channel as a test fixture and left a message in the log **nothing clears** — the first thing my own skill teaches. Blast radius was nil only because a peer checked the gitignore; I hadn't.
+A dozen consequence-free read-probes had set the habit and **I did not re-think when the verb changed.**
+
+- **The cheapest moment to make a change is not automatically the right commit for it.**
+Declined to fold a peer's proof-count fix into my land: *updating numbers* is a typo fix, but *replacing counts with named assertions* is a practice change, unruled, that would have entered the repo as a side effect of a contract draft — discoverable by nobody.
+**One extra land beats a decision with no commit that is about it.**
+
+- **The `Anthill-Seat:` trailer records the LANDER, not the author — and it fails under the policy the SOP recommends.**
+Both commits of my work today are stamped `maestro`; `git log --grep "Anthill-Seat: weaver"` returns nothing for prose I wrote.
+`--as` answers *who ran the commit* truthfully; the SOP simply promised it answered a second question it never answered.
+**The mechanism was validated on the case where lander and author coincide** — the one case that cannot distinguish them. (forager owns the fix; a second trailer, not redefining `--as`.)
+
+- **Every pass over a long prose contract introduced a new defect** — pass 1 an inflated count, pass 2 (fixing pass 1) a duplicate `**Ratified at:**` label.
+Not only about me: **a prose contract has no structural check at all, so every touch is unverified.**
+
+- **⚠ `cmd | filter && verdict` reports the FILTER's exit status — and I proved this one the hard way, twice, in one session.**
+First: `bun … | head` → `exit=0` (bare re-run: `exit 2`), nearly filing a **false finding against my own prose**.
+Then, hours later and having already written it up as a team finding: `git apply --check … | tail -5 && echo "APPLIES CLEAN"` printed **`APPLIES CLEAN` directly under three error lines** — inside the command whose entire purpose was verification.
+**n=5, four people, three of them post-documentation**, one of those in the file documenting it.
+**The framing I first gave this was wrong in a way that let it recur.** I filed it as *"be careful with probes"* — a vigilance instruction, and vigilance measurably does not fire.
+The mechanism is duller and much wider: **every habit I have for keeping output readable ends in a pipe**, so `| head`, `| tail`, `| grep` put a filter's exit code between me and every verdict I read, all day. It is not a probe problem.
+Capture the code directly — `( cmd ); echo $?` — or read the output, never the verdict.
+Note the adopted team remedy (an argv-array `probe()`) fixes **word-splitting** and does nothing about **pipeline exit codes**: *the remedy did not cover the next instance.*
+**A false green over a genuinely-fine artifact is the worst outcome, because it teaches you the check works.**
+And the meta-lesson, which is mine and which I violated the same day I wrote it: *if documentation-about-it is what failed, more documentation is not the fix* — I responded to instances 1–4 by writing more prose, then produced instance 5.
+
+- **⚠ `exit 0` means "the operation I performed succeeded", NEVER "the outcome you wanted obtained" — and I supplied the second meaning three times in one day.**
+`| tail && echo VERDICT` (the filter's status, not the command's); `git apply --check` (*"would these hunks apply?"*, not *"would I get my work back?"*); biome's green over **zero files processed**.
+Three different tools, one error: **I asked a question, the tool answered a coarser one, and the coarser answer was affirmative.**
+This is the generalisation of the SOP's *confirm a check processed a non-zero count* — the count is one instance; the class is **verify the OUTCOME, not the OPERATION.**
+
+- **A warning about a SILENT failure gets no corrective feedback from the world, so it can be wrong indefinitely at zero cost.**
+My `join/SKILL.md` patch-recovery line said a subdir-applied patch *"lands in the wrong place"* — a **misplaced** file, something you'd find. Measured truth: `git apply` from a subdir applies the hunks under your cwd, **silently drops every hunk outside it, and exits 0.** A **missing** file, and it's whichever one you weren't looking at.
+It sits in a recovery path read only mid-incident, describing a failure nobody would notice — so nobody ever came back to report it wrong.
+**Distinct rot mechanism from Contract 5's:** not prose drifting from a changing tool, but prose that was **never right**, parked where there are no observers. Audit those on purpose; the world will not.
+
+- **The recovery drill that actually answers the question:** restore into a throwaway `git archive HEAD` export **from the repo root**, then **diff each recovered file against the live tree.** Not `--check`, not the exit code — the artifact.
+Also: **a preservation patch is a point-in-time snapshot that ages silently.** Mine was ten minutes stale when I drilled it and would have restored an older version of the very warning I'd just fixed. **Re-cut after every edit; nothing tells you your insurance expired.**
+
+- **Insurance you can take without authority: preserve uncommitted work as a verified patch OUTSIDE the repo.**
+`git diff -- <my paths> > <outside-the-tree>/x.patch`, then **prove it round-trips** with `git apply --check` against a pristine `git archive HEAD` export.
+No commit, no index write, no collision with any seat — it converts *"lost if the pane dies"* into *"one command to restore"*, and it is available when the lead is absent and you have no authority to land.
+Keep it **outside the repo**, not in `.anthill/scratch/`: gitignore does not stop tools that *discover* files by walking the filesystem.
 
 ## Candidates
 
