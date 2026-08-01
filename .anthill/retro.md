@@ -5,9 +5,19 @@ and tests.** Q1/Q2 answers carry an artifact where one exists, and are labelled 
 does not.
 
 > **`artifact:` means a thing in the repo a stranger can run or read** — a sha, a test count, a file.
-> **The wire is not an artifact:** the grapevine leaves no log in the tree, and while comms does,
-> quoting our own messages is quoting ourselves. Anything whose only evidence is "we said so" is
-> `testimony:`, however many of us said it.
+> **NEITHER wire is an artifact.** The grapevine leaves no log in the tree, and **comms' log is
+> gitignored too** (`.gitignore:44`, _"per-session conversational state, like scratch"_) — so it is
+> local state that dies with the machine, not a repo artifact. Even where it survives, quoting our own
+> messages is quoting ourselves. Anything whose only evidence is "we said so" is `testimony:`, however
+> many of us said it.
+>
+> _Corrected 2026-08-01 (session 5). The original read "the grapevine leaves no log in the tree, and
+> while comms does…" — asserting comms was durable when it is ignored by the same rule as scratch.
+> Found by a seat checking why a proposed fix could not be built. **This is the paragraph that defines
+> what counts as evidence for this team**, it was committed and wrong, and it is read at every convene —
+> so it had one job and was failing it silently. The session that found it had already put its entire
+> decision record on comms **on the strength of this sentence**; see the Rulings section of
+> `docs/projects/team-comms-spike/slice-two-proposal.md`, which exists because of this correction._
 
 ---
 

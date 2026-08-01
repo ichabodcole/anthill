@@ -107,6 +107,70 @@ field names, the storage format, or the poll interval.
    requires no new signal.
 3. **What is the staleness threshold**, and is it a count or a time?
 
+## Rulings — 2026-08-01, session 5 (this section is the durable record; the wire is not)
+
+**Why this section exists.** These decisions were made on `comms`, and **`.anthill/comms/` is gitignored** (`.gitignore:44`, _"per-session conversational state, like scratch"_).
+The wire that carried them evaporates exactly like the grapevine does.
+Landed here mid-session rather than at finalize, because a decision that outlives the session must be in an artifact before finalize or it is gone when the panes close.
+
+**The proposal above is left as written.** It is the record of what was proposed; the rulings below are the record of what survived contact with the owners. Where they conflict, these win.
+
+### R1 — the artifact-tier field is `emittedThrough`, not `deliveredThrough`, and `follow` stamps it
+
+**The tool cannot observe delivery at all.** Between `follow`'s `emit()` and the agent sit a pipe buffer, the Monitor harness and 200ms batching. A field stamped at emit time but named for delivery **reports a seat as current at the exact instant its wire dies** — H8 reproduced inside the fix for H8, shipping as green.
+
+Neither writer nor follower observes delivery. Follower-side, named for what it can support.
+
+### R2 — `read` records nothing; position lives on `follow` alone
+
+A per-seat position needs a seat identity, and `read` **declares `--as` and explicitly refuses it** — recognised-and-refused, by decision, so the catch-up verb stays reachable for a half-joined agent (Contract 4(c-bis)). Accepting `--as` there would undo that protection; recording ambiently is forbidden by Contract 4(c).
+
+**The honest loss, not a gap to paper over: a seat that only ever `read`s has no position and is invisible to presence.**
+
+### R3 — crossing detection is licensed in one direction only
+
+The tool may report **what did not reach a follower**. It may never report **what a seat had taken in**.
+
+_"Your correction had not been emitted to her follower when she sent"_ is supported. _"She had seen your correction and sent anyway"_ is an **accusation the artifact cannot license** — and it is the sentence a writer reaches for first.
+
+### R4 — presence is head-lag, not wall-clock freshness, and it has three values
+
+The table above (_"a seat whose position has not moved is idle or gone"_) omits the common third reading: **nobody sent anything.** On a silent channel no position moves, so freshness reports every live follower as stale — during precisely the quiet stretch where a real drop is least noticeable. Last session's `pkill` window was quiet.
+
+**Measure `head - emittedThrough`.** Zero for every live follower regardless of traffic; grows only for one that has stopped consuming.
+
+Three distinct values, **never a nullable field**: `never followed` (no record) · `current` (lag 0) · `behind by N`. Collapsing the first two re-introduces the ambiguity removed from `--since`.
+
+**Its honest limit:** head-lag convicts a dead follower only **once someone sends**. The complement is R5.
+
+### R5 — self-observed delivery is a third tier, and it is the only liveness check that works on a silent channel
+
+A seat's own `send` returns to it through its own `follow` — past the pipe buffer, the harness and the batching. That is a genuine end-to-end delivery observation, **about oneself only**, needing no field, no storage and no contract change. Three seats did it accidentally at join.
+
+Recorded **specifically so R1's honest narrowing does not later read as "delivery is unknowable."** It is knowable — just not by the tool, and only about oneself.
+
+**Open, not ruled:** an active self-probe needs a real emission, which pollutes the permanent log — the concern `send --dry-run` exists to address, and a dry-run cannot serve as the probe because it never traverses the follow loop. Owner's call.
+
+### R6 — OQ2 does not close as "freshness is enough"
+
+Superseded by R4 as the measure. Whether a heartbeat is additionally required is open. If it is, keep weaver's separation: **a liveness beat nobody reads is a different animal from a send-time prompt everyone must dismiss.**
+
+### R7 — the warning string is where the honesty is spent, and no rename reaches it
+
+`"3 messages have arrived since you last read. Send anyway?"` (line 45) says **read**. It is the highest-traffic string the primitive will emit and **it survives every field rename.** `emittedThrough` is correct and never appears in the user's field of view.
+
+Honest form: `"3 messages have been added since #140 was emitted to you. Send anyway?"` — the number is a measurement, the verb is one the tool can support.
+
+_(The claim that this string also appears inside the risk paragraph was **withdrawn**: it occurs once, at line 45. Naming a risk and leaking it are not the same act. The finding stands at n=1; the self-referential framing does not.)_
+
+### R8 — one exclusivity semantic for `read --since` and `follow --since`, stated once
+
+`--since` is **exclusive** (`--since 139` returns `[140,…]`). This already cost the team one off-by-one, in the lead's own joining instructions. **Open: the owner states the rule for both verbs before the second is built.**
+
+### Team rule adopted this session (not comms-specific)
+
+**Whoever certifies a convergence names the shared input both parties read first.** Producer/consumer convergence is this team's ratify signal; an unqualified convergence claim is the "agreement is not truth" failure wearing a ratify badge. Adopted after a convergence was certified by timestamp without naming that both parties had read the same proposal — and then re-committed by the lead one message later.
+
 ## Success Criteria
 
 - **A seat can tell whether its own wire is alive** without an external notification. Directly
