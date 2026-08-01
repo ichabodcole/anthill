@@ -63,7 +63,20 @@ _Lesson: if your output cannot distinguish "I did the work" from "I took what I 
 - **Don't re-derive a value another layer already computed — thread the original through.**
 For comms' no-config error I rebuilt an absolute path (`resolve(cwd, ".anthill/config.json")`) and reported "looked for _that_". But `findConfigFile` walks UP: it checks many places and singles out none, so my message asserted a specific location as if it had been checked. **Precision-shaped fabrication — worse than vague, because vague is at least honest about its ignorance.**
 The honest locator already existed in `ConfigError`'s own message ("could not find X in `<startDir>` or any parent"); the fix was **deleting** the derivation, not improving it.
-_Lesson: re-deriving a value invents a second answer to a question that already has one, and the invented one is the one that lies._ (Pinned: the real-tree assertion in `commands/team-comms.test.ts` asserting the actual start dir, not a hand-fed path.)
+_Lesson: re-deriving a value invents a second answer to a question that already has one, and the invented one is the one that lies._
+**The operational form, added after it recurred THREE times in one day, all on my own evidence:
+never re-type an identifier or a quotation — copy it, or cite the command that produced it.**
+(1) I put a **fabricated sha** (`d3ac6dd`, no such object) into a durable message whose subject was
+*"verify the premise before you act"*; the real one was two lines up in my own terminal.
+(2) I ran `git log -S` against **my own re-typed capitalisation** of a quoted string, got nothing, and
+nearly reported that the phrase had never existed in the repo — which would have sent three seats
+hunting a phantom file.
+(3) I read `lock.ts` lines 1–28, didn't find a quoted phrase, and nearly accused the reviewer of
+misquoting; it was on line 29.
+**All three are the same act — generating text where transcription was available** — and all three
+produce *plausible-shaped* output that survives any review not run against the source. A wrong
+character is a typo; a well-formed seven-hex string that resolves to nothing reads as *"that commit
+was rewritten"* rather than *"that reference was never real."* (Pinned: the real-tree assertion in `commands/team-comms.test.ts` asserting the actual start dir, not a hand-fed path.)
 
 - **Put the guardrail where instruction text cannot override it — the emitted output, or a verb surface that can't express the mistake.**
 Evidence, not taste: a prose warning against using a live tail for catch-up was read, edited, believed, and then violated **by the person who wrote it**, hours later. Composed with an outside team's finding that instruction text outranks an agent's own practised knowledge, that's n=5 across three teams.
