@@ -209,10 +209,16 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
 
 ## Open hypotheses — CHECK THESE AT JOIN, they are predictions, not advice
 
-_Recorded at a session retro so the next sentinel can **falsify** them. Each names what it predicts
-**and what its failure would mean** — a prediction that can only be confirmed is not one.
-Sited here deliberately: this doc has a named re-read moment (join); a retro store did not exist when
-these were written, and a hypothesis nobody re-reads is the untested-backup shape all over again._
+**The team's shared hypotheses live in [`.anthill/retro.md`](../retro.md) (H1–H8, newest first) — that
+is the single source, and the next convene reads it back. Do not restate them here.** Two of them are
+mine (named-assertions-over-counts; nothing reports which binary a participant runs); the *reasoning*
+for those lives in the lessons above as seat taste, the *predictions* live only in the retro.
+
+**What remains below are the ones that exist ONLY here**, because they predict **this seat's own
+behaviour** and only a future sentinel can observe them — a hypothesis sited where nobody can run it
+is the same defect as a store with no reader, one level up.
+_Each names what it predicts **and what its failure would mean**; a prediction that can only be
+confirmed is not one._
 
 1. **Every verdict names the exact tree it measured (sha / worktree / dirty working tree).**
    _Predicts:_ zero verdicts need re-running for having measured the wrong subject.
@@ -226,13 +232,13 @@ these were written, and a hypothesis nobody re-reads is the untested-backup shap
    _Predicts:_ scope corrections drop from five in a session to zero.
    _If it fails:_ the driver is not method but **publishing at the moment of surprise**, and the fix is
    a delay, not a check.
-4. **Cleaning stale plugin copies will NOT fix stale served skill text.**
-   _Status: effectively settled the same day_ — a peer's `git log -S` showed the served text was this
-   same file at a pre-change point in time (a temporal snapshot, not a rival copy), which matches the
-   elimination that the source path was current. _Left here because the remedy it warns against
-   ("clean the copies, then trust the served text") is the intuitive one and will be proposed again._
+_(A fourth — "cleaning stale plugin copies will not fix stale served skill text" — was **settled the
+same day** by a peer's `git log -S`: the served text was this same file at a pre-change point in
+time, a temporal snapshot rather than a rival copy, which matched the elimination that the source
+path was current. It is team-level, it is answered, and the retro's H3 carries the live question that
+replaced it. Removed from here rather than kept as a fifth restatement.)_
 
-**Weakness to state rather than let a reader infer:** three of these predict my own behaviour, which
+**Weakness to state rather than let a reader infer:** all three predict my own behaviour, which
 is the weakest evidence available, and they were written from inside the session that produced them.
 None is confirmed by anyone having agreed with it.
 
