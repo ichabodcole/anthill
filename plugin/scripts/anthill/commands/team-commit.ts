@@ -12,6 +12,7 @@ import { join } from "node:path";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
+import { requireConfig } from "./team-support.ts";
 
 // How long to wait for the serialize lock before giving up, and when to treat a
 // held lock as stale (a crashed peer) and steal it.
@@ -26,6 +27,11 @@ interface CommitData {
   message: string;
   waitedMs?: number;
   warnings?: string[];
+  /** Dirty paths OUTSIDE this commit at the moment it landed. The gate ran over
+   * the whole tree; the commit contains only `paths`. When this is non-empty the
+   * gate's green was measured against work this commit does not include, so the
+   * commit was never checked in isolation. Field-reported: the FALSE-GREEN. */
+  uncheckedAgainst?: string[];
 }
 
 function git(args: string[], cwd: string): { ok: boolean; stdout: string; stderr: string } {
@@ -157,8 +163,13 @@ export function foreignDirtyPaths(porcelain: string, ourPaths: string[]): string
   const out: string[] = [];
   for (const raw of porcelain.split("\n")) {
     if (raw.trim().length === 0) continue;
-    // Status is the first 2 cols, then a space, then the path(s).
-    const body = raw.slice(3).trim();
+    // Status is 2 cols then a space — BUT this string may have been trimmed on
+    // the way in, and an unstaged status leads with a space (" M path"), so the
+    // FIRST line can arrive as "M path" with the column already eaten. A fixed
+    // slice(3) then removes the path's first character, and only on that line —
+    // the reported "corrupts the first path, conditionally". Match the status
+    // instead of counting characters: 1-2 non-space status chars, then space(s).
+    const body = (/^\s{0,2}\S{1,2}\s+(.*)$/.exec(raw)?.[1] ?? raw.slice(3)).trim();
     if (body.length === 0) continue;
     const parts = body.includes(" -> ") ? body.split(" -> ") : [body];
     for (const part of parts) {
@@ -194,12 +205,38 @@ export const teamCommitCommand = defineAnthillCommand({
   },
   args: {
     message: { type: "string", alias: "m", description: "Commit message", valueHint: "text" },
+    as: {
+      type: "string",
+      description: "Seat handle to attribute this commit to (must be in config.seats)",
+      valueHint: "handle",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const message = (ctx.args.message as string | undefined)?.trim();
+    const rawMessage = (ctx.args.message as string | undefined)?.trim();
+    // `--as` is validated against the roster BEFORE anything is staged: a bogus
+    // handle must not leave the tree half-touched. Field-requested by all four
+    // seats of a consuming team — every commit on a shared tree is authored by
+    // the human, so "who landed this?" was unanswerable after the fact.
+    const seat = (ctx.args.as as string | undefined)?.trim();
+    if (seat !== undefined) {
+      const config = requireConfig(format, "commit");
+      if (!config.seat(seat)) {
+        const seats = config.roster().map((s) => s.handle);
+        emitError({
+          format,
+          command: "commit",
+          error: `unknown seat "${seat}". Valid handles: ${seats.join(", ") || "(none in config)"}`,
+        });
+        process.exit(1);
+      }
+    }
+    // The trailer is appended, never substituted — git's own `%an` still shows
+    // the human, so this ADDS a machine-greppable seat rather than claiming to
+    // replace authorship. `git log --grep "Anthill-Seat: <handle>"` is the point.
+    const message = seat && rawMessage ? `${rawMessage}\n\nAnthill-Seat: ${seat}` : rawMessage;
     const paths = ((ctx.args._ as string[] | undefined) ?? []).filter((p) => p.length > 0);
     const warnings: string[] = [];
 
@@ -370,9 +407,41 @@ export const teamCommitCommand = defineAnthillCommand({
               "This is an INDEX-level restore only: your working-tree edits are untouched and still " +
               "present. It does NOT isolate your work — a peer who commits a file you have edits in " +
               "will still carry them.";
-        throw new Error(`git commit failed:\n${detail}${hint}${staleNote}`);
+        // Emit the envelope rather than throwing — this file's own rule, stated
+        // above the argument guards, and this path was the one place breaking it.
+        // A raw `throw` reaches cli.ts's fallback, which prints `err.stack`, so
+        // five frames of Bun internals landed UNDER the foreign-red diagnostic
+        // and buried the one line the reader needed.
+        //
+        // ⚠ RELEASE THE LOCK FIRST — `process.exit()` terminates immediately and
+        // does NOT unwind `finally`, so converting the old `throw` into an
+        // emit+exit silently dropped the `finally { releaseLock(lock) }` that had
+        // covered this path. The two sibling guards above already release
+        // explicitly for exactly this reason; this branch — the MOST common
+        // failure, a red gate — was the one that didn't.
+        //
+        // The consequence was this file's own bug (anthill#55) moved from the
+        // index onto the lock: every peer's commit queues 90s in `acquireLock`,
+        // which then throws BEFORE the try — reaching cli.ts's fallback and
+        // printing the very stack trace this change was made to remove.
+        releaseLock(lock);
+        emitError({
+          format,
+          command: "commit",
+          error: `git commit failed:\n${detail}${hint}${staleNote}`,
+        });
+        process.exit(1);
       }
       const sha = git(["rev-parse", "--short", "HEAD"], root);
+      // The FALSE-GREEN counterpart of the foreign-red diagnostic. The gate reads
+      // the WORKING TREE; the commit holds NAMED PATHS. They coincide only when
+      // exactly one seat is dirty. So a peer's UNCOMMITTED code can satisfy this
+      // commit's dependency, the gate passes, and the landed commit is red in
+      // isolation — silently, with nothing to notice. We already compute this set
+      // for the failure path; printing it on success is the same information in
+      // the direction nobody was looking.
+      const after = git(["status", "--porcelain"], root);
+      const unchecked = after.ok ? foreignDirtyPaths(after.stdout, paths) : [];
       const data: CommitData = {
         committed: true,
         sha: sha.ok ? sha.stdout : undefined,
@@ -380,6 +449,7 @@ export const teamCommitCommand = defineAnthillCommand({
         message,
         waitedMs,
         ...(warnings.length > 0 && { warnings }),
+        ...(unchecked.length > 0 && { uncheckedAgainst: unchecked }),
       };
       emit({
         format,
@@ -393,6 +463,21 @@ export const teamCommitCommand = defineAnthillCommand({
           for (const p of d.paths) lines.push(`  ${p}`);
           if (d.waitedMs && d.waitedMs > 500) {
             lines.push(`(waited ${Math.round(d.waitedMs)}ms for the serialize lock)`);
+          }
+          const u = d.uncheckedAgainst ?? [];
+          if (u.length > 0) {
+            lines.push(
+              "",
+              `NOTE: the gate ran over the WHOLE tree, and ${u.length} path(s) outside this commit ` +
+                `were dirty at the time:`,
+            );
+            for (const p of u.slice(0, 12)) lines.push(`  ${p}`);
+            if (u.length > 12) lines.push(`  … and ${u.length - 12} more`);
+            lines.push(
+              "This commit was NOT checked in isolation — the green you just saw was measured " +
+                "against those paths too. If any of them satisfy something this commit needs, " +
+                "HEAD alone may be red.",
+            );
           }
           return lines.join("\n");
         },

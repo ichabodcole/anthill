@@ -1,7 +1,15 @@
 # `anthill commit` hardening — Implementation Plan
 
 **Created:** 2026-07-10 · **Revised:** 2026-07-27
-**Status:** Draft — **needs a revision pass before pickup** (see Intake below)
+**Status:** ⚠️ **Mostly shipped — needs a revision pass to reflect reality.** Intake items 3–6 and
+move 2 landed 2026-07-27 (`2170636`, archived as
+[`anthill-commit-correctness-batch`](../../backlog/_archive/2026-07-27-anthill-commit-correctness-batch.md)).
+Four further field defects landed 2026-08-01 (`f5668cb`) — see
+[the session](sessions/2026-08-01-storyloom-field-fixes.md). **Move 1 (protected-trunk guard) is the
+only original move still open**, and it is tracked separately as
+[`anthill-commit-protected-trunk-guard`](../../backlog/2026-07-10-anthill-commit-protected-trunk-guard.md).
+The plan text below still describes the pre-intake world and should be rewritten or retired before
+anyone picks it up.
 **Shape:** light build — single seat/surface (`plugin/scripts/anthill/`), no owner↔owner seam →
 forager implements, sentinel verifies, no full convene / ratify gate.
 

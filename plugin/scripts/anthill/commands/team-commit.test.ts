@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { foreignDirtyPaths, unexpectedStaged } from "./team-commit.ts";
@@ -123,6 +123,39 @@ describe("unexpectedStaged", () => {
 
 // PURE: the foreign-red diagnostic (anthill#50/#24/#28/#55) — on a gate failure,
 // which dirty paths lie OUTSIDE the commit the seat just attempted?
+// Field report (StoryLoom, 2026-08-01, three independent witnesses): the FIRST
+// path in the foreign-dirty list loses its first character, and only sometimes.
+// Cause: git() trims stdout. Porcelain's status column is two chars, so an
+// UNSTAGED modification is " M path" with a LEADING SPACE — trim eats it, the
+// line becomes "M path", and slice(3) removes "M a" instead of " M ".
+// It survives when the first line is "?? path" or "M  path" (no leading space),
+// which is exactly the reported "conditional, not universal".
+// Severity: this corrupts the one line whose whole job is preventing false
+// attribution. Their lead grepped it for his own path, missed, and blamed peers
+// for his own failure four times.
+describe("foreignDirtyPaths — trimmed porcelain (StoryLoom field report)", () => {
+  test("does NOT eat the first character when the leading status space is gone", () => {
+    // Exactly what git() hands it after .trim(): first line's leading space lost.
+    const trimmed = ["M apps/api/foo.test.ts", " M apps/api/foo.ts", "?? apps/api/bar.ts"].join(
+      "\n",
+    );
+    expect(foreignDirtyPaths(trimmed, ["mine.ts"])).toEqual([
+      "apps/api/foo.test.ts",
+      "apps/api/foo.ts",
+      "apps/api/bar.ts",
+    ]);
+  });
+
+  test("still parses untrimmed porcelain identically", () => {
+    const raw = [" M apps/api/foo.test.ts", " M apps/api/foo.ts", "?? apps/api/bar.ts"].join("\n");
+    expect(foreignDirtyPaths(raw, ["mine.ts"])).toEqual([
+      "apps/api/foo.test.ts",
+      "apps/api/foo.ts",
+      "apps/api/bar.ts",
+    ]);
+  });
+});
+
 describe("foreignDirtyPaths", () => {
   test("names a peer's dirty file, ignoring our own", () => {
     const porcelain = [" M src/mine.ts", " M src/peer.ts", "?? scratch/probe.txt"].join("\n");
@@ -359,6 +392,81 @@ describe("anthill commit — a bounced commit must not strand the index (anthill
     }
   });
 
+  // Field report (StoryLoom, 2026-08-01): the gate-failure path threw a raw
+  // Error, which reaches cli.ts's fallback and prints `err.stack` — five frames
+  // of Bun internals landing UNDER the foreign-red diagnostic, burying the one
+  // line the reader needed. This file's own rule (stated above the argument
+  // guards) says emit the envelope rather than throw; this was the one path
+  // breaking it. The two existing `at run (` guards sit on argument-validation
+  // paths that never throw, so they could never have caught this.
+  test("a gate bounce emits the envelope and leaks NO stack frames", async () => {
+    const dir = makeRepo();
+    try {
+      installFailingHook(dir);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code, stderr, stdout } = await runCli(["commit", "-m", "add mine", "mine.txt"], dir);
+      expect(code).not.toBe(0);
+      expect(stderr + stdout).toMatch(/git commit failed/);
+      expect(stderr).not.toMatch(/at run \(/);
+      expect(stderr).not.toMatch(/at runCommand \(/);
+      expect(stderr).not.toMatch(/\n\s+at /);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  // Found in independent review of this very branch, then reproduced before
+  // fixing. Converting the gate-failure `throw` into `emitError + process.exit`
+  // (to stop a stack-trace leak) silently dropped the lock release, because
+  // `process.exit()` does NOT unwind `finally`. The suite asserted on the INDEX
+  // and on stderr, never on the LOCK — so it passed with the bug present.
+  //
+  // Stranding the lock is anthill#55 moved from the index onto the lock: the
+  // event that blocked you also hides that you are now blocking everyone. Worse,
+  // the peer's 90s `acquireLock` timeout throws BEFORE the try, so it reaches
+  // cli.ts's fallback and prints the exact stack trace this branch removed.
+  test("a gate bounce RELEASES the serialize lock (process.exit skips finally)", async () => {
+    const dir = makeRepo();
+    try {
+      installFailingHook(dir);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code } = await runCli(["commit", "-m", "will bounce", "mine.txt"], dir);
+      expect(code).not.toBe(0);
+
+      const common = Bun.spawnSync(["git", "rev-parse", "--git-common-dir"], {
+        cwd: dir,
+        env: GIT_ENV,
+      })
+        .stdout.toString()
+        .trim();
+      const lock = join(dir, common, "anthill-team-commit.lock");
+      expect(existsSync(lock)).toBe(false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  // The consequence, proven end to end rather than argued: a peer must be able to
+  // land immediately after someone else's gate bounce, not queue behind a corpse.
+  test("a peer can commit promptly after a gate failure", async () => {
+    const dir = makeRepo();
+    try {
+      installFailingHook(dir);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      await runCli(["commit", "-m", "will bounce", "mine.txt"], dir);
+
+      rmSync(join(dir, ".git", "hooks", "pre-commit"), { force: true });
+      writeFileSync(join(dir, "peer.txt"), "peer\n");
+      const started = Date.now();
+      const { code } = await runCli(["commit", "-m", "peer lands", "peer.txt"], dir);
+      expect(code).toBe(0);
+      // A stranded lock costs the peer LOCK_WAIT_MS (90s); this must be instant.
+      expect(Date.now() - started).toBeLessThan(20_000);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   test("names the FOREIGN dirty paths so the seat doesn't debug its own clean lane", async () => {
     const dir = makeRepo();
     try {
@@ -371,6 +479,136 @@ describe("anthill commit — a bounced commit must not strand the index (anthill
       expect(out).toMatch(/peer-wip\.txt/);
       expect(out).toMatch(/NOT your commit/);
       expect(stagedNames(dir)).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+// All four seats of a consuming team, independently, in one session: every
+// commit on a shared tree is authored by the human, so "who landed this?" is
+// unanswerable after the fact. Their lead found an anomalous commit and had to
+// ASK THE CHANNEL; the author was identified only because they volunteered.
+// `anthill commit` already knows the handle — stamping it makes attribution a
+// mechanism instead of a discipline, and sweep forensics a `git log --grep`.
+describe("anthill commit — seat attribution (StoryLoom field request)", () => {
+  function withConfig(dir: string, handles: string[]): void {
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      JSON.stringify({
+        version: 2,
+        channel: "t",
+        lead: handles[0],
+        seats: handles.map((h) => ({ handle: h, role: "r", scope: "s", spawn: true })),
+      }),
+    );
+  }
+
+  test("--as <seat> stamps an Anthill-Seat trailer that git log can grep", async () => {
+    const dir = makeRepo();
+    try {
+      withConfig(dir, ["maestro", "forager"]);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code } = await runCli(
+        ["commit", "-m", "do a thing", "--as", "forager", "mine.txt"],
+        dir,
+      );
+      expect(code).toBe(0);
+      const body = Bun.spawnSync(["git", "log", "-1", "--format=%B"], {
+        cwd: dir,
+        env: GIT_ENV,
+      }).stdout.toString();
+      expect(body).toMatch(/^Anthill-Seat: forager$/m);
+      // The subject must survive intact — the trailer is appended, not merged in.
+      expect(body.split("\n")[0]).toBe("do a thing");
+      // And it must be findable the way a forensic reader would look.
+      const found = Bun.spawnSync(["git", "log", "--grep=Anthill-Seat: forager", "--format=%s"], {
+        cwd: dir,
+        env: GIT_ENV,
+      }).stdout.toString();
+      expect(found).toMatch(/do a thing/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("an unknown seat is refused BEFORE anything is staged, and names the valid set", async () => {
+    const dir = makeRepo();
+    try {
+      withConfig(dir, ["maestro", "forager"]);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code, stderr } = await runCli(
+        ["commit", "-m", "do a thing", "--as", "nobody", "mine.txt"],
+        dir,
+      );
+      expect(code).not.toBe(0);
+      // Assert the machine envelope, not a substring of escaped JSON.
+      const env = firstJson(stderr);
+      expect(env?.ok).toBe(false);
+      expect(env?.error).toMatch(/unknown seat "nobody"/);
+      expect(env?.error).toMatch(/maestro/);
+      expect(env?.error).toMatch(/forager/);
+      // Nothing staged: a bogus handle must not leave the tree half-touched.
+      expect(stagedNames(dir)).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("no --as still commits cleanly (the flag is optional)", async () => {
+    const dir = makeRepo();
+    try {
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code } = await runCli(["commit", "-m", "plain", "mine.txt"], dir);
+      expect(code).toBe(0);
+      const body = Bun.spawnSync(["git", "log", "-1", "--format=%B"], {
+        cwd: dir,
+        env: GIT_ENV,
+      }).stdout.toString();
+      expect(body).not.toMatch(/Anthill-Seat:/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+// The FALSE-GREEN, demonstrated by a consuming team in a throwaway repo: the
+// gate reads the WORKING TREE, the commit holds NAMED PATHS, and they coincide
+// only when exactly one seat is dirty. A peer's uncommitted code can satisfy
+// this commit's dependency, the gate passes, and the landed commit is red in
+// isolation. The false RED is loud and well handled; this direction was silent.
+describe("anthill commit — false-GREEN visibility on SUCCESS", () => {
+  test("names dirty paths outside the commit, and says the check wasn't isolated", async () => {
+    const dir = makeRepo();
+    try {
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      writeFileSync(join(dir, "peer-wip.txt"), "a peer's uncommitted work\n");
+      // The machine contract: the set is a first-class field, not prose.
+      const j = await runCli(["commit", "-m", "add mine", "mine.txt", "--format", "json"], dir);
+      expect(j.code).toBe(0);
+      const env = firstJson(j.stdout) as { data?: { uncheckedAgainst?: string[] } } | null;
+      expect(env?.data?.uncheckedAgainst).toEqual(["peer-wip.txt"]);
+
+      // And the human rendering actually says what it means.
+      writeFileSync(join(dir, "mine2.txt"), "more\n");
+      const t = await runCli(["commit", "-m", "again", "mine2.txt", "--format", "text"], dir);
+      expect(t.code).toBe(0);
+      const out = t.stdout + t.stderr;
+      expect(out).toMatch(/peer-wip\.txt/);
+      expect(out).toMatch(/NOT checked in isolation/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("says nothing when the tree holds no foreign dirt (no noise on a clean land)", async () => {
+    const dir = makeRepo();
+    try {
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code, stdout, stderr } = await runCli(["commit", "-m", "add mine", "mine.txt"], dir);
+      expect(code).toBe(0);
+      expect(stdout + stderr).not.toMatch(/NOT checked in isolation/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

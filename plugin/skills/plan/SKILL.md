@@ -85,6 +85,13 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
      an item is **indistinguishable from one that resolved it** — a seat read the rulings message,
      registered "ruled", and moved on with both of his asks unaddressed. List what you are
      deliberately leaving open.
+   - **A contract spanning TWO artifacts needs a mechanical trigger, not just a clause.** A ratified
+     seam is a description; it cannot make anyone _notice_ they moved the boundary. An owner broke one
+     **three times in a single session** — his own contract, whose lesson he had just written and
+     **quoted to three peers while breaking it**; a compiler caught it in four seconds. **Conviction
+     feels like vigilance and is not.** Ask what will _fail_ when the two sides stop agreeing — a test
+     spanning both, a shared type, an exhaustiveness check. If the answer is "someone will notice", say
+     so in the contract rather than implying enforcement.
    - **A claim about RUNTIME BEHAVIOR needs a measured repro, not pattern memory.** Distinguish the
      two kinds of claim a seam makes:
      - **API shape** ("takes X, returns Y") — ratifiable by _reading_. Memory is usually reliable.
