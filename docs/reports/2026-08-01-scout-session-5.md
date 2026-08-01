@@ -65,8 +65,18 @@
 
 **(a) The retro's own headline count expired while it was being written.** `artifact:` `retro.md` (session 5) states _"25 commits · 25/25 seat-stamped · 19 docs / 6 feat+fix."_ At `2ac3ea7` — **the retro's own commit** — `git rev-list --count 655b3b8..2ac3ea7` is **31**. The code count (6) is exact; **the docs count is short by the finalize burst that landed during the writing.**
 
-**This is not an error of care and I will not report it as one.** It is the team's own documented rule — _"a count is a measurement with a shelf life that no gate checks and that every commit invalidates"_ — **occurring inside the document that records the rule, in the one section a reader trusts most.** `seams.md` already converted its proof pointers from counts to named assertions for exactly this reason; **the retro header was never converted.**
+**This is not an error of care and I will not report it as one.** It is the team's own documented rule — _"a count is a measurement with a shelf life that no gate checks and that every commit invalidates"_ — **occurring inside the document that records the rule, in the one section a reader trusts most.** `seams.md` already converted its proof pointers from counts to named assertions for exactly this reason; the retro header had not been.
 → _see recommendation R1._
+
+> **RESOLVED, and the resolution happened after this report landed — recorded rather than edited away.**
+> `artifact:` `e5ad1fb`. steward found the same defect **independently** — his message carried watermark `#268`, which predates my `#269` raising it, so neither of us read the other. **He converted the header to named assertions rather than re-numbering it**, which is what R1 asks for and is the opposite of the tempting fix:
+>
+>     - "25 commits · 25/25 seat-stamped · 19 docs / 6 feat+fix"
+>     + "every commit seat-stamped · 6 feat/fix, the rest docs" + the commands to re-run
+>
+> **The assertion is now _no commit is unstamped_, which survives more commits landing.**
+>
+> **And this note exists because my own report inherited the defect it reports.** The sentence above said the header _"was never converted"_ — true when I wrote it, false about twenty minutes later, and the tree has since gone from 32 commits to 39. **A report is a measurement with a shelf life too.** The fix here is the same one: prefer the assertion that survives, and date the correction rather than rewriting history.
 
 **(b) The lead asserted the vine was cleared and the artifact said otherwise.** `artifact:` `grapevine pull anthill-dev` returns session 4 intact — 15 messages spanning both sessions. I hit this as the session's only mid-session joiner and had to date messages to separate the sessions. **The lead volunteered this in his own Q2 before anyone raised it.**
 
@@ -98,6 +108,7 @@
 _Missing:_ the retro's summary line is hand-authored counts in a document whose own rule forbids them.
 _Would have prevented:_ the session-5 header being wrong at the moment it was committed (§2.4a) — and the session-4 header, which was corrected for the same class.
 _Cheapest form:_ emit the header from `git` at finalize (`rev-list --count`, the trailer grep, the type split). **The command already exists in this report.**
+_Status:_ **partly discharged the same day, `e5ad1fb`** — the curator converted the header to named assertions plus the commands to re-run them (§2.4a). **What remains unbuilt is the generation**, so the next retro's header is hand-written again and the discipline has to hold a second time. **That is the difference between a fix and a mechanism, and this team has a principle about which one survives.**
 
 **R2 — Surface `waitedMs` and `uncheckedAgainst` in the SOP, and say what they mean.**
 _Missing:_ nothing. **The affordance exists and is unnamed** (§2.1 instance 3).
