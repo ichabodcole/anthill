@@ -32,6 +32,51 @@ tokens), show the human before applying. That is a **correct procedure with no t
 only if someone thinks to run `upgrade` on a release that, by every signal the tooling gives, changed
 nothing.
 
+## StoryLoom ran `upgrade` and diagnosed this with anthill's own principle
+
+Field confirmation the same day, from the team the gap was found against. They ran the skill only
+because they were asked to: _"Nothing would ever have surfaced it. A team can run indefinitely on
+bootstrap-era guidance with **every tool reporting healthy**."_ The guidance they were missing
+included the commit-pathspec caveat — which bears directly on the commit hygiene they had spent that
+session fixing.
+
+**Their diagnosis is sharper than the one above, and it comes from our own SOP.** The rule that
+predicts this gap is already in the guidance we ship:
+
+> **No store without a named re-read moment.** Every place knowledge is written must have a moment it
+> is read back. A store nothing re-reads is a write-only leak — don't create one.
+
+> _"The living docs **do** have a re-read moment — join re-grounds the seat in its doc every session.
+> But that re-read is against the **content**, never against the **source it was rendered from**. So
+> the seat faithfully re-reads guidance that no longer matches upstream, and **re-reading it more
+> often doesn't help at all** — it's the one failure mode a re-read moment can't catch, because the
+> doc is internally consistent. **anthill applied its own principle to seat knowledge and left the
+> template layer out.**"_
+
+That reframes the fix: this is not a missing warning, it is a **missing re-read moment at the template
+layer**. The principle was already right; it was scoped to one layer.
+
+**It also answers the open question below about where the signal belongs — with a third option
+neither of us had.** Not `status`, not `upgrade`: **`convene`.**
+
+> _"It fires once per session instead of once per seat, the human is already present to consent to a
+> doc rewrite, and it's positioned **before the seats get briefed** — which is the moment that
+> matters, since the cost of stale guidance is seats operating on rules the release already corrected.
+> `join` would fire N times for one shared answer and would surface the drift to exactly the agents
+> with **no standing to act on it**."_
+
+**And a design caveat that would have sunk the naive version:** a drift check that cannot tell local
+specificity from staleness **cries wolf on every project**. Their `seams.md` would light up
+permanently, because replacing the `(none yet)` placeholder with real contracts **is the point**. So
+scope the check to genuinely **template-shaped** files (`README.md`, `dev/README.md`) and leave the
+accrete-by-design docs out of it entirely.
+
+They also confirmed independently that the CHANGELOG is unreachable from a consuming repo, so **the
+diff is the only record available** — which is why `upgrade` §4a now leads with it.
+
+Their standing recommendation: **run `upgrade` on every anthill release, not on a version bump**,
+since most releases won't move the version at all.
+
 ## Shape of the fix (not settled)
 
 The cheap end is probably enough, and the expensive end is probably wrong:
@@ -46,9 +91,13 @@ The cheap end is probably enough, and the expensive end is probably wrong:
   prevent. Report; let a human and an agent decide.
 - **Open: how do we know a hunk is "shared guidance" vs "their local content"?** Probably we don't,
   and the report should not pretend to. Naming the file as differing may be the whole feature.
-- **Open: does this belong in `status` (seen every session, risks nagging) or `upgrade` (seen rarely,
-  which is the current problem)?** A once-per-release signal is what's wanted; neither surface is
-  obviously that.
+- ~~**Open: `status` or `upgrade`?**~~ **Answered — `convene`**, per StoryLoom above: once per
+  session rather than once per seat, the human is present to consent to a rewrite, and it fires
+  **before the seats are briefed**, which is the moment that matters. `join` would ask N seats one
+  shared question and surface it to the agents with no standing to act.
+- **Scope the check to template-shaped docs only** (`README.md`, `dev/README.md`). Docs that accrete
+  by design — `seams.md`, seat docs, `paper-cuts.md` — must be excluded, or the check cries wolf
+  permanently on every healthy project.
 
 ## Acceptance Criteria
 
