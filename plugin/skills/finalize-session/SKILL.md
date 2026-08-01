@@ -174,8 +174,8 @@ rule in the very commit that creates the truth being restated.
    - ◻ **Every seat reconciled its doc against contracts that CHANGED this session** (step 3.5) —
      restatement replaced with a pointer. The ordering makes this violation the default, not the
      exception: a four-seat team hit it in all five docs at once.
-   - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit -m "<msg>" <paths…>`**
-     (never `git add -A`).
+   - ◻ **Doc updates landed** as a **file-scoped** commit: **`anthill commit --as <lead> -m "<msg>" <paths…>`**
+     (never `git add -A`) — the `--as` stamps the seat trailer so the atomic land is attributable.
      - **Red tree? (a slice deliberately held red for an atomic land.)** The pre-commit gate runs the
        **whole** suite on every commit, so a held-red tree fails each seat-doc commit and **deadlocks
        this step** — the docs can't land while the code is red. Don't fight the gate; park everything,
@@ -187,7 +187,7 @@ rule in the very commit that creates the truth being restated.
        2. **Bring back only the docs** — `git checkout stash@{0} -- <doc-paths…>`. Now the tree holds
           just the seat docs (markdown → the gate passes); the red slice stays parked in the stash.
        3. **Land all seat docs in ONE atomic commit** — the lead commits every seat's doc together
-          (`anthill commit -m "…" <doc-paths…>`), not each seat self-committing against a red tree.
+          (`anthill commit --as <lead> -m "…" <doc-paths…>`), not each seat self-committing against a red tree.
        4. **Restore the held slice** — `git stash pop`. The stash's doc hunks are already committed
           verbatim, so they re-apply as a clean no-op; the red slice (tracked edits **and** untracked
           new files) comes back intact, and the atomic code land proceeds as planned.

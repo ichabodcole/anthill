@@ -121,11 +121,18 @@ Seats share **one working tree + one git index**. A bare `git commit` (after `gi
 whole index → it **sweeps a peer's staged file** into your commit; concurrent commits also race git's
 index. So:
 
-**Use `anthill commit -m "<msg>" <path>…`** for every land. It (1) commits the **named paths only**
+**Use `anthill commit --as <your-handle> -m "<msg>" <path>…`** for every land. It (1) commits the **named paths only**
 (refuses to run with no paths — no accidental sweep) and (2) holds a **serialize lock** so concurrent
 seats queue instead of racing. The same command **is** the atomic cross-seat land: the lead collects
 every seat's paths and passes them in one call → one commit across the seats. (The raw discipline
 holds if you commit by hand: `git commit -m "<msg>" -- <explicit paths>`, never `git add -A`.)
+
+**`--as` is not optional in practice.** Git records the **human** as the author of every seat's commit
+— all of them, identically — so without the seat stamp _"who landed this?"_ is unanswerable after the
+fact. A team hit exactly that: an unexplained commit appeared mid-session, the lead had to ask the
+channel, and the author was identified only because they volunteered. `--as` adds an
+`Anthill-Seat: <handle>` trailer, so `git log --grep "Anthill-Seat: <handle>"` answers it mechanically.
+It does **not** change git's author field; it adds a line git can search.
 
 **⚠ Know exactly what this protects.** The pathspec protects against sweeping a peer's **files**. It
 does **not** protect their **uncommitted edits inside a file you both write to** — naming
