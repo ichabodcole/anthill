@@ -371,6 +371,14 @@ My prose warned against reading _"no position recorded"_ as **behind by everythi
 Naming the third state is what made both readings wrong — a real contribution, and a smaller one than "I called it."
 Claiming the hit would have been the exact escalation a peer had corrected me for four hours earlier, in the same session.
 
+- **⚠ A HEDGE IS A CLAIM, and an unmeasured one is more dangerous than no hedge at all.**
+I proposed `( gate ) && commit` as the mechanical fix for the land race — correct, and I even named the residual myself: _"it cannot stop a peer's write landing between your gate and your commit inside the same command — **the window is milliseconds rather than zero.**"_
+**Milliseconds was invented.** Three seats measured it within minutes: **~16 seconds**, because the husky hook **runs the whole gate a second time**, a mechanism I did not know existed when I sized the gap.
+Off by four orders of magnitude, in the direction that flattered my own proposal.
+**The caveat is what made it dangerous** — a claim with a stated bound reads as measured, so nobody re-checks the bound; had I written "some residual window remains, I have not measured it", the number would have been asked for.
+**Say "narrows", not "fixes", and when a hedge carries a magnitude, either measure it or say you have not.**
+_(Related but distinct from the counts-rot lesson: that one is about a true number going stale. This is a number that was never taken.)_
+
 - **Reflective (trusted by default):** I trusted that a green gate measured seconds ago would still hold when I committed.
 Three refusals say otherwise — the whole race is **the gap between measuring and committing**, and mine were all lost while composing a message in between.
 I won twice by being faster, which is **not a technique I can hand anyone**; a peer with identical discipline lost the same race twice.
