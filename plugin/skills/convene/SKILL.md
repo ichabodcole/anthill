@@ -144,7 +144,8 @@ stay solo.
 
 The stand-up beats that get skipped when you're eager to spawn. Run them as a list:
 
-- ◻ **Grounded** as the lead (grounding docs → SOP → seams → your seat doc).
+- ◻ **Grounded** as the lead (grounding docs → SOP → **principles** → seams → your seat doc).
+  `.anthill/principles.md` is short and is the highest-leverage read in that list.
 - ◻ **Work gathered** from the human; **plan phase** run (`anthill:plan`) if it's a multi-seat feature
   without a ratified plan.
 - ◻ **Grapevine open** — `anthill convene --topic "<framing>"`.

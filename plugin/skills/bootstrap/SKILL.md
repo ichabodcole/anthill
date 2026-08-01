@@ -180,7 +180,7 @@ once the human has steered you to one seating, treat it as the ratified roster a
   unstamped config reads as the legacy v1 (`.team/` + `docs/team/`) layout. Write it to
   `<repo-root>/.anthill/config.json`.
 - **Render:** run **`anthill init`**. It reads the config and deterministically renders `.anthill/`
-  (the SOP, `seams.md`, the roster `dev/README.md`, one `dev/<handle>.md` per seat) and ensures the
+  (the SOP, `principles.md`, `seams.md`, the roster `dev/README.md`, one `dev/<handle>.md` per seat) and ensures the
   `.anthill/scratch/` line in `.gitignore`. It's idempotent — re-running never clobbers existing docs.
   - **That is a file-level guarantee, and it cuts both ways.** An existing doc is **skipped**, so
     re-running is safe — and also **inert**: it will never bring a doc up to date with a newer

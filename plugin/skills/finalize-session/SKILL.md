@@ -252,6 +252,9 @@ it has gone wrong.**
    - ◻ **Every seat reconciled its doc against contracts that CHANGED this session** (step 3.5) —
      restatement replaced with a pointer. The ordering makes this violation the default, not the
      exception: a four-seat team hit it in all five docs at once.
+   - ◻ **Principle question asked** (Q4) — did this session produce one? **Usually no.** If yes it
+     goes to `.anthill/principles.md` **with its scar**; if it has no scar it is a Q3 hypothesis, and
+     if it only holds for this tool it is an SOP practice.
    - ◻ **Retro written to `.anthill/retro.md` BY THE LEAD** (step 4.5), newest first — the seats
      answered on the wire; **the wire evaporates and the file is the only thing that survives.**
      **Every Q3 answer is a

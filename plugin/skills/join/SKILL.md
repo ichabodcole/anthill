@@ -179,7 +179,8 @@ status`** shows who's on + the board.
 
 ## Join checklist (the beats that get skipped)
 
-- ◻ **Grounded** in your seat (grounding docs → SOP → seams → your seat doc). A doc flagged
+- ◻ **Grounded** in your seat (grounding docs → SOP → **principles** → seams → your seat doc).
+  `.anthill/principles.md` is short and is the highest-leverage read in that list. A doc flagged
   **⚠ unfilled template** in your join output is _not_ evidence the project lacks that content —
   it means nobody wrote it yet. Say so to the lead rather than inferring from it.
 - ◻ **Caught up** if you joined mid-session — `grapevine pull <channel>` (finite). **Never**

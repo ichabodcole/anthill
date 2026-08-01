@@ -84,6 +84,13 @@ prints the migration plan **without touching anything**.
   opinion about guidance**, and neither does `anthill status`.
   → Skip steps 2–3 (there is no migration to consent to or apply) and **go to step 4** — the living-doc
   reconcile is the whole job on a content-only release, and it is the common case.
+
+> **A release can add a NEW living doc, not just edit one.** `anthill init` **creates files that do
+> not exist** while skipping ones that do — so re-running it is how a new team doc reaches an
+> **existing** footprint, and it cannot clobber your content. **Verified:** `principles.md` (added
+> 2026-08-01) arrives this way. So the reconcile has two halves: **diff the docs you already have,
+> and check whether the templates gained one you don't.**
+
 - **Behind** → it prints plain-language **notes** summarizing each move (config relocate, docs
   relocate, gitignore swap, version stamp); the structured op list comes back in the same envelope
   everything else does.
