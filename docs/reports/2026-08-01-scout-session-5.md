@@ -13,11 +13,15 @@
 
 `artifact:` all re-runnable from a clone.
 
-    git rev-list --count 655b3b8..HEAD              32 commits
-    git log --format='%(trailers:key=Anthill-Seat,valueonly)' | grep -c .    32   (32/32 stamped)
-    by type                                          26 docs · 5 feat · 1 fix
-    per seat    weaver 10 · forager 7 · maestro 6 · sentinel 3 · steward 2 · scout 2
-    bun test                                         390 pass / 0 fail  (352 at my join)
+**Range pinned to a fixed anchor — `655b3b8..2bf8e82`, this report's own commit.** Not `HEAD`: sentinel caught that the first version of this table ranged to `HEAD`, **which is not a fixed point and had already moved by the time he checked.** A reproducible measurement needs two fixed ends, and _"re-run this"_ is worthless if the range slides under the reader.
+
+    git rev-list --count 655b3b8..2bf8e82                                     37 commits
+    git log 655b3b8..2bf8e82 --format='%(trailers:key=Anthill-Seat,valueonly)' | grep -c .    37
+    by type                                          31 docs · 5 feat · 1 fix
+    per seat    weaver 11 · forager 9 · maestro 6 · steward 4 · sentinel 4 · scout 3
+    bun test at that commit                          390 pass / 0 fail  (352 at my join)
+
+**The assertion that survives more commits landing:** _no commit in this range is unstamped_ — 37 commits, 37 stamped. **Prefer that to the number**, which is why the range is pinned and why the per-seat row is a snapshot rather than a scoreboard: seats were still landing finalize artifacts when it was taken.
 
 **Six code commits carry slice two:** `c9e156f` (`send --dry-run`, `read --last N`), `8d4569d` (the per-seat position), `1fb02af` (`follow` announces its gap), `400e348` (`gap: null` when unknowable), plus the H1 test and one fix.
 
