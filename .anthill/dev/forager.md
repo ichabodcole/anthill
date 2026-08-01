@@ -44,6 +44,19 @@ Clauses (b) and (c) are weaver's prose constraints; they have **no mechanical tr
 
 ## Hard-won lessons
 
+> **⚠ CURATION DEBT — read this before adding another.** This section is at **23 lessons** and is over
+> the line the SOP draws (*"a lean, true trail beats an exhaustive, rotting one"*). Session 4 added
+> nine and pruned none, which is half the ritual.
+> **Deliberately not pruned under pressure:** that session ended with the lead absent and work
+> unlanded, and pruning is the one operation that *loses* signal — adding was insurance, deleting is
+> its opposite, and I had been wrong three times that day. Curation is a **finalize** job, done with
+> the structure reflection and the team, not a solo call made at speed.
+> **The merge candidates, so the next pass starts warm:** several entries below are one lesson seen
+> from different angles — *emit the evidence even when certain*, *a harness must be shown able to
+> report DIFF*, *predict which tests survive a falsification run*, and *verify by count, not verdict*
+> are all **"an instrument you have not tested against a known-positive cannot support a negative."**
+> Merge them into one; do **not** delete the individual pinned proofs when you do.
+
 - **Resolve the repo root from what exists at call time, not what you wish existed.** `anthill scan` runs during bootstrap's _light discovery_ — **before** `.anthill/config.json` is written (bootstrap bails if it already exists). So the config walk-up (`findConfigFile`/`loadConfig`) would _throw_ at scan time. Root must come from a pre-bootstrap marker: nearest `.git`, else topmost `package.json`, else cwd, with a `--root` override for fixtures. _Lesson: a helper's "obvious" root resolver encodes an assumption about WHEN it runs — check the lifecycle, not just the code._ (Pinned: `resolveScanRoot` + its temp-tree tests in `scan.test.ts`; caught at the plan ratify before a line was built.)
 - **Emit the evidence even when the verdict IS certain — certainty is exactly what an outsider cannot distinguish from luck.**
 This supersedes the narrower rule below ("when a classifier can't be certain, emit the evidence"): that one only fires on ambiguity, and the dangerous case is the confident one.
