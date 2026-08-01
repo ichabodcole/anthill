@@ -129,6 +129,54 @@ Find the row for what you changed. Check every dependent.
 > for weeks. A shipped, consumer-facing restatement of the skill set with nothing pointing at it. The
 > map had no row for this until the omission proved one was needed.
 
+### You **ruled a behaviour change on the wire** — and edited nothing
+
+**The grep-the-concept method cannot fire here, because the concept never entered the repo.** A
+ruling in a message mutates the meaning of every document that describes the old behaviour, while
+touching none of them. Every other row in this map is keyed to a file you changed; this one is keyed
+to a file you _didn't_.
+
+- ◻ **Which shipped skill now contradicts the ruling?** Grep the behaviour, not the wording — you
+  have no diff to start from.
+- ◻ **Did the team already act on the ruling rather than the doc?** If so, **the doc is now the only
+  thing that still believes the old rule.**
+- ◻ **Is the ruling in a durable artifact at all**, or only in a channel that evaporates?
+- ◻ **The rendered copies** — a rule the SOP template states is also in every team's `.anthill/`.
+
+> **The tell, and it is cheap: when the team does something the docs forbid and nobody objects, the
+> doc is stale — the behaviour is the evidence.** Three commits of that evidence sat in `git log` for
+> hours before anyone read it that way.
+
+> **Scar (2026-08-01).** A wire ruling reversed _"seats do not commit their own docs."_ All four
+> agents adopted it immediately; the shipped skill kept teaching the abandoned rule for hours, and
+> **would have taught it to every consuming project.** The stale text sat **twelve lines from an edit
+> the owning seat was actively making**, in a file she was working in, about a thing she had
+> personally done that morning — and her cascade pass missed it, **because she grepped the concept she
+> had changed, not the one that had changed underneath her.**
+
+### You **added a new doc to the team footprint** (`plugin/templates/docs-team/**`)
+
+Distinct from editing a template: **every other row assumes the thing already exists.** A new file
+has no diff, no stale copy, and no reader — so nothing points at it until you make something point.
+
+- ◻ **The enumerations.** `AGENTS.md` (the file every agent reads first) and `bootstrap` both **list
+  what the footprint contains**. A doc missing from those is a doc nobody opens.
+- ◻ **The grounding reads** in `convene` and `join` — being _rendered_ is not being _read_.
+- ◻ **THE CHECKLISTS, separately from the prose.** Grep the checklist section on its own; updating
+  the body does not update it, and the checklist is the part read under time pressure.
+- ◻ **`upgrade`'s reconcile.** It diffs docs a team _already has_. **A new file is a different
+  path** — `init` creates what's missing while skipping what exists, which is how a new doc reaches
+  an existing footprint without clobbering anything.
+- ◻ **This repo's own `.anthill/`** — mirror it, same as any template change.
+- ◻ **Render smoke, twice:** a **fresh** footprint gets the file with tokens substituted, **and** an
+  **existing** footprint gets it on re-init while keeping its local edits. Both, not just the first.
+
+> **Scar (2026-08-01, adding `principles.md`).** The prose was updated in three skills and the
+> **checklists in none of them** — the map's own recorded drift, in triplicate, in one pass. Separately,
+> the claim that the file would reach existing teams was **inferred from reading `readTemplateDir`**
+> and stated in a commit message before anyone ran it. It happened to be true. **A smoke test costs
+> thirty seconds and would have made it a measurement instead of a lucky guess.**
+
 ### You wrote a **promise** — "safe", "protects", "isolated", "never …", "guarantees"
 
 Not a cascade so much as a lens, but it belongs here because release time is when it fires.
