@@ -22,6 +22,7 @@
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
 import { teamCommitCommand } from "./commands/team-commit.ts";
+import { teamCommsCommand } from "./commands/team-comms.ts";
 import { teamConveneCommand } from "./commands/team-convene.ts";
 import { teamDownCommand } from "./commands/team-down.ts";
 import { teamFeedbackCommand } from "./commands/team-feedback.ts";
@@ -62,6 +63,7 @@ export const main: AnyCommand = defineCommand({
     info: infoCommand,
     convene: teamConveneCommand,
     join: teamJoinCommand,
+    comms: teamCommsCommand,
     spawn: teamSpawnCommand,
     attach: teamAttachCommand,
     down: teamDownCommand,

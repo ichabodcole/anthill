@@ -39,3 +39,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # anthill board-session pin (spellbook #69)
 .bounty-session
+
+# anthill team comms log (per-session conversational state, like scratch)
+.anthill/comms/

@@ -106,6 +106,15 @@ export const SCRATCH_GITIGNORE_LINE = ".anthill/scratch/";
  * dir — it's ignored, never committed. See seams.md, the board-binding contract. */
 export const BOUNTY_SESSION_GITIGNORE_LINE = ".bounty-session";
 
+/** The third gitignore line init ensures: the team's comms message log.
+ * `anthill comms send` appends to `.anthill/comms/<channel>.ndjson` — per-session
+ * conversational state, the same genre as scratch, and never a committed artifact.
+ * It needs its OWN line: `.anthill/scratch/` does not match `.anthill/comms/`, and
+ * assuming "the .anthill local-state line already covers it" is exactly how the log
+ * sat committable. Directory-scoped, not per-channel: channels are named per team,
+ * so a filename-scoped ignore would leak every other channel's log. */
+export const COMMS_GITIGNORE_LINE = ".anthill/comms/";
+
 export interface GitignorePlan {
   action: "added" | "present";
   content: string;
@@ -213,7 +222,8 @@ export const teamInitCommand = defineAnthillCommand({
     const before = existsSync(gitignorePath) ? readFileSync(gitignorePath, "utf8") : null;
     const scratchGi = planGitignore(before, SCRATCH_GITIGNORE_LINE);
     const bountyGi = planGitignore(scratchGi.content, BOUNTY_SESSION_GITIGNORE_LINE);
-    if (bountyGi.content !== (before ?? "")) writeFileSync(gitignorePath, bountyGi.content);
+    const commsGi = planGitignore(bountyGi.content, COMMS_GITIGNORE_LINE);
+    if (commsGi.content !== (before ?? "")) writeFileSync(gitignorePath, commsGi.content);
 
     const data: InitData = {
       teamDir: relative(config.projectRoot, teamDir),
@@ -222,6 +232,7 @@ export const teamInitCommand = defineAnthillCommand({
       gitignore: [
         { line: SCRATCH_GITIGNORE_LINE, action: scratchGi.action },
         { line: BOUNTY_SESSION_GITIGNORE_LINE, action: bountyGi.action },
+        { line: COMMS_GITIGNORE_LINE, action: commsGi.action },
       ],
     };
 

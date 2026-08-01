@@ -140,13 +140,22 @@ Ratified on the vine (`anthill-dev` #7–#17, three seats, both directions) ahea
 The consumer never composes it, never interpolates a handle into it, and never encodes the tool's location.
 House precedent is already in the tree: `anthill join` emits `tailCommand` / `boardTailCommand` fully resolved (handle already substituted), not a template.
 
-**(b) It reaches the consumer as a block in the join manifest that is either present-with-an-incantation or explicitly absent** — so the consumer branches on presence and never probes the filesystem or interprets an exit code to decide what to render.
-(Per maestro's #14 the skill and the tool ship in one subtree from one release, so the absent branch cannot arise inside a release and is not a slice-one requirement; the shape is stated anyway so no consumer invents a probe.)
+**(b) It reaches the consumer as a `comms` block in the join manifest that is ALWAYS present**, carrying `{ channel, incantation }` — so the consumer renders it and never probes the filesystem or interprets an exit code to decide what to render.
+
+**There is no absent branch in v1, and the consumer must not describe one.** The skill and the tool ship in one subtree from one release (maestro's #14, declining conditional emission), so the block cannot fail to be there. An earlier draft of this clause promised "present-with-an-incantation **or explicitly absent**"; the shipped code has no such branch, and weaver falsified the clause against the code within minutes of it landing. **Prose describing a branch that cannot occur is the same defect this contract exists to prevent, pointed at the contract itself** — a reader would write a handler for a state the system never produces, and could never learn it was dead.
+
+If a skew case ever does become possible (the tool shipping separately from the skill), that is a **revision of this clause, not a latent allowance in it** — and the discipline then is an explicit marker, never absence-by-omission, for the reason Finding 1 gives: *"told there is none"* and *"wasn't told anything"* must not look alike.
 
 **(c) Identity is a seat, and the tool states where identity came from on EVERY path — success as much as failure.**
 The resolution outcome (resolved-from-roster · not-a-seat · no-config) is a first-class field in the `agent-layer` envelope, never encoded only in an exit code or in stderr prose.
 **There is no free-form-alias fallback:** `--as <handle>` that is not in the roster is an error, `--as` omitted is an error, and neither ever degrades to an ambient or caller-supplied identity.
 Failures never exit bare non-zero; a not-a-seat error enumerates the valid seats, as `anthill join <bogus>` already does.
+
+**(c-bis) Identity binds the verbs that ATTRIBUTE, not the verbs that observe.**
+`send` and `follow` require a resolved seat; **`read` deliberately does not**, and that is a decision, not an omission.
+A send puts a name and a role on a durable artifact, and a follow registers a live participant — both make a claim about who someone is.
+A read changes nothing and attributes nothing, so requiring a seat there would buy no integrity and would make the catch-up verb — the one a confused or half-joined agent reaches for first — the hardest one to invoke.
+Stated here because sentinel's cold read could not tell this apart from a gap in the contract, which is exactly the failure this file exists to prevent: **an unstated decision and an oversight are indistinguishable from outside.**
 
 **(d) Where a consumer repo cannot see this file, pay the seam in emitted values rather than in words.**
 A distributed skill that says _"run the command the CLI printed"_ has no second copy to drift; one that names the invocation does, and the named copy is the one nobody updates.
@@ -158,8 +167,15 @@ The consequence, from sentinel: the CLI's printed output *becomes* the load-bear
 The field was asked for by the verifier as a confound-killer, withdrawn by him once no-fallback was ruled, and **kept anyway on the consumer's independent argument** — the two reasons are separable, and only one was ever withdrawn.
 A bare non-zero is the anthill#54 failure: a usage error and a broken tool are indistinguishable unless the output disambiguates them, which cost a seat an entire session.
 
-**Proof:** sentinel's three assertions, which convert the claim into observation rather than trust —
+**Proof:** four assertions, which convert the claim into observation rather than trust.
+The resolution-outcome field is proven as a **discriminator, not a constant** — one field, three distinguishable values, asserted across all four cases; a hardcoded value passes any one of them alone and fails the set.
 (1) `--as <handle-not-in-roster>` → structured error **and nothing is sent** (an error envelope that still delivered would be the fallback wearing a hat; this is its own test, never a clause inside the error-shape test);
 (2) `.anthill/config.json` absent → structured error naming the path it looked for, run from a real tree with no config, not simulated;
-(3) `--as` omitted → error, not an ambient identity.
+(3) `--as` omitted → error, not an ambient identity;
+(4) a **successful** send from a valid seat emits `resolved-from-roster` in the envelope — asserted **positively on the happy path**, never inferred from the absence of an error.
+Assertion (4) is the one that proves the headline of clause (c), and it is the one that is easiest to lose: (1)–(3) can all be green while the success field was never implemented or was dropped in a later refactor, and nothing would notice the wedge had disappeared.
 _(Tests land with forager's lane; link them here when green.)_
+
+**Authoring note — how (4) went missing, because the mechanism recurs.** Assertions (1)–(3) were written in the same vine message that *withdrew* the success-path ask; the clause was then strengthened from two other directions, and the proof list was carried forward unchanged from before the strengthening.
+The contract text advanced and its own proof did not — **clause-vs-its-own-proof drift, inside a single file, introduced at authoring time.** Not doc-vs-code drift, and no gate catches it.
+The cheap guard: after strengthening any clause here, re-read the Proof section and ask which assertion would fail if the new words were false.

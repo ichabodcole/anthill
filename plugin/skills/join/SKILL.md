@@ -44,6 +44,25 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
    and **board tail** commands — each wrapped with the **Monitor** tool (filter keepalives as the
    checklist shows), so you wake on team messages and register presence as your handle. **`anthill
 status`** shows who's on + the board.
+   - **Run the commands your manifest printed — verbatim, exactly as given.** They arrive fully
+     resolved, with your handle and channel already interpolated. **If you find yourself substituting
+     your handle into a command, or reconstructing one this skill describes in prose, stop** — you are
+     rebuilding a value the CLI already computed, and your reconstruction is what goes stale when a
+     path, a flag, or the resolution rule changes. This skill deliberately does **not** spell out those
+     commands, not even as an example: the printed string is the single source, and a copy here would
+     be the copy nobody remembers to update.
+   - **There is a third wire — `comms` — and your manifest always carries it.** Look for it under
+     **`comms`**, alongside the grapevine and board lines, and **run what it gives you**,
+     Monitor-wrapped, exactly as given. There is no second case to check for: the skill and the tool
+     ship together, so a project that runs this skill has the wire. Don't test for the tool, don't probe
+     the filesystem for it, don't interpret an exit code to decide.
+     - **`comms` missing from the manifest is a bug, not a project without comms.** Say so to your lead
+       rather than quietly carrying on unwired — a dropped block and a deliberate absence would look
+       identical to you, and the second one doesn't exist.
+     - **Do not add a keepalive filter to this one.** The other two wires need one; **`comms` emits no
+       keepalives, so there is nothing to strip** and the string is complete as given. This is the one
+       place the pattern below does _not_ transfer — appending a `grep` here filters out real messages
+       and leaves you silently missing team traffic, which looks exactly like a quiet channel.
    - **Were you dispatched as a subagent** (not a terminal seat)? A one-shot subagent can't hold a
      Monitor tail — **skip the tail wiring**. The lead drives you directly (dispatch → result) and
      relays the vine. The tail wiring above is the **terminal-seat path**.
@@ -58,6 +77,14 @@ status`** shows who's on + the board.
      it once read the non-zero exit as "this command is broken", fell back to `pull --since | head -c`
      for an entire session, and reported the tool as defective — with the correct usage sitting in his
      own scrollback. **A usage error and a broken tool look identical if you don't read the output.**
+     - **Every wire needs this, not just the vine.** If your manifest gave you a `comms` wire, it has
+       its own catch-up verb and the same rule applies: **a finite read to catch up, the live follow
+       only for the Monitor.** Reach for `--help` on the wire you're actually using rather than
+       assuming its verbs match the one you learned first — **these tools are siblings, not clones.**
+     - **`--as` belongs to _write_ verbs.** Identity stamps your seat onto a message, so sending and
+       following take it and reading doesn't. Worth holding as a model because it predicts verbs you
+       haven't tried yet — the tools themselves will correct you at the point of use if you get it
+       wrong.
      - **`read <channel> <id>` is the only way to fetch exactly one message**, and that matters more
        than gap-filling: it is not a narrower range, it is _not a range_. Any `--since` window runs to
        _now_, so on a channel peers are actively writing to it will eventually contain a peer's
@@ -144,11 +171,23 @@ status`** shows who's on + the board.
 - ◻ **On the board** — board tail wrapped in Monitor. Use the filter **verbatim from your join
   output**: it needs `grep -E` (plain `grep` treats `(a|b)` as a literal, so the Monitor stays
   silently empty) and `--line-buffered` (or frames are held back until a block fills).
+- ◻ **On `comms`** — your manifest always carries this wire. Monitor-wrap what it gives you, exactly as
+  given — **no `grep` filter on this one; it emits no keepalives, and a filter here drops real
+  messages.** Never reconstruct the command, and never go looking for the tool to decide.
+  **`comms` missing from the manifest is a bug — raise it**, don't carry on unwired.
 - ◻ **Introduced** on the vine — a short "in, grounded, here's my lane".
-- ◻ **Code-bearing vine message? Send it safely.** Any grapevine `send` whose body carries
-  backticks or code MUST go via `--stdin` (or a quoted heredoc) — an un-quoted body is
-  command-substituted by bash (backticked spans get executed, apostrophes mangle) _before_
-  grapevine ever sees it, corrupting the message or partially running it.
+- ◻ **Code-bearing message? Send it safely — on _every_ wire, not just the one you learned this on.**
+  **Any** `send` on **any** of these tools — grapevine, comms, whatever the manifest hands you next —
+  whose body carries backticks or code MUST go via `--stdin` (or a quoted heredoc). An un-quoted body
+  is command-substituted by bash (backticked spans get executed, apostrophes mangle) _before the tool
+  ever sees it_, corrupting the message or partially running it. **The tool cannot defend against
+  this** — the damage happens in your shell, upstream of it, so no amount of care on the receiving
+  end helps.
+  - **This hazard is a property of the shell, not of any one command**, so don't scope it to the verb
+    you happen to know. A lead walked into the sibling case of exactly this — reaching for the
+    _other_ tool's `tail` because the warning he had written named only the first — and lost time to
+    a mistake his own prose was meant to prevent. **A warning filed under one tool's name does not
+    fire when you reach for the tool beside it.**
 - ◻ **Resuming a preserved patch?** `git apply` resolves patch paths **relative to your CWD, not the
   repo root** — apply from the repo root (or pass `--directory=<repo-root>`), or a patch preserved from
   a subdir lands in the wrong place.

@@ -7,6 +7,7 @@ import { buildChecklist } from "./team-join.ts";
 const base = {
   tailCommand: "bun /cache/grapevine/cli.ts tail dev --as forager",
   boardTailCommand: "bun /cache/bounty/cli.ts tail --mine --as forager",
+  commsIncantation: "bun /plugin/cli.ts comms follow dev --as forager",
   bountyCli: "/cache/bounty/cli.ts",
   handle: "forager",
   seatDocRel: ".anthill/dev/forager.md",
@@ -43,11 +44,49 @@ describe("buildChecklist — the board Monitor filter (anthill#39)", () => {
   });
 });
 
+describe("buildChecklist — the comms wire carries NO filter", () => {
+  test("the comms line has no grep at all — verbatim means verbatim", () => {
+    // `comms follow` emits no keepalives, so there is nothing to strip. The two
+    // filters above exist ONLY to drop keepalives, and both of their silent
+    // failure modes are downstream of needing a filter at all.
+    expect(line("Monitor the team comms")).not.toContain("| grep");
+  });
+
+  test("it still tells the seat to wrap it with Monitor", () => {
+    expect(line("Monitor the team comms")).toContain("Monitor");
+  });
+
+  test("it carries the resolved incantation verbatim", () => {
+    expect(line("Monitor the team comms")).toContain(base.commsIncantation);
+  });
+
+  test("the no-filter rule is stated, so it does not read as an omission", () => {
+    // A seat that has just read two emphatic "always append grep -E
+    // --line-buffered" lines will add one by analogy unless told not to.
+    expect(line("Monitor the team comms").toLowerCase()).toContain("no filter");
+  });
+});
+
 describe("buildChecklist — buffering (anthill#54)", () => {
   test("every grep on a LIVE tail is line-buffered", () => {
-    const monitors = buildChecklist(base).filter((l) => l.startsWith("Monitor"));
-    expect(monitors.length).toBeGreaterThan(0);
-    for (const l of monitors) expect(l).toContain("--line-buffered");
+    // Keyed on the presence of a `grep`, NOT on the line starting with
+    // "Monitor". The original form asserted the latter, which quietly encoded
+    // "every wire has a filter" — an analogy that was true of the only two
+    // wires that existed, and became false the moment a filter-free one landed.
+    // A test that generalizes from a complete set is right until the set grows.
+    // Scoped to the WIRES (lines that arm a Monitor) that actually pipe to
+    // grep. Not every `| grep` in the checklist is a live wire — the catch-up
+    // line quotes `tail --from-start | grep` precisely as the thing NOT to do,
+    // and demanding `--line-buffered` on an anti-pattern would be nonsense.
+    const wires = buildChecklist(base).filter((l) => l.startsWith("Monitor"));
+    const filtered = wires.filter((l) => l.includes("| grep"));
+    expect(filtered.length).toBeGreaterThan(0);
+    for (const l of filtered) expect(l).toContain("--line-buffered");
+  });
+
+  test("a wire with no grep needs no buffering flag — and there is one", () => {
+    const wires = buildChecklist(base).filter((l) => l.startsWith("Monitor"));
+    expect(wires.some((l) => !l.includes("| grep"))).toBe(true);
   });
 });
 

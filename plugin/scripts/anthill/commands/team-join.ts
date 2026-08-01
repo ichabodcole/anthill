@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { isAbsolute, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { buildCommsIncantation } from "../comms.ts";
 import { resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { detectPlaceholder } from "../placeholder.ts";
@@ -22,6 +24,10 @@ interface JoinData {
   grounding: GroundingEntry[];
   tailCommand: string;
   boardTailCommand: string;
+  /** The team comms wire (`seams.md` Contract 4(b)). ALWAYS present — the
+   * consumer branches on this block rather than probing the filesystem or
+   * interpreting an exit code to decide what to render. */
+  comms: { channel: string; incantation: string };
   checklist: string[];
   /** Surfaced when a configured grounding path doesn't exist — a dangling
    * `config.grounding` ref (e.g. a default `AGENTS.md` the repo doesn't have)
@@ -32,6 +38,8 @@ interface JoinData {
 export interface ChecklistInput {
   tailCommand: string;
   boardTailCommand: string;
+  /** The team comms wire — fully resolved, run verbatim, filter-free. */
+  commsIncantation: string;
   bountyCli: string;
   handle: string;
   seatDocRel: string;
@@ -62,6 +70,11 @@ export function buildChecklist(i: ChecklistInput): string[] {
   return [
     `Monitor the grapevine — wrap with Monitor: ${i.tailCommand} | grep --line-buffered '"from"'`,
     `Monitor your board lane — wrap with Monitor: ${i.boardTailCommand} | grep -E --line-buffered '"type":"(task|unblocked|closed)"'`,
+    // Stated as an explicit NO-FILTER instruction, not left as an omission: a
+    // seat reading the two lines above has just been told twice, emphatically,
+    // to append `grep -E --line-buffered`, and will do it here by analogy. The
+    // rule only holds if the exception is named where the analogy is drawn.
+    `Monitor the team comms — wrap with Monitor, verbatim, NO filter (comms follow emits no keepalives, so there is nothing to strip; adding a grep here can only lose messages): ${i.commsIncantation}`,
     `Find your card BEFORE you claim it — read the board fresh (\`bun ${i.bountyCli} state --mine --as ${i.handle}\`) rather than trusting a listing already in your context; a stale listing is how seats claim a card by title-adjacency after the lead renumbered the board (anthill#40).`,
     "Own your card lifecycle: advance with `bounty update <id> --status doing` when you start, `--status review` when green (the bounty CLI has no `move` verb).",
     "Commit file-scoped with an EXPLICIT pathspec (never a bare `git commit` / `git add -A`). On a shared tree, serialize: announce, commit, confirm landed, then the next seat goes — or hand maestro your paths for one atomic land.",
@@ -168,9 +181,16 @@ export const teamJoinCommand = defineAnthillCommand({
     const boardTailCommand = `bun ${bountyCli} tail --mine --as ${handle}`;
     const seatDocRel = relative(root, config.seatDocPath(handle));
 
+    const commsIncantation = buildCommsIncantation({
+      cliPath: fileURLToPath(new URL("../cli.ts", import.meta.url)),
+      channel,
+      handle,
+    });
+
     const checklist = buildChecklist({
       tailCommand,
       boardTailCommand,
+      commsIncantation,
       bountyCli,
       handle,
       seatDocRel,
@@ -183,6 +203,7 @@ export const teamJoinCommand = defineAnthillCommand({
       grounding,
       tailCommand,
       boardTailCommand,
+      comms: { channel, incantation: commsIncantation },
       checklist,
       ...(warnings.length > 0 && { warnings }),
     };
@@ -212,6 +233,7 @@ export const teamJoinCommand = defineAnthillCommand({
           "Then wire BOTH watches (wrap each with Monitor — do not block):",
           `  grapevine:  ${d.tailCommand}`,
           `  board:      ${d.boardTailCommand}`,
+          `  comms:      ${d.comms.incantation}`,
           "",
           "Checklist — your action items as this seat:",
         );

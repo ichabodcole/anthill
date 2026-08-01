@@ -46,6 +46,39 @@ carried sixteen messages of ratified contract. The board is _state_ and the vine
 this is arguably correct — but it means **the board is not a reliable read of where the work is**, and
 the lead has to reconstruct that from the vine.
 
+**A7. ⚠ The crossing problem also happens between FILES, and the read-watermark has no equivalent for
+it. This is the sharpest coordination finding of the session.**
+
+One clause — Contract 4(b)'s absent-branch — drifted **three times**, and every individual fix was
+correct and independently verified:
+
+1. The contract promised an "explicitly absent" branch; the shipped code had **no such marker**.
+   weaver falsified it — against a contract **he had personally ratified twice** — by reading the code
+   rather than the owner's description of it.
+2. forager corrected the contract to match the code (always-present, `{ channel, incantation }`).
+   Right fix, verified on disk.
+3. Which made **weaver's prose false**: it now instructs a seat to read a marker the manifest has no
+   way to emit.
+
+**Nobody was careless, and no fix was wrong.** The mechanism:
+
+> **Two artifacts were fixed one at a time, each against the other's previous state, while both were
+> moving.** Every writer was correct about the state they had read.
+
+This is exactly the message-crossing problem, **with files as the medium** — and the convention that
+solves it for messages **does not transfer**. `ratified as of #14` works because a message has a
+stable id. **A file has no id to cite**, so there is no way to say _"I read `seams.md` as of which
+version"_ — and `git` hashes, which would serve, are not what anyone quotes in a ratify.
+
+**Design consequence for the comms tool, unproven and worth testing:** a ratify that can cite **both**
+a message watermark and a content hash of the artifact it ratifies would close this. Whether that is
+worth its ceremony is exactly the kind of thing the spike should learn by use rather than decide now.
+
+**Note the asymmetry that made it survivable:** the three message-level crossings this session were
+all caught _in flight_ by the watermark. This file-level one was caught only because a human-role seat
+read both artifacts side by side. **The convention we shipped covers the cheaper case and misses the
+more expensive one.**
+
 **A6. A timestamped green goes stale in seconds.** sentinel's `213/0 at 00:09:08Z` was false 77
 seconds later. Every seat began bracketing gate claims with timestamps unprompted. **A shared-tree
 team cannot cite a gate result; it can only cite a gate result _at an instant_.**
@@ -139,9 +172,48 @@ is mechanics working, not transmission working.** StoryLoom's next round is the 
 
 ---
 
-## Open question this session did NOT answer
+## Open Question 2 — ANSWERED, on day one, by an artifact
 
-**Does seat-aware identity change anything on day one, or is it only groundwork?** (Proposal Open
-Question 2.) Slice one built the identity resolution and contracted it, but **no session has yet run
-_on_ the tool** — so the question stands exactly where it started. That is the right outcome for
-slice one and should not be papered over at finalize.
+**"Does seat-aware identity actually change anything on day one, or is it only groundwork?"**
+_(Superseded an earlier note in this file saying the session had not answered it. It had — the
+evidence landed while this log was being written.)_
+
+**Yes.** The verifier ran the wire and the real messages in the log carry:
+
+```json
+"role": "brain (skills/methodology)"
+```
+
+**`role` is unrecoverable from `--as weaver` alone.** It can only have come from
+`.anthill/config.json`. That is the spike's entire wedge — the thing grapevine cannot do by trying
+harder, because a general tool can never know your roster — **observable in a message rather than
+argued for**, inside one session.
+
+The proposal said that if seat-awareness changed nothing observable on day one, that would be a signal
+about how much of the roster-awareness thesis is real. **It changed something observable on day one.**
+
+**What is still NOT answered, so this doesn't overclaim:**
+
+- **No session has yet run _on_ the tool.** The wedge is proven; the tool being _usable for real
+  coordination_ is not. Slice one's success criterion — _"one real convened session runs on it"_ —
+  remains open and is the next session's job.
+- **`follow` is unverified over a live append.** The verifier checked `read` and said so; the
+  streaming path has not been exercised.
+- **Whether seat-awareness is worth its cost** is a different question from whether it does anything,
+  and only use will answer it.
+
+## The spike-framing check
+
+The proposal's own success criterion: _"at least one thing we were sure we'd need turns out to be
+unnecessary — that is the signal the spike framing is working rather than being a design in
+disguise."_
+
+**Candidate: the explicitly-absent branch.** Contract 4(b) originally promised a marker distinguishing
+_"told there is none"_ from _"wasn't told anything,"_ and it was argued for hard and ratified twice.
+It turned out to be **unbuildable and unnecessary in slice one** — the skill and the tool ship in one
+subtree from one release, so the absent case cannot arise. The contract was amended to match. **We
+were sure we needed it; we did not.**
+
+Weaker but worth watching: the read-watermark was shipped as a guess and **earned its keep
+immediately**, which is the opposite signal — a convention we were _not_ sure about turning out
+load-bearing.
