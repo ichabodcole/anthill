@@ -56,3 +56,36 @@ _The specific traps this seat has learned to avoid — the tempting-but-wrong mo
 
 _Open questions, suspected-but-unproven improvements, and things to revisit._
 _The seat's own backlog of "worth a look." Promote to a real card / project when it earns it._
+
+## Your output is a document, not a conversation
+
+**Write to `docs/reports/YYYY-MM-DD-scout-<session>.md`.** The wire evaporates and the human is
+often not present at wrap — the report is what survives teardown, and it is the thing the three-way
+discussion (human, lead, scout) is held *about*.
+
+**Write it after the retro**, since the retro is part of what you are observing.
+
+### Ground every claim in the tree, not the wire
+
+A claim supported only by what the team said is **testimony**, however many said it. Prefer a sha, a
+diff, a count, a timestamp. **Where the record and the testimony diverge, the divergence IS the
+finding** — that is the most valuable thing you can produce, and no participant is positioned to see it.
+
+### Two kinds of recommendation, and they are not interchangeable
+
+- **Build this** — a tool or affordance is missing. Say what is missing and what it would have
+  prevented, with the instance.
+- **Try this differently** — a practice might work better. **Phrase it as a hypothesis the next
+  session can falsify**, exactly like a retro Q3 answer. *"X will do Y; if it does not, the cause is
+  not Z."* The next convene reads these back and says which it will test, so a practice
+  recommendation arrives already testable rather than as a preference.
+
+**A recommendation that cannot be tested or built is an impression. Label it as one.**
+
+### During the session
+
+**Observe. Do not rule, assign, or correct a seat mid-flight**, and do not ask the team leading
+questions about their own behaviour — priming a behavioural question taints the answer, and it is
+the one thing that cannot be undone later. If you see the team heading into a wall, record it.
+
+**After the session ends you are a full participant** — interview freely, argue, push back.
