@@ -461,3 +461,126 @@ describe("M4 — an unparseable id is refused, not silently answered with nothin
     expect(parse(run(teamDir, ["comms", "read", "--id", "1"]).stdout).ok).toBe(true);
   });
 });
+
+/**
+ * `send --dry-run` and `read --last N` — the two diagnostics that let a seat
+ * ask a question about this tool without writing to the team's permanent,
+ * never-cleared record.
+ *
+ * These run in their OWN tree, not the shared `teamDir`. A `--last N` assertion
+ * is a claim about WHICH messages are at the end of the log, so it must not be
+ * silently re-scoped by a test added above it later.
+ */
+describe("comms diagnostics: send --dry-run, read --last", () => {
+  let dir: string;
+  const dirLog = () => join(dir, ".anthill", "comms", "test-channel.ndjson");
+
+  beforeAll(() => {
+    dir = mkdtempSync(join(tmpdir(), "anthill-comms-diag-"));
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      JSON.stringify({
+        version: 2,
+        channel: "test-channel",
+        seats: [
+          { handle: "forager", role: "hands (CLI/engine)", scope: "scripts/", spawn: true },
+          { handle: "weaver", role: "skills", scope: "skills/", spawn: true },
+        ],
+      }),
+    );
+    for (const body of ["alpha", "bravo", "charlie", "delta"]) {
+      run(dir, ["comms", "send", body, "--as", "forager"]);
+    }
+  });
+
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  test("dry-run reports dryRun:true AND leaves the log byte-identical", () => {
+    // The positive anchor and the negative go in ONE test on purpose. Asserting
+    // only "the log did not change" is satisfied by a command that failed for an
+    // unrelated reason; asserting only `dryRun:true` is satisfied by a command
+    // that reported a dry run and appended anyway. Neither half alone is proof.
+    const before = readFileSync(dirLog());
+    const r = run(dir, ["comms", "send", "must never land", "--as", "forager", "--dry-run"]);
+    expect(r.code).toBe(0);
+    const env = parse(r.stdout);
+    expect(env.ok).toBe(true);
+    expect(env.data?.dryRun).toBe(true);
+    expect(env.data?.text).toBe("must never land");
+    expect(readFileSync(dirLog()).equals(before)).toBe(true);
+  });
+
+  test("dry-run emits NO id — the number does not exist until the append", () => {
+    // A predicted id is right only until a peer sends first. Emitting one would
+    // be a field claiming more than it can support, which is the exact defect
+    // the delivered-vs-emitted seam exists to prevent.
+    const env = parse(
+      run(dir, ["comms", "send", "no id here", "--as", "forager", "--dry-run"]).stdout,
+    );
+    expect(env.data).not.toHaveProperty("id");
+    expect(env.data?.identity).toBe("resolved-from-roster");
+  });
+
+  test("dry-run still ENFORCES identity — it is not a bypass", () => {
+    const r = run(dir, ["comms", "send", "ghost probe", "--as", "nobody", "--dry-run"]);
+    expect(r.code).not.toBe(0);
+    expect(parse(r.stderr).ok).toBe(false);
+  });
+
+  test("CONTROL: without --dry-run the same send DOES land", () => {
+    // Proves the comparator can report DIFFERENT. A byte-identical assertion
+    // from a harness that never observes a change is indistinguishable from a
+    // broken harness.
+    const before = readFileSync(dirLog());
+    const r = run(dir, ["comms", "send", "this one lands", "--as", "weaver"]);
+    expect(r.code).toBe(0);
+    expect(readFileSync(dirLog()).equals(before)).toBe(false);
+  });
+
+  test("--last N returns the N most recent messages, newest last", () => {
+    // Asserts WHICH messages, not how many. A count is not a reading: `slice(N)`
+    // and `slice(-N)` both return N rows and only one of them is `--last`.
+    const env = parse(run(dir, ["comms", "read", "--last", "2"]).stdout);
+    const msgs = (env.data?.messages ?? []) as Array<{ text: string }>;
+    expect(msgs.map((m) => m.text)).toEqual(["delta", "this one lands"]);
+  });
+
+  test("--last larger than the log returns everything, not an error", () => {
+    const all = parse(run(dir, ["comms", "read"]).stdout).data?.messages as unknown[];
+    const env = parse(run(dir, ["comms", "read", "--last", "9999"]).stdout);
+    expect((env.data?.messages as unknown[]).length).toBe(all.length);
+  });
+
+  for (const bad of ["abc", "0", "-3", "2.5"]) {
+    test(`--last ${bad} FAILS LOUDLY rather than returning an empty-looking success`, () => {
+      const r = run(dir, ["comms", "read", "--last", bad]);
+      expect(r.code).not.toBe(0);
+      const env = parse(r.stderr);
+      expect(env.ok).toBe(false);
+      expect(env.error).toMatch(/whole number/);
+      expect(r.stderr).not.toContain("NaN");
+    });
+  }
+
+  test("combining two window flags is REFUSED and names both", () => {
+    const r = run(dir, ["comms", "read", "--last", "2", "--since", "1"]);
+    expect(r.code).not.toBe(0);
+    const error = parse(r.stderr).error ?? "";
+    expect(error).toContain("--since");
+    expect(error).toContain("--last");
+  });
+
+  test("--last did NOT leak onto follow — a bounded-looking flag on a stream is the canonical trap", () => {
+    // `read` gaining `--last` is safe; `follow` gaining it would not be. A count
+    // flag on a streaming verb is the same shape as `--since 0`: it makes an
+    // endless stream LOOK finite, which is the mistake the verb surface exists
+    // to make inexpressible. (`read` having no `--follow` is asserted above.)
+    const followHelp = Bun.spawnSync(["bun", CLI, "comms", "follow", "--help"], {
+      cwd: dir,
+      env: cleanGitEnv(),
+    }).stdout.toString();
+    expect(followHelp).not.toContain("--last");
+    expect(run(dir, ["comms", "read", "--last", "1"]).code).toBe(0);
+  });
+});

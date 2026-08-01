@@ -93,6 +93,24 @@ interface SendData {
   warnings?: string[];
 }
 
+/**
+ * What a `--dry-run` send reports. Deliberately NOT `SendData` with a flag:
+ * a real send's `id` is a fact and a dry run has none, so sharing the shape
+ * would force either a fabricated id or an optional one whose absence is
+ * unreadable (Contract 5(a): a field populated on one path only).
+ */
+interface DryRunData {
+  dryRun: true;
+  channel: string;
+  from: string;
+  role: string;
+  identity: IdentityResult["outcome"];
+  /** The body that WOULD be stored, echoed so a caller can audit shell mangling. */
+  text: string;
+  wouldAppendTo: string;
+  warnings?: string[];
+}
+
 const sendCommand = defineCommand({
   meta: { name: "send", description: "Append a message to the team's channel as a seat" },
   args: {
@@ -114,6 +132,10 @@ const sendCommand = defineCommand({
     stdin: {
       type: "boolean",
       description: "Read the message body from stdin (REQUIRED for bodies with backticks or code)",
+    },
+    "dry-run": {
+      type: "boolean",
+      description: "Resolve and validate everything, then STOP before the write — appends nothing",
     },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
@@ -195,6 +217,51 @@ const sendCommand = defineCommand({
       process.exit(1);
     }
 
+    /**
+     * `--dry-run` — exercise the whole send path and STOP at the write.
+     *
+     * Why it exists: `send` had no way to ask a question without causing an
+     * effect, on an append-only log that nothing ever clears. Auditing what
+     * `send` does with a given input REQUIRED sending, so four diagnostic
+     * messages hit the team's permanent record in one session — the tool made
+     * polluting the record the price of verifying a claim about the tool.
+     *
+     * It runs AFTER identity, channel, positional-refusal and body resolution,
+     * so a dry run exercises every check a real send would fail on. Placing it
+     * earlier would make it a different code path that reports on the one it
+     * replaced — a proxy, and proxies eventually lie.
+     *
+     * It deliberately emits NO `id`. The id is `max(existing)+1` decided under
+     * a lock at append time; predicting it here would be a number that is right
+     * until a peer sends first, and a field that claims more than it can support
+     * is exactly the defect the delivered-vs-emitted seam exists to prevent.
+     * `wouldAppendTo` and the echoed `text` are facts; the id is not one yet.
+     */
+    if (ctx.args["dry-run"]) {
+      const data: DryRunData = {
+        dryRun: true,
+        channel,
+        from: identity.handle,
+        role: identity.role,
+        identity: identity.outcome,
+        text,
+        wouldAppendTo: path,
+        ...(warnings.length > 0 && { warnings }),
+      };
+      emit({
+        format,
+        command: "comms send",
+        data,
+        startedAt: started,
+        renderText: (d) =>
+          `DRY RUN — nothing was sent.\n` +
+          `would append to ${d.wouldAppendTo}\n` +
+          `as ${d.from} (${d.role}) on ${d.channel} — identity ${d.identity}\n` +
+          `body (${d.text.length} chars):\n${d.text}`,
+      });
+      return;
+    }
+
     mkdirSync(dirname(path), { recursive: true });
 
     // SERIALIZE the read-compute-append. The id is `max(existing) + 1`, decided
@@ -262,6 +329,11 @@ const readCommand = defineCommand({
     },
     since: { type: "string", description: "Only messages after this id", valueHint: "id" },
     id: { type: "string", description: "Fetch EXACTLY ONE message by id", valueHint: "id" },
+    last: {
+      type: "string",
+      description: "Only the most recent N messages (finite — use it to find an anchor id)",
+      valueHint: "N",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
     // RECOGNISED and REFUSED, not unknown. Every sibling wire takes `--as` on a
     // read verb, so muscle memory supplies it — and `read` is the one verb a
@@ -337,6 +409,51 @@ const readCommand = defineCommand({
       return n;
     };
 
+    /**
+     * `--id`, `--since` and `--last` are three answers to one question — WHICH
+     * messages — so combining them is refused rather than resolved by a silent
+     * precedence rule. A flag that is accepted and then quietly ignored while
+     * the command still reports `ok` is this tool's recurring defect class (a
+     * channel name stored as a message body; `--since '#14'` yielding NaN and
+     * an empty-looking success). The caller who typed two windows has a wrong
+     * model of one of them, and only an error tells them which.
+     */
+    const windows = (["id", "since", "last"] as const).filter(
+      (flag) => ctx.args[flag] !== undefined,
+    );
+    if (windows.length > 1) {
+      emitError({
+        format,
+        command: "comms read",
+        error:
+          `${windows.map((f) => `--${f}`).join(" and ")} cannot be combined — ` +
+          "each selects a different window (--id one message, --since everything after an id, " +
+          "--last the most recent N). Pick one; nothing was read.",
+      });
+      process.exit(1);
+    }
+
+    /**
+     * A count, not an id — so it gets its own validator rather than borrowing
+     * `readId`. `--last 0` is refused: it would return an empty list and read
+     * as a quiet channel, which is precisely the ambiguity `--last` was added
+     * to remove.
+     */
+    const lastN = (() => {
+      if (ctx.args.last === undefined) return undefined;
+      const raw = String(ctx.args.last);
+      const n = Number(raw);
+      if (!Number.isInteger(n) || n < 1) {
+        emitError({
+          format,
+          command: "comms read",
+          error: `--last needs a whole number of messages (1 or more), got "${raw}".`,
+        });
+        process.exit(1);
+      }
+      return n;
+    })();
+
     const one = ctx.args.id === undefined ? undefined : readId(String(ctx.args.id), "--id");
     if (one !== undefined) {
       const found = messages.find((m) => m.id === one);
@@ -348,6 +465,8 @@ const readCommand = defineCommand({
     } else if (ctx.args.since !== undefined) {
       const since = readId(String(ctx.args.since), "--since");
       messages = messages.filter((m) => m.id > since);
+    } else if (lastN !== undefined) {
+      messages = messages.slice(-lastN);
     }
 
     const data: ReadData = { channel, messages, ...(warnings.length > 0 && { warnings }) };
