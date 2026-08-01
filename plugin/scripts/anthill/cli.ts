@@ -19,6 +19,7 @@
  * wants `--format` must declare it locally.
  */
 
+import { emitError, resolveFormat } from "./agent-layer.ts";
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
 import { teamCommitCommand } from "./commands/team-commit.ts";
@@ -77,6 +78,61 @@ export const main: AnyCommand = defineCommand({
 });
 
 /**
+ * Recover the `--format` VALUE from raw argv, for the one caller that cannot ask
+ * the parser: the `CLIError` catch, where parsing is what failed.
+ *
+ * Deliberately returns the raw value rather than a decision — the caller passes it
+ * to `resolveFormat`, so the TTY-vs-pipe heuristic keeps exactly ONE implementation.
+ * A literal scan for `--format json` would look equivalent and is not: it misses a
+ * PIPED agent that passes no `--format` at all, which already gets JSON on every
+ * other path, and which is how anthill's own emitted incantations invoke the CLI.
+ *
+ * Yes, this is a second, dumber parse of argv. It cannot be unified with the real
+ * one — that is the failure being handled — so the obvious later "cleanup" is a
+ * regression, not a tidy-up.
+ */
+export function sniffFormatValue(rawArgs: string[]): string | undefined {
+  const PREFIX = "--format=";
+  let found: string | undefined;
+  for (let i = 0; i < rawArgs.length; i++) {
+    const arg = rawArgs[i];
+    if (arg === undefined) continue;
+    // Everything after `--` is a positional VALUE, never a flag — matching the
+    // real parser, so a path literally named `--format` can't move the verdict.
+    if (arg === "--") break;
+    if (arg.startsWith(PREFIX)) {
+      found = arg.slice(PREFIX.length);
+    } else if (arg === "--format") {
+      const next = rawArgs[i + 1];
+      if (next !== undefined) {
+        found = next;
+        i++;
+      }
+    }
+  }
+  // LAST occurrence wins: a root `--format` precedes the subcommand's, and the
+  // subcommand is the one whose failure is being reported.
+  return found;
+}
+
+/**
+ * The space-joined command path for the error envelope's `meta.command`, matching
+ * the hand-written strings commands pass to `emit`/`emitError` ("commit",
+ * "comms read"). The root's own name is not part of that convention, so it is
+ * dropped. Depth-2 by construction — `resolveSubCommand` returns only the immediate
+ * parent, which is every command shape the CLI currently has.
+ */
+export function commandPath(cmd: AnyCommand, parent?: AnyCommand): string {
+  const self = cmd.meta?.name ?? "";
+  if (!parent) return self;
+  const parentName = parent.meta?.name;
+  // The root is the parent of every top-level command; "anthill status" would not
+  // match what `status` itself emits.
+  if (!parentName || parent === main) return self;
+  return `${parentName} ${self}`;
+}
+
+/**
  * The CLI entry routine. Wrapped in a function (not bare top-level) so this
  * module can be imported for its `main` export without executing — only a direct
  * run (`import.meta.main`) invokes it. That importability is what lets
@@ -123,12 +179,37 @@ async function runCli(): Promise<void> {
   try {
     await runCommand(main, rawArgs);
   } catch (err) {
-    if (err instanceof CLIError) {
-      const [cmd, parent] = resolveSubCommand(main, rawArgs);
-      process.stderr.write(`${renderCommandUsage(cmd, parent)}\n`);
-      process.stderr.write(`${err.message}\n`);
+    const [cmd, parent] = resolveSubCommand(main, rawArgs);
+    // The format decision must NOT depend on where the error was raised. Errors
+    // raised inside `run()` reach this verdict via `resolveFormat(ctx.args.format)`;
+    // this path cannot (parsing is what failed), so it recovers the same INPUT from
+    // rawArgs and hands it to the same FUNCTION.
+    const format = resolveFormat(sniffFormatValue(rawArgs));
+    if (format === "text") {
+      // Byte-unchanged from before the agent-envelope fix: a usage block is the
+      // right answer for a human, and a stack is the right answer for a bug.
+      if (err instanceof CLIError) {
+        process.stderr.write(`${renderCommandUsage(cmd, parent)}\n`);
+        process.stderr.write(`${err.message}\n`);
+      } else {
+        process.stderr.write(
+          `${err instanceof Error ? (err.stack ?? err.message) : String(err)}\n`,
+        );
+      }
+    } else if (err instanceof CLIError) {
+      // Rendered usage NEVER enters a JSON field — not truncated, not escaped, not
+      // under a `usage` key. `err.message` already names what was wrong and the
+      // valid flag set, which is what an agent needs to self-correct.
+      emitError({ format, command: commandPath(cmd, parent), error: err.message });
     } else {
-      process.stderr.write(`${err instanceof Error ? (err.stack ?? err.message) : String(err)}\n`);
+      // An unexpected throw is a BUG, so the stack is the most valuable thing in
+      // the process — carried on `meta` rather than flattened away.
+      emitError({
+        format,
+        command: commandPath(cmd, parent),
+        error: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      });
     }
     process.exit(1);
   }

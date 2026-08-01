@@ -22,6 +22,14 @@ export type OutputFormat = "text" | "json";
 export interface OutputMeta {
   command: string;
   durationMs?: number;
+  /**
+   * The stack of an UNEXPECTED throw (a bug), preserved so an agent-mode failure
+   * is still debuggable. Deliberately on `meta`, not a top-level envelope field:
+   * top-level fields are TOTAL (same shape on every path), so an absent one would
+   * carry meaning with nothing to read that meaning by. `meta` already varies
+   * (`durationMs` comes and goes), which is what makes a sometimes-key correct here.
+   */
+  stack?: string;
 }
 
 export interface OutputEnvelope<T> {
@@ -67,7 +75,13 @@ export function emit<T>(options: {
   process.stdout.write(`${JSON.stringify(envelope)}\n`);
 }
 
-export function emitError(options: { format: OutputFormat; command: string; error: string }): void {
+export function emitError(options: {
+  format: OutputFormat;
+  command: string;
+  error: string;
+  /** Only for an unexpected throw — see {@link OutputMeta.stack}. */
+  stack?: string;
+}): void {
   if (options.format === "text") {
     process.stderr.write(`Error: ${options.error}\n`);
     return;
@@ -75,7 +89,10 @@ export function emitError(options: { format: OutputFormat; command: string; erro
   const envelope: ErrorEnvelope = {
     ok: false,
     error: options.error,
-    meta: { command: options.command },
+    meta: {
+      command: options.command,
+      ...(options.stack !== undefined && { stack: options.stack }),
+    },
   };
   process.stderr.write(`${JSON.stringify(envelope)}\n`);
 }
