@@ -126,3 +126,40 @@ Resolution is **spellbook-side** (v1.16.0): a verb with no `--session` resolves 
 **Why it bites:** without the key every un-flagged verb resolves the bounty daemon's global **`latest`** pointer — with two boards live, a seat silently reads/writes a **stranger's** board (anthill #23/#19; it froze live sessions). The failure is silent (`noop:true` the only tell) and hits exactly the **improvised** verbs a seat runs naturally, not just anthill's pre-emitted ones. Binding the _environment_ + the _directory_ (not each call) is what makes correctness require zero agent cognition.
 
 **Proof:** `plugin/scripts/anthill/commands/team-convene.test.ts` (`bountyOpenArgs` golden), `plugin/scripts/anthill/commands/team-spawn.test.ts` (`buildSeatLaunch` env-prefix + the 3 unsafe-key rejections), `plugin/scripts/anthill/commands/team-init.test.ts` (`planGitignore` reuse for `.bounty-session`, incl. the already-present-under-a-comment case). The live two-board hijack proof (a fresh stranger board as `latest`, an improvised `bounty update` from a seat pane STILL hitting ours) is sentinel's Phase 5 — the mechanism these unit seams compose can't be proven by a unit test.
+
+## Contract 4 — team-comms: the emitted incantation + seat-identity resolution
+
+**Owner:** forager · **Pointed at from:** weaver (`skills/join` renders the incantation and writes the usage-altitude prose a consumer repo actually reads)
+**Ratified at:** the **emitted incantation's form** and **identity resolution on every path, success included**.
+NOT the verb names, the flag surface, the channel-resolution rule, the on-disk log format, or the poll interval — those are the owner's to choose and change freely.
+Ratified on the vine (`anthill-dev` #7–#17, three seats, both directions) ahead of any code; maestro's #14 ruled siting (inside `plugin/`) and zero-dep (confirmed) and explicitly declined to touch the seam's contents.
+
+**The contract, stated once.**
+
+**(a) The incantation is a literal, fully-resolved, per-seat command string, composed by the CLI and rendered verbatim.**
+The consumer never composes it, never interpolates a handle into it, and never encodes the tool's location.
+House precedent is already in the tree: `anthill join` emits `tailCommand` / `boardTailCommand` fully resolved (handle already substituted), not a template.
+
+**(b) It reaches the consumer as a block in the join manifest that is either present-with-an-incantation or explicitly absent** — so the consumer branches on presence and never probes the filesystem or interprets an exit code to decide what to render.
+(Per maestro's #14 the skill and the tool ship in one subtree from one release, so the absent branch cannot arise inside a release and is not a slice-one requirement; the shape is stated anyway so no consumer invents a probe.)
+
+**(c) Identity is a seat, and the tool states where identity came from on EVERY path — success as much as failure.**
+The resolution outcome (resolved-from-roster · not-a-seat · no-config) is a first-class field in the `agent-layer` envelope, never encoded only in an exit code or in stderr prose.
+**There is no free-form-alias fallback:** `--as <handle>` that is not in the roster is an error, `--as` omitted is an error, and neither ever degrades to an ambient or caller-supplied identity.
+Failures never exit bare non-zero; a not-a-seat error enumerates the valid seats, as `anthill join <bogus>` already does.
+
+**(d) Where a consumer repo cannot see this file, pay the seam in emitted values rather than in words.**
+A distributed skill that says _"run the command the CLI printed"_ has no second copy to drift; one that names the invocation does, and the named copy is the one nobody updates.
+weaver's formulation, which is the actionable form: **exemplify the dialogue, never the invocation.**
+The consequence, from sentinel: the CLI's printed output *becomes* the load-bearing onboarding text, so the incantation is prose the owner is accountable for — not a mechanical string.
+
+**Why it bites.**
+**Success is the unfalsifiable case.** A send that resolved from the roster and a send that merely took the string the caller typed emit the same green — so without (c), seat-aware identity, which is the entire wedge of the spike, is unverifiable from outside the process and the spike's own Open Question 2 ("does it change anything on day one, or is it only groundwork?") is unanswerable at finalize.
+The field was asked for by the verifier as a confound-killer, withdrawn by him once no-fallback was ruled, and **kept anyway on the consumer's independent argument** — the two reasons are separable, and only one was ever withdrawn.
+A bare non-zero is the anthill#54 failure: a usage error and a broken tool are indistinguishable unless the output disambiguates them, which cost a seat an entire session.
+
+**Proof:** sentinel's three assertions, which convert the claim into observation rather than trust —
+(1) `--as <handle-not-in-roster>` → structured error **and nothing is sent** (an error envelope that still delivered would be the fallback wearing a hat; this is its own test, never a clause inside the error-shape test);
+(2) `.anthill/config.json` absent → structured error naming the path it looked for, run from a real tree with no config, not simulated;
+(3) `--as` omitted → error, not an ambient identity.
+_(Tests land with forager's lane; link them here when green.)_
