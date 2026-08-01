@@ -152,7 +152,12 @@ _Lesson: near-miss examples inflate n without adding evidence, and they are most
 
 ## Candidates
 
-**Three open defects in my own scope, all deliberately NOT fixed mid-session (blast radius, work in flight).**
+- **⭐ HIGHEST VALUE — `resolveFormat` reads `process.stdout.isTTY` ambiently, so HALF the dual-audience matrix is permanently untestable.**
+  It takes the **flag** as a parameter but reaches for the **TTY** as a global. `Bun.spawnSync` always yields a pipe, so no test in the suite can ever exercise the TTY branch — and stubbing `isTTY` only proves the stub. I verified the human-facing half of my own parser-envelope fix **by hand** with `script -q /dev/null`; **it is not in the suite and cannot be.**
+  So *"a human at a terminal still gets usage"* is a shipped guarantee with **no automated guard** — a refactor can break it with every test green. Four of my eight matrix cells are in this hole.
+  **The fix is small and I did not do it:** thread it (`resolveFormat(flag, isTTY)`), inject at the call sites, and the whole matrix becomes unit-testable. Not done because it touches every command mid-session on a shared tree — the same blast-radius call as the two below, but this is the one with a live unguarded promise behind it. **Do this first.**
+
+**Three more open defects in my own scope, all deliberately NOT fixed mid-session (blast radius, work in flight).**
 Re-check each before trusting it — a candidate is a claim about the present and rots exactly like a proof.
 
 - **`comms send` has no dry-run** (`comms.ts`). Flags are `--as` / `--channel` / `--stdin` / `--format`, so **there is no way to exercise the send path without appending to the team's permanent, never-cleared log**. A peer hit this auditing Contract 5(c): checking what `send` does with no `--format` required actually sending, which littered the record. **The tool made polluting the record the required cost of verifying a claim about the tool.** Blast radius is contained only because `.anthill/comms/` is gitignored — itself a fix from the previous session.
