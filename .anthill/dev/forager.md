@@ -66,7 +66,9 @@ The honest locator already existed in `ConfigError`'s own message ("could not fi
 _Lesson: re-deriving a value invents a second answer to a question that already has one, and the invented one is the one that lies._
 **The operational form, added after it recurred THREE times in one day, all on my own evidence:
 never re-type an identifier or a quotation — copy it, or cite the command that produced it.**
-(1) I put a **fabricated sha** (`d3ac6dd`, no such object) into a durable message whose subject was
+(1) I put a **fabricated sha** (`d3ac6dd` — **intentionally unresolvable; it IS the example, so any
+sha-audit over this file will flag it and should not report it as a new defect**) into a durable
+message whose subject was
 *"verify the premise before you act"*; the real one was two lines up in my own terminal.
 (2) I ran `git log -S` against **my own re-typed capitalisation** of a quoted string, got nothing, and
 nearly reported that the phrase had never existed in the repo — which would have sent three seats
