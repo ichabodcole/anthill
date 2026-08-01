@@ -160,8 +160,13 @@ deliverable is stranded on this branch.**
 
 ### Still unruled at close
 
-- **`resolveFormat(flag, isTTY)` threading** — filed on `develop` as `117d0e1`.
-- **Making the parser fix portable to `develop`** — new, and the largest open item.
+- ~~**`resolveFormat(flag, isTTY)` threading**~~ — filed on `develop` as `117d0e1`. **CLOSED.**
+- ~~**Making the parser fix portable to `develop`**~~ — **CLOSED 2026-08-01**: ported and merged as
+  `e03ec52`. The tests were the un-portable half, not the fix; they exercised `comms`, so they were
+  rewritten against commands `develop` actually has.
+
+*(Both were still listed as open here hours after being closed — the same staleness this entry was
+corrected for once already. A "still open" list nobody re-reads is a store without a re-read moment.)*
 
 *(Two items the first version listed here — the `join/SKILL.md` patch-recovery warning and the H6
 conversion — had already been fixed by `999c234` and `9a2888c`, 49 and 4 minutes before it was written.)*
