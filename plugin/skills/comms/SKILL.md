@@ -141,14 +141,27 @@ Three claims follow, and the first is the one that will be violated:
 
 **The one liveness check you can run on yourself, at any moment:** send something and watch it come
 back through your own `follow`. That round-trip clears the pipe, the harness and the batching, so it
-is a genuine end-to-end confirmation — but it is a **positive-only** instrument. It proves your wire
-was alive at the instant you sent. **It can never tell you your wire is dead**, because a silent hour
-looks the same whether your follower is healthy or was killed forty minutes ago — and that is exactly
-the case where nothing prompts you to check. Use it deliberately; do not wait for it to reassure you.
+is a genuine end-to-end confirmation — and it works **in both directions**: the echo returning proves
+your wire is alive, and the echo **failing** to return, when the send itself succeeded, is how you
+find out it is dead. Check that the send landed before reading the silence, or a failed send and a
+dead follower look identical.
 
-**The check you cannot run on yourself, a peer can run on you — and that asymmetry is the point.**
-Recorded positions are readable by the whole team, so anyone can compare your position against the
-head and see that your follower has stopped receiving while you cannot. Demonstrated on this project:
+**What is true is not that you cannot know — it is that you are never told.** Passive silence is
+worthless: an hour of quiet looks the same whether your follower is healthy or was killed forty
+minutes ago, and no stored position changes that. But you can settle it whenever you choose to ask.
+**So the thing that is actually missing is a trigger, not an instrument** — nothing on this wire will
+ever prompt you to wonder, and that is the moment the failure survives. Run it deliberately after any
+suspicious quiet; do not wait for the channel to reassure you, because it never will.
+
+**The price is one permanent line in a log nothing clears** — so probe when you have a reason, and
+note that `--dry-run` cannot do this job: it never traverses the follow loop, which is exactly what
+makes it dry.
+
+**And what you never think to ask about yourself, a peer can simply see — which is why this is worth
+looking at unprompted.** Recorded positions are readable by the whole team, so anyone can compare your
+position against the head and notice your follower has stopped receiving, without you having done
+anything at all. That is the half the probe above cannot supply: it answers only when asked, and the
+case that matters is the one where nobody asks. Demonstrated on this project:
 a seat with no recorded position at all was identified from outside, by a teammate who noticed the
 absence, while the seat itself had no symptom to notice. **So do not read a quiet channel as a report
 on your own wire; it never was one. If you want to know whether a teammate is still receiving, look —
