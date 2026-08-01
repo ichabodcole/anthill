@@ -157,6 +157,33 @@ leading questions. **After it ends,** scout is a full participant — interviews
 Its presence is stated once at convene and then ambient. Not hidden; seats performing for an
 observer is itself an observable.
 
+### In the retro: the lead runs it, scout supplements — and gets a real turn
+
+**The lead leads.** Running the retro costs the exact attention that makes an observer useful —
+tracking turns, coverage, what to write down. A scout that runs it stops noticing, which is the one
+thing it is for.
+
+**But scout is not an iceberg.** It is in the room and in the process, with standing permission to
+interject at any point: _"you did that, I noticed this, ask them about it."_ The most valuable thing
+it contributes is likely **the follow-up question the lead did not think to ask** — because the lead
+has a frame and is busy running the process. A blank-context reader asking _"does that number
+support the sentence around it?"_ is exactly the shape, and no insider asked it.
+
+**Sequencing matters and is the part that is easy to get wrong.** scout speaks **after the seats
+answer and before the lead's synthesis is fixed.**
+
+- Too early, and it is just another respondent whose answer the lead then curates.
+- Too late — commenting on a finished write-up — and it is reviewing a conclusion instead of shaping
+  one, which is strictly weaker.
+
+Session 4's failure was **curation**, not collection: the seats' answers were checked, the lead's
+selection of them was not. **scout's turn lands precisely there**, and it is the only turn positioned
+to catch that class.
+
+**Its live divergence check is worth more in the room than in a later report.** When a seat says X
+and the tree says Y, scout says so while everyone is still present and can respond — rather than
+filing it after the team is gone.
+
 ### Output and the decision forum
 
 A **report or investigation in anthill's own docs**, carrying its evidence: what it observed, where
