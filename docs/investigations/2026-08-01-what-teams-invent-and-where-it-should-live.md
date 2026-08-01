@@ -102,6 +102,55 @@ _Constraint, stated honestly:_ it assumes the studied project is **on this machi
 and it bounds the skill to the maintainers rather than making it shippable. Internal, like
 `cascade-check`.
 
+### ⚠ The channel already exists — and it stalled for the reason that matters
+
+**`protips` is live on grapevine with ~20 entries**, seeded 15 days before this investigation was
+written, already in the incident-shaped format argued for above (_"Grapevine: send code-bearing
+messages via `--stdin`, never inline"_, _"Bounty: pin the board when more than one may be open"_).
+
+**So the substrate question was already answered, and the thing still didn't work.** Why, from the
+human who created it:
+
+> _"The agents aren't aware that they should be looking at that channel or supplying their pro tips
+> unless I prompt that as part of some session work."_
+
+**Those 20 entries exist because a human asked an agent to write them.** That is the
+[elicits-not-collects finding](../backlog/2026-07-28-feedback-instrument-elicits-not-collects.md)
+again — of five coordination mechanisms found in a week, **not one arrived spontaneously.** So the
+touch point is not decoration on this idea; **it is the entire idea.** A channel without one is a
+diary that a human has to remember to dictate into.
+
+**Both sides need one, and shipping either alone fails:**
+
+| side      | natural moment | why                                                                                                                                                                                                                                               |
+| --------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **write** | `finalize`     | The seat has _just_ synthesised. The ritual already triages each note into seat doc (taste) / `seams.md` (boundary truth) / `paper-cuts.md` (tooling friction) — **a fourth route for _generalizable practice_ fits the existing shape exactly.** |
+| **read**  | `convene`      | Once per session, human present, **before the seats are briefed** — the same hook the version/drift checks want.                                                                                                                                  |
+
+**Write-only fills a channel nobody reads. Read-only points at an empty channel.** Ship both or
+neither.
+
+### The open design question: can a distributed skill name a channel?
+
+Raised and deliberately unresolved. A shipped skill naming `protips` hardcodes a **specific,
+global, cross-project coordination surface** into instruction text that runs in every consuming repo.
+That feels wrong, and it is worth pinning down why before doing it:
+
+- **In favour:** anthill already hardcodes `grapevine` and `bounty` by name, and this week established
+  that **whatever a skill names is what gets run** — so naming the channel would actually work, which
+  is not nothing.
+- **Against:** every other coordination surface anthill touches is **per-project** and resolved from
+  `.anthill/config.json`. A shared channel is **global by nature** — that is its whole value — so it
+  cannot come from per-project config without defeating itself.
+- **Possible resolution:** a documented default (`protips`) with an optional config override, the same
+  shape as `channel`. Unproven.
+- **Note the fit:** this is exactly the job grapevine is _better_ at than the comms tool. Comms is
+  team-local and roster-aware; **cross-project contact is grapevine's actual strength**, and the spike
+  explicitly left it there.
+
+**Not urgent.** But the channel existing and stalling is stronger evidence than the idea being
+untried — it tells us the substrate was never the hard part.
+
 ### Delivery — the touch point is the whole game
 
 Guidance that ships via templates **reaches new teams only** (see the constraint above). So the

@@ -77,6 +77,50 @@ diff is the only record available** — which is why `upgrade` §4a now leads wi
 Their standing recommendation: **run `upgrade` on every anthill release, not on a version bump**,
 since most releases won't move the version at all.
 
+## ⚠ Three questions, not one — and they COMPOSE
+
+This item was filed for one of them. Naming all three, because answering the wrong one produces
+false reassurance:
+
+**a. Content drift — _does my footprint differ from the templates I have?_** What this item was
+filed for. Answered by diffing rendered docs against the shipped templates.
+
+**b. Plugin currency — _is my installed plugin behind the latest release?_** **Not captured
+anywhere until now.** Nothing in anthill tells a team a newer release exists. `anthill migrate`
+answers a footprint-_layout_ question, `status` answers a session question, and neither looks
+outward.
+
+**c. Session pin — _did THIS session resolve a stale skill version?_** Observed live on 2026-08-01
+and recorded in
+[finalize-drift-pass-improvements](2026-08-01-finalize-drift-pass-improvements.md): a session holds
+the plugin version it started with, so an update mid-session does not reach it. The lead's session ran
+**1.5.0** while the installed version was **1.7.0** — and the lead is the seat that convenes and
+finalizes.
+
+**The composition is the important part, and it is why (a) alone is dangerous:**
+
+> **(b) gates (a).** A drift report run against a stale plugin compares your footprint to **old**
+> templates and reports **clean** — while you are two releases behind everything the newer ones added.
+> _"Your SOP matches the template"_ is true relative to the plugin you have and false relative to the
+> world.
+
+That is the granularity pattern again — a check that is correct at one scope, relied on at a wider
+one — which is exactly the shape this whole line of work keeps producing. **So the order is fixed:
+answer (b) first, then (a). A drift report that does not know its own plugin might be stale is worse
+than no report, because it converts "I don't know" into a green tick.**
+
+**What (b) needs, and it is not obvious:** the plugin is installed from a `git-subdir` marketplace
+source, so "is there a newer release?" is a **network** question, and anthill's shipped subtree is
+deliberately zero-dependency and offline-friendly. Cheapest honest options, in order of preference:
+
+- **Report the installed version at the touch point and let the human judge** — no network, no
+  claims. _"This team is running anthill 1.5.0"_ at convene is often enough, because the human knows
+  whether they updated recently.
+- **Compare against the marketplace cache on disk** — several versions usually sit there already
+  (this machine had 1.5.0, 1.6.0 and 1.7.0 cached while 1.5.0 was resolving), so a newer _cached_
+  version is strong evidence without a network call.
+- **A real remote check** — most accurate, worst fit for the constraints. Probably not.
+
 ## Shape of the fix (not settled)
 
 The cheap end is probably enough, and the expensive end is probably wrong:
@@ -102,6 +146,8 @@ The cheap end is probably enough, and the expensive end is probably wrong:
 ## Acceptance Criteria
 
 - [ ] A team can find out that its living docs are behind **without already suspecting it**.
+- [ ] The team can find out **which plugin version it is running**, at a touch point that fires on its
+      own — and the drift report does not claim "clean" without that being known.
 - [ ] The signal distinguishes _differs from the current template_ from _is wrong_ — it must not read
       as an error, because local divergence is legitimate and expected.
 - [ ] Nothing auto-merges a living doc.

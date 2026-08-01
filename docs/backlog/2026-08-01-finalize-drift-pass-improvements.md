@@ -62,6 +62,12 @@ already running.** Established by comparing panes, not inferred:
 So this is not a broken cache; it is **a session holding the version it started with.** Caught only
 because the skill prints its own path at load.
 
+**Confirmed later the same day, and it is stronger than first written.** The lead's session was still
+resolving **1.5.0** after **three** further plugin updates (1.6.0, 1.7.0, 1.7.1 — all four cached on
+disk, 1.7.1 installed). So it is not _"an update mid-session doesn't reach it"_; it is **no number of
+updates reach it.** Only a restart does. The pin was tested deliberately by invoking a skill and
+reading the base directory it reported — which is the only available check.
+
 **Consequence, and it is asymmetric in the worst way: the stale session was the LEAD's.** The 1.5.0
 finalize skill **has no step 2.5 at all** — so the agent running the ritual for the whole team had the
 version missing the step that then found drift in every seat's docs, while the seats it was
