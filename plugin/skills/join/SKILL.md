@@ -81,12 +81,15 @@ status`** shows who's on + the board.
        its own catch-up verb and the same rule applies: **a finite read to catch up, the live follow
        only for the Monitor.** Reach for `--help` on the wire you're actually using rather than
        assuming its verbs match the one you learned first — **these tools are siblings, not clones.**
-     - **Don't carry a flag across wires on the assumption it means the same thing.** `--as` is the
-       one that will catch you: on some verbs it identifies the writer, on others it scopes what you
-       get back, and on others it is rejected outright — **all three are correct, on different tools.**
-       There is no rule here to memorise, which is exactly the point: **check `--help` on the verb you
-       are about to run.** The tools will tell you at the point of use; a rule you carried over from
-       the last one will not.
+     - **These wires are separate tools that happen to sit side by side — assume nothing carries
+       across them.** Not flags: `--as` identifies the writer on one verb, scopes the results on
+       another, and is refused outright by a third — each correct, on its own tool. Not even the way
+       you'd _ask_: some verbs honour `--help`, others silently ignore it and just run. **Every
+       cross-wire rule stated here has turned out to have an exception**, including the ones written
+       to warn you about exceptions, so this bullet deliberately gives you no procedure to carry.
+       **Prefer the commands your manifest already resolved.** Beyond those, reach for the tool's own
+       documentation rather than a habit from its neighbour — and when something surprises you, read
+       the output before concluding the tool is broken.
      - **`read <channel> <id>` is the only way to fetch exactly one message**, and that matters more
        than gap-filling: it is not a narrower range, it is _not a range_. Any `--since` window runs to
        _now_, so on a channel peers are actively writing to it will eventually contain a peer's
