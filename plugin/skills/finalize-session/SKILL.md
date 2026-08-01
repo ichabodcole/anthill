@@ -161,7 +161,14 @@ rule in the very commit that creates the truth being restated.
      and it still never reached anthill, because nothing in this ritual asked it to. **The reflection
      produces the most valuable feedback anthill gets and currently routes none of it upstream.**
 
-4.5. **Retro — three questions, answered as a team, written to `.anthill/retro.md` (newest first).**
+4.5. **Retro — three questions, answered as a team. THE LEAD WRITES `.anthill/retro.md` (newest first)
+before teardown, from the seats' answers on the wire.**
+Name the writer or the file does not get written: seats answer, and every one of them can follow
+this step exactly while the artifact still fails to exist. **The first run of this ritual produced
+no file for exactly that reason** — the step said what and where, and nobody owned the act.
+Capture what you have rather than holding teardown for completeness: **the vine evaporates**, so a
+partial retro that exists beats a complete one that died with the panes — and _"two seats did not
+answer"_ is itself a result about the ritual, not an embarrassment to paper over.
 Distinct from step 4: the structure reflection asks about the team's **shape**; the retro asks for
 **judgement about the session**. Also distinct from the friction sweep in step 1 — that collects what
 happened, this evaluates it.
@@ -221,7 +228,9 @@ it has gone wrong.**
    - ◻ **Every seat reconciled its doc against contracts that CHANGED this session** (step 3.5) —
      restatement replaced with a pointer. The ordering makes this violation the default, not the
      exception: a four-seat team hit it in all five docs at once.
-   - ◻ **Retro written to `.anthill/retro.md`** (step 4.5), newest first — and **every Q3 answer is a
+   - ◻ **Retro written to `.anthill/retro.md` BY THE LEAD** (step 4.5), newest first — the seats
+     answered on the wire; **the wire evaporates and the file is the only thing that survives.**
+     **Every Q3 answer is a
      hypothesis the next convene can test**, not a preference. Check one thing before you land it:
      **is any Q1/Q2 answer carried only by everyone agreeing?** If it has no artifact, no number and
      no count behind it, either attach one or label it as testimony. A retro that skips this is the
