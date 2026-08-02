@@ -142,6 +142,21 @@ cannot see it** — _"my paths are clean"_ is true and blind.
 for a **shared** file: say on the vine that you're taking it, and land your edit promptly rather than
 holding it while others write. A short hold is the only real protection the tooling gives you here.
 
+**Read the envelope your land returns — it already answers two questions seats keep reconstructing by
+hand.** Both are on `anthill commit`'s own output, on every land:
+
+- **`waitedMs`** — how long you queued on the serialize lock. Non-zero means a peer was landing at the
+  same moment, so this **is** the concurrency window, measured rather than estimated.
+- **`uncheckedAgainst`** — dirty paths **outside** your commit at the instant it landed. The gate runs
+  over the **whole tree**; your commit contains only your paths. **Non-empty means your green was
+  measured against work your commit does not include, so the commit was never checked in isolation.**
+  That is the false-green, reported at the moment it happens rather than discovered later.
+
+_Scar: a team measured `bun run check` green, landed, and reconstructed its own race window three
+separate ways across three seats — while the CLI printed the number on every one of their commits.
+The affordance was not missing; it was unnamed, and nothing pointed at it. **Check `uncheckedAgainst`
+before you treat a green as a verdict on your commit.**_
+
 ## Shared practices (true for every seat)
 
 > **The team's PRINCIPLES live in [`principles.md`](./principles.md), not here** — the hard-won
@@ -230,6 +245,11 @@ rather than shape, and two rules are what make it more than a mood:
   agents who shared one session and one frame will converge, and that convergence is the expected
   output of shared priors rather than evidence. **A unanimous "what went well" is a smell.**
   **The lead is in scope** — a retro where the lead comes out clean is a retro that did not run.
+  **And the lead should not open by listing his own errors.** It reads as the opposite of
+  defensiveness and it is not: **a well-executed self-list pre-empts the audit**, leaving a seat
+  nothing to do but concur, so the document becomes indistinguishable from one where the audit found
+  nothing. _Scar: an observer seat checked and found **no seat produced a criticism of the lead he
+  had not already volunteered.**_ Say you are in scope; then say nothing until the seats have written.
 
 ## Onboarding a fresh agent
 

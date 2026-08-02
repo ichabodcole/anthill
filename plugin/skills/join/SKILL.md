@@ -179,6 +179,12 @@ status`** shows who's on + the board.
      on, dispatch a **blank-context** subagent to re-derive it adversarially — _"here's the input and
      the question; find what I missed."_ **Your framing is the blind spot, and fresh context is the
      antidote.** A real 5-item under-enumeration in that session would have been caught pre-post.
+     - **Give it the ARTIFACT, not the conversation.** Hand it the file, the diff, the command — and
+       **do not paste the channel, and do not summarise what you were trying to do.** Both hand it
+       your framing, which is the one thing it was dispatched not to have; **its value is
+       incomprehension**, and a helpful briefing destroys exactly that. _On most setups the channel
+       is gitignored, so a fresh agent cannot reach it — a protection that holds only until someone
+       helpfully pastes it in._
 
 ## Join checklist (the beats that get skipped)
 

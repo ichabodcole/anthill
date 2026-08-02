@@ -214,6 +214,22 @@ Two rules do all the work here. Without them a retro produces a mood, and a mood
   one team, three seats accepted the lead's correction on sight and each amplified it against
   themselves — and part of it was wrong. **Unanimous deference would have carried a false claim
   into a document with nothing to check it against.**
+  - **And the lead should NOT open by listing his own errors.** It reads as the opposite of
+    defensiveness and it is not: **a lead who self-lists well pre-empts the audit**, because there is
+    nothing left for a seat to do but concur, and the resulting document is indistinguishable from
+    one where the audit found nothing. _Observed: an observer seat checked and found **no seat
+    produced a criticism of the lead he had not already volunteered.**_ Say you are in scope, then
+    say nothing further until the seats have written.
+- **Commissioning a cold reviewer? GIVE IT THE TREE, NOT THE WIRE.** A blank-context reviewer is the
+  one instrument a retro's shared frame cannot contaminate — and that only holds while it reads
+  **committed artifacts**. Point it at the repo, the shas, the diffs, the tests.
+  - **Do not paste in the channel log, and do not summarise the session for it.** Both hand it the
+    team's framing, which is the single thing it was commissioned not to have. **Its value is
+    incomprehension**, and a helpful briefing destroys exactly that.
+  - _Worth stating because on most setups this protection is **accidental**: the wire is typically
+    gitignored, so a reviewer working from a clone cannot reach it — until someone helpfully pastes
+    it in. **A safeguard that survives only until a well-meaning person acts is not a safeguard**,
+    which is why it is written here rather than assumed._
 
 **4. Did this session produce a PRINCIPLE?** Asked once, at the end, and **usually the answer is
 no.** A principle is a claim about **how work goes wrong**, general enough to survive a change of
