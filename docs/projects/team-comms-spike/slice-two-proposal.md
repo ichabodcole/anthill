@@ -87,6 +87,9 @@ field names, the storage format, or the poll interval.
 
 - **Guest identity.** Needed to ship comms to another project, **not** needed to create `scout` —
   a rostered observer is just a seat. Demoted below the items above.
+  > **⚠ That second clause was FALSIFIED the same day, and by the seat it is about.** _"A rostered
+  > observer is just a seat"_ is true of the scout we built and **false of the one the session's own
+  > report asks for.** See R10.
 - **Threading, reply-to, channel clearing.** Nobody has reached for them.
 - **The heartbeat fix** — that is bounty, not comms. Filed separately.
 
@@ -207,6 +210,42 @@ So the honest three-part verdict:
 **H8 survives and should be kept.** The probe does not falsify it — the wire still reports nothing on its own; something _outside_ the wire can interrogate it, which is a different and arguably more useful claim.
 
 **Falsifier for the refinement:** _a seat that runs the echo probe after any suspicious quiet period detects a dead wire in one round-trip, every time._ If that fails, the probe is unreliable and the verdict stands unqualified.
+
+### R10 — guest identity is promoted, because the lurking observer IS a guest (human, 2026-08-02)
+
+**The descope reasoning above is falsified.** _"A rostered observer is just a seat"_ holds for the
+scout we ran — visible, rostered, participating. **It fails for the observer the report asks for**,
+and the two-scout design is what exposes it.
+
+**The design, folded rather than invented.** Report §4.3 / T3 proposed comparing observe-only against
+participate **across sessions**, which is confounded by everything that differs between sessions. The
+human's shape is stronger and it is a **within-session control**: run **two** scouts at once — one
+that participates as the need arises (ruled in `dev/scout.md`), and one that **only observes**.
+
+**The second one is a GUEST, not a seat**, and that is the whole promotion: a participant with a
+position and **no send rights** — exactly the item descoped above.
+
+**Why a seat cannot do it.** An observer declared in `seats[]` is visible three ways at once: the
+config, the roster table every seat reads at join, and **presence, which is a side effect of
+tailing** — so it appears in `anthill status` the moment it wires up to watch. Seats then know they
+are observed, by whom, and that a report goes to the human. **The instrument is part of what it
+measures.**
+
+**Anonymised handle:** offered as optional by the human and worth taking — a neutral name reduces
+what the team can infer. **Not load-bearing.**
+
+**⚠ The load-bearing part, and it is one condition:** the human's ruling holds **as long as the agent
+does not actually participate.** So `send` must be **refused by the tool**, not avoided by the
+observer's discipline.
+
+_This is not caution, it is this session's own result: prose guards lost to mechanical ones every time
+they were tested (H1), including against the lead, on the same problem, in the same session. An
+observer whose silence rests on its own restraint is a prose guard — and it is the single guard the
+entire experiment's validity rests on._ **A guest that can send is not a control.**
+
+**Open for the owner:** whether a guest is roster-adjacent or a separate identity class, and how
+`resolveSeatIdentity` admits it **without** re-opening the free-form-alias hole Contract 4(c) closes.
+`read` is already identity-free (4(c-bis)), so **the work is on `follow` and on refusing `send`.**
 
 ### Team rule adopted this session (not comms-specific)
 
