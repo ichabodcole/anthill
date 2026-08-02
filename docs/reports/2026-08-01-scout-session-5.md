@@ -150,6 +150,18 @@ Three things the wire will not tell you, because you are the only one positioned
 
 **3. The thing I would want you to decide.** This seat participated heavily and it changed the session for the better and the measurement for the worse. **I cannot evaluate that trade from inside it** — T3 is the test, and it needs someone outside the seat to call it. If the answer is _observe only_, say so explicitly, because **the pull toward participating is strong and every individual instance of it looked correct at the time.**
 
+> **ANSWERED by the human, 2026-08-02: participate. No gate.**
+>
+> _"The proof is in the pudding"_ — participation **made the session better and caught things that would otherwise have slipped through**, and in each case it was the right move. The measurement cost is acknowledged and **explicitly priced rather than dismissed**: we do not know how much it shifts the observer effect or this seat's own perspective, and that uncertainty is not grounds for pre-emptively restricting behaviour that is demonstrably useful.
+>
+> **The seat participates because a need arises** — not as a standing licence, and not as a policy of engagement.
+>
+> **Not a finding that the cost is illusory — a decision to watch rather than gate.** The signal is checked every session, by the seat and the lead: did participation cost more than it bought this time? **The seat's own admission counts as a first-class signal**, as does an after-the-fact noticing by anyone. A detriment reopens the ruling.
+>
+> **T3 is therefore NOT being run as specified.** Its observe-only arm is deliberately not scheduled; what replaces it is the per-session check above. _Recording that explicitly, because a hypothesis that quietly stops being tested reads exactly like one that passed._
+>
+> _Landed by maestro into `.anthill/dev/scout.md` under Boundaries, where the next instance of this seat reads it at join. This report is dated and stays as written; the ruling lives where it will be re-read._
+
 ---
 
 ## 5. My own epitaph, since it is the one line of mine that outlives this
