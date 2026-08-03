@@ -33,6 +33,7 @@ import { dirname } from "node:path";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import {
   buildCommsIncantation,
+  buildPositionsReport,
   type CommsMessage,
   commsLogPath,
   commsPositionPath,
@@ -44,6 +45,7 @@ import {
   positionState,
   resolveSeatIdentity,
   type SeatPosition,
+  type SeatPositionRow,
 } from "../comms.ts";
 import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
 import { defineAnthillCommand, defineCommand } from "../define.ts";
@@ -831,13 +833,148 @@ const followCommand = defineCommand({
   },
 });
 
+interface PositionsData {
+  channel: string;
+  head: number;
+  seats: SeatPositionRow[];
+  warnings?: string[];
+}
+
+/**
+ * `anthill comms positions` — the CROSS-SEAT read of the `emittedThrough` files
+ * that already existed. H12's direct test: the data was on disk all along and
+ * the missing thing was a NAME for it, so every seat who wanted this answer
+ * hand-rolled a `cat`-and-compare over a private path.
+ *
+ * IDENTITY: no `--as`, and that is a decision rather than an omission
+ * (Contract 4(c-bis)). Identity binds the verbs that ATTRIBUTE — `send` puts a
+ * name on a durable artifact, `follow` registers a live participant. This one
+ * observes and attributes nothing, and it is the verb you reach for when you
+ * suspect your OWN wire is dead, which is exactly when requiring a resolved
+ * seat would be worst.
+ *
+ * It reports EMITTED, never delivered (Contract 6(a)), and it can only convict
+ * a follower once somebody sends — on a silent channel every wire looks alike,
+ * healthy or dead.
+ */
+const positionsCommand = defineCommand({
+  meta: {
+    name: "positions",
+    description:
+      "Where every seat stands on the channel (three states — null/0/N, never flattened)",
+  },
+  args: {
+    channel: {
+      type: "string",
+      description: "Channel (default: config.channel)",
+      valueHint: "name",
+    },
+    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    as: {
+      type: "string",
+      refused:
+        "positions are not attributed to a seat (identity binds sending and following, not observing)",
+    },
+  },
+  async run(ctx) {
+    const started = nowMillis();
+    const format = resolveFormat(ctx.args.format);
+    if (ctx.args.as !== undefined) {
+      emitError({
+        format,
+        command: "comms positions",
+        error:
+          "`--as` is not accepted here: positions are not attributed to a seat (identity binds sending and following, not observing), so drop the flag and the command works unchanged",
+      });
+      process.exit(1);
+    }
+    const { config, configSearch } = loadTeam();
+    const channel = resolveChannel(config, ctx.args.channel);
+    if (!config || !channel) {
+      emitError({
+        format,
+        command: "comms positions",
+        error: `no team config found — cannot resolve a channel. ${configSearch}`.trim(),
+      });
+      process.exit(1);
+    }
+
+    let head: number;
+    let warnings: string[];
+    try {
+      const log = readChannel(config.teamDirPath(), channel);
+      head = log.messages.length > 0 ? (log.messages.at(-1)?.id ?? 0) : 0;
+      warnings = log.warnings;
+    } catch (err) {
+      emitError({ format, command: "comms positions", error: (err as Error).message });
+      process.exit(1);
+    }
+
+    const positions = new Map(
+      config.seats.map((s) => [s.handle, readPosition(config.teamDirPath(), channel, s.handle)]),
+    );
+    // Advisory liveness. `process.kill(pid, 0)` throws ESRCH for a dead pid and
+    // EPERM for one we may not signal — EPERM means it EXISTS, so that branch is
+    // alive, not unknown. Anything else we decline to guess about.
+    const alive = (pid: number): boolean | null => {
+      try {
+        process.kill(pid, 0);
+        return true;
+      } catch (err) {
+        return (err as NodeJS.ErrnoException).code === "ESRCH"
+          ? false
+          : (err as NodeJS.ErrnoException).code === "EPERM"
+            ? true
+            : null;
+      }
+    };
+
+    emit({
+      format,
+      command: "comms positions",
+      data: {
+        channel,
+        head,
+        seats: buildPositionsReport(head, config.seats, positions, alive),
+        ...(warnings.length > 0 && { warnings }),
+      } satisfies PositionsData,
+      startedAt: started,
+      renderText: (d) => {
+        const lines = [`Channel: ${d.channel} · head #${d.head}`];
+        for (const s of d.seats) {
+          // Each state gets its OWN sentence. A single template with a number in
+          // it is where null becomes 0 and "never followed" becomes "caught up".
+          const where =
+            s.state === "never-followed"
+              ? "never followed — no position recorded, so this tool does not know what it has seen"
+              : s.state === "current"
+                ? `current (through #${s.emittedThrough})`
+                : `BEHIND by ${s.gap} (emitted through #${s.emittedThrough})`;
+          const follower = s.followerAlive === false ? " · recording follower is GONE" : "";
+          lines.push(`  ${s.handle} (${s.role}): ${where}${follower}`);
+        }
+        lines.push(
+          "Reports what was EMITTED to each seat, not what arrived — and it can only convict a follower once someone sends.",
+        );
+        if (d.warnings?.length) for (const w of d.warnings) lines.push(`⚠ ${w}`);
+        return lines.join("\n");
+      },
+    });
+  },
+});
+
 export const teamCommsCommand = defineAnthillCommand({
   meta: {
     name: "comms",
     description: "The team's seat-aware message log (send / read / follow)",
     scope: "workspace",
   },
-  subCommands: { send: sendCommand, read: readCommand, follow: followCommand },
+  subCommands: {
+    send: sendCommand,
+    read: readCommand,
+    follow: followCommand,
+    positions: positionsCommand,
+  },
 });
 
 export { buildCommsIncantation };
