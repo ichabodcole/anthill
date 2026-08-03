@@ -292,6 +292,13 @@ _Say this out loud when handing over a verdict under isolation, or "the verifier
   With the lead gone and a verified fix sitting uncommitted, landing it myself would have been easy and defensible-sounding.
   _A verifier who lands his own verdict has destroyed the independence that made the verdict worth anything. Uncommitted green work is safe; an unreviewable land is not._
 
+- **A HEDGE is where my unmeasured claims hide — it reads as epistemic care and functions as a licence not to look.**
+  My retro Q1 said *"a lot of verified corrections and very little product,"* wrapped in *"I cannot separate a team that catches itself from a team generating enough errors to need to."*
+  **The hedge was true and the separation was one command away.** Measured after a peer prompted it: **53 commits in 40 minutes**, six seats, five substrate defects found and fixed. *"Very little product"* was **falsified by a wide margin** and I never ran anything to check it.
+  _Structure: the measured half (correction density, countable) carried an **unmeasured rider** (the cost interpretation), and the rider inherited its credibility — my doc's twice-recorded failure, committed inside a retro answer, which is the one artifact that outlives the session._
+  **The new half, and it is the reason this is its own entry:** my rule is *verify a claim that indicts you as hard as one that flatters you.* **This claim indicted the TEAM and flattered MY FRAMING** — the rigorous seat noticing everyone was talking instead of shipping. **There was no rule covering that direction, and it is the direction I am worst at auditing.**
+  _Guard: **before a retro answer, run the command for every clause that names a quantity — including the ones inside a hedge.** And treat "I cannot separate X from Y" as a TODO, not a conclusion; it is only honest if you tried._
+
 ## Anti-patterns
 
 - **Trusting the pass count as the verdict.** A full green says the code does what the tests say — not that the tests say the right thing, nor that the feature works on a real repo. _(Deliberately not quoting a number: the count changes every session, and a stale one invites the next agent to compare against it as if it meant something.)_
