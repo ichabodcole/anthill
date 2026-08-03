@@ -9,7 +9,7 @@
 
 import { emitError, type OutputFormat } from "../agent-layer.ts";
 import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
-import { execCoord, parseJsonLine, resolveCoordCli } from "../coord.ts";
+import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
 
 /**
  * Load the resolved `.anthill/config.json` for a team command, or emit a clear
@@ -95,19 +95,69 @@ export async function readBoardCounts(): Promise<{
 }
 
 /**
- * Deduped, sorted list of seats currently on the grapevine channel. NEVER throws
- * — any failure (CLI unresolved, dead daemon, parse miss) returns `[]` so a
- * broken vine can never wedge a teardown or other presence guard.
+ * Who is on the channel, as THREE distinguishable states rather than a list that
+ * is empty for two unrelated reasons.
+ *
+ * This mirrors `positionState` in `comms.ts` deliberately (seams.md Contract
+ * 6(c)): `never-followed` is not a rounded-down zero, and `unknown` is not an
+ * empty channel. Both are the same rule — a tool may not report an absence it
+ * did not observe.
  */
-export async function presentSeats(channel: string): Promise<string[]> {
+export type SeatPresence =
+  | { state: "unknown"; reason: string }
+  | { state: "none" }
+  | { state: "present"; seats: string[] };
+
+/**
+ * PURE classifier (the unit-test target) over what grapevine's `who` returned.
+ *
+ * Every branch that is not a positively-observed subscriber list is `unknown`.
+ * The one that reads like an answer and is not: `daemon: false` arrives with
+ * `ok: true` and parses cleanly — the call succeeded and told us the wire is
+ * down. That is the least information available about who is present, not the
+ * most.
+ */
+export function classifyPresence(
+  result: { ok: boolean; stderrLine?: string },
+  parsed: { daemon?: boolean; subscribers?: string[] } | null,
+): SeatPresence {
+  if (!result.ok) {
+    return { state: "unknown", reason: result.stderrLine || "grapevine 'who' failed" };
+  }
+  if (!parsed) return { state: "unknown", reason: "grapevine 'who' returned no parseable JSON" };
+  if (parsed.daemon === false) {
+    return { state: "unknown", reason: "grapevine daemon not running — no presence available" };
+  }
+  // Absent is not empty. A payload with no `subscribers` key is a shape we did
+  // not expect, and guessing "empty" is the fail-open direction.
+  if (!parsed.subscribers) {
+    return { state: "unknown", reason: "grapevine 'who' returned no subscribers field" };
+  }
+  // Dedupe by handle — a seat with >1 live connection (vine tail + board tail)
+  // otherwise shows up twice. Presence is "who's here", not sockets.
+  const seats = [...new Set(parsed.subscribers)].sort();
+  return seats.length === 0 ? { state: "none" } : { state: "present", seats };
+}
+
+/**
+ * Seat presence on the grapevine channel. NEVER throws — but a failure now
+ * reports `unknown` rather than an empty list.
+ *
+ * The previous contract was "any failure returns `[]` so a broken vine can never
+ * wedge a teardown." That traded a wedged teardown for a silent one: the only
+ * consumer is `down`'s guard, which read `[]` as "the team has stood down" and
+ * killed the panes. `--force` is where "tear down anyway" belongs — a human
+ * saying so, not a guard guessing on our behalf.
+ */
+export async function seatPresence(channel: string): Promise<SeatPresence> {
   try {
     const grapevineCli = resolveCoordCli("grapevine");
     const who = await execCoord(grapevineCli, ["who", channel]);
-    if (!who.ok) return [];
-    const parsed = parseJsonLine<{ subscribers?: string[] }>(who.stdout);
-    if (!parsed) return [];
-    return [...new Set(parsed.subscribers ?? [])].sort();
-  } catch {
-    return [];
+    return classifyPresence(
+      { ok: who.ok, stderrLine: firstErrorLine(who.stderr, "could not read channel") },
+      parseJsonLine<{ daemon?: boolean; subscribers?: string[] }>(who.stdout),
+    );
+  } catch (err) {
+    return { state: "unknown", reason: `grapevine CLI unresolved: ${(err as Error).message}` };
   }
 }
