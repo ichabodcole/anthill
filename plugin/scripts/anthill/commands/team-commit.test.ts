@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { foreignDirtyPaths, unexpectedStaged } from "./team-commit.ts";
+import { foreignDirtyPaths, stampSeat, unexpectedStaged } from "./team-commit.ts";
 import { cleanGitEnv } from "./test-support.ts";
 
 // This suite git-inits throwaway repos and commits inside them. Give every git
@@ -845,5 +845,43 @@ describe("anthill commit — the shell hazard, demonstrated on both sides", () =
     // something rather than being a green from a harness that cannot fail.
     expect(hazard).not.toBe(fixed);
     rmSync(dir, { recursive: true, force: true });
+  });
+});
+
+// The seat trailer must be idempotent, because the rule it replaces is one that
+// humans measurably fail: a seat hand-writing `Anthill-Seat:` into `-m` (the
+// habit our own raw-git fallback trains) produced a duplicate TWICE in one
+// session, the second time by the seat who had just written the lesson about it.
+// A situational warning fails at the recognition step, so this is mechanical.
+describe("stampSeat", () => {
+  test("appends the trailer when the body has none", () => {
+    expect(stampSeat("subject line", "forager")).toBe("subject line\n\nAnthill-Seat: forager");
+  });
+
+  test("does NOT append a second trailer for the same seat", () => {
+    const body = "subject\n\nAnthill-Seat: forager";
+    expect(stampSeat(body, "forager")).toBe(body);
+  });
+
+  test("counts exactly one trailer after stamping an already-stamped body", () => {
+    const out = stampSeat("subject\n\nAnthill-Seat: forager", "forager");
+    expect(out.split("\n").filter((l) => l.startsWith("Anthill-Seat:")).length).toBe(1);
+  });
+
+  // The case that must NOT be deduplicated: an atomic cross-seat land is one
+  // commit legitimately carrying several seats. Dropping a real seat is a worse
+  // failure than repeating one, so the match is scoped to the same handle.
+  test("still appends when the existing trailer names a DIFFERENT seat", () => {
+    const out = stampSeat("subject\n\nAnthill-Seat: weaver", "forager");
+    expect(out).toContain("Anthill-Seat: weaver");
+    expect(out).toContain("Anthill-Seat: forager");
+  });
+
+  test("is not fooled by a trailer mentioned mid-prose rather than on its own line", () => {
+    // "we stamp Anthill-Seat: forager on every land" inside a paragraph is prose
+    // ABOUT the trailer, not the trailer. Matching it would silently skip the
+    // real stamp — the same word-vs-claim trap this seat has hit twice before.
+    const out = stampSeat("we always write Anthill-Seat: forager in the body", "forager");
+    expect(out.split("\n").filter((l) => l.trim() === "Anthill-Seat: forager").length).toBe(1);
   });
 });
