@@ -80,9 +80,8 @@ stay solo.
        **If you spawn seats into worktrees, resolve the board id once and hand it to them explicitly.**
        That is the case where a seat does pass a session flag — **the ambient guarantee is what you
        are trading away, so trade it deliberately rather than discovering it seat by seat.**
-       Then **seed one `todo` card per planned lane, in
-       owner lanes** — the doer owns its card's lifecycle `todo→doing→review`, the reviewer closes. The
-       board is _state_; the vine is _substance_.
+   - **Seed the cards** — one `todo` card per planned lane, in owner lanes. The doer owns its card's
+     lifecycle `todo→doing→review`, the reviewer closes. The board is _state_; the vine is _substance_.
    - **`anthill status`** confirms the result (who's on the vine + the board column counts).
    - **⚠ `status` does NOT tell you who is on `comms`.** It reports the grapevine roster; comms has
      no presence at all, so a seat can be wired to the vine, visible in `status`, and receiving
