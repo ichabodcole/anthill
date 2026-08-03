@@ -247,6 +247,13 @@ entire experiment's validity rests on._ **A guest that can send is not a control
 `resolveSeatIdentity` admits it **without** re-opening the free-form-alias hole Contract 4(c) closes.
 `read` is already identity-free (4(c-bis)), so **the work is on `follow` and on refusing `send`.**
 
+> **⚠ NOT RUNNABLE NEXT SESSION — do not plan around it (noted 2026-08-03).** The two-scout control
+> rests entirely on `send` being **refused by the tool**, and that is unbuilt: guest identity does not
+> exist in `resolveSeatIdentity`, which today admits rostered seats and nothing else. **An observer
+> whose silence rests on its own restraint is the prose guard this ruling explicitly rejects**, so
+> running the experiment with a disciplined-but-capable observer is not a weaker version of it — it is
+> the version whose result means nothing. Either build the refusal first or run one scout.
+
 ### R11 — the MERGE BAR: comms ships only when it could stand alone (human, 2026-08-03)
 
 **The ruling, in the human's terms:** _"I don't want to ship it with the intention that both have to be
@@ -321,6 +328,17 @@ and a frame, which is the consensus failure the retro rules already name. So the
    _(Note the live constraint: comms broadcasts, so answers collected on the wire contaminate every
    later answerer — the measured failure in the addressed-delivery item. **Collect these off-wire**,
    or accept that the ordering decides who was uncontaminated.)_
+
+   **The mechanism, because "off-wire" is not self-executing and the next lead should not have to
+   invent it:** dispatch **each seat as a one-shot subagent for this question alone**, grounded via
+   `anthill join <handle>` so the seat's own doc and lineage answer, **returning privately to the
+   lead**. Five independent answers, no cross-delivery, and it runs **before anyone is wired to
+   comms** — which is what makes it blind rather than merely early. This uses no instrument we do not
+   have: subagent dispatch is an existing path (`convene` documents it), and a subagent return is
+   private by construction, which is precisely the addressed-delivery property the wire lacks.
+   **A seat answering from its durable doc rather than from a lived session is a feature here** — it
+   is the seat's accumulated judgement answering, which is what seat docs are for.
+
 2. **Then show B1–B3** and ask specifically what it **misses** and what it **overstates** — both
    directions, since a scaffold is falsified as much by an unnecessary item as a missing one.
 3. **Record the delta**, not just the agreement. If the team converges on the same three, that is a
