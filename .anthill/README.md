@@ -133,6 +133,20 @@ seats queue instead of racing. The same command **is** the atomic cross-seat lan
 every seat's paths and passes them in one call → one commit across the seats. (The raw discipline
 holds if you commit by hand: `git commit -m "<msg>" -- <explicit paths>`, never `git add -A`.)
 
+**⚠ In PER-SEAT WORKTREES the hand form stops being an equivalent fallback — use the tool.**
+Worktrees give each seat its own index, so the sweep hazard above genuinely goes away and the
+obvious inference is that a bare commit is now safe.
+It isn't, and the reason is not visible from the index: **git shares `refs/stash` across every
+worktree of a repo** while `HEAD` and the index are per-worktree, and a pre-commit hook that stashes
+(lint-staged does, on every commit) writes to exactly that shared ref.
+**So the one thing seats still share is the ref holding uncommitted work, and `anthill commit`'s lock
+is the only mutex over it.**
+Isolation moved the race from the index to the stash; it did not remove it.
+_(Session 6. Proven: `git rev-parse --git-path refs/stash` resolves to the common dir from a
+worktree while `HEAD` resolves per-worktree — the second half is the control that makes the first
+mean something. What is **not** proven is that a collision has actually eaten anyone's work; the
+guidance is correct without that, and saying so is the honest form.)_
+
 **`--as` is not optional in practice.** Git records the **human** as the author of every seat's commit
 — all of them, identically — so without the seat stamp _"who landed this?"_ is unanswerable after the
 fact. A team hit exactly that: an unexplained commit appeared mid-session, the lead had to ask the

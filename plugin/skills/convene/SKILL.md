@@ -80,9 +80,17 @@ stay solo.
        **If you spawn seats into worktrees, resolve the board id once and hand it to them explicitly.**
        That is the case where a seat does pass a session flag — **the ambient guarantee is what you
        are trading away, so trade it deliberately rather than discovering it seat by seat.**
-       Then **seed one `todo` card per planned lane, in
-       owner lanes** — the doer owns its card's lifecycle `todo→doing→review`, the reviewer closes. The
-       board is _state_; the vine is _substance_.
+     - **⚠ And under worktrees, seats must land through `anthill commit` — NEVER raw `git commit`.**
+       Worktrees give each seat its own index, so the intuition is that nothing is shared and a bare
+       commit is now safe. **That intuition is wrong, and it is wrong on a path nobody looks at:** a
+       repo with a pre-commit hook that stashes (lint-staged does, on every commit) is writing to
+       **`refs/stash`, which git shares across all worktrees of a repo** — while `HEAD` and the index
+       are per-worktree. So the one thing seats still share is **the ref that holds uncommitted work**,
+       and `anthill commit`'s lock is the only mutex over it. **Isolation moves the race; it does not
+       remove it.** Tell the seats this when you brief them — the reasoning is not available to
+       someone who only knows that worktrees isolate.
+   - **Seed the cards** — one `todo` card per planned lane, in owner lanes. The doer owns its card's
+     lifecycle `todo→doing→review`, the reviewer closes. The board is _state_; the vine is _substance_.
    - **`anthill status`** confirms the result (who's on the vine + the board column counts).
    - **⚠ `status` does NOT tell you who is on `comms`.** It reports the grapevine roster; comms has
      no presence at all, so a seat can be wired to the vine, visible in `status`, and receiving
