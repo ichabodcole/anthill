@@ -400,8 +400,8 @@ Under **Contract 4(d)** that emitted text _is_ the onboarding a consumer repo re
 comms for the first time is instructed by the tool to lead with the wire comms is meant to replace.**
 
 A stronger sub-case, measured by three seats independently with an empty-`HOME` control:
-`team-join.ts:127–135` resolves **both** coord CLIs in one `try` whose catch is `process.exit(1)`,
-and the `comms` block is composed downstream at `:184`. With spellbook absent, **no seat can join at
+`team-join.ts` resolves **both** coord CLIs in one `try` whose catch is `process.exit(1)`, and the
+`comms` block is composed **downstream of that exit**. With spellbook absent, **no seat can join at
 all** — which punches a hole in **Contract 4(b)**'s "the `comms` block is ALWAYS present". That clause
 reasoned about tool/skill skew and never considered an unrelated dependency voiding the whole
 manifest. `convene` already has the correct shape one command over (`team-convene.ts:137,150` warns
@@ -489,6 +489,51 @@ the investigation's thesis holding rather than failing. **Consequence for the se
 worktrees**, and the SOP + convene skill restate it. That is Contract 5(b)'s class — a true sentence
 going quietly false because the environment moved — and the remedy is scoping the claim, not widening
 it. **Owner: forager (Contract 3), weaver (the prose). Not amended by the lead.**
+
+### R14 — status at finalize: what session 6 actually shipped, and what it did NOT
+
+**Written at the finalize 2.5 pass, by re-running the claims above rather than remembering them.
+Two of them had already drifted — see the note at the end, which is the point of the step.**
+
+**Shipped and merged** (`feat/team-comms-slice-one`, gate **423 pass / 0 fail** measured on the
+merged tree):
+
+- **`comms positions`** — the cross-seat position verb. B1, reframed by the blind read from _"build
+  presence"_ to _"the data is on disk, build the reader."_ Verified by the lead as first user: three
+  states hold against a real never-followed channel, **`gap: null` and not `0`** (Contract 6(c)'s
+  hardest clause). Ships with **`followerAlive`**, a live-pid check **nobody specified** — steward's
+  _"a position that MOVED is an artifact, a position VALUE is testimony"_ built into the tool.
+- **The scaffold gap** — `plugin/templates/` now names comms. A bootstrapped team's SOP no longer
+  believes grapevine is its only wire. **The release-facing item, and it was found on the way to a
+  smaller card.**
+- **The join manifest's ordering + its `grapevine pull` catch-up** — the onramp no longer points a
+  first-time comms team at the wire it is meant to replace.
+- **`anthill commit`'s lock path** — was broken in **every** worktree (`join` on an absolute
+  `--git-common-dir`); landed itself from a worktree, which is the only proof that counts.
+- **`down`'s command-path test** — the guard could be **deleted entirely** this morning with the
+  suite still green.
+- **`.gitignore` trailing slash** — `uncheckedAgainst` fired 9/9 identical false positives before
+  this; the field the session-5 scar exists about had been degraded to noise.
+
+**NOT shipped, and it is the blind read's own top-ranked item:**
+
+- **`join`'s coord resolution is still coupled.** Re-verified at finalize with an empty `HOME`:
+  `anthill join` still returns an error envelope **with no `comms` block**. **Contract 4(b)'s "the
+  `comms` block is ALWAYS present" therefore remains false when spellbook is absent.** It is
+  **survivable** under the human's 2026-08-03 ruling that grapevine stays installed as a release-time
+  fallback — but _survivable_ is not _fixed_, and the item all five seats ranked first is only
+  **half** addressed: weaver fixed the **ordering**, forager's decoupling card is still `todo`.
+- **The session anchor (B3).** Confirmed by all five, costed above R11's estimate (needs a field in
+  the record, not a `meta` stamp), and not built.
+- **Guest / human identity.** Unbuilt, and steward's observation stands: it and R10's two-scout
+  control are **one `resolveSeatIdentity` change**, not two.
+
+**⚠ Drift found in this very section by the 2.5 pass, recorded because it is the step's own
+justification.** R12 cited `team-join.ts:127–135` and `:184`; **both line numbers had moved within
+the session that wrote them** — replaced above with the behaviour, which does not rot. And R12/#347
+named `COMMS_GITIGNORE_LINE` as still carrying the trailing slash; **forager had already fixed it.**
+Two stale claims in a document about instruments that answer a different question than the one
+asked, found only by re-running them. **Neither failed any gate.**
 
 ### Team rule adopted this session (not comms-specific)
 
