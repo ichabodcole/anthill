@@ -152,6 +152,12 @@ _Say this out loud when handing over a verdict under isolation, or "the verifier
   Spreading the real module (`const real = await import("./x.ts")` → `{...real}`) **fails**: inside that context the import resolves to the **already-mocked** module, so the spread yields nothing and breaks exports that previously worked.
   _Naming each stub explicitly is the only form I have that works. Recorded with the dead end attached, because the spread is the first thing anyone tries — including me._
 
+- **My drift-checker manufactured five false absences — while running the drift check my own epitaph exists to protect.**
+  Step 2.5 at finalize: I extracted every backticked path from this doc and tested `[ -e "$p" ]`. Five came back **MISSING** — `seams.md`, `principles.md`, `scan.test.ts`, `team-down.test.ts`, `join/SKILL.md`. **All five exist.** They are referenced *by name* in prose, not as paths from the repo root, and my checker could not tell a filename from a path.
+  Re-run with `find`, **plus a control name that genuinely does not resolve**: all five located, the control correctly empty. Drift result: **zero** — every cited artifact resolves, the named fan-in assertion is still in `scan.test.ts`, and `__fixtures__/` is intact.
+  _The fifth instrument failure of one session, inside the ritual step that exists to catch rot, **thirty minutes after I rewrote this doc's epitaph about exactly this.** Knowing the failure mode does not confer immunity to it — which is the house principle that a contract is a description, not a trigger, landing on the seat that had just re-derived it._
+  _Keep the shape, not the incident: **an existence check needs to know what KIND of reference it is checking.** A bare filename in prose is not a broken path, and a checker that cannot distinguish them reports the doc as rotten when it is fine — the false-RED direction, again._
+
 ## Hard-won lessons
 
 - **A guard's PURE function and the command CONSULTING it are two different claims, and the pure test proves only the first.**
