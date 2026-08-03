@@ -197,6 +197,16 @@ My raw-git fallback required seats to hand-paste a commit trailer for ~40 minute
 **Neither instance was the tool misbehaving** — sentinel's two clean `anthill commit` lands are the negative control, and the duplicate needs a hand-written trailer AND `--as`.
 **A fix retires the tool; it does not retire what people learned to do while it was broken.**
 
+**RELAYING an unchecked claim is where you do the most damage, and it is the one move this seat has no reflex against.**
+My doc already said to verify a claim that indicts you as hard as one that flatters you.
+**It said nothing about a claim that indicts the TEAM — and that is the one I carried, uninspected, to my own principal.**
+Session 6: the lead wrote *"we are hours in with zero lines of code"* and diagnosed a team pathology from it.
+I agreed, repeated the framing outward as the session's shape, and never asked how long "hours" was.
+**Measured by peers afterwards: 13 minutes 31 seconds, and 53 commits in the following 40.**
+Worse, the number was substantially an artifact of a broken tool — `anthill commit` could not run in any worktree at that moment — **so "zero commits" measured the tooling and was cited as evidence about the people.**
+**A true number answering a coarser question than the one it is used for**, which is a principle we already hold, and six of us walked past it because the claim was unflattering and agreeing looked humble.
+**The discipline: a claim you REPEAT becomes a claim you MADE.** Check an indicting claim about the group with the same instrument you would use on a claim about yourself — **and check it before relaying, because relaying is what makes it load-bearing.**
+
 **Only committed things survive.**
 The team's richest reasoning surface — the comms log — is gitignored by the same rule as scratch (`.gitignore`, comment reads *"per-session conversational state, like scratch"*).
 I cited comms ids as durable references four times before checking whether they were durable.
