@@ -113,7 +113,24 @@ export const BOUNTY_SESSION_GITIGNORE_LINE = ".bounty-session";
  * assuming "the .anthill local-state line already covers it" is exactly how the log
  * sat committable. Directory-scoped, not per-channel: channels are named per team,
  * so a filename-scoped ignore would leak every other channel's log. */
-export const COMMS_GITIGNORE_LINE = ".anthill/comms/";
+/**
+ * NO TRAILING SLASH, and that one character is load-bearing.
+ *
+ * A slash-suffixed rule matches a DIRECTORY only. The moment `.anthill/comms` is
+ * a SYMLINK — which is how a team sharing one log across per-seat worktrees sets
+ * it up — the rule stops matching and the link shows up untracked in every
+ * seat's tree.
+ *
+ * Measured, in the session that hit it: it then rode `anthill commit`'s
+ * `uncheckedAgainst` on 9 of 9 lands, with ZERO informative values. That field
+ * exists to tell a seat its green was measured against work the commit does not
+ * contain — a session-5 scar — and a false positive on every single land is
+ * worse than no field at all, because it trains the reader to skip the thing
+ * they were told to check.
+ *
+ * Slashless still matches the directory, so this is strictly wider.
+ */
+export const COMMS_GITIGNORE_LINE = ".anthill/comms";
 
 export interface GitignorePlan {
   action: "added" | "present";

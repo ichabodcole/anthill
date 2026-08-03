@@ -43,6 +43,23 @@ function repoRoot(cwd: string): string {
   return top.ok && top.stdout ? top.stdout : cwd;
 }
 
+/**
+ * PURE (the unit-test target): append the seat trailer unless the body already
+ * carries one for THIS seat.
+ *
+ * Scoped to an exact same-seat match on purpose. A body already stamped
+ * `Anthill-Seat: forager` needs nothing; a body stamped for a DIFFERENT seat
+ * still gets ours appended, because that is the atomic cross-seat land — one
+ * commit legitimately carrying several seats — and silently swallowing the
+ * second name would delete provenance rather than deduplicate it. Dropping a
+ * real seat is a strictly worse failure than repeating one.
+ */
+export function stampSeat(body: string, seat: string): string {
+  const trailer = `Anthill-Seat: ${seat}`;
+  const already = body.split("\n").some((line) => line.trim() === trailer);
+  return already ? body : `${body}\n\n${trailer}`;
+}
+
 /** The shared git dir (`--git-common-dir` so a worktree resolves to the real
  * `.git`, where the one shared index — the thing seats race on — actually lives).
  *
@@ -272,7 +289,16 @@ export const teamCommitCommand = defineAnthillCommand({
     // The trailer is appended, never substituted — git's own `%an` still shows
     // the human, so this ADDS a machine-greppable seat rather than claiming to
     // replace authorship. `git log --grep "Anthill-Seat: <handle>"` is the point.
-    const message = seat && rawMessage ? `${rawMessage}\n\nAnthill-Seat: ${seat}` : rawMessage;
+    //
+    // IDEMPOTENT, because the alternative is a rule humans have to remember and
+    // measurably do not. A seat who hand-writes the trailer into `-m` (natural:
+    // it is what the raw-git fallback requires, so the habit is trained by our
+    // own workaround) got it twice. The author of the lesson about checking your
+    // own artifacts did it, wrote it up, and then did it AGAIN two commits later
+    // in the same session — which is this repo's own principle that a
+    // situational warning fails at the RECOGNITION step, not the compliance one,
+    // and therefore needs a mechanical guard rather than better wording.
+    const message = seat && rawMessage ? stampSeat(rawMessage, seat) : rawMessage;
     const paths = ((ctx.args._ as string[] | undefined) ?? []).filter((p) => p.length > 0);
     const warnings: string[] = [];
 
