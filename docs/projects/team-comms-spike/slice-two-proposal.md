@@ -301,6 +301,35 @@ on, and cutting grapevine's tails is what breaks it.
   _"You are never told"_ is acceptable for a beta **as long as the skill says so**, and it does.
 - **Cross-project contact.** Permanently grapevine's, by the spike proposal's own scoping.
 
+#### ⚠ B1–B3 is a SCAFFOLDED CLAIM, not a settled list — the team ratifies or falsifies it at convene
+
+Added by the human, 2026-08-03: **take a read from the team on what else comms needs before it can
+replace grapevine.** The list above was derived by one lead from the code and the backlog. That is
+exactly the artifact this project's ratify gate exists to check — **the lead scaffolds seams as
+falsifiable claims; the owners ratify or falsify before anyone builds.** A blocking set nobody
+falsified is a lead's framing wearing a plan's clothes.
+
+**Collect it BLIND, before showing anyone B1–B3.** This is the spike's own established method (the
+first-contact capture, whose blind condition leaked all three times it was attempted) and the
+[observer-effect discipline](../../reports/2026-07-31-story-loom-comms-round.md) behind it. Handing
+seats a list and asking _"agree?"_ returns agreement — from a team that shares a channel, a session
+and a frame, which is the consensus failure the retro rules already name. So the order is fixed:
+
+1. **Ask each seat the open question first**, in neutral form and without the list:
+   _"grapevine is unavailable this session — comms is all you have. What do you need that isn't
+   there?"_ Per seat, before any discussion, so the answers are independent rather than converged.
+   _(Note the live constraint: comms broadcasts, so answers collected on the wire contaminate every
+   later answerer — the measured failure in the addressed-delivery item. **Collect these off-wire**,
+   or accept that the ordering decides who was uncontaminated.)_
+2. **Then show B1–B3** and ask specifically what it **misses** and what it **overstates** — both
+   directions, since a scaffold is falsified as much by an unnecessary item as a missing one.
+3. **Record the delta**, not just the agreement. If the team converges on the same three, that is a
+   result worth having; **if it converges too cleanly, apply the retro's own smell test** — ask what
+   would have had to be true for anyone to name a fourth.
+
+**The falsifier for the list itself:** any seat naming a blocker not in B1–B3, or showing that one of
+the three is survivable for a beta sole-wire run. **Either outcome is the point of asking.**
+
 #### The gate, and the sequencing
 
 After B1–B3, **one session runs sole-wire** — grapevine unwired, documented as re-armable if comms
