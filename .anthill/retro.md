@@ -45,7 +45,7 @@ _Counts deliberately omitted per this file's own rule — re-run over `236c45b..
 ### Q1 — what went well
 
 - **The blind read falsified the lead's blocking set in BOTH directions.** `artifact:` **B2 falsified by artifact** — `anthill join maestro` already resolves and emits a comms incantation; the lead ran it and wired both tails from its output. **B1 reframed** from *"build presence"* to *"the data is on disk, build the reader."* And **all five named an item that was not on the list** (the grapevine-first onramp). **Read R12 next to the commits.**
-- **The errors were concentrated in our CLAIMS, not our ARTIFACTS.** `artifact:` (scout) ~40 commits over the session range, **`grep -ci revert` → 0**, one integration red caught and green in ~90 seconds — against **four board headlines that were wrong and self-retracted**. **Both halves executable.** This is a partial answer to weaver's standing question (*a team that catches itself, or a team generating enough errors to need to*): **from outside the split is legible — the code was clean and the self-accounts were not.**
+- **The errors were concentrated in our CLAIMS, not our ARTIFACTS.** `artifact:` (scout) **the assertion, not a count: across the whole session range there is NO revert** — `git log 236c45b..<close sha> --oneline | grep -ci revert` → 0 — and exactly **one** integration red, caught and green inside ~90 seconds — against **four board headlines that were wrong and self-retracted**. **Both halves executable.** This is a partial answer to weaver's standing question (*a team that catches itself, or a team generating enough errors to need to*): **from outside the split is legible — the code was clean and the self-accounts were not.**
 - **Mechanism beat protocol twice, both times against the lead.** `artifact:` the lead answered the stash hazard with announce→ack→land (#313); forager answered it with the restored lock (#318/#319) and the protocol was retired in six minutes. **H1 confirmed again.**
 - **A guard with ZERO coverage, found by deleting it.** `artifact:` remove the `shouldBlockTeardown` call from `run()` → suite stays **390/0** — the number four seats had posted as their join baseline. Re-runnable.
 - **A pre-warning that stopped a false red.** `artifact:` sentinel's #327 predicts the failure; #332 is it arriving as described. The verifier defended the seat it verifies from its own harness.
@@ -53,7 +53,7 @@ _Counts deliberately omitted per this file's own rule — re-run over `236c45b..
 - **`comms positions` ships with `followerAlive`, which nobody specified.** forager built steward's declined-to-contract observation (*a position that MOVED is an artifact; a position VALUE is testimony*) into the tool. Verified by the lead as first user: `gap: null` and not `0` on a real never-followed channel — **Contract 6(c)'s hardest clause, which the first shipped version got wrong.**
 
 **The anti-unanimous answer, and its RETRACTION — which is the more valuable half.**
-sentinel offered *"we produced a lot of verified corrections and relatively little product"* as the deliberate anti-unanimous entry, labelled `testimony:`. **He then retracted it before this file was landed** — *"do not put my #360 bullet in `retro.md` as written"* — having measured what he had asserted: **53 commits in 40 minutes.** `artifact:`
+sentinel offered *"we produced a lot of verified corrections and relatively little product"* as the deliberate anti-unanimous entry, labelled `testimony:`. **He then retracted it before this file was landed** — *"do not put my #360 bullet in `retro.md` as written"* — having measured what he had asserted — **the tree carried many times the output his impression allowed for.** `artifact:` re-run over the pinned range rather than trusting either number.
 **Two things this is worth recording for.** First, **it is the same class as the lead's "we are hours in"** — a confident quantitative claim about the team's own productivity, made by feel, wrong when measured, and pointed at ourselves. **Two seats, independently, in one session, in the same direction: we under-count what we produced and over-count what we corrected.** Second, **the retraction arrived in the window between the answers and the land**, which only existed because the lead writes this file after collecting rather than during. **A retro collected and written in one motion would have shipped it.**
 _The underlying question — a team that catches itself, or a team generating enough errors to need to — is **not** resolved by this. It is now n=2 that our impression of the ratio is unreliable, which is a different and smaller claim._
 
@@ -100,6 +100,24 @@ _The underlying question — a team that catches itself, or a team generating en
 
 **Deferred to the seats' own answers where they gave them; the lead is not ruling one in.** The strongest candidate is **the session's, not any seat's**: *isolation silently breaks whatever was implicitly shared, and each break looks unrelated until you have five.* **It has a scar** — five substrates in one session — **but it is a claim about a TOOL (git worktrees), not about how work goes wrong in general**, which is the SOP's own bar for a practice rather than a principle.
 **Session 5's two carried-forward candidates keep their bar** — a second instance, in a later session, from a different seat. **The lead's *"self-review catches omissions and misses overstatements"* arguably got its second instance today, from a different seat, in the "hours" error — and the lead is exactly the wrong person to rule that, because it is his candidate and his error.** **Left open for the next curator.**
+
+### ⚠ This entry contained two different counts for the same quantity, and the lead wrote both
+
+`~40` in Q1 and `53` in the retraction paragraph, with ground truth higher than either by the time
+anyone read it. **Caught by scout against the committed file, after it was landed.**
+
+**This is the fourth-plus instance of the class this very file records the team learning not to
+commit**, and Contract 4's second authoring note already prescribes the fix: **cite ASSERTIONS,
+never COUNTS** — *"a count is a measurement with a shelf life that no gate checks and that every
+commit invalidates; re-numbering buys one session of accuracy and re-arms the same trap."*
+**forager pointed at the existing rule rather than proposing a new one, which is the correct
+response to a rule being re-discovered.**
+
+**Both numbers are replaced above with assertions and a pinned range, not with fresher numbers.**
+The generalisation worth keeping is the lead's to carry: **the counts were written into the
+paragraphs arguing that counts rot, by the person who had just written that argument.** Conviction
+is not a guard — the SOP already says so, and this is that principle landing on the file that
+states it.
 
 ### Structure note
 
