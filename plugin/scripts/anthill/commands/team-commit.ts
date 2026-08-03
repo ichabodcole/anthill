@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { acquireLock, releaseLock } from "../lock.ts";
@@ -44,10 +44,23 @@ function repoRoot(cwd: string): string {
 }
 
 /** The shared git dir (`--git-common-dir` so a worktree resolves to the real
- * `.git`, where the one shared index — the thing seats race on — actually lives). */
+ * `.git`, where the one shared index — the thing seats race on — actually lives).
+ *
+ * `resolve`, NOT `join`. `--git-common-dir` answers in two different namespaces:
+ * a RELATIVE `.git` from a main checkout, and an ABSOLUTE path from a linked
+ * worktree. `join` does not reset on an absolute second argument, so it built
+ * `/<worktree>/<abs path to real .git>` — a path that cannot exist — and every
+ * `anthill commit` in every worktree died with ENOENT. `resolve` treats the
+ * absolute answer as absolute and the relative one as relative to `root`, which
+ * is the behaviour the line above always claimed.
+ *
+ * Worth keeping as the reason rather than the diff: this code was already
+ * worktree-AWARE — the comment names worktrees explicitly — and it was still
+ * wrong, because the author handled the case conceptually and not in the path
+ * algebra. Being conscious of a case is not the same as handling it. */
 function lockPath(root: string): string {
   const common = git(["rev-parse", "--git-common-dir"], root);
-  const dir = common.ok && common.stdout ? join(root, common.stdout) : join(root, ".git");
+  const dir = common.ok && common.stdout ? resolve(root, common.stdout) : resolve(root, ".git");
   return join(dir, "anthill-team-commit.lock");
 }
 

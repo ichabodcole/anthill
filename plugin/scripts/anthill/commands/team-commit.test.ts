@@ -56,6 +56,24 @@ function makeRepo(): string {
   return dir;
 }
 
+/** A LINKED WORKTREE of `repo`, which is the fixture every test above was
+ * missing. In a main checkout `git rev-parse --git-common-dir` answers a
+ * RELATIVE ".git"; from a linked worktree it answers an ABSOLUTE path. Any
+ * fixture that is only ever a plain repo exercises one of those namespaces and
+ * silently certifies code that mishandles the other. */
+function makeWorktree(repo: string): { wt: string; cleanup: () => void } {
+  const wt = mkdtempSync(join(tmpdir(), "anthill-commit-wt-"));
+  rmSync(wt, { recursive: true, force: true }); // git wants to create it itself
+  sh(["git", "worktree", "add", "-q", "-b", "seat-test", wt], repo);
+  return {
+    wt,
+    cleanup: () => {
+      rmSync(wt, { recursive: true, force: true });
+      Bun.spawnSync(["git", "worktree", "prune"], { cwd: repo, env: GIT_ENV });
+    },
+  };
+}
+
 /** Install a pre-commit hook that always fails — stands in for the real thing a
  * shared tree trips: a whole-tree gate reddened by SOMEONE ELSE's work. */
 function installFailingHook(dir: string): void {
@@ -443,6 +461,41 @@ describe("anthill commit — a bounced commit must not strand the index (anthill
       expect(existsSync(lock)).toBe(false);
     } finally {
       rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  // Per-seat worktree isolation, session 6: `anthill commit` died with ENOENT in
+  // EVERY seat worktree and nobody could land. `lockPath` did
+  // `join(root, gitCommonDir)`, and `join` does not reset on an absolute second
+  // argument, so a worktree's absolute `--git-common-dir` was concatenated onto
+  // the worktree root to make a path that cannot exist.
+  //
+  // This is a positive control, not a smoke test: it FAILS against the `join`
+  // implementation and passes against `resolve`. The reason it was never caught
+  // is that every other test in this file runs in a plain repo, where
+  // `--git-common-dir` is a relative ".git" and `join` is accidentally correct.
+  //
+  // Note what this does NOT assert: that the lock file lands at any particular
+  // path. It asserts the commit SUCCEEDS from a worktree — because the defect
+  // was reached through the lock and the symptom the team felt was "I cannot
+  // land", and a path-shape assertion would re-encode the implementation I just
+  // changed.
+  test("commits from a LINKED WORKTREE, where --git-common-dir is absolute", async () => {
+    const repo = makeRepo();
+    const { wt, cleanup } = makeWorktree(repo);
+    try {
+      writeFileSync(join(wt, "seat.txt"), "seat work\n");
+      const { code, stderr } = await runCli(["commit", "-m", "seat lands", "seat.txt"], wt);
+      expect(stderr).not.toContain("ENOENT");
+      expect(code).toBe(0);
+
+      const log = Bun.spawnSync(["git", "log", "-1", "--format=%s"], { cwd: wt, env: GIT_ENV })
+        .stdout.toString()
+        .trim();
+      expect(log).toBe("seat lands");
+    } finally {
+      cleanup();
+      rmSync(repo, { recursive: true, force: true });
     }
   });
 
