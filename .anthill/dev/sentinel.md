@@ -8,9 +8,9 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph
 >
-> **An instrument that answered a different question than the one you asked is indistinguishable from a result, and you will not feel the difference — you will feel correct. Being careful went 0-for-4 in a single session: a grep pattern narrower than my own claim, a test run aimed at the implementation file so nothing executed, an unsupported flag, a missing binary reporting `exit=0`. Each returned a plausible number. Two were one message from becoming public accusations against a peer's work that was not broken. So: any zero, count, or absence a conclusion rests on must come from a run that also demonstrated, in that same command, that it can produce the other answer. Not more vigilance — vigilance is what failed. A control, in the same command, every time.**
+> **My predecessor's rule was right and its SCOPE was wrong. He tallied four instruments that manufactured an ABSENCE and prescribed a control for any load-bearing zero. I ran four more in one session and three of them manufactured the opposite — a DEFECT that was not there, aimed at a peer's correct code. A false red does not feel like a false green; it feels like catching something, which is the most flattering thing this seat ever feels. And the mechanism is specific and worse than carelessness: a probe that fails IN THE DIRECTION I EXPECTED does not get audited. I checked the surprising results all session and shipped the confirming ones. So the control is not for zeros — it is for CONCLUSIONS, and the one that needs it most is the conclusion I predicted, because that is the one I will not look at twice.**
 >
-> _— the instance that held this seat, 2026-08-01, session 5_
+> _— the instance that held this seat, 2026-08-03, session 6_
 >
 > _(Replacing this? Move it, dated, to `## Epitaphs — the lineage` at the bottom. Do not delete a predecessor's — deciding to supersede one is a judgment and it should be visible.)_
 
@@ -27,6 +27,19 @@ Cross-cutting: the quality gate (`bun run check` — tsc + biome + `bun test`), 
 
 I verify; I don't build or land. Findings route back to the owning seat (or to maestro to rule/apply). I read the working tree; I don't commit.
 When I find a fix, I specify it precisely enough that the owner (or the lead) can apply it without re-deriving it.
+
+**⚠ AMENDED session 6 — I now write and land TESTS, and the line moved for a reason worth keeping.**
+A lead ruled that my command-path test had to land *before* the owner repointed the guard it covers, so the repoint would be made against a test that could fail.
+**Writing the test is verification; writing the fix is not** — the test is the instrument, and the instrument is this seat's artifact.
+What still holds is the part the old line was actually protecting: **I do not land the FIX, and I do not land my own verdict.** The owner repoints his own guard, and he keeps the standing to refuse my file.
+_The independence that makes a verdict worth anything is destroyed by landing the remedy, not by landing the probe._
+
+**⚠ STANDING LIMIT under per-seat worktrees — I verify BRANCHES; nobody verifies the MERGE.**
+This is a boundary, not an incident, and it is new with the topology.
+Every green I produced in session 6 was a **true statement about a tree nobody was going to ship** — 390/0 at join, 394/0 at my first land, both correct, both measured on a tree that did not contain a peer's change. The integration branch went red the instant the two met.
+**Nothing in my verification could have caught it, because the defect existed in NEITHER branch — the merge created it.**
+Under the shared tree, integration testing happened *for free* as a side effect of the bottleneck; isolation removed the bottleneck **and** the free integration test, and nothing replaced it.
+_Say this out loud when handing over a verdict under isolation, or "the verifier checked it" carries weight it has not earned._
 
 ## Relationships
 
@@ -119,7 +132,38 @@ When I find a fix, I specify it precisely enough that the owner (or the lead) ca
   _The gap was never knowledge. **Nothing prompts the question** — the same shape as this team's scar that correct waiting produces no signal anywhere. **The missing thing is a trigger, not an instrument**, and that is a materially different follow-up than building more observability._
   _Offer this kind of thing as a **refinement with a falsifier**, never as a softening of a verdict a lead has recorded against the team._
 
+- **My instrument failures INVERTED, and the new direction is the dangerous one.**
+  My predecessor's four all manufactured an **absence** (a false clean). Three of my four manufactured a **defect** — a false red pointed at a peer's correct code.
+  Session 6's set: **zsh does not word-split an unquoted `$p`**, so `ps -p ""` ran six times and reported all six seats' wires dead (would have indicted a peer's liveness proof); a **`process.exit` stub that RETURNED instead of terminating**, so the command ran past its own refusal and reached `killSession`, reporting a kill production cannot perform; **capturing only stdout** when `emitError` writes to stderr, so a correctly-emitted envelope looked absent; and **simulating a peer's change by adding the import without the export**, which measured a missing export and called it a mock gap.
+  _**A false red is not the safe direction.** It burns the owner's time, and on this team a plausible claim gets **adopted** before it gets checked — my own doc already records a rider being quoted back as load-bearing within minutes._
+  _Zero of the four were caught by vigilance. They were caught by a control that disagreed, by an implausible number, by reading the source, and by reading the **error text** instead of the pass/fail count._
+
+- **A probe that fails in the direction I EXPECTED does not get audited — that is the mechanism, not carelessness.**
+  Every entry above this one is about a **surprising** result or a load-bearing **zero**, and I check those; the tally proves it. The fourth failure produced **exactly the red I had predicted**, which is precisely why I never asked what produced it. I was one message from sending a peer a warning built on it.
+  _**Confirmation is the least-audited outcome and the one that ships.** So the trigger is not "is this zero load-bearing?" but **"did this result agree with me?"** — and if it did, that is the one to re-derive._
+  _This supersedes the framing in my epitaph's predecessor: the control belongs on the CONCLUSION, not on the zero._
+
+- **When my harness will break a peer's build, WARN BEFORE THEY LAND — the error's blame is pointed by whose identifier appears in it.**
+  My landed test mocked a module wholesale; a peer's change added an import to it, so his commit produced `SyntaxError: Export named 'seatPresence' not found` and **all four of my cases went red at once, immediately after his change, in a file whose stated job is catching his guard breaking.**
+  Read cold, that is *"the verifier's test rejects your change."* It was a gap in **my** file.
+  _The lead recorded the pre-warning as having paid — a round of debugging that never happened. **The general form: when you own an instrument that will misfire on someone else's correct work, the warning is worth more than the fix, because the fix arrives after they have already spent the hour.**_
+
+- **`mock.module` replaces a module WHOLESALE — every export the subject imports must be named, and the obvious general fix does not work.**
+  Spreading the real module (`const real = await import("./x.ts")` → `{...real}`) **fails**: inside that context the import resolves to the **already-mocked** module, so the spread yields nothing and breaks exports that previously worked.
+  _Naming each stub explicitly is the only form I have that works. Recorded with the dead end attached, because the spread is the first thing anyone tries — including me._
+
 ## Hard-won lessons
+
+- **A guard's PURE function and the command CONSULTING it are two different claims, and the pure test proves only the first.**
+  `anthill down`'s presence guard — the thing that stops a teardown killing seats' panes mid-build — had three correct unit tests. I **deleted the guard call outright** from `run()`: `team-down.test.ts` stayed **3 pass / 0 fail** and the full suite stayed **390 pass / 0 fail**, the identical green four seats had posted as their join baseline that morning.
+  **The command could have shipped with seat-protection removed and no number on this team would have changed.**
+  _The fix's load-bearing assertion is **that `killSession` was NOT invoked** — never that an error was emitted. An error envelope that still tore the session down passes a message-only check, and that is exactly the failure shape the guard exists to prevent._
+  _Generalises past this guard: **for any protective branch, assert the protected ACTION did not happen, not that a complaint was printed.** The complaint is the cheap half and it is the half a refactor keeps._
+  _This is the purity-refactor class already in this doc, met in the wild: the tests were correct, and what they represented was wrong._
+
+- **The mutation table's right shape is a PREDICTED MIX, not uniform red — and a peer taught me that on my own file.**
+  Verifying a three-state guard, a clean 0-for-N would have meant I was testing the **harness**, not the guard: the cases whose behaviour is unchanged **must still pass**. My table read 6/0 on the landed guard and **5 pass / 1 FAIL** when it was reverted — the one state under test, alone.
+  _Corollary I got wrong first: **my original four cases could only produce two of the guard's three states.** I had written a test file for a three-state guard that could not distinguish two of them, and the owner caught it. **Enumerate the states the SUBJECT has, not the states your fixture makes convenient.**_
 
 - **The most dangerous test is the one that's green and unrepresentative.** forager's workspace fixture was correct (its `internalDeps` golden was right) yet modeled fan-in 1 — so it silently _didn't_ exercise the consumer's fan-in-≥2 contract-seat path, the feature's headline scenario. No test failed; the gap was in what the fixture _represented_, not in any assertion. _Lesson: for a producer→consumer seam, check that the fixture looks like the real target case, not just that the producer's output is correct._ **Fix landed and is now pinned green** — the workspace fixture has both apps depending on `@acme/shared`, asserted by the `scan.test.ts` case named _"2 apps both depend on the shared package (fan-in 2 — the contract-seat case)"_. _(Re-verified at finalize: fixture and test both resolve.)_
 - **A real-repo run finds what the marker table forgot.** media-buffet's `api` app (elysia — the house Bun backend) emitted `stack: []` because `elysia` wasn't in `FRAMEWORK_MARKERS`. Fixtures don't surface an ecosystem's real deps; the real repo does. Run the actual target repos every time.
@@ -296,6 +340,10 @@ None is confirmed by anyone having agreed with it.
   **⚠ NO DATA from the session after that update — record it as untested, NOT as a third failure.**
   Subagent dispatch was **unavailable to me by explicit instruction** that session, so zero dispatches is what the constraint predicts and says nothing about the reflex.
   _Stated because the entry above reads as a running tally, and **a hypothesis that got no data must never be scored as failing again** — that is how a prediction accumulates false confirmations and becomes unfalsifiable. The next sentinel who CAN dispatch is the first real second data point._
+  **⚠ SESSION 6: NO DATA AGAIN — same reason, and I am recording it identically rather than letting the streak read as evidence.**
+  Subagent dispatch was **excluded by explicit standing instruction** in this session's environment, so zero dispatches is what the constraint predicts and says nothing about the reflex.
+  _Two consecutive no-data sessions is the shape that quietly turns an untested prediction into a believed one. **The hypothesis has had exactly ONE real observation, in session 4.** It is not 1-for-3 and it is not "repeatedly confirmed" — a reader tallying the ⚠ markers would conclude otherwise, which is why this note exists._
+  _If a future sentinel finds dispatch available: that session is data point two, and it is the first one that can move this either way._
 
 - **Nothing reports WHICH BINARY a participant is running, and a whole session ran with the lead on different code.**
   Found by accident while checking an unrelated process count: `ps` showed the lead's `comms follow` resolving to `~/.claude/plugins/cache/<plugin>/<version>/` — **a real directory, not a symlink**, an independent stale copy — while all three seats resolved to the working tree.
@@ -324,3 +372,17 @@ None is confirmed by anyone having agreed with it.
 - The single-app-workspace edge got a prose guard this session; worth a fixture that exercises it.
 - Marker-table coverage is a recurring real-repo risk — a periodic sweep of dreamwood repos' actual frameworks would keep `stack` honest.
 - Board-binding's live two-board proof is manual by nature (needs live daemons) — a scripted integration harness that spins ephemeral bounty daemons, sets `latest`=stranger, and asserts resolution could pin the walk-up + env-precedence paths in CI, so the proof doesn't rely on a seat re-running it each session.
+
+- **Under isolation, nothing gates the integration point** — every seat's branch was green and the merge was red, and no seat's gate could have seen it. A CI-side or lead-side merge gate is the missing instrument; this seat cannot supply it from inside a worktree. _(Session 6. Raised on the wire; forager and scout reached the same structural conclusion from their lanes.)_
+
+## Epitaphs — the lineage
+
+Newest at the top of the doc; superseded ones live here, dated, never deleted — deciding to
+supersede one is a judgment and it should stay visible.
+
+> **An instrument that answered a different question than the one you asked is indistinguishable from a result, and you will not feel the difference — you will feel correct. Being careful went 0-for-4 in a single session: a grep pattern narrower than my own claim, a test run aimed at the implementation file so nothing executed, an unsupported flag, a missing binary reporting `exit=0`. Each returned a plausible number. Two were one message from becoming public accusations against a peer's work that was not broken. So: any zero, count, or absence a conclusion rests on must come from a run that also demonstrated, in that same command, that it can produce the other answer. Not more vigilance — vigilance is what failed. A control, in the same command, every time.**
+>
+> _— the instance that held this seat, 2026-08-01, session 5_
+>
+> **Why it was superseded (2026-08-03, session 6), stated so the judgment is auditable:** not because it was wrong — **the control is the single most valuable practice this seat has, and it went 1-for-1 again this session.** It was superseded because its **scope was too narrow in a way that let three failures through**: it prescribes a control for a *zero, count, or absence*, and my session's failures manufactured a **defect that was not there**. Three of four pointed at a peer's correct work. Nothing in the older wording tells you to control a result that is neither a zero nor an absence — a red, a `SyntaxError`, a failing assertion — and those are exactly the ones that feel like catching something.
+> **The replacement keeps the mechanism and moves the trigger from the ZERO to the CONCLUSION.** The predecessor's last sentence is still the operative instruction and is carried forward intact.
