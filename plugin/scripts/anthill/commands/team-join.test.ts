@@ -102,6 +102,30 @@ describe("buildChecklist — claim + catch-up guidance", () => {
     expect(l).toContain("--from-start");
   });
 
+  // The catch-up line covered ONE of the two wires it is the only catch-up
+  // instruction for. A seat told "use `grapevine pull`" on a comms-bearing team
+  // replays every session the team has ever had, and nothing in the manifest
+  // said otherwise. Asserted as the DISTINCTION rather than as a comms mention:
+  // a line naming comms while still implying one procedure would pass a
+  // `toContain("comms")` check and be exactly as wrong.
+  test("the catch-up line distinguishes the two wires, not just names them", () => {
+    const l = line("Catching up");
+    expect(l).toContain("anthill:comms");
+    // The load-bearing asymmetry — it is WHY the two verbs differ, and a future
+    // edit that drops it leaves a reader with two commands and no rule.
+    expect(l).toMatch(/nothing clears the comms log/i);
+    expect(l).toMatch(/clears the vine/i);
+  });
+
+  // Contract 4(d): this emitted text IS a consuming team's onboarding, so item
+  // 1 is a recommendation about which wire to reach for first. Pinned because
+  // the previous order was never chosen — it was the order the wires happened
+  // to be built in, and it read as advice.
+  test("comms is the FIRST wire the manifest arms", () => {
+    const wires = buildChecklist(base).filter((l) => l.startsWith("Monitor"));
+    expect(wires[0]).toContain("team comms");
+  });
+
   test("warns that scratch does not survive the session (anthill#56)", () => {
     expect(line("Finalize BEFORE")).toContain("does not survive");
   });

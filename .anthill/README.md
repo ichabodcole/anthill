@@ -84,8 +84,14 @@ direct.
 - **Bounty board** — task state (`todo → doing → review → done`). The **doer owns its card's
   lifecycle**; the lead creates + assigns (leaves in `todo`) and hands off on the vine; the reviewer
   closes. The board is _state_. **It's key-bound:** `convene` owns the board-open (keyed to the team
-  channel, pinned via `.bounty-session`), so every seat + the lead target this board **ambiently** —
-  no one ever threads `--session`. The mechanism lives once in the **board-binding contract** in
+  channel, pinned via `.bounty-session`), so **in one shared working tree** every seat + the lead
+  target this board **ambiently** — no one threads `--session`.
+  **Per-seat git worktrees void that**, and the failure is silent: the board id is derived from the
+  repo path, so a worktree resolves a different one and the pinned file is gitignored and never
+  crosses. **A miss reports "no running bounty session", which reads as "the board isn't up."**
+  Session 6 hit this on all five seats — resolve the id once and pass it explicitly, and know that the
+  ambient guarantee is the thing you traded.
+  The mechanism lives once in the **board-binding contract** in
   [`dev/seams.md`](./dev/seams.md); this points at it, never restates it.
 - **Grapevine (`anthill-dev`)** — the back-channel. Seats discuss, coordinate, reconcile. The vine is
   _substance_. Decisions route to the human **through maestro**, not direct.
@@ -126,6 +132,20 @@ index. So:
 seats queue instead of racing. The same command **is** the atomic cross-seat land: the lead collects
 every seat's paths and passes them in one call → one commit across the seats. (The raw discipline
 holds if you commit by hand: `git commit -m "<msg>" -- <explicit paths>`, never `git add -A`.)
+
+**⚠ In PER-SEAT WORKTREES the hand form stops being an equivalent fallback — use the tool.**
+Worktrees give each seat its own index, so the sweep hazard above genuinely goes away and the
+obvious inference is that a bare commit is now safe.
+It isn't, and the reason is not visible from the index: **git shares `refs/stash` across every
+worktree of a repo** while `HEAD` and the index are per-worktree, and a pre-commit hook that stashes
+(lint-staged does, on every commit) writes to exactly that shared ref.
+**So the one thing seats still share is the ref holding uncommitted work, and `anthill commit`'s lock
+is the only mutex over it.**
+Isolation moved the race from the index to the stash; it did not remove it.
+_(Session 6. Proven: `git rev-parse --git-path refs/stash` resolves to the common dir from a
+worktree while `HEAD` resolves per-worktree — the second half is the control that makes the first
+mean something. What is **not** proven is that a collision has actually eaten anyone's work; the
+guidance is correct without that, and saying so is the honest form.)_
 
 **`--as` is not optional in practice.** Git records the **human** as the author of every seat's commit
 — all of them, identically — so without the seat stamp _"who landed this?"_ is unanswerable after the

@@ -68,11 +68,29 @@ stay solo.
          of a session and not in the middle of one.
    - **Board:** convene now **opens/attaches the team board itself** — keyed to the channel and pinned
      (writes `.bounty-session` at the repo root), so every seat's + the lead's bounty verbs bind **this**
-     board by construction. The binding is **ambient**: no one ever passes `--session`. It's idempotent
+     board by construction. **In a single working tree the binding is ambient — nobody passes
+     `--session`, and that is the guarantee this design is for.** It's idempotent
      and headless (`--no-open`), so a re-convene re-attaches rather than spawning a stranger board, and
-     the reported URL is yours to open when you want it. Then **seed one `todo` card per planned lane, in
-     owner lanes** — the doer owns its card's lifecycle `todo→doing→review`, the reviewer closes. The
-     board is _state_; the vine is _substance_.
+     the reported URL is yours to open when you want it.
+     - **⚠ Putting seats in separate GIT WORKTREES breaks that guarantee, and it breaks it silently.**
+       The board id is derived from the repo path, and a worktree is a different path — so every
+       key-based route resolves to a _different_ board, and the pinned `.bounty-session` is gitignored
+       and never crosses. **Measured, and every seat hit it.** A verb that misses does not error
+       usefully; it reports no running session, which reads as _"the board isn't up."_
+       **If you spawn seats into worktrees, resolve the board id once and hand it to them explicitly.**
+       That is the case where a seat does pass a session flag — **the ambient guarantee is what you
+       are trading away, so trade it deliberately rather than discovering it seat by seat.**
+     - **⚠ And under worktrees, seats must land through `anthill commit` — NEVER raw `git commit`.**
+       Worktrees give each seat its own index, so the intuition is that nothing is shared and a bare
+       commit is now safe. **That intuition is wrong, and it is wrong on a path nobody looks at:** a
+       repo with a pre-commit hook that stashes (lint-staged does, on every commit) is writing to
+       **`refs/stash`, which git shares across all worktrees of a repo** — while `HEAD` and the index
+       are per-worktree. So the one thing seats still share is **the ref that holds uncommitted work**,
+       and `anthill commit`'s lock is the only mutex over it. **Isolation moves the race; it does not
+       remove it.** Tell the seats this when you brief them — the reasoning is not available to
+       someone who only knows that worktrees isolate.
+   - **Seed the cards** — one `todo` card per planned lane, in owner lanes. The doer owns its card's
+     lifecycle `todo→doing→review`, the reviewer closes. The board is _state_; the vine is _substance_.
    - **`anthill status`** confirms the result (who's on the vine + the board column counts).
    - **⚠ `status` does NOT tell you who is on `comms`.** It reports the grapevine roster; comms has
      no presence at all, so a seat can be wired to the vine, visible in `status`, and receiving

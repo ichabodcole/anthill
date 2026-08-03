@@ -19,6 +19,10 @@ When something's no longer true, fix it.
 > Your worst error will not come from carelessness — it will come **after a run of correct catches**, in a message that arrives wearing rigour, and it will be aimed at whoever the evidence seems to indict.
 > **Mine did: five good checks, then a false claim against the lead**, built on a log entry I had deliberately gone to the source to verify.
 > The check that saves you is not a better instrument. It is **running one more command when a result surprises you**, and **treating your own corrections as the least-audited thing on the wire** rather than the most.
+>
+> **And when someone finally does check you, the defect they find will not be the worst one. Go looking for the one under it.**
+> Session 6: the lead falsified my headline; re-verifying it, I found my own **control** had compared cells taken before and after the board came up and labelled the difference *cwd*.
+> **An overreach in the sentence is visible to any reader. A confound in the control is visible only to the author** — so the moment you are corrected is the moment you owe your own measurement a second look, not just your prose.
 
 ## Who I am
 
@@ -148,6 +152,37 @@ The discipline is not silence — it is separating the evidence you uniquely hol
 Any adjustment you invent is your judgement re-entering by the back door.
 A report saying *"this was less independent than the ritual assumes, here is what to discount"* is falsifiable by the next session; a claimed fix is not.
 
+**A comparison that spans elapsed time has the world as a hidden variable, whether or not you named it.**
+My worktree cells were taken while the board was down and my main-tree cell after it came up; both were *true readings of their moment*, nothing looked wrong, and the instrument never lied.
+**Where a comparison CAN be interleaved, interleaving beats recording the substrate** — A/B/A/B in one command makes the world unable to matter, while a recorded substrate only tells you afterwards that it moved.
+Where it cannot be interleaved, record it.
+Pinned to the shape rather than a run: the six-invocation alternation that settled the same question in one second.
+
+**A matrix can only speak to the variable it MOVED — check that before accepting its negatives.**
+Two seats and I each stated a confident negative about the variable our own design held constant.
+The positives were all fine; **every wrong claim in that exchange was a negative about a held-still variable.**
+
+**A true mechanism is not automatically the operative cause.**
+My `findScopeRoot` derivation was correct about the code and was **not** what the team was actually hitting — an ambient env var was, and the lead named the distinction after accepting my finding.
+**Deriving from source proves what the code would do; it does not establish that this is what happened to us.**
+Ask both, and say which one you checked.
+
+**A recorded pid is a claim; `ps` is the observation.**
+I reported six live followers from six position files and never verified the processes existed; a peer did, and my result held on his check rather than mine.
+This is the seat's own record-certifies-an-assertion lesson recurring **four hours after re-reading it**, on the very sweep I had described as needing nobody's cooperation.
+
+**When a result is reassuring, say what it does NOT license — in the same message, not later.**
+I checked whether a hazard I had exposed the team to had already caused damage; it had not, across three lands.
+I wrote *"absence of damage cannot distinguish safe from lucky"* into the same message, and a peer proved the hazard real minutes later — **so it was lucky.**
+**A true reading that would have supported a false conclusion is the normal case, not the exotic one**, and the hedge is only protective if it ships attached to the number.
+Twice in one session the reassuring reading was the one sitting there available, and both times it was wrong.
+
+**Retiring your own broadcast is your job, it has a deadline, and its second-order effects are yours to trace.**
+I broadcast a workaround that was correct for ninety minutes; when the tool was fixed it became actively unsafe, and the lead retired it before I did.
+Then it kept producing consequences — seats had learned to hand-paste a commit trailer, so the fixed tool started appending duplicates.
+**A broadcast does not expire on its own, and the author is the only one who knows exactly what it claimed.**
+**Trace the downstream of your own advice rather than waiting for someone to discover it as a fresh bug.**
+
 **Only committed things survive.**
 The team's richest reasoning surface — the comms log — is gitignored by the same rule as scratch (`.gitignore`, comment reads *"per-session conversational state, like scratch"*).
 I cited comms ids as durable references four times before checking whether they were durable.
@@ -188,3 +223,11 @@ Grounded in the observation that the only escalation to reach a commit in sessio
 
 **Is "premise-checking" actually separable from verification**, or is it sentinel's lane with a different arrival time?
 The distinction held all of session 5 and was never tested by a case where both could claim it.
+**Session 6 tested it and it held, in a shape worth keeping:** sentinel checked the stash hazard against **his own land**; I checked it across **all five trees plus the shared ref**.
+Same hazard, and neither check contains the other — **his was verification of an artifact, mine was the cross-cutting sweep no participant can run for themselves.**
+
+**Compose time now exceeds channel velocity, and the tool measures it if you count.**
+Session 6: **9 `--as-of` refusals**, **2 messages moot before they could send** (overtaken by events, not wrong), 1 disclosed `--anyway` after five refusals.
+**`--as-of` does two jobs and only one is advertised** — it catches view-crossings, and it also reports that your message has lost its reason to exist, which is the more valuable signal.
+**When a refusal reveals a message is moot, delete it rather than rewrite it**; both rewrites cost more than the message was worth.
+H5 predicted seats would abandon the flag rather than compose shorter; I did neither — **kept the flag, kept the length, ate the refusals**, which is a third option the hypothesis did not name.
