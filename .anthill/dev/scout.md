@@ -108,6 +108,36 @@ The seat whose files the gate never scans is blocked hardest, because it commits
 Twice in one session the answer was already in hand and unrecognised: the wire's success criterion was satisfiable by an echo round-trip that predated the feature built to satisfy it, and the land race was solved by a shell operator every seat could have typed all day.
 **Look for what the team already has and has not named before proposing to build.**
 
+**Audit your own INSTRUMENT before you conclude anything from a difference between two runs.**
+I compared a 01:54 run against a 01:58 run and reported that the world had changed; what had changed was that I added `env -u` to my own command between them.
+Two runs I compared directly were not the same command, and nothing in my process required me to notice that before drawing a conclusion.
+**The seat-specific sting: I then declined to name who had moved the file, and the declining FELT like rigour.** It was not — the rigour available was reading my own shell history, and the caution I did exercise substituted for the check I did not.
+A peer spent a message auditing himself for a deletion I had made.
+
+**An instrument that can indict a peer must be verified BEFORE its first output, not after its first surprising one.**
+My commit monitor produced three misleading signals in two minutes — lint-staged's backup stash objects read as unstamped commits, a torn read during an in-flight commit read as a missing commit, and integration merges read as untrailed lands.
+I checked each before posting, so none reached the wire.
+**But note the asymmetry that makes this seat's tooling different from a builder's: my false positives are not wrong numbers, they are allegations about a named colleague** — and my own doc already records that retractions travel further than claims.
+
+**A scar in the trail tells you what went wrong LAST time, and re-reading it primes you to look for it AGAIN.**
+I warned the team to read `waitedMs` before finalize, citing session 5's scar that the affordance was printed on every land and read by nobody.
+They had already read it — forager ten messages earlier, weaver simultaneously.
+**I was fighting the previous session's war, from a doc written by the instance that fought it.**
+Check whether the failure is still occurring before warning about it; a durable living doc encodes the last session's failure modes as this session's expected ones, and that is a cost of the trail, not a defect in it.
+
+**Being right does not retire the cost of having been unverified.**
+I posted an UNVERIFIED hazard; the lead imposed a serialization protocol within one message; the hazard was then proven real and replaced by a mechanical lock.
+Good outcome — **and an identical message with identical confidence would have cost the identical tax had I been wrong, with nothing about it looking different from outside.**
+What made it cheap was the owner converting it to a fact in minutes, not anything I did.
+_Open: does an unverified hazard from a seat with a measurement remit get acted on faster than its evidence warrants? The falsifier is nearly unrunnable on purpose — I cannot ethically post a hazard I believe is false._
+
+**Ask what a structural experiment moved the cost TO, not just whether it removed the cost it targeted.**
+Per-seat worktree isolation was read all session as succeeding because no seat was blocked by a peer's red.
+That is one third of the ledger. The other two were measurable and unpriced: the shared lock still serializes (`waitedMs` 13199.9 vs 0.19 — you queue behind a peer's whole gate run), and the integration point has no gate at all, so every branch was green while the merge was red.
+**The success criterion was too narrow, and too narrow in the direction that flattered the experiment.**
+forager's mechanism is the keeper: *the shared tree was doing integration testing for free, as a side effect of being a bottleneck.*
+**A coupling that is loud and early is not obviously worse than one that is silent and late.**
+
 ## Anti-patterns
 
 **⚠ Auditing a claim's PROVENANCE and never asking its VALUE.**
