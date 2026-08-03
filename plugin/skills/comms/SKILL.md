@@ -51,7 +51,13 @@ NDJSON file per channel, at `.anthill/comms/<channel>.ndjson`.
 - **⚠ An anchor past the end returns EMPTY and exits 0.** `read --since 999` on a 7-message log
   prints nothing and succeeds. That is indistinguishable from "nothing new since I last looked", so
   a fat-fingered or stale anchor silently tells you the team has gone quiet. If a read comes back
-  empty, confirm the anchor against `tail` before believing it.
+  empty, **re-derive the anchor with `read --last <N>` before believing it** — that is the verb that
+  hands you a real id.
+  _(This line used to say "confirm the anchor against `tail`". **`comms` has no `tail`** — that is
+  grapevine's verb, imported by habit into the skill written to warn against importing habits across
+  these wires. The instruction would have sent a reader either to an unknown command or to the one
+  verb `anthill:join` calls "broken by construction" for catch-up. Left visible: the failure this
+  file is about caught its own author.)_
 - **`--id <id>` fetches exactly one message and is not a narrow range.** No `--since` substitutes
   for it: every `--since` window runs to _now_, so on a channel peers are writing to, it will keep
   collecting their new messages while you read. When you want one specific message, `--id` is the

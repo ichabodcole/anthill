@@ -92,12 +92,24 @@ stay solo.
    - **Seed the cards** — one `todo` card per planned lane, in owner lanes. The doer owns its card's
      lifecycle `todo→doing→review`, the reviewer closes. The board is _state_; the vine is _substance_.
    - **`anthill status`** confirms the result (who's on the vine + the board column counts).
-   - **⚠ `status` does NOT tell you who is on `comms`.** It reports the grapevine roster; comms has
-     no presence at all, so a seat can be wired to the vine, visible in `status`, and receiving
-     nothing on comms — with no symptom. **Confirm it by hand: after the seats introduce
-     themselves, count the "in, grounded" messages you actually received on comms and name anyone
-     missing.** If you convened four and can name three, the fourth is not quiet, it is missing.
-     One minute here, or an hour of a seat working from stale context. See **`anthill:comms`**.
+   - **⚠ `status` does NOT tell you who is on `comms`** — it reports the grapevine roster, so a seat
+     can be wired to the vine, visible in `status`, and receiving nothing on comms with no symptom.
+   - **Confirm the comms wiring right after the seats introduce themselves — `anthill comms
+positions`.** This is the named moment to run it; without one it is a verb nobody reaches for.
+     Run it **just after the introductions, while traffic has actually happened** — see the limit below.
+     - **Three states, three different facts, and they must never be read as one number.**
+       `never-followed` means **no record at all** — that seat has never attached a follower and the
+       tool has no idea what it has seen. `current` means level with the head. `behind` means behind
+       by N. **`never-followed` is not a rounded-down zero:** reporting it as _"missed nothing"_ is
+       the one claim it is not entitled to make, on the wire whose whole purpose is to stop silence
+       being mistaken for safety.
+     - **Its honest limit, which you need BEFORE you trust a green.** The position is stamped when a
+       byte leaves the follower's process — not when an agent received it — and lag is measured
+       **against the head, not against the clock.** So on a quiet channel nothing moves and every
+       follower looks equally healthy: **it can only convict a wire once somebody sends.** A green
+       during a lull means "no traffic", not "everyone is fine".
+     - **If you convened four and can account for three, the fourth is not quiet — it is missing.**
+       One minute here, or an hour of a seat working from stale context. See **`anthill:comms`**.
 
 4. **Confirm the branch, brief the seats, then spawn them.**
 
