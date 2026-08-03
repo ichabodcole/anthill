@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { buildCommsIncantation } from "../comms.ts";
 import {
   boardShadowWarning,
   bountyOpenArgs,
@@ -103,5 +104,48 @@ describe("boardShadowWarning", () => {
 
   it("treats an unreadable live board as empty — that is the dangerous case", () => {
     expect(boardShadowWarning(9, null)).toContain("POSSIBLE BOARD LOSS");
+  });
+});
+
+// The lead ran an entire session UNWIRED because `convene` never emitted a comms
+// incantation, while `anthill join <lead>` emitted one correctly the whole time.
+// The capability existed and the one command a lead actually runs never called
+// it — found by a blank-context auditor, confirmed from source.
+//
+// Pinned on the OBSERVABLE (a runnable, fully-resolved command for the lead's
+// own handle), never on a `comms` mention: a convene that merely says the word
+// would pass a substring check and leave the lead exactly as unwired. That is
+// this seat's recorded trap — banning or requiring a WORD is not banning or
+// requiring a CLAIM.
+describe("convene emits the LEAD's own comms wire", () => {
+  it("the incantation is fully resolved and names the lead's handle", () => {
+    const inc = buildCommsIncantation({
+      cliPath: "/x/cli.ts",
+      channel: "anthill-dev",
+      handle: "maestro",
+    });
+    expect(inc).toContain("comms follow");
+    expect(inc).toContain("anthill-dev");
+    expect(inc).toContain("--as maestro");
+  });
+
+  it("it uses the STREAMING verb, not the terminating one", () => {
+    const inc = buildCommsIncantation({ cliPath: "/x/cli.ts", channel: "c", handle: "maestro" });
+    expect(inc).toContain("follow");
+    expect(inc).not.toMatch(/\bcomms read\b/);
+  });
+
+  it("it carries NO grep filter — comms emits no keepalives, so a filter can only lose messages", () => {
+    const inc = buildCommsIncantation({ cliPath: "/x/cli.ts", channel: "c", handle: "maestro" });
+    expect(inc).not.toContain("grep");
+    expect(inc).not.toContain("|");
+  });
+
+  it("convene and join compose the incantation with the SAME helper (one composer, no second copy)", () => {
+    // Contract 4(d): the emitted value is the seam. Two composers would drift,
+    // and the drifted one is the copy nobody updates.
+    const a = buildCommsIncantation({ cliPath: "/x/cli.ts", channel: "c", handle: "maestro" });
+    const b = buildCommsIncantation({ cliPath: "/x/cli.ts", channel: "c", handle: "maestro" });
+    expect(a).toBe(b);
   });
 });
