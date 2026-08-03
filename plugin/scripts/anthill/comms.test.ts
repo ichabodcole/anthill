@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
   buildCommsIncantation,
+  buildPositionsReport,
   commsLogPath,
   commsPositionPath,
   encodeMessage,
@@ -311,5 +312,92 @@ describe("commsPositionPath — it becomes a filename", () => {
       /unsafe seat handle/,
     );
     expect(() => commsPositionPath("/team", "../evil", "forager")).toThrow(/unsafe channel/);
+  });
+});
+
+// The CROSS-SEAT read. The producer (`positionState`) was already a three-value
+// discriminator; the defect this file has recorded twice is a CONSUMER one
+// case away, flattening those three into a scalar. So the gap is asserted as a
+// SET here, not one case at a time — my own scar: I asserted the three states
+// on the producer and then checked the consumer's fields one case at a time,
+// and the collapse happened in the derivation of the number.
+function firstRow<T>(rows: T[]): T {
+  const r = rows[0];
+  if (!r) throw new Error("expected at least one row");
+  return r;
+}
+
+describe("buildPositionsReport — the consumer must not flatten what the producer distinguished", () => {
+  const alpha = { handle: "alpha", role: "hands" };
+  const seats = [alpha, { handle: "beta", role: "verify" }, { handle: "gamma", role: "lead" }];
+  const at = (emittedThrough: number, pid = 1) => ({
+    handle: "x",
+    channel: "c",
+    emittedThrough,
+    at: 0,
+    pid,
+  });
+
+  test("gap is null / 0 / N across the three states — asserted as a SET", () => {
+    const rows = buildPositionsReport(
+      10,
+      seats,
+      new Map([
+        ["alpha", null], // never followed
+        ["beta", at(10)], // current
+        ["gamma", at(7)], // behind by 3
+      ]),
+    );
+    expect(rows.map((r) => r.gap)).toEqual([null, 0, 3]);
+    expect(rows.map((r) => r.state)).toEqual(["never-followed", "current", "behind"]);
+  });
+
+  test("a never-followed seat reports gap NULL, never 0 — the claim it may not make", () => {
+    const row = firstRow(buildPositionsReport(99, [alpha], new Map([["alpha", null]])));
+    expect(row.gap).toBeNull();
+    expect(row.emittedThrough).toBeNull();
+    // 0 would assert "you missed nothing" about a seat that may have read the
+    // entire log via `read`, which records nothing by design.
+    expect(row.gap).not.toBe(0);
+  });
+
+  test("a seat with no entry in the map is never-followed, not an error", () => {
+    const row = firstRow(buildPositionsReport(5, [alpha], new Map()));
+    expect(row.state).toBe("never-followed");
+    expect(row.gap).toBeNull();
+  });
+
+  // The QUIET-CHANNEL control. This is the assertion that fails if anyone ever
+  // "simplifies" liveness to wall-clock freshness — `at: 0` is 1970 and the row
+  // must still be current, because the head has not moved. Freshness measures
+  // the traffic, not the wire.
+  test("an ancient `at` is still CURRENT when the head has not moved", () => {
+    const row = firstRow(buildPositionsReport(4, [alpha], new Map([["alpha", at(4)]])));
+    expect(row.state).toBe("current");
+    expect(row.gap).toBe(0);
+  });
+
+  test("followerAlive is advisory and NEVER contradicts state", () => {
+    const row = firstRow(
+      buildPositionsReport(4, [alpha], new Map([["alpha", at(4, 424242)]]), () => false),
+    );
+    // A dead pid means emittedThrough is a high-water mark, not a live reading
+    // — but the seat is still arithmetically current, and the report says both
+    // rather than resolving them into one verdict.
+    expect(row.state).toBe("current");
+    expect(row.gap).toBe(0);
+    expect(row.followerAlive).toBe(false);
+  });
+
+  test("followerAlive is null when no liveness probe is supplied — not false", () => {
+    const row = firstRow(buildPositionsReport(4, [alpha], new Map([["alpha", at(4)]])));
+    // "not checked" and "checked, dead" must not look alike. This is the same
+    // rule as gap null-vs-0, one field over.
+    expect(row.followerAlive).toBeNull();
+  });
+
+  test("carries the roster role, so a reader need not re-resolve identity", () => {
+    const rows = buildPositionsReport(1, seats, new Map());
+    expect(rows.map((r) => r.role)).toEqual(["hands", "verify", "lead"]);
   });
 });

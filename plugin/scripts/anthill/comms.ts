@@ -303,3 +303,65 @@ export function positionState(head: number, position: SeatPosition | null): Posi
   if (behindBy <= 0) return { state: "current", emittedThrough: position.emittedThrough };
   return { state: "behind", emittedThrough: position.emittedThrough, behindBy };
 }
+
+/** One seat's row in the cross-seat position report. */
+export interface SeatPositionRow {
+  handle: string;
+  role: string;
+  state: PositionState["state"];
+  /** Highest id emitted to this seat, or `null` when it has never followed. */
+  emittedThrough: number | null;
+  /**
+   * `null` / `0` / `N` — and `null` is NOT a rounded-down zero. With no recorded
+   * position the tool has no idea what that seat has seen; it may have read the
+   * whole log via `read`, which records nothing by design (Contract 4(c-bis)).
+   * Reporting `0` there asserts "you missed nothing", the one claim it is not
+   * entitled to make, on the wire whose whole purpose is to stop silence being
+   * mistaken for safety.
+   */
+  gap: number | null;
+  /** Advisory ONLY. `false` means the recording follower's pid is gone, so
+   * `emittedThrough` is a high-water mark rather than a live reading. `null`
+   * means we could not check. Pids are reused, so this narrows a question
+   * rather than answering it — it never contradicts `state`. */
+  followerAlive: boolean | null;
+}
+
+/**
+ * The cross-seat read: where every seat stands against one head.
+ *
+ * PURE (the unit-test target) — `positions` and `alive` are passed in, so the
+ * whole report is testable without a filesystem or live processes.
+ *
+ * **What this observes is EMITTED, and the report may not imply otherwise**
+ * (Contract 6(a)). Three tiers: `emitted` is an artifact this tool owns;
+ * `delivered` is downstream of a pipe buffer and the consuming harness and is
+ * NOT observable from here; `read` is testimony and stays hand-written. The
+ * useful direction is the negative one — a peer reading your position against
+ * the head establishes messages were **not emitted** to you, and nothing
+ * unemitted was ever delivered. That is a fact about someone else obtained
+ * without their cooperation, and it is how a dead wire actually gets found.
+ *
+ * Its honest limit, worth stating where the code is rather than in a footnote:
+ * head-lag can only convict a follower **once somebody sends**. A dead wire on
+ * a silent channel is invisible to this and to everything else we have.
+ */
+export function buildPositionsReport(
+  head: number,
+  seats: { handle: string; role: string }[],
+  positions: Map<string, SeatPosition | null>,
+  alive?: (pid: number) => boolean | null,
+): SeatPositionRow[] {
+  return seats.map((seat) => {
+    const position = positions.get(seat.handle) ?? null;
+    const state = positionState(head, position);
+    return {
+      handle: seat.handle,
+      role: seat.role,
+      state: state.state,
+      emittedThrough: position ? position.emittedThrough : null,
+      gap: state.state === "never-followed" ? null : state.state === "behind" ? state.behindBy : 0,
+      followerAlive: position && alive ? alive(position.pid) : null,
+    };
+  });
+}
