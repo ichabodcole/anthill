@@ -398,6 +398,54 @@ Three refusals say otherwise — the whole race is **the gap between measuring a
 I won twice by being faster, which is **not a technique I can hand anyone**; a peer with identical discipline lost the same race twice.
 Worth keeping: I nearly proposed exempting gate-invisible files from the hook and stopped, because that rule keys on **the committer's own description of its own diff** — the one assertion you must never let the asserting party make.
 
+## Hard-won lessons (worktree isolation + the scaffold's comms gap, 2026-08-03 — session 6)
+
+- **⚠ THE ONE TO READ FIRST: my hard-wrap rule did not cover the case that corrupted a skill, and I believed it did.**
+My doc says *"don't hard-wrap prose; a wrapped line beginning `-`/`+` gets reparsed as a list bullet."* I obeyed it and still mangled `convene`: I inserted a **nested bullet directly above unindented continuation prose**, prettier decided that prose was my new bullet's child, and **card-seeding — a step of convene — became a clause inside a caveat about worktrees, in the commit that added the caveat.**
+The rule I held was about **line shape**; the real hazard is **inserting structure above prose whose parent is implicit.**
+Three properties made it invisible and every skill I own has all three: **biome ignores markdown** (so `392 pass / 0 fail` says nothing about any file I touch), the corruption happens **in the hook, after my last look**, and the output is **still valid markdown that reads fine** — it demotes a step into a caveat, which a reader experiences as *"convene never tells me to seed cards"* rather than as damage.
+The only instrument that exists is reading the rendered file after the hook. I caught it by chance; **that is not a method and I will not write it up as one.**
+_Pin: `84eabf6` against `a3418c7` — the pair is the evidence, neither alone is._
+
+- **⚠ Under a documented FALLBACK, the failing cells carry the information and the successes are noise.**
+Four of us wrote a board-binding headline off a cell that resolved, while `bounty` was silently falling through to `most-recent board`. **Every success was confounded; every error was real** — because a fallback's failure mode is *succeeding* when it shouldn't.
+My surviving claim (`--session-key` errors from a worktree ⇒ every key-shaped remedy is dead) held **only because I happened to derive it from failing cells.** That was luck; it is now a rule.
+**Trigger, and it is checkable: when a tool's resolution order ends in a fallback, read your reds and discard your greens.** The instinct runs the other way, which is why all four of us went the same direction.
+
+- **`stale · false · INVERTED` is a severity axis my Contract 5(b) framing did not have.**
+I was told the ambient-binding prose had gone *false* under worktrees. It had gone **inverted**: it names the only working path (`--session`) as the forbidden one.
+A stale sentence misinforms; **an inverted one routes the most compliant reader away from the fix** — the reader who follows us exactly is the one who cannot reach the board.
+Scope, don't hedge: *"except in worktrees"* is the widening I have been falsified on five times. Each half names the tree it is true of, and **describe the failure as it presents** (*"no running bounty session"* reads as *"the board isn't up"*), because the cause is not what a stuck seat has in front of it.
+
+- **⚠ The counterweight to my own "execution beats reading" — when the probe's blast radius is a PEER's uncommitted work, read-only with a control is the only admissible instrument.**
+Confirming `refs/stash` is shared, the obvious experiment (stash here, look there) would have **manufactured the collision I was measuring, in someone else's tree, with their work as the stake** — the probe's failure mode identical to the bug's.
+`git rev-parse --git-path refs/stash` answered it read-only; **`HEAD` resolving per-worktree was the control that made the answer mean anything.**
+My standing lesson was scoped to probes whose failure costs only me, and I had not noticed the scope. **Both halves are now on the record; neither is safe alone.**
+
+- **A measurement of an idle system measures the idleness, not the property.**
+`waitedMs: 0.19` on my land, `13199.9` on a peer's minutes later. I had *argued* the lock serializes across worktrees and was right; **the peer who queued 13.2s is the one who found it.** A prediction is not a finding — and I said so on the wire rather than collecting it, which is the only reason it stayed true.
+Same shape as Contract 6(d): *a quiet channel makes every follower look equally dead.* **A prediction that treats both outcomes as informative is not testing anything.**
+
+- **"Emitted onboarding is mine" and "the emitter is his" were both true and unreconciled — and the ruling that fixed it did not cover the test.**
+The lead ruled I edit the checklist literals with the owner ratifying. The rewrite could not land without editing **his test**, which pinned the exact string I was replacing — beyond "literals", and the ruling had no view on it. I did it, and flagged the test as the thing to push back on hardest rather than burying it.
+**Candidate Contract 4(d) clause: the emitter's owner holds the file, the prose's owner holds the words, the ratify is where they meet — and a pinned string makes the test part of the prose.**
+_(He ratified by **running** it, not reading it. That is the ask my epitaph tells me to make, arriving unprompted from the other side.)_
+
+- **Assert the DISTINCTION, never the mention.**
+`toContain("comms")` passes on a line that names comms while still implying one procedure — **exactly as wrong as the line it replaced.** The assertion that earns its place is the **asymmetry** (*nothing clears the comms log* + *convene clears the vine*), because an edit that keeps both commands and drops the reason leaves a reader with two verbs and no rule.
+Generalises: when pinning prose, pin **the thing that makes it true**, not a token that appears in it.
+
+- **The scaffold is the strongest argument against whatever it omits.**
+The sweep I was carded to do found the opposite of its premise: not that grapevine was over-named (~22 of 31 mentions were correct) but that **`comms` appeared ZERO times in `plugin/templates/`** — so `anthill init` minted a team whose SOP said its only wire was the vine, while `join` told that same team's seats a missing comms block is a **bug**. Both shipped in one release.
+**A rendered-once doc is permanent for that team** (nothing refreshes it), so the omission is not a gap, it is a standing claim.
+**Reflex: after adding a capability, grep the SCAFFOLD for it, not just the skills.** The skills are where I work; the scaffold is what a stranger receives.
+
+- **Reflective (trusted by default):** I trusted that "not run" would stay legible as not run.
+The blank-context re-derivation I owe my own enumerations could not be dispatched this session, so I marked it `UNVERIFIED` on the wire, in the commits, and in three separate asks.
+**The failure to guard is not that it went unrun — it is that "nobody was available to check me" quietly becomes "it was checked."** Absence of an audit leaves no artifact, so it has to be written down repeatedly or it converts to silence, and silence reads as clean.
+
+_(**Epitaph deliberately NOT superseded.** Session 5's — *ask for a measurement, not a reading* — was not merely still true today, it was **the mechanism of every correction on both sides**: a peer's 13.2s falsified the lead's prediction after my argument had only dented it, and the owner ratified my prose by running it. **A predecessor's epitaph that keeps earning itself should not be replaced by a fresher one that says less.**)_
+
 ## Candidates
 
 - Themed naming is a small fixed set + free-form today; generating a theme from the repo's domain is an open nicety (no payload dependency — a pure weaver call).
