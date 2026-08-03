@@ -363,6 +363,133 @@ gives any failure two candidate causes and settles neither.
 re-arming grapevine. If it re-arms, the bar has not been met and the reason for re-arming is the next
 blocking item.
 
+### R12 — the blind read RAN, and it falsified B1–B3 in both directions (2026-08-03, session 6)
+
+**R11 asked for a falsifier: "any seat naming a blocker not in B1–B3, or showing that one of the three
+is survivable." Both happened.** Recorded here rather than on the wire, because the wire is not an
+artifact and this is the durable record.
+
+**Mechanism, as R11 specified it.** Five seats dispatched as one-shot subagents, grounded via
+`anthill join <handle>`, explicitly un-wired (no follow, no send, no commit), each asked only:
+_"grapevine is unavailable this session — comms is all you have. What do you need that isn't there?"_
+Returned privately to the lead, **before** the framing opener and before any seat was wired.
+
+#### ⚠ The mechanism is structurally leaky, and steward said so instead of answering around it
+
+**The blind read cannot be blind for any seat that grounds properly.** R11 — the scaffold, the
+"collect it BLIND" instruction, and the dispatch mechanism — is **committed in this file**, so
+grounding delivers the thing being withheld. steward opened his answer by refusing the premise,
+split his own response into independently-derived items and ratify-responses, and told the lead to
+**discount the second set as testimony rather than a second derivation**. He declined to correct for
+it on the grounds that any adjustment he invented would be his judgement re-entering by the back
+door.
+
+**This is the fourth leaked blind condition on this spike and the first that no discipline could have
+prevented** — the previous three were procedural. The remedy is structural and belongs to the lead:
+**hold the candidate list in gitignored scratch until collection closes, then land it.** A seat
+cannot be asked not to read the tree it is told to ground in.
+
+_Ruled by the human, 2026-08-03: record as a finding, do not change process mid-session._
+
+#### What the five actually returned
+
+**Named by all five, and absent from B1–B3 — the onramp is grapevine-first.**
+`anthill join` emits a checklist whose item **1** is `grapevine tail`, item **2** `bounty tail`, item
+**3** `comms follow`; item **7**, the manifest's only catch-up instruction, names `grapevine pull`.
+Under **Contract 4(d)** that emitted text _is_ the onboarding a consumer repo reads. **A team adopting
+comms for the first time is instructed by the tool to lead with the wire comms is meant to replace.**
+
+A stronger sub-case, measured by three seats independently with an empty-`HOME` control:
+`team-join.ts:127–135` resolves **both** coord CLIs in one `try` whose catch is `process.exit(1)`,
+and the `comms` block is composed downstream at `:184`. With spellbook absent, **no seat can join at
+all** — which punches a hole in **Contract 4(b)**'s "the `comms` block is ALWAYS present". That clause
+reasoned about tool/skill skew and never considered an unrelated dependency voiding the whole
+manifest. `convene` already has the correct shape one command over (`team-convene.ts:137,150` warns
+and proceeds).
+
+**B2 — FALSIFIED as a blocker, by artifact.** `maestro` is in `seats[]` (`spawn:false`), so
+`anthill join maestro` resolves through the roster and emits a comms incantation **today**; the lead
+ran it and wired both tails from its output. The capability was built and `convene` merely never
+called it. steward's coupling is the durable part: **B2's severity is entirely a function of B1's
+absence** — an unwired lead is undetectable only while nobody can read positions, and becomes the
+most conspicuous row in the table the moment presence exists. Ship it with B1; do not let it gate.
+
+**B1 — reframed, and demoted by three of five to friction.** The primitive shipped and the reader did
+not: `readPosition` is called in exactly two places, both about the caller itself. Six position files
+exist on disk right now. **What is missing is a verb, not a capability** — a direct instance of the
+retro's H12 (_a team's recurring failure is missing NAMES for capability it already holds_).
+Two additions the item as written does not carry: it must be **a verb any seat can run at any time**
+against the whole roster (steward — otherwise the sweep stays a person, and a person is not a
+mechanism), and `anthill status` must stop **asserting** `(nobody)` (forager — not an absent
+instrument but a confidently wrong-shaped one, since `presentSeats()` returns `[]` on any failure).
+**Blocking is retained on the `down` inversion alone**, which is destructive and silent.
+
+**B3 — confirmed by all five, and costed above R11's estimate.** R11 said "topic folds in here."
+forager's scoping says otherwise: a `meta` stamp cannot carry it, because `encodeMessage` serialises
+the message and nothing else — this needs a field **in the record** (a `kind:"session"` frame) on an
+append-only log whose 283 existing records will lack it. `emittedThrough?` is the precedent for
+"absent means older binary, not zero."
+
+**New, and not resolved here:** the **human cannot send on comms at all** (Contract 4(c) admits only
+rostered handles). steward's observation is that this and R10's unbuilt **guest identity are the same
+missing thing inverted** — guest = position without send, human = send without seat — so **one change
+to `resolveSeatIdentity` unblocks the two-scout control _and_ puts the human on the wire.** That is a
+**revision of Contract 4(c), not a flag**, and it is not this session's work.
+
+**Also unresolved — a genuine disagreement between two seats, left standing.** weaver holds that the
+absence of a terminating receive verb (grapevine's `wait`) **blocks the subagent convene path**, since
+a one-shot seat cannot hold a Monitor tail; forager holds it is a non-issue because every seat here is
+Claude Code with Monitor. **weaver is right about the mode the blind read itself ran in.** Unsettled;
+do not let either version be recorded as the team's position.
+
+#### The ordering premise R11 left ambiguous, now ruled
+
+All five seats independently flagged that _"grapevine unavailable"_ has two readings that land in
+different places — **daemon unwired** vs **spellbook uninstalled** — and that the choice decides
+whether the top-ranked blocker fires at all. **Ruled by the human, 2026-08-03: grapevine stays
+installed.** The backup is a **release-time** posture — teams adopting comms for the first time can
+fall back if they hit a bug — not a session configuration. So the uninstalled branch does not gate
+the merge, and the onramp defect (not the hard exit) is what the release actually rides on.
+
+### R13 — per-seat worktree isolation: measured, and it broke BOTH coordination substrates (2026-08-03)
+
+The [shared-tree investigation](../../investigations/2026-07-27-shared-tree-failure-modes.md) asked for
+two measurements it could not get by argument. Both are now taken, in this tree.
+
+**Provisioning cost is not the problem.** `git worktree add` ×5: **0.37s / 14M**. `bun install` ×5:
+**~1.1s** (global cache) / **461M**. Gate in an isolated worktree: **390 pass / 0 fail, 17.84s**. The
+pre-commit hook **does** fire in a worktree — proven with a positive control (a type-broken file was
+refused), not with a green, because a green proves nothing if the hook is inert.
+
+**The problem is that isolation silently severs coordination, for two unrelated reasons.**
+
+1. **comms** resolves its log via the config walk-up, and `.anthill/comms/` is gitignored — so it does
+   not travel with the branch. Each worktree got its **own empty log**. Measured against a control:
+   `comms read --last 1` from a worktree returned `{"ok":true,"messages":[]}` while the main tree
+   returned `#284`. **Same command, same channel, `ok:true` both times.** An empty read is
+   byte-indistinguishable from a quiet channel — the precise failure this wire exists to prevent,
+   manufactured by the isolation experiment itself. _Independently observed from the seat side by
+   scout, who recorded `follow-start → head: 0, never-followed` as join baseline before the lead found
+   it._
+2. **bounty** derives its id as `k-<key>-<projecthash>` — **project-PATH-scoped**. A worktree is a
+   different path, so the same `BOUNTY_SESSION_KEY` derives a **different board**. Three-way control:
+   main tree unflagged → resolves; worktree + `BOUNTY_SESSION_KEY` → _"no running bounty session"_;
+   worktree + explicit `BOUNTY_SESSION=<resolved id>` → resolves.
+
+**Contract 3 forecast this and it was filed as a limitation.** Its scope bound reads: the binding
+_"resolves only from within the project tree… the guarantee is bounded to the tree, not the
+machine,"_ and calls it _"correct in practice — seats always run inside the repo."_ **Worktrees
+falsify "inside the repo."** Likewise the investigation's own line 168 — _"'add `--isolate`' is not a
+flag; it is a **workspace-provisioning problem**"_ — which is now an instance rather than a
+prediction.
+
+**Both were fixed by provisioning** (symlink the comms dir; export the resolved board id), which is
+the investigation's thesis holding rather than failing. **Consequence for the seams:** Contract 3's
+"seats and the lead NEVER pass `--session` — the binding is ambient by construction" is **false under
+worktrees**, and the SOP + convene skill restate it. That is Contract 5(b)'s class — a true sentence
+going quietly false because the environment moved — and the remedy is scoping the claim, not widening
+it. **Owner: forager (Contract 3), weaver (the prose). Not amended by the lead.**
+
 ### Team rule adopted this session (not comms-specific)
 
 **Whoever certifies a convergence names the shared input both parties read first.** Producer/consumer convergence is this team's ratify signal; an unqualified convergence claim is the "agreement is not truth" failure wearing a ratify badge. Adopted after a convergence was certified by timestamp without naming that both parties had read the same proposal — and then re-committed by the lead one message later.
