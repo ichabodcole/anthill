@@ -1,4 +1,6 @@
+import { fileURLToPath } from "node:url";
 import { emit, resolveFormat } from "../agent-layer.ts";
+import { buildCommsIncantation } from "../comms.ts";
 import { execCoord, firstErrorLine, resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
@@ -12,6 +14,18 @@ interface ConveneData {
   topicSet: boolean;
   board: BoardCounts | null;
   leadDoc: string;
+  /**
+   * The LEAD's own comms wire, fully resolved (Contract 4(a)/(b)): the consumer
+   * renders it verbatim and never interpolates a handle.
+   *
+   * `null` ONLY when no lead is resolvable from config — never as a stand-in for
+   * "this team has no comms", which is not a state that exists. A convene that
+   * silently omitted this is why a lead ran a whole session unwired: `join`
+   * emitted an incantation correctly the entire time and convene never called
+   * it, so the capability was present and unreachable from the one command the
+   * lead actually runs.
+   */
+  commsIncantation: string | null;
   warnings?: string[];
 }
 
@@ -185,6 +199,22 @@ export const teamConveneCommand = defineAnthillCommand({
       ? config.seatDocPath(config.lead)
       : `${config.paths.seatDir}/<lead>.md`;
 
+    // The lead is a seat like any other and needs its own wire. Built from the
+    // SAME helper `join` uses, so there is one composer and no second copy to
+    // drift (Contract 4(d): pay the seam in emitted values, not in words).
+    const commsIncantation = config.lead
+      ? buildCommsIncantation({
+          cliPath: fileURLToPath(new URL("../cli.ts", import.meta.url)),
+          channel,
+          handle: config.lead,
+        })
+      : null;
+    if (!config.lead) {
+      warnings.push(
+        "no lead resolvable from config, so no comms incantation was emitted — the lead will be UNWIRED unless it runs `anthill join <handle>` itself",
+      );
+    }
+
     const data: ConveneData = {
       channel,
       channelOpened,
@@ -193,6 +223,7 @@ export const teamConveneCommand = defineAnthillCommand({
       topicSet,
       board,
       leadDoc,
+      commsIncantation,
       ...(warnings.length > 0 && { warnings }),
     };
 
@@ -215,6 +246,11 @@ export const teamConveneCommand = defineAnthillCommand({
           );
         }
         lines.push(`Lead: read ${d.leadDoc} to take the lead seat.`);
+        if (d.commsIncantation) {
+          lines.push(
+            `Monitor the team comms — wrap with Monitor, verbatim, NO filter (comms follow emits no keepalives, so there is nothing to strip; adding a grep here can only lose messages): ${d.commsIncantation}`,
+          );
+        }
         if (d.warnings?.length) {
           for (const w of d.warnings) lines.push(`⚠ ${w}`);
         }
