@@ -444,6 +444,24 @@ The sweep I was carded to do found the opposite of its premise: not that grapevi
 The blank-context re-derivation I owe my own enumerations could not be dispatched this session, so I marked it `UNVERIFIED` on the wire, in the commits, and in three separate asks.
 **The failure to guard is not that it went unrun — it is that "nobody was available to check me" quietly becomes "it was checked."** Absence of an audit leaves no artifact, so it has to be written down repeatedly or it converts to silence, and silence reads as clean.
 
+- **⚠ THE BLANK-CONTEXT AUDIT FOUND SIX DEFECTS IN MY OWN FILES AND MY SELF-REVIEW HAD FOUND NONE — and the worst one shipped long before today.**
+`bootstrap`'s step 5 had *"Optionally suggest they"* cut off mid-clause by an inserted paragraph, stranding *"commit `.anthill/config.json`"* eight lines below **as a bare imperative**. Read literally — which is how an agent reads — **it instructs the agent to make the first commit in the human's repo, two lines under "This edits the repo's root files, so ASK first."**
+Also: `comms/SKILL.md` told readers to confirm an anchor against **`tail`**, a verb comms does not have — grapevine's verb, imported by habit **into the file written to warn against importing habits across these wires**. And `upgrade` told you to diff against a `retro.md` template that does not exist.
+**Every one is old. None was found by me, by a peer, or by any gate.** _Pin: `9edae1d`, `556c4c4`._
+
+- **⚠ A GREP CANNOT FIND AN ABSENCE, AND EVERY SERIOUS DEFECT WAS AN ABSENCE.**
+The auditor's own answer to *"what would this enumeration miss?"* is the most useful sentence anyone handed me this session: **the sweep is keyed on a token, and the real defects are absences and bindings — neither contains the token.**
+`plan/` scores **zero** grapevine-vs-comms hits and is a whole skill running on a single-wire model. `convene` never emits a comms incantation, so **the lead is never wired to the wire it is told to audit** — that is not a wrong sentence anywhere, it is a gap between an instruction in one file and a missing line in another.
+**My one good find today (comms appears 0 times in `plugin/templates/`) came from grepping the INVERSE** — and I did that on instinct, not method. **Make it method: after sweeping for the thing, sweep for its absence, and ask what a token-keyed search structurally cannot see.**
+
+- **Two auditors with DIFFERENT LENSES found disjoint defect sets. Redundancy would have found neither half.**
+The **enumerative** agent (*find every instance, invent your own categories*) found the dead verb and the unmarked defaults. The **behavioural** agent (*read these as the agent who must ENACT them; where would you do the wrong thing?*) found the mangled consent instruction, a genuine cross-file contradiction, and a shared-tree `git stash push -u` that sweeps every peer's uncommitted work.
+**The behavioural one was worth more, and it is the closer analogue to execution my medium has** — my epitaph says ask for a measurement, and *"act on this and tell me where you go wrong"* is the nearest thing to running prose.
+
+- **A contradiction can live entirely BETWEEN two locally-correct files, where no author is wrong.**
+`join` told a seat to introduce itself *on the vine*; `convene` told the lead to count introductions *on comms*. **Each sentence is defensible in its own file.** Together they produce a lead who finds zero seats on comms, concludes everyone is missing, and goes chasing seats that were never told to post there.
+**Only a reader who runs BOTH documents as one procedure can see it**, and neither owner is that reader. This is the strongest argument I have yet for the behavioural audit being a standing beat rather than a favour I ask when I feel uncertain — **I felt no uncertainty about either file.**
+
 _(**Epitaph deliberately NOT superseded.** Session 5's — *ask for a measurement, not a reading* — was not merely still true today, it was **the mechanism of every correction on both sides**: a peer's 13.2s falsified the lead's prediction after my argument had only dented it, and the owner ratified my prose by running it. **A predecessor's epitaph that keeps earning itself should not be replaced by a fresher one that says less.**)_
 
 ## Candidates
