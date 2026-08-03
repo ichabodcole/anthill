@@ -2,8 +2,10 @@
 
 The standard operating procedure for the agent team that builds this project. A **map, not a
 manual** — it points at the source of truth rather than restating it. This is a **seed**: everything
-here is meant to evolve by use, not stand as the final answer. The team coordinates on the
-**`{{channel}}`** grapevine channel (substance) and the bounty board (task state); **{{lead}}** leads.
+here is meant to evolve by use, not stand as the final answer. The team coordinates on **two message
+wires and a board** — `anthill comms` (the seat-aware log, durable across sessions), the
+**`{{channel}}`** grapevine channel (the back-channel, cleared each session), and the bounty board
+(task state); **{{lead}}** leads. Both wires are live; see **Tools** below for which is which.
 
 ## The idea: living context (stigmergy)
 
@@ -86,9 +88,17 @@ direct.
   closes. The board is _state_.
 - **Grapevine (`{{channel}}`)** — the back-channel. Seats discuss, coordinate, reconcile. The vine is
   _substance_. Decisions route to the human **through {{lead}}**, not direct.
+- **Comms (`anthill comms`)** — the team's **seat-aware message log**, on the same channel. Identity is
+  a seat from your roster rather than a free-form alias, and **nothing clears the log** — so unlike the
+  vine, it accumulates across sessions and a bare read replays all of them. Anchor a catch-up to an id.
+  **You are wired to both wires**; `anthill join <handle>` emits the exact command for each.
+  _Why two: they fail differently, so each is the other's fallback. If one drops mid-session, say so on
+  the other — that is the whole reason the second one is there._
 - **The CLI** — `anthill` (run from the plugin; `convene` / `join` / `spawn` / `status` / `commit` /
   `down` wrap grapevine + bounty + tmux). `anthill join <handle>` emits your grounding docs + an
   action checklist — that checklist is the single source; don't restate it.
+  **⚠ `anthill status` does NOT cover comms** — it reports the grapevine roster only, so a seat can be
+  absent from comms and look present. Counting who is on that wire is currently a manual check.
 
 ## Workflow — convene → plan → work → finalize
 

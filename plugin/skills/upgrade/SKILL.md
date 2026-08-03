@@ -98,6 +98,15 @@ prints the migration plan **without touching anything**.
 > 2026-08-01) arrives this way. So the reconcile has two halves: **diff the docs you already have,
 > and check whether the templates gained one you don't.**
 
+> **⚠ A release can add a new COORDINATION WIRE, and no amount of doc reconciling puts you on it.**
+> This is a third case and it is the one that looks handled when it isn't: reconciling the SOP so it
+> _describes_ a new wire changes what your team reads, not what your team is connected to. **Seats get
+> on a wire at `anthill:join`, from the manifest the CLI emits** — so after an upgrade that adds one,
+> the team is wired only from its **next join**, and anyone still in a running session is not.
+> **Tell the human that explicitly.** A team whose SOP now documents a wire nobody is listening on has
+> the worst version of this: the doc reads correct, the channel reads quiet, and those are
+> indistinguishable from working.
+
 - **Behind** → it prints plain-language **notes** summarizing each move (config relocate, docs
   relocate, gitignore swap, version stamp); the structured op list comes back in the same envelope
   everything else does.
