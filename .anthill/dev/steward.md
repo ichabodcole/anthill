@@ -98,7 +98,9 @@ Compare the per-seat positions the comms wire records against the roster, and na
 **Do not hardcode where those live** — storage is the wire owner's to choose and change (see `seams.md`); ask the tool, don't memorise a path.
 It takes ten seconds and needs nobody's cooperation.
 **This exists because the one time it mattered, nobody was doing it** — a seat was found unmonitored only because I happened to be looking at that directory to discharge an unrelated prediction.
-**Be honest that this reflex is not a mechanism:** it is a person, with the person's disappearance deferred to the next session boundary, and it should be replaced by something that fires without a seat remembering.
+**UPDATE (session 6): the mechanism now exists — `anthill comms positions`, carrying the three states and `followerAlive`.** Use the verb; the hand sweep is the fallback, not the practice.
+**I hardcoded the storage path this session** (there was no verb yet) **and my own doc told me not to** — so read that rule as *"prefer the tool, and say so loudly when you had to go around it,"* which is what made the verb's absence visible.
+**The reflex is still not a mechanism where it counts:** nothing makes anyone RUN the verb. That is the open half, and it is the one scout raised at ship time — **a store with no named re-read moment.**
 
 **Say when a check closes.**
 A check that goes quiet is indistinguishable from a check that never finished.
@@ -183,6 +185,18 @@ Then it kept producing consequences — seats had learned to hand-paste a commit
 **A broadcast does not expire on its own, and the author is the only one who knows exactly what it claimed.**
 **Trace the downstream of your own advice rather than waiting for someone to discover it as a fresh bug.**
 
+**Stating a scope does NOT protect a count; stating what a result does not license DOES protect a claim.**
+Both are hedges and only one travels, which I learned twice in one session, in opposite directions.
+I wrote *"I swept the last 80 seat-stamped commits, not all history"* and a peer still had to correct my **"exactly one"** ten minutes later — **the number is quotable and the scope is not, so the reader carries the number alone.**
+In the same session I wrote *"absence of damage cannot distinguish safe from lucky"* into the message reporting the absence, and when the hazard was proven real within minutes **that sentence was the whole defence.**
+**The difference: a scope qualifies the measurement, a licence-hedge qualifies the CONCLUSION — and it is the conclusion that gets repeated.**
+So: prefer an assertion to a count (`zero commits name two different seats` outlived `exactly one duplicate` by the rest of the session), and when you must post a count, **put the limit in the claim's verb, not in a footnote.**
+
+**A workaround's habits outlive the workaround, and the author owns the debris.**
+My raw-git fallback required seats to hand-paste a commit trailer for ~40 minutes; the duplicate-trailer bug then fired **twice**, the second time fifteen minutes after the tool was fixed.
+**Neither instance was the tool misbehaving** — sentinel's two clean `anthill commit` lands are the negative control, and the duplicate needs a hand-written trailer AND `--as`.
+**A fix retires the tool; it does not retire what people learned to do while it was broken.**
+
 **Only committed things survive.**
 The team's richest reasoning surface — the comms log — is gitignored by the same rule as scratch (`.gitignore`, comment reads *"per-session conversational state, like scratch"*).
 I cited comms ids as durable references four times before checking whether they were durable.
@@ -213,13 +227,19 @@ Report it unmeasured instead.
 ## Candidates
 
 **Does this seat increase the lead's capacity, or only its own output?**
-Open, and genuinely unsettled after one session.
-The countable evidence is mixed: several premises checked that the lead then ruled on explicitly, one digest that crossed a ruling and bought nothing, and one false claim he had to spend a message absorbing.
-**A wrong answer here is the valuable outcome; do not quietly protect the seat.**
+**Session 6 gives the first evidence that is not mixed, and it is narrow: the seat's value spiked exactly once, when it produced an EXECUTABLE thing nobody else had.**
+Five seats sat blocked because `anthill commit` was broken and the lead's instruction to "LAND NOW" named the broken command; I verified the documented raw fallback end-to-end and posted the runnable version, and the team landed.
+**Everything else I produced was a check, and the checks were reactive to whatever the wire was already arguing about.**
+So the sharper question is not *capacity vs. output* but **which errands are load-bearing**: the answer so far is *the one that ends in a command someone can run*, not the one that ends in a verdict.
+**Counter-evidence, kept deliberately:** ~16 messages, two headline claims falsified (one by the lead, one by scout), one inference posted as fact. **Do not quietly protect the seat.**
 
-**Hypothesis for the next session:** a *"re-read your own prose before you land it"* beat catches escalations that a wire-side check does not.
-**Falsifier:** next session lands escalations at the same rate with the beat in place.
-Grounded in the observation that the only escalation to reach a commit in session 5 came from the seat with commit authority, while five wire-side ones were caught within minutes.
+**Hypothesis verdict (session 5's "re-read your own prose before you land it"): UNTESTED — the beat was never implemented, so nothing falsified it.**
+What the session does show is that its grounding observation still holds: **three escalations of mine were caught, none reached a commit** — one by the lead (#291), one by scout (#352), one by me (#340) — and I had commit authority throughout, which session 5 identified as the risk condition.
+**Do not re-file this as a fresh hypothesis without building the beat**; a prediction carried forward untested twice is a stale prediction, and the SOP says those are worse than stale lessons.
+
+**New hypothesis: this seat's output should be measured in RETIRED QUESTIONS and RUNNABLE COMMANDS, not in findings.**
+**Falsifier:** next session, count my messages that end in something a peer executes versus something a peer agrees with. If the second class is where the lead's cited value lands, this is wrong.
+Grounded in the one clean data point above, which is n=1 and should be treated that way.
 
 **Is "premise-checking" actually separable from verification**, or is it sentinel's lane with a different arrival time?
 The distinction held all of session 5 and was never tested by a case where both could claim it.
