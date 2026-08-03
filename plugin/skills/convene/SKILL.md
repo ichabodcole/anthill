@@ -46,7 +46,9 @@ stay solo.
      / merge / re-draw it now** (and `anthill init` any new seat doc). This is the forward half of the
      finalize re-scope reflection: last session's captured misfit is this session's signal to act on.
    - **Read the last retro's Q3 hypotheses (`.anthill/retro.md`, newest first) and say which ones this
-     session will test.** They were written to be falsifiable; a hypothesis nobody checks is the same
+     session will test.** **No `retro.md`?** That is the normal state before this team's first
+     finalize — `init` does not render one, it is written at finalize. **Say so in the brief and move
+     on; do not go looking for it or report it as missing.** They were written to be falsifiable; a hypothesis nobody checks is the same
      shape as an untested backup — it reads as protection and has never once been exercised. **Name
      them in the convene brief**, so the seats know what they're testing, and carry the verdict into
      the next retro. **A prediction that comes back _wrong_ is the valuable outcome**, not a failure of

@@ -157,7 +157,14 @@ diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" .anthill/README.md
 ```
 
 Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
-`retro.md`.
+`principles.md`.
+
+**Do NOT diff `retro.md` — there is no template for it and there never will be.** It is written by
+the team at finalize, not rendered by `init`, so the left-hand side of that diff does not exist and
+the command errors. **This is the failure mode step 0 spends five lines warning about, arriving from
+the other direction:** there, an empty diff falsely reported "nothing to reconcile"; here, a missing
+template makes a `diff` fail inside a step whose whole thesis is that a quiet result is a lie. The
+general rule worth carrying: **before you trust a diff, confirm both sides exist.**
 
 Then **classify each hunk** — never sync wholesale:
 
