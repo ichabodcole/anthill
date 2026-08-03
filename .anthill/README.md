@@ -84,8 +84,14 @@ direct.
 - **Bounty board** — task state (`todo → doing → review → done`). The **doer owns its card's
   lifecycle**; the lead creates + assigns (leaves in `todo`) and hands off on the vine; the reviewer
   closes. The board is _state_. **It's key-bound:** `convene` owns the board-open (keyed to the team
-  channel, pinned via `.bounty-session`), so every seat + the lead target this board **ambiently** —
-  no one ever threads `--session`. The mechanism lives once in the **board-binding contract** in
+  channel, pinned via `.bounty-session`), so **in one shared working tree** every seat + the lead
+  target this board **ambiently** — no one threads `--session`.
+  **Per-seat git worktrees void that**, and the failure is silent: the board id is derived from the
+  repo path, so a worktree resolves a different one and the pinned file is gitignored and never
+  crosses. **A miss reports "no running bounty session", which reads as "the board isn't up."**
+  Session 6 hit this on all five seats — resolve the id once and pass it explicitly, and know that the
+  ambient guarantee is the thing you traded.
+  The mechanism lives once in the **board-binding contract** in
   [`dev/seams.md`](./dev/seams.md); this points at it, never restates it.
 - **Grapevine (`anthill-dev`)** — the back-channel. Seats discuss, coordinate, reconcile. The vine is
   _substance_. Decisions route to the human **through maestro**, not direct.
