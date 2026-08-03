@@ -127,6 +127,24 @@ _Would have prevented:_ nothing yet — **and that is the point.** The protectio
 
 **T1 — Scope the pre-commit gate to staged paths.** _Predicts:_ cross-seat refusals go to zero while defect escape stays flat. _Falsified if_ refusals continue after scoping (cause is shared-file concurrency, not scope), **or** if one justified catch that whole-tree makes and staged-scope misses appears. _(Merged into retro Q3-1 with sentinel and weaver.)_
 
+> **DEFERRED by the human, 2026-08-03 — behind a session run on worktree isolation.** See the ordering
+> decision in [the shared-tree investigation](../investigations/2026-07-27-shared-tree-failure-modes.md).
+>
+> **Two reasons, and the second is the recommendation's own.** (1) T1 is plausibly **a patch on a model
+> we are about to test the replacement for** — if isolation lands, cross-seat gate coupling dissolves
+> rather than being scoped around. (2) **T1 is mis-specified as written:** `bun run check` is
+> `tsc && biome check . && bun test`; `tsc` is project-wide by nature and **scoping `bun test` to
+> staged paths removes the one thing a suite exists for** — catching the test elsewhere your change
+> broke. Only the lint leg is meaningfully scopeable, and `lint-staged` already does that.
+>
+> **The honest re-specification, if isolation does not land:** the defect is not _scope_, it is **which
+> tree the gate measures.** The gate reads the **worktree**; the commit contains the **index**. When
+> they differ, your green is about work your commit does not include — which is exactly what
+> `uncheckedAgainst` reports (§2.1, instance 3). **That is the investigation's own "staged-snapshot
+> gate", already recorded there as observation 10** — and the lead re-derived it in conversation
+> without knowing it existed, which is **a fourth instance of this report's central finding, committed
+> by the person recording it.**
+
 **T2 — Classify incidental findings by what SURFACED them, not by seat.** _Predicts:_ substrate-touching lanes lead prose-touching lanes regardless of which seat holds them. _Falsified if_ the rates match over a session. _(Retro Q3-3.)_
 
 **T3 — Run a scout that only observes, and compare.** _Predicts:_ observe-only yields a cleaner retro and a worse session; participate yields a better session and an uninterpretable retro. _Falsified by_ running one of each and checking whether the retro's convergent claims survive a blank-context review. **This session ran the second arm and nobody chose it.** _(Retro Q3-15.)_
