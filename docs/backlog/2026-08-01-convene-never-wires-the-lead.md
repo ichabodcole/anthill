@@ -3,6 +3,12 @@
 **Added:** 2026-08-01 · **Status:** ready to build (small; the pattern already exists)
 · **Seat:** forager (CLI) · **Found:** by the human, after the lead went unmonitored for a session
 
+> **⚠ MERGE BLOCKER (B2) as of 2026-08-03.** This is no longer only a lead-ergonomics fix. The human
+> set the bar for merging `feat/team-comms-slice-one`: comms must be able to run as the **sole** wire,
+> with grapevine as a re-armed backup. **An unwired lead is survivable with grapevine armed and fatal
+> without it.** See R11 in
+> [slice-two-proposal.md](../projects/team-comms-spike/slice-two-proposal.md).
+
 ## The asymmetry, from one session's output
 
 ```

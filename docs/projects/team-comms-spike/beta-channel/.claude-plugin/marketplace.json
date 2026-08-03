@@ -1,0 +1,18 @@
+{
+  "name": "anthill-beta",
+  "owner": {
+    "name": "Cole Reed"
+  },
+  "metadata": {
+    "description": "TEMPLATE for the local beta channel (team-comms spike). Copied to ~/.claude/anthill-beta-channel/ at setup \u2014 it must live OUTSIDE the repo, because the ./plugin symlink it needs would otherwise give every tool a duplicate copy of plugin/. See README.md.",
+    "version": "0.0.0-local"
+  },
+  "plugins": [
+    {
+      "name": "anthill",
+      "source": "./plugin",
+      "description": "anthill @ team-comms-slice-one \u2014 adds the comms wire and the anthill:comms skill",
+      "category": "development"
+    }
+  ]
+}

@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { isAbsolute, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { buildCommsIncantation } from "../comms.ts";
 import { resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { detectPlaceholder } from "../placeholder.ts";
@@ -22,6 +24,10 @@ interface JoinData {
   grounding: GroundingEntry[];
   tailCommand: string;
   boardTailCommand: string;
+  /** The team comms wire (`seams.md` Contract 4(b)). ALWAYS present — the
+   * consumer branches on this block rather than probing the filesystem or
+   * interpreting an exit code to decide what to render. */
+  comms: { channel: string; incantation: string };
   checklist: string[];
   /** Surfaced when a configured grounding path doesn't exist — a dangling
    * `config.grounding` ref (e.g. a default `AGENTS.md` the repo doesn't have)
@@ -32,6 +38,8 @@ interface JoinData {
 export interface ChecklistInput {
   tailCommand: string;
   boardTailCommand: string;
+  /** The team comms wire — fully resolved, run verbatim, filter-free. */
+  commsIncantation: string;
   bountyCli: string;
   handle: string;
   seatDocRel: string;
@@ -60,12 +68,33 @@ export interface ChecklistInput {
  */
 export function buildChecklist(i: ChecklistInput): string[] {
   return [
+    // ORDER IS LOAD-BEARING, and it is the reason comms leads. Under Contract
+    // 4(d) this emitted text IS a consuming team's onboarding — so whatever is
+    // item 1 is the wire that team learns to reach for first. Listing the
+    // grapevine first told every team adopting comms to lead with the wire
+    // comms is meant to make unnecessary. This is not cosmetic ordering; it is
+    // the recommendation, and it was previously being made by accident.
+    `Monitor the team comms — wrap with Monitor, verbatim, NO filter (comms follow emits no keepalives, so there is nothing to strip; adding a grep here can only lose messages): ${i.commsIncantation}`,
+    // The NO-FILTER instruction above is stated explicitly rather than left as
+    // an omission, and it now comes BEFORE the two filtered wires rather than
+    // after. Both orderings need the explicit statement: after, a seat has just
+    // been told twice to append `grep -E --line-buffered` and does it here by
+    // analogy; before, the two lines below teach the filter and a seat may go
+    // back and "fix" this one. The exception has to be named at the line it
+    // applies to either way — proximity to the analogy was never the guard.
     `Monitor the grapevine — wrap with Monitor: ${i.tailCommand} | grep --line-buffered '"from"'`,
     `Monitor your board lane — wrap with Monitor: ${i.boardTailCommand} | grep -E --line-buffered '"type":"(task|unblocked|closed)"'`,
     `Find your card BEFORE you claim it — read the board fresh (\`bun ${i.bountyCli} state --mine --as ${i.handle}\`) rather than trusting a listing already in your context; a stale listing is how seats claim a card by title-adjacency after the lead renumbered the board (anthill#40).`,
     "Own your card lifecycle: advance with `bounty update <id> --status doing` when you start, `--status review` when green (the bounty CLI has no `move` verb).",
     `Commit file-scoped with an EXPLICIT pathspec, and stamp your seat: \`anthill commit --as ${i.handle} -m "<msg>" <path>…\`. Never a bare \`git commit\` / \`git add -A\`. Without \`--as\`, git records the HUMAN as the author of every seat's commit, so "who landed this?" is unanswerable afterwards — a team hit exactly that and had to ask the channel to identify one. On a shared tree, serialize: announce, commit, confirm landed, then the next seat goes — or hand ${i.lead ?? "the lead"} your paths for one atomic land.`,
-    `Catching up after joining mid-session? Use \`grapevine pull\` (finite, exits). NEVER \`tail --from-start | grep\` — it returns zero output and then times out, which reads as "the channel is empty".`,
+    // Two wires, two different catch-up jobs — and the asymmetry is stated as
+    // the REASON rather than as a caveat, so a seat can derive the comms case
+    // instead of being told it. No comms invocation is named here on purpose:
+    // a catch-up needs an anchor id, which does not exist until the seat has a
+    // position, so there is no value to resolve at manifest time. Naming one
+    // would put a second copy of a command in the one surface whose whole
+    // point (Contract 4(d)) is that it carries none. Point at the skill.
+    `Catching up after joining mid-session? The two wires need different verbs AND different anchors. The lead clears the vine at convene, so \`grapevine pull\` (finite, exits) gives you THIS session. Nothing clears the comms log — so the same move there replays every session the team has ever had; anchor it to an id and see the \`anthill:comms\` skill. On BOTH: NEVER catch up with a live stream (\`tail --from-start | grep\`, \`follow\`) — a live stream never exits and a filtered one never flushes, so you get zero output and then a timeout, which reads as "the channel is empty".`,
     `Finalize BEFORE you drop off: synthesize durable lessons into ${i.seatDocRel}, commit, THEN stand down. Scratch is gitignored — it does not survive the session, so synthesize earlier if the reasoning is warm.`,
     `Route questions + decisions to the lead${i.lead ? ` (${i.lead})` : ""} on the vine — not direct to the human.`,
   ];
@@ -168,9 +197,16 @@ export const teamJoinCommand = defineAnthillCommand({
     const boardTailCommand = `bun ${bountyCli} tail --mine --as ${handle}`;
     const seatDocRel = relative(root, config.seatDocPath(handle));
 
+    const commsIncantation = buildCommsIncantation({
+      cliPath: fileURLToPath(new URL("../cli.ts", import.meta.url)),
+      channel,
+      handle,
+    });
+
     const checklist = buildChecklist({
       tailCommand,
       boardTailCommand,
+      commsIncantation,
       bountyCli,
       handle,
       seatDocRel,
@@ -183,6 +219,7 @@ export const teamJoinCommand = defineAnthillCommand({
       grounding,
       tailCommand,
       boardTailCommand,
+      comms: { channel, incantation: commsIncantation },
       checklist,
       ...(warnings.length > 0 && { warnings }),
     };
@@ -212,6 +249,7 @@ export const teamJoinCommand = defineAnthillCommand({
           "Then wire BOTH watches (wrap each with Monitor — do not block):",
           `  grapevine:  ${d.tailCommand}`,
           `  board:      ${d.boardTailCommand}`,
+          `  comms:      ${d.comms.incantation}`,
           "",
           "Checklist — your action items as this seat:",
         );

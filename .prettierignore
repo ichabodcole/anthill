@@ -17,3 +17,6 @@ dist
 # anthill team footprint (living docs + config.json) — keep the host formatter off the
 # pheromone docs and the JSON config (a **/*.json glob would rewrite it).
 .anthill/
+
+# Local beta channel symlink — a second path to plugin/, see beta-channel/README.md
+docs/projects/team-comms-spike/beta-channel/plugin

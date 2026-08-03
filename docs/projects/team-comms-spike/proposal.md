@@ -219,6 +219,56 @@ knows what we care about.
 team under load, which is what the spike's own sessions will provide. This answers first contact and
 nothing else, which is precisely the gap.
 
+## Session 2 — run it dual-wired (decided 2026-08-01)
+
+**Slice one is built and its transport is verified end to end**: `send`, `read`, `follow`, seat
+identity, `--stdin`, flag rejection. `follow` streams live appends with `role` resolved from the
+roster — the last piece, checked by running it rather than reading it.
+
+**Decision: the next session coordinates on comms, with grapevine armed alongside — not switched to,
+and not mirrored.**
+
+**Why dual and not a clean switch.** The failure mode of a comms tool is **seats silently receive
+nothing**, which is indistinguishable from a quiet channel. That is the exact shape this project has
+now hit repeatedly (a dead board Monitor for a whole session; a `grep` filter that matched nothing
+while looking correctly wired). A switch bets the session on the one failure that cannot be noticed
+from the inside.
+
+**Why not mirror everything.** Posting each message twice is double work and, worse, it removes the
+signal — if everything lands on grapevine anyway, nobody ever discovers what comms fails at.
+
+### The protocol, so "dual-wired" isn't just both-things-running
+
+- **Comms is primary.** All session substance goes there.
+- **Grapevine is armed and used for exactly two things:** a **liveness handshake** at join, and any
+  message that must not be lost if comms is broken (a stop, a blocker, a teardown).
+- **Liveness handshake, at join, before any work:** each seat posts its "in, grounded" on **both**
+  wires. **The lead confirms it received all N on comms.** If a seat's comms message never arrives,
+  that is discovered in the first minute rather than an hour in. **This is the whole reason the
+  session is dual-wired**; without it the second wire catches nothing.
+- **If comms drops mid-session**, the lead says so on grapevine and the team falls back. Record where
+  it broke — that's the finding.
+
+### What this session is actually testing
+
+**Open Question 2's second half.** _"Does seat-aware identity change anything on day one?"_ is answered
+— **yes, observably**, `role` is in the log. **Whether it is _useful_** is a different question and only
+use answers it. Watch specifically: does anyone read `role`, act on it, or miss it when absent?
+
+### Known gaps going in — expected, not blockers
+
+Slice one has **three verbs and nothing else**. Going in, we know:
+
+- **No presence.** `anthill status` reports grapevine's roster; comms has no notion of who is on. The
+  lead cannot see who joined, and **`anthill down`'s presence guard has nothing to guard** — that guard
+  fired correctly at session 1's teardown and stopped a blind tear-down.
+- **`convene` does not open a comms channel** (zero references) and there is **no `--fresh`**, so the
+  log carries every prior session's messages forever.
+
+**Do not pre-build these.** They are the most likely slice-two items and the point is to find out which
+one the lead reaches for first. Prediction, recorded so it can be wrong: **presence goes first**,
+because its absence is felt by the lead within minutes.
+
 ## Open Questions
 
 1. **What is genuinely minimal?** Slice one above is a guess. If a session runs fine on less, build

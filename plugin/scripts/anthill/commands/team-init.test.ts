@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import {
   BOUNTY_SESSION_GITIGNORE_LINE,
+  COMMS_GITIGNORE_LINE,
   planGitignore,
   renderTemplates,
   SCRATCH_GITIGNORE_LINE,
@@ -125,6 +126,37 @@ describe("planGitignore (idempotent ensure-line)", () => {
     expect(planGitignore(existing, LINE)).toEqual({ action: "present", content: existing });
     // trailing whitespace variant still counts as present (no dupe)
     expect(planGitignore(`${LINE}  \n`, LINE).action).toBe("present");
+  });
+});
+
+describe("COMMS_GITIGNORE_LINE (the message log is per-session local state)", () => {
+  it("is a distinct line from the other two", () => {
+    expect(COMMS_GITIGNORE_LINE).not.toBe(SCRATCH_GITIGNORE_LINE);
+    expect(COMMS_GITIGNORE_LINE).not.toBe(BOUNTY_SESSION_GITIGNORE_LINE);
+  });
+
+  it("covers the comms dir, not just one channel's file", () => {
+    // Channels are named per team; ignoring a single filename would leak every
+    // other channel's log into the next `git add`.
+    // No trailing slash: a slash-suffixed rule matches directories ONLY, so a
+    // symlinked `.anthill/comms` (how a multi-worktree team shares one log)
+    // stops being ignored and shows up untracked in every seat's tree.
+    expect(COMMS_GITIGNORE_LINE).toBe(".anthill/comms");
+    expect(COMMS_GITIGNORE_LINE.endsWith("/")).toBe(false);
+  });
+
+  it("is NOT covered by the scratch line — that is why it needs its own", () => {
+    // `.anthill/scratch/` does not match `.anthill/comms/`; the log sat
+    // committable because the two were assumed to be the same kind of thing.
+    expect(COMMS_GITIGNORE_LINE.startsWith(SCRATCH_GITIGNORE_LINE)).toBe(false);
+  });
+
+  it("chains onto the other two idempotently", () => {
+    const a = planGitignore(null, SCRATCH_GITIGNORE_LINE);
+    const b = planGitignore(a.content, BOUNTY_SESSION_GITIGNORE_LINE);
+    const c = planGitignore(b.content, COMMS_GITIGNORE_LINE);
+    expect(c.action).toBe("added");
+    expect(planGitignore(c.content, COMMS_GITIGNORE_LINE).action).toBe("present");
   });
 });
 

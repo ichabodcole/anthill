@@ -2,8 +2,10 @@
 
 The standard operating procedure for the agent team that builds this project. A **map, not a
 manual** — it points at the source of truth rather than restating it. This is a **seed**: everything
-here is meant to evolve by use, not stand as the final answer. The team coordinates on the
-**`{{channel}}`** grapevine channel (substance) and the bounty board (task state); **{{lead}}** leads.
+here is meant to evolve by use, not stand as the final answer. The team coordinates on **two message
+wires and a board** — `anthill comms` (the seat-aware log, durable across sessions), the
+**`{{channel}}`** grapevine channel (the back-channel, cleared each session), and the bounty board
+(task state); **{{lead}}** leads. Both wires are live; see **Tools** below for which is which.
 
 ## The idea: living context (stigmergy)
 
@@ -86,9 +88,17 @@ direct.
   closes. The board is _state_.
 - **Grapevine (`{{channel}}`)** — the back-channel. Seats discuss, coordinate, reconcile. The vine is
   _substance_. Decisions route to the human **through {{lead}}**, not direct.
+- **Comms (`anthill comms`)** — the team's **seat-aware message log**, on the same channel. Identity is
+  a seat from your roster rather than a free-form alias, and **nothing clears the log** — so unlike the
+  vine, it accumulates across sessions and a bare read replays all of them. Anchor a catch-up to an id.
+  **You are wired to both wires**; `anthill join <handle>` emits the exact command for each.
+  _Why two: they fail differently, so each is the other's fallback. If one drops mid-session, say so on
+  the other — that is the whole reason the second one is there._
 - **The CLI** — `anthill` (run from the plugin; `convene` / `join` / `spawn` / `status` / `commit` /
   `down` wrap grapevine + bounty + tmux). `anthill join <handle>` emits your grounding docs + an
   action checklist — that checklist is the single source; don't restate it.
+  **⚠ `anthill status` does NOT cover comms** — it reports the grapevine roster only, so a seat can be
+  absent from comms and look present. Counting who is on that wire is currently a manual check.
 
 ## Workflow — convene → plan → work → finalize
 
@@ -141,6 +151,21 @@ cannot see it** — _"my paths are clean"_ is true and blind.
 `seams.md` is where this recurs by design, since ownership there is per-contract inside one file. So
 for a **shared** file: say on the vine that you're taking it, and land your edit promptly rather than
 holding it while others write. A short hold is the only real protection the tooling gives you here.
+
+**Read the envelope your land returns — it already answers two questions seats keep reconstructing by
+hand.** Both are on `anthill commit`'s own output, on every land:
+
+- **`waitedMs`** — how long you queued on the serialize lock. Non-zero means a peer was landing at the
+  same moment, so this **is** the concurrency window, measured rather than estimated.
+- **`uncheckedAgainst`** — dirty paths **outside** your commit at the instant it landed. The gate runs
+  over the **whole tree**; your commit contains only your paths. **Non-empty means your green was
+  measured against work your commit does not include, so the commit was never checked in isolation.**
+  That is the false-green, reported at the moment it happens rather than discovered later.
+
+_Scar: a team measured `bun run check` green, landed, and reconstructed its own race window three
+separate ways across three seats — while the CLI printed the number on every one of their commits.
+The affordance was not missing; it was unnamed, and nothing pointed at it. **Check `uncheckedAgainst`
+before you treat a green as a verdict on your commit.**_
 
 ## Shared practices (true for every seat)
 
@@ -230,6 +255,11 @@ rather than shape, and two rules are what make it more than a mood:
   agents who shared one session and one frame will converge, and that convergence is the expected
   output of shared priors rather than evidence. **A unanimous "what went well" is a smell.**
   **The lead is in scope** — a retro where the lead comes out clean is a retro that did not run.
+  **And the lead should not open by listing his own errors.** It reads as the opposite of
+  defensiveness and it is not: **a well-executed self-list pre-empts the audit**, leaving a seat
+  nothing to do but concur, so the document becomes indistinguishable from one where the audit found
+  nothing. _Scar: an observer seat checked and found **no seat produced a criticism of the lead he
+  had not already volunteered.**_ Say you are in scope; then say nothing until the seats have written.
 
 ## Onboarding a fresh agent
 

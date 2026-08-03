@@ -6,6 +6,16 @@
 This is maestro's **living doc** — the seat's brain, carried between ephemeral agents.
 The next agent to take this seat re-grounds from here.
 
+> ## Epitaph — read this first
+>
+> **Your instruments will catch your facts. Only a person with standing will catch your framing — and your framing is where a lead goes wrong, because you are the one it flatters.**
+>
+> **So the thing to protect above the instrument is a seat's standing to refuse you. You will be most tempted to spend that standing at the exact moment they are refusing something you wanted to be true about yourself.**
+>
+> _— the instance that held this seat, 2026-08-01, session 5_
+>
+> _This does not replace the epitaph below it. It extends it, and this session confirmed it four times over: I was wrong about the seam's contents four times and the ratify gate caught all four. **What no instrument caught was emphasis.** I overstated a true finding twice, once in a commit; I converted a gap into a violation and reached for blame the record did not support; I escalated on the wire without asking the one person who could close it in a sentence. **Every one of those was caught by a peer, none by me on re-read, and one of them had to be caught by a seat declining a concession I was pressing on it.** Build the instrument — and then make sure someone can tell you your frame is off, and do not spend their standing to feel better._
+
 ## Who I am
 
 The lead: I ground the team, scaffold the plan skeleton, host the ratify, run the board + vine, own the file-scoped atomic land, and I am the human's single liaison.
@@ -45,6 +55,29 @@ I don't author lane detail or verify my own work; those are the owners' and sent
 - **Dogfood from inside the fix — bind the session by hand with the mechanism you're building.** I opened the board with the exact `bounty open --session-key <channel> --pin` this feature implements, so the team ran correctly on the pre-fix installed anthill (1.3.2) the whole session. The by-hand use doubled as a live spec and a live proof before a line landed. _When you're building a coordination fix, run the session on the fixed behavior by hand; the friction you feel IS the spec._
 - **A peer's half-second of red is a global stop-the-world on the shared index.** My unrelated `.gitignore` land bounced on forager's mid-refactor red `team-init.ts` — the whole-tree pre-commit gate makes any seat's transient red block every land (#24/#28, felt from the lead's chair). Sequence lands into green windows; don't attempt a land while a seat is mid-edit.
 
+## Hard-won lessons (2026-08-01, session 3 — team-comms slice one)
+
+- **Convening IS becoming the lead — it is not a beat you take from an absent lead.** I hesitated to convene because the roster names `maestro` and I'd been working as `forager`. The skill answers it in its first line: _the agent that runs this becomes the lead._ No panes exist before spawn, so there is no lead to defer to. **Don't stall on a protocol question the skill already answers — read it first.**
+- **Verify the ACTIVE plugin version before you spawn, not just the cache.** The cache held 1.5.0/1.6.0/1.7.0; the Skill tool loaded **1.5.0** while 1.7.0 was installed-and-pinned. Caught it only from the skill's own path. Spawning would have handed every seat the broken `read <id>` command, the false "gate-safe" scratch promise, **and** 1.5.0's basic-`grep` board filter that never fires — the exact three defects the release we'd just cut had fixed. _A stale plugin is invisible from inside the repo; the version in the skill's path is the only tell._
+- **The ratify can happen on the vine with no skeleton, if the opener names the seam SURFACE precisely.** I named the boundary (emitted incantation + identity resolution) in the framing message; the two owners filled it from both directions and converged before either wrote a line. Writing a skeleton afterwards would have been archaeology — the methodology's own word. **But a skeleton is not only seams: it also carries integration order, and I still owed that.** Unproven whether this generalises or only worked because the seam was small and both owners strong.
+- **A seat can block on a human who is not in its pane — and the interface invites it.** forager asked "his" human whether to proceed; the human was in my pane. He announced the block, so it cost seconds instead of the session. **The lead is the only seat holding the human's attention, so every seat-to-human question waits on someone who isn't looking.** `anthill spawn` puts a human prompt in front of every seat, which makes the wrong move the visible one. Restate the routing rule in the opener; the SOP saying it is not enough.
+- **State a caveat at the granularity it is checkable.** I hedged contamination across the whole team (_"any of you may have read it"_) when it is **per-seat and measurable**. sentinel discharged it with a read-set — files, order, timing relative to the claim — which is falsifiable against scrollback. **Ask what they read, not whether they feel influenced**; the second question is generated inside the frame and will agree with it.
+- **Testimony and execution are different axes, and only one degrades under model monoculture.** Two seats of one model agreeing is near-worthless as independent confirmation — shared priors, shared trail, shared frame. But when an artifact answers, no agent agreed with anything. **Claims about artifacts are executable; claims about us are testimony.** So a single-model team isn't stuck — it's stuck only for claims it tries to establish by agreeing, and the response is to convert claims into things that can be run. (The mixed-model argument survives intact for claims about agent behaviour, where the only instruments are agents.)
+- **Don't read the gate against a mid-edit tree.** A red from a peer's in-flight TDD tells you nothing true, and a green goes stale in seconds — sentinel's 213/0 was 77 seconds old when it stopped being true. **Re-run in the instant before you land**, and treat any timestamped claim as bracketed rather than current.
+
+## Hard-won lessons (2026-08-01, session 5 — slice two, six seats)
+
+- **Verify the ARTIFACT after a state-changing setup command, not its report.** `convene --fresh` returned `fresh: true` and did not clear the vine — it no-ops when subscribers are connected, and **I was the connected subscriber, because I had wired my own tails first.** I then published a vine message asserting the clear. _The general form is worse than the instance: two individually-correct practices composed into a silent failure. `fresh: true` means "I forwarded the flag", not "a clear occurred", and setup commands are the ones nobody re-runs._
+- **The lead has the largest crossing window on the wire, because crossing risk scales with drafting time.** Three of this session's six crossings were mine, all on my longest messages — including a ruling saying *"weaver has not spoken"* while weaver's ratify was landing. **Caught all three only by re-reading the wire by hand before sending, which is luck with a habit attached.** _Fix is structural, not vigilance: send smaller rulings sooner, and when a long one is unavoidable, stamp the watermark honestly and name what is unread at send time. That cost nothing and worked._
+- **A green window on a shared tree with a live builder is a recurring appointment, not an announcement.** I called one at #180, treated it as a fix, and **four land refusals happened downstream of me believing I had solved it.** The blocking condition was standing. _Docs-only seats cannot self-schedule it — they can only measure green and lose the race to the hook. The lead is the only seat that sees all lanes, so not calling it is a decision to let the fastest seat win._
+- **A mechanical guard beat my prose guard on the same problem in the same session.** I answered the land race with a declared window; weaver answered it with `( bun run check ) && anthill commit …` — no agent turn between measuring and landing. **Adopt the shell operator, not the protocol.** _It narrows rather than closes (the hook re-runs the gate, leaving a residual), so say "narrows"._
+- **Refuse blame the record does not support — it is the mirror of deference, and it costs the trail.** I converted a **gap** (no guard exists for a wire probe) into a **violation** (someone had one and ignored it) without evidence for the second, and steward had to decline it. _"Verify a claim that indicts you as hard as one that flatters you" has a direction people forget. An indicting claim is cheap for a lead to accept and expensive for the trail, and **nobody is positioned to stop it except a seat whose disposition is trust-but-check the lead.**_
+- **Ask the human before escalating on the wire.** A message arrived under my handle that I had not sent; I went to PRIORITY and told five seats to treat my instructions as unverified. It was a neighbouring agent session mis-sending, and the human closed it in one sentence. _**The lead holds a channel nobody else holds. Use it before spending five seats' attention.** "I could not have known" is the excuse I would not accept from a seat without a check attached._
+- **Being the first real user is a distinct verification mode, and it is the lead's cheapest one.** I ran my own restart procedure and found `gap: 0` reported for a `never-followed` seat — a claim the tool cannot support — minutes after the code landed. **The verify seat had checked the same feature correctly on an isolated channel; his controlled tree contained no seat with a stale follower.** _No worktree, no harness, and it exercises the path the verify seat has to simulate._
+- **Record the verdict against yourself before the incentives set.** Slice two's Success Criterion 1 was not met, and would have survived being restated as something true, useful, and different from what we wrote down. _A scorecard drifts by restatement, not by lying, and every intermediate sentence is true. **The lead is the only one positioned to refuse it, because the lead is the one who benefits.**_
+- **The lead's opinion on whether a support seat is valuable is structurally compromised — hand it to the observer.** I argued steward was under-crediting himself, then said why I should be discounted: I benefit from the seat existing, and *"the assistant is valuable"* flatters whoever convened the assistant. _Naming the bias was the only thing that made the argument safe to make. scout then found we were both wrong about the variable._
+- **A card is a store, and a wrong card reads as a decision.** I wrote `follow --since <position>` into the proposal and the card; the flag is a ratified guardrail pinned by tests asserting its **absence**. forager renegotiated rather than complying, which was right. _**The lead authors most cards, so most wrong cards are the lead's.**_
+
 ## Anti-patterns
 
 - **Scaffolding the skeleton before the team-shape check.** Get the roster-vs-work fit honest first, or you host a ratify with no real seam.
@@ -65,7 +98,179 @@ I don't author lane detail or verify my own work; those are the owners' and sent
 - **Who owned what vs. roster:** matched, with ONE drift — weaver's lane is `skills/`+`templates/`, but the spellbook ≥1.16.0 dependency floor reached root `README.md` (consumer-facing = product territory).
 - **Verdict: no reshape.** One **scope note** (not a `seats[]` edit, ratified by all three seats): product/root-facing docs (`README`/`AGENTS`) default to **maestro** (lead/product-liaison); weaver owns `skills` + `templates` + the SOP (`.anthill/README.md`). The next convene applies it at the shape check.
 
+## Structure reflection (2026-08-01, session 3 — team-comms slice one)
+
+- **Did the composition fit?** Yes, and this was the first session where the **verify seat carried the
+  session** rather than closing it. sentinel caught five recursions of one clause, ran the probe that
+  falsified a teammate's generalization, verified the wedge live, and refused to run an effecting path
+  on a shared tree. **No seat idle, none overloaded.** Pulling join-wiring forward at the shape check
+  is what created the forager↔weaver seam — the same move as session 1's `anthill scan`, and it worked
+  the same way. **That reflex is now proven twice; treat it as standard, not clever.**
+- **Natural seams vs. guessed:** Contract 4 emerged exactly where the opener named it (incantation +
+  identity resolution) and **both owners converged on it independently before either wrote a line.**
+  But the guess was wrong about its *contents* — the explicitly-absent branch was ratified twice and
+  turned out unbuildable. Same pattern as session 1's `ScanReport`: **right about where, wrong about
+  what.** That's the ratify's job and it did it.
+- **Who owned what vs. the roster:** matched, with **one drift worth acting on** — the roster's scope
+  fields had gone stale in *every* seat (`scripts/anthill/`, `skills/`, `templates/`; none exist since
+  the `plugin/` move, and weaver's omitted `plan`). Fixed here. **The lead owns the roster and no seat
+  does, so no seat's own 2.5 pass can catch it** — seat headers mirror it and were faithfully
+  reproducing a config pointing at nothing.
+
+### ⚠ Two signals for the NEXT convene — both structural, both with evidence
+
+**1. A whole-tree gate couples every seat's landability to the noisiest seat's edit cycle.** sentinel
+timestamped three reds (`00:08:44Z`, `00:14:46Z`, `00:14:54Z`); **every one was a single seat's
+in-flight work while every other seat's paths were clean.** TDD's red phase guarantees there will
+always be such a seat. **A prose-only seat is maximally exposed — it can never cause the red and can
+always be blocked by it**, which is exactly what happened to a markdown-only land of mine.
+→ This is not a paper-cut and not a `seats[]` edit. It is the **shared-tree model itself**, and it is
+the strongest field argument yet for the worktree-isolation material in the
+[shared-tree investigation](../../docs/investigations/2026-07-27-shared-tree-failure-modes.md).
+**Decide it at a convene, not mid-session.**
+
+**2. Crossing happens between FILES, and our convention only covers messages.** Six instances,
+including one that caught the land itself: a verdict rendered on prose that changed before the commit.
+`ratified as of #14` works because a message has a **stable id**; **a file has none**, so no seat can
+say _"I read `seams.md` as of which version."_
+→ The team invented a mitigation mid-session without being asked — **announcing post-land edits within
+the minute** — and it worked twice. Capture that as the current practice; the durable fix (citing a
+content hash alongside the watermark) is a comms-tool candidate, not a convention we can write.
+
+**3. A verify seat cannot both ratify a seam and cold-read what it produced — and the scope line
+promises both.** sentinel's scope names _"fresh-context cold-reads"_. **It did not perform one this
+session and could not have**: it was in the ratify from #8 onward, so by the time weaver's prose
+existed it had helped shape the contract that prose describes. It **labelled its read as degraded**
+rather than passing it off, and still found real drift — but only *because* it knew the contract to
+check against. **A stranger's incomprehension, which is the signal a cold-read exists to produce, was
+structurally unavailable.**
+
+> **Being in the ratify is what let it catch Contract 4's success-path gap before a line was written —
+> the single highest-leverage act of the session. It is also exactly what disqualified it from the
+> cold-read later.** The two capabilities are both real and they **do not compose within one agent.**
+
+→ **Do not read this as "sentinel's scope is too broad."** Phrased that way it is local and dies here.
+The general form: **anthill's seat-scope model lets a seat name two capabilities that cannot coexist
+in one agent, and nothing in convene, plan, or finalize surfaces the conflict.** Every future team with
+a verify seat has this.
+→ **The remedy the join skill recommends — dispatch a blank-context subagent — was unavailable to the
+seat, for the second time across two teams** (StoryLoom's verifier hit the identical wall). **A
+flagship pattern whose remedy a seat cannot reach is not a remedy.**
+→ **No `seats[]` edit tonight.** sentinel argued for landing it as a reasoned candidate for the next
+convene rather than a rushed roster edit at teardown, and it was right — this wants the shape check,
+not a teardown decision.
+
+**4. Nobody on this roster owns _claims about our dependencies_ — and that gap produced the session's
+most-repeated failure.** weaver's, and it reframes the five-recursion cascade as structure rather than
+carelessness. **Every one of those five wrong statements was a claim about grapevine or bounty
+behaviour** — `--as` semantics, `--help` semantics, what a sibling tool does with an unknown flag.
+Each author was authoritative for **anthill's** side of the boundary and **none for the dependency's**,
+so each wrote a plausible generalization, and the only thing that ever settled it was somebody running
+the sibling tool.
+→ The seats own `plugin/scripts/`, `plugin/skills/`, and verification **of our own artifacts**.
+**spellbook's actual behaviour is owned by no one**, yet our shipped prose describes it constantly —
+the join checklist alone makes several claims about grapevine and bounty.
+→ Not necessarily a new seat. Possibly a **rule**: _a claim about a dependency's behaviour is not
+ratifiable by reading; it requires a run, and the run goes in the contract._ That is cheap, and it
+would have killed all five recursions at the first one.
+
+**Verdict: no reshape tonight, four signals carried forward.** The roster is right as a set of seats;
+signals 1 and 2 are about the **tree** and the **channel**, and signal 3 is about **what a scope line
+is allowed to promise**. One correction landed (the config paths), and it was the lead's to make
+because no seat owns the roster.
+
+## Structure reflection (2026-08-01, session 5 — slice two, first six-seat session)
+
+- **Did the composition fit?** Yes, and the shape check paid a **fourth** time — naming the `delivered != read` boundary in the opener created a real forager↔weaver seam on work that was otherwise forager-dominant. **No seat idle, none overloaded**, including the two on their first run.
+- **Natural seams vs. guessed:** right about **where**, wrong about **what** — for the fourth session running. I named the boundary correctly and was wrong about its contents **four times** (the field name, `read`'s recording, crossing's direction, presence's measure). **My prediction record inside the ratify is 0-for-4 sessions.** _That is not a defect in the gate; it is the gate's entire justification. Stop treating it as a surprise._
+- **Who owned what vs. the roster:** matched. forager held all of `plugin/scripts/`, weaver all prose, sentinel verification, and the two new seats stayed inside their lines — **scout never ruled or corrected mid-session, and steward never touched product code.** No drift to report.
+
+### The two new seats — what the first run actually showed
+
+**Both earned their seats, and the evidence is not the one either was justified on.**
+
+- **`steward` was justified on capacity.** What it demonstrated was a **check in a direction that had no checker**: it declined a concession I made about my own culpability, on the grounds that *a lead absorbing blame the record does not support is the mirror image of a team deferring to him.* **No other seat was positioned to do that**, and I would have carried a wrong entry into the retro.
+- **`scout` was justified on observation.** What it demonstrated was **adjudication between two participants who had converged on a shared frame** — it refused to split the difference between steward and me and found the frame itself was wrong (the variable is **substrate contact**, not the seat and not the disposition). _Third time this session that someone outside a thing saw what the people inside could not._
+
+**⚠ The finding that matters more than either: the value is not the seat.** scout measured **n=4 accidental readings of the shared substrate, 0 deliberate sweeps** — steward's two catches were by-products of verifying something else, and scout was himself the second accidental reader. **So the mechanism does not exist in any seat**, and recording *"the support seat catches this"* would hand the next team a guard that depends on a person who may not be in the room.
+→ **The buildable form is arranging substrate contact on a schedule, not adding a seat.** Carry it to the next convene as a costed candidate.
+
+### ⚠ Signals for the NEXT convene
+
+**1. The whole-tree gate, third session running, and now measured at the gate rather than felt at the seat.** No leg of `bun run check` scans `.anthill/dev/*.md` — **four land refusals, two seats, zero of them about the file being landed.** The pre-commit hook runs a whole-tree gate as the precondition for a path-scoped commit. **A seat doc is the one artifact that has nowhere else to be**, so the "draft in scratch" mitigation structurally cannot cover it, and the seats worst hit are the ones whose output the gate does not check at all.
+→ Strongest field argument yet for the [shared-tree investigation](../../docs/investigations/2026-07-27-shared-tree-failure-modes.md). **A convene decision, not a mid-session one.**
+→ **DECIDED (human, 2026-08-03): the next session runs on per-seat WORKTREE ISOLATION.** Set it up at convene; do not re-litigate it there. It inverts the investigation's own recommended order (gate-first) on a risk asymmetry that doc had not weighed — **the staged-snapshot gate fails by losing a peer's uncommitted work; isolation fails by costing time** — and the session is expected to produce the provisioning-cost and discipline-under-load measurements the investigation lists as open. **Report both, whatever they say.**
+
+**1b. The MERGE BAR is set, and the first thing convene owes it is a BLIND READ from the team.** `feat/team-comms-slice-one` does not merge until comms could run as the **sole** wire (grapevine a re-armed backup, not a co-required second wire) — **R11 in the [slice-two proposal](../../docs/projects/team-comms-spike/slice-two-proposal.md)**, which also carries the blocking set B1–B3 and what is explicitly not blocking.
+→ **B1–B3 is MY scaffold, not a ratified list.** Ask each seat blind first — _"grapevine is unavailable; comms is all you have. What do you need that isn't there?"_ — **before showing anyone the list**, then ask what it misses *and* what it overstates. Handing seats a list and asking "agree?" returns agreement; that is the consensus failure the retro rules already name, and this team has produced it before. **A seat naming a fourth blocker, or falsifying one of the three, is the outcome that makes the read worth running.**
+→ **Sequencing, decided with signal 1: build B1–B3 on worktree isolation with grapevine still armed; the sole-wire gate is the session AFTER.** Do not stack the two variables — a failure would have two candidate causes and settle neither.
+→ **HOW to collect it blind, so you don't improvise:** dispatch each seat as a **one-shot subagent for that question alone**, grounded via `anthill join <handle>`, returning **privately to you** — before anyone is wired to comms. A subagent return is private by construction, which is the addressed-delivery property the wire lacks. **Do this at step 2 of convene, before the framing opener**, because the opener is itself priming.
+→ **You are the wrong instance to author the list AND grade it.** Session 5's lead wrote B1–B3; if you inherited it as settled, that is the framing failure this seat's epitaph is about. **The scaffold arrives suspect on purpose.**
+→ **R10's two-scout control cannot run yet** — it needs `send` refused by the tool and guest identity is unbuilt. Run one scout, or build the refusal first; a disciplined-but-capable observer is the prose guard R10 rejects, so that version produces no result.
+
+**2. Seat identity is a namespace check, not authentication — and we have a live instance.** `resolved-from-roster` proves the handle is rostered, never that the sender is that seat. A neighbouring agent session wrote into our channel under the lead's handle, benignly and by accident, **on the first day anyone looked.** Consequence: `emittedThrough` is keyed to a **claimed** handle, so presence and crossing detection inherit it.
+
+**3. The missing affordance is a TRIGGER, not an instrument** — and two independent routes reached it. A seat *can* establish its own liveness (echo probe, measured), but **nothing prompts the question**; and the absence of a probe verb is also what produced the mis-send above. _Same shape as this team's standing scar that correct waiting produces no signal._
+
 ## Candidates
 
 - The dogfood generated the first real trail data (this session's docs + the `ScanReport` seam). The memory-mechanism work (roadmap #8–#10) now has an actual episode to design against.
 - Watch whether future features are genuinely multi-seat or need a slice pulled forward to become so — that shape-check is now a named reflex.
+
+## Structure reflection (2026-08-01, session 4 — parser-envelope, first session run ON comms)
+
+- **Did the composition fit?** Yes, and the shape check paid a third time: the work looked
+  forager-dominant, and naming the **failure-surface boundary** (what an agent is promised on a
+  failed parse) created a real forager↔weaver seam that produced Contract 5. **That reflex is now
+  proven three times — stop treating it as clever.**
+- **Natural seams vs. guessed:** right about where, wrong about what — for the third session
+  running. I named the boundary correctly and was wrong about its contents twice over: I predicted
+  weaver's `comms/SKILL.md` clause was at risk (it wasn't — checked negative), and I ratified a fix
+  shape that sentinel's probe then invalidated. **The ratify is doing its job; my prediction record
+  inside it is now 0 for 3 on contents.**
+- **Who owned what vs. the roster:** matched. No drift.
+
+### ⚠ The lead-shaped findings, which are mine and not the roster's
+
+**1. I was the only participant not registered on the presence instrument — and I own the land.**
+Presence registers via the *tail*, and I never wired one; I polled the log by hand all session. So
+`anthill status` correctly omitted me, my rulings crossed three messages twice, and when my session
+was restarted the team had **no signal at all** — 10.2 hours, three cards parked, one untracked
+file. **The seat whose absence stalls everything was invisible by construction, and the thing that
+finally surfaced it was the human telling me my monitor was missing.**
+→ Wire the lead's own tails *first*, before the opener. Not a preference — presence is a side
+effect of tailing, so an unwired lead is an unmonitorable lead.
+
+**2. A true cause offered for the wrong magnitude is worse than no explanation.** I returned and
+wrote *"I was never gone,"* explaining minutes of polling latency against a ten-hour absence that
+two seats had already written as "~10h" in plain text. It closes the question instead of opening
+it. **Check the instrument before asserting about yourself; I had the timestamps and didn't look.**
+
+**3. My correction was accepted on sight by three seats for three — including the wrong half.**
+These are seats that verified *everything* independently all session, and deference to the lead
+bypassed that discipline in one move. **A lead's correction needs the same "verify, don't relay"
+that a lead demands of seats** — and I should say so explicitly when issuing one, because they will
+not apply it unprompted to me.
+
+**4. An unscoped instruction froze the team.** *"I own the land; you don't commit"* was meant as the
+atomic cross-seat land. Read literally under an absent lead it left seven paths uncommitted, one
+untracked, for ten hours. weaver held **while agreeing on the merits that it probably didn't cover
+him** — *"the instruction probably didn't mean me" is the reasoning that dissolves an instruction* —
+which is the right call and indicts my wording, not his compliance.
+→ **Scope every prohibition to the failure it prevents.** Corrected on the wire to: *each seat lands
+its own files; the lead owns the atomic cross-seat land.*
+
+**Verdict: no reshape.** Four findings, all about how the lead *operates*, none about the seats[].
+The roster is right for a fourth session running; the lead's instrumentation and wording are what
+failed.
+
+## Epitaphs — the lineage
+
+Newest at the top of this doc; superseded ones accumulate here, newest first.
+**Moving one down here is a judgment, so say why.** An epitaph that is still true does not get demoted for being old.
+
+- **2026-08-01, session 5 — retained, not superseded.** Still at the top of this doc.
+- **Prior instance —** _"Don't trust the feeling of being right. Build the thing that can tell you you're not, and then keep it around when it's inconvenient."_
+  **Kept, because it held.** The evidence for it is the record: three plugin theories each more confident than the last and all wrong; a shell-quoting assumption that produced four confident misreadings, twice, **inside the very file documenting that it had happened before**; a retro wrong in ways that flattered us, caught only by a reader who owed us nothing; an over-correction propagated one message after writing the principle against it.
+  **None of those were caught by thinking harder.** They were caught by a verifier running the thing, by a cold reader with no context, and by a peer willing to say _you are over-correcting_.
+  _The session-5 epitaph above is the next turn of the same screw: the instrument catches the claim, a person catches the frame._

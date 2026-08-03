@@ -1,16 +1,9 @@
 import { spawnSync } from "node:child_process";
-import {
-  closeSync,
-  existsSync,
-  openSync,
-  readFileSync,
-  statSync,
-  unlinkSync,
-  writeSync,
-} from "node:fs";
-import { join } from "node:path";
+import { existsSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
+import { acquireLock, releaseLock } from "../lock.ts";
 import { nowMillis } from "../runtime.ts";
 import { requireConfig } from "./team-support.ts";
 
@@ -50,65 +43,42 @@ function repoRoot(cwd: string): string {
   return top.ok && top.stdout ? top.stdout : cwd;
 }
 
+/**
+ * PURE (the unit-test target): append the seat trailer unless the body already
+ * carries one for THIS seat.
+ *
+ * Scoped to an exact same-seat match on purpose. A body already stamped
+ * `Anthill-Seat: forager` needs nothing; a body stamped for a DIFFERENT seat
+ * still gets ours appended, because that is the atomic cross-seat land — one
+ * commit legitimately carrying several seats — and silently swallowing the
+ * second name would delete provenance rather than deduplicate it. Dropping a
+ * real seat is a strictly worse failure than repeating one.
+ */
+export function stampSeat(body: string, seat: string): string {
+  const trailer = `Anthill-Seat: ${seat}`;
+  const already = body.split("\n").some((line) => line.trim() === trailer);
+  return already ? body : `${body}\n\n${trailer}`;
+}
+
 /** The shared git dir (`--git-common-dir` so a worktree resolves to the real
- * `.git`, where the one shared index — the thing seats race on — actually lives). */
+ * `.git`, where the one shared index — the thing seats race on — actually lives).
+ *
+ * `resolve`, NOT `join`. `--git-common-dir` answers in two different namespaces:
+ * a RELATIVE `.git` from a main checkout, and an ABSOLUTE path from a linked
+ * worktree. `join` does not reset on an absolute second argument, so it built
+ * `/<worktree>/<abs path to real .git>` — a path that cannot exist — and every
+ * `anthill commit` in every worktree died with ENOENT. `resolve` treats the
+ * absolute answer as absolute and the relative one as relative to `root`, which
+ * is the behaviour the line above always claimed.
+ *
+ * Worth keeping as the reason rather than the diff: this code was already
+ * worktree-AWARE — the comment names worktrees explicitly — and it was still
+ * wrong, because the author handled the case conceptually and not in the path
+ * algebra. Being conscious of a case is not the same as handling it. */
 function lockPath(root: string): string {
   const common = git(["rev-parse", "--git-common-dir"], root);
-  const dir = common.ok && common.stdout ? join(root, common.stdout) : join(root, ".git");
+  const dir = common.ok && common.stdout ? resolve(root, common.stdout) : resolve(root, ".git");
   return join(dir, "anthill-team-commit.lock");
-}
-
-function sleep(ms: number): void {
-  // Synchronous wait — this CLI is a one-shot; a blocking poll keeps the lock
-  // logic simple + deterministic.
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
-
-/** Acquire the serialize lock (atomic O_EXCL create), waiting for a peer to
- * release. Steals a stale lock (crashed holder). Returns the wait time, or
- * throws on timeout. */
-function acquireLock(path: string): number {
-  const startedAt = nowMillis();
-  for (;;) {
-    try {
-      const fd = openSync(path, "wx");
-      writeSync(fd, `${process.pid} ${new Date(nowMillis()).toISOString()}\n`);
-      closeSync(fd);
-      return nowMillis() - startedAt;
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code !== "EEXIST") throw err;
-      // Held — steal if stale, else wait.
-      try {
-        if (nowMillis() - statSync(path).mtimeMs > LOCK_STALE_MS) {
-          unlinkSync(path);
-          continue;
-        }
-      } catch {
-        // Lock vanished between the open and the stat — just retry.
-      }
-      if (nowMillis() - startedAt > LOCK_WAIT_MS) {
-        let holder = "unknown";
-        try {
-          holder = readFileSync(path, "utf8").trim();
-        } catch {
-          // ignore
-        }
-        throw new Error(
-          `timed out after ${LOCK_WAIT_MS}ms waiting for the team-commit lock (held by: ${holder}). ` +
-            `If that peer crashed, remove ${path}.`,
-        );
-      }
-      sleep(LOCK_POLL_MS);
-    }
-  }
-}
-
-function releaseLock(path: string): void {
-  try {
-    unlinkSync(path);
-  } catch {
-    // already gone — fine
-  }
 }
 
 /**
@@ -205,6 +175,16 @@ export const teamCommitCommand = defineAnthillCommand({
   },
   args: {
     message: { type: "string", alias: "m", description: "Commit message", valueHint: "text" },
+    stdin: {
+      type: "boolean",
+      description: "Read the commit message from stdin (safe for bodies with backticks or code)",
+    },
+    file: {
+      type: "string",
+      alias: "F",
+      description: "Read the commit message from a file (safe for bodies with backticks or code)",
+      valueHint: "path",
+    },
     as: {
       type: "string",
       description: "Seat handle to attribute this commit to (must be in config.seats)",
@@ -215,7 +195,80 @@ export const teamCommitCommand = defineAnthillCommand({
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const rawMessage = (ctx.args.message as string | undefined)?.trim();
+    /**
+     * THREE ways to supply a message, and exactly one may be used.
+     *
+     * `--stdin` / `-F` exist because the damage happens in the SHELL, upstream
+     * of this process: an unquoted `-m` body carrying backticks is command-
+     * substituted by bash before the tool ever sees it, so the message is
+     * corrupted — or partially executed — and nothing downstream can recover it.
+     * `comms send` already had `--stdin` for exactly this; `commit` did not, and
+     * commit messages on this team are made of paths, flags and code.
+     *
+     * This is retro hypothesis H1 — *mechanical guards beat prose guards* — as a
+     * live test rather than an argument. The prose guard already exists and is
+     * emphatic: the join checklist mandates `--stdin` for code-bearing bodies on
+     * every wire. It was written by a lead who then walked into the sibling case
+     * of the same hazard on the tool beside the one his warning named. The
+     * prediction under test is that an affordance on the verb that actually
+     * needs it outperforms the instruction, and the way to falsify it is to
+     * watch whether the backtick class recurs now that this exists.
+     *
+     * Combining them is REFUSED rather than resolved by precedence: a caller who
+     * passed two has a wrong model of one, and silently honouring the winner
+     * commits a message they did not intend — on an operation that is a great
+     * deal harder to take back than a chat message.
+     */
+    const sources = (["message", "stdin", "file"] as const).filter((k) =>
+      k === "stdin" ? Boolean(ctx.args.stdin) : ctx.args[k] !== undefined,
+    );
+    if (sources.length > 1) {
+      emitError({
+        format,
+        command: "commit",
+        error:
+          `${sources.map((s) => (s === "message" ? "-m" : `--${s}`)).join(" and ")} cannot be ` +
+          "combined — each supplies the whole commit message. Pick one; nothing was committed.",
+      });
+      process.exit(1);
+    }
+
+    let rawMessage: string | undefined;
+    if (ctx.args.stdin) {
+      rawMessage = (await Bun.stdin.text()).trim();
+      if (!rawMessage) {
+        emitError({
+          format,
+          command: "commit",
+          error: "--stdin was given but stdin was empty — nothing was committed",
+        });
+        process.exit(1);
+      }
+    } else if (ctx.args.file !== undefined) {
+      const file = String(ctx.args.file);
+      try {
+        rawMessage = (await Bun.file(file).text()).trim();
+      } catch {
+        // Name the path we were given, verbatim — never a re-derived absolute
+        // one. Re-deriving invents a second answer and the invented one lies.
+        emitError({
+          format,
+          command: "commit",
+          error: `could not read the commit message from "${file}" — nothing was committed`,
+        });
+        process.exit(1);
+      }
+      if (!rawMessage) {
+        emitError({
+          format,
+          command: "commit",
+          error: `"${file}" is empty — nothing was committed`,
+        });
+        process.exit(1);
+      }
+    } else {
+      rawMessage = (ctx.args.message as string | undefined)?.trim();
+    }
     // `--as` is validated against the roster BEFORE anything is staged: a bogus
     // handle must not leave the tree half-touched. Field-requested by all four
     // seats of a consuming team — every commit on a shared tree is authored by
@@ -236,7 +289,16 @@ export const teamCommitCommand = defineAnthillCommand({
     // The trailer is appended, never substituted — git's own `%an` still shows
     // the human, so this ADDS a machine-greppable seat rather than claiming to
     // replace authorship. `git log --grep "Anthill-Seat: <handle>"` is the point.
-    const message = seat && rawMessage ? `${rawMessage}\n\nAnthill-Seat: ${seat}` : rawMessage;
+    //
+    // IDEMPOTENT, because the alternative is a rule humans have to remember and
+    // measurably do not. A seat who hand-writes the trailer into `-m` (natural:
+    // it is what the raw-git fallback requires, so the habit is trained by our
+    // own workaround) got it twice. The author of the lesson about checking your
+    // own artifacts did it, wrote it up, and then did it AGAIN two commits later
+    // in the same session — which is this repo's own principle that a
+    // situational warning fails at the RECOGNITION step, not the compliance one,
+    // and therefore needs a mechanical guard rather than better wording.
+    const message = seat && rawMessage ? stampSeat(rawMessage, seat) : rawMessage;
     const paths = ((ctx.args._ as string[] | undefined) ?? []).filter((p) => p.length > 0);
     const warnings: string[] = [];
 
@@ -264,7 +326,11 @@ export const teamCommitCommand = defineAnthillCommand({
 
     const root = repoRoot(process.cwd());
     const lock = lockPath(root);
-    const waitedMs = acquireLock(lock);
+    const waitedMs = acquireLock(lock, {
+      waitMs: LOCK_WAIT_MS,
+      staleMs: LOCK_STALE_MS,
+      pollMs: LOCK_POLL_MS,
+    });
 
     // Which of OUR paths were ALREADY staged before we touched the index? We must
     // know this to put the index back exactly as we found it if we bail — see

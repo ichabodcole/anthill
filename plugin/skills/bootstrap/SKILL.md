@@ -226,15 +226,17 @@ once the human has steered you to one seating, treat it as the ratified roster a
 ### 5. Report
 
 Tell the human the team is ready: the roster (handles + roles), where the docs landed (`.anthill/`),
-and the next step — **"run `anthill:convene` to start a working session."** Optionally suggest they
+and the next step — **"run `anthill:convene` to start a working session."** Optionally **suggest they
+commit `.anthill/config.json` + `.anthill/`** (the scaffold is durable; `.anthill/scratch/` stays
+gitignored) — **suggest it; do not do it.** It is their repo and this skill has just asked consent
+for a smaller change than its first commit.
+
 **Before you hand over, show them the field notes once.** Run **`anthill field-notes`** and point at
 what's in it. `principles.md` ships **empty on purpose** — a team's principles are the ones it earns,
 and seeding them with ours hands over conclusions whose scars belong to somebody else. The field
 notes are the other half of that: _here is what other teams found, with the evidence; take what
 fits._ **Say plainly that it is not a list they are expected to adopt** — and that if one of them
 turns out to be wrong for them, `anthill feedback` is how we find out.
-
-commit `.anthill/config.json` + `.anthill/` (the scaffold is durable; `.anthill/scratch/` stays gitignored).
 
 ## Output
 

@@ -38,6 +38,19 @@ interface BaseArgDef<T extends ArgType, VT extends boolean | string> {
   alias?: string | string[];
   default?: VT;
   required?: boolean;
+  /** A flag the command RECOGNISES but deliberately REFUSES. Distinct from an
+   * unknown flag: `--as` on `comms read` is not a typo, it is a coherent thing to
+   * try that this verb does not do. The generic "Unknown option" is correct and
+   * useless there — it names the valid set but not WHY yours was refused, which
+   * is the inference that makes a seat conclude the tool is broken (anthill#54).
+   *
+   * A refused arg is REGISTERED with the parser (so it never reads as "unknown")
+   * and EXCLUDED from the advertised valid set (so we don't offer a flag we
+   * reject) — but it is NOT rejected here. The value reaches `ctx.args` and the
+   * command refuses it through its own dual-audience envelope, because a usage
+   * error under `--format json` must stay a clean `{ok:false}` envelope rather
+   * than becoming usage text. */
+  refused?: string;
 }
 
 export type BooleanArgDef = Omit<BaseArgDef<"boolean", boolean>, never>;
@@ -178,10 +191,16 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
   const booleans = new Set<string>();
   const strings = new Set<string>();
   const positionals: Array<{ name: string; def: PositionalArgDef }> = [];
+  const refused = new Set<string>();
 
   for (const [name, def] of Object.entries(argsDef)) {
     if (def.type === "positional") {
       positionals.push({ name, def });
+      continue;
+    }
+    if ((def as StringArgDef | BooleanArgDef).refused !== undefined) {
+      options[name] = { type: "string" };
+      refused.add(name);
       continue;
     }
     const type: "string" | "boolean" = def.type === "boolean" ? "boolean" : "string";
@@ -269,17 +288,33 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
       code === "ERR_PARSE_ARGS_UNKNOWN_OPTION" ||
       code === "ERR_PARSE_ARGS_INVALID_OPTION_VALUE"
     ) {
+      // Refused args are registered so they don't read as "unknown", but they are
+      // NOT valid to pass — advertising one would offer a flag we reject.
       const valid = Object.keys(options)
+        .filter((n) => !refused.has(n))
         .sort()
         .map((n) => `--${n}`);
       const detail =
         err instanceof Error
           ? err.message.replace(/\s*To specify.*$/s, "").replace(/\.\s*$/, "")
           : "";
+      // A VALUE that begins with `-` is read as a cluster of short options, so
+      // `comms send "-dash body"` fails with "Unknown option 'd'" — an error
+      // about a letter inside the user's own sentence, which names neither the
+      // cause nor either escape. Both escapes are real and were measured:
+      // `-- "<body>"` and (where the command has it) `--stdin`.
+      const dashValue = processed.find(
+        (a) => a.startsWith("-") && !a.startsWith("--") && a.length > 2 && !stringFlagName(a),
+      );
+      const escapes = ["put it after `--`"];
+      if (Object.hasOwn(argsDef, "stdin")) escapes.push("or pass it on --stdin");
+      const hint = dashValue
+        ? `. If "${dashValue}" was meant as a VALUE rather than flags, ${escapes.join(" ")}`
+        : "";
       throw new CLIError(
         `${detail.trim() || "invalid option"}${
           valid.length > 0 ? `. Valid flags: ${valid.join(", ")}` : ""
-        }`,
+        }${hint}`,
       );
     }
     parsed = { values: {}, positionals: processed };
@@ -371,6 +406,17 @@ export async function runCommand(cmd: AnyCommand, rawArgs: string[]): Promise<vo
     if (name) {
       const sub = subCommands[name];
       if (!sub) throw new CLIError(`Unknown command ${name}`);
+      // Validate the tokens BEFORE the subcommand against this level's spec.
+      // They were previously dropped on the floor: only `rawArgs.slice(idx + 1)`
+      // was ever parsed, so `anthill --nope status` exited 0 with `ok:true`.
+      // That is precisely the silent-fallback failure `strict: true` exists to
+      // prevent (see the long note in `parseArgs`), surviving in the one
+      // position nobody probed — a typo is as likely before the subcommand as
+      // after it, and only one of the two was ever checked.
+      //
+      // Reuses the same strict parser rather than a second, laxer check, so a
+      // flag is judged by one rule wherever it appears.
+      parseArgs(rawArgs.slice(0, idx), argsDef);
       await runCommand(sub, rawArgs.slice(idx + 1));
       return;
     }

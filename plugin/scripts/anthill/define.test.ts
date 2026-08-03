@@ -137,3 +137,45 @@ describe("parseArgs — a dash-leading VALUE is a value, not a flag", () => {
     expect(() => parseArgs(["--force", "-1"], SPEC)).toThrow(CLIError);
   });
 });
+
+describe("m10 — a VALUE beginning with a dash names both escapes", () => {
+  const SEND = {
+    text: { type: "positional" as const, required: false },
+    as: { type: "string" as const },
+    stdin: { type: "boolean" as const },
+  };
+
+  test("the error explains the cause and both escapes, not just a letter", () => {
+    // `send "-dash body"` failed with "Unknown option 'd'" — an error about a
+    // letter inside the user's own sentence, naming neither cause nor escape.
+    try {
+      parseArgs(["-dash body", "--as", "forager"], SEND);
+      throw new Error("expected a CLIError");
+    } catch (e) {
+      const m = (e as Error).message;
+      expect(m).toContain("-dash body");
+      expect(m).toContain("--");
+      expect(m).toContain("--stdin"); // offered only because this spec HAS it
+    }
+  });
+
+  test("a command WITHOUT --stdin does not advertise it", () => {
+    // The hint is derived from the spec, so it cannot promise a flag the command
+    // does not have — the failure mode of a hand-written hint.
+    try {
+      parseArgs(["-dash body"], { as: { type: "string" as const } });
+      throw new Error("expected a CLIError");
+    } catch (e) {
+      expect((e as Error).message).not.toContain("--stdin");
+    }
+  });
+
+  test("CONTROL: a genuine unknown long flag gets NO dash hint", () => {
+    try {
+      parseArgs(["--nope"], SEND);
+      throw new Error("expected a CLIError");
+    } catch (e) {
+      expect((e as Error).message).not.toContain("meant as a VALUE");
+    }
+  });
+});

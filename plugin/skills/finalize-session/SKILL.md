@@ -179,7 +179,10 @@ Name the writer or the file does not get written: seats answer, and every one of
 this step exactly while the artifact still fails to exist. **The first run of this ritual produced
 no file for exactly that reason** — the step said what and where, and nobody owned the act.
 Capture what you have rather than holding teardown for completeness: **the vine evaporates**, so a
-partial retro that exists beats a complete one that died with the panes — and _"two seats did not
+partial retro that exists beats a complete one that died with the panes —
+_(**and a durable comms log does not discharge this.** Nothing clears comms, so the words survive —
+but a retro nobody re-reads is a write-only store, and the next convene reads `retro.md`, not a log.
+**Durable is not the same as re-read**, and the whole point of this step is the second one.)_ and _"two seats did not
 answer"_ is itself a result about the ritual, not an embarrassment to paper over.
 Distinct from step 4: the structure reflection asks about the team's **shape**; the retro asks for
 **judgement about the session**. Also distinct from the friction sweep in step 1 — that collects what
@@ -214,6 +217,22 @@ Two rules do all the work here. Without them a retro produces a mood, and a mood
   one team, three seats accepted the lead's correction on sight and each amplified it against
   themselves — and part of it was wrong. **Unanimous deference would have carried a false claim
   into a document with nothing to check it against.**
+  - **And the lead should NOT open by listing his own errors.** It reads as the opposite of
+    defensiveness and it is not: **a lead who self-lists well pre-empts the audit**, because there is
+    nothing left for a seat to do but concur, and the resulting document is indistinguishable from
+    one where the audit found nothing. _Observed: an observer seat checked and found **no seat
+    produced a criticism of the lead he had not already volunteered.**_ Say you are in scope, then
+    say nothing further until the seats have written.
+- **Commissioning a cold reviewer? GIVE IT THE TREE, NOT THE WIRE.** A blank-context reviewer is the
+  one instrument a retro's shared frame cannot contaminate — and that only holds while it reads
+  **committed artifacts**. Point it at the repo, the shas, the diffs, the tests.
+  - **Do not paste in the channel log, and do not summarise the session for it.** Both hand it the
+    team's framing, which is the single thing it was commissioned not to have. **Its value is
+    incomprehension**, and a helpful briefing destroys exactly that.
+  - _Worth stating because on most setups this protection is **accidental**: the wire is typically
+    gitignored, so a reviewer working from a clone cannot reach it — until someone helpfully pastes
+    it in. **A safeguard that survives only until a well-meaning person acts is not a safeguard**,
+    which is why it is written here rather than assumed._
 
 **4. Did this session produce a PRINCIPLE?** Asked once, at the end, and **usually the answer is
 no.** A principle is a claim about **how work goes wrong**, general enough to survive a change of
@@ -256,7 +275,10 @@ it has gone wrong.**
      goes to `.anthill/principles.md` **with its scar**; if it has no scar it is a Q3 hypothesis, and
      if it only holds for this tool it is an SOP practice.
    - ◻ **Retro written to `.anthill/retro.md` BY THE LEAD** (step 4.5), newest first — the seats
-     answered on the wire; **the wire evaporates and the file is the only thing that survives.**
+     answered on the wire; **a wire is not a store — the file is the thing the next convene reads.**
+     _(True whichever wire they answered on: the vine is cleared at convene and the comms log is
+     never read back by anything. **Surviving and being re-read are different properties**, and only
+     the file has the second.)_
      **Every Q3 answer is a
      hypothesis the next convene can test**, not a preference. Check one thing before you land it:
      **is any Q1/Q2 answer carried only by everyone agreeing?** If it has no artifact, no number and
@@ -275,9 +297,22 @@ it has gone wrong.**
        this step** — the docs can't land while the code is red. Don't fight the gate; park everything,
        land the docs green against a clean tree, then restore the slice. You always know the **doc**
        paths (the seat living docs), so pivot on those — no need to enumerate the red slice:
-       1. **Stash all uncommitted work** — `git stash push -u` (the `-u` sweeps in untracked red files
-          too, which a patch of `git diff HEAD` would silently drop). The tree is now at `HEAD`, so the
-          gate is green.
+       1. **Stash the red slice — BY PATH, and only stash-all if you are genuinely alone in the tree.**
+          `git stash push -u -- <red-paths…>`. The `-u` sweeps in untracked red files too, which a
+          patch of `git diff HEAD` would silently drop.
+          **⚠ Bare `git stash push -u` means EVERY seat's uncommitted work, not just yours.** Seats
+          share one tree — and `refs/stash` is shared **even across per-seat worktrees**, where
+          nothing else is. So the unscoped form reverts your peers to `HEAD` underneath them, with no
+          announcement, at the exact moment they may still be writing their own seat docs. **And
+          `anthill commit`'s serialize lock does not cover `git stash`** — it is the one mutation
+          around here with no mutex at all.
+          **The failure is invisible in the direction you are looking:** the gate goes green, which
+          is what this recipe told you to check, and _"green because the red slice is parked"_ is
+          indistinguishable from _"green because I also parked three seats' unrelated work."_
+          **If you do not know the red paths, find them — do not reach for the unscoped form as the
+          shortcut.** _(This step used to give stash-all as the default and the by-path form as an
+          optimisation in a parenthetical. That ordering was backwards: the safe version was offered
+          only to a reader who already knew enough not to need it.)_
        2. **Bring back only the docs** — `git checkout stash@{0} -- <doc-paths…>`. Now the tree holds
           just the seat docs (markdown → the gate passes); the red slice stays parked in the stash.
        3. **Land the docs against the now-green tree** — each seat commits its own
@@ -291,8 +326,13 @@ it has gone wrong.**
        `git stash push -u -- <red-paths…>` before step 3, `git stash pop` after — same result, as long
        as `<red-paths…>` is disjoint from the doc paths so a doc edit isn't stashed away with it.)_
    - ◻ **Board settled — best-effort, never a gate** (cards → review/done). If the board idle-died or is
-     unreachable, **don't block finalize on it**: the **git history and the grapevine ARE the session's
-     durable record**. Attempt a settle once; if the board's gone, note it on the vine and move on.
+     unreachable, **don't block finalize on it**: the **git history and the comms log ARE the session's
+     durable record**. Attempt a settle once; if the board's gone, say so on a wire and move on.
+     - **Do not substitute the grapevine here.** The lead clears the vine at convene (`--fresh`), so
+       it is the wire that is _designed_ not to outlive the session; **nothing clears the comms log.**
+       Naming the vine as the durable record is the exact inversion this ritual exists to prevent —
+       and per the standing principle, **a decision that must outlive the session belongs in an
+       artifact anyway**, not in either wire.
    - ◻ **Human sign-off before the code branch merges to `develop`.** Green tests and a checked-off
      board are the team's _own_ signals — but the human's look (UI bugs, the feel, feedback) is a gate
      the team **cannot run itself**. Get an explicit "yes, merge it" before you land the feature branch

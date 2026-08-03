@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { foreignDirtyPaths, unexpectedStaged } from "./team-commit.ts";
+import { foreignDirtyPaths, stampSeat, unexpectedStaged } from "./team-commit.ts";
 import { cleanGitEnv } from "./test-support.ts";
 
 // This suite git-inits throwaway repos and commits inside them. Give every git
@@ -54,6 +54,24 @@ function makeRepo(): string {
   sh(["git", "add", "baseline.txt"], dir);
   sh(["git", "commit", "-qm", "baseline"], dir);
   return dir;
+}
+
+/** A LINKED WORKTREE of `repo`, which is the fixture every test above was
+ * missing. In a main checkout `git rev-parse --git-common-dir` answers a
+ * RELATIVE ".git"; from a linked worktree it answers an ABSOLUTE path. Any
+ * fixture that is only ever a plain repo exercises one of those namespaces and
+ * silently certifies code that mishandles the other. */
+function makeWorktree(repo: string): { wt: string; cleanup: () => void } {
+  const wt = mkdtempSync(join(tmpdir(), "anthill-commit-wt-"));
+  rmSync(wt, { recursive: true, force: true }); // git wants to create it itself
+  sh(["git", "worktree", "add", "-q", "-b", "seat-test", wt], repo);
+  return {
+    wt,
+    cleanup: () => {
+      rmSync(wt, { recursive: true, force: true });
+      Bun.spawnSync(["git", "worktree", "prune"], { cwd: repo, env: GIT_ENV });
+    },
+  };
 }
 
 /** Install a pre-commit hook that always fails — stands in for the real thing a
@@ -446,6 +464,41 @@ describe("anthill commit — a bounced commit must not strand the index (anthill
     }
   });
 
+  // Per-seat worktree isolation, session 6: `anthill commit` died with ENOENT in
+  // EVERY seat worktree and nobody could land. `lockPath` did
+  // `join(root, gitCommonDir)`, and `join` does not reset on an absolute second
+  // argument, so a worktree's absolute `--git-common-dir` was concatenated onto
+  // the worktree root to make a path that cannot exist.
+  //
+  // This is a positive control, not a smoke test: it FAILS against the `join`
+  // implementation and passes against `resolve`. The reason it was never caught
+  // is that every other test in this file runs in a plain repo, where
+  // `--git-common-dir` is a relative ".git" and `join` is accidentally correct.
+  //
+  // Note what this does NOT assert: that the lock file lands at any particular
+  // path. It asserts the commit SUCCEEDS from a worktree — because the defect
+  // was reached through the lock and the symptom the team felt was "I cannot
+  // land", and a path-shape assertion would re-encode the implementation I just
+  // changed.
+  test("commits from a LINKED WORKTREE, where --git-common-dir is absolute", async () => {
+    const repo = makeRepo();
+    const { wt, cleanup } = makeWorktree(repo);
+    try {
+      writeFileSync(join(wt, "seat.txt"), "seat work\n");
+      const { code, stderr } = await runCli(["commit", "-m", "seat lands", "seat.txt"], wt);
+      expect(stderr).not.toContain("ENOENT");
+      expect(code).toBe(0);
+
+      const log = Bun.spawnSync(["git", "log", "-1", "--format=%s"], { cwd: wt, env: GIT_ENV })
+        .stdout.toString()
+        .trim();
+      expect(log).toBe("seat lands");
+    } finally {
+      cleanup();
+      rmSync(repo, { recursive: true, force: true });
+    }
+  });
+
   // The consequence, proven end to end rather than argued: a peer must be able to
   // land immediately after someone else's gate bounce, not queue behind a corpse.
   test("a peer can commit promptly after a gate failure", async () => {
@@ -612,5 +665,223 @@ describe("anthill commit — false-GREEN visibility on SUCCESS", () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+/**
+ * t-93fca16a — retro H1's assigned test: `--stdin` / `-F` on `anthill commit`.
+ *
+ * The hazard is a property of the SHELL, upstream of this process: an unquoted
+ * `-m` body carrying backticks is command-substituted by bash before the tool
+ * sees it. `comms send` already had `--stdin`; commit did not, and commit
+ * messages here are made of paths, flags and code.
+ */
+describe("anthill commit — --stdin / -F (H1: a mechanical guard for the backtick class)", () => {
+  const CODE_BODY =
+    "fix(comms): handle `--as-of` and $HOME in bodies\n\n" +
+    "The guard is `SAFE_SESSION_KEY.test(config.channel)` — see $(whoami) notes.\n";
+
+  test("-F carries a backtick/$() body through VERBATIM", async () => {
+    const dir = makeRepo();
+    writeFileSync(join(dir, "a.txt"), "a\n");
+    const msgFile = join(dir, "msg.txt");
+    writeFileSync(msgFile, CODE_BODY);
+
+    const r = await runCli(["commit", "-F", msgFile, "a.txt", "--format", "json"], dir);
+    expect(r.code).toBe(0);
+
+    const logged = Bun.spawnSync(["git", "log", "-1", "--format=%B"], {
+      cwd: dir,
+      env: GIT_ENV,
+    }).stdout.toString();
+    // The assertion that matters: the backticked span survived UNEXECUTED and
+    // unmangled. A shell-substituted body would have replaced it or emptied it.
+    expect(logged).toContain("`--as-of`");
+    expect(logged).toContain("$(whoami)");
+    expect(logged).toContain("$HOME");
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  test("--stdin does the same from a pipe", async () => {
+    const dir = makeRepo();
+    writeFileSync(join(dir, "b.txt"), "b\n");
+    const proc = Bun.spawn(["bun", CLI, "commit", "--stdin", "b.txt", "--format", "json"], {
+      cwd: dir,
+      env: GIT_ENV,
+      stdin: new TextEncoder().encode(CODE_BODY),
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    expect(await proc.exited).toBe(0);
+    const logged = Bun.spawnSync(["git", "log", "-1", "--format=%B"], {
+      cwd: dir,
+      env: GIT_ENV,
+    }).stdout.toString();
+    expect(logged).toContain("`--as-of`");
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  test("combining two message sources is REFUSED and names both", async () => {
+    const dir = makeRepo();
+    writeFileSync(join(dir, "c.txt"), "c\n");
+    const msgFile = join(dir, "m.txt");
+    writeFileSync(msgFile, "from file\n");
+    const r = await runCli(
+      ["commit", "-m", "from flag", "-F", msgFile, "c.txt", "--format", "json"],
+      dir,
+    );
+    expect(r.code).not.toBe(0);
+    const env = JSON.parse(r.stderr.trim());
+    expect(env.ok).toBe(false);
+    expect(env.error).toContain("-m");
+    expect(env.error).toContain("--file");
+    // And NOTHING was committed — a refusal that still commits is worse than no
+    // refusal, because the caller believes the wrong message was rejected.
+    const head = Bun.spawnSync(["git", "log", "-1", "--format=%s"], {
+      cwd: dir,
+      env: GIT_ENV,
+    }).stdout.toString();
+    expect(head.trim()).toBe("baseline");
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  test("-F on a missing file names the path AS GIVEN and commits nothing", async () => {
+    const dir = makeRepo();
+    writeFileSync(join(dir, "d.txt"), "d\n");
+    const r = await runCli(["commit", "-F", "no/such.txt", "d.txt", "--format", "json"], dir);
+    expect(r.code).not.toBe(0);
+    const env = JSON.parse(r.stderr.trim());
+    // The path the caller typed, not a re-derived absolute one: re-deriving
+    // invents a second answer to a question that already has one.
+    expect(env.error).toContain("no/such.txt");
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  test("--stdin still appends the Anthill-Seat trailer", async () => {
+    // The trailer is the other half of this command's contract; a new message
+    // path that silently dropped it would make `git log --grep` lie.
+    const dir = makeRepo();
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      JSON.stringify({
+        version: 2,
+        channel: "c",
+        seats: [{ handle: "forager", role: "hands", scope: "s/", spawn: true }],
+      }),
+    );
+    writeFileSync(join(dir, "e.txt"), "e\n");
+    const proc = Bun.spawn(
+      ["bun", CLI, "commit", "--stdin", "--as", "forager", "e.txt", "--format", "json"],
+      {
+        cwd: dir,
+        env: GIT_ENV,
+        stdin: new TextEncoder().encode("feat: via stdin with `code`\n"),
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    expect(await proc.exited).toBe(0);
+    const logged = Bun.spawnSync(["git", "log", "-1", "--format=%B"], {
+      cwd: dir,
+      env: GIT_ENV,
+    }).stdout.toString();
+    expect(logged).toContain("Anthill-Seat: forager");
+    expect(logged).toContain("`code`");
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  test("CONTROL: -m still works unchanged", async () => {
+    const dir = makeRepo();
+    writeFileSync(join(dir, "f.txt"), "f\n");
+    const r = await runCli(["commit", "-m", "plain message", "f.txt", "--format", "json"], dir);
+    expect(r.code).toBe(0);
+    rmSync(dir, { recursive: true, force: true });
+  });
+});
+
+/**
+ * The KNOWN-POSITIVE for the whole card.
+ *
+ * Every test above passes a body straight to `Bun.spawn`, so no shell is
+ * involved and none of them demonstrate the hazard `--stdin`/`-F` exist to
+ * defeat. An instrument never shown able to report the failure cannot support a
+ * claim that the failure was avoided — so this runs BOTH paths through a real
+ * `sh -c` and asserts they differ.
+ */
+describe("anthill commit — the shell hazard, demonstrated on both sides", () => {
+  const shellRun = (cmd: string, cwd: string) =>
+    Bun.spawnSync(["sh", "-c", cmd], { cwd, env: GIT_ENV });
+
+  const lastMessage = (dir: string) =>
+    Bun.spawnSync(["git", "log", "-1", "--format=%B"], {
+      cwd: dir,
+      env: GIT_ENV,
+    }).stdout.toString();
+
+  test("-m through a shell EXECUTES a backticked span; -F through the same shell does not", async () => {
+    const dir = makeRepo();
+    writeFileSync(join(dir, "x.txt"), "x\n");
+    writeFileSync(join(dir, "y.txt"), "y\n");
+
+    // (a) THE HAZARD, reproduced. Double-quoted `-m` is what a hurried caller
+    // writes; bash substitutes the backticked span before anthill is even
+    // invoked, so the committed message contains the command's OUTPUT.
+    shellRun(`bun ${CLI} commit -m "docs: note \`echo INJECTED\` here" x.txt`, dir);
+    const hazard = lastMessage(dir);
+    expect(hazard).toContain("INJECTED"); // the substitution HAPPENED
+    expect(hazard).not.toContain("echo INJECTED"); // the literal did NOT survive
+
+    // (b) THE FIX, through the identical shell. The body never passes through
+    // bash's expansion at all, so the literal text lands.
+    const msgFile = join(dir, "msg2.txt");
+    writeFileSync(msgFile, "docs: note `echo INJECTED` here\n");
+    shellRun(`bun ${CLI} commit -F ${msgFile} y.txt`, dir);
+    const fixed = lastMessage(dir);
+    expect(fixed).toContain("`echo INJECTED`"); // the literal SURVIVED
+    expect(fixed.replace("`echo INJECTED`", "")).not.toContain("INJECTED");
+
+    // Same shell, same body, opposite outcomes — which is what makes (b) mean
+    // something rather than being a green from a harness that cannot fail.
+    expect(hazard).not.toBe(fixed);
+    rmSync(dir, { recursive: true, force: true });
+  });
+});
+
+// The seat trailer must be idempotent, because the rule it replaces is one that
+// humans measurably fail: a seat hand-writing `Anthill-Seat:` into `-m` (the
+// habit our own raw-git fallback trains) produced a duplicate TWICE in one
+// session, the second time by the seat who had just written the lesson about it.
+// A situational warning fails at the recognition step, so this is mechanical.
+describe("stampSeat", () => {
+  test("appends the trailer when the body has none", () => {
+    expect(stampSeat("subject line", "forager")).toBe("subject line\n\nAnthill-Seat: forager");
+  });
+
+  test("does NOT append a second trailer for the same seat", () => {
+    const body = "subject\n\nAnthill-Seat: forager";
+    expect(stampSeat(body, "forager")).toBe(body);
+  });
+
+  test("counts exactly one trailer after stamping an already-stamped body", () => {
+    const out = stampSeat("subject\n\nAnthill-Seat: forager", "forager");
+    expect(out.split("\n").filter((l) => l.startsWith("Anthill-Seat:")).length).toBe(1);
+  });
+
+  // The case that must NOT be deduplicated: an atomic cross-seat land is one
+  // commit legitimately carrying several seats. Dropping a real seat is a worse
+  // failure than repeating one, so the match is scoped to the same handle.
+  test("still appends when the existing trailer names a DIFFERENT seat", () => {
+    const out = stampSeat("subject\n\nAnthill-Seat: weaver", "forager");
+    expect(out).toContain("Anthill-Seat: weaver");
+    expect(out).toContain("Anthill-Seat: forager");
+  });
+
+  test("is not fooled by a trailer mentioned mid-prose rather than on its own line", () => {
+    // "we stamp Anthill-Seat: forager on every land" inside a paragraph is prose
+    // ABOUT the trailer, not the trailer. Matching it would silently skip the
+    // real stamp — the same word-vs-claim trap this seat has hit twice before.
+    const out = stampSeat("we always write Anthill-Seat: forager in the body", "forager");
+    expect(out.split("\n").filter((l) => l.trim() === "Anthill-Seat: forager").length).toBe(1);
   });
 });
