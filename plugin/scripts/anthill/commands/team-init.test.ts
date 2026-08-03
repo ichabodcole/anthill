@@ -138,7 +138,11 @@ describe("COMMS_GITIGNORE_LINE (the message log is per-session local state)", ()
   it("covers the comms dir, not just one channel's file", () => {
     // Channels are named per team; ignoring a single filename would leak every
     // other channel's log into the next `git add`.
-    expect(COMMS_GITIGNORE_LINE).toBe(".anthill/comms/");
+    // No trailing slash: a slash-suffixed rule matches directories ONLY, so a
+    // symlinked `.anthill/comms` (how a multi-worktree team shares one log)
+    // stops being ignored and shows up untracked in every seat's tree.
+    expect(COMMS_GITIGNORE_LINE).toBe(".anthill/comms");
+    expect(COMMS_GITIGNORE_LINE.endsWith("/")).toBe(false);
   });
 
   it("is NOT covered by the scratch line — that is why it needs its own", () => {
