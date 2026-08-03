@@ -264,6 +264,35 @@ So the bar is **not** parity and **not** perfection. It is: **a team can run a s
 Grapevine stays as a **backup the team re-arms if comms drops** — not a second wire held open in
 parallel. A merge that ships two co-required wires is refused.
 
+> #### ⚠ CORRECTION, 2026-08-03 — this ruling was recorded on a premise nobody checked
+>
+> **The bar above is unchanged and still binding. What was wrong is WHICH merge it gates.**
+>
+> R11 was written treating _"merge to `develop`"_ and _"ship"_ as the same event, because the framing
+> it was recorded from said so. **They are not the same event, and one command settles it:**
+> `.github/workflows/release-please.yml` triggers **only on push to `main`**, and
+> `.claude-plugin/marketplace.json` pins **no ref**, so consumers resolve the repo's default branch.
+>
+> - **`develop` is STAGING.** Merging there runs CI and reaches no consumer.
+> - **`develop → main` is SHIPPING.** That is the promotion R11 actually guards, and the sole-wire
+>   gate session is still required before it.
+>
+> **What the unchecked premise cost.** The branch was held unmerged for four days and **201 commits**
+> across sessions 3–6, with one human as the sole integration gate. Three independent cold
+> assessments of session 6 — run without access to this file or to each other — each identified that
+> unmerged branch as the **largest standing risk in the repository, above the token cost of running
+> the team**. A material part of that exposure was self-imposed by this ruling, on a premise that cost
+> one `grep` to falsify.
+>
+> **Recorded as a correction rather than an edit, deliberately.** The lead who wrote R11 also wrote the
+> handoff instructing the next lead not to inherit a scaffold as settled — and then recorded a merge
+> gate without verifying the release plumbing it referenced. **Silently rewriting the ruling would
+> delete the instance.** The generalisable form, which is this project's own scar arriving again:
+> **a gate is only as good as the mechanism it names, and naming one you have not run is a claim, not
+> a gate.**
+>
+> _Merged to `develop` at `0560873`, 2026-08-03, gate 427/0. Not shipped._
+
 **What this bar rejects, and it is the posture we have been in all along:** every session so far ran
 with grapevine armed alongside, by explicit decision (see the spike proposal's "not switched to").
 **So we have zero observations of comms without a fallback** — and a team that can fall back silently
