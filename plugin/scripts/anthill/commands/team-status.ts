@@ -2,11 +2,20 @@ import { emit, resolveFormat } from "../agent-layer.ts";
 import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
-import { type BoardCounts, readBoardCounts, requireConfig } from "./team-support.ts";
+import {
+  type BoardCounts,
+  classifyPresence,
+  readBoardCounts,
+  requireConfig,
+  type SeatPresence,
+} from "./team-support.ts";
 
 interface StatusData {
   channel: string;
   present: string[];
+  /** Which of the three presence states the channel actually reported. `present`
+   * is empty for BOTH `none` and `unknown` — read this to tell them apart. */
+  presence: SeatPresence["state"];
   humans: string[];
   board: BoardCounts | null;
   /** Title of the board the counts came from — labels an ambient/stranger board
@@ -41,6 +50,9 @@ export const teamStatusCommand = defineAnthillCommand({
 
     let present: string[] = [];
     let humans: string[] = [];
+    // Three states, not a list that is empty for two unrelated reasons — the
+    // same rule as `positionState` and `down`'s guard (seams.md Contract 6(c)).
+    let presence: SeatPresence["state"] = "unknown";
     try {
       const grapevineCli = resolveCoordCli("grapevine");
       const who = await execCoord(grapevineCli, ["who", channel]);
@@ -49,20 +61,21 @@ export const teamStatusCommand = defineAnthillCommand({
         subscribers?: string[];
         humans?: string[];
       }>(who.stdout);
-      if (!who.ok || !parsed) {
-        warnings.push(
-          `grapevine 'who' unavailable: ${firstErrorLine(who.stderr, "could not read channel")}`,
-        );
-      } else if (parsed.daemon === false) {
-        warnings.push("grapevine daemon not running — no presence available");
-      } else {
-        // Dedupe by handle — a seat with >1 live connection (vine tail + board
-        // tail) otherwise shows up twice. Presence is "who's here", not sockets.
-        present = [...new Set(parsed.subscribers ?? [])].sort();
-        humans = [...new Set(parsed.humans ?? [])].sort();
+      const classified = classifyPresence(
+        { ok: who.ok, stderrLine: firstErrorLine(who.stderr, "could not read channel") },
+        parsed,
+      );
+      presence = classified.state;
+      if (classified.state === "unknown") {
+        warnings.push(`presence unavailable: ${classified.reason}`);
+      } else if (classified.state === "present") {
+        present = classified.seats;
       }
+      // Humans ride the same payload but are not part of the presence verdict —
+      // read them whenever the payload parsed at all.
+      humans = [...new Set(parsed?.humans ?? [])].sort();
     } catch (err) {
-      warnings.push(`grapevine CLI unresolved: ${(err as Error).message}`);
+      warnings.push(`presence unavailable: grapevine CLI unresolved: ${(err as Error).message}`);
     }
 
     const { board, title: boardTitle, warning: boardWarning } = await readBoardCounts();
@@ -71,6 +84,7 @@ export const teamStatusCommand = defineAnthillCommand({
     const data: StatusData = {
       channel,
       present,
+      presence,
       humans,
       board,
       ...(boardTitle && { boardTitle }),
@@ -84,8 +98,15 @@ export const teamStatusCommand = defineAnthillCommand({
       startedAt: started,
       renderText: (d) => {
         const lines: string[] = [`Channel: ${d.channel}`];
+        // "(nobody)" is a claim. Only make it when the channel actually said so
+        // — otherwise say we could not tell. A reader who sees "(nobody)" after
+        // a dead daemon concludes the team stood down.
         lines.push(
-          d.present.length > 0 ? `On the vine: ${d.present.join(", ")}` : "On the vine: (nobody)",
+          d.presence === "present"
+            ? `On the vine: ${d.present.join(", ")}`
+            : d.presence === "none"
+              ? "On the vine: (nobody)"
+              : "On the vine: (unknown — could not read presence)",
         );
         if (d.humans.length > 0) lines.push(`Humans: ${d.humans.join(", ")}`);
         if (d.board) {
