@@ -93,6 +93,18 @@ stay solo.
        someone who only knows that worktrees isolate.
    - **Seed the cards** — one `todo` card per planned lane, in owner lanes. The doer owns its card's
      lifecycle `todo→doing→review`, the reviewer closes. The board is _state_; the vine is _substance_.
+   - **⚠ WIRE YOURSELF FIRST — `convene` prints YOUR OWN comms line and you are not on that wire
+     until you run it.** Look for the comms Monitor line in convene's own output and **run it exactly
+     as printed, Monitor-wrapped, with no filter** (it emits no keepalives, so a `grep` there can only
+     lose messages). **Do this before you brief anyone**: everything below asks you to audit a wire,
+     and every one of those checks reads as _"nobody is there"_ if the one who is missing is you.
+     - **If convene instead reports that no lead is resolvable, you got a WARNING saying so, and you
+       are unwired until you run `anthill join <your-handle>` yourself.** That is a real branch, not a
+       theoretical one — **and it announces itself rather than showing up as an absent line**, which
+       is the only reason you can act on it. Never infer your wiring state from a line you did not see.
+       _(Scar: a lead spent a morning counting handshakes by hand to find seats "missing from comms",
+       because convene did not emit this and nothing said it was needed. The seats were fine. The lead
+       was the one not on the wire, and no check it ran could have told it so.)_
    - **`anthill status`** confirms the result (who's on the vine + the board column counts).
    - **⚠ `status` does NOT tell you who is on `comms`** — it reports the grapevine roster, so a seat
      can be wired to the vine, visible in `status`, and receiving nothing on comms with no symptom.
