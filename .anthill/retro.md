@@ -27,6 +27,87 @@ does not.
 
 ---
 
+## 2026-08-03 · Session 6 — the blind read, worktree isolation, and five broken substrates
+
+**Seats:** maestro (lead), forager, weaver, sentinel, steward, scout — **all six in per-seat git worktrees**, a first.
+**Landed:** gate **390 → 423, 0 fail** (join → close, same command, sentinel's measurement on the merged tree at `17636ee`).
+_Counts deliberately omitted per this file's own rule — re-run over `236c45b..<the merge sha>`._
+**Curated by:** maestro (the lead writes this file; the seats answered on the wire).
+
+> ### ⚠ Read this before trusting any convergence below
+>
+> **The blind read could not be blind, and steward said so instead of answering around it.** R11's scaffold, the *"collect it BLIND"* instruction and the dispatch mechanism are all **committed in the tree the seat is told to ground in**. steward split his own answer into independently-derived items and ratify-responses and told the lead to **discount the second set**. Fourth leaked blind condition on this spike and **the first that no discipline could have prevented**. Human ruling: record as a finding, do not change process mid-session.
+>
+> **Provenance is unanswerable for the other four, by construction.** The blind read ran as one-shot subagents **before** the seats were spawned, so the instance that answered is not the instance that worked. Three seats independently declined the question as incoherent. **Only the lead holds those transcripts, and he did not reconstruct from them.**
+>
+> **scout answered after reading steward's and sentinel's and disclosed it** — *"treat my convergences as cheap unless I name the artifact."*
+
+### Q1 — what went well
+
+- **The blind read falsified the lead's blocking set in BOTH directions.** `artifact:` **B2 falsified by artifact** — `anthill join maestro` already resolves and emits a comms incantation; the lead ran it and wired both tails from its output. **B1 reframed** from *"build presence"* to *"the data is on disk, build the reader."* And **all five named an item that was not on the list** (the grapevine-first onramp). **Read R12 next to the commits.**
+- **The errors were concentrated in our CLAIMS, not our ARTIFACTS.** `artifact:` (scout) ~40 commits over the session range, **`grep -ci revert` → 0**, one integration red caught and green in ~90 seconds — against **four board headlines that were wrong and self-retracted**. **Both halves executable.** This is a partial answer to weaver's standing question (*a team that catches itself, or a team generating enough errors to need to*): **from outside the split is legible — the code was clean and the self-accounts were not.**
+- **Mechanism beat protocol twice, both times against the lead.** `artifact:` the lead answered the stash hazard with announce→ack→land (#313); forager answered it with the restored lock (#318/#319) and the protocol was retired in six minutes. **H1 confirmed again.**
+- **A guard with ZERO coverage, found by deleting it.** `artifact:` remove the `shouldBlockTeardown` call from `run()` → suite stays **390/0** — the number four seats had posted as their join baseline. Re-runnable.
+- **A pre-warning that stopped a false red.** `artifact:` sentinel's #327 predicts the failure; #332 is it arriving as described. The verifier defended the seat it verifies from its own harness.
+- **The COLD AUDIT found six defects in weaver's own files that weaver's own review had missed — and one of them told an agent to commit the human's repo.** `artifact:` two blank-context agents re-derived weaver's sweep classification; **weaver withheld its own answer from both**, so the re-derivation was genuinely independent. **All six were pre-existing** (weaver corrected its own *"five of six"* to **six of six** before this file was written, prompted by sentinel's retraction — *"the number was wrong in my own favour's direction of vagueness"*). **This is the audit the seat asked for, was blocked on the human for, and refused to let pass as discharged** — it explicitly would not let *"nobody was available to check me"* become *"it was checked."* **The blocking was real, the human cleared it, and it paid immediately.**
+- **`comms positions` ships with `followerAlive`, which nobody specified.** forager built steward's declined-to-contract observation (*a position that MOVED is an artifact; a position VALUE is testimony*) into the tool. Verified by the lead as first user: `gap: null` and not `0` on a real never-followed channel — **Contract 6(c)'s hardest clause, which the first shipped version got wrong.**
+
+**The anti-unanimous answer, and its RETRACTION — which is the more valuable half.**
+sentinel offered *"we produced a lot of verified corrections and relatively little product"* as the deliberate anti-unanimous entry, labelled `testimony:`. **He then retracted it before this file was landed** — *"do not put my #360 bullet in `retro.md` as written"* — having measured what he had asserted: **53 commits in 40 minutes.** `artifact:`
+**Two things this is worth recording for.** First, **it is the same class as the lead's "we are hours in"** — a confident quantitative claim about the team's own productivity, made by feel, wrong when measured, and pointed at ourselves. **Two seats, independently, in one session, in the same direction: we under-count what we produced and over-count what we corrected.** Second, **the retraction arrived in the window between the answers and the land**, which only existed because the lead writes this file after collecting rather than during. **A retro collected and written in one motion would have shipped it.**
+_The underlying question — a team that catches itself, or a team generating enough errors to need to — is **not** resolved by this. It is now n=2 that our impression of the ratio is unreliable, which is a different and smaller claim._
+
+### Q2 — what did not
+
+**The lead's, written by the SEATS. He deliberately volunteered nothing here first, after session 5 measured that no seat criticised the lead beyond what he had already listed.**
+
+- **⚠ "We are hours in" was THIRTEEN MINUTES AND THIRTY-ONE SECONDS.** `artifact:` (scout) session opened #284 at 01:51:23; the lead wrote #304 at 02:04:55; the first seat commit landed 02:08:58 — **17 minutes after open.** That number carried **the session's biggest self-criticism** — *"zero code, the team prefers measuring to building"* — which was broadcast to the team and reported to the human. **It was wrong in cause (a one-word lock bug meant nobody COULD land) and wrong in magnitude by an order of magnitude.** The lead's own seat doc already carries the session-4 lesson *"a true cause offered for the wrong magnitude is worse than no explanation."* **He committed the same error one session later, in the opposite direction, about the team instead of himself.** scout amplified it rather than checking it and says so.
+- **A named recipe was invoked instead of re-derived, and it cost the scarcest seat.** `artifact:` (sentinel) #291 directed him to Contract 3's stranger-board recipe as *"the highest-value verification available right now, above your card-6 verify lane."* **It was not** — the thing it would establish was already visible from `pin absent + unbound verb resolves`, one command. It would have meant standing a second live board against another project's live 37-task board. He declined; **the lead accepted without comment and never revisited the scoping.** **The mechanism: a recipe is a contract too, and it goes stale the same way** — `seams.md`'s own proof-pointer failure class, pointed at a *procedure*.
+- **He ruled a question CLOSED one message before the owning seat solved it.** `artifact:` #297 *"STOP MEASURING THE BOARD"* → #299 forager's deterministic root cause. **The seats who ignored him were right.** A lead closing a question is a **throughput** decision made in the voice of a **correctness** one.
+- **`--as-of` failed him TWICE, same mechanism** — a head fetched but not read (#308, #323). **Contract 6(a) documents this exactly, in the file the session was editing.**
+- **He stated a merge hold and broke it one action later**; withdrew a `waitedMs: 0` prediction wrong by four orders of magnitude; and **his own symlink fix corrupted the position primitive** (n=2), asserting `current`/gap `0` for seats that never received ids 7–284.
+
+**The seats' own, kept unsoftened:**
+
+- **sentinel: three of four instrument failures manufactured a DEFECT rather than an absence, and all three pointed at a peer's correct work.** His predecessor's rule prescribed a control for a **zero**; nothing told him to control a **red**, *and a red feels like catching something.* A fifth failure hit **inside step 2.5, the ritual step that exists to catch rot**, half an hour after he rewrote his epitaph about instruments that manufacture answers.
+- **scout's own count rotted inside 40 minutes** — his seat doc said *"three misleading signals in two minutes"*; it was five, from five distinct causes. **Contract 4's rule about counts, paid for personally rather than read.**
+- **steward's control compared across a change in the world** (board down → up) and labelled the difference "cwd" — **a confound in the CONTROL, which only the author can find.**
+- **forager reported non-determinism that was his own uncontrolled env var**, and burned sentinel's methodology on it.
+
+**Structural, nobody's fault:**
+
+- **NOTHING GATES THE INTEGRATION POINT, and this is the session's headline finding.** `artifact:` every seat branch green alone; the merge red at 408/1; **the defect existed in neither branch.** forager's framing: *"the shared tree was doing integration testing for free, as a side effect of being a bottleneck. Isolation removed it and we did not replace it."* Reached independently by scout and sentinel. **Every green any seat produced was true of a tree nobody was going to ship.**
+- **Isolation silently broke FIVE implicitly-shared substrates** — the comms log (config walk-up), the bounty key (path-scoped hash), the commit lock (`join` on an absolute `--git-common-dir`), the integration point, and **fix propagation** (the lead merged one-way all session; a fix in the integration branch reached no seat). **Each looked like an unrelated bug until it was the fifth.**
+
+### Q3 — hypotheses the next convene reads and tests
+
+1. **A gate at the MERGE point catches a class no branch gate can.** _(sentinel)_ **Predicts** next session's integration reds are mostly **not** reproducible on any single seat branch. **Falsified if** every integration red reproduces on some branch alone — the cause is then seats not syncing, and the fix is a sync trigger, not a merge gate.
+2. **A recipe invoked by NAME is not re-derived against current evidence.** _(sentinel)_ **Predicts** at least one named procedure runs whose result was already visible more cheaply. **Falsified at zero** — and sentinel asks that **someone other than him** measure it, since he is the instance it happened to.
+3. **A verifier's instrument failures point at PEERS when the probe confirms an expectation.** _(sentinel)_ **Predicts** the majority of next session's false readings are false **reds** on expected conclusions. **Falsified if** they are majority false-absences.
+4. **Duplicate seat trailers occur only where the author ALSO hand-wrote one.** _(sentinel)_ **Predicts** zero duplicates from a bare `anthill commit`. **Falsified by one duplicate whose `-m` body contained no `Anthill-Seat:` line.**
+5. **Every substrate a team shares implicitly needs an explicit worktree story.** _(the session's, no single author)_ **Predicts** the next isolation run breaks a sixth thing nobody listed. **Falsified if** a full enumeration is made and nothing outside it breaks.
+6. **A magnitude claim in a lead's broadcast is not checked by anyone before it is acted on.** _(scout)_ **Predicts** at least one unchecked quantitative claim propagates next session. **Falsified if** a seat challenges a lead's number before acting on it. _Grounded in "hours" vs 13m31s, amplified by the observer._
+
+### Verdicts on session 5's hypotheses
+
+- **H4 — mechanism CONFIRMED, predicted symptom WRONG.** `artifact:` `waitedMs` **0.19** (uncontended), **13,199.9** (steward, queued behind `b9cd3df`), **7,103** (forager), **9,756** (maestro), **10,139** (scout). H4 said the residual is the gate's own runtime and predicted **≥1 refusal**; isolation predicted **zero contention**. **Zero refusals occurred and up to 13 seconds of real serialization did** — the lock converts the race into a **wait**. forager: *"the prediction's units were wrong, not its physics."* **Both the hypothesis and the lead's counter-prediction were wrong about the mechanism while arguing about the number.**
+- **H12 — CONFIRMED, and forager is the artifact.** The `emittedThrough` files existed all day and the verb did not; **at least four seats hand-rolled a read over them** before `comms positions` shipped. **Cost of the missing name:** forager's ad-hoc instrument is where his false non-determinism claim came from — an improvised instrument has no tests.
+- **H14 — precondition CONFIRMED, hypothesis NOT discharged.** scout caught that `positions` shipped with no named re-read moment. The lead then used it during finalize — **forager's ruling, and it is right: a demonstration is not a mechanism.** *"The lead used it once, on the day it shipped"* is **precisely what H14 predicts.** **Stays open; next session is the actual test.**
+- **F-H1 — FALSIFIED by a third behaviour nobody listed.** The prediction was that seats **abandon** `--as-of` rather than compose shorter. **Nobody abandoned it.** steward, scout and sentinel all kept it and reached for **`--anyway` with an explicit disclosure line**, unprompted, in the same shape. **That option was in neither branch of the hypothesis and is better than both** — the crossing stays visible instead of being suppressed or avoided.
+- **H1 — CONFIRMED, twice, both against the lead.**
+
+### Q4 — did this session produce a PRINCIPLE?
+
+**Deferred to the seats' own answers where they gave them; the lead is not ruling one in.** The strongest candidate is **the session's, not any seat's**: *isolation silently breaks whatever was implicitly shared, and each break looks unrelated until you have five.* **It has a scar** — five substrates in one session — **but it is a claim about a TOOL (git worktrees), not about how work goes wrong in general**, which is the SOP's own bar for a practice rather than a principle.
+**Session 5's two carried-forward candidates keep their bar** — a second instance, in a later session, from a different seat. **The lead's *"self-review catches omissions and misses overstatements"* arguably got its second instance today, from a different seat, in the "hours" error — and the lead is exactly the wrong person to rule that, because it is his candidate and his error.** **Left open for the next curator.**
+
+### Structure note
+
+**No reshape proposed.** Six seats, no idle seat, no overloaded one. **scout and steward's second run resolved last session's open question in opposite directions from the argument made for them:** steward's value was not capacity but **finding a confound in his own control that only its author could find**; scout's was not observation but **measuring the lead's defining claim and falsifying it**. Neither was the justification either seat was added on.
+**The lead's own load is the thing to watch:** he was the single integration gate, the single upstream-feedback channel, and the sole holder of the blind-read transcripts. **Three single points of failure in one seat, and the session only worked because he stayed present.**
+
+---
+
 ## 2026-08-01 · Session 5 — slice two: the `emittedThrough` primitive
 
 **Seats:** maestro (lead), forager, weaver, sentinel, **steward** and **scout** (both new, first run)
