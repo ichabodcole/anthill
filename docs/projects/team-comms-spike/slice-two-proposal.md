@@ -247,6 +247,75 @@ entire experiment's validity rests on._ **A guest that can send is not a control
 `resolveSeatIdentity` admits it **without** re-opening the free-form-alias hole Contract 4(c) closes.
 `read` is already identity-free (4(c-bis)), so **the work is on `follow` and on refusing `send`.**
 
+### R11 — the MERGE BAR: comms ships only when it could stand alone (human, 2026-08-03)
+
+**The ruling, in the human's terms:** _"I don't want to ship it with the intention that both have to be
+used. We don't need parity with grapevine — that isn't the point — but anthill comms needs to be a
+viable replacement, with the understanding that it's a beta tool."_
+
+So the bar is **not** parity and **not** perfection. It is: **a team can run a session on comms alone.**
+Grapevine stays as a **backup the team re-arms if comms drops** — not a second wire held open in
+parallel. A merge that ships two co-required wires is refused.
+
+**What this bar rejects, and it is the posture we have been in all along:** every session so far ran
+with grapevine armed alongside, by explicit decision (see the spike proposal's "not switched to").
+**So we have zero observations of comms without a fallback** — and a team that can fall back silently
+will, without reporting that it did. Frictions collected under a safety net grade the net.
+
+**The structural finding that sets the blocking set — presence is a side effect of holding a tail.**
+Both backlog items state it. So the moment grapevine goes from co-wired to genuine backup, seats stop
+holding vine tails and `grapevine who` goes empty. Two things read it, and neither degrades gracefully:
+
+- **`anthill status`** reports nobody present, which is indistinguishable from nobody having joined.
+- **`anthill down`'s presence guard** — which today can **never pass**, because the lead is always
+  present — flips to **always passing**, tearing down a live team in silence.
+
+**That guard has never once been correct, and going sole-wire flips it from never-passes to
+always-passes with nothing in the diff to say so.** Worse, the flip reads as a fix: it stops nagging.
+So presence is not a feature deferred for beta — it is what an existing destructive-action guard rests
+on, and cutting grapevine's tails is what breaks it.
+
+#### Blocking — required before the gate session
+
+- **B1 — native presence on comms.** The primitive exists: `positionState` already gives three states,
+  and a position file plus a live pid answers "who has a follower attached", which is the convene
+  roll-call question. **`down`'s guard must be repointed in the same change**, or we ship the inversion.
+  Wiring, not design.
+- **B2 — `convene` wires the lead** (`docs/backlog/2026-08-01-convene-never-wires-the-lead.md`). Today
+  `join` hands each seat three resolved wires and `convene` hands the lead none. With grapevine armed
+  the lead could at least poll the vine; **as sole wire an unwired lead is fatal**, and the cost is
+  already measured — rulings crossing in-flight messages twice, and a session where only a human
+  noticing could recover it. The fix is `join`'s proven pattern applied to the one participant it was
+  never applied to.
+- **B3 — a session anchor on comms.** Not clearing: a **marker**. `convene` opens the channel and posts
+  a session-start message, returning its id, so every seat catches up from a real anchor instead of a
+  hand-found `read --last N` — whose failure mode (anchor past the end → empty, exit 0) is
+  indistinguishable from a quiet channel, which is precisely what a sole wire cannot afford. Topic
+  folds in here.
+
+#### Explicitly NOT blocking
+
+- **Addressed delivery.** Grapevine has none either; its measured failure was a **ritual** precondition
+  (independent retro collection), not day-to-day coordination; and it still needs a design pass.
+- **Passive self-observation (SC1).** R9 settled this — the echo probe covers the active case.
+  _"You are never told"_ is acceptable for a beta **as long as the skill says so**, and it does.
+- **Cross-project contact.** Permanently grapevine's, by the spike proposal's own scoping.
+
+#### The gate, and the sequencing
+
+After B1–B3, **one session runs sole-wire** — grapevine unwired, documented as re-armable if comms
+drops. **That session is the merge gate, and this one is not.**
+
+**Do not stack it with the worktree-isolation run** decided in
+`docs/investigations/2026-07-27-shared-tree-failure-modes.md`. Sequence instead: **build B1–B3 on
+worktree isolation with grapevine still armed** (which exercises isolation safely and produces its
+verdict), **then** run the sole-wire gate on whatever isolation setup survived. Stacking both variables
+gives any failure two candidate causes and settles neither.
+
+**Falsifier for this bar:** the sole-wire session completes a real session's work end to end without
+re-arming grapevine. If it re-arms, the bar has not been met and the reason for re-arming is the next
+blocking item.
+
 ### Team rule adopted this session (not comms-specific)
 
 **Whoever certifies a convergence names the shared input both parties read first.** Producer/consumer convergence is this team's ratify signal; an unqualified convergence claim is the "agreement is not truth" failure wearing a ratify badge. Adopted after a convergence was certified by timestamp without naming that both parties had read the same proposal — and then re-committed by the lead one message later.

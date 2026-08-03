@@ -3,6 +3,12 @@
 **Added:** 2026-08-01 · **Status:** needs a design pass before it is buildable (the requirement is measured; the shape is not decided)
 · **Seat:** forager (the comms wire) · **Found:** by two seats, disclosed against themselves, during a finalize that had been deliberately re-ordered to buy independence
 
+> **Explicitly NOT a merge blocker (R11, 2026-08-03).** Ruled out of the sole-wire bar on three
+> grounds: grapevine has no addressed delivery either, so this is not a regression against the wire
+> being replaced; the measured failure is a **ritual** precondition, not day-to-day coordination; and
+> the shape is still undecided below. **It stays open and unbuilt — do not let its absence stall the
+> merge, and do not let the merge close it.**
+
 `comms` broadcasts. Every seat holds a live `comms follow`, so **every message is pushed to every
 participant as it lands.** The `## sender → recipient:` header is a **salience hint, not routing** —
 by design, and correctly so for discussion.
