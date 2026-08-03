@@ -297,9 +297,22 @@ it has gone wrong.**
        this step** — the docs can't land while the code is red. Don't fight the gate; park everything,
        land the docs green against a clean tree, then restore the slice. You always know the **doc**
        paths (the seat living docs), so pivot on those — no need to enumerate the red slice:
-       1. **Stash all uncommitted work** — `git stash push -u` (the `-u` sweeps in untracked red files
-          too, which a patch of `git diff HEAD` would silently drop). The tree is now at `HEAD`, so the
-          gate is green.
+       1. **Stash the red slice — BY PATH, and only stash-all if you are genuinely alone in the tree.**
+          `git stash push -u -- <red-paths…>`. The `-u` sweeps in untracked red files too, which a
+          patch of `git diff HEAD` would silently drop.
+          **⚠ Bare `git stash push -u` means EVERY seat's uncommitted work, not just yours.** Seats
+          share one tree — and `refs/stash` is shared **even across per-seat worktrees**, where
+          nothing else is. So the unscoped form reverts your peers to `HEAD` underneath them, with no
+          announcement, at the exact moment they may still be writing their own seat docs. **And
+          `anthill commit`'s serialize lock does not cover `git stash`** — it is the one mutation
+          around here with no mutex at all.
+          **The failure is invisible in the direction you are looking:** the gate goes green, which
+          is what this recipe told you to check, and _"green because the red slice is parked"_ is
+          indistinguishable from _"green because I also parked three seats' unrelated work."_
+          **If you do not know the red paths, find them — do not reach for the unscoped form as the
+          shortcut.** _(This step used to give stash-all as the default and the by-path form as an
+          optimisation in a parenthetical. That ordering was backwards: the safe version was offered
+          only to a reader who already knew enough not to need it.)_
        2. **Bring back only the docs** — `git checkout stash@{0} -- <doc-paths…>`. Now the tree holds
           just the seat docs (markdown → the gate passes); the red slice stays parked in the stash.
        3. **Land the docs against the now-green tree** — each seat commits its own

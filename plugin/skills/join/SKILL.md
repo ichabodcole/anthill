@@ -141,7 +141,15 @@ status`** shows who's on + the board.
        the whole team** — from a directory the docs had called safe. Put throwaway _configs_ outside
        the repo entirely.
 
-5. **Signal ready** on the vine (a short "in, grounded, here's my lane") and **claim your bounty card**
+5. **Signal ready on EVERY wire your manifest armed** — a short "in, grounded, here's my lane".
+   **Not the vine alone.** Your lead audits who showed up by looking at **comms**, so a seat that
+   introduces itself only on the vine is counted as **missing** — and the lead's next move is to go
+   chase a seat that was never told to post there. Post the substance on comms and a pointer on the
+   vine, or post on both; what you must not do is pick one and assume the other is covered.
+   _(This instruction said "on the vine" while `convene` told the lead to count on comms. Both were
+   individually reasonable and they only meet in a live session — found by an outside reader, not by
+   either document's author.)_
+   Then **claim your bounty card**
    — advance it to `doing` when you actually start with **`bounty update <id> --status doing`** (the
    bounty CLI has **no `move` verb** — `update <id> --status <col>` is how you change columns) — or
    await assignment from the lead.
