@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import type { SeatPresence } from "./team-support.ts";
 
 /**
  * COMMAND-PATH tests for `anthill down` — distinct from `team-down.test.ts`,
@@ -50,7 +51,7 @@ async function runCmd(
 let rec: Recorder;
 
 /** Fresh mocks + a fresh import of the command under test, per case. */
-async function loadCommand(opts: { present: string[]; sessionExists: boolean }) {
+async function loadCommand(opts: { presence: SeatPresence; sessionExists: boolean }) {
   rec = { killed: [], exits: [], stdout: "", stderr: "" };
 
   mock.module("../tmux.ts", () => ({
@@ -63,9 +64,13 @@ async function loadCommand(opts: { present: string[]; sessionExists: boolean }) 
     },
   }));
 
+  // Every export `team-down.ts` imports must be named here: mock.module
+  // replaces the module WHOLESALE, so an unlisted export becomes a
+  // `SyntaxError: Export named 'X' not found` and every case in this file goes
+  // red at once — looking like a rejected change rather than a harness gap.
   mock.module("./team-support.ts", () => ({
     requireConfig: () => ({ channel: "test-channel", seats: [], grounding: [] }),
-    presentSeats: async () => opts.present,
+    seatPresence: async () => opts.presence,
   }));
 
   // process.exit would abort the test runner, so it is stubbed — but it MUST
@@ -119,7 +124,10 @@ afterEach(() => {
 
 describe("anthill down — command path honours the presence guard", () => {
   it("REFUSES and does not kill when seats are present and --force is absent", async () => {
-    const cmd = await loadCommand({ present: ["forager", "weaver"], sessionExists: true });
+    const cmd = await loadCommand({
+      presence: { state: "present", seats: ["forager", "weaver"] },
+      sessionExists: true,
+    });
     await runCmd(cmd, { session: "probe", force: false, format: "json" });
 
     // THE load-bearing assertion. Deleting the guard call from run() flips this.
@@ -136,7 +144,10 @@ describe("anthill down — command path honours the presence guard", () => {
   });
 
   it("PROCEEDS and kills when the same seats are present but --force is passed", async () => {
-    const cmd = await loadCommand({ present: ["forager", "weaver"], sessionExists: true });
+    const cmd = await loadCommand({
+      presence: { state: "present", seats: ["forager", "weaver"] },
+      sessionExists: true,
+    });
     await runCmd(cmd, { session: "probe", force: true, format: "json" });
 
     // The discriminator: identical presence, one flag changed, opposite outcome.
@@ -147,7 +158,7 @@ describe("anthill down — command path honours the presence guard", () => {
   });
 
   it("PROCEEDS and kills when nobody is present and --force is absent", async () => {
-    const cmd = await loadCommand({ present: [], sessionExists: true });
+    const cmd = await loadCommand({ presence: { state: "none" }, sessionExists: true });
     await runCmd(cmd, { session: "probe", force: false, format: "json" });
 
     expect(rec.killed).toEqual(["probe"]);
@@ -159,12 +170,55 @@ describe("anthill down — command path honours the presence guard", () => {
     // Both this case and the refusal case leave `killed` empty, so an assertion
     // on `killed` alone cannot tell them apart. The envelope is what separates
     // "the guard stopped me" from "there was nothing there".
-    const cmd = await loadCommand({ present: ["forager"], sessionExists: false });
+    const cmd = await loadCommand({
+      presence: { state: "present", seats: ["forager"] },
+      sessionExists: false,
+    });
     await runCmd(cmd, { session: "probe", force: false, format: "json" });
 
     expect(rec.killed).toEqual([]);
     expect(rec.exits).toEqual([]);
     expect(rec.stdout).toContain('"ok":true');
     expect(rec.stdout).toContain('"tornDown":false');
+  });
+  // The `unknown` state is the entire reason the guard was repointed, and the
+  // original four cases could only produce `present` and `none` — so nothing on
+  // the command path exercised it. Cases added at forager's pushback (comms
+  // #329); the gap was real and was in this file.
+  it("REFUSES and does not kill when presence is UNKNOWN and --force is absent", async () => {
+    const cmd = await loadCommand({
+      presence: {
+        state: "unknown",
+        reason: "grapevine daemon not running — no presence available",
+      },
+      sessionExists: true,
+    });
+    await runCmd(cmd, { session: "probe", force: false, format: "json" });
+
+    // Fails open is the dangerous direction: an unreadable roster must not be
+    // treated as an empty one. This is the assertion that flips if the guard is
+    // reverted to `state === "present"`.
+    expect(rec.killed).toEqual([]);
+
+    expect(rec.exits).toContain(1);
+    expect(rec.stderr).toContain('"ok":false');
+    // The reason must reach the operator — "I could not tell" is only
+    // actionable if it says why it could not tell.
+    expect(rec.stderr).toContain("grapevine daemon not running");
+    expect(rec.stdout).toBe("");
+  });
+
+  it("PROCEEDS and kills when presence is UNKNOWN but --force is passed", async () => {
+    const cmd = await loadCommand({
+      presence: { state: "unknown", reason: "grapevine 'who' failed" },
+      sessionExists: true,
+    });
+    await runCmd(cmd, { session: "probe", force: true, format: "json" });
+
+    // Keeps the escape hatch honest: blocking on unknown must remain
+    // overridable, or an unreachable grapevine would make teardown impossible.
+    expect(rec.killed).toEqual(["probe"]);
+    expect(rec.exits).toEqual([]);
+    expect(rec.stdout).toContain('"tornDown":true');
   });
 });
