@@ -10,7 +10,8 @@
 > comparable to session 6. **This is the third stale-anchor incident in a session that produced a
 > backlog item about stale reads** — see caveat 2, where the lead made the same class of error on the
 > gate delta.
-> **Compared against:** [session 6's measurements](./2026-08-03-session-6-measurements.md), range `236c45b..0d3d8f4`
+
+**Compared against:** [session 6's measurements](./2026-08-03-session-6-measurements.md), range `236c45b..0d3d8f4`
 
 ---
 
