@@ -6,6 +6,20 @@ surviving trace** of the data it came from.
 
 ---
 
+> ### ⚠ UNIT CORRECTION (2026-08-04) — read every dollar figure below as a DERIVED ESTIMATE
+>
+> **Tokens are the real measurement. Dollars are arithmetic on an assumed rate card, and the owner is
+> on a subscription — so no per-token money changes hands and these figures are NOTIONAL.**
+>
+> The transcripts carry **no cost field**: only token counts, `service_tier`, and a model id. Every
+> dollar here is `(in x $5 + out x $25 + cache_write x $6.25 + cache_read x $0.50) / 1M`, a card never
+> checked against a price list or an invoice. **`ccusage` agreeing to 0.20% validated TOKEN COUNTS,
+> not prices — it runs the same multiplication with its own table.**
+>
+> **What survives:** every ratio (cache-read share, wire-as-fraction-of-spend, session-vs-session),
+> because the same card sits on both sides and all three sessions were verified 100% `claude-opus-5`.
+> **What does not:** any absolute dollar claim.
+
 ## ⚠ Read this before citing any number here
 
 **The comms log these numbers came from no longer exists. I deleted it.**

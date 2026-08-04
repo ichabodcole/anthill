@@ -116,7 +116,36 @@ Everything above can be matched by isolated subagents. **One thing cannot:**
   most informative number in its report: **every stranger find was a guard that could not fail; every
   owner find was duplication, staleness, or ordering.** Measure KIND, not count.
 
-## Phase 4 — cost, in the tier that is actually comparable
+## Phase 4 — cost. ⚠ TOKENS ARE THE UNIT. Dollars are a derived estimate, and often meaningless.
+
+**Report tokens. If you report dollars at all, label them as an estimate and state the rate card.**
+
+**The transcripts contain NO cost field** — only token counts, a `service_tier`, and a model id. Every
+dollar figure this project has published was **arithmetic on an assumed rate card** ($5/$25 per MTok,
+cache write 1.25×, cache read 0.1×), never checked against a price list or an invoice.
+
+**And the owner is on a subscription, so the marginal dollar cost of these tokens is ZERO.** The
+dollar framing was a proxy that was never labelled as one, and it invited comparisons to money that
+does not change hands.
+
+> **Do not mistake tool agreement for price validation.** One audit reported cost "two independent
+> ways, 0.20% apart" — but `ccusage` performs **the same multiplication with its own rate table**.
+> That agreement confirmed **token counts**, not prices. **Neither method ever touched a real price.**
+
+**What survives without a rate card, and it is most of the value:** every RATIO. Cache-read share,
+wire-as-fraction-of-spend, and session-to-session comparisons all hold, because the same (possibly
+wrong) card sits on both sides. **Verify the model is the same on both sides before comparing** —
+mixed tiers would break it. _(Checked for sessions 6, 7 and dream-flute: 100% `claude-opus-5` in all
+three.)_
+
+### The efficiency question worth asking instead
+
+**Tokens alone are not efficiency.** The number that answers _"are these tokens buying anything"_ is:
+
+> **team-unique findings per million tokens** — Phase 3's count over Phase 4's total.
+
+Report it. It is the only ratio that prices the thing a solo agent cannot produce, and it is the
+guard against optimising the team into cheapness.
 
 - ◻ **⚠ DEDUPLICATE ON `requestId` (or `message.id`) BEFORE SUMMING. This is the big one.** A single
   API request is written to the transcript as **several assistant records — one per content block —
