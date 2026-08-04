@@ -43,6 +43,7 @@ import {
   type PositionState,
   parseLog,
   positionState,
+  readPosition,
   resolveSeatIdentity,
   type SeatPosition,
   type SeatPositionRow,
@@ -603,18 +604,6 @@ const POLL_MS = 400;
  * stream is the product. A read-only or full disk must not take down a seat's
  * wire in order to protect the ability to notice that a seat's wire went down.
  */
-/** This seat's last recorded position, or null if it has never followed. A
- * damaged file is treated as null: an unreadable position is not evidence of a
- * position, and the notice below must not report a gap it invented. */
-function readPosition(teamDir: string, channel: string, handle: string): SeatPosition | null {
-  try {
-    const path = commsPositionPath(teamDir, channel, handle);
-    if (!existsSync(path)) return null;
-    return JSON.parse(readFileSync(path, "utf8")) as SeatPosition;
-  } catch {
-    return null;
-  }
-}
 
 /**
  * What `follow` announces before it streams a single message.

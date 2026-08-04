@@ -89,7 +89,10 @@ export const teamDownCommand = defineAnthillCommand({
 
     // Presence guard — the one thing raw tmux can't do. Reads the config channel.
     const force = Boolean(ctx.args.force);
-    const presence = await seatPresence(config.channel);
+    // Config is passed so presence spans BOTH wires. Without it this reads the
+    // vine alone and reports a confident "nobody" on a comms-only session —
+    // which is the defect, on the one command that kills panes.
+    const presence = await seatPresence(config.channel, config);
     if (shouldBlockTeardown(presence, force)) {
       // Two distinct refusals. They must not share a sentence: one says who is
       // still working, the other says we could not find out — and a reader who

@@ -24,6 +24,7 @@
  *     identity the roster never granted.
  */
 
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { SeatConfig } from "./config.ts";
 
@@ -325,6 +326,31 @@ export interface SeatPositionRow {
    * means we could not check. Pids are reused, so this narrows a question
    * rather than answering it — it never contradicts `state`. */
   followerAlive: boolean | null;
+}
+
+/**
+ * A seat's last recorded position, or null if it has never followed.
+ *
+ * A damaged file is treated as null: **an unreadable position is not evidence
+ * of a position**, and a caller must not report a gap it invented.
+ *
+ * Lives here rather than in the `comms` command because it is now read by TWO
+ * consumers — `comms positions` and the teardown presence guard — and the
+ * null-on-damage rule is the kind of thing that drifts the moment it is
+ * reimplemented beside its second caller.
+ */
+export function readPosition(
+  teamDir: string,
+  channel: string,
+  handle: string,
+): SeatPosition | null {
+  try {
+    const path = commsPositionPath(teamDir, channel, handle);
+    if (!existsSync(path)) return null;
+    return JSON.parse(readFileSync(path, "utf8")) as SeatPosition;
+  } catch {
+    return null;
+  }
 }
 
 /**
