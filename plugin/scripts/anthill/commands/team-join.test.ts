@@ -1,5 +1,73 @@
 import { describe, expect, test } from "bun:test";
-import { buildChecklist, buildGroundingRefs, buildMissingWarnings } from "./team-join.ts";
+import {
+  buildChecklist,
+  buildGroundingRefs,
+  buildLandCommand,
+  buildMissingWarnings,
+} from "./team-join.ts";
+
+// TWO prose warnings failed in ONE session, each against an agent who had read
+// it, on the two most safety-critical commands this team runs. These assertions
+// exist because a third wording would be the next thing to fail — the guard has
+// to be a string we EMIT, not a rule we state.
+describe("buildLandCommand — the composition an agent cannot get wrong", () => {
+  const base = { handle: "forager", msgFileRel: ".anthill/scratch/forager/commit-msg.txt" };
+
+  // THE assertion. `bun run check | tail -6 && anthill commit …` reported a
+  // failing gate and committed anyway, because `&&` tested `tail`'s status.
+  // Keyed on the pipe CHARACTER, because any pipe at all reintroduces it — this
+  // must not be narrowed to `| tail` when the next agent reaches for `| head`.
+  test("contains NO pipe — a filter would make `&&` test the filter's exit status", () => {
+    expect(buildLandCommand({ ...base, gate: "bun run check" })).not.toContain("|");
+  });
+
+  test("puts the gate BEFORE the commit, joined by &&", () => {
+    expect(buildLandCommand({ ...base, gate: "bun run check" })).toBe(
+      "bun run check && anthill commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…",
+    );
+  });
+
+  // The second failure: a backticked span in an inline body is executed by the
+  // shell before the tool sees it. The landed commit `73e8fea` is missing a word
+  // for exactly this reason, and `-F` was built by the seat who then used `-m`.
+  test("passes the body by FILE, never inline with -m", () => {
+    const cmd = buildLandCommand({ ...base, gate: "bun run check" });
+    expect(cmd).toContain("-F .anthill/scratch/forager/commit-msg.txt");
+    // Keyed on the FLAG, not the token: a bare `not.toContain("-m")` matches
+    // inside `commit-msg.txt` and fails against a correct command. Banning a
+    // token is not banning the claim — this seat has now made that mistake
+    // three times, twice while writing a test for an honesty rule.
+    expect(cmd).not.toMatch(/(^|\s)-m(\s|$)/);
+    expect(cmd).not.toMatch(/--message(\s|=|$)/);
+  });
+
+  test("carries the seat, fully resolved — never a <handle> template", () => {
+    const cmd = buildLandCommand({ ...base, gate: "bun run check" });
+    expect(cmd).toContain("--as forager");
+    expect(cmd).not.toContain("<handle>");
+  });
+
+  // The gate is the PROJECT's. Hard-coding one would be the anti-pattern
+  // AGENTS.md names; emitting a bare commit when none is configured would be a
+  // silent absence. So the absence is stated loudly instead.
+  test("an unconfigured gate is announced, not silently dropped", () => {
+    const cmd = buildLandCommand({ ...base, gate: undefined });
+    expect(cmd).toMatch(/NO GATE CONFIGURED/);
+    expect(cmd).toContain("config.gate");
+    // Still emits a usable, correct commit — a seat is not left with nothing.
+    expect(cmd).toContain("anthill commit --as forager -F");
+  });
+
+  test("does not invent a default gate command", () => {
+    // A wrong gate is worse than a named absence: someone else's command can
+    // exit 0 without checking anything this project cares about.
+    expect(buildLandCommand({ ...base, gate: undefined })).not.toContain("bun run check");
+  });
+
+  test("uses the project's gate verbatim, whatever it is", () => {
+    expect(buildLandCommand({ ...base, gate: "make verify" })).toStartWith("make verify && ");
+  });
+});
 
 // These assertions pin SILENT failure modes. Each one shipped, looked correct,
 // and cost live sessions before anyone diagnosed it — so the fix is pinned here
@@ -12,6 +80,8 @@ const base = {
   handle: "forager",
   seatDocRel: ".anthill/dev/forager.md",
   lead: "maestro" as string | undefined,
+  gate: "bun run check" as string | undefined,
+  msgFileRel: ".anthill/scratch/forager/commit-msg.txt",
 };
 
 /** Find the one checklist line starting with `prefix`, failing loudly if absent. */
@@ -264,11 +334,20 @@ describe("buildChecklist — shape", () => {
 // own rule applies — emit the RESOLVED incantation, don't make the consumer
 // compose it — and this checklist is the seat-resolved surface that gets read.
 describe("buildChecklist — the commit incantation carries the seat (attribution)", () => {
+  // RE-KEYED, not deleted, when the resolved incantation moved to the LAND
+  // line: this asserts that the checklist emits it SOMEWHERE, which is the
+  // actual rule (Contract 4(d) — the consumer never composes it). Keying it to
+  // one line's prefix encoded which line happened to carry it, and that is the
+  // same "a test written when the set is complete encodes the set" trap that
+  // already cost this file two cycles.
   test("emits `anthill commit --as <handle>` fully resolved, not a template", () => {
-    const l = line("Commit file-scoped");
-    expect(l).toContain(`anthill commit --as ${base.handle}`);
-    expect(l).not.toContain("<handle>");
-    expect(l).not.toContain("{handle}");
+    const all = buildChecklist(base);
+    const carrier = all.filter((l) => l.includes(`anthill commit --as ${base.handle}`));
+    expect(carrier.length).toBeGreaterThan(0);
+    for (const l of carrier) {
+      expect(l).not.toContain("<handle>");
+      expect(l).not.toContain("{handle}");
+    }
   });
 
   test("still forbids the bare-git escape hatches", () => {

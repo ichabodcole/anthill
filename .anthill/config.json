@@ -12,7 +12,7 @@
     {
       "handle": "forager",
       "role": "hands (CLI/engine)",
-      "scope": "plugin/scripts/anthill/ \u2014 the CLI commands, config/coord/tmux, the migration engine, the comms wire, and their tests",
+      "scope": "plugin/scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, the comms wire, and their tests",
       "spawn": true
     },
     {
@@ -24,20 +24,21 @@
     {
       "handle": "sentinel",
       "role": "verify",
-      "scope": "cross-cutting verification \u2014 the quality gate (typecheck/biome/bun test), fresh-context cold-reads, and real-repo/consumer validation",
+      "scope": "cross-cutting verification — the quality gate (typecheck/biome/bun test), fresh-context cold-reads, and real-repo/consumer validation",
       "spawn": true
     },
     {
       "handle": "steward",
       "role": "support (the lead's capacity)",
-      "scope": "errands the lead would otherwise stop to do \u2014 go find out whether X is true, read this and return the decision, hold context. Verifies premises as a by-product, never product code. Disposition: trust but check, including and especially the lead.",
+      "scope": "errands the lead would otherwise stop to do — go find out whether X is true, read this and return the decision, hold context. Verifies premises as a by-product, never product code. Disposition: trust but check, including and especially the lead.",
       "spawn": true
     },
     {
       "handle": "scout",
       "role": "research (how the team works)",
-      "scope": "observes the session and reports on how the team actually behaves \u2014 grounded in the tree, not the wire. Never rules, assigns, or corrects mid-session; full participant after it ends. Reports to the lead AND the human.",
+      "scope": "observes the session and reports on how the team actually behaves — grounded in the tree, not the wire. Never rules, assigns, or corrects mid-session; full participant after it ends. Reports to the lead AND the human.",
       "spawn": true
     }
-  ]
+  ],
+  "gate": "bun run check"
 }

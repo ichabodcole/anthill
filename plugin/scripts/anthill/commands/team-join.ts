@@ -58,6 +58,52 @@ export interface ChecklistInput {
   handle: string;
   seatDocRel: string;
   lead: string | undefined;
+  /** The PROJECT's gate command (`config.gate`), or undefined if none declared. */
+  gate: string | undefined;
+  /** Gitignored scratch path a seat writes its commit message to, so the body
+   * never passes through a shell. */
+  msgFileRel: string;
+}
+
+/**
+ * The LAND command, fully composed — gate and commit in one string, with no
+ * pipe and no inline message body.
+ *
+ * This is a MECHANICAL GUARD replacing two prose warnings that both failed, in
+ * one session, against agents who had read them:
+ *
+ *   * `bun run check | tail -6 && anthill commit …` — `&&` tests the exit status
+ *     of `tail`, which is always 0. The gate reported failure and the commit ran
+ *     anyway. **The guard is defeated while remaining visibly present in the
+ *     command**, and the pipe is there because an agent is trying to keep output
+ *     short. A lead hit the same pipeline-exit-code confusion the same day on a
+ *     different command.
+ *   * `-m "… \`fresh\` …"` — an un-quoted body is command-substituted by the
+ *     shell BEFORE the tool sees it, so backticked spans execute and vanish from
+ *     the message. `--stdin`/`-F` exist precisely for this, were built by the
+ *     seat that then didn't use them, and the corrupted commit is on this branch.
+ *
+ * Both are `principles.md`'s *"a dispositional instruction holds; a situational
+ * warning fails at the recognition step"* — the compliance was never the
+ * problem, recognising that THIS was an instance was. So the fix is not a third
+ * wording: it is emitting the composition, per Contract 4(d) — **exemplify the
+ * dialogue, never the invocation.**
+ *
+ * `gate` is the PROJECT's, never anthill's: hard-coding `bun run check` here
+ * would be the convention-baked-into-a-default anti-pattern this project names
+ * in AGENTS.md. When it is absent the line says so EXPLICITLY rather than
+ * quietly emitting a commit with no gate — an unstated absence and a considered
+ * one must not look alike.
+ */
+export function buildLandCommand(i: {
+  handle: string;
+  gate: string | undefined;
+  msgFileRel: string;
+}): string {
+  const commit = `anthill commit --as ${i.handle} -F ${i.msgFileRel} <path>…`;
+  return i.gate === undefined
+    ? `${commit}   ⚠ NO GATE CONFIGURED (\`config.gate\` is unset), so this runs your project's verification NOT AT ALL — prefix it yourself and tell your lead the config is missing it`
+    : `${i.gate} && ${commit}`;
 }
 
 /**
@@ -100,7 +146,11 @@ export function buildChecklist(i: ChecklistInput): string[] {
     `Monitor your board lane — wrap with Monitor: ${i.boardTailCommand} | grep -E --line-buffered '"type":"(task|unblocked|closed)"'`,
     `Find your card BEFORE you claim it — read the board fresh (\`bun ${i.bountyCli} state --mine --as ${i.handle}\`) rather than trusting a listing already in your context; a stale listing is how seats claim a card by title-adjacency after the lead renumbered the board (anthill#40).`,
     "Own your card lifecycle: advance with `bounty update <id> --status doing` when you start, `--status review` when green (the bounty CLI has no `move` verb).",
-    `Commit file-scoped with an EXPLICIT pathspec, and stamp your seat: \`anthill commit --as ${i.handle} -m "<msg>" <path>…\`. Never a bare \`git commit\` / \`git add -A\`. Without \`--as\`, git records the HUMAN as the author of every seat's commit, so "who landed this?" is unanswerable afterwards — a team hit exactly that and had to ask the channel to identify one. On a shared tree, serialize: announce, commit, confirm landed, then the next seat goes — or hand ${i.lead ?? "the lead"} your paths for one atomic land.`,
+    // The composed land goes FIRST and verbatim. Everything after it is the
+    // reasoning; a seat that reads only the first clause still lands correctly,
+    // which is the property the previous prose-only form did not have.
+    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel })}\n  Do NOT pipe the gate to \`tail\`/\`head\`/\`grep\` to shorten its output: \`&&\` would then test the FILTER's exit status, which is always 0, and your commit runs on a red gate while the guard is still visibly there. Redirect to a file and read that instead. Do NOT pass the body with \`-m\` if it contains backticks — the shell executes them before the tool sees them. Both of these defeated agents who had just read the warning against them.`,
+    `Commit file-scoped with an EXPLICIT pathspec, and stamp your seat. Never a bare \`git commit\` / \`git add -A\`. Without \`--as\`, git records the HUMAN as the author of every seat's commit, so "who landed this?" is unanswerable afterwards — a team hit exactly that and had to ask the channel to identify one. On a shared tree, serialize: announce, commit, confirm landed, then the next seat goes — or hand ${i.lead ?? "the lead"} your paths for one atomic land.`,
     // Two wires, two different catch-up jobs — and the asymmetry is stated as
     // the REASON rather than as a caveat, so a seat can derive the comms case
     // instead of being told it. No comms invocation is named here on purpose:
@@ -297,6 +347,10 @@ export const teamJoinCommand = defineAnthillCommand({
       handle,
       seatDocRel,
       lead: config.lead,
+      gate: config.gate,
+      // Beside the seat's scratch, which `init` already gitignores — so a
+      // commit-message file never becomes a stray artifact on the gate surface.
+      msgFileRel: join(relative(root, config.teamDirPath()), "scratch", handle, "commit-msg.txt"),
     });
 
     const data: JoinData = {

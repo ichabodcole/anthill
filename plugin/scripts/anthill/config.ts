@@ -61,6 +61,7 @@ export interface RawTeamConfig {
   grounding?: string[];
   paths?: Partial<TeamPaths>;
   launch?: string;
+  gate?: string;
 }
 
 /** A fully-resolved config: defaults applied, helpers + path resolvers attached. */
@@ -74,6 +75,16 @@ export interface ResolvedConfig {
   /** Path templates as configured (relative to project root), after defaults. */
   paths: TeamPaths;
   launch: string;
+  /**
+   * The PROJECT's pre-land verification command (e.g. `bun run check`), used to
+   * emit a ready-composed land. `undefined` when the project hasn't declared one.
+   *
+   * anthill supplies the TRIGGER (a resolved land command with the gate already
+   * in front of it) and the project supplies the CONTENT. Hard-coding a gate
+   * here would be the convention-baked-into-a-default anti-pattern; leaving the
+   * composition to the agent is what this exists to stop.
+   */
+  gate: string | undefined;
   /** Directory containing `.anthill/` — the resolved project root. */
   projectRoot: string;
   /** Absolute path to the config file (when loaded from disk; "" for pure resolves). */
@@ -162,6 +173,9 @@ export function resolveConfig(
   if (raw.launch !== undefined && typeof raw.launch !== "string") {
     throw new ConfigError("config.launch must be a string");
   }
+  if (raw.gate !== undefined && typeof raw.gate !== "string") {
+    throw new ConfigError("config.gate must be a string");
+  }
 
   const seats = raw.seats.map((s, i) => validateSeat(s, i));
 
@@ -193,6 +207,9 @@ export function resolveConfig(
     grounding: raw.grounding ? [...(raw.grounding as string[])] : [...DEFAULT_GROUNDING],
     paths,
     launch: typeof raw.launch === "string" ? raw.launch : DEFAULT_LAUNCH,
+    // No default: a wrong gate is worse than a named absence, because an agent
+    // that runs someone else's gate command gets a green that means nothing.
+    gate: typeof raw.gate === "string" && raw.gate.trim() !== "" ? raw.gate : undefined,
     projectRoot,
     configPath: ctx.configPath ?? "",
 
