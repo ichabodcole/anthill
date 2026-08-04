@@ -1,14 +1,17 @@
 import { describe, expect, test } from "bun:test";
-import { rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import {
   buildChecklist,
   buildGroundingRefs,
   buildLandCommand,
   buildMissingWarnings,
+  type CoordWires,
   decideGate,
   toManifestEntry,
 } from "./team-join.ts";
+import { cleanGitEnv } from "./test-support.ts";
 
 // TWO prose warnings failed in ONE session, each against an agent who had read
 // it, on the two most safety-critical commands this team runs. These assertions
@@ -138,10 +141,13 @@ describe("buildLandCommand — the composition an agent cannot get wrong", () =>
 // and cost live sessions before anyone diagnosed it — so the fix is pinned here
 // rather than trusted to prose. See anthill#39, #40, #54, #56.
 const base = {
-  tailCommand: "bun /cache/grapevine/cli.ts tail dev --as forager",
-  boardTailCommand: "bun /cache/bounty/cli.ts tail --mine --as forager",
+  coord: {
+    available: true,
+    tailCommand: "bun /cache/grapevine/cli.ts tail dev --as forager",
+    boardTailCommand: "bun /cache/bounty/cli.ts tail --mine --as forager",
+    bountyCli: "/cache/bounty/cli.ts",
+  } as CoordWires,
   commsIncantation: "bun /plugin/cli.ts comms follow dev --as forager",
-  bountyCli: "/cache/bounty/cli.ts",
   handle: "forager",
   seatDocRel: ".anthill/dev/forager.md",
   lead: "maestro" as string | undefined,
@@ -488,5 +494,145 @@ describe("buildChecklist — the commit incantation carries the seat (attributio
 
   test("says WHY, so a seat that drops the flag knows the cost", () => {
     expect(line("Commit file-scoped")).toMatch(/who landed this/i);
+  });
+});
+
+/**
+ * S8-1 — the EMITTED manifest, run as a real process, with spellbook ABSENT.
+ *
+ * Every other test in this file is pure, and the file says why: the exact
+ * emitted strings can then be asserted in CI, where no spellbook plugin cache
+ * exists. **This block is the one case that inverts that constraint and is
+ * therefore the one real-process assertion that belongs here** — it needs
+ * spellbook to be MISSING, which CI supplies for free and a dev machine has to
+ * fake with `HOME`.
+ *
+ * The defect: `join` resolved grapevine + bounty and `process.exit(1)` BEFORE
+ * building anything, so a **spellbook** absence suppressed the **anthill** comms
+ * block — which depends on neither — and withheld the grounding list, which
+ * depends on nothing but the repo. The same function already degrades a failed
+ * grounding-doc READ under the comment "must not sink the whole manifest — the
+ * grounding list is the seat's lifeline"; the rule simply stopped one layer
+ * short of the thing that sank the whole manifest.
+ *
+ * Contract 4(b) is amended in the same change: "ALWAYS present" is bounded to
+ * every manifest `join` EMITS. `join bogus` and a config-less tree still exit
+ * before any manifest, and must — there is no seat doc and no roster to emit —
+ * so an unbounded "always" was false no matter what this fix does.
+ */
+describe("join — a missing spellbook must not sink the manifest (S8-1)", () => {
+  const CLI = resolve(import.meta.dir, "..", "cli.ts");
+
+  /** A real team tree + a real EMPTY home, so coord resolution genuinely fails. */
+  function joinWithoutSpellbook() {
+    const dir = mkdtempSync(join(tmpdir(), "anthill-s8-1-"));
+    const emptyHome = mkdtempSync(join(tmpdir(), "anthill-s8-1-home-"));
+    try {
+      mkdirSync(join(dir, ".anthill", "dev"), { recursive: true });
+      writeFileSync(
+        join(dir, ".anthill", "config.json"),
+        JSON.stringify({
+          version: 2,
+          channel: "s8-channel",
+          lead: "maestro",
+          seats: [
+            { handle: "maestro", role: "lead", scope: ".", spawn: true },
+            { handle: "forager", role: "hands (CLI/engine)", scope: "scripts/", spawn: true },
+          ],
+        }),
+      );
+      const proc = Bun.spawnSync(["bun", CLI, "join", "forager", "--format", "json"], {
+        cwd: dir,
+        env: { ...cleanGitEnv(), HOME: emptyHome },
+      });
+      const stdout = proc.stdout.toString();
+      const lines = stdout.trim().split("\n").filter(Boolean);
+      return {
+        code: proc.exitCode,
+        stdout,
+        stderr: proc.stderr.toString(),
+        lineCount: lines.length,
+        envelope: lines.length === 1 ? JSON.parse(lines[0] as string) : undefined,
+      };
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+      rmSync(emptyHome, { recursive: true, force: true });
+    }
+  }
+
+  // The control that makes the rest of this block mean anything: if the harness
+  // ever resolved a real spellbook, every assertion below would pass for the
+  // wrong reason. Asserting the DEGRADED path is reported keeps the fixture
+  // honest about which world it ran in.
+  test("the fixture genuinely has no spellbook — the manifest says so, positively", () => {
+    const r = joinWithoutSpellbook();
+    expect(r.envelope?.ok).toBe(true);
+    expect(JSON.stringify(r.envelope)).toMatch(/spellbook/i);
+  });
+
+  test("emits a manifest at all — a missing spellbook is not fatal", () => {
+    const r = joinWithoutSpellbook();
+    expect(r.envelope?.ok).toBe(true);
+    expect(r.code).toBe(0);
+  });
+
+  test("the comms block survives — it depends on neither grapevine nor bounty", () => {
+    const r = joinWithoutSpellbook();
+    const comms = r.envelope?.data?.comms;
+    expect(comms?.channel).toBe("s8-channel");
+    // Fully resolved, per Contract 4(a) — never a template the consumer fills in.
+    expect(comms?.incantation).toContain("comms follow s8-channel --as forager");
+    expect(comms?.incantation).not.toContain("<handle>");
+  });
+
+  test("the grounding list survives — it is the seat's lifeline and needs only the repo", () => {
+    const r = joinWithoutSpellbook();
+    const grounding = r.envelope?.data?.grounding;
+    expect(Array.isArray(grounding)).toBe(true);
+    expect(grounding.length).toBeGreaterThan(0);
+    // The seat doc specifically: this is the one file the seat cannot re-ground
+    // without, and it is the one the old exit withheld.
+    expect(JSON.stringify(grounding)).toContain("forager.md");
+  });
+
+  // The envelope is the agent's whole input. A stray warning line printed
+  // beside it makes `JSON.parse(stdout)` throw for every real caller while a
+  // last-line-picking assertion stays green — the M1 leak, in a new place.
+  test("the degraded manifest is STILL a single parseable envelope", () => {
+    const r = joinWithoutSpellbook();
+    expect(r.lineCount).toBe(1);
+  });
+
+  // THE TEXT SIDE IS A DIFFERENT AUDIENCE AND IT BROKE WHILE THE JSON WAS RIGHT.
+  // `null` interpolated into a line labelled "wire these watches" renders the
+  // literal "null", which reads as a command to run. The pure functions and the
+  // JSON payload were both already correct — found by RUNNING the binary, which
+  // is the only reason it was found at all.
+  test("text mode never renders a null as if it were a command", () => {
+    const dir = mkdtempSync(join(tmpdir(), "anthill-s8-1-text-"));
+    const emptyHome = mkdtempSync(join(tmpdir(), "anthill-s8-1-texthome-"));
+    try {
+      mkdirSync(join(dir, ".anthill", "dev"), { recursive: true });
+      writeFileSync(
+        join(dir, ".anthill", "config.json"),
+        JSON.stringify({
+          version: 2,
+          channel: "s8-channel",
+          seats: [{ handle: "forager", role: "hands", scope: ".", spawn: true }],
+        }),
+      );
+      const proc = Bun.spawnSync(["bun", CLI, "join", "forager", "--format", "text"], {
+        cwd: dir,
+        env: { ...cleanGitEnv(), HOME: emptyHome },
+      });
+      const out = proc.stdout.toString();
+      // Positive anchor FIRST: assert we rendered the degraded text at all, so
+      // this cannot pass by rendering nothing (Contract 4's assertion-(4) shape).
+      expect(out).toMatch(/UNAVAILABLE/);
+      expect(out).not.toMatch(/^\s*(grapevine|board):\s*null\s*$/m);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+      rmSync(emptyHome, { recursive: true, force: true });
+    }
   });
 });
