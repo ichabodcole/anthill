@@ -1,9 +1,19 @@
 # `convene` wires every seat and never the lead
 
-**Added:** 2026-08-01 · **Status:** ready to build (small; the pattern already exists)
+**Added:** 2026-08-01 · **Status:** ✅ **SHIPPED** (`2563d94` + the recovered prose) · **Closed:** 2026-08-03, session 7
 · **Seat:** forager (CLI) · **Found:** by the human, after the lead went unmonitored for a session
 
-> **⚠ MERGE BLOCKER (B2) as of 2026-08-03.** This is no longer only a lead-ergonomics fix. The human
+> **✅ CLOSED — and the closing evidence is a use, not a reading.**
+> `anthill convene` now emits `commsIncantation` in its own envelope. **Session 7's lead wired itself
+> from that emitted string before briefing anyone**, which is the behaviour this card asked for,
+> exercised by its intended consumer on the intended path. Verified by running, not by reading status.
+>
+> **The B2 framing below is retained as history and is FALSIFIED as a blocker.** Session 6's blind
+> read falsified B2 **by artifact**: the capability already existed and `convene` merely never called
+> it. Do not re-derive the blocking argument from this file — see R12 in
+> [slice-two-proposal.md](../projects/team-comms-spike/slice-two-proposal.md).
+
+> **⚠ Original framing — MERGE BLOCKER (B2) as of 2026-08-03.** This is no longer only a lead-ergonomics fix. The human
 > set the bar for merging `feat/team-comms-slice-one`: comms must be able to run as the **sole** wire,
 > with grapevine as a re-armed backup. **An unwired lead is survivable with grapevine armed and fatal
 > without it.** See R11 in
