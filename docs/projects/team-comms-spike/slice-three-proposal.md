@@ -74,6 +74,43 @@ Slice two's primitive turns out to be the mute/unmute substrate:
 **What is missing is small by comparison:** the mute switch, suppression inside `follow`, and one new
 state.
 
+### The MAP — and it is what makes "don't backfill" honest, not a separate nicety
+
+**The flood is the reason muting is wanted, and un-muting recreates it.** A seat activated after sixty
+messages either reads them all (paying the cost muting just saved, at the worst moment) or skips them
+blind.
+
+`artifact:` **Measured on the live channel: 40 messages are 157,463 chars of body (~39K tokens) and
+4,000 chars of headlines (~1K). A 39.4× reduction, at 100% convention adherence** — every message
+already opens `## sender → recipient: HEADLINE`.
+
+`artifact:` **The technique is already proven in use, not just in principle.** All 106 of session 6's
+messages were classified into the eight buckets in that session's Tier C **from headline extraction
+alone** — the shape of an entire session, at ~1/40th of reading it.
+
+**So the reconnect convention becomes honest rather than merely cheap:** _here is the shape of what
+you missed; fetch by id if something matters._ `comms read --id <n>` already exists and is the only
+verb that fetches exactly one message — **it is the natural partner to a map and it is already built.**
+
+Without a map, "do not backfill" means "be blind to it." With one, it means "know the shape, pay only
+for what you need." **The map is the precondition for the convention, not a complement to it.**
+
+### The activation handoff — three parts, and only one is new
+
+When the lead un-mutes, the seat needs: **where the team is**, **where it left off**, and **what it is
+being activated to do.**
+
+| part                                                                                         | status                                                  |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| the gap — where you were, where the head is, the catch-up command                            | **built** (`follow-start`, `team-comms.ts:711-723`)     |
+| the map — headlines over the gap                                                             | **small** (first-line extraction)                       |
+| the lead's context payload — "you are on; here is where we are; you are taking over from #N" | **new**, and the only part that is irreducibly judgment |
+
+**Do not automate the third.** A summary of the session is a routing decision made by whoever
+understands the work, and the lead is the one participant who has been present throughout. A
+generated summary would be the tool asserting something no instrument measured — the exact class
+this spike keeps ruling against.
+
 ### ⚠ The load-bearing requirement: `muted` is its OWN state, never `behind`
 
 **Mute manufactures silence deliberately, on a wire whose defining failure is that silence and
@@ -114,6 +151,32 @@ intuition that a muted seat is a degraded one.
 review it finds more _"my check cannot fail"_ defects than a seat that watched the implementation
 live. **Falsifier:** it finds the same class of defects the owners find (duplication, staleness,
 ordering), in which case muting bought cost and nothing else.
+
+### The WARM READ — and it is a different axis, not a middle point
+
+The obvious framing is a Goldilocks amount of context: cold ← warm → saturated on one line. **The
+evidence says it is not a line.**
+
+- **Strangers** found _every_ guard-that-cannot-fail.
+- **Owners** found _only_ duplication, staleness, ordering.
+
+A seat that helped plan and was then muted through implementation is **not 50% contextual. It is
+fully warm on INTENT and fully cold on EXECUTION** — which is exactly the split a reviewer wants: you
+must know what it was supposed to do, and you must not be anchored on how it was done.
+
+**That reframes the hypothesis into something stronger and more surprising: the value of a cold read
+comes from being cold on EXECUTION, not from being cold on intent** — in which case a warm reader
+should **beat** a cold one, because the cold reader must reconstruct intent and will sometimes
+reconstruct it wrong.
+
+`artifact:` A hint already exists in session 7: the verifier briefed to **find, not design** filed
+three findings, all correct — against a prior round this team measured where **four of four**
+reviewer-proposed remedies were wrong. The difference was how much the reviewer was asked to infer.
+
+**Runnable as a third arm, cheaply:** same diff, three reviewers — cold (no context), warm (planning
+context only, muted through the build), saturated (present throughout) — and compare defect **class**,
+not count. **Falsifier for the whole reframe:** warm and cold produce the same class, in which case
+warmth is irrelevant and only distance from the execution matters.
 
 ## Scope
 
@@ -165,11 +228,70 @@ ordering), in which case muting bought cost and nothing else.
 
 ## Success Criteria
 
-- **Cost per minute tracks the UNMUTED context count, not the roster size.** Directly falsifiable —
-  if it tracks the roster, mute is saving nothing and something else is waking the seats.
-- **A muted seat is distinguishable from a dead one** by any seat, not just the lead, in one command.
-- **The un-mute catch-up cost is measured and published**, not assumed.
+> **Written to weaver's session-7 epitaph, deliberately:** _"a check aimed at the thing you can SEE,
+> rather than at the thing that would FAIL, is worse than no check — it retires the question."_ The
+> visible thing here is **muted seats take fewer turns**, which will obviously be true and proves
+> nothing. Each criterion below is therefore aimed at the way this feature would fail while looking
+> like it worked.
+
+- **⚠ TOTAL session cost falls — not just per-turn or per-minute cost.** The failure mode is that the
+  un-mute catch-up eats the saving and the session ends up costing the same with more ceremony.
+  **Per-minute cost is the thing I can see; total is the thing that would fail.** Publish both, and
+  if total does not move, **the feature is theatre no matter how good the rate looks.**
+- **The un-mute catch-up cost is measured as its own line item**, per activation. Not folded into the
+  session total, where it cannot be told from the saving it is cancelling.
+- **A muted seat is distinguishable from a dead one by any seat, in one command** — not by the lead,
+  not by inference. **The control:** kill a follower and mute a follower in the same session, and
+  show the command telling them apart. _(sentinel's epitaph: a result must come from a run that also
+  demonstrated it can produce the other answer.)_
+- **Cost per minute tracks the UNMUTED context count, not the roster.** If it tracks the roster, mute
+  is saving nothing and something else is waking the seats.
 - **At least one thing here turns out unnecessary** — slice one's framing check, which has held twice.
+
+### The criterion that answers the question none of the others do
+
+**Count the findings whose provenance requires two or more seats.**
+
+Every measurement this project has taken so far — tokens, turns, commits, defect class — can be
+matched by isolated subagents. **This is the one currency they cannot pay in**, because a subagent
+returns to the lead and never to another subagent.
+
+`artifact:` Two exist and are identifiable in the record:
+
+- _"The shared tree was doing integration testing for free"_ — scout's observation, forager's
+  mechanism. **Neither seat had it alone.**
+- **`followerAlive`** — steward's declined-to-contract observation, built into the tool by forager,
+  specified by nobody.
+
+**If this count is zero across several sessions, the intersections are producing nothing and the
+durable team is decoration.** If it is consistently non-zero, that is the answer to _"what does this
+give us that isolated agents would not"_ in the only form that is not a feeling.
+
+**⚠ And it needs a control, or a zero is uninterpretable** — sentinel's rule, applied to a metric
+rather than a command. A zero could mean _no cross-pollination happened_ or _my counting method
+cannot see it_, **and those are indistinguishable without a positive control.** So: before trusting a
+zero, run the counting method over session 6 and confirm it finds the two above. **A metric that has
+never been shown to produce a non-zero is not evidence of absence.**
+
+## What the SEATS' own epitaphs say about this proposal
+
+Checked against the living docs before handing this over, because three of them land on it directly.
+
+- **weaver (new, session 7) — _"you will measure the wrong property and call it verified."_** Applied
+  above: the success criteria were rewritten to aim at total cost rather than at the visible rate.
+  **The original draft of this file failed weaver's test**, and the epitaph caught it before a seat
+  had to.
+- **sentinel — _"a control, in the same command, every time."_** Applied twice: to the muted-vs-dead
+  criterion, and to the cross-seat count, which without a positive control cannot distinguish
+  _nothing happened_ from _I cannot see it_.
+- **forager — _"an instruction will sometimes be wrong in a way only you can see, and complying with
+  it will look like cooperation."_ This proposal specifies mechanism inside forager's surface and
+  forager should expect it to be wrong.** One specific hazard, named so it is falsifiable rather than
+  discovered: **if mute is implemented by stopping the follower process, `followerAlive` goes false
+  and a muted seat becomes byte-identical to a dead one — defeating this proposal's single
+  load-bearing requirement.** The mute must suppress _emission_ while the follower lives. **If that
+  is not achievable, say so before building; the requirement, not the implementation, is what
+  matters.**
 
 ## References
 
