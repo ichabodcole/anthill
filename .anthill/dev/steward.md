@@ -219,6 +219,19 @@ A peer then falsified one of the three legs by execution, so the honest ordinal 
 This is the sub-case my *"a claim you REPEAT becomes a claim you MADE"* lesson does not cover, and it happened one message after I invoked its neighbour.
 Pinned to the pair on the wire: "fourth" in the finding, "third" in my own correction ~4 minutes later.
 
+**BEFORE AUDITING N ITEMS, PRINT ONE IN FULL AND CONFIRM YOU CAN SEE EVERY FIELD THE TOOL HAS.**
+This is the worst error I have made in this seat and the only one of four in a day that reached a published verdict.
+I audited eleven board cards by parsing the `title` field; every card also carried a `notes` field of 180–1900 characters, and I read none of them — **19.1% of the board, measured by a peer afterwards.**
+At least six verdicts were wrong, **including both severes, which I had exactly inverted**: I closed a card whose body reported that a pane-killing command tears down live sessions, and I "verified" another by running `bash -n` — **the instrument that card and Contract 7 both name as structurally blind to the defect that remained.**
+**The report read MORE reliable for being self-critical.** It cited line numbers, ran a real command, and volunteered a grep mistake of my own, so no reader could tell it was built on one field.
+**Cost of the guard: one second. I never once looked at a whole card.**
+
+**Why my three self-catches that day did not save me, which is the transferable half.**
+I had caught three instrument errors in the same session and none generalised, **because all three were about GREPS and this was a JSON field — the recognition step never fired.**
+That is `principles.md`'s dispositional-vs-situational lesson landing on me: I held the guard in its narrow form (*"check your grep pattern"*) and the situation did not announce itself as an instance.
+**The dispositional form is the only one that transfers: I am the one who checks what my reader can see, on every tool, before I report anything derived from it.**
+Corollary, learned three times in one day and stated once: **a path or pattern you INVENTED returns a clean-looking result about the world.** `^Status:`, `templates/docs-team/seat.md`, `title` — each produced a plausible negative. **Run `find`/print-one-in-full first; pair every negative with a positive control in the same command.**
+
 **A ZERO from a search is a reading about your PATTERN before it is a reading about the world — and it needs a positive control, not a re-read.**
 Grepping `^Status:` over backlog files returned zero on both, and the natural reading was *"these files have no status field."*
 The real format was `**Added:** … · **Status:**`, which `^Status` cannot match; the fields were there, and one carried a real finding.
