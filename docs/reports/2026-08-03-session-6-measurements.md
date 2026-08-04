@@ -147,6 +147,42 @@ _Cost is a list-price estimate from transcript `usage` fields, not an invoice._
 - Split: **CODE 1,120 (52.4%)** — 509 impl, 611 test — **PROSE 1,018 (47.6%)**, of which team living
   docs 493, project docs 361, shipped skills/templates 160
 
+### Team-unique findings — the ratio that prices what a solo agent cannot produce
+
+`artifact:` **17 multi-seat findings** (12 clear, 5 borderline), counted by a blank-context auditor
+applying one stated rule — _the conclusion depends on an input from another seat and is not derivable
+in one lane_ — over **artifacts only** (the wire was destroyed).
+
+**This corrects a casual count of 2 made by this file's author, which was low by ~8x.** It was made
+from memory, without a stated rule, by someone who had been in the session. The same auditor applied
+the identical rule to dream-flute's 2026-08-04 session and found **24**.
+
+|               | tokens (dedup) | multi-seat findings | **per 100M tokens** |
+| ------------- | -------------- | ------------------- | ------------------- |
+| **session 6** | 251.7M         | **17**              | **6.8**             |
+| dream-flute   | ~700M          | 24                  | 3.4                 |
+
+**⚠ The earlier claim that the chattier session was ~2.5x more productive per token is FALSE and
+inverted.** On a consistent rule, session 6 produced roughly **twice** as many team-unique findings
+per token.
+
+**⚠ But do not read the gap as a collaboration ratio, per the auditor's own caveat.** What is counted
+is _how much cross-seat dependency each team wrote down in a form a stranger can attribute_ — a joint
+product of how much happened, how code-shaped it was, and the **artifact discipline** in place. Both
+numbers are lower bounds and the bounds are loose by different amounts.
+
+**The actionable half:** dream-flute's provenance is better evidenced because it ships artifacts built
+to carry it — a per-seam ratify record naming the ratifying seat (`plan.md`), a decision log naming
+the contributing seat per entry, and **finding-shaped commit subjects**. Session 6's log is 25 merges
+out of 53 with subjects like `merge(<seat>): finalize`. **anthill has the mechanism (the R-rulings)
+and did not use it for session 6.**
+
+**⚠ And a structural undercount that applies to both:** `finalize-session` instructs seats to
+_strengthen an existing entry rather than add a bullet_ when a candidate is a second instance. **Repeat
+cross-seat corrections are the most common kind, so the compression policy deletes exactly the
+evidence this count needs** — the same collision recorded in
+[the decay item](../backlog/2026-08-04-nothing-records-that-a-lesson-fired-so-nothing-can-fade.md).
+
 ### Grounding cost per seat
 
 Common reads ≈ **19K tokens** (AGENTS, README, `.anthill/README`, principles, seams) plus the seat's
