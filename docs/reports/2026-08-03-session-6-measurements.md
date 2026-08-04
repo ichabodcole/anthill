@@ -63,7 +63,35 @@ wrong variable.
 > **Corroboration, which matters more than usual given Tier B's fate.** Three blank-context agents
 > independently measured this from the same transcripts without access to each other or to this file:
 > **531.9M / 532.0M / 535.1M cache read**, **~$361 / ~$361 / ~$363**. Four measurements within ~1%,
-> and **all five seat-level figures matched exactly.** This tier is solid.
+> and **all five seat-level figures matched exactly.**
+
+> ### ⚠ CORRECTION (2026-08-03, session 7) — the figures above are MAIN-THREAD ONLY
+>
+> **Everything above excludes subagent spend, and I did not notice.** Subagent transcripts live at
+> `<project-dir>/<session-uuid>/subagents/agent-*.jsonl` — **one directory deeper than the
+> non-recursive glob** used above (`<dir>/*.jsonl`). There are 274 such transcripts across the anthill
+> project dirs; the scan never saw one.
+>
+> **Corrected session-6 total, verified by re-running with `glob(..., recursive=True)`:**
+>
+> |           | main threads | subagents                      | **TOTAL**       |
+> | --------- | ------------ | ------------------------------ | --------------- |
+> | tokens    | 543,392,951  | **20,406,258** (7 transcripts) | **563,799,209** |
+> | est. cost | $363         | **$25**                        | **~$388**       |
+>
+> **Use $388 / 563.8M for any comparison.** The $363 figure is main-thread spend and is correct only
+> as that.
+>
+> **Found by scout (blank-context, one-shot) during session 7's measurement**, which **reproduced this
+> file's main-thread total to the byte (543,392,951) and all six per-seat dollar figures** before
+> finding the omission. That ordering is the point: it calibrated the instrument against my published
+> numbers, matched them exactly, and _then_ showed they were incomplete.
+>
+> **The three-way corroboration above did not catch it either** — which is the more useful lesson.
+> **Four independent measurements agreeing tells you the METHOD is reproducible, not that it is
+> complete.** All four scanned the same wrong depth. A shared blind spot survives any amount of
+> agreement, and this is the second time in two sessions that a figure of mine was wrong in a way
+> consensus could not see.
 
 _Cost is a list-price estimate from transcript `usage` fields, not an invoice._
 
