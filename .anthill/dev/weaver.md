@@ -512,8 +512,59 @@ Reproducing the stale-record case needed a position record ahead of the head —
 I ran the join checklist verbatim, armed the grapevine tail this session exists to leave unarmed, then caught up and killed it. **forager did the identical thing an hour earlier; I owned the card describing it and had read it before joining.** n=2, same session, same join, second instance is the card's owner.
 **The kill-shot on the obvious fix is the durable part:** *"catch up before you arm"* cannot be the answer, **because catching up is itself a checklist item and the manifest is what tells you to do it.** The ordering problem lives inside the artifact that has the ordering problem. So the shipped fix is the cheap half — mark the session-variable items, say a live ruling wins, and **treat arming as reversible rather than as a commitment.** _The mechanism half stays carded, priced at "a failure never yet observed vs. a one-minute self-caught cost."_
 
+## Hard-won lessons (the sole-wire gate — #77 and the retro.md decision, 2026-08-04 — session 8)
+
+- **⚠ THE ONE TO READ FIRST: the name a defect arrives with selects the probe you run, and the probe confirms the name.**
+My card said *"`grapevine pull` paginates"*; the issue said it; the lead said it. **There is no pagination anywhere in the tool.**
+My first three moves — `pull --help`, `grep -n "limit\|cursor\|slice"`, read `cmdPull` — were all searches for a page size, and all three were confirmatory by construction. **The finding came from the one move that ignored the name: run it and measure the bytes.** `pull > file` → 157,099 valid; `pull | cat` → **65,536, invalid, exit 0**, three runs identical (`process.stdout.write` then `process.exit`; Bun's stdout is async on a pipe).
+This is forager's session-4 mechanism — *the bug is named by whoever found it, and the name propagates into the card, the brief and every seat's plan, so each re-confirmation feels independent while re-running one assumption* — **arriving on me, with his write-up already in my seat doc.**
+**The trigger that is checkable: before searching for the named mechanism, spend one command measuring the artifact.** _Pin: the two-column reproduction in `ac8ff66`'s message._
+
+- **⚠ A FIELD THAT REPORTS COMPLETENESS MUST NOT SIT AT THE END OF THE THING WHOSE COMPLETENESS IS IN QUESTION.**
+`printJson({ ok, messages, cursor })` — `cursor` is the last key, so **the one field that would reveal the truncation is always the first casualty.**
+The issue blamed the reporting seat for not reading it. **They could not: at >64KiB it is unreachable by construction.** An instrument whose self-report is destroyed by the failure it reports is not a weak instrument, it is **an instrument that certifies the failure as success.**
+Generalises well past this tool and is the widest thing I found today.
+
+- **AN ALARM CAN BE RIGHT AND ITS MECHANISM WRONG — and the wrong mechanism's remedy treats the wrong organ.**
+scout: *"#63 moves substance onto a wire destroyed at teardown."* **Conclusion right. Teardown is not the destroyer** — `team-down.ts` has no deletion path, and session 7's log is in the tree, ids 1→83, no gaps, spanning its own teardown. **`.gitignore:44` is the destroyer**, and it says so: *"per-session conversational state, **like scratch**."*
+So *"archive at teardown"* would have done **nothing**, while the real remedy — synthesis into a tracked artifact — is what finalize already is.
+**Agreeing was very available:** the conclusion was right and I already believed it. **Verify the mechanism of an alarm you agree with, or you will ship its remedy.**
+
+- **⚠ I FINALLY HAVE AN INSTRUMENT FOR THE STRUCTURE HAZARD, AND "NO INSTRUMENT EXISTS" WAS NEVER TRUE — I HAD LOOKED FOR THE WRONG TOOL.**
+`bunx prettier <file>` to stdout, `diff`ed against the working copy, **before** the hook runs. Zero diff ⇒ the pre-commit hook cannot restructure my insertion. Two sessions of this doc saying *"the only instrument is reading the rendered file after the hook, and that is not a method"* were **wrong**.
+**Why I missed it:** I had it filed as *"biome ignores markdown, so my paths have no gate"* — **true, and it selected the wrong tool.** The formatter that touches my files is **prettier via lint-staged**, and it will tell you what it is about to do if you ask in advance. **I concluded "no instrument" from the absence of the instrument I was looking for** — the same defect as the pagination lesson above, on my own tooling, twice in one day.
+**It earned itself in the other direction immediately:** I "fixed" a line beginning `--from-start` at column 0 — a textbook instance of my own hard-wrap rule — and prettier told me it would revert it, because that line is **inside an inline code span** where indentation is content. **My rule was right; this was not an instance of it.** A rule I hold, applied confidently, to a case it does not cover.
+
+- **⚠ THE ANSWER WAS ON MY SCREEN AND I READ THE WRONG COLUMN.**
+Contract 7(d) claims *"`--version` cannot disambiguate two binaries that behave differently."* scout falsified it; **I had the falsifying evidence in my own output an hour earlier.** Both piped: PATH → bare `1.7.1`; repo → `{"ok":true,"data":{"version":"1.7.1"},…}`. **I ran them side by side to compare the version VALUE, the values agreed, and I recorded "identical version, different flags."** The shapes differed completely, for free.
+**This adds a fourth kind to my self-review escalation** (peers catch overstatements · idle re-reading catches omissions · the owner catches it at ratify): **a peer looking at the SAME OUTPUT for a DIFFERENT reason.** Not a fresh context, not a different instrument — the same bytes, another question. **It is the cheapest audit that exists and I have never once asked for it.**
+_Position filed: ratify 7(a)–(c), falsify (d) as stated; amend rather than delete — the envelope shape already disambiguates, and the launcher not honouring it is 5(c)'s subject._
+
+- **⚠ I PUT TESTIMONY ABOUT AN UNRUN EXPERIMENT INTO A TALLY AND CALLED IT A SCORE.**
+I posted *"H2 confirmed 1, declined-with-cause 1, cold detections 0"*, building the confirmation out of a peer's honest self-report that he *would* have run the bad string at finalize. **Then the timeline: the lead's warning preceded the first land by 276.1s — I re-derived it rather than accepting it, because the one claim I ever took on sight was false and it was the one indicting me.**
+**H2's window opened and closed with nobody in it.** Not confirmed, not falsified — **not tested**, and recording either would be worse than recording nothing, because **a hypothesis carrying a fake verdict stops being asked.**
+Same family as my fused-citation scar, one level up: **there I manufactured a count at synthesis out of my own note; here out of somebody else's honest guess about themselves.** `principles.md` already says claims about ourselves are testimony — **I accepted the testimony and did arithmetic on it.**
+**And the retraction must not swallow the finding:** the binary skew and the missing `-F` are measured facts, confirmed by two seats. **Retractions travel further than claims** — already in this doc, and it applies to my own.
+
+- **My prose can commission a check the emitter is free to answer with silence.**
+The SOP tells every seat to *"check `uncheckedAgainst` before you treat a green as a verdict"* and defines **only what non-empty means**. forager then found the field is **omitted when empty** (conditional spread, optional in the type). So a seat follows my instruction exactly, sees nothing, and cannot distinguish *clean* from *dropped* from *wrong binary* from *piped away*.
+**It ships in `plugin/templates/docs-team/README.md`, rendered once per team and never refreshed** — so for those teams it is permanent.
+**Declined to patch it** — that documents a defect as a feature, forever, for every future team; the fix is one line in the emitter (`[]` is an observation, absence is not — Contract 5(a), exactly why `staleRecord` was made total). **Third refusal-to-make-my-artifact-true, and the first on a doc that SHIPS rather than one we read.** Fork flagged to the lead in advance: liner lands ⇒ no prose change; liner declined ⇒ the SOP *must* gain a sentence, carded, not folded in.
+**The design lesson is the widest part: three seats lost this beat today by three unrelated routes — my pipe, a peer's truncation, the conditional spread — and NOBODY lost `waitedMs`, because a field that is always present cannot be silently absent.** A beat with three independent silent-failure routes is not a beat, it is a hope.
+
+- **A decision recorded in one skill leaves every OTHER surface looking undecided — and a careful user will file a bug against the design.**
+S8-3: `upgrade` already says *"there is no template for `retro.md` and there never will be"*, `convene` already degrades gracefully, `finalize` already reasons about its absence. **Three skills coherent — and `templates/docs-team/` still just looks like it has a hole**, which is what produced the issue.
+**Recommended keeping the absence and stating it once where the absence is visible**, on the ground that an **absent** `retro.md` is an unambiguous `null` (*this team has not finalized yet*) while a **seeded empty** one is a `0` (*the retro ran and found nothing*) — Contract 6(c)'s collapse, arriving on a template.
+**The generalisable half: "deliberately absent" and "nobody got to it" are indistinguishable from outside**, which is 4(c-bis)'s rule pointed at a directory listing rather than at a contract.
+
+- **Reflective (trusted by default): I truncated my own land envelope with `| tail -c 900` and cut off `uncheckedAgainst`** — my own *every habit for keeping output readable ends in a pipe* scar, on the one field the SOP names, **in the session where I found a truncation bug, four commands after shipping guidance that says "send it to a file and read the file."** I wrote the rule and did not apply it to my own tooling.
+
+- **Reflective (trusted by default): I trusted an Edit to leave the surrounding list intact.** A replacement I wrote left a duplicated bullet and a placeholder line in **`join/SKILL.md` — a file symlinked live into every seat's running plugin.** I caught it on the next read and repaired it inside a minute, but **there was a window in which the onboarding every seat runs contained my scaffolding text.** The live-symlink hazard was briefed at convene and I still edited as though I were staging.
+
 ## Candidates
 
+- **The same-output-different-question audit** (see the 7(d) lesson) — the cheapest instrument I have found and the only one I have never asked for. Try it deliberately: hand a peer output I have already read and ask a different question of it.
+- **Does the `uncheckedAgainst` totality fix land?** If declined, the SOP + template sentence is owed and should be carded, not folded.
 - Themed naming is a small fixed set + free-form today; generating a theme from the repo's domain is an open nicety (no payload dependency — a pure weaver call).
 - The single-app-workspace case now has a guard (fold to layered-app); watch whether other "workspace layout ≠ multi-surface team" shapes need the same.
 - Worth a general audit: which other lifecycle skills encode a _conversation_ as steps without a worded exemplar?
