@@ -4,6 +4,7 @@ import {
   buildGroundingRefs,
   buildLandCommand,
   buildMissingWarnings,
+  toManifestEntry,
 } from "./team-join.ts";
 
 // TWO prose warnings failed in ONE session, each against an agent who had read
@@ -178,15 +179,35 @@ describe("buildMissingWarnings — the remedy has to match the origin", () => {
     expect(w).not.toMatch(/fix `config\.grounding`/);
   });
 
-  test("a dangling configured ref still points at config.grounding", () => {
+  // D1 (blank-context verify of 322a48a). The original assertion here was
+  // `toContain("config.grounding")` — and that literal appears in BOTH remedies,
+  // because the team remedy reads "these are NOT in `config.grounding`". So it
+  // could not fail for ANY partition of the origins, leaving the `configured`
+  // half of the split unguarded. Reproduced by inverting the split: only the
+  // team-side test died, exactly as reported.
+  //
+  // The lesson is the asymmetry, not the string: the sibling test carried a
+  // load-bearing NEGATIVE and this one did not take the symmetric form. A test
+  // whose subject is a SPLIT must assert what each side is NOT, or it passes on
+  // the collapsed world.
+  test("a dangling configured ref gets the config.grounding remedy and NOT the team one", () => {
     const [w] = buildMissingWarnings([{ rel: "AGENTS.md", origin: "configured" }]);
-    expect(w).toContain("config.grounding");
+    expect(w).toMatch(/fix `config\.grounding`/);
+    expect(w).not.toMatch(/anthill init/);
+    expect(w).not.toMatch(/NOT in `config\.grounding`/);
   });
 
-  // Asserted as a SET of two, not two separate one-origin cases: a single
-  // warning covering both misses would satisfy either case alone while handing
-  // one of the two origins the other's remedy — the exact bug being fixed.
-  test("a mixed set yields two warnings, each with only its own remedy", () => {
+  // Asserted as a SET of two: a single combined warning would satisfy either
+  // one-origin case alone. That much the original version did do.
+  //
+  // D2 (blank-context verify): its COMMENT claimed it also guarded against
+  // "handing one of the two origins the other's remedy", and it did not — it
+  // located each warning by content (`includes("AGENTS.md")`), which is
+  // invariant to which remedy is attached, so it survived origin inversion
+  // intact. The test was real and its stated justification was false: the
+  // clause advanced and its proof did not, which is the drift class seams.md
+  // records against itself. Now it actually pairs FILE to REMEDY.
+  test("a mixed set pairs each file with its OWN remedy, not just its own warning", () => {
     const w = buildMissingWarnings([
       { rel: "AGENTS.md", origin: "configured" },
       { rel: ".anthill/principles.md", origin: "team" },
@@ -194,12 +215,57 @@ describe("buildMissingWarnings — the remedy has to match the origin", () => {
     expect(w).toHaveLength(2);
     const configured = w.find((x) => x.includes("AGENTS.md"));
     const team = w.find((x) => x.includes("principles.md"));
+    // Separation of subjects...
     expect(configured).not.toContain("principles.md");
     expect(team).not.toContain("AGENTS.md");
+    // ...and the pairing itself, which is what the comment always claimed.
+    expect(configured).toMatch(/fix `config\.grounding`/);
+    expect(configured).not.toMatch(/anthill init/);
+    expect(team).toMatch(/anthill init/);
+    expect(team).not.toMatch(/fix `config\.grounding`/);
   });
 
   test("nothing missing means no warning at all", () => {
     expect(buildMissingWarnings([])).toEqual([]);
+  });
+});
+
+// D3 (blank-context verify): the origin strip had no test, and it is the one
+// line holding the "emitted payload shape is unchanged" promise. Every other
+// test exercised buildGroundingRefs, which INCLUDES origin — so the suite was
+// green on a manifest that could have leaked it.
+describe("toManifestEntry — origin is bookkeeping and must not reach the payload", () => {
+  test("strips origin while preserving every emitted field", () => {
+    expect(toManifestEntry({ path: "/a.md", exists: true, origin: "team" })).toEqual({
+      path: "/a.md",
+      exists: true,
+    });
+  });
+
+  // Keyed on the KEY SET, not on `origin` alone: an assertion naming only the
+  // forbidden field goes stale the moment a second internal field is added, and
+  // the next leak would be of whatever that new field is.
+  test("emits exactly the manifest keys, for every entry variant", () => {
+    const variants = [
+      { path: "/a.md", exists: true, origin: "team" as const },
+      { path: "/b.md", exists: false, origin: "configured" as const },
+      { path: "/c.md", exists: true, placeholder: true, origin: "team" as const },
+    ];
+    const keys = variants.map((v) => Object.keys(toManifestEntry(v)).sort());
+    expect(keys).toEqual([
+      ["exists", "path"],
+      ["exists", "path"],
+      ["exists", "path", "placeholder"],
+    ]);
+  });
+
+  test("placeholder survives the strip — it IS part of the manifest", () => {
+    // The negative control for the test above: if the strip ever became an
+    // allow-list that dropped optional fields, the key-set test alone would
+    // still pass on the two entries that have none.
+    expect(
+      toManifestEntry({ path: "/c.md", exists: true, placeholder: true, origin: "team" }),
+    ).toHaveProperty("placeholder", true);
   });
 });
 

@@ -202,6 +202,21 @@ export function buildGroundingRefs(i: GroundingInput): GroundingRef[] {
 }
 
 /**
+ * Project an internal entry onto the EMITTED manifest shape — `origin` is
+ * bookkeeping for the warning split and must never reach the payload.
+ *
+ * Extracted from an inline `.map()` in `run()` because nothing tested it (D3,
+ * blank-context verify): it is the single line keeping the "payload shape is
+ * unchanged" promise true, and a refactor could leak `origin` into the manifest
+ * with the whole suite green. A promise with no assertion is a claim, not a
+ * guarantee.
+ */
+export function toManifestEntry(e: GroundingEntry & { origin: GroundingOrigin }): GroundingEntry {
+  const { origin: _origin, ...entry } = e;
+  return entry;
+}
+
+/**
  * Missing-doc warnings, split by origin because the REMEDY differs.
  *
  * A missing team doc is the common case on a footprint that predates the file
@@ -307,9 +322,7 @@ export const teamJoinCommand = defineAnthillCommand({
       return { path: p, exists, origin, ...(placeholder && { placeholder }) };
     });
 
-    // `origin` is internal bookkeeping, not part of the emitted manifest — the
-    // payload shape stays exactly as consumers already read it.
-    const grounding: GroundingEntry[] = resolved.map(({ origin: _origin, ...entry }) => entry);
+    const grounding: GroundingEntry[] = resolved.map(toManifestEntry);
 
     // A grounding path that doesn't exist is a dangling reference — surface it
     // as a real warning, not just an inline "(missing!)" the reader might skim
