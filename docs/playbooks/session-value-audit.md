@@ -118,10 +118,22 @@ Everything above can be matched by isolated subagents. **One thing cannot:**
 
 ## Phase 4 — cost, in the tier that is actually comparable
 
+- ◻ **⚠ DEDUPLICATE ON `requestId` (or `message.id`) BEFORE SUMMING. This is the big one.** A single
+  API request is written to the transcript as **several assistant records — one per content block —
+  and every one of them carries the FULL usage object.** Naive summing therefore counts the same
+  request two or more times.
+  **Measured over-count: 2.24× (session 6), 2.03× (session 7), 1.86× (dream-flute).** The factor
+  **varies by session**, so it does not cancel in a comparison — a ratio computed from naive figures
+  is wrong in an unpredictable direction, not merely inflated on both sides. **Session 6's published
+  cost fell from $388 to $166 when this was applied, and the s7/s6 ratio moved from 0.55 to 0.63.**
+  _Found by a blank-context auditor running this playbook's first outing, on a project that had
+  published four "independently corroborated" figures — all four naive._
 - ◻ Token spend from transcripts, filtered by **message timestamp**, never file mtime — a file whose
   mtime falls in the window can contain only messages from outside it.
 - ◻ **Recurse into `<project>/<session>/subagents/`.** This is the omission that made four independent
   measurements agree and all be wrong.
+- ◻ **Check whether the transcripts are still being appended to.** A live session writes as you
+  measure. Pin the window and say it is pinned; the figure is a snapshot, not a closed book.
 - ◻ Report **cache-read share** — it has been ~98% every time, which is why message volume is a
   rounding error and concurrent context count is the whole bill.
 - ◻ Report **cost per minute AND total.** Rate flatters a staged session; total is what gets paid.

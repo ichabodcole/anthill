@@ -31,6 +31,33 @@ back to session 6; on the originally-published basis it reads $363 vs $195.
 
 ---
 
+## ⚠⚠ CORRECTION (2026-08-04) — every token/cost figure below is inflated ~2.03×
+
+**Session 7's real cost is ~$104 / 157.0M tokens, not ~$215 / 311.9M.**
+
+**Cause:** one API request is written as **several assistant records — one per content block — each
+carrying the FULL usage object.** Summing records double-counts. Deduplicating on `message.id` fixes
+it.
+
+|               | naive (published) | **deduplicated (true)**          |
+| ------------- | ----------------- | -------------------------------- |
+| session 6     | $388 / 563.8M     | **$166 / 251.7M** (factor 2.24×) |
+| **session 7** | **$225 / 319.2M** | **$104 / 157.0M** (factor 2.03×) |
+
+**⚠ The factor VARIES, so it does not cancel in the comparison this report exists to make.** The
+headline _"~45% cost cut"_ is really **~37%** (ratio 0.63, not 0.55). **The direction and the
+mechanism survive; the magnitude was overstated.**
+
+Everything derived as a _ratio within one session_ still holds — cache-read share, the wire at 0.013%
+of spend, burn-rate-tracks-context-count. Everything quoted in **dollars or absolute tokens** does not.
+
+**Found by a blank-context auditor** running the
+[session value audit playbook](../playbooks/session-value-audit.md) against a different project.
+**This report's own Phase-0 calibration reproduced session 6's figure to the byte — and both were
+wrong the same way**, which is precisely what calibrating against a same-method figure cannot catch.
+
+---
+
 ## Tier A — the comparable tier
 
 |                              | **Session 6**                            | **Session 7**                                     |

@@ -65,7 +65,38 @@ wrong variable.
 > **531.9M / 532.0M / 535.1M cache read**, **~$361 / ~$361 / ~$363**. Four measurements within ~1%,
 > and **all five seat-level figures matched exactly.**
 
-> ### ⚠ CORRECTION (2026-08-03, session 7) — the figures above are MAIN-THREAD ONLY
+> ### ⚠⚠ CORRECTION 2 (2026-08-04) — EVERY TOKEN FIGURE IN THIS FILE IS INFLATED ~2.24×
+>
+> **The real session-6 cost is ~$166 / 251.7M tokens, not $388 / 563.8M.**
+>
+> **Cause: a single API request is written to the transcript as SEVERAL assistant records — one per
+> content block — and each one carries the FULL usage object.** Summing records therefore counts the
+> same request repeatedly. Deduplicating on `message.id` collapses **2,504 usage-bearing records into
+> 1,081 actual requests.**
+>
+> |           | naive (published) | **deduplicated (true)** |
+> | --------- | ----------------- | ----------------------- |
+> | session 6 | $388 / 563.8M     | **$166 / 251.7M**       |
+> | session 7 | $225 / 319.2M     | **$104 / 157.0M**       |
+>
+> **⚠ The over-count factor VARIES and therefore does NOT cancel in a comparison** — 2.24× here,
+> 2.03× for session 7, 1.86× measured on dream-flute. **The published s7/s6 ratio of 0.55 is really
+> 0.63**, so staging's saving was **~37%, not ~45%.** The direction survives; the magnitude was
+> overstated.
+>
+> **Found by a blank-context auditor** running the
+> [session value audit playbook](../playbooks/session-value-audit.md) on a different project, which
+> hit the same trap and resolved it. **This is the FOURTH correction to this file's numbers, and the
+> third caught by someone other than their author.** The earlier three-way "corroboration" below did
+> not catch it either — **all four measurements were naive, which is what agreement between identical
+> methods is worth.**
+>
+> _Everything downstream that quotes $388 or 563.8M — including
+> [slice three](../projects/team-comms-spike/slice-three-proposal.md)'s problem statement — inherits
+> this error. The percentages it draws (cache-read share ~98%, wire = 0.017% of spend) are RATIOS
+> within one session and survive; the absolute dollars do not._
+>
+> ### ⚠ CORRECTION 1 (2026-08-03, session 7) — the figures above are MAIN-THREAD ONLY
 >
 > **Everything above excludes subagent spend, and I did not notice.** Subagent transcripts live at
 > `<project-dir>/<session-uuid>/subagents/agent-*.jsonl` — **one directory deeper than the
