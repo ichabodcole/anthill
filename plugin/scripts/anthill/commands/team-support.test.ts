@@ -65,8 +65,49 @@ describe("commsPresence — a live follower is presence; an unchecked one is not
     });
   });
 
-  test("a dead follower is absence — a checked pid IS an observation", () => {
-    expect(commsPresence([row("a", "current", false)])).toEqual({ state: "none" });
+  // F1 (session 7, cold read): this test used to assert `none` under the name
+  // "a dead follower is absence — a checked pid IS an observation". The premise
+  // is true and the conclusion was wrong, which is the shape that hides:
+  // a checked pid IS an observation, but an observation ABOUT THE FOLLOW
+  // PROCESS. `down` kills PANES, and a follow process is not a pane. Contract
+  // 6(f) already rules that a dead pid means the position is a high-water mark,
+  // not that the seat is gone.
+  //
+  // Measured before the fix, real position files, real code: two followers at
+  // pid 999999 with both seats live in their panes → `none` →
+  // shouldBlockTeardown(false) === false → TEARS DOWN.
+  test("a dead follower is UNKNOWN, never absence — down kills panes, not followers", () => {
+    expect(commsPresence([row("a", "current", false)]).state).toBe("unknown");
+  });
+
+  // The two unknown-producing causes must stay DISTINGUISHABLE in the reason:
+  // same fact about our knowledge, different facts about the world. (Same
+  // discipline as `staleRecord` in 6(c-bis) — a row that says "no idea" may not
+  // also imply which kind of no-idea it is.)
+  test("a dead follower and an unchecked one give different reasons", () => {
+    const reasonOf = (alive: boolean | null) => {
+      const p = commsPresence([row("a", "current", alive)]);
+      return p.state === "unknown" ? p.reason : `NOT-UNKNOWN:${p.state}`;
+    };
+    const dead = reasonOf(false);
+    const unchecked = reasonOf(null);
+    // Both unknown...
+    expect([dead, unchecked].every((r) => !r.startsWith("NOT-UNKNOWN"))).toBe(true);
+    // ...and distinguishable. A shared reason would make the two causes
+    // indistinguishable to the human deciding whether --force is safe.
+    expect(dead).not.toBe(unchecked);
+  });
+
+  // `none` must stay REACHABLE or the guard degrades into "always block", which
+  // trains reflexive --force and removes the guard for real. Only the absence of
+  // a record at all gets there.
+  test("only a total absence of records reaches none", () => {
+    expect(
+      commsPresence([row("a", "never-followed", null), row("b", "never-followed", null)]).state,
+    ).toBe("none");
+    expect(
+      commsPresence([row("a", "never-followed", null), row("b", "current", false)]).state,
+    ).toBe("unknown");
   });
 
   test("one live follower outweighs any number of dead ones", () => {

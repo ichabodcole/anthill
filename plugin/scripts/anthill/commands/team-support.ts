@@ -129,6 +129,30 @@ export type SeatPresence =
  *
  * `null` means NOT CHECKED and must not be read as checked-and-dead (6(f)
  * again), so it yields `unknown` rather than contributing to an absence.
+ *
+ * **`false` yields `unknown` TOO, and that is the F1 ruling** — the sentence
+ * above used to be a promise the code broke. `followerAlive === false` was
+ * neither `live` nor `unchecked`, so it fell through to `none`, and `none` is
+ * the only state `shouldBlockTeardown` permits teardown on. The docstring said
+ * PRESENT-never-absent while the code did the opposite, on the pane-killing
+ * command. The reason it is a ruling and not a coin-flip:
+ *
+ *   **`down` kills PANES. `followerAlive` observes FOLLOW PROCESSES. A follow
+ *   process is not a pane.**
+ *
+ * A seat whose `comms follow` died is the single most common failure this team
+ * hits; the agent keeps working in its pane, and its scratch is gitignored and
+ * exists nowhere else. Contract 6(f) already fixes what a dead pid means — that
+ * `emittedThrough` is a HIGH-WATER MARK, not that the seat is gone — so deriving
+ * an absence from it contradicts the contract this file's own comments cite.
+ * `pidAlive` is ESRCH-only and pids are reused, so a **restarted** follower with
+ * a new pid reads identically to a dead one; an instrument that cannot separate
+ * those two may not be the one that authorises a teardown.
+ *
+ * So only **the absence of a record at all** contributes to `none`. That keeps
+ * `none` reachable (a roster where nobody ever followed), which is what stops
+ * the guard degrading into "always block" — the state that trains people to pass
+ * `--force` reflexively and thereby removes the guard for real.
  */
 export function commsPresence(
   rows: { handle: string; hasRecord: boolean; followerAlive: boolean | null }[],
@@ -144,12 +168,20 @@ export function commsPresence(
   // command, introduced one commit after the guard itself. Presence asks "is
   // there a follower and is it alive"; it must never be derived from a value
   // that means something about LAG.
+  // A record whose follower is not CONFIRMED ALIVE is not evidence the seat is
+  // gone. Both cases land here, and they are the same fact about our KNOWLEDGE
+  // and different facts about the WORLD — so the reason says which, per the
+  // `staleRecord` precedent in Contract 6(c-bis).
+  const dead = rows.filter((r) => r.hasRecord && r.followerAlive === false);
   const unchecked = rows.filter((r) => r.hasRecord && r.followerAlive === null);
-  if (unchecked.length > 0) {
-    return {
-      state: "unknown",
-      reason: `${unchecked.length} comms follower(s) could not be checked (liveness unknown, not dead)`,
-    };
+  if (dead.length + unchecked.length > 0) {
+    const why = [
+      dead.length > 0 &&
+        `${dead.length} follower process(es) not running — the SEAT may still be working (6(f): a dead pid means the position is a high-water mark, not that the seat is gone)`,
+      unchecked.length > 0 &&
+        `${unchecked.length} comms follower(s) could not be checked (liveness unknown, not dead)`,
+    ].filter((s): s is string => typeof s === "string");
+    return { state: "unknown", reason: why.join(" · ") };
   }
   return { state: "none" };
 }
