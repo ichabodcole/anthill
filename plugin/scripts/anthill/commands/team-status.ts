@@ -1,13 +1,12 @@
 import { emit, resolveFormat } from "../agent-layer.ts";
-import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import {
   type BoardCounts,
-  classifyPresence,
   readBoardCounts,
   requireConfig,
   type SeatPresence,
+  seatPresence,
 } from "./team-support.ts";
 
 interface StatusData {
@@ -48,34 +47,24 @@ export const teamStatusCommand = defineAnthillCommand({
     const channel = (ctx.args.channel as string | undefined) || config.channel;
     const warnings: string[] = [];
 
-    let present: string[] = [];
-    let humans: string[] = [];
-    // Three states, not a list that is empty for two unrelated reasons — the
-    // same rule as `positionState` and `down`'s guard (seams.md Contract 6(c)).
-    let presence: SeatPresence["state"] = "unknown";
-    try {
-      const grapevineCli = resolveCoordCli("grapevine");
-      const who = await execCoord(grapevineCli, ["who", channel]);
-      const parsed = parseJsonLine<{
-        daemon?: boolean;
-        subscribers?: string[];
-        humans?: string[];
-      }>(who.stdout);
-      const classified = classifyPresence(
-        { ok: who.ok, stderrLine: firstErrorLine(who.stderr, "could not read channel") },
-        parsed,
-      );
-      presence = classified.state;
-      if (classified.state === "unknown") {
-        warnings.push(`presence unavailable: ${classified.reason}`);
-      } else if (classified.state === "present") {
-        present = classified.seats;
-      }
-      // Humans ride the same payload but are not part of the presence verdict —
-      // read them whenever the payload parsed at all.
-      humans = [...new Set(parsed?.humans ?? [])].sort();
-    } catch (err) {
-      warnings.push(`presence unavailable: grapevine CLI unresolved: ${(err as Error).message}`);
+    // Presence comes from `seatPresence`, NOT from an inline grapevine read.
+    //
+    // This command had its own SECOND copy of the presence logic, so the fix
+    // that made `down` span both wires left `status` still single-wire: it
+    // reported `presence: "none"` with two seats demonstrably on comms. Nothing
+    // is destroyed by a wrong `status` — but the convene checklist and the
+    // session brief both name it as how a lead checks the team, so the failure
+    // is a lead reading "nobody is here" and concluding teardown is safe, which
+    // is precisely the conclusion `down` now refuses.
+    //
+    // Two copies of one verdict is the defect; patching the second copy would
+    // have left the defect and removed its symptom. Found by the lead against a
+    // running session, one command outside the card that fixed the first copy.
+    const { presence: classified, humans } = await seatPresence(channel, config);
+    const presence: SeatPresence["state"] = classified.state;
+    const present = classified.state === "present" ? classified.seats : [];
+    if (classified.state === "unknown") {
+      warnings.push(`presence unavailable: ${classified.reason}`);
     }
 
     const { board, title: boardTitle, warning: boardWarning } = await readBoardCounts();

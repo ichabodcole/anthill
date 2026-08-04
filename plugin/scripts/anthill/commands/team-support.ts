@@ -262,18 +262,33 @@ export function classifyPresence(
  * killed the panes. `--force` is where "tear down anyway" belongs — a human
  * saying so, not a guard guessing on our behalf.
  */
+export interface TeamPresence {
+  presence: SeatPresence;
+  /** Humans watching the VINE. Not part of the presence verdict — they are
+   * observers, not seats — but read from the same payload, which is why this
+   * rides along rather than costing a second call. */
+  humans: string[];
+}
+
 export async function seatPresence(
   channel: string,
   config?: ResolvedConfig,
-): Promise<SeatPresence> {
+): Promise<TeamPresence> {
   let vine: SeatPresence;
+  let humans: string[] = [];
   try {
     const grapevineCli = resolveCoordCli("grapevine");
     const who = await execCoord(grapevineCli, ["who", channel]);
+    const parsed = parseJsonLine<{
+      daemon?: boolean;
+      subscribers?: string[];
+      humans?: string[];
+    }>(who.stdout);
     vine = classifyPresence(
       { ok: who.ok, stderrLine: firstErrorLine(who.stderr, "could not read channel") },
-      parseJsonLine<{ daemon?: boolean; subscribers?: string[] }>(who.stdout),
+      parsed,
     );
+    humans = [...new Set(parsed?.humans ?? [])].sort();
   } catch (err) {
     vine = { state: "unknown", reason: `grapevine CLI unresolved: ${(err as Error).message}` };
   }
@@ -281,12 +296,16 @@ export async function seatPresence(
   // point. Returning the vine's verdict alone here would be the original bug
   // with an extra step: a one-wire answer presented as a team-wide one.
   if (!config) {
-    return vine.state === "none"
-      ? {
-          state: "unknown",
-          reason: "comms wire not consulted (no config) — vine alone reported nobody",
-        }
-      : vine;
+    return {
+      presence:
+        vine.state === "none"
+          ? {
+              state: "unknown",
+              reason: "comms wire not consulted (no config) — vine alone reported nobody",
+            }
+          : vine,
+      humans,
+    };
   }
-  return combinePresence(vine, commsPresenceFor(config, channel));
+  return { presence: combinePresence(vine, commsPresenceFor(config, channel)), humans };
 }

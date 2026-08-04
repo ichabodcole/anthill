@@ -92,7 +92,7 @@ export const teamDownCommand = defineAnthillCommand({
     // Config is passed so presence spans BOTH wires. Without it this reads the
     // vine alone and reports a confident "nobody" on a comms-only session —
     // which is the defect, on the one command that kills panes.
-    const presence = await seatPresence(config.channel, config);
+    const { presence } = await seatPresence(config.channel, config);
     if (shouldBlockTeardown(presence, force)) {
       // Two distinct refusals. They must not share a sentence: one says who is
       // still working, the other says we could not find out — and a reader who
