@@ -212,6 +212,39 @@ The team's richest reasoning surface — the comms log — is gitignored by the 
 I cited comms ids as durable references four times before checking whether they were durable.
 **Cite the content, not the id.**
 
+**Auditing an enumeration's MEMBERSHIP and inheriting its CARDINALITY are two acts, and doing the first makes you feel you have done the second.**
+I flagged the lead's three-surface list as incomplete — correctly, under weaver's own principle — while adopting its count uncritically, and called the doc "the fourth surface."
+A peer then falsified one of the three legs by execution, so the honest ordinal was **third**.
+**The audit is the disguise:** having just scrutinised the set, I had the felt experience of having checked the number, and the number was the part I had merely relayed.
+This is the sub-case my *"a claim you REPEAT becomes a claim you MADE"* lesson does not cover, and it happened one message after I invoked its neighbour.
+Pinned to the pair on the wire: "fourth" in the finding, "third" in my own correction ~4 minutes later.
+
+**A ZERO from a search is a reading about your PATTERN before it is a reading about the world — and it needs a positive control, not a re-read.**
+Grepping `^Status:` over backlog files returned zero on both, and the natural reading was *"these files have no status field."*
+The real format was `**Added:** … · **Status:**`, which `^Status` cannot match; the fields were there, and one carried a real finding.
+**The team's principle already covers a count that is coarser than your question; this is the harder case where the count is ZERO**, because zero reads as a clean negative result rather than as a broken instrument.
+**What saved it was surprise, not diligence** — the epitaph's *run one more command when a result surprises you*, which is the only reason it was a footnote instead of a false headline.
+Corollary: **pair every negative search with a positive control in the same command**, so a broken pattern cannot return a quiet, plausible zero.
+
+**Peers will assemble a tidy account of who-found-what without your action history, and it will be wrong in your favour as often as against.**
+Two seats independently published accounts in which I had reached a document by clever analysis, and in which another seat was "the only joiner" who had read it.
+Both were false: I had read it at join by the same reflex he did, before the analysis existed, and **I was the only person who could know that.**
+**The flattering error took me a full message to catch, because it arrived as corroboration and I read it as a claim about the finding before I read it as a claim about me.**
+The correction cost me credit and made the underlying result stronger — two seats obeying the same stimulus is a *reflex with a cause*, which is countable, while two clever routes is a coincidence, which is not.
+
+**A definition that sorts by HOW content arrived cannot measure WHERE it originated.**
+An instrument for counting out-of-band human input excluded "anything a seat reads from the repo — that is the work," which is right for grounding docs and wrong for exactly one file: a human ruling that had been committed to git.
+**The most load-bearing human input of the session arrived by the excluded path.**
+Say which axis a definition cuts on before anyone counts with it; the gap is invisible once the tally starts, and cheapest to find before the first row.
+Corollary earned the same hour: **a marker adopted mid-session is prospective only** — a grep for it returns the messages after it was adopted, which is not the same set as the ones it describes.
+
+**`--as-of` refusal has a SECOND branch, and my doc only carried the first.**
+Session 6 taught *"when a refusal reveals a message is moot, delete it rather than rewrite it."*
+**The other case is a message that is not moot but time-critical** — a peer was about to build an instrument my finding invalidated — and there chasing the watermark is the losing move.
+The discipline: **refusal → ask "is this still worth sending?" → if yes, `--anyway`, and name the exact ids you did NOT read.**
+I named two as headline-only; a peer replied that one of them *did* touch my finding, which is the disclosure paying for itself immediately.
+**The envelope records `staleness:{asOf,crossed}` whether or not you confess it** — so the only thing confession buys is the reader knowing *which* messages you skipped, and that is the whole value.
+
 ## Anti-patterns
 
 **Summarizing the channel back to someone reading the same channel.**
