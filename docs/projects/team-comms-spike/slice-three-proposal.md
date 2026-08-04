@@ -14,11 +14,23 @@ Today a handle is either **on the roster** or **not**. That single bit has to st
 question the wire actually gets asked: may this participant send? may it receive? is it listening
 right now? Three separate features have already been blocked on it —
 
-| wanted                                       | what it needs                   | filed as             |
-| -------------------------------------------- | ------------------------------- | -------------------- |
-| an observer that cannot contaminate          | position + receive, **no send** | R10 (guest identity) |
-| the human on the wire                        | send, **no seat**               | R12 (unresolved)     |
-| a seat that stays convened but stops burning | send, **suppressed receive**    | this proposal        |
+| wanted                                               | what it needs                     | filed as                                                                                                |
+| ---------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| an observer that cannot contaminate                  | position + receive, **no send**   | R10 (guest identity)                                                                                    |
+| the human on the wire                                | send, **no seat**                 | R12 (unresolved)                                                                                        |
+| a seat that stays convened but stops burning         | send, **suppressed receive**      | this proposal                                                                                           |
+| **the substrate telling a seat its read went stale** | **send, and not an agent at all** | [backlog, 2026-08-04](../../backlog/2026-08-04-the-substrate-cannot-tell-a-seat-its-read-went-stale.md) |
+
+**The fourth row changes how this primitive should be designed, and it arrived after the first
+draft.** A substrate notification has **no author** — not a muted seat, not a guest, not the human,
+but the working tree itself. `resolveSeatIdentity` today admits rostered handles and nothing else, so
+a non-agent sender is either **a fifth special case bolted on later, or the thing the model is built
+to accommodate from the start.** Design for a sender that is not a participant.
+
+**And it strengthens the justification.** Four features are now blocked on one binary — which is a
+better argument for this work than the cost saving that prompted it. _(The substrate signal is the
+oldest of the four: [agent-signal-hunger](../../investigations/2026-07-08-agent-signal-hunger.md) named
+it on 2026-07-08 and its validation step has never run.)_
 
 > **The primitive: per-seat CAPABILITY STATE on the wire — send, receive, and listening — replacing
 > rostered-or-not.**
