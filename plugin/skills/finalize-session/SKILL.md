@@ -80,6 +80,32 @@ _live_. Don't skip it on a real session.
      and a stale prediction is worse than a stale lesson because it commissions work against a world
      that has already moved.
    - Your scratch is **disposable after synthesis** — the durable form is the seat doc.
+   - **⚠ WRITE YOUR EPITAPH — LAST, and it goes FIRST in the doc.** One sentence at the top of
+     `.anthill/dev/<handle>.md`, under the seat header and **above "Who I am"**: the single thing you
+     want the next holder of this seat to know, above all else. _It has to be first or it is not an
+     epitaph, it is an appendix._
+     - **Exactly one thing.** The whole discipline is the selection — everything the seat knows
+       competes for the slot and one wins. **Write it after synthesis**, because you cannot know
+       which it is until then, and **address it to your successor in the second person**: they will
+       not remember this session, and they are the only reader who matters.
+     - **The selection test:** _what would go wrong if the next instance did not know this?_ If the
+       answer is _"nothing specific, but they'd be poorer"_, it is a hard-won lesson and it already
+       has a home lower in the doc. **The epitaph is for the thing whose absence produces a concrete,
+       recurring failure.**
+     - **Expect the technical candidate to lose.** Run across six seats, **every** one that won was
+       about disposition — what this seat must refuse, what it will be tempted to defer to, what
+       nobody else will tell it. Not because the technical answers were wrong: **the technical
+       surface will have moved by the time anyone reads it, and the shape of how this seat goes wrong
+       will not.**
+     - **Superseding a predecessor's epitaph does not delete it.** Move it to
+       `## Epitaphs — the lineage` at the bottom, dated, **and say why yours replaces it.** An
+       epitaph that is still true does not get demoted for being old — and **"still true" is a real
+       verdict to reach**: keeping a predecessor's because it kept earning itself is a stronger
+       finalize than minting a fresher one that says less.
+     - **Why this is a gated beat and not a matter of taste:** it is the one artifact where
+       session-end loss is **total**. There is no scratch to recover it from and no peer who can
+       write it for you, so it happens here or it silently never happens. **It is also stigmergy's
+       sharpest form** — curation forced to n=1, chosen by the only instance qualified to choose it.
    - **Land your own seat doc yourself** — with the land command `anthill join <you>` emitted, passing
      your own doc as the path. **It already carries your project's gate in front of the commit and reads
      the message from a file (`-F`); do not retype it as an inline `-m`.** A synthesis message is exactly
@@ -289,6 +315,12 @@ it has gone wrong.**
      **is any Q1/Q2 answer carried only by everyone agreeing?** If it has no artifact, no number and
      no count behind it, either attach one or label it as testimony. A retro that skips this is the
      one that reads well and cannot be checked.
+   - ◻ **Every seat wrote its EPITAPH** — one sentence at the top of its own doc, above "Who I am",
+     or an explicit _"keeping my predecessor's, because it is still true"_ with the reason. **Gate the
+     teardown on this the way you gate the synthesis confirmations:** it is the one artifact with no
+     scratch to recover it from and no peer who can write it, so a seat that drops off without one
+     takes it with it. **A silent absence is the expected failure here** — ask each seat to say which
+     it did, and treat "kept the predecessor's" as a complete answer, not a skipped beat.
    - ◻ **Every seat landed its OWN doc** — with the land command its own `anthill join` emitted (gate
      and commit in one, message from a file), never `git add -A` and never an inline `-m` for a body
      containing backticks. The `--as` it carries stamps the seat trailer, and because each seat runs its

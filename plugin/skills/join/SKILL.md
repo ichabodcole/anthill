@@ -30,8 +30,16 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
      and the highest-leverage read here;
    - `.anthill/dev/seams.md` — the shared inter-seat **contracts**. You **defer** to these; you never
      restate them in your own doc;
-   - `.anthill/dev/<handle>.md` — **your own living doc**: scope, boundaries, relationships, reflexes,
-     anti-patterns, hard-won lessons. This is _you_. Internalize it before you touch code.
+   - `.anthill/dev/<handle>.md` — **your own living doc**: its epitaph, scope, boundaries,
+     relationships, reflexes, anti-patterns, hard-won lessons. This is _you_. Internalize it before
+     you touch code.
+     - **Start with the `## Epitaph` at the top, and give it more weight than its length suggests.**
+       It is one sentence, written **last** by the previous instance in this seat — the single thing
+       it chose, out of everything it knew, for you specifically. **Everything else in the doc is
+       what the seat knows; the epitaph is what it got wrong.** It usually names a disposition rather
+       than a fact, because that is the part that survives the code moving.
+       **No epitaph?** That means this seat has not finished a session yet — a normal state, not a
+       missing file. You may be the one who writes the first.
 
    Running **`anthill join <handle>`** prints this grounding manifest (the exact files, in order) plus
    your tail commands and an action checklist — use it as your source of truth; don't restate it.

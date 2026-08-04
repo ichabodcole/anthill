@@ -30,9 +30,12 @@ the next instance follows**.
 
 ## Three homes — where knowledge lives
 
-- **Taste → the seat doc** (`dev/<handle>.md`) — each seat's own face: scope + boundaries,
-  relationships, reflexes, anti-patterns, hard-won lessons. Opinionated. **Capture judgments, not
-  file maps** — the reasoning and the generalizable lesson, never a lesson-less event.
+- **Taste → the seat doc** (`dev/<handle>.md`) — each seat's own face: **its epitaph**, scope +
+  boundaries, relationships, reflexes, anti-patterns, hard-won lessons. Opinionated. **Capture
+  judgments, not file maps** — the reasoning and the generalizable lesson, never a lesson-less event.
+  **The epitaph is written last and read first:** one sentence, chosen at finalize out of everything
+  the seat knows, addressed to the next instance. It is the one line that must survive if nothing
+  else does.
 - **Truth → `dev/seams.md`** — the contracts _between_ seats, stated **once**, owned by the
   authoritative seat. Seat docs **point** at it, never restate it.
 - **Proof → the tests** — executable where it exists. A lesson pinned to a green test can't rot.
