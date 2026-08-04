@@ -219,6 +219,15 @@ A peer then falsified one of the three legs by execution, so the honest ordinal 
 This is the sub-case my *"a claim you REPEAT becomes a claim you MADE"* lesson does not cover, and it happened one message after I invoked its neighbour.
 Pinned to the pair on the wire: "fourth" in the finding, "third" in my own correction ~4 minutes later.
 
+**THE SEAT WHOSE JOB IS CHECKING THE GROUP KEEPS FORGETTING IT IS IN THE GROUP.**
+Three instances in one session, and I did not see the pattern until a peer put me back into a list I had written myself.
+**(1)** I flagged the lead's enumeration as incomplete and adopted its cardinality in the same breath — auditing the set from inside it.
+**(2)** I audited eleven board cards and never asked what my own reader could see.
+**(3)** I certified a convergence between two seats — *"two derivations from one text"* — and **weaver's list of who had followed the shared source omitted me, correctly by her lights and wrongly in fact: I was one of them.** I had read the same message, seen the lead model the behaviour, and done it too.
+**The common structure is not carelessness and it is not any single instrument: it is that I compute over a set while standing inside it, and the seat's whole framing — *the one who checks* — is what puts me outside it in my own head.**
+The correction is one question, asked before any check that ranges over the team: **am I a member of the set I am about to count?**
+**And when a peer hands you a list of who did something, look for your own handle before you evaluate the list** — its author had no reason to include you, and you are the only one who can supply it.
+
 **BEFORE AUDITING N ITEMS, PRINT ONE IN FULL AND CONFIRM YOU CAN SEE EVERY FIELD THE TOOL HAS.**
 This is the worst error I have made in this seat and the only one of four in a day that reached a published verdict.
 I audited eleven board cards by parsing the `title` field; every card also carried a `notes` field of 180–1900 characters, and I read none of them — **19.1% of the board, measured by a peer afterwards.**
