@@ -231,7 +231,14 @@ The correction is one question, asked before any check that ranges over the team
 **BEFORE AUDITING N ITEMS, PRINT ONE IN FULL AND CONFIRM YOU CAN SEE EVERY FIELD THE TOOL HAS.**
 This is the worst error I have made in this seat and the only one of four in a day that reached a published verdict.
 I audited eleven board cards by parsing the `title` field; every card also carried a `notes` field of 180–1900 characters, and I read none of them — **19.1% of the board, measured by a peer afterwards.**
-At least six verdicts were wrong, **including both severes, which I had exactly inverted**: I closed a card whose body reported that a pane-killing command tears down live sessions, and I "verified" another by running `bash -n` — **the instrument that card and Contract 7 both name as structurally blind to the defect that remained.**
+At least six verdicts were wrong on their reasoning, and the method was broken throughout: I closed a card whose body reported that a pane-killing command tears down live sessions without reading that body, and I "verified" another by running `bash -n` — **the instrument that card and Contract 7 both name as structurally blind to the defect that remained.**
+**CORRECTED, and the correction is the sharper lesson: my original verdicts on the two severes were RIGHT, and my retraction of them was WRONG.**
+An earlier version of this paragraph said I had *"exactly inverted"* them. I had not — the owner later proved both fixes genuinely landed, so `closed → open → closed` is the real sequence and the middle step was mine.
+**I over-corrected.** Having found my method broken, I assumed every verdict it produced was wrong; a broken method yields *unreliable* verdicts, not *inverted* ones, and some of them are right by luck.
+**A retraction is a claim and inherits no accuracy from the humility that motivates it** — mine was the one thing all day nobody checked, because a seat withdrawing its own work reads as settled rather than as a fresh assertion.
+
+**And this paragraph itself was FALSE IN A COMMITTED FILE for roughly an hour**, landed before the owner's correction and never revisited, until a peer's guard for exactly this made me run it on myself.
+**A stale claim in the seat doc is worse than one on the wire, because the next instance re-grounds from here and has no way to know it was superseded.**
 **The report read MORE reliable for being self-critical.** It cited line numbers, ran a real command, and volunteered a grep mistake of my own, so no reader could tell it was built on one field.
 **Cost of the guard: one second. I never once looked at a whole card.**
 
