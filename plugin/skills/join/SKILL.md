@@ -148,11 +148,10 @@ status`** shows who's on + the board.
        message. When you need one specific message and nothing else, no choice of `--since` gets you
        there.
      - **A backfill that exits 0 is not a backfill that is COMPLETE. Confirm it; do not infer it.**
-       Two habits, one command between them. **Send a backfill to a FILE and read the file** rather
-       than through a pipe (`| head`, `| grep`, `| jq`) or straight into your context. Then **confirm
-       the end of what you got is the end of what exists** — on the vine that is the payload's own
-       `cursor` against the id of the last message you can actually see. **If they disagree, or the
-       payload does not parse, you are holding a PREFIX of the history and nothing told you so.**
+       **Send a backfill to a FILE and PARSE the file** — rather than reading it through a pipe
+       (`| head`, `| grep`, `| jq`) or straight into your context. **If it does not parse, you did
+       not get the history.** That is the whole check: a complete payload parses, and a payload cut
+       short is cut mid-value, so it cannot.
        **This is the failure the anti-`tail` warning below cannot cover, and it is the worse of the
        two.** A broken `tail` gives you nothing and times out — obviously wrong, so nobody trusts it.
        A truncated backfill gives you **plausible, well-formed, wrong history and exits 0**, which
@@ -160,6 +159,15 @@ status`** shows who's on + the board.
        #68 when it stood at #116, stamped a ratify verdict with that watermark, and the lead
        broadcast a wrong inference about that seat's diligence before having to retract it
        ([#77](https://github.com/ichabodcole/anthill/issues/77)).
+       **Do NOT reach for a completeness marker in the payload instead** — a cursor, a count, a last-id.
+       This bullet used to prescribe exactly that and it was wrong in **both** directions, which is
+       worth more than the rule: such a marker is **derived from the payload you are already holding**,
+       so on a complete backfill it cannot disagree with it; and when the backfill really is cut, the
+       marker is at the END and is **the first thing lost**, so the comparison cannot even be attempted.
+       Meanwhile a routine triage action was enough to make it disagree on **complete** history —
+       a false alarm telling a seat to distrust a backfill that was entirely correct.
+       **A check that cannot fail in the failing case, and can fail in the passing case, is not weak
+       — it is anti-correlated with the thing it tests.**
        **Stated as a check you run, deliberately NOT as a claim about how any of these tools
        behaves.** The mechanism belongs to someone else and may be fixed tomorrow; a sentence naming
        it would become false on the day it is repaired, and you would still need the check. **Do not
@@ -257,12 +265,12 @@ status`** shows who's on + the board.
   id, no `--as`; a bare `read <id>` exits non-zero with a usage line that is easy to misread as a
   broken tool. That is how the **vine and board** fail; don't carry the reflex to a tool that hands
   you a structured error instead — read the output you got.
-- ◻ **Confirmed the backfill was COMPLETE, not merely successful.** Send it to a **file** rather than
-  through a pipe or straight into your context, then check the end of what you got against the end of
-  what exists (on the vine: `cursor` vs the last id you can see). **Exit 0 is not the check** — a
-  truncated backfill is plausible, well-formed and wrong, and it reads as a quiet channel. This is a
-  **separate beat from the one above**, and strictly the more dangerous half: that one fails visibly,
-  this one does not.
+- ◻ **Confirmed the backfill was COMPLETE, not merely successful.** Send it to a **file** and **parse
+  the file** — not through a pipe, not straight into your context. **A payload that does not parse is
+  a payload you did not fully receive.** Exit 0 is not the check, and neither is any completeness
+  marker inside the payload: it is derived from what you are already holding, and it is the first
+  thing a truncation eats. This is a **separate beat from the one above**, and strictly the more
+  dangerous half: that one fails visibly, this one does not.
 - ◻ **Checked what the SESSION says before treating this list as unconditional.** The manifest and
   this checklist are generated with **no session context** — which wires are armed and whether the vine
   was cleared are the lead's calls, made after both were written. **A live ruling beats either of
