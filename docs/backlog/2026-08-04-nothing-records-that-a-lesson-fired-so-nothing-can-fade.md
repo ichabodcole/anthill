@@ -19,6 +19,36 @@ pheromone — it is an archive.**
 **And `git log --numstat` counts an edited line as one add plus one remove**, so genuine _deletion_ is
 well below that 11%. Re-runnable: `git log --numstat --format="" -- .anthill/dev/<file>.md`.
 
+### ⚠ It is not this project's habit. It is the SYSTEM's shape — measured across all 7 footprints
+
+`artifact:` Every repo with an `.anthill/` on this machine, same method:
+
+| repo          | added      | removed   | current    | del-rate |
+| ------------- | ---------- | --------- | ---------- | -------- |
+| dream-flute   | 7,312      | 50        | **7,262**  | **0.7%** |
+| story-loom    | 3,187      | 493       | 2,694      | 15.5%    |
+| **anthill**   | 2,838      | 309       | 2,529      | 10.9%    |
+| media-buffet  | 2,187      | 138       | 2,049      | 6.3%     |
+| operator-mono | 1,984      | 420       | 1,564      | 21.2%    |
+| Spellbook     | 1,868      | 116       | 1,752      | 6.2%     |
+| media-forge   | 904        | 143       | 761        | 15.8%    |
+| **total**     | **20,280** | **1,669** | **18,611** | **8.2%** |
+
+**Seven of seven grow monotonically.** No footprint anywhere has ever meaningfully pruned.
+
+**Read the rates the right way round.** A _high_ rate is ambiguous — `numstat` cannot tell a deletion
+from a rewrite, so operator-mono's 21% may be revision rather than pruning. **A LOW rate is
+unambiguous**, and **dream-flute at 0.7% means its docs are very nearly pure APPEND** — not even
+revised, let alone pruned, across their whole life.
+
+**The read cost is already being paid, and it is worst where the docs are oldest.** Largest single
+seat docs: `dream-flute/fathom.md` **1,519 lines**, `loom.md` 1,482, `prism.md` 1,365, `mosaic.md`
+1,336, plus an 853-line `seams.md`. **A seat there reads ~2,400 lines of accumulated history at every
+join** — before the SOP, principles, and product grounding. anthill's own largest is 531.
+
+**So dream-flute is the future of every other footprint**, and it is the repo to measure the
+firing-rate question against, not this one.
+
 **`finalize-session` step 2 already instructs this** — _"**Prune / compact** — keep it lean; shed
 stale lines"_ — and it has been executing at approximately **zero** for the project's life. **This is
 a mechanism with a measured 0% firing rate**, which is the third such instruction found in two days
