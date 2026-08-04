@@ -19,9 +19,12 @@ import {
  * destructive command, which is worse than either prediction.
  */
 describe("commsPresence — a live follower is presence; an unchecked one is not absence", () => {
+  // `hasRecord`, not a lag state: presence asks "is there a follower and is it
+  // alive". Keying it on a lag value is what let the F1 fix silently turn every
+  // unchecked follower into an absence, one commit after this guard landed.
   const row = (handle: string, state: string, followerAlive: boolean | null) => ({
     handle,
-    state,
+    hasRecord: state !== "never-followed",
     followerAlive,
   });
 

@@ -301,7 +301,26 @@ export type PositionState =
 export function positionState(head: number, position: SeatPosition | null): PositionState {
   if (position === null) return { state: "never-followed" };
   const behindBy = head - position.emittedThrough;
-  if (behindBy <= 0) return { state: "current", emittedThrough: position.emittedThrough };
+  // INCOHERENT: a position AHEAD of the head is impossible for a live follower
+  // of THIS log, so the record does not describe this log. `never-followed` is
+  // the honest classification — the tool has no idea what this seat has seen,
+  // which is exactly what that state means (Contract 6(c)).
+  //
+  // This is the F1 defect, found by the lead at convene as the FIRST user of the
+  // instrument: the positions directory outlived the log it described, so
+  // `comms positions` reported six seats `current`, gap 0, against `head: 0` —
+  // five of whom had never existed on that log. `gap = head - emittedThrough`
+  // was NEGATIVE (0 − 389) and the old `behindBy <= 0` silently rounded it into
+  // the single most reassuring state, on the wire whose entire purpose is to
+  // stop silence being mistaken for safety.
+  //
+  // Deliberately NOT a fix for Contract 6(e) (a live follower whose log is
+  // swapped underneath it) — that needs `follow` to record a log identity, which
+  // is a revision of 6(a). This changes only how an already-recorded value is
+  // CLASSIFIED, so it carries none of that cost. The expensive half is carried,
+  // not built.
+  if (behindBy < 0) return { state: "never-followed" };
+  if (behindBy === 0) return { state: "current", emittedThrough: position.emittedThrough };
   return { state: "behind", emittedThrough: position.emittedThrough, behindBy };
 }
 
@@ -326,6 +345,18 @@ export interface SeatPositionRow {
    * means we could not check. Pids are reused, so this narrows a question
    * rather than answering it — it never contradicts `state`. */
   followerAlive: boolean | null;
+  /**
+   * A position record EXISTS but cannot describe this log — its `emittedThrough`
+   * is ahead of the head, which is impossible for a live follower. TOTAL (always
+   * present) so its `false` is readable as an observation rather than as an
+   * unpopulated field.
+   *
+   * The state is still `never-followed`, honestly: the tool has no idea what the
+   * seat has seen. This flag preserves the DIAGNOSTIC that the old code threw
+   * away by rounding a negative gap up to `current` — the difference between
+   * "nobody ever followed" and "a record from another log survived here".
+   */
+  staleRecord: boolean;
 }
 
 /**
@@ -381,13 +412,25 @@ export function buildPositionsReport(
   return seats.map((seat) => {
     const position = positions.get(seat.handle) ?? null;
     const state = positionState(head, position);
+    // A record classified `never-followed` must not also report a number: the
+    // row would then assert both "no idea what this seat has seen" and a
+    // specific high-water mark, and a reader would believe the number. Derived
+    // from the STATE rather than from the record's existence, so the two can
+    // never disagree.
+    const incoherent = position !== null && state.state === "never-followed";
     return {
       handle: seat.handle,
       role: seat.role,
       state: state.state,
-      emittedThrough: position ? position.emittedThrough : null,
+      emittedThrough: state.state === "never-followed" ? null : (position?.emittedThrough ?? null),
       gap: state.state === "never-followed" ? null : state.state === "behind" ? state.behindBy : 0,
       followerAlive: position && alive ? alive(position.pid) : null,
+      // TOTAL, not optional: an absent flag would be unreadable (Contract 5(a)'s
+      // rule). `true` is the mechanical tell nothing looked at — it says a record
+      // EXISTS and does not describe this log, which is different from never
+      // having followed, even though both are honestly `never-followed` about
+      // what the tool KNOWS.
+      staleRecord: incoherent,
     };
   });
 }

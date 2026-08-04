@@ -8,7 +8,7 @@
  */
 
 import { emitError, type OutputFormat } from "../agent-layer.ts";
-import { buildPositionsReport, readPosition } from "../comms.ts";
+import { readPosition } from "../comms.ts";
 import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
 import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
 
@@ -131,12 +131,20 @@ export type SeatPresence =
  * again), so it yields `unknown` rather than contributing to an absence.
  */
 export function commsPresence(
-  rows: { handle: string; state: string; followerAlive: boolean | null }[],
+  rows: { handle: string; hasRecord: boolean; followerAlive: boolean | null }[],
 ): SeatPresence {
   const live = rows.filter((r) => r.followerAlive === true).map((r) => r.handle);
   if (live.length > 0) return { state: "present", seats: [...new Set(live)].sort() };
   // A record we could not check is not evidence of absence.
-  const unchecked = rows.filter((r) => r.state !== "never-followed" && r.followerAlive === null);
+  //
+  // Keyed on `hasRecord`, NOT on a lag state. It was briefly keyed on
+  // `state !== "never-followed"`, and the F1 fix — which reclassifies an
+  // incoherent record as `never-followed` — silently turned every unchecked
+  // follower into an ABSENCE, i.e. a fail-open regression on the pane-killing
+  // command, introduced one commit after the guard itself. Presence asks "is
+  // there a follower and is it alive"; it must never be derived from a value
+  // that means something about LAG.
+  const unchecked = rows.filter((r) => r.hasRecord && r.followerAlive === null);
   if (unchecked.length > 0) {
     return {
       state: "unknown",
@@ -194,13 +202,20 @@ function pidAlive(pid: number): boolean | null {
 /** Read the comms wire's view of who is here. Any failure is `unknown`, never absence. */
 function commsPresenceFor(config: ResolvedConfig, channel: string): SeatPresence {
   try {
-    const positions = new Map(
-      config.seats.map((s) => [s.handle, readPosition(config.teamDirPath(), channel, s.handle)]),
+    // Deliberately NOT via `buildPositionsReport`: that report is about LAG, and
+    // borrowing it meant inventing a `head` to satisfy a parameter presence does
+    // not care about. The invented value then changed the lag classification and
+    // broke this guard. Presence reads the two things it actually needs.
+    return commsPresence(
+      config.seats.map((s) => {
+        const position = readPosition(config.teamDirPath(), channel, s.handle);
+        return {
+          handle: s.handle,
+          hasRecord: position !== null,
+          followerAlive: position ? pidAlive(position.pid) : null,
+        };
+      }),
     );
-    // head 0 is fine: presence asks who is FOLLOWING, not how far along they
-    // are, so the report's lag half is irrelevant here and its liveness half is
-    // the whole point.
-    return commsPresence(buildPositionsReport(0, config.seats, positions, pidAlive));
   } catch (err) {
     return { state: "unknown", reason: `comms positions unreadable: ${(err as Error).message}` };
   }
