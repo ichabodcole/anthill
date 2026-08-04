@@ -595,6 +595,42 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
     expect(JSON.stringify(grounding)).toContain("forager.md");
   });
 
+  /**
+   * D3 — the origin strip, asserted on the REAL EMITTED MANIFEST at last.
+   *
+   * `origin` is internal bookkeeping (it picks which remedy a missing doc gets)
+   * and must never reach the payload. `toManifestEntry` was pinned in both
+   * directions, but the `.map` CALL SITE in `run()` was not: reverting it to
+   * `.map(e => e)` leaks `origin` into the real manifest with tsc, biome and the
+   * full suite GREEN — tsc cannot see it, because there is no excess-property
+   * check on a non-literal `.map` result even under a `GroundingEntry[]`
+   * annotation.
+   *
+   * IT WAS PARKED AS UNTESTABLE, AND S8-1 DISSOLVED THE BLOCKER RATHER THAN
+   * SOLVING IT. The card (t-ca407189) reasoned — correctly, against the code as
+   * it then stood — that reaching the real emission required a resolvable
+   * spellbook cache, which CI does not have; the alternative was injecting a
+   * seam, which is the trap that needs pinning to the production path. **Making
+   * a missing spellbook non-fatal means the manifest now emits WITHOUT one**, so
+   * the honest assertion is available for free and needs no seam at all.
+   *
+   * Worth stating because the general form is cheap: a fix aimed at one defect
+   * can retire another defect's STATED IMPOSSIBILITY, and nothing re-reads a
+   * card to notice. This one was found by re-reading the card, not by the tree.
+   */
+  test("D3 — `origin` is stripped from the emitted manifest, asserted on the real payload", () => {
+    const r = joinWithoutSpellbook();
+    const grounding = r.envelope?.data?.grounding as Array<Record<string, unknown>>;
+    // Positive anchor first: we are looking at real entries with the real keys,
+    // so this cannot pass by finding an empty list (Contract 4 assertion-(4)).
+    expect(grounding.length).toBeGreaterThan(0);
+    for (const entry of grounding) {
+      expect(Object.hasOwn(entry, "path")).toBe(true);
+      expect(Object.hasOwn(entry, "exists")).toBe(true);
+      expect(Object.hasOwn(entry, "origin")).toBe(false);
+    }
+  });
+
   // The envelope is the agent's whole input. A stray warning line printed
   // beside it makes `JSON.parse(stdout)` throw for every real caller while a
   // last-line-picking assertion stays green — the M1 leak, in a new place.
