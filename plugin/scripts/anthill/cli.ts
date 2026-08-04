@@ -19,6 +19,7 @@
  * wants `--format` must declare it locally.
  */
 
+import { fileURLToPath } from "node:url";
 import { emit, emitError, resolveFormat } from "./agent-layer.ts";
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
@@ -229,11 +230,34 @@ async function runCli(): Promise<void> {
   const versionArgs = withoutFormat(rawArgs);
   if (versionArgs.length === 1 && (versionArgs[0] === "--version" || versionArgs[0] === "-v")) {
     const version = main.meta?.version ?? "";
+    // `source` — WHICH cli.ts is answering, not just what it calls itself.
+    //
+    // A version string alone cannot disambiguate two binaries that behave
+    // differently, and during dogfooding they routinely do: the PATH launcher
+    // resolves the highest CACHED RELEASE while this repo runs ahead of its own
+    // release, so both answered `1.7.1` while differing in at least two ways —
+    // the launcher had no `-F` (the flag our own emitted LAND string uses, so
+    // the string simply failed), and piped `--help` returned text from one and
+    // JSON from the other, i.e. they disagreed about the format decision itself.
+    //
+    // THE VERSION STRING DID NOT MERELY FAIL TO INFORM — IT ASSERTED SAMENESS.
+    // That is the defect this field closes: `version` answers "what release do I
+    // claim to be", `source` answers "which file is actually running", and only
+    // the second one distinguishes a repo checkout from a cached release.
+    //
+    // TOTAL, never conditional: a field present only when it looks interesting
+    // would make its absence unreadable (Contract 5(a)), and "absent" would be
+    // indistinguishable from an older binary that never had it — which is
+    // precisely the confusion this exists to end.
+    const source = fileURLToPath(import.meta.url);
     emit({
       format,
       command: "version",
-      data: { version },
-      renderText: () => version,
+      data: { version, source },
+      // The path goes in the human line too. A human comparing two shells is
+      // the ORIGINAL victim here, and telling them only in JSON would leave the
+      // audience that hit this defect exactly where they were.
+      renderText: () => `${version} (${source})`,
     });
     process.exit(0);
   }

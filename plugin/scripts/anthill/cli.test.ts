@@ -23,7 +23,8 @@
  */
 
 import { describe, expect, test } from "bun:test";
-import { resolve } from "node:path";
+import { existsSync } from "node:fs";
+import { isAbsolute, resolve } from "node:path";
 import { commandPath, main, sniffFormatValue } from "./cli.ts";
 import { defineCommand } from "./define.ts";
 
@@ -304,6 +305,42 @@ describe("M3 — the help/usage interceptors honour the format verdict", () => {
     const env = JSON.parse(run(["--version", "--format", "json"]).stdout);
     expect(env.ok).toBe(true);
     expect(env.data.version).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+
+  /**
+   * `--version` must say WHICH cli.ts answered, not only what it calls itself.
+   *
+   * Two binaries reported `1.7.1` while differing in at least two behaviours —
+   * the PATH launcher had no `-F`, the flag our own emitted LAND string uses, so
+   * the string failed outright; and piped `--help` returned text from one and
+   * JSON from the other. The version string did not merely fail to inform, it
+   * ASSERTED SAMENESS, and a seat reasonably read it as proof the two were
+   * interchangeable.
+   *
+   * Keyed on the DISCRIMINATING PROPERTY, not on a path literal: the assertion
+   * is that `source` resolves to a real, absolute cli.ts that EXISTS on disk —
+   * which is what makes two installs distinguishable — rather than on this
+   * checkout's path, which would be a souvenir of where the suite happened to
+   * run and would fail in CI, in a worktree, and from the cache.
+   */
+  test("--version says WHICH cli.ts answered, so two installs are distinguishable", () => {
+    const env = JSON.parse(run(["--version", "--format", "json"]).stdout);
+    const source = env.data.source as string;
+    expect(isAbsolute(source)).toBe(true);
+    expect(source).toEndWith("cli.ts");
+    // The path is only worth anything if it points at something real.
+    expect(existsSync(source)).toBe(true);
+    // TOTAL, not conditional — an absent `source` would be indistinguishable
+    // from an older binary that never emitted one, which is the exact confusion
+    // this field exists to end (Contract 5(a)).
+    expect(Object.hasOwn(env.data, "source")).toBe(true);
+  });
+
+  test("--version carries the source in TEXT too — the human is the original victim", () => {
+    // A human comparing two shells is who hit this. Telling only the JSON
+    // audience would leave them exactly where they were.
+    const { stdout } = run(["--version", "--format", "text"]);
+    expect(stdout).toMatch(/^\d+\.\d+\.\d+ \(.*cli\.ts\)/);
   });
 
   test("bare `help` under json emits the manifest as an ENVELOPE", () => {
