@@ -108,6 +108,9 @@ export interface ChecklistInput {
   /** Gitignored scratch path a seat writes its commit message to, so the body
    * never passes through a shell. */
   msgFileRel: string;
+  /** Absolute path to the emitting cli.ts, so the LAND string resolves to the
+   * binary that composed it rather than through PATH. */
+  cliPath: string;
 }
 
 /**
@@ -192,8 +195,24 @@ export function buildLandCommand(i: {
   handle: string;
   gate: string | undefined;
   msgFileRel: string;
+  /** Absolute path to the cli.ts that EMITTED this string. See below. */
+  cliPath: string;
 }): string {
-  const commit = `anthill commit --as ${i.handle} -F ${i.msgFileRel} <path>…`;
+  // FULLY RESOLVED, never a bare `anthill` — Contract 4(a), which this string
+  // was violating while the comms incantation beside it obeyed.
+  //
+  // A bare `anthill` resolves through PATH to the launcher, which picks the
+  // highest CACHED RELEASE. Measured on this machine: that launcher has no
+  // `-F`, so the string a seat is told to run VERBATIM fails outright — and it
+  // fails on the one flag that exists to stop a backticked message body being
+  // executed by the shell. A verifier declined to run it and was right to.
+  //
+  // Resolving to the emitting cli.ts makes the string self-consistent by
+  // construction: whatever binary composed the instruction is the binary that
+  // executes it, so the two can never disagree about which flags exist. That is
+  // the same guarantee `--version`'s `source` field reports, applied rather
+  // than merely observed.
+  const commit = `bun ${i.cliPath} commit --as ${i.handle} -F ${i.msgFileRel} <path>…`;
   const decision = decideGate(i.gate);
   // The returned value is A COMMAND OR NOTHING ELSE. It previously concatenated
   // the no-gate warning INTO the string under a label reading "LAND with this
@@ -275,7 +294,7 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // error carrying backticks — the defect this line exists to prevent, inside
     // the line that prevents it. A notice that cannot be run is not a safer
     // notice; it is an unusable command.
-    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel })}${(() => {
+    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel, cliPath: i.cliPath })}${(() => {
       const d = decideGate(i.gate);
       return d.composable ? "" : `\n  ${d.notice}`;
     })()}\n  Do NOT pipe the gate to \`tail\`/\`head\`/\`grep\` to shorten its output: \`&&\` would then test the FILTER's exit status, which is always 0, and your commit runs on a red gate while the guard is still visibly there. Redirect to a file and read that instead. Do NOT pass the body with \`-m\` if it contains backticks — the shell executes them before the tool sees them. Both of these defeated agents who had just read the warning against them.`,
@@ -506,8 +525,9 @@ export const teamJoinCommand = defineAnthillCommand({
 
     const seatDocRel = relative(root, config.seatDocPath(handle));
 
+    const cliPath = fileURLToPath(new URL("../cli.ts", import.meta.url));
     const commsIncantation = buildCommsIncantation({
-      cliPath: fileURLToPath(new URL("../cli.ts", import.meta.url)),
+      cliPath,
       channel,
       handle,
     });
@@ -515,6 +535,7 @@ export const teamJoinCommand = defineAnthillCommand({
     const checklist = buildChecklist({
       coord,
       commsIncantation,
+      cliPath,
       handle,
       channel,
       seatDocRel,

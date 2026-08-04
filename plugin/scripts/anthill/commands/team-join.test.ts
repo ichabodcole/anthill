@@ -18,7 +18,11 @@ import { cleanGitEnv } from "./test-support.ts";
 // exist because a third wording would be the next thing to fail — the guard has
 // to be a string we EMIT, not a rule we state.
 describe("buildLandCommand — the composition an agent cannot get wrong", () => {
-  const base = { handle: "forager", msgFileRel: ".anthill/scratch/forager/commit-msg.txt" };
+  const base = {
+    handle: "forager",
+    msgFileRel: ".anthill/scratch/forager/commit-msg.txt",
+    cliPath: "/plugin/scripts/anthill/cli.ts",
+  };
 
   // THE assertion. `bun run check | tail -6 && anthill commit …` reported a
   // failing gate and committed anyway, because `&&` tested `tail`'s status.
@@ -30,7 +34,7 @@ describe("buildLandCommand — the composition an agent cannot get wrong", () =>
 
   test("puts the gate BEFORE the commit, joined by &&", () => {
     expect(buildLandCommand({ ...base, gate: "bun run check" })).toBe(
-      "bun run check && anthill commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…",
+      `bun run check && bun ${base.cliPath} commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…`,
     );
   });
 
@@ -86,7 +90,7 @@ describe("buildLandCommand — the composition an agent cannot get wrong", () =>
     // The command carries no prose at all...
     expect(cmd).not.toMatch(/NO GATE CONFIGURED/);
     expect(cmd).toBe(
-      "anthill commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…",
+      `bun ${base.cliPath} commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…`,
     );
     // ...and the announcement still exists, on the decision the checklist renders.
     const d = decideGate(undefined);
@@ -111,7 +115,8 @@ describe("buildLandCommand — the composition an agent cannot get wrong", () =>
     expect(defeats.map((g) => decideGate(g).composable)).toEqual(defeats.map(() => false));
     expect(defeats.map((g) => buildLandCommand({ ...base, gate: g }))).toEqual(
       defeats.map(
-        () => "anthill commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…",
+        () =>
+          `bun ${base.cliPath} commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…`,
       ),
     );
   });
@@ -122,7 +127,7 @@ describe("buildLandCommand — the composition an agent cannot get wrong", () =>
   test("&& preserves failure, so it is allowed through", () => {
     expect(decideGate("tsc --noEmit && bun test").composable).toBe(true);
     expect(buildLandCommand({ ...base, gate: "tsc --noEmit && bun test" })).toStartWith(
-      "tsc --noEmit && bun test && anthill commit",
+      `tsc --noEmit && bun test && bun ${base.cliPath} commit`,
     );
   });
 
@@ -152,6 +157,7 @@ const base = {
   lead: "maestro" as string | undefined,
   gate: "bun run check" as string | undefined,
   msgFileRel: ".anthill/scratch/forager/commit-msg.txt",
+  cliPath: "/plugin/scripts/anthill/cli.ts",
 };
 
 /** Find the one checklist line starting with `prefix`, failing loudly if absent. */
@@ -475,13 +481,23 @@ describe("buildChecklist — the commit incantation carries the seat (attributio
   // one line's prefix encoded which line happened to carry it, and that is the
   // same "a test written when the set is complete encodes the set" trap that
   // already cost this file two cycles.
-  test("emits `anthill commit --as <handle>` fully resolved, not a template", () => {
+  test("emits the commit invocation fully resolved — a PATH, never a bare `anthill`", () => {
     const all = buildChecklist(base);
-    const carrier = all.filter((l) => l.includes(`anthill commit --as ${base.handle}`));
+    // RE-KEYED off the bare word `anthill`: the land string now resolves to the
+    // emitting cli.ts, because a bare `anthill` goes through PATH to the
+    // launcher — which on a dogfooding machine is a DIFFERENT binary with a
+    // different flag surface, and it lacked the very `-F` this line depends on.
+    // The rule the old literal was standing in for is "fully resolved, never a
+    // template", and that rule is now stronger, not weaker.
+    const carrier = all.filter((l) => l.includes(`commit --as ${base.handle}`));
     expect(carrier.length).toBeGreaterThan(0);
     for (const l of carrier) {
       expect(l).not.toContain("<handle>");
       expect(l).not.toContain("{handle}");
+      // THE ASSERTION THAT MATTERS NOW: no bare `anthill commit`, which would
+      // resolve through PATH to whatever release happens to be cached.
+      expect(l).not.toMatch(/(^|\s)anthill commit/);
+      expect(l).toContain(base.cliPath);
     }
   });
 
