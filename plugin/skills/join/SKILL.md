@@ -147,6 +147,23 @@ status`** shows who's on + the board.
        _now_, so on a channel peers are actively writing to it will eventually contain a peer's
        message. When you need one specific message and nothing else, no choice of `--since` gets you
        there.
+     - **A backfill that exits 0 is not a backfill that is COMPLETE. Confirm it; do not infer it.**
+       Two habits, one command between them. **Send a backfill to a FILE and read the file** rather
+       than through a pipe (`| head`, `| grep`, `| jq`) or straight into your context. Then **confirm
+       the end of what you got is the end of what exists** — on the vine that is the payload's own
+       `cursor` against the id of the last message you can actually see. **If they disagree, or the
+       payload does not parse, you are holding a PREFIX of the history and nothing told you so.**
+       **This is the failure the anti-`tail` warning below cannot cover, and it is the worse of the
+       two.** A broken `tail` gives you nothing and times out — obviously wrong, so nobody trusts it.
+       A truncated backfill gives you **plausible, well-formed, wrong history and exits 0**, which
+       reads as a quiet or stale channel. A seat that skipped this check read a channel as ending at
+       #68 when it stood at #116, stamped a ratify verdict with that watermark, and the lead
+       broadcast a wrong inference about that seat's diligence before having to retract it
+       ([#77](https://github.com/ichabodcole/anthill/issues/77)).
+       **Stated as a check you run, deliberately NOT as a claim about how any of these tools
+       behaves.** The mechanism belongs to someone else and may be fixed tomorrow; a sentence naming
+       it would become false on the day it is repaired, and you would still need the check. **Do not
+       generalise it into "these tools truncate"** — that widening has been falsified here before.
      - **NEVER use `tail` to catch up — use it only for the live Monitor.** `grapevine tail
 --from-start | grep …` looks like the obvious backfill and is **broken by construction**:
        `grep` block-buffers so a finite backfill never flushes, and a live `tail` holds the pipe
@@ -240,6 +257,12 @@ status`** shows who's on + the board.
   id, no `--as`; a bare `read <id>` exits non-zero with a usage line that is easy to misread as a
   broken tool. That is how the **vine and board** fail; don't carry the reflex to a tool that hands
   you a structured error instead — read the output you got.
+- ◻ **Confirmed the backfill was COMPLETE, not merely successful.** Send it to a **file** rather than
+  through a pipe or straight into your context, then check the end of what you got against the end of
+  what exists (on the vine: `cursor` vs the last id you can see). **Exit 0 is not the check** — a
+  truncated backfill is plausible, well-formed and wrong, and it reads as a quiet channel. This is a
+  **separate beat from the one above**, and strictly the more dangerous half: that one fails visibly,
+  this one does not.
 - ◻ **Checked what the SESSION says before treating this list as unconditional.** The manifest and
   this checklist are generated with **no session context** — which wires are armed and whether the vine
   was cleared are the lead's calls, made after both were written. **A live ruling beats either of
