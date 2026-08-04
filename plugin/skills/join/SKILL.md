@@ -257,9 +257,11 @@ status`** shows who's on + the board.
          **tracked** travels with it, including team docs, and **the commit history comes too**, so
          `git log` on the file under audit hands over the reasoning that produced it.
          _This paragraph used to claim the channel was out of reach because it was gitignored. That was
-         false, and it was worse than a wrong fact: it told you a precaution was unnecessary. It stood
-         for months because a false reassurance in a rarely-walked path gets no corrective feedback —
-         nobody had opened a cold reader locally until someone did, and it fell over immediately._
+         false, and it was worse than a wrong fact: it told you a precaution was unnecessary. **Duration
+         was never the point — it stood two days and four people repeated it in one afternoon.** A false
+         reassurance gets no corrective feedback from a path nobody walks: it is read while planning and
+         only tested by someone actually trying to reach the thing. The first person who tried knocked it
+         over immediately._
        - **So BUILD the surface instead of enumerating what to keep out of it.** Export just the
          artifact into a throwaway directory outside the repo and dispatch against that. **An
          exclusion list cannot be completed** — the source and the tests under audit carry your
