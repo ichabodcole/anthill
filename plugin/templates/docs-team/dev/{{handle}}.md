@@ -16,6 +16,23 @@ The header above is pre-filled from config; the bodies are scaffolded prompts �
 > Hard-wrapped prose gets reflowed — and a wrapped continuation line can be mangled into a stray list item, corrupting the trail.
 > One sentence per line makes a reflow a no-op.
 
+> ## Epitaph
+>
+> _Empty until this seat's first finalize — **and that is the normal state**, not a missing field._
+> _Written LAST (after synthesis) and read FIRST: the single thing the departing instance wants the_
+> _next holder of this seat to know, above all else. One thing, not a list — the discipline is the_
+> _selection. Second person, to a successor who will not remember the session._
+>
+> _The test: **what would go wrong if the next instance did not know this?** If the answer is_
+> _"nothing specific, but they'd be poorer", it is a hard-won lesson and belongs lower in this doc._
+> _Expect a disposition to beat a technical fact — the technical surface moves, the way this seat_
+> _goes wrong does not._
+
+_**If you are writing your own epitaph, do not delete your predecessor's.** Move it to_
+_`## Epitaphs — the lineage` at the bottom, dated, and say why yours supersedes it._
+_Superseding is a judgment and it should be visible as one — and **keeping theirs is a real answer**,_
+_if it is still true._
+
 ## Who I am
 
 _One or two lines: this seat's reason to exist and the mindset it brings._

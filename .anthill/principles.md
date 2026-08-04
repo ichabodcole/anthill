@@ -110,7 +110,18 @@ compliance. **Situational warnings need a mechanical guard, not better wording.*
 _Scar: prose guards went 0-for-4 in one session — a warning failed to stop the agent who had just
 read the file documenting it._
 
-## On communication
+## On enumerations
+
+**When you add a member to a category, the risk is not the new thing being wrong — it is every existing enumeration of that category silently becoming incomplete.**
+An enumeration does not advertise what it is missing, and the prose around it reads complete, so
+nobody re-reading it notices. **Adding a member is therefore a cascade event, not a local edit** —
+and the moment to ask *"what else lists these?"* is when you add it, not when something breaks.
+_Scar: four omissions in one session, four files, four authors — a design-of-record's schema section
+missing a field the code cited it by number for; a template directory missing the same field while
+`grep` returned five hits for the word in a different sense; a finalize ritual teaching a land
+invocation three times, one of them in its checklist, that a guard had already replaced; and an SOP's
+"what a seat doc contains" list written before the beat it omitted. **Every one was found by running
+a cascade check, none by reading.**_
 
 **A ruling must name what it did not rule on.**
 A long, authoritative message that silently omits someone's item is indistinguishable from one that

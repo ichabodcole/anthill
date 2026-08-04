@@ -43,6 +43,7 @@ import {
   type PositionState,
   parseLog,
   positionState,
+  readPosition,
   resolveSeatIdentity,
   type SeatPosition,
   type SeatPositionRow,
@@ -603,18 +604,6 @@ const POLL_MS = 400;
  * stream is the product. A read-only or full disk must not take down a seat's
  * wire in order to protect the ability to notice that a seat's wire went down.
  */
-/** This seat's last recorded position, or null if it has never followed. A
- * damaged file is treated as null: an unreadable position is not evidence of a
- * position, and the notice below must not report a gap it invented. */
-function readPosition(teamDir: string, channel: string, handle: string): SeatPosition | null {
-  try {
-    const path = commsPositionPath(teamDir, channel, handle);
-    if (!existsSync(path)) return null;
-    return JSON.parse(readFileSync(path, "utf8")) as SeatPosition;
-  } catch {
-    return null;
-  }
-}
 
 /**
  * What `follow` announces before it streams a single message.
@@ -899,6 +888,24 @@ const positionsCommand = defineCommand({
       process.exit(1);
     }
 
+    // READ ORDER IS LOAD-BEARING: positions FIRST, head SECOND.
+    //
+    // A live follower emits message N and records `emittedThrough: N`. If the
+    // head were snapshotted first, a message appended between the two reads
+    // makes a healthy follower look AHEAD of the head — and `positionState` now
+    // classifies ahead-of-head as an incoherent record. Reading the head last
+    // guarantees it is >= anything a position could have seen, so the benign
+    // race can only ever produce "behind by 1", which is self-correcting and
+    // alarms nobody.
+    //
+    // A pre-existing test asserted ahead-of-head is `current` and gave exactly
+    // this race as its reason. The reason was right; treating the symptom as
+    // normal was what hid F1. Ordering the reads removes the race instead, so
+    // the remaining negative case is genuinely impossible rather than tolerated.
+    const positions = new Map(
+      config.seats.map((s) => [s.handle, readPosition(config.teamDirPath(), channel, s.handle)]),
+    );
+
     let head: number;
     let warnings: string[];
     try {
@@ -909,10 +916,6 @@ const positionsCommand = defineCommand({
       emitError({ format, command: "comms positions", error: (err as Error).message });
       process.exit(1);
     }
-
-    const positions = new Map(
-      config.seats.map((s) => [s.handle, readPosition(config.teamDirPath(), channel, s.handle)]),
-    );
     // Advisory liveness. `process.kill(pid, 0)` throws ESRCH for a dead pid and
     // EPERM for one we may not signal — EPERM means it EXISTS, so that branch is
     // alive, not unknown. Anything else we decline to guess about.

@@ -70,7 +70,12 @@ async function loadCommand(opts: { presence: SeatPresence; sessionExists: boolea
   // red at once — looking like a rejected change rather than a harness gap.
   mock.module("./team-support.ts", () => ({
     requireConfig: () => ({ channel: "test-channel", seats: [], grounding: [] }),
-    seatPresence: async () => opts.presence,
+    // Returns the {presence, humans} envelope, matching production. `seatPresence`
+    // gained the humans field when `status`'s duplicate copy of this logic was
+    // folded into it; this mock going stale is the harness telling the truth,
+    // and it is why the mock mirrors the real SHAPE rather than just the value
+    // the assertions read.
+    seatPresence: async () => ({ presence: opts.presence, humans: [] }),
   }));
 
   // process.exit would abort the test runner, so it is stubbed — but it MUST

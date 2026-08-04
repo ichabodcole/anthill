@@ -292,10 +292,79 @@ describe("positionState — the slice-two primitive's discriminator", () => {
     expect(positionState(10, ancient).state).toBe("current");
   });
 
-  test("a follower AHEAD of the head is current, not negatively behind", () => {
-    // Reachable in practice: the follower emits, then reads the head an instant
-    // before another append. `behindBy: -1` would be a number nobody can act on.
-    expect(positionState(9, pos(10)).state).toBe("current");
+  /**
+   * REVISED, and the old version's REASON is why — it is not being discarded.
+   *
+   * It asserted ahead-of-head is `current`, on the grounds that a follower can
+   * emit and then read the head an instant before another append. **That race is
+   * real.** But treating its symptom as normal is exactly what hid F1: at
+   * convene, six seats' records from a previous session survived the log's
+   * deletion, `head` was 0, `gap` was 0 − 389 = **negative**, and every one of
+   * them reported `current`, gap 0 — five of whom had never existed on that log.
+   * **Rounding a negative up to the most reassuring state, on the wire whose
+   * whole purpose is to stop silence being mistaken for safety.**
+   *
+   * So the race is CLOSED rather than tolerated: `comms positions` now reads
+   * positions FIRST and the head SECOND, guaranteeing the head is >= anything a
+   * position could have seen. The benign race can now only produce "behind by
+   * 1"; a remaining negative is genuinely impossible for a live follower, and
+   * `never-followed` is the honest classification because the tool has no idea
+   * what that seat has seen.
+   */
+  test("a follower AHEAD of the head is an INCOHERENT record — never-followed, not current", () => {
+    expect(positionState(9, pos(10)).state).toBe("never-followed");
+  });
+
+  test("F1: the convene scenario — a surviving record against a deleted log", () => {
+    // The exact numbers the lead measured as the instrument's first user.
+    const row = buildPositionsReport(
+      0,
+      [{ handle: "maestro", role: "lead" }],
+      new Map([["maestro", { ...pos(389), handle: "maestro", pid: 424242 }]]),
+      () => false,
+    )[0];
+    // Every field must refuse to reassure. `gap: 0` and `emittedThrough: 389`
+    // were BOTH lies here — the second is what would make a reader believe the
+    // first, so the row may not report a number it cannot stand behind.
+    expect(row).toMatchObject({
+      state: "never-followed",
+      gap: null,
+      emittedThrough: null,
+      staleRecord: true,
+    });
+  });
+
+  test("staleRecord distinguishes a surviving record from having never followed", () => {
+    // Both are honestly `never-followed` about what the TOOL KNOWS, and they are
+    // different facts about the WORLD. Collapsing them would throw away the free
+    // mechanical tell that nothing was looking at.
+    const seats = [{ handle: "a", role: "r" }];
+    const never = buildPositionsReport(5, seats, new Map([["a", null]]), () => null)[0];
+    const stale = buildPositionsReport(
+      5,
+      seats,
+      new Map([["a", { ...pos(99), handle: "a" }]]),
+      () => null,
+    )[0];
+    expect([never?.state, never?.staleRecord]).toEqual(["never-followed", false]);
+    expect([stale?.state, stale?.staleRecord]).toEqual(["never-followed", true]);
+  });
+
+  test("staleRecord is FALSE, not absent, on healthy rows — an absent flag is unreadable", () => {
+    const rows = buildPositionsReport(
+      10,
+      [
+        { handle: "cur", role: "r" },
+        { handle: "beh", role: "r" },
+      ],
+      new Map([
+        ["cur", { ...pos(10), handle: "cur" }],
+        ["beh", { ...pos(7), handle: "beh" }],
+      ]),
+      () => true,
+    );
+    expect(rows.map((r) => r.staleRecord)).toEqual([false, false]);
+    expect(rows.map((r) => r.state)).toEqual(["current", "behind"]);
   });
 });
 

@@ -44,10 +44,30 @@ export interface ErrorEnvelope {
   meta?: OutputMeta;
 }
 
-/** Priority: explicit --format wins, else TTY → text, pipe → json. */
-export function resolveFormat(flagFormat?: string): OutputFormat {
+/**
+ * Priority: explicit --format wins, else TTY → text, pipe → json.
+ *
+ * **The RULE is unchanged** — this is `seams.md` Contract 5(c)'s subject and
+ * that clause stays true word for word: the envelope is conditional on **not
+ * being a TTY**, never on `--format`, and our emitted invocations pass no
+ * `--format`. Only the SOURCE of the TTY value became injectable.
+ *
+ * Why it had to: this function took the **flag** as a parameter and reached for
+ * the **TTY** as a global, so half the dual-audience matrix was permanently
+ * untestable — `Bun.spawnSync` always yields a pipe, so no test in the suite
+ * could ever exercise the TTY branch. *"A human at a terminal still gets usage"*
+ * was a shipped guarantee with no automated guard, verified once by hand with
+ * `script -q /dev/null` and never again. A refactor could have broken it with
+ * every test green.
+ *
+ * `isTTY` is OPTIONAL rather than threaded through all 21 call sites: on a
+ * shared tree, correctness at every call site is not worth a 21-file diff
+ * mid-session, and the default keeps production behaviour byte-identical while
+ * making the branch reachable from a test.
+ */
+export function resolveFormat(flagFormat?: string, isTTY?: boolean): OutputFormat {
   if (flagFormat === "json" || flagFormat === "text") return flagFormat;
-  return process.stdout.isTTY ? "text" : "json";
+  return (isTTY ?? process.stdout.isTTY === true) ? "text" : "json";
 }
 
 export function emit<T>(options: {

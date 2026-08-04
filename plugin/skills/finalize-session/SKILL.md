@@ -80,7 +80,38 @@ _live_. Don't skip it on a real session.
      and a stale prediction is worse than a stale lesson because it commissions work against a world
      that has already moved.
    - Your scratch is **disposable after synthesis** — the durable form is the seat doc.
-   - **Land your own seat doc yourself** — `anthill commit --as <you> -m "…" .anthill/dev/<you>.md`.
+   - **⚠ WRITE YOUR EPITAPH — LAST, and it goes FIRST in the doc.** One sentence at the top of
+     `.anthill/dev/<handle>.md`, under the seat header and **above "Who I am"**: the single thing you
+     want the next holder of this seat to know, above all else. _It has to be first or it is not an
+     epitaph, it is an appendix._
+     - **Exactly one thing.** The whole discipline is the selection — everything the seat knows
+       competes for the slot and one wins. **Write it after synthesis**, because you cannot know
+       which it is until then, and **address it to your successor in the second person**: they will
+       not remember this session, and they are the only reader who matters.
+     - **The selection test:** _what would go wrong if the next instance did not know this?_ If the
+       answer is _"nothing specific, but they'd be poorer"_, it is a hard-won lesson and it already
+       has a home lower in the doc. **The epitaph is for the thing whose absence produces a concrete,
+       recurring failure.**
+     - **Expect the technical candidate to lose.** Run across six seats, **every** one that won was
+       about disposition — what this seat must refuse, what it will be tempted to defer to, what
+       nobody else will tell it. Not because the technical answers were wrong: **the technical
+       surface will have moved by the time anyone reads it, and the shape of how this seat goes wrong
+       will not.**
+     - **Superseding a predecessor's epitaph does not delete it.** Move it to
+       `## Epitaphs — the lineage` at the bottom, dated, **and say why yours replaces it.** An
+       epitaph that is still true does not get demoted for being old — and **"still true" is a real
+       verdict to reach**: keeping a predecessor's because it kept earning itself is a stronger
+       finalize than minting a fresher one that says less.
+     - **Why this is a gated beat and not a matter of taste:** it is the one artifact where
+       session-end loss is **total**. There is no scratch to recover it from and no peer who can
+       write it for you, so it happens here or it silently never happens. **It is also stigmergy's
+       sharpest form** — curation forced to n=1, chosen by the only instance qualified to choose it.
+   - **Land your own seat doc yourself** — with the land command `anthill join <you>` emitted, passing
+     your own doc as the path. **It already carries your project's gate in front of the commit and reads
+     the message from a file (`-F`); do not retype it as an inline `-m`.** A synthesis message is exactly
+     the kind that quotes a command or a symbol in backticks, and **the shell executes a backticked span
+     before the tool ever sees it** — that is upstream of any defence the CLI could mount, and it has
+     already silently eaten a word out of a landed commit message on this project.
      It has exactly one possible author, no seam, and no other seat's paths in it, so there is nothing
      for a cross-seat land to coordinate. Two things follow, and both were paid for:
      - **The `Anthill-Seat` trailer records who RAN the command, not who authored.** Lead-lands-everything
@@ -284,9 +315,16 @@ it has gone wrong.**
      **is any Q1/Q2 answer carried only by everyone agreeing?** If it has no artifact, no number and
      no count behind it, either attach one or label it as testimony. A retro that skips this is the
      one that reads well and cannot be checked.
-   - ◻ **Every seat landed its OWN doc** — `anthill commit --as <you> -m "<msg>" <your paths…>`, never
-     `git add -A`. The `--as` stamps the seat trailer, and because each seat runs its own commit the
-     trailer names the actual author rather than whoever happened to hold the land.
+   - ◻ **Every seat wrote its EPITAPH** — one sentence at the top of its own doc, above "Who I am",
+     or an explicit _"keeping my predecessor's, because it is still true"_ with the reason. **Gate the
+     teardown on this the way you gate the synthesis confirmations:** it is the one artifact with no
+     scratch to recover it from and no peer who can write it, so a seat that drops off without one
+     takes it with it. **A silent absence is the expected failure here** — ask each seat to say which
+     it did, and treat "kept the predecessor's" as a complete answer, not a skipped beat.
+   - ◻ **Every seat landed its OWN doc** — with the land command its own `anthill join` emitted (gate
+     and commit in one, message from a file), never `git add -A` and never an inline `-m` for a body
+     containing backticks. The `--as` it carries stamps the seat trailer, and because each seat runs its
+     own commit the trailer names the actual author rather than whoever happened to hold the land.
    - ◻ **The lead landed anything CROSS-SEAT atomically** — a `seams.md` contract plus the skill that
      points at it, a CLI change plus the doc describing it. **This is what lead-owns-the-land is for:**
      work spanning owners that would, landed in pieces, leave a trail asserting something untrue for
@@ -316,7 +354,7 @@ it has gone wrong.**
        2. **Bring back only the docs** — `git checkout stash@{0} -- <doc-paths…>`. Now the tree holds
           just the seat docs (markdown → the gate passes); the red slice stays parked in the stash.
        3. **Land the docs against the now-green tree** — each seat commits its own
-          (`anthill commit --as <you> -m "…" <your doc>`); the lead lands only genuinely cross-seat
+          (the land command its `anthill join` emitted, naming its own doc); the lead lands only genuinely cross-seat
           docs together. The pivot exists to make the tree green, not to move authorship.
        4. **Restore the held slice** — `git stash pop`. The stash's doc hunks are already committed
           verbatim, so they re-apply as a clean no-op; the red slice (tracked edits **and** untracked

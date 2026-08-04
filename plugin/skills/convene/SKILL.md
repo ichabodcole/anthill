@@ -54,6 +54,17 @@ stay solo.
      the next retro. **A prediction that comes back _wrong_ is the valuable outcome**, not a failure of
      the previous team — say so when you brief it, or seats will quietly protect it.
    - Anything constraining: what's already in flight, deadlines, sensitivities.
+   - **Is `gate` set in `.anthill/config.json`? If not, ask for it now — this is the one field a
+     footprint cannot backfill on its own.** Every seat's land runs the project's gate in front of
+     the commit, and the field has **no default on purpose**: a guessed gate hands seats a green that
+     means nothing. Any team bootstrapped before the field existed has it unset, so **the absence is
+     the normal state of an older footprint, not a sign anything is broken.**
+     Propose a candidate (the `check`/`verify`/`ci` script in the manifest, a `Makefile` target, or
+     whatever this repo's own grounding docs tell contributors to run) and let the human ratify or
+     correct it — **anthill supplies the trigger, the project supplies the content.**
+     **"We don't have one" is a real answer:** leave it unset and the land command announces the
+     absence loudly instead of skipping the gate silently. What you must not do is invent one to
+     make the field look filled. Ask **once** at convene; if it is already set, say nothing.
 
 3. **Stand up coordination.**
    - **Channel:** run **`anthill convene --topic "<one-line framing>"`** to open the grapevine channel
@@ -192,6 +203,10 @@ The stand-up beats that get skipped when you're eager to spawn. Run them as a li
   `.anthill/principles.md` is short and is the highest-leverage read in that list.
 - ◻ **Work gathered** from the human; **plan phase** run (`anthill:plan`) if it's a multi-seat feature
   without a ratified plan.
+- ◻ **`gate` set in `.anthill/config.json`** — if it is unset, you asked the human for this project's
+  verification command and did not guess one. A footprint bootstrapped before the field existed has it
+  blank, and every land the team makes until it is set runs **no verification at all** (the land
+  command says so, loudly — but it says it to a seat, not to you).
 - ◻ **Grapevine open** — `anthill convene --topic "<framing>"`.
 - ◻ **Board open + seeded** — one `todo` card per planned lane, in owner lanes; **size** them where the
   work is known enough to size.

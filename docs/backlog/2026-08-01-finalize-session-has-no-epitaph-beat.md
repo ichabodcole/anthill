@@ -1,7 +1,15 @@
 # `finalize-session` has no epitaph beat — the highest-leverage line in a seat doc is unprompted
 
-**Added:** 2026-08-01 · **Status:** ready to build (a step in the skill + a line in the seat-doc template)
-· **Seat:** weaver (skills + templates) · **Origin:** the human, added mid-finalize in session 5 and run by all six seats the same day
+**Added:** 2026-08-01 · **Status:** ✅ **SHIPPED** 2026-08-03 (session 7) · **Seat:** weaver (skills + templates) · **Origin:** the human, added mid-finalize in session 5 and run by all six seats the same day
+
+> **As shipped:** the beat is the last item of `finalize-session` step 2 (after synthesis, before the
+> land) plus a **gated line in the teardown checklist**; the seat-doc template carries the placeholder
+> and the lineage rule; `join` tells an arriving seat to read it first and what it means. The cascade
+> pass added one the touch-list missed: **the SOP's "Three homes" enumerates the seat doc's contents
+> and omitted the epitaph** — in the template _and_ the rendered copy.
+> **Not needed:** mirroring into this repo's own seat docs. All six already carried a hand-written
+> epitaph from sessions 5–6 — the ritual was run before it was written down, which is why the shape
+> above is described rather than invented.
 
 A seat doc is read cold by an agent with none of the writing instance's context. It currently opens
 with a config-derived header and **"Who I am"** — accurate, and not the thing a departing instance

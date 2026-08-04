@@ -32,9 +32,12 @@ the next instance follows**.
 
 ## Three homes — where knowledge lives
 
-- **Taste → the seat doc** (`dev/<handle>.md`) — each seat's own face: scope + boundaries,
-  relationships, reflexes, anti-patterns, hard-won lessons. Opinionated. **Capture judgments, not
-  file maps** — the reasoning and the generalizable lesson, never a lesson-less event.
+- **Taste → the seat doc** (`dev/<handle>.md`) — each seat's own face: **its epitaph**, scope +
+  boundaries, relationships, reflexes, anti-patterns, hard-won lessons. Opinionated. **Capture
+  judgments, not file maps** — the reasoning and the generalizable lesson, never a lesson-less event.
+  **The epitaph is written last and read first:** one sentence, chosen at finalize out of everything
+  the seat knows, addressed to the next instance. It is the one line that must survive if nothing
+  else does.
 - **Truth → `dev/seams.md`** — the contracts _between_ seats, stated **once**, owned by the
   authoritative seat. Seat docs **point** at it, never restate it.
 - **Proof → the tests** — executable where it exists. A lesson pinned to a green test can't rot.
@@ -128,11 +131,35 @@ Seats share **one working tree + one git index**. A bare `git commit` (after `gi
 whole index → it **sweeps a peer's staged file** into your commit; concurrent commits also race git's
 index. So:
 
-**Use `anthill commit --as <your-handle> -m "<msg>" <path>…`** for every land. It (1) commits the **named paths only**
-(refuses to run with no paths — no accidental sweep) and (2) holds a **serialize lock** so concurrent
-seats queue instead of racing. The same command **is** the atomic cross-seat land: the lead collects
-every seat's paths and passes them in one call → one commit across the seats. (The raw discipline
-holds if you commit by hand: `git commit -m "<msg>" -- <explicit paths>`, never `git add -A`.)
+**Land with the command `anthill join <your-handle>` printed for you — verbatim, and don't rebuild it.**
+It arrives fully resolved: your project's **gate and the commit in one string, with no pipe in it**,
+your handle already substituted, and the message read from a **file** rather than an argument.
+The land it performs (1) commits the **named paths only** (it refuses to run with no paths — no
+accidental sweep) and (2) holds a **serialize lock** so concurrent seats queue instead of racing.
+It **is** also the atomic cross-seat land: the lead collects every seat's paths and passes them in one
+call → one commit across the seats.
+
+**The three things the emitted string is protecting you from — each one has bitten a team that had
+just read the warning against it:**
+
+- **Never pipe the gate.** `gate | tail && commit` tests the **filter's** exit status, which is always
+  0, so **your commit runs on a red gate while the guard is still visibly sitting there.** Redirect to
+  a file and read the file instead. Two agents hit this in one session on two different commands.
+- **Never pass a message body with `-m` if it contains backticks.** The shell substitutes the
+  backticked span **before the tool ever sees it** — the damage happens upstream, so no care on the
+  receiving end helps. Write the message to a file and use `-F`. (The seat who *built* the `-F`
+  affordance is one of the ones who forgot to use it.)
+- **Never a bare `git commit` or `git add -A`.** If you must land by hand — the tool is broken, or
+  you are somewhere it cannot run — the raw discipline is `( <gate> ) && git commit -F <msgfile> --
+  <explicit paths>`, with an `Anthill-Seat: <handle>` line in the body. **Parenthesise the gate and
+  keep the pipe out of it**; you are hand-assembling the composition the emitted string exists to
+  hand you correctly.
+
+**The gate itself is YOUR project's, from `gate` in `.anthill/config.json` — there is no default, on
+purpose.** anthill supplies the trigger to run one; the project supplies what to run. If that field is
+unset the land command **says so loudly** rather than quietly committing with nothing checked — an
+announced absence, not a silent one. **If you see that announcement, don't work around it: tell the
+lead the field needs setting**, because every land the team makes until then is unverified.
 
 **`--as` is not optional in practice.** Git records the **human** as the author of every seat's commit
 — all of them, identically — so without the seat stamp _"who landed this?"_ is unanswerable after the

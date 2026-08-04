@@ -8,6 +8,7 @@
  */
 
 import { emitError, type OutputFormat } from "../agent-layer.ts";
+import { readPosition } from "../comms.ts";
 import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
 import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
 
@@ -109,6 +110,150 @@ export type SeatPresence =
   | { state: "present"; seats: string[] };
 
 /**
+ * PURE: presence as seen from the COMMS wire, from the same rows
+ * `comms positions` reports.
+ *
+ * Why this exists: presence was single-wire on a multi-wire team. `seatPresence`
+ * read grapevine's `who` and nothing else, so on a session where comms is the
+ * only armed wire it returned a confident `none` — **measured live, with five
+ * seats working** — and `shouldBlockTeardown` correctly let a pane-killing
+ * command through. The guard was not wrong; it was answering honestly about a
+ * wire nobody was on.
+ *
+ * `followerAlive` is ADVISORY under seams.md Contract 6(f) — pids are reused, so
+ * it narrows a question and never answers one. **It is used here in one
+ * direction only: to say PRESENT, never to say absent.** That is legitimate
+ * precisely because the costs are asymmetric — a false "present" costs one
+ * `--force`, and a false "absent" kills a seat mid-build. An advisory signal may
+ * push toward the recoverable failure and must never push toward the other.
+ *
+ * `null` means NOT CHECKED and must not be read as checked-and-dead (6(f)
+ * again), so it yields `unknown` rather than contributing to an absence.
+ *
+ * **`false` yields `unknown` TOO, and that is the F1 ruling** — the sentence
+ * above used to be a promise the code broke. `followerAlive === false` was
+ * neither `live` nor `unchecked`, so it fell through to `none`, and `none` is
+ * the only state `shouldBlockTeardown` permits teardown on. The docstring said
+ * PRESENT-never-absent while the code did the opposite, on the pane-killing
+ * command. The reason it is a ruling and not a coin-flip:
+ *
+ *   **`down` kills PANES. `followerAlive` observes FOLLOW PROCESSES. A follow
+ *   process is not a pane.**
+ *
+ * A seat whose `comms follow` died is the single most common failure this team
+ * hits; the agent keeps working in its pane, and its scratch is gitignored and
+ * exists nowhere else. Contract 6(f) already fixes what a dead pid means — that
+ * `emittedThrough` is a HIGH-WATER MARK, not that the seat is gone — so deriving
+ * an absence from it contradicts the contract this file's own comments cite.
+ * `pidAlive` is ESRCH-only and pids are reused, so a **restarted** follower with
+ * a new pid reads identically to a dead one; an instrument that cannot separate
+ * those two may not be the one that authorises a teardown.
+ *
+ * So only **the absence of a record at all** contributes to `none`. That keeps
+ * `none` reachable (a roster where nobody ever followed), which is what stops
+ * the guard degrading into "always block" — the state that trains people to pass
+ * `--force` reflexively and thereby removes the guard for real.
+ */
+export function commsPresence(
+  rows: { handle: string; hasRecord: boolean; followerAlive: boolean | null }[],
+): SeatPresence {
+  const live = rows.filter((r) => r.followerAlive === true).map((r) => r.handle);
+  if (live.length > 0) return { state: "present", seats: [...new Set(live)].sort() };
+  // A record we could not check is not evidence of absence.
+  //
+  // Keyed on `hasRecord`, NOT on a lag state. It was briefly keyed on
+  // `state !== "never-followed"`, and the F1 fix — which reclassifies an
+  // incoherent record as `never-followed` — silently turned every unchecked
+  // follower into an ABSENCE, i.e. a fail-open regression on the pane-killing
+  // command, introduced one commit after the guard itself. Presence asks "is
+  // there a follower and is it alive"; it must never be derived from a value
+  // that means something about LAG.
+  // A record whose follower is not CONFIRMED ALIVE is not evidence the seat is
+  // gone. Both cases land here, and they are the same fact about our KNOWLEDGE
+  // and different facts about the WORLD — so the reason says which, per the
+  // `staleRecord` precedent in Contract 6(c-bis).
+  const dead = rows.filter((r) => r.hasRecord && r.followerAlive === false);
+  const unchecked = rows.filter((r) => r.hasRecord && r.followerAlive === null);
+  if (dead.length + unchecked.length > 0) {
+    const why = [
+      dead.length > 0 &&
+        `${dead.length} follower process(es) not running — the SEAT may still be working (6(f): a dead pid means the position is a high-water mark, not that the seat is gone)`,
+      unchecked.length > 0 &&
+        `${unchecked.length} comms follower(s) could not be checked (liveness unknown, not dead)`,
+    ].filter((s): s is string => typeof s === "string");
+    return { state: "unknown", reason: why.join(" · ") };
+  }
+  return { state: "none" };
+}
+
+/**
+ * PURE: combine presence across the wires into ONE verdict, fail-closed.
+ *
+ * The lattice, and every rule is the same rule: **`none` requires a positive
+ * observation of absence on EVERY wire consulted.**
+ *
+ *   - either wire `present`  → present (union of seats)
+ *   - either wire `unknown`  → unknown
+ *   - both `none`            → none
+ *
+ * A team that runs one wire and not the other is the normal case, not an edge
+ * case: this session armed comms alone and deliberately left the vine
+ * unsubscribed. So a verdict derived from one wire is a verdict about that wire,
+ * and the bug was reporting it as a verdict about the team.
+ */
+export function combinePresence(a: SeatPresence, b: SeatPresence): SeatPresence {
+  const seats = [
+    ...(a.state === "present" ? a.seats : []),
+    ...(b.state === "present" ? b.seats : []),
+  ];
+  if (seats.length > 0) return { state: "present", seats: [...new Set(seats)].sort() };
+  const unknowns = [a, b].filter(
+    (p): p is { state: "unknown"; reason: string } => p.state === "unknown",
+  );
+  if (unknowns.length > 0) {
+    return { state: "unknown", reason: unknowns.map((u) => u.reason).join(" · ") };
+  }
+  return { state: "none" };
+}
+
+/**
+ * Advisory pid liveness — `process.kill(pid, 0)`. ESRCH means gone; **EPERM
+ * means it EXISTS** but we may not signal it, so that branch is alive rather
+ * than unknown. Anything else we decline to guess about.
+ */
+function pidAlive(pid: number): boolean | null {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    return code === "ESRCH" ? false : code === "EPERM" ? true : null;
+  }
+}
+
+/** Read the comms wire's view of who is here. Any failure is `unknown`, never absence. */
+function commsPresenceFor(config: ResolvedConfig, channel: string): SeatPresence {
+  try {
+    // Deliberately NOT via `buildPositionsReport`: that report is about LAG, and
+    // borrowing it meant inventing a `head` to satisfy a parameter presence does
+    // not care about. The invented value then changed the lag classification and
+    // broke this guard. Presence reads the two things it actually needs.
+    return commsPresence(
+      config.seats.map((s) => {
+        const position = readPosition(config.teamDirPath(), channel, s.handle);
+        return {
+          handle: s.handle,
+          hasRecord: position !== null,
+          followerAlive: position ? pidAlive(position.pid) : null,
+        };
+      }),
+    );
+  } catch (err) {
+    return { state: "unknown", reason: `comms positions unreadable: ${(err as Error).message}` };
+  }
+}
+
+/**
  * PURE classifier (the unit-test target) over what grapevine's `who` returned.
  *
  * Every branch that is not a positively-observed subscriber list is `unknown`.
@@ -149,15 +294,50 @@ export function classifyPresence(
  * killed the panes. `--force` is where "tear down anyway" belongs — a human
  * saying so, not a guard guessing on our behalf.
  */
-export async function seatPresence(channel: string): Promise<SeatPresence> {
+export interface TeamPresence {
+  presence: SeatPresence;
+  /** Humans watching the VINE. Not part of the presence verdict — they are
+   * observers, not seats — but read from the same payload, which is why this
+   * rides along rather than costing a second call. */
+  humans: string[];
+}
+
+export async function seatPresence(
+  channel: string,
+  config?: ResolvedConfig,
+): Promise<TeamPresence> {
+  let vine: SeatPresence;
+  let humans: string[] = [];
   try {
     const grapevineCli = resolveCoordCli("grapevine");
     const who = await execCoord(grapevineCli, ["who", channel]);
-    return classifyPresence(
+    const parsed = parseJsonLine<{
+      daemon?: boolean;
+      subscribers?: string[];
+      humans?: string[];
+    }>(who.stdout);
+    vine = classifyPresence(
       { ok: who.ok, stderrLine: firstErrorLine(who.stderr, "could not read channel") },
-      parseJsonLine<{ daemon?: boolean; subscribers?: string[] }>(who.stdout),
+      parsed,
     );
+    humans = [...new Set(parsed?.humans ?? [])].sort();
   } catch (err) {
-    return { state: "unknown", reason: `grapevine CLI unresolved: ${(err as Error).message}` };
+    vine = { state: "unknown", reason: `grapevine CLI unresolved: ${(err as Error).message}` };
   }
+  // With no config we cannot reach the comms wire at all — and saying so is the
+  // point. Returning the vine's verdict alone here would be the original bug
+  // with an extra step: a one-wire answer presented as a team-wide one.
+  if (!config) {
+    return {
+      presence:
+        vine.state === "none"
+          ? {
+              state: "unknown",
+              reason: "comms wire not consulted (no config) — vine alone reported nobody",
+            }
+          : vine,
+      humans,
+    };
+  }
+  return { presence: combinePresence(vine, commsPresenceFor(config, channel)), humans };
 }

@@ -200,6 +200,23 @@ overwriting. The per-migration guide flags when a step needs this.
   _drops_ it, upgrade keeps it _true_. Idempotent: no pointer, or one that doesn't name the team dir →
   nothing to do.
 
+#### 4d. Backfill config FIELDS a later release added — 4a cannot reach these
+
+**4a diffs living docs. `.anthill/config.json` is not a living doc and has no template**, so a field
+introduced after this team bootstrapped is simply absent, and nothing above will surface it. The
+config is where a silent gap survives an upgrade that reports success.
+
+- **`gate` — the project's pre-commit verification command.** Added 2026-08-03; **every footprint
+  bootstrapped before then has it unset.** `anthill join` composes it into the land command in front
+  of the commit, so while it is blank **the team's lands run no verification at all.** The emitted
+  command announces that — but it announces it to a seat mid-land, which is late and is not the
+  person who can fix it.
+  **Ask the human for it here**, proposing the command this repo actually uses (a `check`/`verify`/`ci`
+  script in the manifest, a `Makefile` target, whatever its contributor docs name) and letting them
+  ratify or correct it. **There is no default and you must not invent one** — a guessed gate is worse
+  than a blank one, because a blank one tells the truth. **"We don't have one" is a valid answer:**
+  leave it unset.
+
 ### 5. Verify, then land
 
 - **Verify:**

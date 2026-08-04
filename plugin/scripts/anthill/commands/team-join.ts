@@ -9,6 +9,20 @@ import { detectPlaceholder } from "../placeholder.ts";
 import { nowMillis } from "../runtime.ts";
 import { requireConfig } from "./team-support.ts";
 
+/**
+ * Where a grounding entry came from. Load-bearing ONLY when the file is missing:
+ * the two origins have different remedies, and the old single warning gave the
+ * `configured` remedy to every miss. "fix `config.grounding`" sends a seat to
+ * edit a list that does not mention `principles.md` — advice that is not merely
+ * unhelpful but sends them looking for a cause that isn't there.
+ */
+type GroundingOrigin = "configured" | "team";
+
+interface GroundingRef {
+  path: string;
+  origin: GroundingOrigin;
+}
+
 interface GroundingEntry {
   path: string;
   exists: boolean;
@@ -44,6 +58,108 @@ export interface ChecklistInput {
   handle: string;
   seatDocRel: string;
   lead: string | undefined;
+  /** The PROJECT's gate command (`config.gate`), or undefined if none declared. */
+  gate: string | undefined;
+  /** Gitignored scratch path a seat writes its commit message to, so the body
+   * never passes through a shell. */
+  msgFileRel: string;
+}
+
+/**
+ * The LAND command, fully composed — gate and commit in one string, with no
+ * pipe and no inline message body.
+ *
+ * This is a MECHANICAL GUARD replacing two prose warnings that both failed, in
+ * one session, against agents who had read them:
+ *
+ *   * `bun run check | tail -6 && anthill commit …` — `&&` tests the exit status
+ *     of `tail`, which is always 0. The gate reported failure and the commit ran
+ *     anyway. **The guard is defeated while remaining visibly present in the
+ *     command**, and the pipe is there because an agent is trying to keep output
+ *     short. A lead hit the same pipeline-exit-code confusion the same day on a
+ *     different command.
+ *   * `-m "… \`fresh\` …"` — an un-quoted body is command-substituted by the
+ *     shell BEFORE the tool sees it, so backticked spans execute and vanish from
+ *     the message. `--stdin`/`-F` exist precisely for this, were built by the
+ *     seat that then didn't use them, and the corrupted commit is on this branch.
+ *
+ * Both are `principles.md`'s *"a dispositional instruction holds; a situational
+ * warning fails at the recognition step"* — the compliance was never the
+ * problem, recognising that THIS was an instance was. So the fix is not a third
+ * wording: it is emitting the composition, per Contract 4(d) — **exemplify the
+ * dialogue, never the invocation.**
+ *
+ * `gate` is the PROJECT's, never anthill's: hard-coding `bun run check` here
+ * would be the convention-baked-into-a-default anti-pattern this project names
+ * in AGENTS.md. When it is absent the line says so EXPLICITLY rather than
+ * quietly emitting a commit with no gate — an unstated absence and a considered
+ * one must not look alike.
+ */
+export type GateDecision =
+  | { composable: true; gate: string }
+  | { composable: false; notice: string };
+
+/**
+ * ONE verdict on whether `config.gate` may be composed into the emitted land
+ * string. Both the command and its warning derive from THIS — never from two
+ * separate predicates, which is the "two copies of one verdict" defect `status`
+ * and `down` were just de-duplicated for.
+ *
+ * A gate is refused for two different reasons, and they are kept distinguishable
+ * because they call for different actions by different people:
+ *
+ *   * **unset** — the project never configured one. The lead sets it.
+ *   * **not composable** — it is set, but contains a shell operator that would
+ *     make `&&` test the WRONG command's exit status. `bun run check | tail -6`
+ *     is the live example: `&&` then tests `tail`, which is always 0, so the
+ *     commit runs on a RED gate. That is the original defect this whole
+ *     composition exists to prevent, arriving through the config field instead
+ *     of through the agent's shell — and `bash -n` is clean on it, so nothing
+ *     downstream complains.
+ *
+ * `&&` is deliberately ALLOWED (`tsc --noEmit && bun test` is a correct gate and
+ * fails correctly). `|`, `||`, `;`, a lone `&`, backticks, `$(…)` and newlines
+ * are not: each can make a failing gate report success.
+ */
+export function decideGate(gate: string | undefined): GateDecision {
+  if (gate === undefined) {
+    return {
+      composable: false,
+      notice:
+        "⚠ NO GATE CONFIGURED (`config.gate` is unset), so the command above runs your project's verification NOT AT ALL — run your project's check yourself before landing, and tell your lead the config is missing it.",
+    };
+  }
+  // `&&` is the one operator that preserves failure, so it is removed before
+  // looking for a bare `&` (background, which detaches and always succeeds).
+  const withoutAnd = gate.replaceAll("&&", "");
+  const unsafe =
+    /[|;`\n\r]/.test(gate) || gate.includes("$(") || withoutAnd.includes("&") || gate.trim() === "";
+  if (unsafe) {
+    return {
+      composable: false,
+      notice: `⚠ config.gate is set to \`${gate}\` and was NOT composed into the command above, because it contains a shell operator that would make \`&&\` test the wrong command's exit status — a failing gate would report success and your commit would land on a red gate. Run your gate as its own command, read its result, then land. Tell your lead to set config.gate to a single command (\`&&\` is fine; a pipe is not).`,
+    };
+  }
+  return { composable: true, gate };
+}
+
+export function buildLandCommand(i: {
+  handle: string;
+  gate: string | undefined;
+  msgFileRel: string;
+}): string {
+  const commit = `anthill commit --as ${i.handle} -F ${i.msgFileRel} <path>…`;
+  const decision = decideGate(i.gate);
+  // The returned value is A COMMAND OR NOTHING ELSE. It previously concatenated
+  // the no-gate warning INTO the string under a label reading "LAND with this
+  // EXACT string": `bash -n` exit 2, and it carried BACKTICKS — the second of
+  // the two failure modes this function was built to prevent, reintroduced into
+  // the one string we tell every seat to run verbatim. weaver's `upgrade 4d`
+  // finding is what made it maximal: no existing footprint could receive
+  // `config.gate` by any path that existed, so EVERY existing anthill project
+  // emitted the broken branch. The warning is now a sibling value (`notice`),
+  // rendered beside the command and never inside it.
+  return decision.composable ? `${decision.gate} && ${commit}` : commit;
 }
 
 /**
@@ -86,7 +202,19 @@ export function buildChecklist(i: ChecklistInput): string[] {
     `Monitor your board lane — wrap with Monitor: ${i.boardTailCommand} | grep -E --line-buffered '"type":"(task|unblocked|closed)"'`,
     `Find your card BEFORE you claim it — read the board fresh (\`bun ${i.bountyCli} state --mine --as ${i.handle}\`) rather than trusting a listing already in your context; a stale listing is how seats claim a card by title-adjacency after the lead renumbered the board (anthill#40).`,
     "Own your card lifecycle: advance with `bounty update <id> --status doing` when you start, `--status review` when green (the bounty CLI has no `move` verb).",
-    `Commit file-scoped with an EXPLICIT pathspec, and stamp your seat: \`anthill commit --as ${i.handle} -m "<msg>" <path>…\`. Never a bare \`git commit\` / \`git add -A\`. Without \`--as\`, git records the HUMAN as the author of every seat's commit, so "who landed this?" is unanswerable afterwards — a team hit exactly that and had to ask the channel to identify one. On a shared tree, serialize: announce, commit, confirm landed, then the next seat goes — or hand ${i.lead ?? "the lead"} your paths for one atomic land.`,
+    // The composed land goes FIRST and verbatim. Everything after it is the
+    // reasoning; a seat that reads only the first clause still lands correctly,
+    // which is the property the previous prose-only form did not have.
+    // The emitted string is A COMMAND, and the warnings are BELOW it. They were
+    // briefly concatenated into it, which made the no-gate branch a shell syntax
+    // error carrying backticks — the defect this line exists to prevent, inside
+    // the line that prevents it. A notice that cannot be run is not a safer
+    // notice; it is an unusable command.
+    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel })}${(() => {
+      const d = decideGate(i.gate);
+      return d.composable ? "" : `\n  ${d.notice}`;
+    })()}\n  Do NOT pipe the gate to \`tail\`/\`head\`/\`grep\` to shorten its output: \`&&\` would then test the FILTER's exit status, which is always 0, and your commit runs on a red gate while the guard is still visibly there. Redirect to a file and read that instead. Do NOT pass the body with \`-m\` if it contains backticks — the shell executes them before the tool sees them. Both of these defeated agents who had just read the warning against them.`,
+    `Commit file-scoped with an EXPLICIT pathspec, and stamp your seat. Never a bare \`git commit\` / \`git add -A\`. Without \`--as\`, git records the HUMAN as the author of every seat's commit, so "who landed this?" is unanswerable afterwards — a team hit exactly that and had to ask the channel to identify one. On a shared tree, serialize: announce, commit, confirm landed, then the next seat goes — or hand ${i.lead ?? "the lead"} your paths for one atomic land.`,
     // Two wires, two different catch-up jobs — and the asymmetry is stated as
     // the REASON rather than as a caveat, so a seat can derive the comms case
     // instead of being told it. No comms invocation is named here on purpose:
@@ -98,6 +226,85 @@ export function buildChecklist(i: ChecklistInput): string[] {
     `Finalize BEFORE you drop off: synthesize durable lessons into ${i.seatDocRel}, commit, THEN stand down. Scratch is gitignored — it does not survive the session, so synthesize earlier if the reasoning is warm.`,
     `Route questions + decisions to the lead${i.lead ? ` (${i.lead})` : ""} on the vine — not direct to the human.`,
   ];
+}
+
+export interface GroundingInput {
+  root: string;
+  /** `config.grounding` — the PRODUCT context, verbatim (relative or absolute). */
+  configured: string[];
+  teamDir: string;
+  seamsPath: string;
+  seatDocPath: string;
+}
+
+/**
+ * The grounding read order, PURE so the order itself is assertable.
+ *
+ * It had no test at all until `principles.md` was found missing from it — the
+ * whole list was assembled inline in `run()`, so the only way to observe an
+ * omission was to run the command and read the output, which is precisely how
+ * it went unnoticed while BOTH `join/SKILL.md` and `convene/SKILL.md` called the
+ * missing file "the highest-leverage read in that list" (anthill backlog
+ * 2026-08-01). A list that documents itself in prose and is built in code will
+ * disagree with itself, and nothing mechanical was watching.
+ *
+ * Order is the claim, not the membership: product context (so the seat doc's
+ * assumptions hold) → SOP (how the team works) → PRINCIPLES (how work goes
+ * wrong) → seams (the shared contracts) → the seat's own doc.
+ */
+export function buildGroundingRefs(i: GroundingInput): GroundingRef[] {
+  return [
+    ...i.configured.map((g) => ({
+      path: isAbsolute(g) ? g : join(i.root, g),
+      origin: "configured" as const,
+    })),
+    { path: join(i.teamDir, "README.md"), origin: "team" },
+    { path: join(i.teamDir, "principles.md"), origin: "team" },
+    { path: i.seamsPath, origin: "team" },
+    { path: i.seatDocPath, origin: "team" },
+  ];
+}
+
+/**
+ * Project an internal entry onto the EMITTED manifest shape — `origin` is
+ * bookkeeping for the warning split and must never reach the payload.
+ *
+ * Extracted from an inline `.map()` in `run()` because nothing tested it (D3,
+ * blank-context verify): it is the single line keeping the "payload shape is
+ * unchanged" promise true, and a refactor could leak `origin` into the manifest
+ * with the whole suite green. A promise with no assertion is a claim, not a
+ * guarantee.
+ */
+export function toManifestEntry(e: GroundingEntry & { origin: GroundingOrigin }): GroundingEntry {
+  const { origin: _origin, ...entry } = e;
+  return entry;
+}
+
+/**
+ * Missing-doc warnings, split by origin because the REMEDY differs.
+ *
+ * A missing team doc is the common case on a footprint that predates the file
+ * (`principles.md` was added 2026-08-01), and the fix is `anthill init`, which
+ * creates what is absent and skips what exists — verified in `team-init.ts`'s
+ * plan step, not taken from the upgrade skill's prose.
+ */
+export function buildMissingWarnings(
+  missing: { rel: string; origin: GroundingOrigin }[],
+): string[] {
+  const warnings: string[] = [];
+  const configured = missing.filter((m) => m.origin === "configured").map((m) => m.rel);
+  const team = missing.filter((m) => m.origin === "team").map((m) => m.rel);
+  if (configured.length > 0) {
+    warnings.push(
+      `${configured.length} configured grounding doc(s) not found: ${configured.join(", ")} — fix \`config.grounding\` or create them`,
+    );
+  }
+  if (team.length > 0) {
+    warnings.push(
+      `${team.length} team doc(s) not found: ${team.join(", ")} — these are NOT in \`config.grounding\`, so editing it will not help. A footprint that predates a doc gets it from \`anthill init\`, which creates missing team docs and skips the ones you already have (see \`anthill:upgrade\`).`,
+    );
+  }
+  return warnings;
 }
 
 // `anthill join <handle>` — produce the grounding manifest (docs to read, in
@@ -151,17 +358,22 @@ export const teamJoinCommand = defineAnthillCommand({
     }
 
     // Grounding docs, in read order: product context (config.grounding) → SOP →
-    // seam contract → own seat doc. All resolved to absolute paths.
+    // principles → seam contract → own seat doc. All resolved to absolute paths.
     const root = config.projectRoot;
-    const groundingPaths = [
-      ...config.grounding.map((g) => (isAbsolute(g) ? g : join(root, g))),
-      join(config.teamDirPath(), "README.md"),
-      config.seamsPath(),
-      config.seatDocPath(handle),
-    ];
-    const grounding: GroundingEntry[] = groundingPaths.map((p) => {
+    const groundingRefs = buildGroundingRefs({
+      root,
+      configured: config.grounding,
+      teamDir: config.teamDirPath(),
+      seamsPath: config.seamsPath(),
+      seatDocPath: config.seatDocPath(handle),
+    });
+    // Origin travels WITH the entry rather than being re-paired by index later:
+    // an index lookup needs a fallback, and a fallback here would silently
+    // mislabel a doc's provenance — which is the one thing the warning split
+    // depends on being right.
+    const resolved = groundingRefs.map(({ path: p, origin }) => {
       const exists = existsSync(p);
-      if (!exists) return { path: p, exists };
+      if (!exists) return { path: p, exists, origin };
       // Read failures (permissions, a directory at that path) must not sink the
       // whole manifest — the grounding list is the seat's lifeline. Degrade to
       // "not a placeholder" and let the seat read it.
@@ -171,22 +383,23 @@ export const teamJoinCommand = defineAnthillCommand({
       } catch {
         placeholder = false;
       }
-      return { path: p, exists, ...(placeholder && { placeholder }) };
+      return { path: p, exists, origin, ...(placeholder && { placeholder }) };
     });
 
-    // A configured grounding path that doesn't exist is a dangling reference
-    // (commonly a default `AGENTS.md` the repo doesn't have) — surface it as a
-    // real warning, not just an inline "(missing!)" the reader might skim past.
-    const missingGrounding = grounding.filter((g) => !g.exists).map((g) => relative(root, g.path));
+    const grounding: GroundingEntry[] = resolved.map(toManifestEntry);
+
+    // A grounding path that doesn't exist is a dangling reference — surface it
+    // as a real warning, not just an inline "(missing!)" the reader might skim
+    // past. Split by origin: a dangling `config.grounding` ref (commonly a
+    // default `AGENTS.md` the repo doesn't have) and a team doc the footprint
+    // predates have different fixes.
+    const missingGrounding = resolved
+      .filter((g) => !g.exists)
+      .map((g) => ({ rel: relative(root, g.path), origin: g.origin }));
     const placeholderGrounding = grounding
       .filter((g) => g.placeholder)
       .map((g) => relative(root, g.path));
-    const warnings: string[] = [];
-    if (missingGrounding.length > 0) {
-      warnings.push(
-        `${missingGrounding.length} grounding doc(s) not found: ${missingGrounding.join(", ")} — fix \`config.grounding\` or create them`,
-      );
-    }
+    const warnings: string[] = buildMissingWarnings(missingGrounding);
     if (placeholderGrounding.length > 0) {
       warnings.push(
         `${placeholderGrounding.length} grounding doc(s) appear to be UNFILLED TEMPLATES: ${placeholderGrounding.join(", ")} — read them as "nobody filled this in yet", NOT as "this project has no such content". Worth telling the human.`,
@@ -211,6 +424,10 @@ export const teamJoinCommand = defineAnthillCommand({
       handle,
       seatDocRel,
       lead: config.lead,
+      gate: config.gate,
+      // Beside the seat's scratch, which `init` already gitignores — so a
+      // commit-message file never becomes a stray artifact on the gate surface.
+      msgFileRel: join(relative(root, config.teamDirPath()), "scratch", handle, "commit-msg.txt"),
     });
 
     const data: JoinData = {

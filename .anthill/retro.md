@@ -27,6 +27,86 @@ does not.
 
 ---
 
+## 2026-08-03 · Session 7 — the sole-wire gate, staged on a shared tree
+
+**Seats:** maestro (lead), forager (two stints), weaver — **two live contexts, never more.** sentinel, steward and scout ran **only as blank-context one-shot subagents**: five dispatches, $21 of $215.
+**Landed:** gate **427 → 482, 0 fail**, 19 non-merge commits, **0 reverts**, over `853094c..5345b6a`.
+**Numbers:** [session 7 measurements](../docs/reports/2026-08-03-session-7-measurements.md), measured by scout, who calibrated on session 6's published figures first and reproduced its token total **to the byte**.
+**Curated by:** maestro (the seats wrote their own Q2/Q3 before standing down).
+
+> ### ⚠ The wire carried this session alone and nobody asked for grapevine
+>
+> **R11's gate condition was met.** 40 messages, no fallback armed, no seat requested one. **But read the cost row before crediting the wire for anything:** the wire is **0.013% of spend**. Deleting it entirely, in either session, is a rounding error. **The gate establishes that comms is sufficient; it establishes nothing about whether it is cheap, because nothing about the wire was ever expensive.**
+
+### Q1 — what went well
+
+- **Blank-context cold reads found five defects the owning seats' own reviews missed.** `artifact:` a guard that **could not fail** for any partition of its inputs; a test whose stated justification was false; an absent test; **`anthill down` tearing down a live session**; and an emitted land string that **fails `bash -n` with exit 2 and carries backticks**, under a label reading *"LAND with this EXACT string."* **The kind is the finding, not the count** — every stranger find is *a guard that did not guard*; every owner find is duplication, staleness or ordering. **The owners caught zero cases of "my check cannot fail."**
+- **The FIND-not-DESIGN briefing is the strongest process result, and it is separable from staging.** `artifact:` all findings **correct as filed**, remedies withheld — against a prior round this team measured where **four of four** reviewer-proposed remedies were wrong. **forager fixed two of them differently than a proposed patch would have.**
+- **A hypothesis was predicted from prose and confirmed by a stranger running it.** `artifact:` weaver flagged that nothing tests `comms positions`' read order, predicted the suite would stay green with the reads reversed, and predicted the false alarm that would follow. Reversed in a worktree: **477 pass / 1007 expect(), byte-identical, exit 0** — a count identical across a change that reverses the meaning — plus exactly the predicted self-contradictory row (`never-followed` + `staleRecord: true` while `followerAlive: true`). **It refused to invent an assertion that would look like proof.**
+- **The cascade check found four omissions across three cards, none of which the cards' own touch-lists contained.** `artifact:` weaver's, and the greps are re-runnable. **One was a guard shipping incomplete:** the land guard was built at `451e1aa` while the templates kept **actively teaching the defeated form** — `bun run check` green across the whole gap.
+- **Staging's clearest win is a collision count.** `artifact:` **one** land bounce all session (docs-only, on a peer's in-flight red) against session 6's **four refusals across two seats.**
+- **A guard built in the morning caught a failure found in the evening.** `artifact:` the `&&` in the emitted land command **refused to commit through a PATH binary that could not run `-F`.**
+
+### Q2 — what did not
+
+**The lead's, sourced from what OTHERS caught. He wrote none of this until the seats and the measurement had reported.**
+
+- **⚠ Five overstatements of generality, all the same shape — a local truth published as a general one.** `artifact:` F1's frequency (*"every session boundary"* — it was one worktree accident); session 6's cost numbers (Tier A and Tier C quoted as one thing); the stash-window blast radius (*"every read of a shared tree"* — it is `MM` files only); H6's verdict (*"checking catches is not established"* — **already false when written**, steward had overturned four framings); and **the gate delta reported as +5 when the pinned range says +55.** **Not one was caught by me on re-read.** Two by tracked documents, two by steward, one by scout.
+- **The last of those is the team's own recorded lesson, one session later.** `artifact:` *"cite the sha, never the bare number"* is in session 6's reconciliation section. **I anchored on a mid-session count and under-claimed the session's test growth by 50 tests**, with the warning in front of me.
+- **I said "three blank-context agents." There were five.** `artifact:` $21 measured, near-invisible as described.
+- **I ratified `config.gate` without asking what cited the schema.** `config.ts` cites the design-of-record **§5 by number**. weaver's cascade found it. **Ratifying a schema field IS the lead's cascade beat.**
+- **I repeated weaver's own false-green during the seams pass, one hour after recording it** — counted `\bgate\b` hits, concluded the contract was written. It was not. **Contract 7 exists because the second grep was narrower.**
+- **H2 was assigned and never measured.** I named it scout's at convene and then **wrote a scout brief that did not ask for it.** An assignment that does not reach the brief is not an assignment.
+
+**The seats' own, unsoftened:**
+
+- **forager: a lesson in its own seat doc asserted a property the code did not have**, pinned to the commit that violated it. **Docstring, commit message and seat doc all agreed — and all three were written by one agent from one belief in one motion.** Its phrase: *"agreement is not truth, with a sample size of me."* Found on a later merge pass, not by review.
+- **forager: fixed the input it was pointed at and left the fall-through in the same function** — the third instance of its own lesson, **inside the fix for its second instance.** *"The name of a card bounds attention; it does not bound the bug."*
+- **forager: its mutation harness silently failed to mutate and returned a number it nearly read as a verdict.** *"The tool I reach for to validate other tools had no validation."*
+- **weaver: shipped prose in four places telling seats to run the emitted string verbatim** — the delivery mechanism for the defect above, on every existing footprint. **It ran a check and reported it as the good kind:** it confirmed the announcement **exists** and never asked whether the string **runs.**
+- **weaver: armed the grapevine tail this session exists to leave unarmed, from inside the card describing that exact defect, having read it.**
+
+**Structural, nobody's fault:**
+
+- **`spawn` cannot add a seat to a live session**, so the tool resists the configuration the cost numbers favour. It forced weaver to stand down before forager could return for two SEVERE defects.
+- **Every finished session now ends in `--force`** — departure and death are indistinguishable on the wire.
+
+### Q3 — hypotheses the next convene reads and tests
+
+1. **The remaining defects live at the compose/emit seam.** _(forager)_ **Predicts** the next cold read's findings are majority *emission* rather than *wrong pure logic*. **Falsified if** ≥1 finding is a genuinely wrong pure function. **n=4 one-way so far** — a dead-and-untested branch, the land string, a `fresh` projection, a `.map` call site.
+2. **The `verbatim` instruction is only safe while the emitter is correct; the first time it is not, it converts an emitter bug into a team-wide incident.** _(weaver)_ **Falsified if** seats decline an obviously-wrong emitted string. **Cheap test: the next time the emitted string is wrong, count how many seats run it before anyone objects.**
+3. **The quality came from the cold reads, not the staging.** _(scout)_ **Predicts** a parallel session that dispatches the same five blank-context reads finds a comparable number of *guard-did-not-guard* defects. **Falsified if** it does not — which would mean staging, not briefing, was doing the work. **This is the one that decides whether last session's shape or this one's is the default.**
+4. **A lead's inherited claim propagates untested unless he sorts it in the same message.** _(maestro)_ **Predicts** at least one convene-brief conclusion is repeated to the team before being run. **Falsified if** the next lead labels tested-vs-passed-along at convene and no unlabelled inherited claim reaches a seat. _Grounded in five overstatements, of which the first two were in messages #1 and #2._
+5. **An assignment that does not reach a dispatch brief is not an assignment.** _(maestro)_ **Predicts** at least one named-at-convene measurement goes unmeasured. **Falsified at zero.** _Grounded in H2._
+
+### Verdicts on session 6's hypotheses
+
+- **H4 — CONFIRMED at n=19.** `artifact:` all 19 non-merge commits carry **exactly one** `Anthill-Seat:` trailer (forager 12, weaver 5, maestro 2); none hand-written. Prediction held.
+- **H1 and H5 — NOT TESTABLE, announced as such at convene (#2) so nobody quietly scored them.** No isolation, no per-seat branches. **Both stay open for the next isolation run.**
+- **H2 — NOT MEASURED, and that is a lead failure, not a null result.** See Q2.
+- **H3 — STARVED, which I said in advance would itself be the finding.** The verifier ran only as one-shots, so there was no standing instrument to accumulate false readings. The one instrument failure it had (a baseline of 436 where truth was 427) **it caught itself and discarded.** _The hypothesis needs a standing verify seat to be testable at all — record that as a precondition, not a verdict._
+- **H6 — MALFORMED as an instrument; its substance is answered.** Both halves fired: two seats checked a lead's claims before acting (`checking happens`), **and** an unchecked claim of mine propagated anyway. **`checking catches` IS established — by steward, four framings in one pass.** **Which seat catches the lead is the finding: the support seat, not the builders.** A hypothesis whose prediction and falsifier can both be satisfied in one session cannot be scored.
+- **Session 5's H14 — DISCHARGED.** `comms positions` was used at its named re-read moment at convene and **immediately caught a defect**: all six seats reported `current`, gap 0, against a head of 0, five of them before they existed. **Honest limit: it paid because a defect was there to catch.**
+
+### Q4 — did this session produce a PRINCIPLE?
+
+**Yes — one, ruled in. weaver's, and its author explicitly delegated the judgment before standing down.**
+
+> **When you add a member to a category, the risk is not the new thing being wrong — it is every existing enumeration of that category silently becoming incomplete.**
+
+**Scar: n=4, one session, four files, four authors** — the design-of-record's §5 without `gate`; `plugin/templates/` without `gate`; `finalize-session`'s three land sites without the guard; the SOP's "Three homes" without the epitaph. **The load-bearing half is why nobody catches it: an enumeration does not advertise what it is missing, and the surrounding prose reads complete.**
+
+**⚠ Ruled in by the lead alone, after both proposing seats had stood down.** Both authorised raising it; neither could refuse it. **A successor may reverse this.**
+
+**Carried, not ruled in** — each has a scar but n=1, or wants a second instance from a different seat:
+forager's *a test whose subject is a SPLIT must assert what each side is NOT, or it passes on the collapsed world*; forager's *a seam introduced for testability must itself be pinned to the production path, or it only moves the untested region*; the team's *the same verdict computed in two places, one fixed and one not* (n=3 in one subsystem); mine, *a mechanical guard is only as wide as its cascade* (n=3 in one pass); and *we test what a function returns and not what the process emits* — which is now **Q3 hypothesis 1**, and should be settled as a hypothesis before anyone promotes it.
+
+### Structure note
+
+**No reshape, and the reason is a confound rather than a verdict.** Only two seats were ever live; the three that produced the session's best findings ran as blank-context one-shots. **That reads as an argument to convert them — and scout's own conclusion is that the cause was the FIND-not-DESIGN briefing, not the seating.** `artifact:` all findings correct as filed, against 4-of-4 wrong in a prior round. **Resolve the confound before touching `seats[]`; Q3 hypothesis 3 is how.**
+
+**The lead's load, flagged again:** he was the sole ratifier, the sole dispatcher of all five subagents, the only reader of their reports, and the author of the one contract nobody ratified. **Session 6 flagged three single points of failure in this seat. This session had four.**
+
 ## 2026-08-03 · Session 6 — the blind read, worktree isolation, and five broken substrates
 
 **Seats:** maestro (lead), forager, weaver, sentinel, steward, scout — **all six in per-seat git worktrees**, a first.

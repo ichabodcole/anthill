@@ -1,5 +1,138 @@
 import { describe, expect, test } from "bun:test";
-import { buildChecklist } from "./team-join.ts";
+import { rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import {
+  buildChecklist,
+  buildGroundingRefs,
+  buildLandCommand,
+  buildMissingWarnings,
+  decideGate,
+  toManifestEntry,
+} from "./team-join.ts";
+
+// TWO prose warnings failed in ONE session, each against an agent who had read
+// it, on the two most safety-critical commands this team runs. These assertions
+// exist because a third wording would be the next thing to fail — the guard has
+// to be a string we EMIT, not a rule we state.
+describe("buildLandCommand — the composition an agent cannot get wrong", () => {
+  const base = { handle: "forager", msgFileRel: ".anthill/scratch/forager/commit-msg.txt" };
+
+  // THE assertion. `bun run check | tail -6 && anthill commit …` reported a
+  // failing gate and committed anyway, because `&&` tested `tail`'s status.
+  // Keyed on the pipe CHARACTER, because any pipe at all reintroduces it — this
+  // must not be narrowed to `| tail` when the next agent reaches for `| head`.
+  test("contains NO pipe — a filter would make `&&` test the filter's exit status", () => {
+    expect(buildLandCommand({ ...base, gate: "bun run check" })).not.toContain("|");
+  });
+
+  test("puts the gate BEFORE the commit, joined by &&", () => {
+    expect(buildLandCommand({ ...base, gate: "bun run check" })).toBe(
+      "bun run check && anthill commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…",
+    );
+  });
+
+  // The second failure: a backticked span in an inline body is executed by the
+  // shell before the tool sees it. The landed commit `73e8fea` is missing a word
+  // for exactly this reason, and `-F` was built by the seat who then used `-m`.
+  test("passes the body by FILE, never inline with -m", () => {
+    const cmd = buildLandCommand({ ...base, gate: "bun run check" });
+    expect(cmd).toContain("-F .anthill/scratch/forager/commit-msg.txt");
+    // Keyed on the FLAG, not the token: a bare `not.toContain("-m")` matches
+    // inside `commit-msg.txt` and fails against a correct command. Banning a
+    // token is not banning the claim — this seat has now made that mistake
+    // three times, twice while writing a test for an honesty rule.
+    expect(cmd).not.toMatch(/(^|\s)-m(\s|$)/);
+    expect(cmd).not.toMatch(/--message(\s|=|$)/);
+  });
+
+  test("carries the seat, fully resolved — never a <handle> template", () => {
+    const cmd = buildLandCommand({ ...base, gate: "bun run check" });
+    expect(cmd).toContain("--as forager");
+    expect(cmd).not.toContain("<handle>");
+  });
+
+  // THE F2 ASSERTION, and it is `bash -n` rather than a substring because a
+  // SUBSTRING IS NOT USABILITY. The old test asserted
+  // toContain("anthill commit --as forager -F") under the comment "Still emits a
+  // usable, correct commit" — and passed against a string that was a shell
+  // syntax error carrying backticks, on every existing footprint.
+  //
+  // Every branch, including ones no config here produces, because the emitted
+  // string is run VERBATIM by a seat in a consuming repo.
+  test("EVERY branch parses as a shell command — bash -n, not toContain", () => {
+    const gates = [undefined, "bun run check", "make verify", "tsc --noEmit && bun test"];
+    const results = gates.map((gate) => {
+      const cmd = buildLandCommand({ ...base, gate });
+      const file = `${tmpdir()}/anthill-land-${Bun.hash(cmd)}.sh`;
+      writeFileSync(file, cmd);
+      const p = Bun.spawnSync(["bash", "-n", file]);
+      rmSync(file, { force: true });
+      return { exit: p.exitCode, backticks: (cmd.match(/`/g) ?? []).length };
+    });
+    // Asserted as a SET: one cell passing proves nothing about the branch that
+    // actually shipped broken.
+    expect(results).toEqual(gates.map(() => ({ exit: 0, backticks: 0 })));
+  });
+
+  // The gate is the PROJECT's. Hard-coding one would be the anti-pattern
+  // AGENTS.md names; emitting a bare commit when none is configured would be a
+  // silent absence. So the absence is stated loudly — as a SIBLING notice, never
+  // inside the command.
+  test("an unconfigured gate is announced OUTSIDE the command, not inside it", () => {
+    const cmd = buildLandCommand({ ...base, gate: undefined });
+    // The command carries no prose at all...
+    expect(cmd).not.toMatch(/NO GATE CONFIGURED/);
+    expect(cmd).toBe(
+      "anthill commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…",
+    );
+    // ...and the announcement still exists, on the decision the checklist renders.
+    const d = decideGate(undefined);
+    expect(d.composable).toBe(false);
+    expect(d.composable === false && d.notice).toMatch(/NO GATE CONFIGURED/);
+    expect(d.composable === false && d.notice).toContain("config.gate");
+  });
+
+  // F2b: the ORIGINAL commit-on-a-red-gate defect, arriving through the config
+  // field instead of the agent's shell. `bash -n` is CLEAN on it, so syntax
+  // checking cannot catch this one — only refusing to compose it can.
+  test("a gate that would defeat && is refused, not composed", () => {
+    const defeats = [
+      "bun run check | tail -6",
+      "bun run check || true",
+      "bun run check; true",
+      "bun run check &",
+      "bun run check `echo hi`",
+      "bun run check $(echo hi)",
+    ];
+    // Asserted as a set: none of these may reach the command string.
+    expect(defeats.map((g) => decideGate(g).composable)).toEqual(defeats.map(() => false));
+    expect(defeats.map((g) => buildLandCommand({ ...base, gate: g }))).toEqual(
+      defeats.map(
+        () => "anthill commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…",
+      ),
+    );
+  });
+
+  // ...but a gate whose operator PRESERVES failure must still compose, or the
+  // guard degrades into "no gate is ever good enough" and stops running anyone's
+  // verification. This is the positive anchor for the test above.
+  test("&& preserves failure, so it is allowed through", () => {
+    expect(decideGate("tsc --noEmit && bun test").composable).toBe(true);
+    expect(buildLandCommand({ ...base, gate: "tsc --noEmit && bun test" })).toStartWith(
+      "tsc --noEmit && bun test && anthill commit",
+    );
+  });
+
+  test("does not invent a default gate command", () => {
+    // A wrong gate is worse than a named absence: someone else's command can
+    // exit 0 without checking anything this project cares about.
+    expect(buildLandCommand({ ...base, gate: undefined })).not.toContain("bun run check");
+  });
+
+  test("uses the project's gate verbatim, whatever it is", () => {
+    expect(buildLandCommand({ ...base, gate: "make verify" })).toStartWith("make verify && ");
+  });
+});
 
 // These assertions pin SILENT failure modes. Each one shipped, looked correct,
 // and cost live sessions before anyone diagnosed it — so the fix is pinned here
@@ -12,6 +145,8 @@ const base = {
   handle: "forager",
   seatDocRel: ".anthill/dev/forager.md",
   lead: "maestro" as string | undefined,
+  gate: "bun run check" as string | undefined,
+  msgFileRel: ".anthill/scratch/forager/commit-msg.txt",
 };
 
 /** Find the one checklist line starting with `prefix`, failing loudly if absent. */
@@ -20,6 +155,183 @@ function line(prefix: string, input = base): string {
   if (found === undefined) throw new Error(`no checklist line starting with "${prefix}"`);
   return found;
 }
+
+// The grounding list had NO test before this. It was assembled inline in
+// `run()`, so `principles.md` was missing from it while both `join/SKILL.md` and
+// `convene/SKILL.md` called it "the highest-leverage read in that list" — a doc
+// and its code disagreeing, with nothing mechanical watching. The command was
+// green throughout.
+describe("buildGroundingRefs — the read order IS the claim", () => {
+  const g = {
+    root: "/repo",
+    configured: ["AGENTS.md", "docs/README.md"],
+    teamDir: "/repo/.anthill",
+    seamsPath: "/repo/.anthill/dev/seams.md",
+    seatDocPath: "/repo/.anthill/dev/forager.md",
+  };
+  const paths = () => buildGroundingRefs(g).map((r) => r.path);
+
+  test("principles.md is in the manifest at all (the defect)", () => {
+    expect(paths()).toContain("/repo/.anthill/principles.md");
+  });
+
+  // Membership alone would pass with principles appended last, after the seat
+  // doc — which reverses the skills' stated order and puts the "highest-leverage
+  // read" behind the doc that assumes you've done it. The ORDER is the contract,
+  // so it is asserted as a full sequence rather than as N independent contains.
+  test("emits the full documented order, not merely the right set", () => {
+    expect(paths()).toEqual([
+      "/repo/AGENTS.md",
+      "/repo/docs/README.md",
+      "/repo/.anthill/README.md",
+      "/repo/.anthill/principles.md",
+      "/repo/.anthill/dev/seams.md",
+      "/repo/.anthill/dev/forager.md",
+    ]);
+  });
+
+  test("principles comes AFTER the SOP and BEFORE the seat doc", () => {
+    const p = paths();
+    expect(p.indexOf("/repo/.anthill/principles.md")).toBeGreaterThan(
+      p.indexOf("/repo/.anthill/README.md"),
+    );
+    expect(p.indexOf("/repo/.anthill/principles.md")).toBeLessThan(
+      p.indexOf("/repo/.anthill/dev/forager.md"),
+    );
+  });
+
+  test("an absolute configured path is passed through, not re-rooted", () => {
+    expect(buildGroundingRefs({ ...g, configured: ["/elsewhere/SPEC.md"] })[0]?.path).toBe(
+      "/elsewhere/SPEC.md",
+    );
+  });
+
+  // seams/seat doc are config-overridable; the SOP and principles are not. If
+  // that ever changes, this is the test that should force the decision rather
+  // than letting a hardcoded join quietly ignore a configured path.
+  test("configured seams/seatDoc paths are honoured verbatim", () => {
+    const refs = buildGroundingRefs({
+      ...g,
+      seamsPath: "/repo/team/contracts.md",
+      seatDocPath: "/repo/team/seats/forager.md",
+    }).map((r) => r.path);
+    expect(refs).toContain("/repo/team/contracts.md");
+    expect(refs).toContain("/repo/team/seats/forager.md");
+  });
+
+  test("origin distinguishes config-supplied docs from team docs", () => {
+    const refs = buildGroundingRefs(g);
+    expect(refs.filter((r) => r.origin === "configured").map((r) => r.path)).toEqual([
+      "/repo/AGENTS.md",
+      "/repo/docs/README.md",
+    ]);
+    expect(refs.filter((r) => r.origin === "team")).toHaveLength(4);
+  });
+});
+
+// Adding principles.md to the manifest makes this warning fire on real repos:
+// any footprint bootstrapped before 2026-08-01 lacks the file. The single
+// pre-existing warning told every miss to "fix `config.grounding`" — which for
+// a team doc names a file that does not mention it, sending the reader after a
+// cause that isn't there.
+describe("buildMissingWarnings — the remedy has to match the origin", () => {
+  test("a missing team doc is NOT blamed on config.grounding", () => {
+    const [w] = buildMissingWarnings([{ rel: ".anthill/principles.md", origin: "team" }]);
+    expect(w).toContain(".anthill/principles.md");
+    expect(w).toContain("anthill init");
+    // The load-bearing negative: the old text sent this case to the wrong file.
+    expect(w).not.toMatch(/fix `config\.grounding`/);
+  });
+
+  // D1 (blank-context verify of 322a48a). The original assertion here was
+  // `toContain("config.grounding")` — and that literal appears in BOTH remedies,
+  // because the team remedy reads "these are NOT in `config.grounding`". So it
+  // could not fail for ANY partition of the origins, leaving the `configured`
+  // half of the split unguarded. Reproduced by inverting the split: only the
+  // team-side test died, exactly as reported.
+  //
+  // The lesson is the asymmetry, not the string: the sibling test carried a
+  // load-bearing NEGATIVE and this one did not take the symmetric form. A test
+  // whose subject is a SPLIT must assert what each side is NOT, or it passes on
+  // the collapsed world.
+  test("a dangling configured ref gets the config.grounding remedy and NOT the team one", () => {
+    const [w] = buildMissingWarnings([{ rel: "AGENTS.md", origin: "configured" }]);
+    expect(w).toMatch(/fix `config\.grounding`/);
+    expect(w).not.toMatch(/anthill init/);
+    expect(w).not.toMatch(/NOT in `config\.grounding`/);
+  });
+
+  // Asserted as a SET of two: a single combined warning would satisfy either
+  // one-origin case alone. That much the original version did do.
+  //
+  // D2 (blank-context verify): its COMMENT claimed it also guarded against
+  // "handing one of the two origins the other's remedy", and it did not — it
+  // located each warning by content (`includes("AGENTS.md")`), which is
+  // invariant to which remedy is attached, so it survived origin inversion
+  // intact. The test was real and its stated justification was false: the
+  // clause advanced and its proof did not, which is the drift class seams.md
+  // records against itself. Now it actually pairs FILE to REMEDY.
+  test("a mixed set pairs each file with its OWN remedy, not just its own warning", () => {
+    const w = buildMissingWarnings([
+      { rel: "AGENTS.md", origin: "configured" },
+      { rel: ".anthill/principles.md", origin: "team" },
+    ]);
+    expect(w).toHaveLength(2);
+    const configured = w.find((x) => x.includes("AGENTS.md"));
+    const team = w.find((x) => x.includes("principles.md"));
+    // Separation of subjects...
+    expect(configured).not.toContain("principles.md");
+    expect(team).not.toContain("AGENTS.md");
+    // ...and the pairing itself, which is what the comment always claimed.
+    expect(configured).toMatch(/fix `config\.grounding`/);
+    expect(configured).not.toMatch(/anthill init/);
+    expect(team).toMatch(/anthill init/);
+    expect(team).not.toMatch(/fix `config\.grounding`/);
+  });
+
+  test("nothing missing means no warning at all", () => {
+    expect(buildMissingWarnings([])).toEqual([]);
+  });
+});
+
+// D3 (blank-context verify): the origin strip had no test, and it is the one
+// line holding the "emitted payload shape is unchanged" promise. Every other
+// test exercised buildGroundingRefs, which INCLUDES origin — so the suite was
+// green on a manifest that could have leaked it.
+describe("toManifestEntry — origin is bookkeeping and must not reach the payload", () => {
+  test("strips origin while preserving every emitted field", () => {
+    expect(toManifestEntry({ path: "/a.md", exists: true, origin: "team" })).toEqual({
+      path: "/a.md",
+      exists: true,
+    });
+  });
+
+  // Keyed on the KEY SET, not on `origin` alone: an assertion naming only the
+  // forbidden field goes stale the moment a second internal field is added, and
+  // the next leak would be of whatever that new field is.
+  test("emits exactly the manifest keys, for every entry variant", () => {
+    const variants = [
+      { path: "/a.md", exists: true, origin: "team" as const },
+      { path: "/b.md", exists: false, origin: "configured" as const },
+      { path: "/c.md", exists: true, placeholder: true, origin: "team" as const },
+    ];
+    const keys = variants.map((v) => Object.keys(toManifestEntry(v)).sort());
+    expect(keys).toEqual([
+      ["exists", "path"],
+      ["exists", "path"],
+      ["exists", "path", "placeholder"],
+    ]);
+  });
+
+  test("placeholder survives the strip — it IS part of the manifest", () => {
+    // The negative control for the test above: if the strip ever became an
+    // allow-list that dropped optional fields, the key-set test alone would
+    // still pass on the two entries that have none.
+    expect(
+      toManifestEntry({ path: "/c.md", exists: true, placeholder: true, origin: "team" }),
+    ).toHaveProperty("placeholder", true);
+  });
+});
 
 describe("buildChecklist — the board Monitor filter (anthill#39)", () => {
   test("uses grep -E — plain grep treats (a|b) as a literal and matches NOTHING", () => {
@@ -152,11 +464,20 @@ describe("buildChecklist — shape", () => {
 // own rule applies — emit the RESOLVED incantation, don't make the consumer
 // compose it — and this checklist is the seat-resolved surface that gets read.
 describe("buildChecklist — the commit incantation carries the seat (attribution)", () => {
+  // RE-KEYED, not deleted, when the resolved incantation moved to the LAND
+  // line: this asserts that the checklist emits it SOMEWHERE, which is the
+  // actual rule (Contract 4(d) — the consumer never composes it). Keying it to
+  // one line's prefix encoded which line happened to carry it, and that is the
+  // same "a test written when the set is complete encodes the set" trap that
+  // already cost this file two cycles.
   test("emits `anthill commit --as <handle>` fully resolved, not a template", () => {
-    const l = line("Commit file-scoped");
-    expect(l).toContain(`anthill commit --as ${base.handle}`);
-    expect(l).not.toContain("<handle>");
-    expect(l).not.toContain("{handle}");
+    const all = buildChecklist(base);
+    const carrier = all.filter((l) => l.includes(`anthill commit --as ${base.handle}`));
+    expect(carrier.length).toBeGreaterThan(0);
+    for (const l of carrier) {
+      expect(l).not.toContain("<handle>");
+      expect(l).not.toContain("{handle}");
+    }
   });
 
   test("still forbids the bare-git escape hatches", () => {

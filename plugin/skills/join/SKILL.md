@@ -30,8 +30,16 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
      and the highest-leverage read here;
    - `.anthill/dev/seams.md` — the shared inter-seat **contracts**. You **defer** to these; you never
      restate them in your own doc;
-   - `.anthill/dev/<handle>.md` — **your own living doc**: scope, boundaries, relationships, reflexes,
-     anti-patterns, hard-won lessons. This is _you_. Internalize it before you touch code.
+   - `.anthill/dev/<handle>.md` — **your own living doc**: its epitaph, scope, boundaries,
+     relationships, reflexes, anti-patterns, hard-won lessons. This is _you_. Internalize it before
+     you touch code.
+     - **Start with the `## Epitaph` at the top, and give it more weight than its length suggests.**
+       It is one sentence, written **last** by the previous instance in this seat — the single thing
+       it chose, out of everything it knew, for you specifically. **Everything else in the doc is
+       what the seat knows; the epitaph is what it got wrong.** It usually names a disposition rather
+       than a fact, because that is the part that survives the code moving.
+       **No epitaph?** That means this seat has not finished a session yet — a normal state, not a
+       missing file. You may be the one who writes the first.
 
    Running **`anthill join <handle>`** prints this grounding manifest (the exact files, in order) plus
    your tail commands and an action checklist — use it as your source of truth; don't restate it.
@@ -46,6 +54,28 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
    and **board tail** commands — each wrapped with the **Monitor** tool (filter keepalives as the
    checklist shows), so you wake on team messages and register presence as your handle. **`anthill
 status`** shows who's on + the board.
+   - **⚠ FIRST, KNOW WHAT YOUR MANIFEST CANNOT KNOW — some of these steps are SESSION-VARIABLE and it
+     states all of them unconditionally.** The manifest is generated from config, **before any session
+     context reaches you**, so it cannot know which wires this session armed, whether the lead cleared
+     the vine at convene, or what was ruled five minutes ago. **Where the manifest and a live ruling
+     disagree, the ruling wins** — the manifest is not more authoritative for being mechanical, it is
+     just earlier.
+     - **The two that are actually variable:** _which wires to arm_ (a session may deliberately run on
+       one wire and leave another open-but-unsubscribed), and _what the lead did at convene_ (the
+       checklist's "the lead clears the vine at `--fresh`" is a **default, not an observation** — a
+       lead who deliberately skipped it is a normal case, and it changes what your catch-up returns).
+     - **You will usually read the ruling AFTER you have acted, and that is structural, not
+       carelessness.** The obvious remedy — _"catch up before you arm anything"_ — **cannot be the
+       whole answer, because catching up is itself one of these steps and the manifest is what tells
+       you to do it.** The ordering problem lives inside the artifact that has the ordering problem.
+     - **So do the cheap thing instead: treat arming as REVERSIBLE, not as a commitment.** A Monitor
+       you started is killed in one call. Catch up early, and if the session turns out to have ruled
+       against a wire you already armed, **kill it and say so on the wire** — that costs a minute and
+       it is how both recorded instances actually ended. **What is expensive is defending the action
+       because the manifest told you to.**
+     - **Say it out loud when it happens.** Both times this occurred, the seat caught itself; the
+       danger case is the seat that catches up late, never notices, and reports a clean join. **Your
+       report is the only evidence this defect is still live.**
    - **Run the commands your manifest printed — verbatim, exactly as given.** They arrive fully
      resolved, with your handle and channel already interpolated. **If you find yourself substituting
      your handle into a command, or reconstructing one this skill describes in prose, stop** — you are
@@ -70,9 +100,12 @@ status`** shows who's on + the board.
      relays the vine. The tail wiring above is the **terminal-seat path**.
    - **Joining mid-session? Backfill the vine history first.** A live tail only shows messages from
      _now_ forward. To inherit the session's context, replay it with
-     **`grapevine pull <channel>`** — finite, it prints the history and **exits**. Because the lead
-     clears the channel at convene (`--fresh`), that history is **this session**, not an archive of
-     past ones, so it's usually the right catch-up. Anchor at a known message id with `--since <id>`
+     **`grapevine pull <channel>`** — finite, it prints the history and **exits**. **When the lead
+     cleared the channel at convene (`--fresh`) that history is _this session_** rather than an
+     archive of past ones, which is what makes it the usual right catch-up. **Do not treat the
+     clearing as given: it is a default the lead can deliberately skip**, and a lead has — so if
+     what you pull reaches back further than this session, **the vine was not cleared; nothing is
+     broken.** Anchor at a known message id with `--since <id>`
      on a long-running channel, then fill gaps selectively with
      **`grapevine read <channel> <id>`** — note it takes the **channel _and_ the id**, and does not
      take `--as`. A bare `grapevine read <id>` exits non-zero with a usage line. A seat who mis-called
@@ -91,8 +124,9 @@ status`** shows who's on + the board.
        only for the Monitor.** Reach for `--help` on the wire you're actually using rather than
        assuming its verbs match the one you learned first — **these tools are siblings, not clones.**
        - **On `comms` specifically, catching up is not the same job as on the vine, and
-         `anthill:comms` is the skill for it.** The lead clears the vine at convene, so `pull` gives
-         you this session. **Nothing clears the comms log** — no `--fresh`, and convene has no notion
+         `anthill:comms` is the skill for it.** A vine the lead cleared at convene gives you this
+         session from `pull`. **Nothing clears the comms log — ever, by any lead** — no `--fresh`, and
+         convene has no notion
          of a comms channel — so a bare read replays _every session the team has ever had_. Anchor
          with `--since <id>`. That skill also covers the failure you cannot see from here: a wire
          that silently delivers nothing looks exactly like a quiet channel. **Attaching `follow` is
@@ -206,7 +240,13 @@ status`** shows who's on + the board.
   id, no `--as`; a bare `read <id>` exits non-zero with a usage line that is easy to misread as a
   broken tool. That is how the **vine and board** fail; don't carry the reflex to a tool that hands
   you a structured error instead — read the output you got.
-- ◻ **On the vine** — grapevine tail wrapped in Monitor, presence registered (terminal-seat path).
+- ◻ **Checked what the SESSION says before treating this list as unconditional.** The manifest and
+  this checklist are generated with **no session context** — which wires are armed and whether the vine
+  was cleared are the lead's calls, made after both were written. **A live ruling beats either of
+  them.** Arming is reversible: if you armed a wire the session had ruled against, kill it and say so
+  — that is a minute, and it is how every recorded instance ended.
+- ◻ **On the vine** — grapevine tail wrapped in Monitor, presence registered (terminal-seat path)
+  **— unless this session says otherwise.**
 - ◻ **On the board** — board tail wrapped in Monitor. Use the filter **verbatim from your join
   output**: it needs `grep -E` (plain `grep` treats `(a|b)` as a literal, so the Monitor stays
   silently empty) and `--line-buffered` (or frames are held back until a block fills).
