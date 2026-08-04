@@ -173,6 +173,10 @@ absence, while the seat itself had no symptom to notice. **So do not read a quie
 on your own wire; it never was one. If you want to know whether a teammate is still receiving, look —
 and if you want that known about yourself, someone else has to.**
 
+**⚠ A seat can show as never-followed while a record for it plainly exists — and that is the tool being honest, not losing your data.** A stored position can be **ahead of the log head**, which is impossible for anything actually following this log: it means the record outlived the log it described, or the log was replaced underneath it. The tool therefore reports what it genuinely knows, which is **nothing** — no position, no gap — and raises a separate `staleRecord` tell so you can tell _"nobody ever followed"_ apart from _"a record from somewhere else survived here."_ Same verdict, two different facts about the world.
+**Read it as a question about the LOG, not about the seat.** The seat may be fine; what is established is that the record cannot speak for this log. Re-attach the follow and the position becomes real again.
+**Why this is worth knowing before it happens to you:** this defect was found by a lead running the cross-seat read as its **first user of the session**, and being told **every seat was current, gap 0** — against an empty log, with most of those seats not yet existing. A surviving record subtracted from a fresh head produced a _negative_ gap, and a negative rounded down into the most reassuring answer available. **On a wire whose entire purpose is to stop silence being mistaken for safety, the audit instrument was the thing reassuring everyone.** If your team's positions look implausibly healthy at the very start of a session, that is the shape of it.
+
 ## 3. `read` terminates; `follow` streams. Don't make one do the other's job.
 
 - **Catch-up → `read`.** It prints and exits, so it is the one to pipe into other tools.
