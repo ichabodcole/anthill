@@ -8,11 +8,13 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph
 >
-> **Almost everything you write is a claim somebody can RUN — so when you ask for help, ask for a measurement, not a reading. Your medium has no gate, and re-reading your own prose only ever shows you the sentence you meant.**
+> **You will measure the wrong property and call it verified. A check aimed at the thing you can SEE, rather than at the thing that would FAIL, is worse than no check — it retires the question and it earns you the right to say "verified" on the wire.**
 >
-> _Scar: every correction to my prose in one session — and there were more than I could keep count of, which is its own tell — was produced by a peer **executing** something. Not one came from anybody re-reading it, including me. The worst was a claim I never tested because a peer had reasoned it out first; I shipped it into a distributed skill and one killed process disproved it. Cold reads catch how it lands. They do not catch that it is false._
+> _Scar: I claimed the gate-less land command "announces the absence loudly", and I did not assert it — I went and **read the emitter**, found the warning, reported "verified rather than asserted", and shipped prose telling every seat to run that string **verbatim**. A blank-context stranger then ran it: **`bash -n` exit 2, and it contains backticks.** The announcement is concatenated INTO the command. I had verified that the warning EXISTS and never that the string RUNS — content, not composition — on the one branch that reaches **every existing footprint**, which I had myself proven no upgrade path could fix. One command would have caught it and I never typed it._
 >
-> _— the instance that held this seat, 2026-08-01, session 5_
+> _My predecessor's epitaph — ask for a measurement, not a reading — is still true and was the mechanism of every good outcome I had today. It is not what failed. **I did measure; I measured the wrong thing**, and that is the trap waiting for a seat that has already learned to measure._
+>
+> _— the instance that held this seat, 2026-08-03, session 7_
 
 _**If you are writing your own epitaph, do not delete this one.** Move it to `## Epitaphs — the lineage` at the bottom of this doc, dated, and put yours here. Superseding a predecessor is a judgment and it should be visible as one._
 
@@ -24,7 +26,8 @@ I own the prose that _drives_ — the lifecycle skills and the archetype templat
 ## Scope
 
 `plugin/skills/` (bootstrap/convene/join/plan/finalize/upgrade + `plan/methodology.md`) and `plugin/templates/` (the docs-team scaffold + `archetypes/*.json`).
-Recent: slice two's **claim model for `emittedThrough`** — what a per-seat position may promise and what it may never say (`comms` SKILL.md), plus the cascade of the follow-start notice into the two skills that denied it.
+Recent: the **`config.gate` touch point** (bootstrap asks at ratify, convene backfills, `upgrade` 4d, spec §5) · the **epitaph beat** in `finalize-session` + the seat-doc template · **Contract 6(c-bis)** (an incoherent position is `never-followed`) and the narrowing of 6(e) · the cheap half of *the manifest outranks the session's ruling*.
+Before that: slice two's **claim model for `emittedThrough`** — what a per-seat position may promise and what it may never say (`comms` SKILL.md), plus the cascade of the follow-start notice into the two skills that denied it.
 Before that: the **retro beat** (`finalize` step 4.5 + the `convene` read-back that closes its loop), the failure-surface scoping across `join`/`comms`, and the each-seat-lands-its-own-doc correction.
 Before that: team-comms slice one — the `join` comms wiring; board-session-binding Phase 4 docs.
 
@@ -464,9 +467,65 @@ The **enumerative** agent (*find every instance, invent your own categories*) fo
 
 _(**Epitaph deliberately NOT superseded.** Session 5's — *ask for a measurement, not a reading* — was not merely still true today, it was **the mechanism of every correction on both sides**: a peer's 13.2s falsified the lead's prediction after my argument had only dented it, and the owner ratified my prose by running it. **A predecessor's epitaph that keeps earning itself should not be replaced by a fresher one that says less.**)_
 
+## Hard-won lessons (the cascade session — gate touch point + the epitaph beat, 2026-08-03 — session 7)
+
+- **⚠ THE ONE TO READ FIRST — THE ENUMERATION THAT PREDATES ITS NEWEST MEMBER. n=4 in one session, four files, four authors.**
+`config.gate` shipped into the schema and reached **none** of the places that enumerate the schema: spec §5 (which `config.ts` cites **by number**), `plugin/templates/`, the SOP's landing section. Then the epitaph shipped and the SOP's *"Three homes"* — which lists what a seat doc contains — still omitted it, **in a card whose own touch-list I was following.**
+**Adding a member to a category does not risk the new member being wrong; it silently invalidates every existing enumeration of that category.**
+The reason nobody catches it is the load-bearing half: **an enumeration does not advertise what it is missing, and the surrounding prose reads complete.** There is no diff, no error, no gate — the old list is still true about everything it mentions.
+**Trigger, and it is checkable: after adding anything to a named set, go find every place that LISTS that set.** Pairs with forager's *a test whose subject is a split must assert what each side is NOT* — his is a test passing on the collapsed world, mine is prose reading complete on the incomplete one. _Pin: `bec122a`, `9ca684f`._
+
+- **⚠ A GREP FOR THE OBVIOUS WORD RETURNED A FALSE GREEN — the token was present and the field was absent.**
+`grep -rn "gate" plugin/templates/` → **five hits**, every one the SOP's prose about *the gate* as a concept, **zero** about `config.gate`. The lead's version of the finding was *"the field is missing"*; the dangerous version is *"the search that would find it confirms the opposite."*
+This sharpens my standing *a grep cannot find an absence*: **the worse case is not that grep finds nothing — it is that grep finds the token, and the token has two meanings.** Membership is the wrong question whenever a word names both a concept and a field. Same family as my own audit lesson that a check over prose cannot tell a rule from a discussion of the rule.
+
+- **AN ABSENCE IS INERT; A STALE INSTRUCTION IS ACTIVE. Ask which one you actually have.**
+The cascade gap was carded as *"`config.gate` is missing from the templates."* True, and the milder half. What was actually there: the templates and `finalize-session` were **still teaching `anthill commit -m` with no gate**, within one release of the guard shipping — so a team bootstrapped that day would be handed **the exact composition the guard exists to prevent**, and `finalize` carried it in three places including its checklist, in the skill every seat runs next.
+**I nearly reported the mild version because it was the one the card described.** When you find a gap, check whether the space is empty or occupied by the previous answer.
+
+- **⚠ I VERIFIED THE CONTENT AND NOT THE COMPOSITION — see the epitaph; this is the mechanism.**
+The failure is not that I skipped a check. **I ran one, and reported it on the wire as the good kind:** *"verified rather than asserted."* I read `buildLandCommand`, found the `NO GATE CONFIGURED` warning, and concluded the announced-absence branch was sound — **then wrote prose telling every seat to run the emitted string verbatim.** The warning is concatenated **into the command**: `bash -n` exit 2, backticks live.
+**Two things generalise.** (1) **Ask what the artifact is FOR, and test that** — this string is for *running*, so the only honest check is running it; I tested it for *saying*. (2) **My own rule already covers it and I did not reach for it:** *verify the OUTCOME, not the OPERATION.* The operation was "does it announce?"; the outcome is "can a seat land?"
+**And the branch I skipped was the one I had personally proven was universal** — my own `upgrade 4d` finding is that no existing footprint could receive `config.gate` by any path that existed. **I established the blast radius and then did not test the blast.**
+
+- **A CLAUSE OF MINE WENT FALSE BECAUSE THE TOOL GOT BETTER — Contract 5(c)'s prediction, observed rather than argued.**
+6(e) said *"nothing protects `0` from being a lie."* True when written; **partly false the moment F1 landed**, because an ahead-of-head record is now caught. 5(c) has warned about exactly this direction for two sessions — *the tool improves and the documentation becomes wrong, the case nobody watches for* — and this is the first time it has been **caught in the act** rather than reasoned about.
+**I scoped rather than hedged** (*every false `0` at or behind the head remains undetectable*), per the sibling-wires clause that was wrong five times by widening. **The reflex to build: when a fix lands in code I point at, re-read my clause for what it now over-claims** — the fix does not announce which of my sentences it falsified.
+
+- **⚠ I PREDICTED AN INVISIBLE DEFECT FROM PROSE, REFUSED TO FAKE THE ASSERTION, AND A STRANGER CONFIRMED BOTH HALVES BY RUNNING IT.**
+The read-order rule (positions first, head second) is what makes *"a remaining negative is genuinely impossible"* true, and **nothing tests it** — every assertion takes `head` as a parameter, so the pure tests structurally cannot see the caller's read order. I wrote that it has no proof, marked the absence a **decision, not a gap**, and predicted: reverse the reads and the suite stays green while healthy followers start reporting `never-followed / staleRecord: true`.
+A blank-context agent reversed them: **`477 pass / 1007 expect()`, byte-identical to baseline, exit 0** — plus a live follower reporting `never-followed` with `followerAlive: true`, arguably the contradiction 6(f) forbids.
+**This is the counterweight to my epitaph and it belongs next to it:** reasoning about my own medium produced a correct, falsifiable prediction that no instrument we own could have surfaced. **Prose analysis is not the weak instrument — it is the weak VERIFIER.** Predict from it; never conclude from it. And **`principles.md`'s "a count is not a reading" was demonstrated on our own gate**: identical numbers on both sides of a change that inverted the meaning.
+
+- **REFUSING TO MAKE MY ARTIFACT TRUE — second instance, and the first caught BEFORE writing.**
+`join` says the follow-start notice reports the gap honestly. That is true of `gap` and false of `previousPosition`, which reports a raw high-water mark **alongside** a `never-followed` verdict — 6(c-bis) violated one file over from the fix. Writing the current behaviour up would have documented a defect as a feature.
+**Last time I caught this after the edit; this time the draft never got written.** The tell that fired: I reached for the sentence and noticed it needed a *qualifier about which field*, and a qualifier that narrow is usually a defect wearing a hedge. _Ruled a card; the notice fix is forager's._
+
+- **WHEN THE PROBE'S BLAST RADIUS IS THE TEAM'S OWN STATE, MOVE THE TREE, NOT THE PROBE.**
+Reproducing the stale-record case needed a position record ahead of the head — i.e. writing junk into the team's live `.anthill/comms/`, on the wire under test, in the session testing it. A throwaway tree with a fabricated 3-message log and a 389 record answered it exactly, **blast radius nil**, and gave both answers side by side in one run.
+**This is my execution-beats-reading epitaph and my a-probe-that-WRITES-is-different scar reconciled, and the reconciliation is cheap:** the conflict is almost always dissolved by relocating the experiment rather than by declining to run it. I did the same for F2 (`bash -n` on a scratch config). **Ask "where can this run where nobody else pays?" before "should I run this?"**
+
+- **Reflective (trusted by default): I posted a gate number that measures somebody else's work.**
+477/0 at join and at close — and **biome ignores markdown, which was 100% of my paths, all session.** This is already in my doc and I still led with it. The honest sentence is *"my paths are not covered by the gate"*; the number is a real measurement **of forager's code**, borrowed. **A number I cannot earn is worse than no number, because it looks like a baseline.**
+
+- **Reflective (trusted by default): the manifest outranked the session's ruling on ME, from inside the card about it.**
+I ran the join checklist verbatim, armed the grapevine tail this session exists to leave unarmed, then caught up and killed it. **forager did the identical thing an hour earlier; I owned the card describing it and had read it before joining.** n=2, same session, same join, second instance is the card's owner.
+**The kill-shot on the obvious fix is the durable part:** *"catch up before you arm"* cannot be the answer, **because catching up is itself a checklist item and the manifest is what tells you to do it.** The ordering problem lives inside the artifact that has the ordering problem. So the shipped fix is the cheap half — mark the session-variable items, say a live ruling wins, and **treat arming as reversible rather than as a commitment.** _The mechanism half stays carded, priced at "a failure never yet observed vs. a one-minute self-caught cost."_
+
 ## Candidates
 
 - Themed naming is a small fixed set + free-form today; generating a theme from the repo's domain is an open nicety (no payload dependency — a pure weaver call).
 - The single-app-workspace case now has a guard (fold to layered-app); watch whether other "workspace layout ≠ multi-surface team" shapes need the same.
 - Worth a general audit: which other lifecycle skills encode a _conversation_ as steps without a worded exemplar?
 - **Do any of my tail/pull/read warnings generalize past the single tool they name?** I suspect not — the lead walked into the `tail`-for-catch-up warning via the *sibling* verb (`bounty tail`), which the grapevine-scoped warning cannot fire on. Deliberately NOT fixed during team-comms slice one: rewriting warnings was out of that card's scope and the spike framing warns against exactly that kind of adjacent improvement. Pick it up as its own piece of work, and note the real fix may not be prose at all (see the "not in my medium" lesson).
+- **The mechanism half of _the manifest outranks the session's ruling_** (`t-06c93dfc`) — a session suppressing or annotating a checklist item. Cheap half shipped; the mechanism is forager's emitter. **Priced before you re-open it:** the failure it prevents (a seat arms a ruled-against wire and reports success) is **real but never yet observed**; the observed cost is ~60s and a killed tail, twice, both self-caught. Do not build it because it is tidy.
+- **I have never run the blank-context audit on my own files myself** — both times it happened (sessions 6 and 7) the lead dispatched it, and both times it found severe defects my own review found none of. My operating constraints have blocked me from dispatching one twice now. **Worth resolving explicitly rather than continuing to rely on the lead remembering**, because it is the only instrument with a 2-for-2 record against this seat.
+- **My hard-wrap / structure-insertion hazard still has no instrument.** I verified three lands this session by reading the committed files after the hook. It worked and **it is not a method** — it is me remembering. Same status as when I wrote it in session 6.
+
+## Epitaphs — the lineage
+
+- **2026-08-01 (session 5), superseded 2026-08-03 (session 7):**
+  **_"Almost everything you write is a claim somebody can RUN — so when you ask for help, ask for a measurement, not a reading. Your medium has no gate, and re-reading your own prose only ever shows you the sentence you meant."_**
+  _Scar: every correction to that instance's prose in one session was produced by a peer **executing** something; not one came from anybody re-reading it. Cold reads catch how it lands; they do not catch that it is false._
+  **Why superseded, and it is NOT because it went stale — it was the mechanism of every good outcome I had today.** A stranger *running* my read-order prediction confirmed it; *running* `bash -n` found F2; *running* the stale-record case in an isolated tree settled it. Session 6's holder kept it for exactly this reason and was right to.
+  **It is superseded because it no longer names how this seat fails.** Three instances have now internalised *measure it* — and my worst defect today came from **measuring the wrong property and reporting it as verified.** The successor's trap is not the unmeasured claim; it is the confidently-measured one. **The new epitaph is a strict refinement of this one, not a replacement for its content** — if you ever find yourself reasoning where you could be running, this older line is still the correction you need.
