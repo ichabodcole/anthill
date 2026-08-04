@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { buildChecklist } from "./team-join.ts";
+import { buildChecklist, buildGroundingRefs, buildMissingWarnings } from "./team-join.ts";
 
 // These assertions pin SILENT failure modes. Each one shipped, looked correct,
 // and cost live sessions before anyone diagnosed it — so the fix is pinned here
@@ -20,6 +20,118 @@ function line(prefix: string, input = base): string {
   if (found === undefined) throw new Error(`no checklist line starting with "${prefix}"`);
   return found;
 }
+
+// The grounding list had NO test before this. It was assembled inline in
+// `run()`, so `principles.md` was missing from it while both `join/SKILL.md` and
+// `convene/SKILL.md` called it "the highest-leverage read in that list" — a doc
+// and its code disagreeing, with nothing mechanical watching. The command was
+// green throughout.
+describe("buildGroundingRefs — the read order IS the claim", () => {
+  const g = {
+    root: "/repo",
+    configured: ["AGENTS.md", "docs/README.md"],
+    teamDir: "/repo/.anthill",
+    seamsPath: "/repo/.anthill/dev/seams.md",
+    seatDocPath: "/repo/.anthill/dev/forager.md",
+  };
+  const paths = () => buildGroundingRefs(g).map((r) => r.path);
+
+  test("principles.md is in the manifest at all (the defect)", () => {
+    expect(paths()).toContain("/repo/.anthill/principles.md");
+  });
+
+  // Membership alone would pass with principles appended last, after the seat
+  // doc — which reverses the skills' stated order and puts the "highest-leverage
+  // read" behind the doc that assumes you've done it. The ORDER is the contract,
+  // so it is asserted as a full sequence rather than as N independent contains.
+  test("emits the full documented order, not merely the right set", () => {
+    expect(paths()).toEqual([
+      "/repo/AGENTS.md",
+      "/repo/docs/README.md",
+      "/repo/.anthill/README.md",
+      "/repo/.anthill/principles.md",
+      "/repo/.anthill/dev/seams.md",
+      "/repo/.anthill/dev/forager.md",
+    ]);
+  });
+
+  test("principles comes AFTER the SOP and BEFORE the seat doc", () => {
+    const p = paths();
+    expect(p.indexOf("/repo/.anthill/principles.md")).toBeGreaterThan(
+      p.indexOf("/repo/.anthill/README.md"),
+    );
+    expect(p.indexOf("/repo/.anthill/principles.md")).toBeLessThan(
+      p.indexOf("/repo/.anthill/dev/forager.md"),
+    );
+  });
+
+  test("an absolute configured path is passed through, not re-rooted", () => {
+    expect(buildGroundingRefs({ ...g, configured: ["/elsewhere/SPEC.md"] })[0]?.path).toBe(
+      "/elsewhere/SPEC.md",
+    );
+  });
+
+  // seams/seat doc are config-overridable; the SOP and principles are not. If
+  // that ever changes, this is the test that should force the decision rather
+  // than letting a hardcoded join quietly ignore a configured path.
+  test("configured seams/seatDoc paths are honoured verbatim", () => {
+    const refs = buildGroundingRefs({
+      ...g,
+      seamsPath: "/repo/team/contracts.md",
+      seatDocPath: "/repo/team/seats/forager.md",
+    }).map((r) => r.path);
+    expect(refs).toContain("/repo/team/contracts.md");
+    expect(refs).toContain("/repo/team/seats/forager.md");
+  });
+
+  test("origin distinguishes config-supplied docs from team docs", () => {
+    const refs = buildGroundingRefs(g);
+    expect(refs.filter((r) => r.origin === "configured").map((r) => r.path)).toEqual([
+      "/repo/AGENTS.md",
+      "/repo/docs/README.md",
+    ]);
+    expect(refs.filter((r) => r.origin === "team")).toHaveLength(4);
+  });
+});
+
+// Adding principles.md to the manifest makes this warning fire on real repos:
+// any footprint bootstrapped before 2026-08-01 lacks the file. The single
+// pre-existing warning told every miss to "fix `config.grounding`" — which for
+// a team doc names a file that does not mention it, sending the reader after a
+// cause that isn't there.
+describe("buildMissingWarnings — the remedy has to match the origin", () => {
+  test("a missing team doc is NOT blamed on config.grounding", () => {
+    const [w] = buildMissingWarnings([{ rel: ".anthill/principles.md", origin: "team" }]);
+    expect(w).toContain(".anthill/principles.md");
+    expect(w).toContain("anthill init");
+    // The load-bearing negative: the old text sent this case to the wrong file.
+    expect(w).not.toMatch(/fix `config\.grounding`/);
+  });
+
+  test("a dangling configured ref still points at config.grounding", () => {
+    const [w] = buildMissingWarnings([{ rel: "AGENTS.md", origin: "configured" }]);
+    expect(w).toContain("config.grounding");
+  });
+
+  // Asserted as a SET of two, not two separate one-origin cases: a single
+  // warning covering both misses would satisfy either case alone while handing
+  // one of the two origins the other's remedy — the exact bug being fixed.
+  test("a mixed set yields two warnings, each with only its own remedy", () => {
+    const w = buildMissingWarnings([
+      { rel: "AGENTS.md", origin: "configured" },
+      { rel: ".anthill/principles.md", origin: "team" },
+    ]);
+    expect(w).toHaveLength(2);
+    const configured = w.find((x) => x.includes("AGENTS.md"));
+    const team = w.find((x) => x.includes("principles.md"));
+    expect(configured).not.toContain("principles.md");
+    expect(team).not.toContain("AGENTS.md");
+  });
+
+  test("nothing missing means no warning at all", () => {
+    expect(buildMissingWarnings([])).toEqual([]);
+  });
+});
 
 describe("buildChecklist — the board Monitor filter (anthill#39)", () => {
   test("uses grep -E — plain grep treats (a|b) as a literal and matches NOTHING", () => {

@@ -9,6 +9,20 @@ import { detectPlaceholder } from "../placeholder.ts";
 import { nowMillis } from "../runtime.ts";
 import { requireConfig } from "./team-support.ts";
 
+/**
+ * Where a grounding entry came from. Load-bearing ONLY when the file is missing:
+ * the two origins have different remedies, and the old single warning gave the
+ * `configured` remedy to every miss. "fix `config.grounding`" sends a seat to
+ * edit a list that does not mention `principles.md` — advice that is not merely
+ * unhelpful but sends them looking for a cause that isn't there.
+ */
+type GroundingOrigin = "configured" | "team";
+
+interface GroundingRef {
+  path: string;
+  origin: GroundingOrigin;
+}
+
 interface GroundingEntry {
   path: string;
   exists: boolean;
@@ -100,6 +114,70 @@ export function buildChecklist(i: ChecklistInput): string[] {
   ];
 }
 
+export interface GroundingInput {
+  root: string;
+  /** `config.grounding` — the PRODUCT context, verbatim (relative or absolute). */
+  configured: string[];
+  teamDir: string;
+  seamsPath: string;
+  seatDocPath: string;
+}
+
+/**
+ * The grounding read order, PURE so the order itself is assertable.
+ *
+ * It had no test at all until `principles.md` was found missing from it — the
+ * whole list was assembled inline in `run()`, so the only way to observe an
+ * omission was to run the command and read the output, which is precisely how
+ * it went unnoticed while BOTH `join/SKILL.md` and `convene/SKILL.md` called the
+ * missing file "the highest-leverage read in that list" (anthill backlog
+ * 2026-08-01). A list that documents itself in prose and is built in code will
+ * disagree with itself, and nothing mechanical was watching.
+ *
+ * Order is the claim, not the membership: product context (so the seat doc's
+ * assumptions hold) → SOP (how the team works) → PRINCIPLES (how work goes
+ * wrong) → seams (the shared contracts) → the seat's own doc.
+ */
+export function buildGroundingRefs(i: GroundingInput): GroundingRef[] {
+  return [
+    ...i.configured.map((g) => ({
+      path: isAbsolute(g) ? g : join(i.root, g),
+      origin: "configured" as const,
+    })),
+    { path: join(i.teamDir, "README.md"), origin: "team" },
+    { path: join(i.teamDir, "principles.md"), origin: "team" },
+    { path: i.seamsPath, origin: "team" },
+    { path: i.seatDocPath, origin: "team" },
+  ];
+}
+
+/**
+ * Missing-doc warnings, split by origin because the REMEDY differs.
+ *
+ * A missing team doc is the common case on a footprint that predates the file
+ * (`principles.md` was added 2026-08-01), and the fix is `anthill init`, which
+ * creates what is absent and skips what exists — verified in `team-init.ts`'s
+ * plan step, not taken from the upgrade skill's prose.
+ */
+export function buildMissingWarnings(
+  missing: { rel: string; origin: GroundingOrigin }[],
+): string[] {
+  const warnings: string[] = [];
+  const configured = missing.filter((m) => m.origin === "configured").map((m) => m.rel);
+  const team = missing.filter((m) => m.origin === "team").map((m) => m.rel);
+  if (configured.length > 0) {
+    warnings.push(
+      `${configured.length} configured grounding doc(s) not found: ${configured.join(", ")} — fix \`config.grounding\` or create them`,
+    );
+  }
+  if (team.length > 0) {
+    warnings.push(
+      `${team.length} team doc(s) not found: ${team.join(", ")} — these are NOT in \`config.grounding\`, so editing it will not help. A footprint that predates a doc gets it from \`anthill init\`, which creates missing team docs and skips the ones you already have (see \`anthill:upgrade\`).`,
+    );
+  }
+  return warnings;
+}
+
 // `anthill join <handle>` — produce the grounding manifest (docs to read, in
 // order) + the tail commands for an agent taking a seat. Does NOT exec the tail;
 // that's the calling skill's job (it must wrap it with Monitor). Config-driven:
@@ -151,17 +229,22 @@ export const teamJoinCommand = defineAnthillCommand({
     }
 
     // Grounding docs, in read order: product context (config.grounding) → SOP →
-    // seam contract → own seat doc. All resolved to absolute paths.
+    // principles → seam contract → own seat doc. All resolved to absolute paths.
     const root = config.projectRoot;
-    const groundingPaths = [
-      ...config.grounding.map((g) => (isAbsolute(g) ? g : join(root, g))),
-      join(config.teamDirPath(), "README.md"),
-      config.seamsPath(),
-      config.seatDocPath(handle),
-    ];
-    const grounding: GroundingEntry[] = groundingPaths.map((p) => {
+    const groundingRefs = buildGroundingRefs({
+      root,
+      configured: config.grounding,
+      teamDir: config.teamDirPath(),
+      seamsPath: config.seamsPath(),
+      seatDocPath: config.seatDocPath(handle),
+    });
+    // Origin travels WITH the entry rather than being re-paired by index later:
+    // an index lookup needs a fallback, and a fallback here would silently
+    // mislabel a doc's provenance — which is the one thing the warning split
+    // depends on being right.
+    const resolved = groundingRefs.map(({ path: p, origin }) => {
       const exists = existsSync(p);
-      if (!exists) return { path: p, exists };
+      if (!exists) return { path: p, exists, origin };
       // Read failures (permissions, a directory at that path) must not sink the
       // whole manifest — the grounding list is the seat's lifeline. Degrade to
       // "not a placeholder" and let the seat read it.
@@ -171,22 +254,25 @@ export const teamJoinCommand = defineAnthillCommand({
       } catch {
         placeholder = false;
       }
-      return { path: p, exists, ...(placeholder && { placeholder }) };
+      return { path: p, exists, origin, ...(placeholder && { placeholder }) };
     });
 
-    // A configured grounding path that doesn't exist is a dangling reference
-    // (commonly a default `AGENTS.md` the repo doesn't have) — surface it as a
-    // real warning, not just an inline "(missing!)" the reader might skim past.
-    const missingGrounding = grounding.filter((g) => !g.exists).map((g) => relative(root, g.path));
+    // `origin` is internal bookkeeping, not part of the emitted manifest — the
+    // payload shape stays exactly as consumers already read it.
+    const grounding: GroundingEntry[] = resolved.map(({ origin: _origin, ...entry }) => entry);
+
+    // A grounding path that doesn't exist is a dangling reference — surface it
+    // as a real warning, not just an inline "(missing!)" the reader might skim
+    // past. Split by origin: a dangling `config.grounding` ref (commonly a
+    // default `AGENTS.md` the repo doesn't have) and a team doc the footprint
+    // predates have different fixes.
+    const missingGrounding = resolved
+      .filter((g) => !g.exists)
+      .map((g) => ({ rel: relative(root, g.path), origin: g.origin }));
     const placeholderGrounding = grounding
       .filter((g) => g.placeholder)
       .map((g) => relative(root, g.path));
-    const warnings: string[] = [];
-    if (missingGrounding.length > 0) {
-      warnings.push(
-        `${missingGrounding.length} grounding doc(s) not found: ${missingGrounding.join(", ")} — fix \`config.grounding\` or create them`,
-      );
-    }
+    const warnings: string[] = buildMissingWarnings(missingGrounding);
     if (placeholderGrounding.length > 0) {
       warnings.push(
         `${placeholderGrounding.length} grounding doc(s) appear to be UNFILLED TEMPLATES: ${placeholderGrounding.join(", ")} — read them as "nobody filled this in yet", NOT as "this project has no such content". Worth telling the human.`,
