@@ -247,6 +247,37 @@ Note the direction — **the tool got better and the documentation became wrong*
 Per Contract 4's authoring note, the guard is a **named re-read moment** rather than a fake assertion — whoever changes the envelope re-reads the two skills' failure-surface claims in the same change, because that is the only trigger that exists.
 Do not later paper this over with an assertion that merely greps the prose for a forbidden string; that would give the appearance of proof for a claim it does not test, which is the failure mode Contract 4 records against itself.
 
+## Contract 7 — the emitted LAND command: what may be in the string, and what prose may promise about it
+
+> **⚠ UNRATIFIED — authored by the lead at session 7's finalize, as a CLAIM, after both owning seats had stood down.**
+> This boundary was created and shipped in one session and nobody wrote it here. **Found by the seams pass, not by either owner.**
+> **forager and weaver must ratify or falsify it at the next convene, before either builds against it.** The lead hosts the interface; he does not decree it — and this entry is exactly the kind a single author gets wrong at the seam, which is the ratify gate's whole justification.
+
+**Owner (proposed):** forager (the emitter + `config.gate`) · **Pointed at from:** weaver (the SOP template, this repo's SOP, and `finalize-session` all tell a seat to run the emitted string **verbatim**)
+
+**The contract, stated once (as a claim).**
+
+**(a) The emitted value is a COMMAND or NOTHING. Never a command with prose in it.**
+`join` emits a fully-resolved land string — the project's gate and the commit in one, with no pipe and no inline `-m`. When no gate is configured, **the announcement is a SIBLING of the command, not concatenated into it.**
+_Scar: it was concatenated. Under a label reading "LAND with this EXACT string" the emitted value failed `bash -n` with exit 2 and carried **backticks** — reintroducing the second of the two failure modes the string exists to prevent. It shipped to **every existing footprint**, because `upgrade`'s living-doc diff cannot reach `config.json`, so no footprint could ever have received `config.gate`._
+
+**(b) `config.gate` has NO DEFAULT, and an unsafe gate is REFUSED rather than composed.**
+Hard-coding a gate command would be anthill dictating a host project's convention; a silently gate-less commit is worse than a loud absence. **Announced absence over silent absence.** `&&` is permitted (it preserves failure); `|`, `||`, `;`, lone `&`, backticks and `$(…)` are not.
+**One verdict feeds both the command and its notice** — deliberately not two predicates, which would be the *two copies of one verdict* defect deleted from `status`/`down` in the same session.
+
+**(c) Prose may instruct a seat to run the string VERBATIM only because (a) and (b) hold.**
+That instruction is the affordance's whole point and it is also its whole risk: **it converts an emitter bug into a team-wide incident**, because a seat told to run something verbatim will run it.
+**Open hypothesis, weaver's, with a cheap falsifier:** _the next time the emitted string is wrong, count how many seats run it before anyone objects._ **Falsified if seats decline an obviously-wrong string.** Its prediction is that they will not, because being told to run it verbatim is the affordance.
+
+**(d) The emitted string is only as good as the binary that receives it.**
+_Scar, same session, opposite end: the PATH launcher and this repo both reported `--version 1.7.1` while differing in **two** behaviours — the launcher had no `-F`, and piped `--help` returned text where the repo returned JSON (Contract 5(c)'s own subject matter). **The version string did not merely fail to inform; it asserted sameness.** Self-resolves at release, since skill and tool ship in one subtree (Contract 4(b)) — so this is a dogfooding-window hazard. **The defect that is ours is that `--version` cannot disambiguate two binaries that behave differently.**_
+
+**Proof.** `bash -n` on the **emitted artifact**, not `toContain` on the composed pieces — *a substring is not usability*, and the substring assertion passed against a shell syntax error.
+**Two assertions are required and neither subsumes the other, proven by mutation:** moving the notice back inside the command fails `bash -n`; **allowing an unsafe gate does NOT — a piped gate parses cleanly.** So `bash -n` structurally cannot catch (b), and only refusing to compose can.
+The pipe assertion pins on the **pipe character**, not on `| tail`: injecting `| head -20`, a token no author named, fails it.
+
+**Why it bites.** This is the session's compose/emit pattern stated as a boundary: **the pure functions were right every time and the emission was not.** Four instances — a dead-and-untested branch, this string, a `fresh` projection, a `.map` call site. **Every assertion the team wrote landed on the side that was already correct.**
+
 ## Contract 6 — the per-seat position: what `emittedThrough` contains and what it may never claim
 
 **Owner:** forager · **Pointed at from:** weaver (`skills/comms` + `skills/join` tell a consumer-repo seat what a position and a gap MEAN)

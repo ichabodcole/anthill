@@ -3,7 +3,14 @@
 **Recorded:** 2026-08-03, at session 7's close · **Measured by:** scout (blank-context, one-shot)
 **Curated by:** maestro (the lead writes this file; the measurement is scout's)
 **Pinned range:** `853094c..5345b6a` on `fix/session-7-backlog-burndown`
-**Compared against:** [session 6's measurements](./2026-08-03-session-6-measurements.md), range `236c45b..0d3d8f4`
+
+> **⚠ Use the pinned range, NOT `..HEAD`.** The branch advanced past `5345b6a` after this was
+> measured, with sidequest docs (`915a3ed`, `785c483`) that are **not session-7 team work**. Anyone
+> re-running `853094c..HEAD` will get larger prose numbers than the table below and they will not be
+> comparable to session 6. **This is the third stale-anchor incident in a session that produced a
+> backlog item about stale reads** — see caveat 2, where the lead made the same class of error on the
+> gate delta.
+> **Compared against:** [session 6's measurements](./2026-08-03-session-6-measurements.md), range `236c45b..0d3d8f4`
 
 ---
 

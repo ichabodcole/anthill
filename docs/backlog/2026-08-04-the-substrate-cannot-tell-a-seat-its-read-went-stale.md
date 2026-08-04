@@ -43,6 +43,56 @@ So the notification must be scoped to **a file THIS seat actually read, that it 
 since.** That filter is the whole feature; a generic file watcher is the failure mode wearing the
 feature's clothes.
 
+## ⚠ Session 7 measured three more instances, and one of them narrows the design
+
+Added at session 7's finalize. **All three are artifact-backed and one was measured with an
+instrument, not inferred** — so this item's evidence is no longer only retrospective.
+
+**1. A verify seat's baseline was wrong by 9 tests because a peer's file appeared MID-RUN.**
+It measured **436** where the truth was **427** — another seat's uncommitted `team-convene.test.ts`
+landed inside the test run. It discarded the number and redid the whole verification in detached
+worktrees, which is the only reason its later 427→482 delta means anything. **Adopted as a session
+rule: any count taken in the live shared tree is untrustworthy.**
+
+**2. The lead reported the session's gate delta as +5. It was +55.** He anchored on a mid-session
+number (`ec404b1` → 477) and treated it as the session baseline (`853094c` → 427). **This is a stale
+read of the team's own headline metric, by the person who had `cite the sha, never the bare number`
+in front of him**, and it went out to the team before anyone checked it.
+
+**3. A ~100ms window in which a file is briefly the WRONG BYTES — or absent entirely.** Measured in
+an isolated clone, 5 instrumented runs at ~0.021ms sampling:
+
+```
+t+0.0000  marker=1 bytes=20687   <- worktree content
+t+0.1796  open=0   bytes=0       <- FILE MOMENTARILY GONE
+t+0.1804  marker=0 bytes=20642   <- INDEX content
+t+0.3227  marker=1 bytes=20687   <- restored
+window: 143.1 ms
+```
+
+Mechanism: **not `git stash`** — this repo never runs `stash push`. It is lint-staged's
+`hidePartiallyStaged` → `git restore --worktree`, restoring from the **index**. It affects **only
+files that are staged AND further worktree-modified (`MM`)**; purely unstaged files are never
+touched. **`anthill commit` fires it on every land**, because it stages the named paths and then
+commits with no pathspec (`team-commit.ts:398`, `:440`) — a pathspec commit does _not_ trigger it.
+
+### Why instance 3 NARROWS this item's design rather than just supporting it
+
+**An mtime/blob-sha comparison sampled inside that window reads the index blob, or a zero-byte file,
+and would report a spurious staleness notice on a file nobody touched.** That is precisely the
+9/9-false-positive trap this item already warns about, arriving from a direction the warning does not
+cover — **not a noisy-but-correct alarm, but a factually wrong one.**
+
+**So the cheap poll-on-interaction version needs a stability condition**, not just a relevance filter:
+compare against a quiesced tree, or re-read once on a mismatch before reporting, or exclude paths in
+the `MM` state at sample time. **Cheap to add now; expensive to discover as flakiness later.**
+
+_A fourth, still open: a seat read its own committed test file as `0 matches / 19 tests` when it held
+`6 / 29`, with the tree byte-identical to its commit. The confirmed window above does **not** explain
+it — a committed-clean file cannot be `MM`. It also saw `git status --porcelain` report `M ` for files
+it had already committed clean, which should be impossible. **Recorded as unexplained rather than
+folded into the mechanism it superficially resembles.**_
+
 ## The open question, and it is the real work
 
 **What counts as "read"?** The `anthill join` grounding manifest is known and enumerable. Ad-hoc
