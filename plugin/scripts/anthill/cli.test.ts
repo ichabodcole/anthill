@@ -326,8 +326,18 @@ describe("M3 — the help/usage interceptors honour the format verdict", () => {
   test("--version says WHICH cli.ts answered, so two installs are distinguishable", () => {
     const env = JSON.parse(run(["--version", "--format", "json"]).stdout);
     const source = env.data.source as string;
+    // IDENTITY, not shape — widened after a blank-context reader mutated
+    // `source` to the CACHED 1.7.1 path while this repo answered, and got
+    // 37 pass / 0 fail. Shape assertions (absolute / ends in cli.ts / exists)
+    // are all TRUE of the wrong binary, which is the exact confusion this field
+    // was built to end: it could name a different cli.ts than the one that ran
+    // and nothing would notice.
+    //
+    // `CLI` is derived from `import.meta.dir` at the top of this file, so this
+    // is not a souvenir of where the suite happened to run — it moves with the
+    // tree, in CI, in a worktree, and from a cache.
+    expect(source).toBe(CLI);
     expect(isAbsolute(source)).toBe(true);
-    expect(source).toEndWith("cli.ts");
     // The path is only worth anything if it points at something real.
     expect(existsSync(source)).toBe(true);
     // TOTAL, not conditional — an absent `source` would be indistinguishable

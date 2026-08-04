@@ -56,28 +56,51 @@ interface JoinData {
 }
 
 /**
- * The spellbook-backed wires (grapevine + bounty), as ONE verdict.
- *
- * Deliberately a single discriminated value rather than three nullable fields:
- * three fields can disagree, and "two copies of one verdict" is a defect this
- * seat has now shipped three times in one function. Everything downstream —
- * the checklist lines, the manifest's `tailCommand`/`boardTailCommand` — is a
- * PROJECTION of this, never a second derivation.
+ * ONE spellbook-backed wire's resolution outcome.
  *
  * `available: false` is a POSITIVE observation carrying its reason, not an
- * absence. A consumer must never have to tell "no coord wires" from "nobody
- * populated the field" (Contract 5(a)'s rule, applied to the data side).
+ * absence. A consumer must never have to tell "this wire did not resolve" from
+ * "nobody populated the field" — Contract 5(a)'s rule, applied to the data side.
+ *
+ * Everything downstream — the checklist lines, the manifest's `tailCommand` /
+ * `boardTailCommand` — is a PROJECTION of these, never a second derivation.
+ *
+ * _(This docstring previously described the wires as ONE verdict for both, and
+ * argued for it. That design was the defect below, and the prose outlived it by
+ * one commit — the "prose about code, written by the person who just wrote the
+ * code" failure this seat records against itself. Rewritten, not amended.)_
  */
-export type CoordWires =
-  | { available: true; tailCommand: string; boardTailCommand: string; bountyCli: string }
-  | { available: false; reason: string };
+export type WireStatus = { available: true; cli: string } | { available: false; reason: string };
+
+/**
+ * PER WIRE, not one verdict for both — and this is a CORRECTION of the first
+ * version of this fix, found by a blank-context reader.
+ *
+ * S8-1's whole thesis is that one wire's missing dependency must not suppress
+ * another's. The first fix applied that to comms-vs-spellbook and then **left
+ * the identical bug one level in**: grapevine and bounty are separate CLIs that
+ * can independently fail to resolve, and a single `available` flag meant a
+ * missing BOUNTY told the seat *"NO GRAPEVINE AND NO BOARD … you cannot tail the
+ * vine"* while the grapevine resolved perfectly. Reproduced with a fake cache
+ * carrying grapevine 9.0.0 and no bounty.
+ *
+ * That is this seat's *"a defect's NAME bounds your attention, not the bug"*
+ * lesson, third instance: I fixed the coupling I was pointed at and shipped the
+ * same coupling in the code that fixed it.
+ */
+export interface CoordWires {
+  grapevine: WireStatus;
+  bounty: WireStatus;
+}
 
 export interface ChecklistInput {
-  /** The spellbook wires, or a positive statement that they are unavailable. */
+  /** The spellbook wires, each carrying its own availability + reason. */
   coord: CoordWires;
   /** The team comms wire — fully resolved, run verbatim, filter-free. */
   commsIncantation: string;
   handle: string;
+  /** The team channel — the grapevine tail is composed here, per wire. */
+  channel: string;
   seatDocRel: string;
   lead: string | undefined;
   /** The PROJECT's gate command (`config.gate`), or undefined if none declared. */
@@ -225,15 +248,24 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // remedy — it does NOT emit a command with a hole in it. A half-resolved
     // incantation is the thing Contract 4(a) exists to forbid, and "run this
     // verbatim" makes an unusable string worse than an honest absence.
-    ...(i.coord.available
+    // EACH WIRE REPORTS ITSELF. A single verdict told a seat "NO GRAPEVINE AND
+    // NO BOARD … you cannot tail the vine" when only BOUNTY was missing — a
+    // manifest asserting something false about a wire that was working.
+    ...(i.coord.grapevine.available
       ? [
-          `Monitor the grapevine — wrap with Monitor: ${i.coord.tailCommand} | grep --line-buffered '"from"'`,
-          `Monitor your board lane — wrap with Monitor: ${i.coord.boardTailCommand} | grep -E --line-buffered '"type":"(task|unblocked|closed)"'`,
-          `Find your card BEFORE you claim it — read the board fresh (\`bun ${i.coord.bountyCli} state --mine --as ${i.handle}\`) rather than trusting a listing already in your context; a stale listing is how seats claim a card by title-adjacency after the lead renumbered the board (anthill#40).`,
+          `Monitor the grapevine — wrap with Monitor: bun ${i.coord.grapevine.cli} tail ${i.channel} --as ${i.handle} | grep --line-buffered '"from"'`,
+        ]
+      : [
+          `⚠ NO GRAPEVINE THIS JOIN — ${i.coord.grapevine.reason} You cannot tail the discussion channel. Your comms wire above is UNAFFECTED (it is anthill's own and needs no spellbook), and so are your grounding docs. **Tell your lead rather than working around it.**`,
+        ]),
+    ...(i.coord.bounty.available
+      ? [
+          `Monitor your board lane — wrap with Monitor: bun ${i.coord.bounty.cli} tail --mine --as ${i.handle} | grep -E --line-buffered '"type":"(task|unblocked|closed)"'`,
+          `Find your card BEFORE you claim it — read the board fresh (\`bun ${i.coord.bounty.cli} state --mine --as ${i.handle}\`) rather than trusting a listing already in your context; a stale listing is how seats claim a card by title-adjacency after the lead renumbered the board (anthill#40).`,
           "Own your card lifecycle: advance with `bounty update <id> --status doing` when you start, `--status review` when green (the bounty CLI has no `move` verb).",
         ]
       : [
-          `⚠ NO GRAPEVINE AND NO BOARD THIS JOIN — ${i.coord.reason} Your comms wire above is UNAFFECTED (it is anthill's own and needs no spellbook), and your grounding docs are unaffected. What you have lost is the discussion channel and the task board: you cannot tail the vine, and you cannot claim or advance a card. **Tell your lead this rather than working around it** — a seat whose board verbs silently do nothing looks exactly like a seat with no work.`,
+          `⚠ NO BOARD THIS JOIN — ${i.coord.bounty.reason} You cannot claim or advance a card, so you will be INVISIBLE on the board — which looks exactly like a seat with nothing to do. **Tell your lead rather than working around it.**`,
         ]),
     // The composed land goes FIRST and verbatim. Everything after it is the
     // reasoning; a seat that reads only the first clause still lands correctly,
@@ -395,17 +427,20 @@ export const teamJoinCommand = defineAnthillCommand({
     // to emit, so there is no manifest to degrade to. That is why Contract 4(b)'s
     // "ALWAYS present" is bounded to every manifest `join` EMITS — an unbounded
     // "always" is false no matter what this function does.
-    let coord: CoordWires;
-    try {
-      coord = {
-        available: true,
-        tailCommand: `bun ${resolveCoordCli("grapevine")} tail ${channel} --as ${handle}`,
-        boardTailCommand: `bun ${resolveCoordCli("bounty")} tail --mine --as ${handle}`,
-        bountyCli: resolveCoordCli("bounty"),
-      };
-    } catch (err) {
-      coord = { available: false, reason: (err as Error).message };
-    }
+    // Resolved INDEPENDENTLY per wire: they are separate CLIs and can fail
+    // separately, and a shared try/catch made a missing bounty report the
+    // grapevine as gone too.
+    const resolveWire = (tool: "grapevine" | "bounty"): WireStatus => {
+      try {
+        return { available: true, cli: resolveCoordCli(tool) };
+      } catch (err) {
+        return { available: false, reason: (err as Error).message };
+      }
+    };
+    const coord: CoordWires = {
+      grapevine: resolveWire("grapevine"),
+      bounty: resolveWire("bounty"),
+    };
 
     // Grounding docs, in read order: product context (config.grounding) → SOP →
     // principles → seam contract → own seat doc. All resolved to absolute paths.
@@ -456,9 +491,16 @@ export const teamJoinCommand = defineAnthillCommand({
       );
     }
 
-    if (!coord.available) {
+    // One warning PER unavailable wire, naming that wire. A single combined
+    // warning asserted both were gone whenever either was.
+    if (!coord.grapevine.available) {
       warnings.push(
-        `NO GRAPEVINE AND NO BOARD: ${coord.reason} The comms wire and your grounding docs are UNAFFECTED — they are anthill's own and need no spellbook. Tell your lead: a seat that cannot claim a card is invisible on the board, which looks identical to a seat with nothing to do.`,
+        `NO GRAPEVINE: ${coord.grapevine.reason} You cannot tail the discussion channel. The comms wire and your grounding docs are UNAFFECTED — they are anthill's own and need no spellbook.`,
+      );
+    }
+    if (!coord.bounty.available) {
+      warnings.push(
+        `NO BOARD: ${coord.bounty.reason} You cannot claim or advance a card. Tell your lead: a seat that cannot claim a card is invisible on the board, which looks identical to a seat with nothing to do.`,
       );
     }
 
@@ -474,6 +516,7 @@ export const teamJoinCommand = defineAnthillCommand({
       coord,
       commsIncantation,
       handle,
+      channel,
       seatDocRel,
       lead: config.lead,
       gate: config.gate,
@@ -490,8 +533,12 @@ export const teamJoinCommand = defineAnthillCommand({
       // never "nobody populated this". Same discipline as Contract 6(c)'s
       // null-is-not-a-rounded-down-zero: a consumer that cannot tell an
       // inapplicable field from an unpopulated one has been handed a guess.
-      tailCommand: coord.available ? coord.tailCommand : null,
-      boardTailCommand: coord.available ? coord.boardTailCommand : null,
+      tailCommand: coord.grapevine.available
+        ? `bun ${coord.grapevine.cli} tail ${channel} --as ${handle}`
+        : null,
+      boardTailCommand: coord.bounty.available
+        ? `bun ${coord.bounty.cli} tail --mine --as ${handle}`
+        : null,
       comms: { channel, incantation: commsIncantation },
       checklist,
       ...(warnings.length > 0 && { warnings }),

@@ -150,14 +150,21 @@ describe("anthill down — command path honours the presence guard", () => {
     // there. It named "the vine" for a whole session after that stopped being
     // true.
     //
-    // Keyed on the CLAIM ("present on <wire>"), not on the token "vine": this
-    // seat has twice written an assertion banning a WORD and had it match the
-    // tool's own affordances or its own explanatory prose. The channel name is
-    // deliberately still allowed — it is true of every wire, and of the next one.
-    expect(rec.stderr).not.toMatch(/present on the vine/i);
-    expect(rec.stderr).not.toMatch(/present on (the )?(grapevine|comms)/i);
+    // WIDENED after a blank-context reader defeated the first version: it
+    // banned two literal PHRASINGS, and `"seats still present, per the
+    // grapevine, on …"` sailed through at 6 pass / 0 fail. Banning a phrasing
+    // is not banning the claim — the third time this seat has made exactly that
+    // mistake, twice while writing a test for an honesty rule.
+    //
+    // So the assertion is now on the REFUSAL STRING as a whole: it may not
+    // name a wire ANYWHERE, in any construction, because `SeatPresence` carries
+    // no attribution and any wire named here is a guess that reads as a fact.
+    // The channel name is what it may say, and the positive anchor pins that.
+    const refusal = JSON.parse(rec.stderr).error as string;
+    expect(refusal).not.toMatch(/grapevine|vine|comms/i);
     // Positive anchor, so this cannot pass by refusing with no reason at all.
-    expect(rec.stderr).toContain("test-channel");
+    expect(refusal).toContain("test-channel");
+    expect(refusal).toContain("forager, weaver");
 
     // Stream separation: the refusal must NOT reach stdout, where an agent
     // parsing the success channel would read it as output.

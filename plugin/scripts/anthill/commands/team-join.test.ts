@@ -142,11 +142,10 @@ describe("buildLandCommand — the composition an agent cannot get wrong", () =>
 // rather than trusted to prose. See anthill#39, #40, #54, #56.
 const base = {
   coord: {
-    available: true,
-    tailCommand: "bun /cache/grapevine/cli.ts tail dev --as forager",
-    boardTailCommand: "bun /cache/bounty/cli.ts tail --mine --as forager",
-    bountyCli: "/cache/bounty/cli.ts",
+    grapevine: { available: true, cli: "/cache/grapevine/cli.ts" },
+    bounty: { available: true, cli: "/cache/bounty/cli.ts" },
   } as CoordWires,
+  channel: "dev",
   commsIncantation: "bun /plugin/cli.ts comms follow dev --as forager",
   handle: "forager",
   seatDocRel: ".anthill/dev/forager.md",
@@ -523,10 +522,32 @@ describe("buildChecklist — the commit incantation carries the seat (attributio
 describe("join — a missing spellbook must not sink the manifest (S8-1)", () => {
   const CLI = resolve(import.meta.dir, "..", "cli.ts");
 
-  /** A real team tree + a real EMPTY home, so coord resolution genuinely fails. */
-  function joinWithoutSpellbook() {
+  /**
+   * Build a fake spellbook cache containing exactly the tools named.
+   *
+   * This is what makes the control below a REAL control: it can construct BOTH
+   * worlds — spellbook present and spellbook absent — anywhere, including CI,
+   * with no dependency on the developer's machine. A control that can only ever
+   * produce one of the two answers is not a control.
+   */
+  function fakeHome(tools: Array<"grapevine" | "bounty">): string {
+    const home = mkdtempSync(join(tmpdir(), "anthill-s8-1-home-"));
+    for (const tool of tools) {
+      const dir = join(
+        home,
+        ".claude/plugins/cache/spellbook-marketplace/spellbook/9.0.0/skills",
+        tool,
+        "scripts",
+      );
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(join(dir, "cli.ts"), "// stub\n");
+    }
+    return home;
+  }
+
+  /** Run `join` in a real team tree against a caller-chosen HOME. */
+  function joinWith(home: string) {
     const dir = mkdtempSync(join(tmpdir(), "anthill-s8-1-"));
-    const emptyHome = mkdtempSync(join(tmpdir(), "anthill-s8-1-home-"));
     try {
       mkdirSync(join(dir, ".anthill", "dev"), { recursive: true });
       writeFileSync(
@@ -543,7 +564,7 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
       );
       const proc = Bun.spawnSync(["bun", CLI, "join", "forager", "--format", "json"], {
         cwd: dir,
-        env: { ...cleanGitEnv(), HOME: emptyHome },
+        env: { ...cleanGitEnv(), HOME: home },
       });
       const stdout = proc.stdout.toString();
       const lines = stdout.trim().split("\n").filter(Boolean);
@@ -556,18 +577,43 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
       };
     } finally {
       rmSync(dir, { recursive: true, force: true });
-      rmSync(emptyHome, { recursive: true, force: true });
+      rmSync(home, { recursive: true, force: true });
     }
   }
 
-  // The control that makes the rest of this block mean anything: if the harness
-  // ever resolved a real spellbook, every assertion below would pass for the
-  // wrong reason. Asserting the DEGRADED path is reported keeps the fixture
-  // honest about which world it ran in.
-  test("the fixture genuinely has no spellbook — the manifest says so, positively", () => {
-    const r = joinWithoutSpellbook();
-    expect(r.envelope?.ok).toBe(true);
-    expect(JSON.stringify(r.envelope)).toMatch(/spellbook/i);
+  /** The original case: a genuinely empty HOME, so neither wire resolves. */
+  function joinWithoutSpellbook() {
+    return joinWith(mkdtempSync(join(tmpdir(), "anthill-s8-1-empty-")));
+  }
+
+  /**
+   * THE CONTROL — REWRITTEN, because the first version could not fire.
+   *
+   * It asserted `JSON.stringify(envelope)` matched `/spellbook/i` to prove the
+   * fixture had no spellbook. **A RESOLVED spellbook matches that too**, because
+   * the cache path is `…/spellbook-marketplace/spellbook/1.16.0/…` — so the
+   * guard passed in exactly the world it existed to detect, and the comment
+   * above it ("if the harness ever resolved a real spellbook, every assertion
+   * below would pass for the wrong reason") described a protection that did not
+   * exist. Found by a blank-context reader, whose mutation swapped the empty
+   * HOME for the real one and got 48 pass / 1 fail — the control silent.
+   *
+   * The replacement is a DISCRIMINATOR asserted as a SET: the same command, in
+   * two constructed worlds, must produce two different answers. A single case
+   * passes against a hardcoded value; the pair does not. This is the shape this
+   * seat prescribes everywhere and did not apply to its own control.
+   */
+  test("CONTROL — the fixture's two worlds produce DIFFERENT answers", () => {
+    const withSpellbook = joinWith(fakeHome(["grapevine", "bounty"]));
+    const without = joinWithoutSpellbook();
+    // The discriminating pair. If the fixture silently resolved a real
+    // spellbook, these two would be equal and the assertion dies.
+    expect([
+      typeof withSpellbook.envelope?.data?.tailCommand,
+      typeof without.envelope?.data?.tailCommand,
+    ]).toEqual(["string", "object"]); // typeof null === "object"
+    expect(without.envelope?.data?.tailCommand).toBeNull();
+    expect(withSpellbook.envelope?.data?.tailCommand).toContain("tail");
   });
 
   test("emits a manifest at all — a missing spellbook is not fatal", () => {
@@ -637,6 +683,65 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
   test("the degraded manifest is STILL a single parseable envelope", () => {
     const r = joinWithoutSpellbook();
     expect(r.lineCount).toBe(1);
+  });
+
+  /**
+   * THE DEGRADED CHECKLIST LINE — the seat-facing instruction this whole fix
+   * exists to produce, and it had ZERO coverage. Deleting the entire
+   * unavailable branch left 49 pass / 0 fail: `available` appeared once in 674
+   * test lines, in a fixture set to `true`. Every assertion landed on the side
+   * that already worked — this seat's standing pattern, in the commit that
+   * records it.
+   */
+  test("the degraded checklist TELLS the seat what it lost, and to tell the lead", () => {
+    const r = joinWithoutSpellbook();
+    const checklist = (r.envelope?.data?.checklist as string[]).join("\n");
+    expect(checklist).toMatch(/NO GRAPEVINE/);
+    expect(checklist).toMatch(/NO BOARD/);
+    // The consequence, not just the fact — a seat that cannot claim a card is
+    // invisible, which looks identical to a seat with nothing to do.
+    expect(checklist).toMatch(/invisible on the board|cannot claim or advance/i);
+    expect(checklist).toMatch(/tell your lead/i);
+    // ...and it must NOT hand out a broken command in place of the real one.
+    expect(checklist).not.toMatch(/Monitor the grapevine — wrap with Monitor: bun null/);
+  });
+
+  /**
+   * PARTIAL RESOLUTION — the manifest asserted something FALSE.
+   *
+   * grapevine and bounty are separate CLIs that can fail separately. Under one
+   * shared verdict, a missing BOUNTY told the seat "NO GRAPEVINE AND NO BOARD …
+   * you cannot tail the vine" while the grapevine resolved perfectly — and the
+   * `reason` named only bounty. Reproduced by a blank-context reader with a
+   * fake cache; reproduced again here, which is what makes this a test rather
+   * than a note.
+   *
+   * The defect is S8-1's own thesis violated one level in: I fixed "one wire's
+   * missing dependency must not suppress another" for comms-vs-spellbook and
+   * shipped the same coupling between grapevine and bounty.
+   */
+  test("a missing BOUNTY does not report the GRAPEVINE as gone", () => {
+    const r = joinWith(fakeHome(["grapevine"])); // grapevine only
+    const d = r.envelope?.data as Record<string, unknown>;
+    // The grapevine resolved, so it must be offered — this is the assertion
+    // that fails against the shared-verdict version.
+    expect(d.tailCommand).toContain("tail");
+    expect(d.boardTailCommand).toBeNull();
+    const checklist = (d.checklist as string[]).join("\n");
+    expect(checklist).toMatch(/NO BOARD/);
+    expect(checklist).not.toMatch(/NO GRAPEVINE/);
+    // And no warning may claim the vine is gone when it is not.
+    expect((d.warnings as string[]).join("\n")).not.toMatch(/NO GRAPEVINE/);
+  });
+
+  test("a missing GRAPEVINE does not report the BOARD as gone — the mirror", () => {
+    const r = joinWith(fakeHome(["bounty"])); // bounty only
+    const d = r.envelope?.data as Record<string, unknown>;
+    expect(d.boardTailCommand).toContain("tail --mine");
+    expect(d.tailCommand).toBeNull();
+    const checklist = (d.checklist as string[]).join("\n");
+    expect(checklist).toMatch(/NO GRAPEVINE/);
+    expect(checklist).not.toMatch(/NO BOARD/);
   });
 
   // THE TEXT SIDE IS A DIFFERENT AUDIENCE AND IT BROKE WHILE THE JSON WAS RIGHT.
