@@ -102,7 +102,26 @@ export const teamDownCommand = defineAnthillCommand({
         command: "down",
         error:
           presence.state === "present"
-            ? `seats still present on the vine: ${presence.seats.join(", ")}. They haven't stood down — finalize them first, or re-run with --force to tear down anyway.`
+            ? // NAMES NO WIRE, deliberately. This said "on the vine" while the
+              // verdict has been drawn from BOTH wires since presence became
+              // multi-wire (`fb85483`) — so a seat present only on comms was
+              // reported as present "on the vine", and a lead debugging it would
+              // go read a grapevine roster that correctly says nobody is there.
+              //
+              // Adding a second wire silently made an existing enumeration wrong
+              // while the sentence still read complete: `principles.md`'s
+              // enumeration principle, reproducing on the command that
+              // demonstrates the fix it describes, minutes after it landed.
+              //
+              // Naming BOTH wires here would be the same bug with a longer fuse:
+              // `SeatPresence` carries no attribution, so this string cannot know
+              // which wires were actually consulted — `seatPresence` skips comms
+              // when it has no config — and the next wire added would make it
+              // wrong again with nothing to catch it. So it names the CHANNEL,
+              // which is true of every wire and stays true when one is added.
+              // That also matches the `unknown` branch below, which was already
+              // wire-agnostic and already correct.
+              `seats still present on "${config.channel}": ${presence.seats.join(", ")}. They haven't stood down — finalize them first, or re-run with --force to tear down anyway.`
             : presence.state === "unknown"
               ? `cannot establish who is on "${config.channel}" (${presence.reason}), so this would tear down panes without knowing whether seats are working in them. Re-run with --force to tear down anyway.`
               : // Unreachable: the guard only blocks on present/unknown. Stated

@@ -140,8 +140,24 @@ describe("anthill down — command path honours the presence guard", () => {
 
     expect(rec.exits).toContain(1);
     expect(rec.stderr).toContain('"ok":false');
-    expect(rec.stderr).toContain("seats still present on the vine");
+    expect(rec.stderr).toContain("seats still present");
     expect(rec.stderr).toContain("forager, weaver");
+
+    // THE REFUSAL MAY NOT NAME A SINGLE WIRE. Presence spans grapevine AND
+    // comms, and `SeatPresence` carries no attribution — so any wire named here
+    // is a guess that reads as a fact, and it sends a lead debugging a
+    // comms-only session to a grapevine roster that correctly says nobody is
+    // there. It named "the vine" for a whole session after that stopped being
+    // true.
+    //
+    // Keyed on the CLAIM ("present on <wire>"), not on the token "vine": this
+    // seat has twice written an assertion banning a WORD and had it match the
+    // tool's own affordances or its own explanatory prose. The channel name is
+    // deliberately still allowed — it is true of every wire, and of the next one.
+    expect(rec.stderr).not.toMatch(/present on the vine/i);
+    expect(rec.stderr).not.toMatch(/present on (the )?(grapevine|comms)/i);
+    // Positive anchor, so this cannot pass by refusing with no reason at all.
+    expect(rec.stderr).toContain("test-channel");
 
     // Stream separation: the refusal must NOT reach stdout, where an agent
     // parsing the success channel would read it as output.
