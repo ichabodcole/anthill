@@ -249,9 +249,24 @@ status`** shows who's on + the board.
      - **Give it the ARTIFACT, not the conversation.** Hand it the file, the diff, the command — and
        **do not paste the channel, and do not summarise what you were trying to do.** Both hand it
        your framing, which is the one thing it was dispatched not to have; **its value is
-       incomprehension**, and a helpful briefing destroys exactly that. _On most setups the channel
-       is gitignored, so a fresh agent cannot reach it — a protection that holds only until someone
-       helpfully pastes it in._
+       incomprehension**, and a helpful briefing destroys exactly that.
+       - **⚠ Nothing makes a reader cold BY CONSTRUCTION unless you built the surface it sees.**
+         Coldness is a property of **what you gave it**, never of what you assume it cannot get to.
+         **Gitignore is not an access boundary** — an ignored file is a normal readable file, and an
+         agent in your working directory reads it with `cat`. Neither is a fresh clone: anything
+         **tracked** travels with it, including team docs, and **the commit history comes too**, so
+         `git log` on the file under audit hands over the reasoning that produced it.
+         _This paragraph used to claim the channel was out of reach because it was gitignored. That was
+         false, and it was worse than a wrong fact: it told you a precaution was unnecessary. It stood
+         for months because a false reassurance in a rarely-walked path gets no corrective feedback —
+         nobody had opened a cold reader locally until someone did, and it fell over immediately._
+       - **So BUILD the surface instead of enumerating what to keep out of it.** Export just the
+         artifact into a throwaway directory outside the repo and dispatch against that. **An
+         exclusion list cannot be completed** — the source and the tests under audit carry your
+         framing too, and you cannot exclude the thing you are asking about. **An allow-list you can
+         verify by listing it**, which is the only completeness claim available here.
+         Its floor is the artifact's own contents, and that floor is irreducible: showing them the
+         artifact is the job.
 
 ## Join checklist (the beats that get skipped)
 
