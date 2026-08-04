@@ -80,7 +80,12 @@ _live_. Don't skip it on a real session.
      and a stale prediction is worse than a stale lesson because it commissions work against a world
      that has already moved.
    - Your scratch is **disposable after synthesis** — the durable form is the seat doc.
-   - **Land your own seat doc yourself** — `anthill commit --as <you> -m "…" .anthill/dev/<you>.md`.
+   - **Land your own seat doc yourself** — with the land command `anthill join <you>` emitted, passing
+     your own doc as the path. **It already carries your project's gate in front of the commit and reads
+     the message from a file (`-F`); do not retype it as an inline `-m`.** A synthesis message is exactly
+     the kind that quotes a command or a symbol in backticks, and **the shell executes a backticked span
+     before the tool ever sees it** — that is upstream of any defence the CLI could mount, and it has
+     already silently eaten a word out of a landed commit message on this project.
      It has exactly one possible author, no seam, and no other seat's paths in it, so there is nothing
      for a cross-seat land to coordinate. Two things follow, and both were paid for:
      - **The `Anthill-Seat` trailer records who RAN the command, not who authored.** Lead-lands-everything
@@ -284,9 +289,10 @@ it has gone wrong.**
      **is any Q1/Q2 answer carried only by everyone agreeing?** If it has no artifact, no number and
      no count behind it, either attach one or label it as testimony. A retro that skips this is the
      one that reads well and cannot be checked.
-   - ◻ **Every seat landed its OWN doc** — `anthill commit --as <you> -m "<msg>" <your paths…>`, never
-     `git add -A`. The `--as` stamps the seat trailer, and because each seat runs its own commit the
-     trailer names the actual author rather than whoever happened to hold the land.
+   - ◻ **Every seat landed its OWN doc** — with the land command its own `anthill join` emitted (gate
+     and commit in one, message from a file), never `git add -A` and never an inline `-m` for a body
+     containing backticks. The `--as` it carries stamps the seat trailer, and because each seat runs its
+     own commit the trailer names the actual author rather than whoever happened to hold the land.
    - ◻ **The lead landed anything CROSS-SEAT atomically** — a `seams.md` contract plus the skill that
      points at it, a CLI change plus the doc describing it. **This is what lead-owns-the-land is for:**
      work spanning owners that would, landed in pieces, leave a trail asserting something untrue for
@@ -316,7 +322,7 @@ it has gone wrong.**
        2. **Bring back only the docs** — `git checkout stash@{0} -- <doc-paths…>`. Now the tree holds
           just the seat docs (markdown → the gate passes); the red slice stays parked in the stash.
        3. **Land the docs against the now-green tree** — each seat commits its own
-          (`anthill commit --as <you> -m "…" <your doc>`); the lead lands only genuinely cross-seat
+          (the land command its `anthill join` emitted, naming its own doc); the lead lands only genuinely cross-seat
           docs together. The pivot exists to make the tree green, not to move authorship.
        4. **Restore the held slice** — `git stash pop`. The stash's doc hunks are already committed
           verbatim, so they re-apply as a clean no-op; the red slice (tracked edits **and** untracked

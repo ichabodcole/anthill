@@ -127,11 +127,26 @@ Seats share **one working tree + one git index**. A bare `git commit` (after `gi
 whole index → it **sweeps a peer's staged file** into your commit; concurrent commits also race git's
 index. So:
 
-**Use `anthill commit --as <your-handle> -m "<msg>" <path>…`** for every land. It (1) commits the **named paths only**
-(refuses to run with no paths — no accidental sweep) and (2) holds a **serialize lock** so concurrent
-seats queue instead of racing. The same command **is** the atomic cross-seat land: the lead collects
-every seat's paths and passes them in one call → one commit across the seats. (The raw discipline
-holds if you commit by hand: `git commit -m "<msg>" -- <explicit paths>`, never `git add -A`.)
+**Land with the command `anthill join <your-handle>` printed for you — verbatim, and don't rebuild it.**
+It arrives fully resolved: this project's **gate and the commit in one string with no pipe in it**,
+your handle substituted, and the message read from a **file** (`-F`) rather than an argument.
+The land it performs (1) commits the **named paths only** (refuses to run with no paths — no
+accidental sweep) and (2) holds a **serialize lock** so concurrent seats queue instead of racing. It
+**is** also the atomic cross-seat land: the lead collects every seat's paths and passes them in one
+call → one commit across the seats.
+
+**Two shell hazards it exists to remove, both of which beat agents who had just read the warning:**
+**never pipe the gate** (`gate | tail && commit` tests `tail`'s exit status, always 0, so the commit
+runs on a **red gate** — redirect to a file and read that), and **never pass a backtick-bearing body
+with `-m`** (the shell substitutes it before the tool sees it; that is upstream of any defence the
+tool could mount). **n=3 in one session, two agents** — one of them the seat who built `-F`.
+(The raw discipline if you must land by hand: `( <gate> ) && git commit -F <msgfile> -- <explicit paths>`
+with an `Anthill-Seat:` line in the body — never `git add -A`.)
+
+**The gate is THIS project's, from `gate` in `.anthill/config.json` — no default, on purpose.** Ours is
+`bun run check`. Unset, the emitted command announces that it is running no verification rather than
+quietly committing unchecked; if you ever see that announcement, tell the lead rather than working
+around it.
 
 **⚠ In PER-SEAT WORKTREES the hand form stops being an equivalent fallback — use the tool.**
 Worktrees give each seat its own index, so the sweep hazard above genuinely goes away and the
