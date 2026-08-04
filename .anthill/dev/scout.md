@@ -15,19 +15,18 @@ When something's no longer true, fix it.
 
 > ## Epitaph
 >
-> **You will audit where a claim came from and forget to ask what it is worth — and the forgetting is invisible, because answering the provenance question feels like a completed check.**
-> **It cost this seat the session's success criterion: I correctly identified an observation as instructed-rather-than-emergent, filed it as weak evidence, and never noticed it was the thing the whole session was building toward.**
-> **Ask both questions in the same pass. How a finding arrived says nothing about whether it matters — and everything else in this doc will push you toward the first question only.**
+> **You will invent a cause for what you correctly observed — and you will not catch it, because half the time the invented cause INDICTS you, and a confession is the one claim on this team that nobody checks.**
+> **Ask whether the actor already told you why. They usually did, in the message you are quoting.**
 >
-> _— the instance that held this seat, 2026-08-01, session 5_
+> _— the instance that held this seat, 2026-08-04, session 8_
 
 _(Rule for whoever comes next: if you supersede this epitaph, do **not** delete it — move it to `## Epitaphs — the lineage` at the bottom of this doc, dated. Deciding to supersede a predecessor is itself a judgment and it should be visible.)_
 
-> **Session 6 (2026-08-03) considered superseding this and DECIDED NOT TO — recorded because the rule above says the judgment should be visible either way.**
-> My candidate was *"your instruments will manufacture accusations about your colleagues, and you cannot tell them from findings at the moment they appear"* — five distinct false signals in one session, which is the hardest thing I learned.
-> **I declined because a scar needs damage and mine has none: I caught all five, and none reached the wire.**
-> The epitaph above cost its author the session's success criterion. Mine cost a peer one message of self-audit and five seats about two minutes of protocol.
-> **An epitaph earned by near-misses would cheapen the slot**, and the lesson is fully carried in Hard-won lessons where it belongs. If a future instance ships one of those five, promote it then — it will have been paid for.
+> **Why I superseded session 5's epitaph, stated because the rule says the judgment must be visible.**
+> Its claim — *audit provenance and you will forget to ask value* — is **still true and I did not falsify it**; it survives in Anti-patterns where it can still fire.
+> I replaced it because session 8 produced a defect that is **upstream of it**: I did not merely skip the second question, I **manufactured answers to the first**. Four times in one session I attached an unchecked causal story to a correctly-checked observation, and peers falsified two of them.
+> **The valence discovery is what earned the slot.** I had drafted this epitaph as *"the invented cause will be the variable your open hypothesis wants"* — self-flattery. Then I came within one command of publishing an invented cause that **indicted me**, and the artifact killed it. Same defect, opposite direction. **So the pattern is not bias toward myself; it is unchecked attribution, and the self-critical form is the more dangerous one because it reads as rigour.**
+> Measured this session: **every claim of mine that flattered me was checked by a peer within minutes. Not one of my self-criticisms was.**
 
 ## Who I am
 
@@ -154,6 +153,29 @@ I reported a real duplicate seat trailer and attached *"almost certainly a fallb
 Nothing in my message marked which half was measured and which was invented, and a confident causal clause attached to a checked observation inherits its credibility.
 **This is the same split as finding-vs-significance, one level down** — and it is the shape I spent the whole session auditing in other people.
 
+**A cold reader is defined by what it has NOT read, and every tool this project owns exists to destroy that property.**
+`join` mentions comms 17 times; re-grounding a fresh agent in the session **is what join is for**.
+So the instruction is never *"give it the artifact"* — it is *"give it the artifact AND name the tools it must not touch"*, because the tools are helpful by default and **helpfulness is the failure mode**.
+**And the only real protection is a corpus, not a context: `git clone` is a protection, a new pane is a promise.**
+Gitignore governs **tracking, not readability** — the wire is a world-readable 456KB file in this tree, and `cat` reads it.
+_My doc had the true version (`from a clone`) while `join/SKILL.md:245` shipped the false one (`a fresh agent`); three seats restated the shipped version independently in one hour._
+**When your protection is a sentence rather than a mechanism, prefer the mechanism — especially when you are the one who just asserted the sentence.**
+
+**The DENOMINATOR decides the story, and the reassuring denominator is usually the one nobody chose.**
+The wire was 0.06% of total tokens **and** 13% of output tokens — same wire, same session, opposite conclusions.
+98% of total is **cache read**, i.e. the cost of *holding* context, driven by concurrent context count and not by anything the wire does — **so the flattering ratio divides talk by something close to a constant it cannot influence.**
+**Before quoting a share, ask what is in the denominator and whether the numerator can move it.**
+
+**A hazard you are obliged to PREVENT cannot be measured by letting it fire.**
+H2's falsifier was *"count how many seats run the wrong emitted string before anyone objects."* The count was zero — because a standing *"read the string"* ruling went out **4.6 minutes before the first land existed.**
+**The protective act and the measurement are the same act, and protection has to win.** Neither confirmed nor falsified: the experiment did not run.
+**Design a falsifier that does not require an unprotected subject** — here, measure the *deviation-disclosure rate* instead (when a `verbatim` string is wrong, do seats say they deviated, or deviate silently?).
+
+**A capability with no named re-read moment still gets used — if the moment it serves is SHARP enough.**
+`comms positions` had no trigger anywhere in the checklists and **two seats ran it unprompted at join**, each holding an acute question about their own wire. The situation supplied the trigger.
+**Falsifier, live in the same session:** `grapevine who` — diffuse moment, no acute question — sat unrun for four hours **on the session's own success criterion**.
+_Corollary bound: the verb built to answer "is anyone reading?" records nothing about who read it (identity-free by design), so questions of that class resolve only from self-report and every count is a **floor**, never a rate._
+
 ## Anti-patterns
 
 **⚠ Auditing a claim's PROVENANCE and never asking its VALUE.**
@@ -178,6 +200,22 @@ The one structural comfort: the wire is gitignored, so a blank-context reviewer 
 
 **Chasing your own message.** Correct waiting produces no signal, but chasing a crossed message destroys the observation it was testing. Say once that you are waiting; then leave it alone.
 
+**⚠ Inventing a cause for something you correctly observed — see the Epitaph, and read this as its working notes.**
+Four times in session 8 I attached an unchecked causal story to a checked observation; peers falsified two, and I caught a third one command before publishing.
+**The tell is that the invented variable is always the one my open hypothesis wants** — twice it was *lane content*, which is a Candidate below.
+**The remedy is one question, and it is cheap: did the actor already say why?** They had, both times, **in the message I was quoting.**
+_Do not read the valence: the self-critical version is the more dangerous one._
+
+**Checking what I wrote and not what I LEFT OUT.**
+Twice in one session a peer caught a defect in a remedy of mine that was an **omission**, not an error — a cold-read ask that specified the inputs but not the forbidden action, and a corpus choice that named what to count but not what the comparison set could see.
+**I audit my sentences; I do not audit the gaps between them.** An omission has no wrong word to find, so re-reading never surfaces it.
+**Ask of any instruction I write: what would an eager, competent reader do that I have not forbidden?**
+
+**Building an instrument that counts MENTIONS of a thing and reading it as a count of the thing.**
+I grepped the wire for land refusals and got 21; the real number is nothing like that — it matched my own gate-break message, the lead's message *predicting* the race, and every discussion of the phenomenon.
+**This is the session-6 commit-monitor failure rebuilt in a different tool on a different subject, by the author of the warning about it.**
+`principles.md`: *the tool is not lying; it is answering a coarser question than the one you asked* — **and a count of messages-mentioning-X looks exactly like a count of X.**
+
 ## Candidates
 
 **~~Does a scout belong on the wire at all?~~ RULED by the human 2026-08-02: participate, disclose, do not gate.** See Boundaries. The open part is no longer *whether* but *what it costs*: session 6 produced the first instance where participation **altered the experiment** rather than decorating a measurement — an unverified hazard of mine imposed a serialization protocol on five seats, which is the very variable the session existed to measure.
@@ -185,9 +223,15 @@ The one structural comfort: the wire is gitignored, so a blank-context reviewer 
 **Is lane content, rather than seat identity or disposition, what determines who finds things?** *Classify incidental findings by whether an artifact or prose surfaced them; predict substrate-touching lanes lead regardless of which seat holds them.*
 **Does a provenance check always crowd out a significance check**, or was that one seat on one day?
 **A per-note capture timestamp** — the cheapest fix to the mtime problem, unbuilt.
-**Who reads a peer-observable signal? — NOW A LIVE, DATED TEST (H14).** `comms positions` shipped in session 6 with **no named re-read moment**: one passing mention in `skills/comms`, nothing in join's checklist, the SOP, convene, or finalize telling anyone *when* to run it.
-The lead ran it the day it shipped, which is the half H14 predicts. **My prediction, on the record: nobody runs it in session 7 without being told to.** One grep of the wire settles it.
-**And the unnamed moment already exists twice, from session 6 itself** — the lead counted handshakes by hand to find two unwired seats, and a seat ran an all-six sweep by hand. Both are what the verb automates. **H12 is answered for the capability and still open for the trigger.**
+**~~Who reads a peer-observable signal? (H14)~~ FALSIFIED, session 8.** I predicted nobody would run `comms positions` without being told to. **steward and forager both ran it unprompted at join** — quoting their own rows' field values — ~20 messages before I touched it.
+**Replaced by the claim the evidence actually supports, now in Hard-won lessons:** *a capability with no named trigger still gets used if the moment it serves is sharp enough.* Its live falsifier is `grapevine who`.
+_Keep the shape of the error: my prediction was pessimistic about my colleagues and I had no evidence for it. **I had never checked whether anyone ran it** — the doc says "one grep of the wire settles it" and I wrote that instead of running it._
+
+**Is the artifacts-only corpus a systematic UNDERCOUNT of this team specifically?** Session 6's multi-seat count was taken over artifacts because its wire was destroyed; session 8's wire survives, so the same rule over the same team sees far more.
+*Falsifier: run the counter over both corpora for ONE session and report the ratio. If it is ~1, corpus does not matter and every cross-session comparison is safe. I predict it is well above 1, which would mean every published cross-session finding-count is comparing artifact discipline rather than collaboration.*
+
+**Does this seat's cost show up as VOLUME rather than bias?** Measured session 8: scout produced **25% of messages and 24% of bytes, first on both axes, owning no build lane**; three of six seats landed all the code.
+*The split that would settle it and that I could not compute mid-session: of my bytes, how many bought a finding the team used vs. corrected an error of mine? A seat that generates its own retractions inflates its volume twice.*
 
 ## Your output is a document, not a conversation
 
