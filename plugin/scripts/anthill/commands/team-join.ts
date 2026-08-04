@@ -95,15 +95,71 @@ export interface ChecklistInput {
  * quietly emitting a commit with no gate — an unstated absence and a considered
  * one must not look alike.
  */
+export type GateDecision =
+  | { composable: true; gate: string }
+  | { composable: false; notice: string };
+
+/**
+ * ONE verdict on whether `config.gate` may be composed into the emitted land
+ * string. Both the command and its warning derive from THIS — never from two
+ * separate predicates, which is the "two copies of one verdict" defect `status`
+ * and `down` were just de-duplicated for.
+ *
+ * A gate is refused for two different reasons, and they are kept distinguishable
+ * because they call for different actions by different people:
+ *
+ *   * **unset** — the project never configured one. The lead sets it.
+ *   * **not composable** — it is set, but contains a shell operator that would
+ *     make `&&` test the WRONG command's exit status. `bun run check | tail -6`
+ *     is the live example: `&&` then tests `tail`, which is always 0, so the
+ *     commit runs on a RED gate. That is the original defect this whole
+ *     composition exists to prevent, arriving through the config field instead
+ *     of through the agent's shell — and `bash -n` is clean on it, so nothing
+ *     downstream complains.
+ *
+ * `&&` is deliberately ALLOWED (`tsc --noEmit && bun test` is a correct gate and
+ * fails correctly). `|`, `||`, `;`, a lone `&`, backticks, `$(…)` and newlines
+ * are not: each can make a failing gate report success.
+ */
+export function decideGate(gate: string | undefined): GateDecision {
+  if (gate === undefined) {
+    return {
+      composable: false,
+      notice:
+        "⚠ NO GATE CONFIGURED (`config.gate` is unset), so the command above runs your project's verification NOT AT ALL — run your project's check yourself before landing, and tell your lead the config is missing it.",
+    };
+  }
+  // `&&` is the one operator that preserves failure, so it is removed before
+  // looking for a bare `&` (background, which detaches and always succeeds).
+  const withoutAnd = gate.replaceAll("&&", "");
+  const unsafe =
+    /[|;`\n\r]/.test(gate) || gate.includes("$(") || withoutAnd.includes("&") || gate.trim() === "";
+  if (unsafe) {
+    return {
+      composable: false,
+      notice: `⚠ config.gate is set to \`${gate}\` and was NOT composed into the command above, because it contains a shell operator that would make \`&&\` test the wrong command's exit status — a failing gate would report success and your commit would land on a red gate. Run your gate as its own command, read its result, then land. Tell your lead to set config.gate to a single command (\`&&\` is fine; a pipe is not).`,
+    };
+  }
+  return { composable: true, gate };
+}
+
 export function buildLandCommand(i: {
   handle: string;
   gate: string | undefined;
   msgFileRel: string;
 }): string {
   const commit = `anthill commit --as ${i.handle} -F ${i.msgFileRel} <path>…`;
-  return i.gate === undefined
-    ? `${commit}   ⚠ NO GATE CONFIGURED (\`config.gate\` is unset), so this runs your project's verification NOT AT ALL — prefix it yourself and tell your lead the config is missing it`
-    : `${i.gate} && ${commit}`;
+  const decision = decideGate(i.gate);
+  // The returned value is A COMMAND OR NOTHING ELSE. It previously concatenated
+  // the no-gate warning INTO the string under a label reading "LAND with this
+  // EXACT string": `bash -n` exit 2, and it carried BACKTICKS — the second of
+  // the two failure modes this function was built to prevent, reintroduced into
+  // the one string we tell every seat to run verbatim. weaver's `upgrade 4d`
+  // finding is what made it maximal: no existing footprint could receive
+  // `config.gate` by any path that existed, so EVERY existing anthill project
+  // emitted the broken branch. The warning is now a sibling value (`notice`),
+  // rendered beside the command and never inside it.
+  return decision.composable ? `${decision.gate} && ${commit}` : commit;
 }
 
 /**
@@ -149,7 +205,15 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // The composed land goes FIRST and verbatim. Everything after it is the
     // reasoning; a seat that reads only the first clause still lands correctly,
     // which is the property the previous prose-only form did not have.
-    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel })}\n  Do NOT pipe the gate to \`tail\`/\`head\`/\`grep\` to shorten its output: \`&&\` would then test the FILTER's exit status, which is always 0, and your commit runs on a red gate while the guard is still visibly there. Redirect to a file and read that instead. Do NOT pass the body with \`-m\` if it contains backticks — the shell executes them before the tool sees them. Both of these defeated agents who had just read the warning against them.`,
+    // The emitted string is A COMMAND, and the warnings are BELOW it. They were
+    // briefly concatenated into it, which made the no-gate branch a shell syntax
+    // error carrying backticks — the defect this line exists to prevent, inside
+    // the line that prevents it. A notice that cannot be run is not a safer
+    // notice; it is an unusable command.
+    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel })}${(() => {
+      const d = decideGate(i.gate);
+      return d.composable ? "" : `\n  ${d.notice}`;
+    })()}\n  Do NOT pipe the gate to \`tail\`/\`head\`/\`grep\` to shorten its output: \`&&\` would then test the FILTER's exit status, which is always 0, and your commit runs on a red gate while the guard is still visibly there. Redirect to a file and read that instead. Do NOT pass the body with \`-m\` if it contains backticks — the shell executes them before the tool sees them. Both of these defeated agents who had just read the warning against them.`,
     `Commit file-scoped with an EXPLICIT pathspec, and stamp your seat. Never a bare \`git commit\` / \`git add -A\`. Without \`--as\`, git records the HUMAN as the author of every seat's commit, so "who landed this?" is unanswerable afterwards — a team hit exactly that and had to ask the channel to identify one. On a shared tree, serialize: announce, commit, confirm landed, then the next seat goes — or hand ${i.lead ?? "the lead"} your paths for one atomic land.`,
     // Two wires, two different catch-up jobs — and the asymmetry is stated as
     // the REASON rather than as a caveat, so a seat can derive the comms case

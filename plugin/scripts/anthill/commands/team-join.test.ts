@@ -1,9 +1,12 @@
 import { describe, expect, test } from "bun:test";
+import { rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import {
   buildChecklist,
   buildGroundingRefs,
   buildLandCommand,
   buildMissingWarnings,
+  decideGate,
   toManifestEntry,
 } from "./team-join.ts";
 
@@ -48,15 +51,76 @@ describe("buildLandCommand — the composition an agent cannot get wrong", () =>
     expect(cmd).not.toContain("<handle>");
   });
 
+  // THE F2 ASSERTION, and it is `bash -n` rather than a substring because a
+  // SUBSTRING IS NOT USABILITY. The old test asserted
+  // toContain("anthill commit --as forager -F") under the comment "Still emits a
+  // usable, correct commit" — and passed against a string that was a shell
+  // syntax error carrying backticks, on every existing footprint.
+  //
+  // Every branch, including ones no config here produces, because the emitted
+  // string is run VERBATIM by a seat in a consuming repo.
+  test("EVERY branch parses as a shell command — bash -n, not toContain", () => {
+    const gates = [undefined, "bun run check", "make verify", "tsc --noEmit && bun test"];
+    const results = gates.map((gate) => {
+      const cmd = buildLandCommand({ ...base, gate });
+      const file = `${tmpdir()}/anthill-land-${Bun.hash(cmd)}.sh`;
+      writeFileSync(file, cmd);
+      const p = Bun.spawnSync(["bash", "-n", file]);
+      rmSync(file, { force: true });
+      return { exit: p.exitCode, backticks: (cmd.match(/`/g) ?? []).length };
+    });
+    // Asserted as a SET: one cell passing proves nothing about the branch that
+    // actually shipped broken.
+    expect(results).toEqual(gates.map(() => ({ exit: 0, backticks: 0 })));
+  });
+
   // The gate is the PROJECT's. Hard-coding one would be the anti-pattern
   // AGENTS.md names; emitting a bare commit when none is configured would be a
-  // silent absence. So the absence is stated loudly instead.
-  test("an unconfigured gate is announced, not silently dropped", () => {
+  // silent absence. So the absence is stated loudly — as a SIBLING notice, never
+  // inside the command.
+  test("an unconfigured gate is announced OUTSIDE the command, not inside it", () => {
     const cmd = buildLandCommand({ ...base, gate: undefined });
-    expect(cmd).toMatch(/NO GATE CONFIGURED/);
-    expect(cmd).toContain("config.gate");
-    // Still emits a usable, correct commit — a seat is not left with nothing.
-    expect(cmd).toContain("anthill commit --as forager -F");
+    // The command carries no prose at all...
+    expect(cmd).not.toMatch(/NO GATE CONFIGURED/);
+    expect(cmd).toBe(
+      "anthill commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…",
+    );
+    // ...and the announcement still exists, on the decision the checklist renders.
+    const d = decideGate(undefined);
+    expect(d.composable).toBe(false);
+    expect(d.composable === false && d.notice).toMatch(/NO GATE CONFIGURED/);
+    expect(d.composable === false && d.notice).toContain("config.gate");
+  });
+
+  // F2b: the ORIGINAL commit-on-a-red-gate defect, arriving through the config
+  // field instead of the agent's shell. `bash -n` is CLEAN on it, so syntax
+  // checking cannot catch this one — only refusing to compose it can.
+  test("a gate that would defeat && is refused, not composed", () => {
+    const defeats = [
+      "bun run check | tail -6",
+      "bun run check || true",
+      "bun run check; true",
+      "bun run check &",
+      "bun run check `echo hi`",
+      "bun run check $(echo hi)",
+    ];
+    // Asserted as a set: none of these may reach the command string.
+    expect(defeats.map((g) => decideGate(g).composable)).toEqual(defeats.map(() => false));
+    expect(defeats.map((g) => buildLandCommand({ ...base, gate: g }))).toEqual(
+      defeats.map(
+        () => "anthill commit --as forager -F .anthill/scratch/forager/commit-msg.txt <path>…",
+      ),
+    );
+  });
+
+  // ...but a gate whose operator PRESERVES failure must still compose, or the
+  // guard degrades into "no gate is ever good enough" and stops running anyone's
+  // verification. This is the positive anchor for the test above.
+  test("&& preserves failure, so it is allowed through", () => {
+    expect(decideGate("tsc --noEmit && bun test").composable).toBe(true);
+    expect(buildLandCommand({ ...base, gate: "tsc --noEmit && bun test" })).toStartWith(
+      "tsc --noEmit && bun test && anthill commit",
+    );
   });
 
   test("does not invent a default gate command", () => {
