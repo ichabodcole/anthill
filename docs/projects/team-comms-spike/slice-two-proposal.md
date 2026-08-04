@@ -564,6 +564,53 @@ named `COMMS_GITIGNORE_LINE` as still carrying the trailing slash; **forager had
 Two stale claims in a document about instruments that answer a different question than the one
 asked, found only by re-running them. **Neither failed any gate.**
 
+### R15 — how the SOLE-WIRE GATE is actually configured (human, 2026-08-04)
+
+**Ruled, so session 8 is not blocked on it.** Session 7 could not start the gate because `anthill
+convene` opens the grapevine channel **unconditionally** (no opt-out flag) while `anthill join`'s
+checklist items 2–3 arm `grapevine tail` and `bounty tail`. Running the commands the skills mandate
+arms the wire the gate requires be unarmed.
+
+**The ruling:**
+
+> **convene opens the vine channel as normal. Seats SKIP join checklist items 2 and 3 — nobody tails
+> it. Bounty stays wired.**
+
+**Why an open-but-untailed channel is genuinely unarmed:** presence on grapevine is a _side effect of
+holding a tail_, so a channel nobody tails delivers nothing to anyone. It is dead as a wire whether or
+not it exists.
+
+**And it is better than not opening it, because it leaves an instrument in place.** A seat that
+reaches for grapevine mid-session lands a message in a log nobody is reading — **the falsifier
+recording itself.** Closing the channel would remove the tripwire along with the wire.
+
+**Bounty is out of scope by design.** comms replaces grapevine (discussion), not bounty (task state);
+the spike proposal scoped bounty out from the start.
+
+**The uninstalled branch stays ruled out** (R12): grapevine remains installed as a release-time
+fallback, and the unfixed `join` coord coupling means no seat could join at all without it.
+
+#### ⚠ Accepted traps — named so they are known, NOT gated on
+
+_The human's framing, and it is the right one: **"certainly there are potential traps there, but we
+shouldn't over-index on getting caught in them at this point."** These are recorded so a later reader
+can tell an accepted limitation from an oversight._
+
+1. **A fallback is invisible in real time.** A seat that sends to grapevine is seen by nobody,
+   including the lead — the falsifier fires **silently and late**, detectable only post-hoc in the log.
+2. **"Nobody tails" is not "nobody reads."** Nothing stops the lead running `grapevine pull` by hand.
+3. **Bounty still carries information.** Card titles, statuses and comments can route coordination. Its
+   tail is armed, so it is a real leak from the gate's purity — accepted because the board is not the
+   thing under test.
+4. **The human is on neither wire, and that matters more here than usual.** Contract 4(c) admits only
+   rostered handles, so the human cannot send on comms and all human input reaches the team through
+   the lead, out of band. **When comms is the only wire, that out-of-band channel is an unmeasured
+   fallback** — and it is the one nobody thinks of as one.
+
+**None of these blocks the gate. All of them qualify a PASS**: a session that survives on comms alone
+did so with bounty armed and a human talking to the lead outside both wires. **Say that in the
+result rather than claiming a cleaner run than happened.**
+
 ### Team rule adopted this session (not comms-specific)
 
 **Whoever certifies a convergence names the shared input both parties read first.** Producer/consumer convergence is this team's ratify signal; an unqualified convergence claim is the "agreement is not truth" failure wearing a ratify badge. Adopted after a convergence was certified by timestamp without naming that both parties had read the same proposal — and then re-committed by the lead one message later.
