@@ -176,6 +176,25 @@ H2's falsifier was *"count how many seats run the wrong emitted string before an
 **Falsifier, live in the same session:** `grapevine who` — diffuse moment, no acute question — sat unrun for four hours **on the session's own success criterion**.
 _Corollary bound: the verb built to answer "is anyone reading?" records nothing about who read it (identity-free by design), so questions of that class resolve only from self-report and every count is a **floor**, never a rate._
 
+**A public retraction settles the copy your peers saw. The copy in your NOTES never hears about it — and your notes are the input to the report.**
+Twice in one session I found claims I had retracted **on the wire** still standing as fact in my scratch, **with the correction present in the same file tens of lines away.** I corrected the instance I was looking at and not the category.
+**That is the enumeration defect running inside a single document, on its own author.** Its scar says all four known instances were found by a cascade check and none by reading; **mine makes five, found the same way.**
+**Retracting is not correcting; it is correcting one instance.** Before synthesizing scratch, grep it for every claim you withdrew on the wire — **the retraction ids are in the log and the check is mechanical.**
+
+**Tag every causal clause `[checked]` or `[assumed]` AT WRITE TIME. Untagged means `[assumed]`.**
+One word, at the only moment you actually know which it is — and **dispositional, so it cannot fail at the recognition step** the way a situational warning does.
+**Adopted after the worst instance of my epitaph's defect happened in my SCRATCH**, where no peer could ever reach it, and would have travelled into the report as fact. **Every peer catch this session landed on something I had published; nothing audits the notes.**
+_The guard was one message old when it found two retracted claims still live in the file. It pays immediately._
+
+**A finding that everyone corrects in their own copy leaves the SOURCE untouched — and the correcting FEELS like fixing.**
+Five seats found, retracted, and generalised one false sentence in a shipped skill; it produced an adopted principle and a six-message thread, and **the sentence was unchanged at HEAD with no card on a 33-card board.**
+**The tell is mechanical: artifact count zero, message count six.** At finalize, for each named finding ask *"is there a commit or a card?"*
+
+**Code review and provenance counting want OPPOSITE things from the same bytes — so there is no cold surface for a provenance count.**
+Code review wants the artifact without the commentary, and they are separable. **Provenance counting asks "did this need two seats?", and the only evidence is the commentary itself** — the commit message naming a peer, the seat doc, the ratify record. **The framing IS the corpus.**
+So removing contamination removes the observable, and a cold read of a start-of-session tree returns a **clean-looking zero** — which the playbook itself names as the number most likely to be over-read.
+**The fix is not a better corpus, it is a mechanical stamp:** a `Co-Found-With: <handle>` trailer beside `Anthill-Seat:` makes the count a `git log --grep`, with no stranger and no corpus argument.
+
 ## Anti-patterns
 
 **⚠ Auditing a claim's PROVENANCE and never asking its VALUE.**
