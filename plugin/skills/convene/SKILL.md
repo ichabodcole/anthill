@@ -116,7 +116,11 @@ stay solo.
        _(Scar: a lead spent a morning counting handshakes by hand to find seats "missing from comms",
        because convene did not emit this and nothing said it was needed. The seats were fine. The lead
        was the one not on the wire, and no check it ran could have told it so.)_
-   - **`anthill status`** confirms the result (who's on the vine + the board column counts).
+   - **`anthill status`** confirms the result (who is present on the channel + the board column
+     counts). **Presence spans every wire, not the vine alone** — `status` and `down` both read it
+     from one multi-wire source, so a seat present only on `comms` counts as present. Don't read a
+     name here as "on the grapevine", and don't go looking for it on one wire when it disagrees
+     with your expectation.
    - **⚠ `status` does NOT tell you who is on `comms`** — it reports the grapevine roster, so a seat
      can be wired to the vine, visible in `status`, and receiving nothing on comms with no symptom.
    - **Confirm the comms wiring right after the seats introduce themselves — `anthill comms

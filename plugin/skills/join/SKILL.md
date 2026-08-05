@@ -343,8 +343,8 @@ status`** shows who's on + the board.
 
 ## Output
 
-A grounded seat: re-grounded in your role, present on the vine + board, scratch minted, working your
-lane.
+A grounded seat: re-grounded in your role, present on the wires this session armed, scratch minted,
+working your lane.
 
 ## Skill feedback
 
