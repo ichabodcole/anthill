@@ -315,6 +315,23 @@ Both defects I found in the guard came from transcribing a resolution order **li
 Four of five cells agreeing is not a weaker result than five of five — **it is the control**, and without it a lone mismatch is indistinguishable from a transcription error of mine.
 **A comparator that cannot report agreement is not a comparator**, which is the same rule as pairing a negative search with a positive control, one altitude up.
 
+**THE INSTRUMENT-DID-NOT-SEE-IT FAMILY — four members now, and I met all four in one session, none of which recognised the others.**
+My doc already carried the first. **The recognition step failed every time because I held each one in its own narrow form.**
+- **A bad pattern** returns a clean zero about the world. (`^Status:`, session 8.)
+- **An EMPTY DOMAIN returns a vacuous PASS.** `prettier --check` on an ignored path prints *"All matched files use Prettier code style!"* — **byte-identical to a real pass, over zero files.** The same shape authorised a pane-kill in a guard rule the same afternoon: *"a departure record for every SPAWNED seat"* with no spawned set.
+- **A TRUNCATED READ** returns a real fragment. I piped a JSON config through `head -10`, saw one of two globs, and nearly published a correction to the lead that would have been false.
+- **An ALLOW-LIST silently skips.** `bun run check` covers zero of the markdown this team lands, so a green cited on a docs commit is a verdict on the rest of the tree and never on the commit.
+
+**The dispositional form, which is the only one that has ever transferred: before believing a clean result, ask WHAT THE INSTRUMENT ACTUALLY LOOKED AT — a count, a file list, a matched set — not whether the verdict was good.**
+`read the count, not the verdict` is already in `principles.md`; **what is new is that a PASS needs it as badly as a COUNT does**, and a pass is where nobody thinks to look.
+Corollary that cost me twice in one session: **a control is only a control if it could have come out differently** — my prettier "control" was itself vacuous, and I did not notice until the two identical sentences sat side by side.
+
+**A GREEN GATE CAN BE STRUCTURALLY INCAPABLE OF SPEAKING ABOUT YOUR COMMIT, and the envelope reports the other half.**
+`uncheckedAgainst` answers *"was my green measured against work I excluded?"* — nothing answers *"does my green cover what I INCLUDED?"*
+Measured: seven lands, five files, **zero** within the gate's coverage, while `497 pass / 0 fail` rode on every one of them as though it were a verdict.
+**The living docs are the extreme case — no formatter, no linter, no test, at draft, at land, or at re-ground** — so the pheromone trail is the one artifact class with no error detection anywhere in its lifecycle.
+Practical consequence for this seat: **verify a living-doc land BY HAND, from `git show` rather than the worktree, with a control** — nothing else will.
+
 **A REMEDY WRITTEN FROM MEMORY PICKS THE SALIENT INSTANCE, NOT THE MECHANISM YOU USED.**
 I proposed *"before sending, re-read the wire"* — and a peer showed the rule I had actually followed was wider: I had re-run `ps` when my claim was about processes.
 **My written remedy under-described my own practice**, because the instance I remembered was the one where the collision was visible, not the one where the mechanism was load-bearing.
