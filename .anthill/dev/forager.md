@@ -433,6 +433,17 @@ _It failed LOUDLY, which is the only reason it cost nothing. **The dangerous sib
 
 _Lesson: a guardrail a wrong invocation can defeat is not a guardrail. If the mistake is expressible, it will eventually be expressed — by you._ (Pinned: the verb-surface tests asserting the ABSENCE of those flags.)
 
+- **⚠ BEFORE YOU USE THE `git archive` HARNESS THIS DOC PRESCRIBES SEVEN TIMES: IT RUNS `bun test` AND NOTHING ELSE.** _(Session 12, found post-stand-down while verifying my own close baseline. Placed FIRST in this cluster because every entry below tells you to use that harness and none of them states its domain.)_
+`git archive` carries **tracked files and not `node_modules`**, so in the copy:
+```
+bun test      -> works           (this repo has ZERO runtime deps — that is WHY it works)
+tsc --noEmit  -> error TS2688: Cannot find type definition file for 'bun'
+biome check   -> no "Checked N files" line at all — it does not run
+```
+**Nobody has been bitten: every archive run in this doc's history is `bun test`.** The hazard is a future instance following the prescription to verify a **typecheck- or lint-level** change and reading **a red that is an artifact of the harness**, on the gate leg whose failures we treat as most serious.
+> **A throwaway harness has a DOMAIN, and a harness that works for everything you have used it for looks domain-free.**
+**🔴 And the meta-instance is the reason this sits here rather than in a retro: I published this bound ONE HOUR EARLIER scoped to `tsc` alone** (*"valid for `bun test`, NOT for `tsc`"*), **because `tsc` was the one failure I had tripped over. Then I ran `biome` in a copy and it did not run either.** I stated a bound from a single observed instance, and the reassurance — *"`bun test` works, so the harness is fine"* — is the half nobody re-reads. **That is this file's most-repeated failure, committed inside the message warning about instruments.** _(Corrected on the wire at `#824`; the correct form is **"it runs only what needs no `node_modules`"**, which is a rule rather than a list and therefore does not need re-widening the next time a tool is added.)_
+
 - **⭐ NEW — MY ISOLATION DISCIPLINE WAS FOLLOWED ALL SESSION AND SCOPED TO THE WRONG SET, AND THE COST WAS THE WIRE ITSELF.** _(Session 10, late. New rather than merged, because every existing blast-radius entry here is about DELIBERATE breakage and this is the one where the discipline held and still failed.)_
 Six mutation checks ran in `git archive` clones outside the checkout. **Zero blocked lands, reported twice with satisfaction.** Then a **one-line comment fix** to a template literal in `team-join.ts` went straight into the shared tree: I terminated the string with `\\\`` — an **escaped** backtick, which inside a template literal is not a terminator — and the parser died.
 **`team-join.ts` is imported by `cli.ts`, so the failure was not the gate. It was every anthill verb, including `comms send`.** I did not break a check; **I broke the channel the team was using to coordinate around the breakage.** A peer's message was lost in the window, and **he** reported the outage — the seat who caused it was the last to know, because the tool that would have told him was the tool he had broken.
