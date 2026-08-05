@@ -168,7 +168,7 @@ measured.
   [the substrate cannot tell a seat its read went stale](../backlog/2026-08-04-the-substrate-cannot-tell-a-seat-its-read-went-stale.md).
 - **B remains genuinely open**, and the open question below — _does a real surface earn its keep, or
   is a reserved channel enough?_ — is now partly answered by
-  [slice three](../projects/comms-as-default/capability-state-proposal.md): a substrate message needs **a
+  [slice three](../projects/capability-state/proposal.md): a substrate message needs **a
   sender that is not a participant**, which the current identity model forbids. **That is a
   capability-model change, not a new surface.**
 - **Do not re-file step 2 as another convention.** If signal-hunger capture is wanted, it belongs in

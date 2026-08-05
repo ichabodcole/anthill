@@ -5,7 +5,7 @@ must produce one.**
 **Supersedes:** the [team-comms spike](../_archive/team-comms-spike/), archived 2026-08-04 — the spike's
 question (_does an in-repo wire work?_) is answered; this project ships it and decides the guidance.
 **Author:** maestro (session 8), from the human's three questions at session 8's close
-**Follows:** [slice-two](../_archive/team-comms-spike/slice-two-proposal.md) · [capability state](./capability-state-proposal.md) · [session 8 retro](../../../.anthill/retro.md)
+**Follows:** [slice-two](../_archive/team-comms-spike/slice-two-proposal.md) · [capability state](../capability-state/proposal.md) · [session 8 retro](../../../.anthill/retro.md)
 
 ---
 
@@ -64,13 +64,13 @@ gate a swap. It gates _treating attribution as proof_, which is a larger and sep
 
 ## Question 2 — blockers vs wants
 
-|             | item                                                                  | why                                                                                                                                         |
-| ----------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| **BLOCKER** | **session rotation**                                                  | the wire opens carrying the previous session's log; a team will read old history as current                                                 |
-| **BLOCKER** | **`comms stand-down`**                                                | departure and death are indistinguishable, so every session ends in `--force` — which trains the reflex the teardown guard exists to resist |
-| want        | capability state ([capability state](./capability-state-proposal.md)) | unblocks four things: guest identity, human-on-wire, mute, substrate-as-sender                                                              |
-| want        | ratify record (the human's poll idea)                                 | the durable per-seam ratify record is the real gap; the tally half is ceremony — carded, not specified here                                 |
-| want        | addressed delivery                                                    | [backlog](../../backlog/2026-08-01-comms-has-no-addressed-delivery.md)                                                                      |
+|             | item                                                                   | why                                                                                                                                         |
+| ----------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **BLOCKER** | **session rotation**                                                   | the wire opens carrying the previous session's log; a team will read old history as current                                                 |
+| **BLOCKER** | **`comms stand-down`**                                                 | departure and death are indistinguishable, so every session ends in `--force` — which trains the reflex the teardown guard exists to resist |
+| want        | capability state ([capability state](../capability-state/proposal.md)) | unblocks four things: guest identity, human-on-wire, mute, substrate-as-sender                                                              |
+| want        | ratify record (the human's poll idea)                                  | the durable per-seam ratify record is the real gap; the tally half is ceremony — carded, not specified here                                 |
+| want        | addressed delivery                                                     | [backlog](../../backlog/2026-08-01-comms-has-no-addressed-delivery.md)                                                                      |
 
 ### Session rotation — NOT a clear verb
 

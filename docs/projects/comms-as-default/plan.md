@@ -1,9 +1,19 @@
-# Comms as the default team wire — phase 1 plan SKELETON
+# Comms as the default team wire — plan
 
-**Status:** SKELETON — seams are **CLAIMS awaiting ratification**. Nobody builds against an unratified seam.
-**Created:** 2026-08-04 (session 9) · **Author:** maestro (lead), solo — which is exactly why the seams below are claims rather than decisions.
-**Follows:** [proposal.md](./proposal.md) · [capability-state-proposal.md](./capability-state-proposal.md)
-**Branch:** `feat/comms-as-default` · **Gate:** `bun run check` · **Arrival baseline:** 497 pass / 0 fail at `acefa0c`
+**Status:** **PHASE 1 PARTIALLY SHIPPED**, merged to `develop` at `5697eca` with **two known lifecycle defects**. Phases 2 and 3 unbuilt. Seams below are **RATIFIED** except Contract 6(g), which is marked UNRATIFIED in `seams.md`.
+**Created:** 2026-08-04 (session 9) · **Author:** maestro (lead) · **Last revised:** 2026-08-04, after the session-9 merge, to replace a phase split the tree had falsified.
+**Follows:** [proposal.md](./proposal.md) · [capability-state](../capability-state/proposal.md) _(moved out of this folder — it is slice three, not this project)_
+**Sessions:** [session 9 — phase 1](./sessions/2026-08-04-session-9-phase-1.md)
+**Branch:** `feat/comms-as-default` (merged) · **Gate:** `bun run check` · **Baseline:** 497 pass at `acefa0c` → **512 pass at `5697eca`**
+
+> **This file was authored as a SKELETON and is no longer one.** That banner has been discharged: every
+> seam below was ratified or falsified on the wire before it was built, and four of the lead's five
+> load-bearing claims were wrong, which is the record the gate exists to produce.
+> **What replaces the banner is a narrower warning, and it is the reason this header was rewritten:**
+> the phase split this document shipped with (_"phases 1–4 are phase one"_) **was falsified by what
+> actually landed** — steps 1–2 shipped and 3–6 did not. A plan asserting more completeness than the
+> tree supports is the proposal's original sin recurring one document later, so the phases below are
+> now stated against the merge rather than against the intent.
 
 > This file discharges the proposal's banner — the planning that banner said was still owed is this document.
 > The banner stays valid for what it warned about: **a name asserting more than its contents support.**
@@ -48,7 +58,24 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
 5. **The prose migration** — depends on (4) being settled. Session 8 measured six instances of prose asserting things about a still-moving tool, three of them introduced _by seats fixing other false prose_.
 6. **The swap run** — the session that convenes, runs and tears down with grapevine never opened.
 
-**Phases 1–4 are phase one of the human's one-feature framing; 5–6 are phase two. One branch, one release.**
+### Phases — redrawn 2026-08-04 against the merge, not the intent
+
+**The dependency order above is unchanged and still correct. What follows is where the phase boundaries actually fell**, which is not where this plan predicted. One branch, one release, per the human's framing — the phases are review-and-validation boundaries, not separate deliverables.
+
+|             | steps                   | status                             | validation criterion                                                                                                                                        |
+| ----------- | ----------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1** | 1–2                     | **SHIPPED** `5697eca`, two defects | gate green at 512; guard mutation pair kills on both cells                                                                                                  |
+| **Phase 2** | defect repair, then 3–4 | **NOT BUILT**                      | `none` reachable through the intended lifecycle **and** unreachable while any seat is working; `resolveCoordCli("grapevine")` absent from `plugin/scripts/` |
+| **Phase 3** | 5–6                     | **NOT BUILT**                      | the swap run: a session convenes, works and tears down with grapevine never opened **on this channel**                                                      |
+
+**Phase 2 opens with a hard constraint and it is the single most important line in this plan.** The two shipped defects (`seams.md` Contract 6(g)) **must be repaired together.**
+
+- **Defect 1** — `none` is unreachable: branch 1 (`followerAlive` → `present`) fires before departure is consulted, and `down` is what kills the follow. Circular.
+- **Defect 2** — `departed(s)` does not mean the seat has stopped. Measured 4/4 seats, 7 messages sent after their own departure record, including the report of Defect 1 at +71s.
+
+**Repairing Defect 1 alone makes `none` reachable, which makes Defect 2 live** — a guard that blocks forever becomes one that fires too early, and the failure flips from **visible to silent.** That is strictly worse than what shipped. Tests first, per the tripwire ruling.
+
+**What protected session 9 was an accident**, and it will not protect session 10: `spawned` was `null` because that team predated the session-open record, so presence was `unknown` and the guard fail-closed. Session 10's team will have the record, so it gets no such cover.
 
 ## Shared interfaces — ratify on the vine, then fill
 
