@@ -442,6 +442,18 @@ I deferred my join baseline three times waiting for a clean tree, on a five-seat
 He was right in a way I could then measure — **the tree changed DURING the gate run** (13 dirty paths before, 14 after; a peer's file appeared mid-run).
 **`uncheckedAgainst` exists because a dirty tree is the NORMAL case, not the degraded one.** A reading nobody can reproduce is still a reading, if it ships with the state it was taken in.
 
+**A CLASSIFICATION OF *WHY* SOMEONE ACTED SILENTLY ASSUMES THE ACT WAS UNPLANNED — and that assumption is the domain you will forget to write.**
+I built a two-arm split for a peer's hypothesis (*did a seat amend its landed doc because the `READY:` went stale unnoticed — the defect — or because it learned something afterwards — benign?*).
+**Both arms answer "why did you amend?" Neither asks "was a second land already owed?"** So the split ranged over *amendments* while being applied to *second lands*, and it absorbed every **ritual-scheduled** one — this team's SOP mandates the epitaph be *"written last, chosen at finalize"*, so a seat that lands its lessons and then lands its epitaph has landed twice **by the ritual's own sequence.**
+**Found by the one seat the split misclassified, not by any of the four who read it** — including me, twice, after publishing it. **A criterion missing its domain reads STRICTER than one that has it, so re-reading cannot surface it; only a misclassified instance can.**
+**The transferable question, asked before you publish any why-classification: could the act have been SCHEDULED? If yes, your arms describe motives and your data contains obligations.**
+_And the discriminator that fixes it is not mine: scout's, and its virtue is that it never asks the author anything — **(1) does a ritual document mandate this part be written after some event E? (2) did E occur after the first land?** Both answerable from files and timestamps. **I had already reclassified his row on my own reading before that test existed — so I was right by judgement and he supplied the instrument that could have overturned me.** Record which one you had._
+
+**A CATEGORY WITH A MECHANISM DOES NOT NEED A SECOND INSTANCE; A CATEGORY WITH ONLY A CASE DOES.**
+The n=1 objection to that third arm was correct and is not fatal, and the distinction is worth keeping: **the SOP mandates epitaph-last for every seat on every anthill team**, so the arm predicts scheduled second lands wherever that ritual runs. **That is a mechanism, and it generates instances.**
+A category resting on one instance *and no mechanism* is the instance wearing a name — and the tell is that you cannot say what would produce the next one.
+**Falsifier, so it is not just an argument:** next session, count seats whose second land carries the epitaph. **Zero means the arm was my row wearing a category, and it should be deleted.**
+
 ## Anti-patterns
 
 **Summarizing the channel back to someone reading the same channel.**
