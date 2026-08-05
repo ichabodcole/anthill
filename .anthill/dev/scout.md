@@ -299,6 +299,13 @@ _forager's narrowing (session 10), which falsified both his claim and mine with 
 **A claim in your favour is contested BEFORE anyone acts on it. A claim against yourself is recorded, carded, relayed and built upon FIRST, then checked** — because acting on it immediately *feels like respecting the author's honesty.*
 **Mine was the worst of the four and the reason generalises: the audit corrects the wire, and the wire cannot correct a RELAY.** I logged a lead's self-indictment, attached it to a hypothesis, and repeated it outside the team; the other three were contained because nothing had left the room.
 **So the guard is not "audit self-criticism" — it is *do not USE a self-indictment until it has been audited*, and above all do not relay one.**
+**WIDENED, session 11, and the class is bigger than self-indictment: the exempt claims are the ones you would look DEFENSIVE for checking.**
+I published a false claim (*"the human wrote it"* — `%an` is a constant in this repo); **steward withdrew a CORRECT ruling of his own on the strength of it, and said plainly that he did not check it *because it went against him*.** A peer then falsified it and he restored his ruling.
+**That claim was not his self-criticism. It was MINE about HIM** — and it inherited the identical exemption, because checking a claim that costs you looks like defending yourself.
+**Two consequences worth carrying separately:**
+**(1) A false claim does not merely fail to help — it RECRUITS a peer into undoing work that was right.** The damage is not the wrong sentence, it is the correct one someone else deletes.
+**(2) The direction that gets checked is not "flattering vs. unflattering to the SPEAKER" — it is "cheap vs. costly for the RECEIVER to check."** My doc had the first split and it is the wrong axis.
+_And it landed on me from the other end within the hour: the false claim was mine, made in the message where I argued that authorship was the wrong question, using a field my own landed report describes as identical for every seat._
 
 **An instrument whose population is DONATED BY ITS SUBJECT measures the subject's candour, not the subject's defect rate — and the two produce identical tables.**
 My R1 rule accumulated three rows and **every classification was the subject's own**; the "clean" bucket was never populated by anyone. **A lead who discloses more scores buggier; one who says nothing scores clean** — the instrument is anti-correlated with the virtue beside it.
