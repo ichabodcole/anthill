@@ -201,6 +201,32 @@ I don't author lane detail or verify my own work; those are the owners' and sent
 - 🔴 **Your own briefing instruction will not fire on you. Only the artifact will.** I told the team `tsc` alone is not a green, then read `tsc` alone and called a green window. **The full gate — run before the claim left my machine — is the only reason it is a report and not an incident.** _And the companion is worse: **I hit a carded defect first-hand, routed around it in ten seconds, and never filed it.** Routing around a failure destroys the report; a defect you can absorb is a defect you will not file._
 - **Provenance dies silently when the lead is the only one who lands.** Nine of eleven commits carry no `Anthill-Seat` trailer because **I landed ten of them and passed `--as` on none.** Found by two seats counting, **not by me.** _I refused the rebase — every sha was already cited in landed docs and sixty messages, and "a tree-grounded claim travels with its sha" cuts against the repair. **Landed a provenance table instead: when the fix costs more of the thing the fix protects, write the mapping, not the history.**_
 
+## Hard-won lessons (2026-08-05, session 12 — the wire is trustworthy; six seats; synthesised EARLY, before running anyone else's finalize)
+
+- 🔴 **YOU WILL MANUFACTURE AN INSTANCE OF YOUR OWN FAILURE, AND IT IS THE ONE CLAIM NOBODY WILL CHECK.**
+  I reported that retro hypothesis #4 had FIRED — that I had hit a carded 64KB board-truncation defect in hour one — and published it as a standing rule three seats then worked under.
+  **None of it was true.** The board read whole at 120041 bytes; the 65366 was **my own command substitution**, and I read a property of my shell as a property of the tool.
+  _`principles.md` says self-criticism is the one claim class this team does not audit and that **the exemption runs the wrong way**. It ran the wrong way, on the lead, in the first hour._
+  **The mechanism is worse than the instance: an unflattering claim arrives feeling pre-audited BECAUSE it costs you something to say.** A flattering number gets checked by a peer within minutes. **Falsified by scout, by running it. I re-measured rather than accepting on sight, and that is the only part I did right.**
+
+- **The instrument fired and the operator did not look.** I built an id-indexed table of open asks at `#705` specifically because our SOP says a *"what I am NOT ruling on"* section is enumerated from the author's **agenda** and not from the **inbox** — then wrote **seven more rulings without re-reading my own table.** weaver's ask sat open through **eight** of them and it was the **blocking** one; scout measured that a non-build seat's ask cleared in 4.3 minutes while weaver's cleared none of eight.
+  _**The table is not the guard. Re-reading it before each ruling is the guard**, and I did that once. Fix is mechanical: every ruling now ends with the open asks enumerated from the inbox._
+
+- **Offer the cheap version of an impossibility, and it dies in 90 seconds.** sentinel reported the live pane-kill verification **circular and unmeetable** — the only live session was ours, and `down` against it ends the session. **I wrote a documented override of a session-9 gate on that premise.** I also offered, explicitly as an option and not an assertion, that a throwaway project might reach the same code path. **He tested it fifteen minutes later and the circularity fell over.**
+  _Neither of us had tested a claim that had stood since session 9. **Do not rule on an impossibility claim until someone has spent one command trying it** — and offer the try as a costed option, because a seat can tell you the cheap version is not cheap and I cannot._
+
+- **A CARD THAT SAYS OPEN ABOUT FINISHED WORK COMMISSIONS REAL EFFORT.** I ruled a regression test *"not written, and nobody is claiming it is"* and carried it to session 13 — **inside the artifact whose entire purpose is making continuation easy.** sentinel went to write it and found it **already landed**, ten minutes from rebuilding a test that exists.
+  _Same class as S11-9's *13 review cards nobody verified*. **A stale card is a stale PREDICTION, and our SOP already says a stale prediction is worse than a stale lesson** — I simply never recognised a board card as one._
+
+- **The continuation surface is THREE things and I enumerated two.** I treated Cole's *"capture it so a fresh agent can continue"* as satisfied by `ROADMAP.md` + `plan.md`. **steward pointed at the board: 87 open cards, whose ids are cited throughout the docs, on a surface that had silently emptied between sessions.**
+  _**I enumerated the surface from my own agenda, which is the same defect as the ruling table one level out.** The enumeration principle keeps arriving as *"the thing I did not list is the thing that was already there."_
+
+- **Verify a destructive command's safety claim yourself; it is the one class where relaying is not enough.** sentinel ran live `anthill down` cells and reported the blast radius. **I re-ran `tmux ls` and `comms positions` rather than repeating his sentence. Five seconds.**
+  _The general form: **a lead relays almost everything, so pick the classes where relaying is banned.** Destructive operations, and counts that indict the team, are the two I now hold._
+
+- **Land the artifact that dies with the session FIRST, not at finalize.** The t=0 baseline could not be retaken and lived in gitignored scratch. **I promoted it to the tree mid-session (`86a92af`) rather than at wrap, and the continuation doc was drafted at the halfway point rather than at the end.**
+  _Cole's condition made continuation a deliverable, and **the deliverable most likely to be cut is the one that describes what is left.** Write it while you still have time to be wrong about it._
+
 ## Structure reflection (2026-08-05, session 11 — six seats, shared tree, phase 3)
 
 - **Did the composition fit? Yes, and the two non-building seats carried the session's two best findings.** sentinel found that my own correct ruling removed a load-bearing input to the pane-kill guard; steward found that the same ruling blinded the instrument reporting the failure. **Neither is a build seat and neither finding was available from a lane.** No seat idle.
