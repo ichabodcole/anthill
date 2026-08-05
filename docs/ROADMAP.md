@@ -53,7 +53,14 @@ wire to consuming projects._ **✅ STEPS 4+5 SHIPPED — released as `anthill-v2
 > scope of work"** at the **archived** team-comms spike. **Sessions 9, 10 and 11 each ran a full
 > convene→finalize cycle without reading or updating it**, while this file's own header names both
 > moments. _A roadmap nothing re-reads is a wish list — its words, and it was one._
-> **The repair is a ritual beat, not resolve: card `S12-1`, weaver's lane.**
+> **The repair SHIPPED — the docs-of-record sweep, `32d087a` + `ec58802`, card `t-2a48f297`** (a ritual
+> beat, not resolve). _This line previously said "card `S12-1`, weaver's lane", which was stale twice
+> over: the repair was already landed, and `S12-1` resolves to a different seat's card (the R7 S-number
+> collision — **cite card ids, never S-numbers**)._
+> **It was found by the LEAD, not by the sweep's own first run**, and that is a recorded bound on the
+> beat rather than a footnote: **the sweep read this file's TABLE and skipped its PROSE** — 10 rows
+> checked against 91 assertion-bearing prose lines. **A sweep that reads tables and passes a document
+> whose narrative is wrong is the failure this box is about, arriving inside the box.**
 
 ### The exit criteria — all seven, every one mechanically checkable
 

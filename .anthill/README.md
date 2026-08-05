@@ -310,6 +310,14 @@ step, so the beat has to name what was checked or it has not fired._
 each sentence's justification RESTED on, not what it is about. A reason resting on a property this
 world no longer has does not go stale, it **inverts**, and the sentence still reads fine.
 
+**⚠ SWEEP THE PROSE, NOT JUST THE TABLES — a document's NARRATIVE goes stale too, and it is the half
+a structured reader skips.** Status tables and criteria rows are the easy targets because they look
+like claims; the assertions buried in headers, blockquotes and scar boxes read as commentary and get
+no second look.
+_Measured on this beat's own first run: **4 stale claims found across 10 table rows, and a 5th MISSED
+among 91 assertion-bearing prose lines** — the miss sitting inside the very box warning that this
+document goes stale, and caught by a reader rather than by the sweep._
+
 _Scar: a session spent its night hunting predicates whose domain had gone unwritten, while its own
 plan of record carried **four stale claims** — one falsified by a test that landed the same session.
 The ritual caught none. **All four surfaced because the human asked whether the runway was clean.**_

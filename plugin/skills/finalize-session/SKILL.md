@@ -243,6 +243,13 @@ because an absence is not readable.**
   property the world no longer has does not go stale — it **inverts**, and the sentence still reads
   fine. _"Capture it now, the wire evaporates"_ survives the wire becoming durable as a sentence and
   loses the argument for the step it justifies.
+- **⚠ Sweep the PROSE, not just the tables.** A document's narrative goes stale too, and it is the
+  half a structured reader skips: status tables and criteria rows look like claims, while the
+  assertions in headers, blockquotes and scar boxes read as commentary and get no second look.
+  **Measured on this beat's own first run — 4 stale claims found across 10 table rows, and a 5th
+  MISSED among 91 assertion-bearing prose lines**, the miss sitting inside the box warning that the
+  document goes stale. **It was caught by a reader, not by the sweep**, which is the bound this
+  bullet exists to state rather than to imply.
 - **The set is self-seeding.** Next session's sweep finds its own scope by looking for the docs
   carrying a reconciliation line, so the first run is the only one that has to enumerate.
 
