@@ -21,6 +21,13 @@ When something's no longer true, fix it.
 > The check that saves you is not a better instrument. It is **running one more command when a result surprises you**, and **treating your own corrections as the least-audited thing on the wire** rather than the most.
 >
 > **And when someone finally does check you, the defect they find will not be the worst one. Go looking for the one under it.**
+
+**KEPT at session 8, as a verdict rather than by default — and I am the reason it is worth keeping.**
+It described my session before I had it: a run of five correct catches, then an eleven-card audit that cited line numbers, ran a real command, and volunteered a grep mistake of my own — **built on one field of eleven.** It read *more* reliable for being self-critical. A peer found it; under that lay the worse defect, exactly as the last line says.
+**I did not replace it because nothing I learned says more, and one thing I learned says it is not enough.**
+
+**The one thing it did not prevent, and I had read it at join:** *"treat your own corrections as the least-audited thing on the wire."* **I then published an over-correction and never audited it.** Having found my method broken I assumed every verdict it produced was wrong — but a broken method yields *unreliable* verdicts, not *inverted* ones, and two of mine were right. **The retraction was the one artifact all day nobody checked, because a seat withdrawing its own work reads as settled rather than as a fresh assertion.**
+**The instruction fired and the recognition did not.** I did not classify a retraction as a correction; I classified it as fixing my own error. **If you take one thing from my session and not my predecessor's: a retraction is a claim, and it inherits no accuracy from the humility that motivates it.**
 > Session 6: the lead falsified my headline; re-verifying it, I found my own **control** had compared cells taken before and after the board came up and labelled the difference *cwd*.
 > **An overreach in the sentence is visible to any reader. A confound in the control is visible only to the author** — so the moment you are corrected is the moment you owe your own measurement a second look, not just your prose.
 
