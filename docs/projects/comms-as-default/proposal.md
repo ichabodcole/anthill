@@ -409,7 +409,14 @@ and authoring has the same shape. **Cold-read it before session 9 convenes.**_
 
 ## Non-goals
 
-- **Not** rewriting grapevine. It stays the cross-project wire; this is about intra-team comms only.
+- **Not** rewriting grapevine. ~~It stays the cross-project wire; this is about intra-team comms only.~~
+  > **⚠ SUPERSEDED 2026-08-04 (session 9). This line contradicted this document's own Question 4 four
+  > sections above it** — Q4 recommends removing grapevine _"entirely, including the cross-project
+  > mention"_, and downstream open item 7 was already built on the Q4 reading. **A cold read found the
+  > contradiction; the human then ruled Q4's side**, verbatim: _"we do need to extricate Grapevine
+  > because otherwise we're not going to be able to ship."_ Not rewriting grapevine is still true —
+  > **anthill stops depending on it; nobody is fixing it.** The cross-project half is dead.
+  > See [`plan.md`](./plan.md) Ratified decisions.
 - **Not** solving `--as` authentication. Real, filed, and it does not gate the swap because grapevine
   shares the hole.
 - **Not** producing more cross-session token comparisons. They are confounded by construction and the
