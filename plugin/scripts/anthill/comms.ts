@@ -408,6 +408,20 @@ export function commsSessionPath(teamDir: string, channel: string): string {
 export interface SessionOpenRecord {
   /** Seats this session spawned. `[]` is a real value: a record naming nobody. */
   spawned: string[];
+  /**
+   * When this session opened — the ORIGIN a departure is scoped against (D3).
+   *
+   * `writeSessionOpen` has always written this; the interface never declared
+   * it, so every reader cast it away. That is the enumeration defect in its
+   * quietest form: a field the writer emits and the type denies, which no gate
+   * can see because nothing ever asked for it.
+   *
+   * **Optional on purpose, and the optionality is load-bearing.** A record
+   * written before this field existed has no `openedAt`, and the honest reading
+   * of that is *"I cannot scope a departure"* — which must fail SAFE (nothing
+   * counts as departed, teardown blocks), never fail open.
+   */
+  openedAt?: number;
 }
 
 /**
@@ -458,10 +472,47 @@ export function readSessionOpen(teamDir: string, channel: string): SessionOpenRe
   }
 }
 
-/** Has this seat positively recorded a departure? Absence is NOT a departure. */
-export function hasDeparted(teamDir: string, channel: string, handle: string): boolean {
+/**
+ * Has this seat positively recorded a departure **IN THIS SESSION**?
+ * Absence is NOT a departure, and neither is a departure from a PAST one.
+ *
+ * **D3 — the tombstone had no session scope, and that was an ABSENT choice
+ * rather than a wrong one:** the record is `{handle, channel, at}` and
+ * `hasDeparted` was a bare `existsSync`, so a tombstone written by any past
+ * session counted forever. Contract 6(g)'s conjunct — *every spawned seat has
+ * departed* — was therefore satisfiable by files nobody wrote this session.
+ *
+ * **Measured on the real tree (session 10):** four session-9 tombstones on disk
+ * for exactly the four seats then working. With them, `commsPresence` returned
+ * `none` / `all-spawned-departed` — **teardown authorised while four seats
+ * worked.** Remove only those files, one variable, and it returns `unknown`.
+ * The hazard is reachable at the fresh-spawn instant (no seat has a position
+ * record yet, so nothing reaches the follower branches) **and at teardown**.
+ *
+ * **A mask fails safe; a stale departure fails OPEN.** That is the whole reason
+ * this is scoped rather than swept: nothing here deletes a tombstone, so
+ * session 9's records survive — they are the only copy of what its retro cites.
+ *
+ * **Fail-safe in every direction that is not a positive, in-session departure:**
+ * no session origin, no record, damaged record, or a record predating the
+ * session all return `false`. `false` blocks teardown. An unreadable world must
+ * never authorise killing a pane.
+ */
+export function hasDeparted(
+  teamDir: string,
+  channel: string,
+  handle: string,
+  /** This session's origin. `null` ⇒ nothing to scope against ⇒ never departed. */
+  sessionOpenedAt: number | null,
+): boolean {
+  if (sessionOpenedAt === null) return false;
   try {
-    return existsSync(commsDeparturePath(teamDir, channel, handle));
+    const path = commsDeparturePath(teamDir, channel, handle);
+    if (!existsSync(path)) return false;
+    const record = JSON.parse(readFileSync(path, "utf8")) as { at?: unknown };
+    // `>=`, not `>`: a departure stamped in the same millisecond as the open is
+    // this session's. The boundary is asserted rather than left to taste.
+    return typeof record?.at === "number" && record.at >= sessionOpenedAt;
   } catch {
     return false;
   }

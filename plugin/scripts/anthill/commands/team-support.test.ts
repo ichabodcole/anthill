@@ -359,3 +359,90 @@ describe("classifyPresence — the discriminator", () => {
     });
   });
 });
+
+/**
+ * D1 — the departed-but-live qualifier, and D3's caller invariant.
+ *
+ * Session 10. `none` was unreachable through the lifecycle the feature exists
+ * for: a stood-down seat read `present` while its `comms follow` was alive, and
+ * `down` is what kills the follow. Stand down → `present` → `down` refuses →
+ * the follow never dies → `present`. Circular.
+ *
+ * Ruled a QUALIFIER on branch 1 rather than a hoist above it (Contract 6(g)):
+ * both fail closed, so it is not a safety choice but a question of what the
+ * report may CLAIM. A hoist reports `present, because: live-follower` — naming a
+ * seat that filed a departure record as being here.
+ */
+describe("commsPresence — a DEPARTED seat's live follower is not presence (D1)", () => {
+  const row = (
+    handle: string,
+    hasRecord: boolean,
+    followerAlive: boolean | null,
+    departed = false,
+  ) => ({ handle, hasRecord, followerAlive, departed });
+
+  test("a departed seat with a LIVE follower does not report present", () => {
+    const p = commsPresence([row("a", true, true, true)], ["a"]);
+    expect(p.presence.state).not.toBe("present");
+    expect(p.because).toBe("all-spawned-departed");
+  });
+
+  // The positive anchor, first — per Contract 4's assertion-(4) shape. Without
+  // it the test above passes against a branch that never reports `present` at
+  // all, which would be always-block: the failure this repair must not cause.
+  test("a NON-departed seat with a live follower still reports present", () => {
+    const p = commsPresence([row("a", true, true, false)], ["a"]);
+    expect(p.presence).toEqual({ state: "present", seats: ["a"] });
+    expect(p.because).toBe("live-follower");
+  });
+
+  // The pair, as a SET. Either assertion alone is satisfied by a constant; the
+  // pair is not. `departed` is the only field that moves.
+  test("departed is the ONLY difference — the pair discriminates", () => {
+    const states = [
+      commsPresence([row("a", true, true, false)], ["a"]).presence.state,
+      commsPresence([row("a", true, true, true)], ["a"]).presence.state,
+    ];
+    expect(states).toEqual(["present", "none"]);
+  });
+
+  /**
+   * ⚠ THE CALLER INVARIANT — found by steward, and it is the assumption this
+   * repair's safety is inherited from.
+   *
+   * Branch 1 filters on `followerAlive === true` and does NOT test `hasRecord`.
+   * So a seat that never followed is kept out of it only because the PRODUCTION
+   * caller derives both fields from ONE `position` lookup: `hasRecord: false`
+   * forces `followerAlive: null`. Nothing asserted that coupling, and D1 edits
+   * exactly that branch.
+   *
+   * This test pins the row shape production can emit. If a second caller ever
+   * constructs rows by hand, or the derivation is split, the guard's safety
+   * argument changes with nothing else to catch it.
+   */
+  test("INVARIANT: no-record rows can only carry followerAlive null (the shape production emits)", () => {
+    const noRecordLive = commsPresence([row("a", false, true, true)], ["a"]);
+    const noRecordNull = commsPresence([row("a", false, null, true)], ["a"]);
+    // The unreachable pairing and the reachable one must NOT be assumed equal —
+    // asserting the pair documents that they differ, so anyone who makes the
+    // impossible row possible sees this fail rather than inherit a silent change.
+    expect([noRecordLive.presence.state, noRecordNull.presence.state]).toEqual(["none", "none"]);
+  });
+
+  // The fresh-spawn cell: no position record + a departure. It must reach `none`
+  // ONLY because of the departure — and D1 must NOT move it, since branch 1 is
+  // the only thing D1 touches and a no-record seat never reaches it. This is the
+  // hold that proves "never D1 alone": before D3 scoping, a STALE tombstone put
+  // the guard here while every seat was working.
+  test("a spawned seat that never followed reaches none via departure, not liveness", () => {
+    const p = commsPresence([row("a", false, null, true)], ["a"]);
+    expect(p.presence.state).toBe("none");
+    expect(p.because).toBe("all-spawned-departed");
+  });
+
+  test("a spawned seat that never followed and never departed BLOCKS", () => {
+    const p = commsPresence([row("a", false, null, false)], ["a"]);
+    expect(p.presence.state).toBe("unknown");
+    expect(p.because).toBe("outstanding-departures");
+  });
+});

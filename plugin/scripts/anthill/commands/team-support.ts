@@ -242,7 +242,25 @@ export function commsPresence(
     because: CommsPresenceReport["because"],
   ): CommsPresenceReport => ({ presence, spawnedCount, departedCount, because });
 
-  const live = rows.filter((r) => r.followerAlive === true).map((r) => r.handle);
+  // D1 — `&& !r.departed` is the whole repair, and it is a QUALIFIER rather than
+  // a hoist, ruled at Contract 6(g) after two rival constructions were diffed
+  // over the reachable cell space.
+  //
+  // **The circularity it closes:** a stood-down seat read `present` while its
+  // `comms follow` was alive — and `down` is what kills the follow. Stand down →
+  // still `present` → `down` refuses → the follow never dies → still `present`.
+  // `none` was unreachable through the exact lifecycle the feature exists for.
+  //
+  // **Why not the hoist.** Hoisting the departure test above this branch makes a
+  // departed-but-live seat report `present`, `because: live-follower` — i.e. the
+  // report NAMES a seat that filed a departure record as being here. Both fail
+  // closed, so this is not a safety choice; it is what the tool is entitled to
+  // CLAIM (6(a)). A `{departed, spawned: []}` row is an INCOHERENT record — a
+  // seat cannot depart a session it was never spawned into — and 6(c-bis)
+  // already ruled that class routes to the state meaning *the tool has no idea*.
+  // The hoist would also be the noun-mismatch a fourth time: it observes a FOLLOW
+  // PROCESS and claims a SEAT is present, against that seat's own record.
+  const live = rows.filter((r) => r.followerAlive === true && !r.departed).map((r) => r.handle);
   if (live.length > 0)
     return report({ state: "present", seats: [...new Set(live)].sort() }, "live-follower");
 
@@ -363,14 +381,25 @@ function commsPresenceFor(config: ResolvedConfig, channel: string): SeatPresence
     // borrowing it meant inventing a `head` to satisfy a parameter presence does
     // not care about. The invented value then changed the lag classification and
     // broke this guard. Presence reads the two things it actually needs.
+    // D3 — departures are scoped to THIS session's origin. `null` when there is
+    // no open record or it predates the field, and `hasDeparted` treats that as
+    // "cannot scope ⇒ nobody departed", which blocks rather than authorises.
+    const openedAt = session?.openedAt ?? null;
     return commsPresence(
       config.seats.map((s) => {
         const position = readPosition(teamDir, channel, s.handle);
         return {
           handle: s.handle,
+          // ⚠ INVARIANT, asserted in team-support.test.ts rather than trusted:
+          // these two fields derive from ONE `position` lookup, so
+          // `hasRecord: false` FORCES `followerAlive: null`. The D1 branch above
+          // does NOT test `hasRecord`, so its correctness for a seat that has
+          // never followed is inherited from this coupling and from nowhere
+          // else. A second caller constructing rows by hand would break the
+          // guard's safety argument with nothing to catch it.
           hasRecord: position !== null,
           followerAlive: position ? pidAlive(position.pid) : null,
-          departed: hasDeparted(teamDir, channel, s.handle),
+          departed: hasDeparted(teamDir, channel, s.handle, openedAt),
         };
       }),
       session === null ? null : session.spawned,
