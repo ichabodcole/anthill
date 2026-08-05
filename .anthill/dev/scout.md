@@ -181,6 +181,12 @@ Twice in one session I found claims I had retracted **on the wire** still standi
 **That is the enumeration defect running inside a single document, on its own author.** Its scar says all four known instances were found by a cascade check and none by reading; **mine makes five, found the same way.**
 **Retracting is not correcting; it is correcting one instance.** Before synthesizing scratch, grep it for every claim you withdrew on the wire — **the retraction ids are in the log and the check is mechanical.**
 
+**A guard scoped to one GRAMMATICAL FORM is evaded by the same error wearing a different one.**
+I built the `[checked]/[assumed]` tag for **causal clauses** and applied it faithfully — then shipped *"these six instances share a mechanism"*, which is a **CLASSIFICATION**, and my guard had no rule for it. **It went straight through, and a peer caught what the guard could not.**
+The six counts were each verified at HEAD; **the sentence joining them was never checked at all.**
+**So the guard's real scope is not "causal clauses" — it is any sentence that ADDS SOMETHING TO THE MEASUREMENTS.** A count, a classification, a cause, a significance clause: **if the data does not say it, tag it.**
+_Corollary I would not have predicted: writing the guard made me trust the untagged sentences MORE, because tagging felt like the audit had run._
+
 **Tag every causal clause `[checked]` or `[assumed]` AT WRITE TIME. Untagged means `[assumed]`.**
 One word, at the only moment you actually know which it is — and **dispositional, so it cannot fail at the recognition step** the way a situational warning does.
 **Adopted after the worst instance of my epitaph's defect happened in my SCRATCH**, where no peer could ever reach it, and would have travelled into the report as fact. **Every peer catch this session landed on something I had published; nothing audits the notes.**
