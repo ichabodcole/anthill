@@ -83,6 +83,47 @@ returning identical counts across a rule whose meaning had inverted, while check
 **A count is not a reading.**
 A number can be identical on both sides of a change that reversed the meaning.
 
+**Before answering a question posed with a count, check what its DENOMINATOR is made of.**
+A ratio can measure your **rituals** rather than your output and read as the second. The number is
+correct, the arithmetic is correct, and the thing it counts is not the thing the question is about —
+so **no amount of re-checking the figure finds it.** You find it by asking what one unit of the
+denominator IS.
+_Scar: an outside audit routed "was this worth convening six seats?" to the human on **2 product
+commits out of 20**. Measured by lines, product code was **38%** — the largest single area. The gap is
+this team's own atomic cross-seat land, which ships all product code in ONE commit while docs land
+per-seat, per-file. **The ratio was an artifact of the discipline it was being used to indict**, and
+it had already been carried into a decision request before anyone looked at the unit._
+
+**A criterion states a predicate; the part you omit is its DOMAIN — what it ranges over, at what
+scale, in whose world.**
+A criterion missing its domain looks **stricter** than one that has it, because the missing half is
+the half that would have let something pass. **You will not catch it by re-reading** — the sentence
+is about the predicate, and re-reading re-reads the predicate. It is caught by someone running it.
+_Scar: five in one session from one seat, the fifth inside a guard built against the other four — an
+exit criterion ("absent from the process table") that was a **global** predicate standing for a
+**channel-scoped** claim, against a daemon serving twenty other projects that can never be absent;
+and a tripwire that counts to five without ever defining what **one** is, for which three defensible
+counts of the same history existed. **Not one was caught by re-reading. Every one was caught by
+execution.**_
+
+**A tree-grounded claim travels with its sha, or it does not travel.**
+A count measured at one commit and quoted at another is stale in a way nothing in the sentence shows.
+**Re-stamping an inherited number with your own, newer sha is worse than leaving it unstamped** — it
+converts someone else's measurement into an assertion you appear to have made.
+_Scar: n=2 within one day. A seat stamped its own report `2fff683` and said so, correctly. An outside
+audit then quoted that report's "20 commits" while stamping itself `7b8c4cf`, four commits later,
+where the figure was 23 — in a report that **cites the seat whose hypothesis this is** as a source._
+
+**Do not publish a count of a class without the command that enumerated it AND the sha it ran
+against — including, and especially, a count that indicts you.**
+Self-criticism is the one claim class this team does not audit: a flattering number gets checked by a
+peer within minutes, an escalating recurrence count ("THIRD INSTANCE, SAME FUNCTION") is published
+bare and believed. **The exemption runs the wrong way** — an unfalsified indictment is still
+unfalsified, and it makes the team look worse than the artifacts support while feeling like rigour.
+_Scar: seat docs carry escalating instance counts across nine sessions, none with its enumerating
+command. An outside audit found sessions 6, 7 and 9 each closed at **zero reverts, zero gate
+failures**._
+
 ## On durability
 
 **The channel evaporates — land decisions in an artifact.**
