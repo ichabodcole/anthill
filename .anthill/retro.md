@@ -98,7 +98,19 @@ does not.
 
 ### Verdicts on session 9's hypotheses
 
-- **#1 (a session spawned by the NEW `spawn` tears down with no `--force`)** — **SEE THE TEARDOWN SECTION BELOW.** STEP B ran: `down` **REFUSED, exit 1**, naming all six, matching sentinel's pre-registered prediction exactly.
+- **#1 (a session spawned by the NEW `spawn` tears down with no `--force`)** — ✅ **HELD. RUN, BOTH READINGS, NO `--force`.**
+
+  ```
+  STEP B  07:14:59Z  before any stand-down   → ok:false  exit 1  "seats still present: all six"
+  STEP E  07:22:26Z  after all six stood down → ok:true   exit 0  tornDown:true  presence:"none"
+  ```
+
+  **STEP B matched sentinel's pre-registered prediction exactly** — `present` branch, all six named. **The live path and the pure path agree**, which is the one thing STEP B could discover that the harness had not already given us.
+  **⚠ STEP B is labelled `NOT DISCRIMINATING` for D3** — with all followers alive the unrepaired guard returns `present` too. Recorded as a negative, **not scored as evidence about the repair.**
+  **⚠ And the lead nearly published the wrong exit code:** the first STEP B run piped to `head`, so `$?` was **head's** status (`0`). The CLI's true exit is `1`. **This team's own named instrument defect, firing on the lead, inside the exit criterion.**
+  **The vine did not veto:** `presence: "none"`, 0 subscribers, checked immediately before STEP E per steward's `#483`.
+  **What it proves:** the lifecycle **composes at the command boundary**. **What it does not:** D3 — by STEP E every spawned seat has a *fresh* tombstone, which counts under both the old and new predicates. **D3 is pinned by mutation M2, and separately by forager exercising it live against his own session-9 tombstone with two controls.**
+  _First clean teardown in this team's record. Every prior session ended in `--force`._
 - **#2 (a reorder introduces a fifth always-block road unless a cell covers it first)** — **`EXPERIMENT DID NOT RUN`.** `artifact:` its falsifier required *"lands correct with no new cell"* and `S10-4` is verbatim *the cell BEFORE the reorder*. **The protective act and the measurement were the same act, and protection had to win.** _The lead first scored this "falsified"; scout caught that the conditions were unmet and named the mechanism: **"#409 opens with 0 of 7 tested; a falsification recorded today makes it 1 of 7. The honest desire to record a falsification is what makes a near-falsification look like one."** Withdrawn._ **Second registered falsifier in two sessions requiring the team to leave a hazard unprotected — a pattern in our retro practice, not in either hypothesis.**
 - **#3 (the lead's defects are DOMAIN omissions, not predicate errors)** — **NOT CONFIRMED AS STATED.** See Q2. **The exclusive clause fails; the weaker claim survives.**
 - **#4 (a count is stale before it is sent more often than wrong when measured)** — **HELD, and it is the session's most reproducible finding.** `artifact:` five stale-tree claims, four seats.
