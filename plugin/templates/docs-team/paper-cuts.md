@@ -18,7 +18,7 @@ so a recurring tax becomes a tracked fix instead of a re-discovered annoyance.
    file an issue there), or **graduated** (it's really a feature → promote to a project). Strike
    through / mark resolved items so the open queue stays honest.
 
-A friction that lives in a **dependency** (grapevine, bounty, the plugin itself) isn't yours to fix
+A friction that lives in a **dependency** (bounty, the plugin itself) isn't yours to fix
 in-repo — file it upstream and note the workaround here. When the dependency is **anthill**, the
 streamlined path is **`anthill feedback`** (on a team, surface it to the lead — see the SOP's feedback
 routing); ideas to improve anthill route the same way, not just bugs.

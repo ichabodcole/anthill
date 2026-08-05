@@ -2,8 +2,8 @@
 
 The team that builds this project. Each seat keeps its own living doc (`<handle>.md`); shared
 inter-seat truth lives once in [`seams.md`](./seams.md). How the whole system works: the SOP,
-[`../README.md`](../README.md). Task state on the bounty board; the team's two message wires are
-`anthill comms` (the seat-aware log) and the `{{channel}}` grapevine (the back-channel).
+[`../README.md`](../README.md). Task state on the bounty board; the team's message wire is
+`anthill comms` (the seat-aware log) on the `{{channel}}` channel.
 
 ## Roster
 
@@ -15,7 +15,7 @@ inter-seat truth lives once in [`seams.md`](./seams.md). How the whole system wo
   lands. Boundaries between slices are the **seams** — single-sourced in [`seams.md`](./seams.md),
   never restated per seat.
 - **A feature spanning slices** is split into per-seat bounty cards (owner lanes); the seats
-  coordinate on the grapevine; the lead reconciles and lands atomically, **file-scoped** (no seat's
+  coordinate on comms; the lead reconciles and lands atomically, **file-scoped** (no seat's
   tree gets swept into another's commit).
 - **Verification is dynamic** — the verify seat engages at verification points (early/mid/late), not
   only at the end, and ping-pongs with the owning seat until green. See the SOP.
