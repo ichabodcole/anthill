@@ -436,6 +436,27 @@ _Session 9 was masked by an accident (its scout never stood down), exactly as se
 1. **Branch 1 ranges over the WHOLE ROSTER; the departure check ranges over `spawned`.** A lead who is in `rows` and not in `spawned` **blocks teardown with his own live follower** until he stands down himself. Not a defect — but the exit criterion is unreachable without an explicit lead stand-down step, and **the discriminator there is the DEPARTURE RECORD, not the pid**: a lead who stands down authorises teardown with his follow still alive.
 2. **The tombstone branches are only reachable when NO seat has a live follower.** Every statement of this hazard — the lead's, the owner's, the verifier's — left that condition unstated somewhere, which made a pre/post reading look discriminating when it was not. **State the population, not just the predicate.**
 
+**⏳ SESSION 12 — ROTATION HAS LANDED (`81d3991`) AND THIS CLAUSE IS STILL TRUE. The amendment is NOT YET DUE, and this note is its TRIGGER.** _(Ruled by the owner at the lead's R30 ask, from a measurement rather than from the design, and deliberately not ruled in the direction that would let a release criterion pass.)_
+
+Session 11 carried a prediction that **property 1's lead-veto is false post-rotation** — because rotation empties the positions directory, every row then has `hasRecord: false` ⇒ `followerAlive: null`, branch 1 needs `=== true` and cannot fire, and **the lead's live follower stops blocking teardown.** That reasoning is correct and it is **not yet in force.**
+
+**The distinction that decides it: the veto is falsified by an EXECUTED rotation, never by the mechanism EXISTING.** `81d3991` landed **inert** — no `rotate` verb, nothing in production calls it. With no `CURRENT` pointer the channel resolves the legacy layout, so every position record is exactly where it was.
+
+**Measured at `81d3991`, clean tree, on the live channel rather than a fixture:**
+
+```
+readCurrentSession(anthill-dev)  ->  null          (legacy layout, no rotation has occurred)
+resolveCommsPosition(forager)    ->  <team>/comms/anthill-dev.positions/forager.json
+comms positions                  ->  6 of 6 seats  state=current  followerAlive=TRUE
+  => branch 1 fires for maestro, so THE LEAD'S LIVE FOLLOWER STILL BLOCKS TEARDOWN
+```
+
+> **⚠ THE TRIGGER, and it is the only part of this note that must survive: THE FIRST EXECUTED ROTATION ON A CHANNEL FALSIFIES PROPERTY 1 FOR THAT CHANNEL. Whoever runs that rotation owes this clause its amendment in the same change — that is the write-trigger, and the debt is theirs, not the next reader's.**
+
+**Why a trigger and not the amendment now:** amending a clause that is still true would make this file describe a world we are not in — the defect Contract 4 records against itself (*prose describing a branch that cannot occur*, so a reader writes a handler for a state the system never produces). **An amendment written tonight would be wrong tonight and right later, which is indistinguishable from wrong.**
+
+**And the second half a reader will otherwise infer wrongly: positions are now PER SESSION (`comms.ts`, `commsPositionPath`'s `sessionId` parameter), which means a rotation does NOT carry a watermark into a log that never contained it.** That is a partial mitigation of **(e)** for the ROTATION path only — **(e) is NOT closed**, and must not be read as closed: a symlink repoint or a file replaced underneath a live follower is untouched by this, because the mitigation lives in *path resolution* and (e)'s repair would have to live in what `follow` **records**, which is a revision of (a). _Pre-registered by steward and reproduced live by sentinel with an inode proof before the code existed; the design is theirs as much as mine._
+
 ---
 
 **HISTORICAL — the two defects as recorded at session 9, kept because the reasoning is the record. Both are now fixed; do not read this block as live.**
