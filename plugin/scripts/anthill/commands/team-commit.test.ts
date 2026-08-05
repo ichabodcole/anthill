@@ -632,6 +632,33 @@ describe("anthill commit — seat attribution (StoryLoom field request)", () => 
 // this commit's dependency, the gate passes, and the landed commit is red in
 // isolation. The false RED is loud and well handled; this direction was silent.
 describe("anthill commit — false-GREEN visibility on SUCCESS", () => {
+  // THE CLEAN CASE — the half that was missing, and the half the SOP's beat
+  // depends on. `uncheckedAgainst` used to be OMITTED when empty, so a seat
+  // that read it carefully and a seat that never read it produced the SAME
+  // observation: absence. That is the definition of a check that is not one,
+  // and four seats hit it in one session (one holding both states across three
+  // lands on one machine).
+  //
+  // Its own repo on purpose: the sibling test leaves a peer's file dirty, so
+  // asserting "clean" in that tree would have asserted nothing. (It did, on the
+  // first attempt — the assertion failed because the world was not what the
+  // test's name claimed.)
+  test("on a CLEAN tree the field is PRESENT and empty — absence is the defect", async () => {
+    const dir = makeRepo();
+    try {
+      writeFileSync(join(dir, "solo.txt"), "no peer dirt\n");
+      const j = await runCli(["commit", "-m", "solo", "solo.txt", "--format", "json"], dir);
+      expect(j.code).toBe(0);
+      const env = firstJson(j.stdout) as { data?: Record<string, unknown> } | null;
+      // The KEY's presence is asserted directly: `toEqual([])` against
+      // `undefined` is exactly the confusion this field existed to end.
+      expect(Object.hasOwn(env?.data ?? {}, "uncheckedAgainst")).toBe(true);
+      expect(env?.data?.uncheckedAgainst).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   test("names dirty paths outside the commit, and says the check wasn't isolated", async () => {
     const dir = makeRepo();
     try {
