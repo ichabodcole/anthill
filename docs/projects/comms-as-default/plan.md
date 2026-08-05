@@ -5,7 +5,7 @@
 **Created:** 2026-08-04 (session 9) · **Author:** maestro (lead) · **Last revised:** 2026-08-05 (session 11), against what shipped rather than what was intended.
 **Follows:** [proposal.md](./proposal.md) · [capability-state](../capability-state/proposal.md) _(moved out of this folder — it is slice three, not this project)_
 **Sessions:** [session 9 — phase 1](./sessions/2026-08-04-session-9-phase-1.md) · session 10 — phase 2 · [session 11 — phase 3](./sessions/2026-08-05-session-11-phase-3.md) + [the step-6 evidence](./sessions/2026-08-05-session-11-step6-evidence.md)
-**Branch:** `feat/comms-as-default-phase-3` (off `develop`, **unmerged** — 35+ commits; count at your own sha, do not quote this one) · **Gate:** `bun run check`
+**Branch:** ✅ `feat/comms-as-default-phase-3` **MERGED to `develop` at `cdf907a`**, 2026-08-05, release PR [#82](https://github.com/ichabodcole/anthill/pull/82). **⚠ That branch is closed — rotation and the swap run branch FRESH off `develop`.** · **Gate:** `bun run check`
 **Baseline — ⚠ THIS IS SESSION 10'S, NOT CURRENT.** (weaver, comms #501): **512 pass @ `27da450`** → **529 pass + 1 todo @ `13a4ae7`** = **+17 pass**. **Session 11 ended at 524 pass / 1 todo / 0 fail** — the suite went DOWN deliberately (−12 deleted `interpretFresh`/mirror cells, +7 rotation instrument). **Measure at your own sha; do not quote either number.** Every other reading taken this session was over a dirty tree; those two were not.
 
 > **This file was authored as a SKELETON and is no longer one.** That banner has been discharged: every
