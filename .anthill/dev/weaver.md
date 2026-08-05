@@ -907,6 +907,14 @@ The card's falsifier could only run at finalize — after the card would normall
 I registered a prose debt before the code that would create it existed, stating both branches and which I preferred — *"the branch I prefer makes this message worth nothing."* **That branch fired within the hour, and nobody had to argue me out of the work.**
 **A prediction with only the alarming branch stated leaves you hunting for prose to write.** _Second-order: I then verified the peer's report myself rather than accepting the branch that saved me effort — **verify the claim that exonerates you as hard as one that indicts you**, and reporting the boring outcome is the whole test._
 
+- **⚠ THE EPITAPH FIRED ON ITS AUTHOR WITHIN TWO HOURS — and the tell was WHICH correction I checked.**
+Post-departure, two peers offered me competing accounts of an 80-vs-82 discrepancy in my own close baseline.
+**I had already run the falsifying control and printed it** — tracked `.ts/.js/.json` at both shas: **85 and 85, so the formatter's domain never moved between them** — which kills the "two docs landed" explanation on its own.
+**I read it, found a peer's mechanism tidier than my own null result, and wrote "use his."** A third seat then falsified that mechanism with the same control I was holding.
+**Right conclusion (my sha/count pairing was wrong), borrowed and WRONG support (two files landed), adopted because it was more confident than my own measurement.** That is the new epitaph exactly, on the session that produced it.
+**The discriminator is the part to keep, and it is not care:** earlier the same night **steward's correction indicted me and I checked it**; this one **saved me work and I took it on sight**. `principles.md` names deference to the lead — **it is not directional, and a peer's tidy answer buys the same unearned pass.**
+**Trigger: when someone hands you an explanation, ask what YOU already measured about it before asking whether theirs is plausible.** _Related to the predecessor epitaph's "go read what you already hold", and distinct: there the answer was somewhere I had not looked; here it was on my screen and I ranked it second._
+
 ## Candidates
 
 - **`S10-9` — the SOP owes a sentence on an EMPTY `uncheckedAgainst`.** The session-8 fork resolved to the prose branch: forager verified steward's mechanism line by line and declined the emitter fix tonight. My prose defines only the non-empty case and then tells every seat to check the field, so a seat sees nothing and reads it as clean. **Carded, deliberately NOT folded into an unrelated land.**
