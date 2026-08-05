@@ -90,6 +90,6 @@ Gap 1.)_
 
 ## References
 
-- [Session 1 friction log](../projects/team-comms-spike/session-1-friction.md).
+- [Session 1 friction log](../projects/_archive/team-comms-spike/session-1-friction.md).
 - `plugin/skills/finalize-session/SKILL.md` step 2.5; `.anthill/config.json`.
 - `.claude/skills/cascade-check/SKILL.md` — the `plugin.json`-description scar, same shape as Gap 2.

@@ -35,6 +35,7 @@ import {
   buildCommsIncantation,
   buildPositionsReport,
   type CommsMessage,
+  commsDeparturePath,
   commsLogPath,
   commsPositionPath,
   encodeMessage,
@@ -846,6 +847,111 @@ interface PositionsData {
  * a follower once somebody sends — on a silent channel every wire looks alike,
  * healthy or dead.
  */
+// --- stand-down ------------------------------------------------------------
+
+interface StandDownData {
+  channel: string;
+  handle: string;
+  /** Where the tombstone lives, so a human can see and remove it. */
+  path: string;
+  /** TOTAL. `false` = a record already existed; this verb is idempotent. */
+  created: boolean;
+  identity: "resolved-from-roster";
+}
+
+/**
+ * `anthill comms stand-down --as <seat>` — record a DELIBERATE departure.
+ *
+ * Why this verb exists: departure and death were byte-identical on this wire.
+ * A seat that finished left a position record with a dead follower, which the
+ * teardown guard correctly refuses to read as absence (Contract 6(f): a dead pid
+ * means the position is a high-water mark, not that the seat is gone). So every
+ * finished session ended in `--force`, and a guard that is always overridden has
+ * been deleted in practice — it trains the reflex on the session where a seat IS
+ * still working.
+ *
+ * This makes departure a POSITIVE OBSERVATION, which is what lets `none` be
+ * reached honestly instead of by an absence of data.
+ *
+ * IDENTITY BINDS, and it is the strongest case on this wire for it (Contract
+ * 4(c-bis)): identity binds the verbs that ATTRIBUTE. A departure record is the
+ * most attributing artifact we have — it is what authorises killing a pane — so
+ * no ambient identity, no unresolved handle, and no standing another seat down.
+ *
+ * A TOMBSTONE, never a deletion: removing the position record instead would make
+ * a stood-down seat byte-identical to one that never followed, restoring the
+ * exact ambiguity this verb exists to remove.
+ */
+const standDownCommand = defineCommand({
+  meta: {
+    name: "stand-down",
+    description: "Record that YOUR seat is deliberately leaving (makes departure observable)",
+  },
+  args: {
+    as: {
+      type: "string",
+      description: "Your seat handle (must be in the roster)",
+      valueHint: "handle",
+    },
+    channel: {
+      type: "string",
+      description: "Channel (default: config.channel)",
+      valueHint: "name",
+    },
+    format: { type: "string", description: "Output format", valueHint: "text|json" },
+  },
+  async run(ctx) {
+    const started = nowMillis();
+    const format = resolveFormat(ctx.args.format);
+    const { config, configSearch } = loadTeam();
+    const identity = identify(config, configSearch, ctx.args.as);
+    if (identity.outcome !== "resolved-from-roster") {
+      emitError({ format, command: "comms stand-down", error: identity.error });
+      process.exit(1);
+    }
+    const channel = resolveChannel(config, ctx.args.channel);
+    if (!config || !channel) {
+      emitError({
+        format,
+        command: "comms stand-down",
+        error: `no team config found — cannot resolve a channel. ${configSearch}`.trim(),
+      });
+      process.exit(1);
+    }
+
+    const teamDir = config.teamDirPath();
+    const path = commsDeparturePath(teamDir, channel, identity.handle);
+    const created = !existsSync(path);
+    // Idempotent: standing down twice is not an error, and `created: false` says
+    // which happened rather than leaving the caller to infer it from silence.
+    // Atomic (tmp + rename) for the same reason position writes are: a reader
+    // must never see a half-written record, and this one authorises a teardown.
+    mkdirSync(dirname(path), { recursive: true });
+    const tmp = `${path}.${process.pid}.tmp`;
+    writeFileSync(
+      tmp,
+      `${JSON.stringify({ handle: identity.handle, channel, at: Date.now() })}\n`,
+      "utf8",
+    );
+    renameSync(tmp, path);
+
+    emit({
+      format,
+      command: "comms stand-down",
+      data: {
+        channel,
+        handle: identity.handle,
+        path,
+        created,
+        identity: identity.outcome,
+      } satisfies StandDownData,
+      startedAt: started,
+      renderText: (d) =>
+        `${d.handle} stood down on ${d.channel}${d.created ? "" : " (already recorded)"}\n${d.path}`,
+    });
+  },
+});
+
 const positionsCommand = defineCommand({
   meta: {
     name: "positions",
@@ -977,6 +1083,7 @@ export const teamCommsCommand = defineAnthillCommand({
     read: readCommand,
     follow: followCommand,
     positions: positionsCommand,
+    "stand-down": standDownCommand,
   },
 });
 

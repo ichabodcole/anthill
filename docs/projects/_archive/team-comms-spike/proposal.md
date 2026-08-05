@@ -12,7 +12,7 @@ Build the smallest useful **cross-terminal communication tool for an anthill tea
 work, and let the friction we actually hit decide what comes next.
 
 **This is a spike. It is deliberately not a design.** The
-[coordination-layer investigation](../../investigations/2026-07-31-team-native-coordination-layer.md)
+[coordination-layer investigation](../../../investigations/2026-07-31-team-native-coordination-layer.md)
 lays out eight areas of design space (attention management, seat addressing, typed acts, lead triage,
 durability classes, one-surface-or-two, convergence provenance, what stays with grapevine). **This
 proposal commits to none of them.** They are hypotheses to be earned, not a backlog to implement.
@@ -137,14 +137,14 @@ spike:
   _"because I'd used up my sense of message budget,"_ and it died there.
 - **Capture the scenario, not just the takeaway.** A friction report without what-was-assumed and
   what-turned-out-true is a preference; with them, it is evidence. (Same reasoning as the
-  [practice-transmission investigation](../../investigations/2026-07-28-practice-transmission-between-teams.md).)
+  [practice-transmission investigation](../../../investigations/2026-07-28-practice-transmission-between-teams.md).)
 - **Log it in this project folder**, not in `paper-cuts.md`, until we know the ritual holds.
 
 ## What the StoryLoom round already settled
 
 **Done — the perishable capture below was taken**, in two rounds:
-[first contact](../../reports/2026-07-31-story-loom-first-contact-intake.md) and
-[a targeted comms round](../../reports/2026-07-31-story-loom-comms-round.md). It changes this
+[first contact](../../../reports/2026-07-31-story-loom-first-contact-intake.md) and
+[a targeted comms round](../../../reports/2026-07-31-story-loom-comms-round.md). It changes this
 proposal in three ways.
 
 **1. The wedge may be smaller than "own the layer."** Three of five seats independently showed that
@@ -196,7 +196,7 @@ all**, and first contact is a different question: what was confusing, what was h
 did they expect that wasn't there.
 
 **And the window closes within a session or two.** The strongest methodological finding from the
-[shared-tree investigation](../../investigations/2026-07-27-shared-tree-failure-modes.md): a team that
+[shared-tree investigation](../../../investigations/2026-07-27-shared-tree-failure-modes.md): a team that
 has absorbed a workaround **stops experiencing it as friction** — it is paid for once and amortised.
 One studied team had grown a universal provenance-prefix convention that existed in no document and
 that nobody could see any more. That is what a settled team looks like, and a fresh one becomes one
@@ -286,7 +286,7 @@ because its absence is felt by the lead within minutes.
 
 - ~~**A first-contact capture from the new team**, taken blind and before the build starts~~ —
   **done 2026-07-31**, in two rounds. The blind condition leaked all three times it was attempted; see
-  the [comms round](../../reports/2026-07-31-story-loom-comms-round.md) for the working method
+  the [comms round](../../../reports/2026-07-31-story-loom-comms-round.md) for the working method
   (**one exact command that fetches exactly one message** — never a range plus a caveat).
 - **One real convened session runs on it**, end to end, with the team's actual work.
 - **A written list of frictions from that session**, in scenario form.
@@ -297,15 +297,15 @@ because its absence is felt by the lead within minutes.
 
 **Related documents:**
 
-- [Team-native coordination layer](../../investigations/2026-07-31-team-native-coordination-layer.md)
+- [Team-native coordination layer](../../../investigations/2026-07-31-team-native-coordination-layer.md)
   — the design space this spike deliberately does not commit to, and the evidence for owning the layer.
-- [Shared-tree failure modes](../../investigations/2026-07-27-shared-tree-failure-modes.md) — **M4,
+- [Shared-tree failure modes](../../../investigations/2026-07-27-shared-tree-failure-modes.md) — **M4,
   M7, M8, M9, M10, M11** are the mechanisms a team-aware layer could address. Useful as a scoring
   rubric later; **not** a feature list now.
-- [Per-seat model selection](../per-seat-model-selection/proposal.md) — the per-seat `launch`
+- [Per-seat model selection](../../per-seat-model-selection/proposal.md) — the per-seat `launch`
   primitive, which is adjacent (foreign harnesses need the CLI-first property this spike should
   preserve).
-- [Feedback instrument: collects vs elicits](../../backlog/2026-07-28-feedback-instrument-elicits-not-collects.md)
+- [Feedback instrument: collects vs elicits](../../../backlog/2026-07-28-feedback-instrument-elicits-not-collects.md)
   — why the observation discipline above needs a trigger rather than an intention.
 
 ## Notes

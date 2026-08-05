@@ -307,7 +307,27 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // would put a second copy of a command in the one surface whose whole
     // point (Contract 4(d)) is that it carries none. Point at the skill.
     `Catching up after joining mid-session? The two wires need different verbs AND different anchors. The lead clears the vine at convene, so \`grapevine pull\` (finite, exits) gives you THIS session. Nothing clears the comms log — so the same move there replays every session the team has ever had; anchor it to an id and see the \`anthill:comms\` skill. On BOTH: NEVER catch up with a live stream (\`tail --from-start | grep\`, \`follow\`) — a live stream never exits and a filtered one never flushes, so you get zero output and then a timeout, which reads as "the channel is empty".`,
-    `Finalize BEFORE you drop off: synthesize durable lessons into ${i.seatDocRel}, commit, THEN stand down. Scratch is gitignored — it does not survive the session, so synthesize earlier if the reasoning is warm.`,
+    // NAMES THE VERB, not just the act. This line already carried the CORRECT
+    // ordering (synthesize → commit → THEN stand down) and every seat reads it
+    // at every join — but it said "stand down" in English and never named
+    // `anthill comms stand-down`, so it reads as "finish up and leave", an act
+    // with no artifact. Session 9's seats produced tombstones only once the lead
+    // named the command on the wire, and his improvised ordering was the INVERSE
+    // of this line: four of four seats followed the message over the manifest.
+    // **The ordering was never missing — it was present, correct, and overridden
+    // by a wire that evaporates.** An instruction that cannot be discharged
+    // mechanically loses to one that can.
+    // ⚠ "Scratch is gitignored — it does not survive the session" was FALSE and
+    // shipped to every consuming project. Gitignore governs TRACKING, not
+    // DELETION: 465 scratch files across six seats, back to July 10, were on
+    // disk when this was found. The urgency is real and its REASON was wrong —
+    // scratch is lost to the next AGENT, not to the filesystem — and a wrong
+    // reason routes the reader to the passing case: they run `ls`, see their
+    // notes intact, and discount the advice. Third instance of this exact false
+    // belief here; the others were "the comms log is gitignored so a fresh pane
+    // cannot reach it" (false — a 452KB world-readable file) and this seat's own
+    // promotion of that claim to a "guarantee".
+    `Finalize BEFORE you drop off: synthesize durable lessons into ${i.seatDocRel}, commit, post your retro answers, THEN record your departure with \`bun ${i.cliPath} comms stand-down --as ${i.handle}\` — the LAST thing you do. It is a positive observation the teardown guard reads; "I stopped working" leaves no record and is not a departure. Scratch is gitignored, so it never TRAVELS — the files stay on your disk, but nothing commits them and no future instance reads them. Synthesize earlier if the reasoning is warm.`,
     // NAMES NO WIRE — found by grepping this scope after the same collapse was
     // fixed three times elsewhere today. This said "on the vine", and it is
     // EMITTED to every consuming project: a team running comms-only (which this

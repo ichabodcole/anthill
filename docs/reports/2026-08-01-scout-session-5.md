@@ -25,7 +25,7 @@
 
 **Six code commits carry slice two:** `c9e156f` (`send --dry-run`, `read --last N`), `8d4569d` (the per-seat position), `1fb02af` (`follow` announces its gap), `400e348` (`gap: null` when unknowable), plus the H1 test and one fix.
 
-**The strongest single artifact of the session** is not a feature. `artifact:` read `docs/projects/team-comms-spike/slice-two-proposal.md` next to the commits: the shipped code differs from the ratified design in **exactly the two places the owning seat falsified it before writing a line** — `emittedThrough` not `deliveredThrough`, and `read` records nothing rather than `follow --since`. Nobody has to agree with anyone; the diff carries it.
+**The strongest single artifact of the session** is not a feature. `artifact:` read `docs/projects/_archive/team-comms-spike/slice-two-proposal.md` next to the commits: the shipped code differs from the ratified design in **exactly the two places the owning seat falsified it before writing a line** — `emittedThrough` not `deliveredThrough`, and `read` records nothing rather than `follow --since`. Nobody has to agree with anyone; the diff carries it.
 
 ---
 

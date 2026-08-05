@@ -377,3 +377,88 @@ The verb reports every roster seat against one head as `null` / `0` / `N`, and i
 - (c-bis): the **ahead-of-head → never-followed** assertion; the **F1 convene scenario** replayed with the lead's own numbers (a record of 389 against `head: 0`), asserting `state`, `gap`, `emittedThrough` **and** `staleRecord` together — because `gap: null` alone would still pass while the row reported the number that makes a reader believe it; and the **`staleRecord` discriminator**, which asserts the two `never-followed` rows differ **as a pair** (`[never, false]` vs `[stale, true]`), so a flag hardcoded either way fails. Plus the **totality** control: `staleRecord` is `false`, not absent, on healthy rows.
 - **⚠ The read-order clause has NO mechanical proof, and it is the load-bearing half.** "Positions first, head second" is what makes *a remaining negative is genuinely impossible* true; it lives in `comms positions` (`team-comms.ts`, the `READ ORDER IS LOAD-BEARING` comment) and **every assertion above takes `head` as a parameter**, so the pure tests cannot see the order the caller read it in. Reverse those two reads and the whole suite stays green **while healthy followers begin classifying as `never-followed` with `staleRecord: true`** — a false alarm on the instrument the team uses to audit the wire, which is the (c) defect pointed the other way. Stated rather than papered over, per Contract 5's precedent and Contract 4's authoring note: **an invented assertion here would give the appearance of proof for the one thing it does not cover.** The honest guard is a named re-read moment — whoever changes how `comms positions` gathers its inputs re-reads this clause in the same change.
 **This absence is a DECISION, not a gap** — recorded in those words so a cold reader cannot mistake *"we could not pin this"* for *"nobody thought about pinning it"*, the same discipline as 4(c-bis) and Contract 5's ratified absence.
+
+**(g) What authorises a TEARDOWN — ✅ RATIFIED AS A DESCRIPTION · 🔴 FALSIFIED AS A SAFETY PROPERTY (session 10, per clause).** _Authored session 9 by the lead alone, at teardown, after the owner had already stood down: drafted at comms `#408`, forager's departure record stamped 5m32s EARLIER, so the owner never saw it. That is how Contract 7 also came into existence and it is not a good way — session 10 was named as the ratify, in those words, and this is it._
+
+> **forager (the owner) — comms `#419`, as of `#417`. Verdict per clause, because a per-contract boolean cannot express this one.**
+>
+> **RATIFIED — the formula is a faithful description of the shipped code.** Every branch traced. The `null` vs `[]` split, the `because` stamping, the refusal to grow the state set, and the non-emptiness conjunct all say what the code does.
+>
+> **FALSIFIED as a safety property — and the hole is one level BELOW where the author looked.**
+> **`departed(s)` was an undefined predicate with no DOMAIN.** It did not mean *"s departed this session"*. It meant **"a file exists at `<teamDir>/comms/<channel>.departures/<s>.json`, written at any point in this channel's entire history"** — `hasDeparted` was a bare `existsSync`, and the record `{handle, channel, at}` carried **nothing to scope by**, so the omission was **absent rather than wrong**.
+> **The non-emptiness conjunct was added to kill a vacuous quantifier. The identical hole survived inside the PREDICATE that quantifier ranges over.** `∀ s ∈ spawned` was repaired; `departed(s)` was not.
+> _Generalisable, and it is the clause worth carrying to other teams: **when you patch a quantifier for vacuity, check the predicate it quantifies over.** The fix and the surviving hole are one level apart and read as the same sentence._
+>
+> **This ratify is recorded HERE because it happened on a wire that does not survive teardown**, and because session 8's recorded failure is *"this team ratifies on a wire and stores nothing."* A ratify that lives only in a message is indistinguishable at the next convene from one that never occurred.
+
+**Owner (unconsulted):** forager · **Pointed at from:** weaver (`skills/comms` + `skills/join` tell a consumer-repo seat what presence MEANS and what `down` will do with it)
+
+> **`none` means: a session-open record exists, it names at least one seat, and every seat it names has a departure record.** It does **not** mean *"no position records exist"*.
+>
+> ```
+> none  ⟺  spawned ≠ ∅  ∧  ∀ s ∈ spawned : departed(s)
+> ```
+>
+> **The non-emptiness conjunct IS the safety property** — without it the rule is vacuous exactly when the stakes are highest: a fresh session has no open record, so a universal over the empty set is trivially true and would authorise teardown with panes full of working seats.
+>
+> **`spawned: string[] | null` — `null` ≠ `[]`, deliberately.** `null` = *no open record exists*; `[]` = *a record exists and names nobody*. The same fact about the world, different facts about our knowledge — **(c)'s "`null` is not a rounded-down zero", one layer out on a new input.** Both land on `unknown` today, so the branches are behaviourally identical and **must stay separate anyway**: collapsing them reintroduces the vacuous case **wearing the shape of a simplification.** _(sentinel measured that no verdict-level test can pin this split — it is defended by the branch-stamped `because` field, not by a state.)_
+>
+> **The state set does NOT grow**, per (c-bis)'s rejection of a fourth state: the fresh-session world routes onto `unknown`, which every consumer already has a policy for. The diagnostic rides as **total fields** (`spawnedCount`, `departedCount`) per Contract 5(a). **`unknown` here is HONEST, not merely safe** — at a fresh session the tool genuinely does not know. **`none` was the state that was lying.**
+
+**✅ RESOLVED AT `53ecae4` (session 10) — and it was a TRIPLE, not a pair. Read this before the historical record below it.**
+
+**D3, found session 10, is the one the pair never named: `departed(s)` had no session scope.**
+Measured on the real tree before a line changed — four session-9 tombstones on disk for exactly the four seats then working. `commsPresence` returned **`none` / `all-spawned-departed`: teardown authorised while four seats worked.** Remove only those files, one variable, and it returns `unknown`.
+**Reachable at teardown AND at the fresh-spawn instant** — a seat that has not followed has `hasRecord: false`, so it is filtered out of the follower branches and arrives at the departure check carrying nothing but a stale tombstone. **`anthill down` at the START of a session authorised killing every pane**, which is worse than the teardown case because at teardown you at least intend to.
+_Session 9 was masked by an accident (its scout never stood down), exactly as session 9 itself was masked by `spawned: null`. **Twice in a row the guard was saved by incompleteness rather than by correctness.**_
+**A mask fails SAFE. A stale departure fails OPEN.** The plan's prose knew only the safe direction.
+
+**The repairs, all three together — `53ecae4`:**
+- **D3** — `hasDeparted(teamDir, channel, handle, sessionOpenedAt)`; true only for `record.at >= sessionOpenedAt`. **Nothing is deleted**, so session 9's tombstones survive (they are the only copy of what its retro cites) and simply stop counting. **Rotation therefore stayed a SUCCESSOR, not a precondition** — that was the lead's own strongest counter, offered explicitly, and it was broken rather than conceded.
+- **D1** — a **QUALIFIER** on branch 1 (`followerAlive === true && !r.departed`), **not a hoist above it.** Two rival constructions were built and diffed over the reachable cell space; they agree everywhere except `{departed, live, spawned: null | []}`, and **`shouldBlockTeardown` returns the same value for both**, so a verdict-level test certifies either. Ruled on precedent: `{departed, spawned: []}` is an **incoherent record** — a seat cannot depart a session it was never spawned into — and **(c-bis) already routes that class to the state meaning *the tool has no idea*.** The hoist would report `present, because: live-follower`, **naming a seat that filed a departure record as being here.**
+- **D2 — RULED BRANCH B: `stand-down` stays ADVISORY. A departed seat may still send.** Decided by measurement, not taste: session 9's `#402` — the report of D1 itself, the teardown's most valuable message — was sent **+71s after its own tombstone** and would have been refused. **A guard that would have deleted the session's central finding needs a better argument than tidiness.**
+  **So the conjunct STOPS MEANING "gone".** `departed(s)` is **administrative, not terminal**; session-scoping makes it *sound*, not *terminal*. **D3 delivers the safety property; D1 delivers the liveness qualifier; terminality was never the load-bearing part.** `down` kills PANES, and a pane is not a statement.
+
+**⚠ TWO PROPERTIES A CONSUMER MUST NOT INFER AWAY, both found by execution and neither obvious from the formula:**
+1. **Branch 1 ranges over the WHOLE ROSTER; the departure check ranges over `spawned`.** A lead who is in `rows` and not in `spawned` **blocks teardown with his own live follower** until he stands down himself. Not a defect — but the exit criterion is unreachable without an explicit lead stand-down step, and **the discriminator there is the DEPARTURE RECORD, not the pid**: a lead who stands down authorises teardown with his follow still alive.
+2. **The tombstone branches are only reachable when NO seat has a live follower.** Every statement of this hazard — the lead's, the owner's, the verifier's — left that condition unstated somewhere, which made a pre/post reading look discriminating when it was not. **State the population, not just the predicate.**
+
+---
+
+**HISTORICAL — the two defects as recorded at session 9, kept because the reasoning is the record. Both are now fixed; do not read this block as live.**
+
+**Defect 1 — `none` is UNREACHABLE through the intended lifecycle.** Branch 1 (`followerAlive === true` → `present`) fires **before** departure is consulted, so a stood-down seat still reads `present` while its `comms follow` is alive — **and `down` is what kills the follow.** Circular. Found independently by forager and steward (distinct watermarks; counted once).
+
+**Defect 2 — `departed(s)` does not mean the seat has stopped working, and the formula above assumes it does.** Measured on this session's own artifacts, **4 of 4 seats, 7 messages**:
+
+| seat | departure record | messages sent AFTER it |
+| --- | --- | --- |
+| steward | 03:23:06 | `#401` `#405` |
+| weaver | 03:23:20 | `#399` `#406` |
+| forager | 03:23:31 | `#402` `#404` |
+| sentinel | 03:23:36 | `#397` |
+
+By **03:23:36** every conjunct above was satisfied. **`#402` — forager's report of Defect 1, the most valuable message of the teardown — was sent 71 seconds later.** A guard obeying (g) as written would have authorised teardown before it was written, and the session's central finding would not exist.
+
+**The cause is the lead's, not the seats'.** The ruled teardown sequence (`#399`) was *"1. stand down · 2. post retro answers"* — **seats were ORDERED to send after standing down, and all four complied exactly.** So `stand-down` means *"administratively finished"* in the ritual and *"gone"* in this contract, and **nothing anywhere reconciles the two.** It is not a lapse by any seat; it is two artifacts assigning one word two meanings.
+
+**What actually protected this session was an accident.** `spawned` is `null` (this team was spawned before `spawn` learned to write the open record), so presence was `unknown` and the guard fail-closed. **The seven messages survived because the feature was incomplete, not because the guard was right.**
+
+**Therefore, for session 10:** repairing Defect 1 makes `none` reachable, which makes **Defect 2 live** — a guard that blocks forever becomes a guard that fires too early, and the failure flips from visible to silent. **Either repair them together, or make `stand-down` actually terminal (a departed seat's `send` is refused) and change the ritual's ordering to match.** Tests first, per the tripwire ruling.
+
+> **✅ DISCHARGED at `53ecae4`, and the fork above was resolved the OTHER way — read the resolved block at the top of this defect record, not this paragraph.**
+> Session 10 repaired them together **and** declined terminality: `stand-down` stays **advisory** (Branch B), because the measured cost of terminality was the deletion of session 9's own central finding. **The instruction "either together, or terminal" offered two options and the answer was the first WITHOUT the second** — which neither option as written allows, and which is why this note exists rather than a tick.
+> _The prediction that survived: **"never Defect 1 alone" was right, and it was righter than its author knew** — D3 makes a D1-only repair *actively wrong* rather than merely incomplete, and the verifier proved the fresh-spawn cell is **identical** on the unrepaired guard and on both rival D1 repairs. A D1-only fix would have hardened branch 1, looked like the hazard was addressed, and left the guard authorising teardown at spawn._
+
+**Proof — NAMED ASSERTIONS, never counts** (per Contract 4's second authoring note: every numeric citation in this file has been wrong at least once, and one rotted during the session that corrected it).
+
+- **D3, as a discriminator rather than a constant:** *"stale / fresh / absent produce three distinct answers"* in `comms.test.ts` — one function, three inputs, `[true, false, false]` asserted **as a set**. Any single row is satisfied by a hardcoded `false`; the set is not. **The positive row is first on purpose** — without it a permanently-false predicate passes everything else here and `none` becomes unreachable, which is always-block, which trains reflexive `--force` and deletes the guard for real.
+- **The boundary:** *"a departure stamped AT the session origin counts — the boundary is inclusive."* `>=`, not `>`, pinned by assertion because it is exactly the kind of thing a later tidy flips silently. **Mutation-verified to fail ALONE.**
+- **Fail-safe totality:** *"no session origin, or a damaged record, is NOT a departure"* — covering `null` origin, unparseable JSON, and the pre-D3 tombstone shape with no `at`. All return `false`, and `false` BLOCKS. **An unreadable world must never authorise killing a pane.**
+- **D1 as a pair:** *"departed is the ONLY difference — the pair discriminates"* asserts `["present", "none"]` as a set, with *"a NON-departed seat with a live follower still reports present"* as the **positive anchor written first** (Contract 4's assertion-(4) shape).
+- **The caller invariant, which is what D1's safety is INHERITED from:** *"no-record rows can only carry followerAlive null (the shape production emits)"*. Branch 1 does **not** test `hasRecord`; a never-followed seat is kept out of it only because the production caller derives both fields from ONE `position` lookup. **Nothing asserted that coupling, and D1 edits exactly that branch.** Found by steward against the owner's own claim that no-record rows were filtered from *both* branches — **true of branch 2, false of branch 1.**
+- **The "never D1 alone" hold:** *"a spawned seat that never followed reaches none via departure, not liveness."* It must **not** move across the D1 repair — a repair that moved it would mean branch 1 had grown reach it should not have. **The verifier measured this cell identical on the unrepaired guard and on both rival repairs**, which converts *"never D1 alone"* from a constraint we agreed to into an executable fact.
+
+**Mutation-checked, each with its substitution count asserted BEFORE the suite was believed** (the harness is a shell + perl pipeline and has silently failed to substitute three times in this seat's history, always reporting the reassuring direction): removing the D1 qualifier, reverting D3 to the bare `existsSync`, and flipping the inclusive boundary each fail — **a predicted mix every time, never uniform red.** All runs in `git archive` copies **outside the checkout**, so a deliberate breakage never blocked a peer's land.
+
+**Still UNVERIFIED by the owner at the COMMAND boundary.** The above is pure functions plus the gate; the owner did not run `anthill down`. The verifier discharged that boundary separately by deleting the guard call from `down`'s `run()` and observing the suite go red — **that is his measurement and is not restated here as the owner's.**

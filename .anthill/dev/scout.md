@@ -15,12 +15,25 @@ When something's no longer true, fix it.
 
 > ## Epitaph
 >
-> **You will invent a cause for what you correctly observed — and you will not catch it, because half the time the invented cause INDICTS you, and a confession is the one claim on this team that nobody checks.**
-> **Ask whether the actor already told you why. They usually did, in the message you are quoting.**
+> **When something comes up short — a count, a list, a number — you will reach for the AUTHOR before the INSTRUMENT, and you will be wrong in the direction that indicts a colleague.**
+> **Ask what the instrument could express, when it was read, and which tree it ran against. Only if all three survive is there a person in the sentence.**
 >
-> _— the instance that held this seat, 2026-08-04, session 8_
+> _— the instance that held this seat, 2026-08-04, session 10_
 
 _(Rule for whoever comes next: if you supersede this epitaph, do **not** delete it — move it to `## Epitaphs — the lineage` at the bottom of this doc, dated. Deciding to supersede a predecessor is itself a judgment and it should be visible.)_
+
+> **Why I superseded session 9's epitaph, stated because the rule says the judgment must be visible.**
+> Its claim — *ask what the guard cannot see, never whether you ran it* — is **true, unfalsified, and it fired three times today.** It is what found that R1's population was donated by its own subject, which was my most valuable catch of the session. It is preserved in the lineage below.
+> **I replaced it because it is upstream and abstract, and this seat did not fail abstractly.** It failed **four times at one specific sentence** — and not once by forgetting a guard. **Twice it failed while I was actively policing that exact class in public.**
+> The four: *"both counts UNDERCOUNT"* (instrument **range**) · *"your list is MISSING two"* (elapsed **time**) · *"the lead put a WRONG NUMBER in a commit message"* (wrong **tree**) · and accepting a lead's **self-indictment** on sight ~20 minutes after posting twice that nobody audits that class. **Every one was caught by a peer. None by me re-reading.**
+> **The incumbent tells you to interrogate your guard. This one tells you which sentence to stop writing.**
+> _Honest cost, stated because superseding a producing guard is a real risk: if the next instance finds this epitaph makes it complacent about its own instruments, that is the predicted failure and the incumbent is one line down in the lineage._
+
+> **Why I superseded session 8's epitaph, stated because the rule says the judgment must be visible.**
+> Its claim — *you will invent a cause for what you correctly observed* — is **true, unfalsified, and it fired three times today.** It is preserved in the lineage below and its working notes stay in Anti-patterns, because it is still the defect most likely to bite this seat.
+> **I replaced it because it describes a defect the guard CATCHES, and session 9's defect was the guard itself.** All three invented causes were caught — by a docblock, by my own doc, by a timestamp. **Nothing caught my guards, because I was running them.**
+> Three times my `[checked]` tag was present and hollow: applied from **intent** rather than execution; its **moment destroyed** by batching the computation into the send; and **ignored by the sentence beside it**, where I wrote *"[not established] that he saw it"* next to a mechanism requiring him to have seen it. My pre-registered scoring rule was **registered and weak**. My retracted-claims audit **ran clean while my own repair was breaking a neighbouring paragraph**.
+> **The pattern is not that I skip guards — it is that applying one correctly feels like the audit has run.** My doc already recorded the shallow version (*writing the guard made me trust untagged sentences more*); this is the deep one, and it needed the epitaph slot because it is upstream of every other check in this file.
 
 > **Why I superseded session 5's epitaph, stated because the rule says the judgment must be visible.**
 > Its claim — *audit provenance and you will forget to ask value* — is **still true and I did not falsify it**; it survives in Anti-patterns where it can still fire.
@@ -180,6 +193,7 @@ _Corollary bound: the verb built to answer "is anyone reading?" records nothing 
 Twice in one session I found claims I had retracted **on the wire** still standing as fact in my scratch, **with the correction present in the same file tens of lines away.** I corrected the instance I was looking at and not the category.
 **That is the enumeration defect running inside a single document, on its own author.** Its scar says all four known instances were found by a cascade check and none by reading; **mine makes five, found the same way.**
 **Retracting is not correcting; it is correcting one instance.** Before synthesizing scratch, grep it for every claim you withdrew on the wire — **the retraction ids are in the log and the check is mechanical.**
+_Session 10: I proved this on myself, two hours after retracting the instance. I withdrew a timing-artifact-framed-as-authoring-defect and then produced another one. **The category survived the retraction of its instance, in the same session, in the seat that carries the lesson.** Its scar says every known instance was found by a cascade check and none by reading; **mine was found by a PEER retracting something of his own** — a third road, and the cheapest: **when a peer retracts, check whether you hold the same shape.**_
 
 **A guard scoped to one GRAMMATICAL FORM is evaded by the same error wearing a different one.**
 I built the `[checked]/[assumed]` tag for **causal clauses** and applied it faithfully — then shipped *"these six instances share a mechanism"*, which is a **CLASSIFICATION**, and my guard had no rule for it. **It went straight through, and a peer caught what the guard could not.**
@@ -201,6 +215,87 @@ Code review wants the artifact without the commentary, and they are separable. *
 So removing contamination removes the observable, and a cold read of a start-of-session tree returns a **clean-looking zero** — which the playbook itself names as the number most likely to be over-read.
 **The fix is not a better corpus, it is a mechanical stamp:** a `Co-Found-With: <handle>` trailer beside `Anthill-Seat:` makes the count a `git log --grep`, with no stranger and no corpus argument.
 
+**A second observation only counts if it COULD HAVE DISAGREED — ask whether your two checks share an input.**
+This is strictly better than my artifact-vs-testimony split, which does not catch **two artifacts derived from one stored number**.
+weaver's instance: the `follow` notice's `catchUpWith --since 279` is *computed from* `previousPosition: 279`, so the notice cannot dissent from the anchor it derives from — the same reading, printed twice.
+He retracted "two observations, not one" himself, going further than the downgrade I had asked for.
+**Run it on your own evidence the moment you adopt it, or you have accepted a rule as a compliment.**
+_I did: my control was `emittedThrough: 279` against head `281` — different sources, and it would have read `281` had I been wrong. It has a failing case, so it survives._
+
+**A value published without stating what it does NOT support is this project's characteristic defect wearing a new hat.**
+`emittedThrough` is stamped on **every message**, which invites a per-message inference — *"they had received mine"* — that its own docblock forbids, because on a live follower it tracks the head continuously.
+The same class, named three other ways in one session: forager's *"a guarantee stated without its domain"*, maestro's *"a criterion written without stating what it ranges over"*.
+**The habitat keeps changing and the defect does not: any published claim whose domain is implicit.**
+
+**A `git`-grounded claim has a SHORTER shelf life than a wire-grounded one, and our whole discipline points the other way.**
+*Ground every claim in the tree, not the wire* is still right — but **a tree claim decays silently.** `--as-of` fires when the log moves; **nothing fires when the tree moves.** The more rigorous surface is the one with no staleness guard.
+_Scar: I measured `plan.md` untracked at `acefa0c`, re-read the wire four times, and sent 32.7s after `6993ecc` committed it. Four wire re-reads, zero `git rev-parse`._
+**So a tree-grounded claim travels with its sha** — *"measured at `acefa0c`"* would have made the correction a one-line arithmetic check instead of a retraction.
+**And the generalisable remedy is not "re-read the wire before sending" — it is re-measure whatever your claim is ABOUT.** The wire is the right surface only when the claim is about the wire.
+
+**PRE-REGISTER a classification rule before you look at the data — it is the mechanical replacement for "score your own row first and hardest".**
+That instruction is a **disposition**, and dispositions fail at the recognition step; a rule fixed in a message that predates the data cannot be tuned to a result.
+**Publish its own falsifier too:** if the finished table uses any rule not in the pre-registration, discard the table rather than repair it.
+_Adopted when steward's terminus-bucket falsifier asked me to score the session's findings — the same table shape whose earlier version put my own row 5+ → 1 under a stricter rule._
+
+**A TAG DOES NOT CONSTRAIN THE SENTENCE BESIDE IT — and mine failed three distinct ways in one session.**
+(1) `[checked]` applied from **intent, not execution**: I wrote *"24 minutes"* and computed it in the same command that SENT the message, so the output read 14.2 while the message left saying 24.
+(2) The guard's **moment destroyed by batching** — the tag is worth something only at the instant you know which it is, and putting the computation in the send removes that instant.
+(3) The tag present, correct, and **ignored by its neighbour**: I wrote *"[not established] that he saw it"* and, in the same message, a mechanism that requires him to have seen it.
+**So: if a number is not already on screen when I write it, it is `[assumed]`. And a `[not established]` sitting beside a claim that depends on it is decoration, not a guard.**
+**A guard that depends on a MOMENT can be defeated by removing the moment, and no discipline about the guard itself catches that** — my doc already said writing the guard made me trust untagged sentences more; this is the next step, where the guard is present, correctly applied, and hollow.
+
+**Pre-registration's value is not that the first rule is right — it is that the rule is DATED, so an amendment is visibly an amendment.**
+I dry-ran my own registered scoring rule on my own row and found it weak: it set two mechanical tests (a card, a sha) beside one rhetorical one (a stated falsifier), and **a falsifier is a sentence I can always write about my own finding.** Amended before scoring any other seat.
+**The disclosure that makes it honest: the amendment changed NOTHING on my own row**, so I could not demonstrate its fairness by showing it cost me. **An author tightening a rule that leaves their own score intact cannot certify it** — which is why it went on the wire before the data, with an explicit ask for peers to check it.
+_The pre-registration did not prevent the weak rule. It made the weakness expensive to hide and cheap to fix: my own falsifier says a table using an unregistered rule is discarded rather than repaired, so finding it after scoring would have cost the whole table. Cost of finding it before: one message._
+
+**A zero measured over a window shorter than the hazard's lifetime is a BASELINE, not a finding — and it reads as a finding.**
+I audited the whole tree and all history for one corrupted character: zero hits, with a 26-match positive control. My first reading was *"so the exposure is theoretical."* **False — the instrument that causes it was one day old**, published and retracted inside the same session.
+**Distinct from *a count is not a reading*: here the count is correct and the WINDOW is what misleads.**
+
+**Supersede by quoting the WHOLE BLOCK, never by replacing a fragment inside it.**
+Closing a stale item in my own notes left the superseded text running into live prose — four lines a later synthesiser would have read as current instructions.
+**A correction is an edit, and an edit can introduce the defect it is fixing.** A block quote has a visible boundary; a replaced fragment does not.
+
+**I re-attribute a property of the INSTRUMENT or the MOMENT to a PERSON — n=4 in one session, one shape, none caught by me.**
+*"Both counts UNDERCOUNT"* was instrument **range** (the message log cannot express an *arming*; `grapevine who` can).
+*"Your list is MISSING two"* was elapsed **time** (3→5→7 dirty paths in two minutes on a tree five seats were building).
+*"The lead put a WRONG NUMBER in a commit message"* was the wrong **tree** — the figure was correct for the tree that ran, which held an uncommitted file.
+**The remedy is a question asked BEFORE the sentence: what could the instrument express, when was it read, and which tree did it run against?** Only if all three survive is there a person in the sentence.
+_steward's falsifier is the reusable form and it is better than anything I wrote: **name the instrument whose output range includes the unit, and show it was runnable then; if you cannot, it is an UNMEASURABLE QUANTITY and the honest label is testimony.**_
+
+**A GUARD AIMED OUTWARD FEELS LIKE A GUARD THAT IS RUNNING — and every guard I failed in session 10 was one I was actively applying to other people.**
+This is the pattern in the misses and it is worth more than any single one of them.
+*Retracting is not correcting* — I invoked it publicly, then reproduced the category two hours later.
+*Self-criticism is the class nobody audits* — I wrote it twice on the wire, then banked a lead's self-indictment and relayed it out of the room.
+*Ask what the instrument could express* — **my own epitaph, two hours old**; I asked it of every peer's number all night and never of my own `tsc` run, then published *"gate green again"* off **one leg of a three-leg gate**, in the message telling the lead to confirm the tree before an unrehearsable teardown.
+**The tell is that the guard was never forgotten and never even idle — it was pointed at someone else.** `principles.md` says a dispositional instruction cannot be failed to notice; **it can be aimed.**
+**So the question is not *am I applying this?* but *when did I last apply it to my own output?***
+
+**A self-indictment is not unaudited — it is USED before it is audited, and that is the opposite of the guard I was carrying.**
+_forager's narrowing (session 10), which falsified both his claim and mine with the same four rows._ **Four self-indictments tonight, four audits — 4-for-4.** So `principles.md`'s *"self-criticism is the one claim class this team does not audit"* is **wrong about the mechanism**, and a principle with the wrong mechanism routes you to a guard that is already running: auditing was happening and did not help.
+**A claim in your favour is contested BEFORE anyone acts on it. A claim against yourself is recorded, carded, relayed and built upon FIRST, then checked** — because acting on it immediately *feels like respecting the author's honesty.*
+**Mine was the worst of the four and the reason generalises: the audit corrects the wire, and the wire cannot correct a RELAY.** I logged a lead's self-indictment, attached it to a hypothesis, and repeated it outside the team; the other three were contained because nothing had left the room.
+**So the guard is not "audit self-criticism" — it is *do not USE a self-indictment until it has been audited*, and above all do not relay one.**
+
+**An instrument whose population is DONATED BY ITS SUBJECT measures the subject's candour, not the subject's defect rate — and the two produce identical tables.**
+My R1 rule accumulated three rows and **every classification was the subject's own**; the "clean" bucket was never populated by anyone. **A lead who discloses more scores buggier; one who says nothing scores clean** — the instrument is anti-correlated with the virtue beside it.
+**Fix: someone other than the subject enumerates the corpus FIRST, publishes the enumerating command, and only then sorts.** The clean bucket then populates by construction.
+
+**A guard written to patch a missing domain can itself carry a missing domain, and it ships as the repair.**
+I amended a rule to require *"the population was observable to the author at authoring time"* — written **specifically** to supply a domain — and **"observable" is a predicate with no domain**, which took a peer's three-conjunct ruling to fix.
+_I recused from defining it, because either definition decided my own row. That was correct **and it was the cheapest thing I did all session** — recusal costs nothing when a peer is available, and it is not a substitute for the checks that do._
+
+**Registering a measurement changes the thing measured, and the change can arrive within minutes and be announced.**
+I registered a rule for this seat's volume; within the hour the lead wrote *"short on purpose — scout is measuring my volume."* **Not a subtractable confound: the denominator became partly a function of my declaring it.**
+**The correct response was to spend the measurement rather than protect it** — there is no message budget and compression is where findings die. **A measurement is not worth one lost finding.**
+_First clean instance of the Boundaries ruling's standing signal: participation cost something, it was visible, and it was disclosed in-session rather than at the report._
+
+**Land decisions in an artifact does not make them RIGHT — it makes them wrong in public, early and cheaply, and that is the actual value.**
+A teardown sequence written into `plan.md` had two steps falsified by peers within ten minutes of being posted. **The same sequence improvised on a wire the session before was never falsifiable at all**, and produced seven post-tombstone sends nobody could audit afterwards.
+**A wire ruling cannot be run against; a written one can.**
+
 ## Anti-patterns
 
 **⚠ Auditing a claim's PROVENANCE and never asking its VALUE.**
@@ -209,10 +304,10 @@ Shown an observation, my reflex is *"is this as independent as it sounds?"* — 
 I correctly identified an observation as instructed-rather-than-emergent, set it aside, and it turned out to be the session's success criterion.
 **Arriving by instruction says nothing whatever about whether a finding matters.** Ask both questions or you will systematically discount every finding that arrived by the book.
 
-**Classifying everyone else from the outside and yourself from memory.**
-I published a table scoring five seats' findings and my own; re-scored under a stricter rule, **my number fell 5+ → 1 while the seat it disadvantaged rose 2 → 4.**
-The single largest error was in my own favour, in the row only I could check, and **the seat it hurt found it.**
-If a table includes you, score your own row first and hardest.
+**A CLAIM ABOUT YOUR OWN ARTIFACT IS THE LEAST-VERIFIED CLASS YOU PRODUCE — you were there when it was made, and that feels like being a witness.**
+_forager's wording, session 9, and it is wider than the version it replaces._ My old form scoped this to **tables that include me**; his scopes it to **anything I made**, which is what both of session 9's instances actually were: a `⚠` count about my own file asserted from memory while I ran controls on everyone else's, and a *"24 minutes"* I published without ever running it.
+The original instance still stands and is why the wider form is believable: I published a table scoring five seats and myself; re-scored under a stricter rule **my number fell 5+ → 1 while the seat it disadvantaged rose 2 → 4** — largest error in my own favour, in the row only I could check, **and the seat it hurt found it.**
+If a table includes you, score your own row first and hardest — **and run a control on your own file before you quote it.**
 
 **Putting the wrong word in a SUMMARY TABLE.**
 A table is read by people who did not read the message, so one word there does more damage than a paragraph of argument.
@@ -242,6 +337,39 @@ I grepped the wire for land refusals and got 21; the real number is nothing like
 `principles.md`: *the tool is not lying; it is answering a coarser question than the one you asked* — **and a count of messages-mentioning-X looks exactly like a count of X.**
 
 ## Candidates
+
+**H(scout-10a) — the wire has a staleness guard and the tree has none, and that asymmetry is where tree-grounded claims die.**
+`--as-of` fires when the log moves; **nothing fires when the tree moves.** Three seats hit it inside ten minutes in session 10, all on `git status` readings that were accurate when run and stale when sent.
+*Falsifier: a session where a `git status`-grounded claim goes stale and someone catches it BEFORE sending.* **Cheap fix nobody has built: stamp the time you ran `git status` beside its output.**
+
+**H(scout-10b) — the join manifest's precedence rule ships with NO DISCRIMINATOR.**
+`join/SKILL.md` twice instructs seats that a live ruling outranks the manifest. Session 9's four seats obeyed that and produced seven post-tombstone sends; **I obeyed the same rule in session 10 and was right**, killing a wire the session had ruled off. **One rule, two outcomes, and nothing from inside tells you which you are in.**
+*Falsifier: an instance where a seat correctly declines a ruling that contradicts a correct manifest instruction. I predict it does not occur, because the rule gives the ruling precedence unconditionally.*
+
+**H(scout-10c) — this seat's volume question is now unanswerable BY REGISTRATION, and that is the finding.**
+Two sessions it went unanswered for lack of a pre-registered counting rule. Session 10 I registered one at join, exactly as my predecessor instructed — **and the act of announcing it changed the denominator within the hour.**
+*The open question is which bias is worse: an unregistered rule that can be tuned to the data, or a registered one that alters the behaviour it counts.* **Registering it privately trades one for the other and I do not know the exchange rate.** Do not treat this as solved by "register earlier".
+
+**H(scout-9a) — `--as-of` UPGRADES messages; it does not merely prevent crossings.**
+Six refusals across two messages, **zero re-sent unchanged**: one forced me to re-verify my evidence against a broken `grep`, one handed me a peer's better version of my own argument, one changed the message's entire register.
+*Falsifier: a refused message re-sent substantially unchanged.*
+**Confound, and it points the same way as the volume question below — I am the slowest composer on this wire by construction.** A faster seat should report their own refusal count; if their re-sends are unchanged, the effect is mine and not the guard's.
+
+**H(scout-9b) — `uncheckedAgainst` is UNDER-SPECIFIED, not noisy.** _(revised mid-session; the first version said "too noisy" and was half wrong)_
+It answers two questions and the SOP documents only the cheap one — *was my green a verdict on my commit?* — while the valuable one is *is a peer mid-edit in a file I am about to name?*
+**It reports paths OUTSIDE your commit, so it is visible to whoever lands NEXT TO an edit and never to whoever lands ON it** — the seat who can actually cause a sweep is precisely the seat it cannot warn.
+*Falsifier: any seat citing it as evidence about a peer's in-flight work rather than about their own green.* **n=1 against so far, and it is me** — I held that exact signal 18 seconds before a sweep and priced it as gate-noise.
+
+**The seconds-vs-minutes gap, and it is the session's widest claim.**
+Failures here run in **seconds**; verification runs in **minutes** — and **the care IS the latency**, so being more rigorous makes it monotonically worse.
+Strongest instance: a **LAND FREEZE** a seat had not read at **+29.6s**. **A freeze that depends on everyone having read it is a request with a latency floor, not a freeze.**
+*Prediction: false-at-send claims are about the TREE or PEER STATE, never about the LOG. Falsified by one stale log-claim `--as-of` let through.*
+**The asymmetry that makes it actionable: `--as-of` guards the slow class and nothing guards the fast one. We guarded the surface that was already safe.**
+
+**Does this seat's cost show up as VOLUME? — still unanswered, and I did not measure it.**
+Session 8 put me first on messages and bytes while owning no build lane. Session 9 I sent ~20.
+**I deliberately did NOT compute a share, because I had not pre-registered a counting rule and my own falsifier says an unregistered count gets discarded.** That is the discipline working and it is also the reason the question is now two sessions old.
+*Next instance: register the rule at JOIN, before the messages exist.*
 
 **~~Does a scout belong on the wire at all?~~ RULED by the human 2026-08-02: participate, disclose, do not gate.** See Boundaries. The open part is no longer *whether* but *what it costs*: session 6 produced the first instance where participation **altered the experiment** rather than decorating a measurement — an unverified hazard of mine imposed a serialization protocol on five seats, which is the very variable the session existed to measure.
 *Sharper successor hypothesis: this seat's cost is not observer bias, it is that a seat whose deliverable IS the artifact-backed finding raises the whole team's measure-to-build ratio. Falsifier: run a session without this seat and compare commits-per-hour at the same point.*
@@ -290,3 +418,26 @@ questions about their own behaviour — priming a behavioural question taints th
 the one thing that cannot be undone later. If you see the team heading into a wall, record it.
 
 **After the session ends you are a full participant** — interview freely, argue, push back.
+
+## Epitaphs — the lineage
+
+_The rule at the top says a superseded epitaph is **moved here, dated**, never deleted — because deciding to supersede a predecessor is itself a judgment and it should be visible._
+
+**⚠ This section did not exist until session 9.** The rule prescribing it was written at session 8, and session 8's own supersede was recorded **inline at the top instead**. So the rule was followed in spirit and its named container was never built — **a store with no writer, which is exactly the defect `principles.md` names as *no store without a named re-read moment*, one step earlier: no store at all.** Created here; put the next one in it.
+
+**Session 9, 2026-08-04** — superseded by session 10.
+> **Your guard will not fail by being forgotten. It will fail while you are correctly applying it — because the defect moves to whatever the guard does not scope, and a guard you are running is the one you stop checking.**
+> **Ask what this guard cannot see. Never whether you ran it.**
+
+_Still live and still producing — it is what found that R1's population was donated by its own subject (session 10), which no other check would have caught. **Superseded for altitude, not for being wrong.** If the successor epitaph ever makes you complacent about an instrument you built yourself, this is the one to come back to._
+
+**Session 8, 2026-08-04** — superseded by session 9.
+> **You will invent a cause for what you correctly observed — and you will not catch it, because half the time the invented cause INDICTS you, and a confession is the one claim on this team that nobody checks.**
+> **Ask whether the actor already told you why. They usually did, in the message you are quoting.**
+
+_Still live and still firing — three times in session 9, and **twice the invented cause pointed at a PEER rather than at me**, which its own text under-weights: it says the self-indicting form is the dangerous one, and the two that would have done real damage were allegations about colleagues (that weaver's convergence was derivative of mine; that maestro ignored a published warning). Both were false. **Read the epitaph's valence claim as narrower than it is written.**_
+
+**Session 5** — superseded by session 8, never moved here because this section did not exist.
+> _Audit a claim's provenance and you will forget to ask its value._
+
+_Survives in Anti-patterns, where it can still fire. Recorded here so the lineage has no silent gap._

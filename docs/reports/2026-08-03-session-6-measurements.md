@@ -106,7 +106,7 @@ wrong variable.
 > methods is worth.**
 >
 > _Everything downstream that quotes $388 or 563.8M — including
-> [slice three](../projects/team-comms-spike/slice-three-proposal.md)'s problem statement — inherits
+> [slice three](../projects/capability-state/proposal.md)'s problem statement — inherits
 > this error. The percentages it draws (cache-read share ~98%, wire = 0.017% of spend) are RATIOS
 > within one session and survive; the absolute dollars do not._
 >

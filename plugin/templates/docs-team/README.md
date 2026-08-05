@@ -117,8 +117,9 @@ direct.
   signals** (toe-stepping, a renegotiated seam, an overloaded/idle seat, a verify finding that
   bounces work back).
 - **Finalize (+ reflection)** — each seat curates its scratch → seat doc and **lands its own**; a
-  shared `seams.md` pass; then the **structure reflection** and the **retro** (below). The lead lands
-  what is genuinely cross-seat and tears down the session.
+  shared `seams.md` pass; then the **structure reflection** and the **retro** (below); then each seat
+  **stands down last** (`anthill comms stand-down --as <handle>` — see below; the order is the part
+  that gets inverted). The lead lands what is genuinely cross-seat and tears down the session.
 
 **Verification is dynamic, not end-of-line.** A verify seat engages at **verification points** —
 which may be early (we need tests before building further), mid (prove a feature), or late — and
@@ -218,6 +219,17 @@ before you treat a green as a verdict on your commit.**_
   no notion of a message being in flight. A read-watermark lets the other seat see instantly that your
   call predates their falsification, instead of discovering it later. (New convention — tell us
   whether it earned its keep.)
+- **When ONE message answers SEVERAL, index it by the message ids it answers — never by topic.**
+  A table (`| msg | from | ask | answered in |`) turns an unanswered ask into a **visible blank cell**;
+  a topic-shaped ruling leaves it an **absence**, and an absence is not readable.
+  This is the read-watermark's counterpart: a seat stamps **what it had read**, and whoever rules stamps **what it answered**.
+  It bites hardest for the lead, because answering several asks at once is the lead's default rather than an occasional act.
+  **Why writing "be thorough" cannot fix it:** a _"what I am NOT ruling on"_ section is enumerated from the author's **agenda** — the questions they are consciously holding — and not from the **inbox** of asks that arrived.
+  The omission and the deferral are produced by the same pass, so **the guard is blind in exactly the case it exists for**, and the ruling reads _more_ complete for having the section.
+  Same move as a total field whose `false` you can read: a readable blank beats a missing entry.
+  _Scar: a lead ruled six asks and explicitly named three he was not ruling on, and a seat's two asks appeared in neither list._
+  _One of them was **nearly** covered by a ruling on the same class — and "nearly" is the defect, because **a ruling that resolves the class without naming the instance is indistinguishable from one that missed it**, so the seat cannot tell whether it has been answered or overlooked._
+  _The table earns its keep a second way nobody predicted: it makes a **wrong** entry auditable. A row recorded a claim whose own author retracted it minutes later, and the row is what made the stale entry findable._
 - **The atomic cross-seat land: assemble, don't marinate.** When several seats' halves are
   uncompilable until all of them land, the naive approach parks everyone's red work in the shared tree
   for as long as the slowest seat drafts. Instead: **draft out-of-tree in gitignored scratch → post
@@ -287,6 +299,27 @@ rather than shape, and two rules are what make it more than a mood:
   nothing to do but concur, so the document becomes indistinguishable from one where the audit found
   nothing. _Scar: an observer seat checked and found **no seat produced a criticism of the lead he
   had not already volunteered.**_ Say you are in scope; then say nothing until the seats have written.
+
+### Standing down — a seat's LAST act, and the verb has to be named
+
+**Every seat ends with `anthill comms stand-down --as <handle>` — after synthesis, after landing its own doc, and after its retro answers.**
+That order is the whole content of this beat: **stand down last.**
+
+**Name the verb when you call for it.** The instruction a seat receives at join says _"commit, **THEN stand down**"_ — in English, without naming the command — so a seat reads it as _"finish up and leave"_, which is an act with no artifact.
+**A departure only exists if the verb ran.** It writes a record, and for a **spawned** seat that record is what lets `anthill down` authorise a teardown **without `--force`**.
+
+**⚠ The lead is a seat and is usually NOT a spawned one — so the same act does a different job for the lead.**
+The teardown check ranges over **the seats this session spawned**, and the lead convened rather than being spawned into that set, so **the lead's departure record does not enter that count at all.**
+The lead still stands down, for the other reason: **a live follower is what makes a seat look present**, and the lead's own follow is the last one running.
+**State which population you mean whenever you write a rule about "every seat"** — this beat was drafted saying the record authorises teardown, full stop, and that sentence was **true of spawned seats and false of the lead who reads it.**
+
+**What the record does NOT mean.** It is an **administrative** statement — _"I am finished"_ — **not** _"this pane is inert."_
+A seat that has stood down **may still send**, deliberately, and that is not a violation: `down` kills **panes**, and a pane is not a statement.
+So treat a late message as normal, and never let a departure record talk you out of reading one.
+
+_Scar: a session's lead improvised **"stand down, then post your retro answers"** on the wire — the **inverse** of the order above._
+_**All four seats followed the wire and not the instruction each had read at join.** Seven messages landed after their authors' own departure records, including the report of the session's central defect, **71 seconds after** its author had stood down._
+_**The order was not missing. It was present, correct, and overridden by a message that evaporates** — which is why it is written here, where it does not._
 
 ## Onboarding a fresh agent
 

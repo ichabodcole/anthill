@@ -113,7 +113,7 @@ get miscounted as a tool gap.
 _what turned out true_ is an opinion; with them it is evidence.
 
 **And every entry carries a triage verdict** — the three outcomes from
-[what teams invent and where it should live](../../investigations/2026-08-01-what-teams-invent-and-where-it-should-live.md):
+[what teams invent and where it should live](../../../investigations/2026-08-01-what-teams-invent-and-where-it-should-live.md):
 
 | verdict        | means                                                     | goes to                                      |
 | -------------- | --------------------------------------------------------- | -------------------------------------------- |
@@ -144,7 +144,7 @@ Recorded now, because these are much harder to admit mid-session:
 - [Proposal](./proposal.md) — protocol, observation discipline, the StoryLoom findings that narrowed
   the design space
 - [Session 1 friction log](./session-1-friction.md) — the output format this session follows
-- [What teams invent and where it should live](../../investigations/2026-08-01-what-teams-invent-and-where-it-should-live.md)
+- [What teams invent and where it should live](../../../investigations/2026-08-01-what-teams-invent-and-where-it-should-live.md)
   — the triage
-- [A blocked seat is invisible to every surface](../../backlog/2026-08-01-a-blocked-seat-is-invisible-to-every-surface.md)
+- [A blocked seat is invisible to every surface](../../../backlog/2026-08-01-a-blocked-seat-is-invisible-to-every-surface.md)
   — why a zero count on both wires is not "quiet"

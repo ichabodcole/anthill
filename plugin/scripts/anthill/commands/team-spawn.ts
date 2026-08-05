@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { writeSessionOpen } from "../comms.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import {
@@ -157,6 +158,25 @@ export const teamSpawnCommand = defineAnthillCommand({
     }
     const handles = resolved.handles;
 
+    // A degraded-but-non-fatal spawn (a split, a missing pane, an unwritable
+    // session record) surfaces as a warning rather than a crash. Declared here
+    // because the open record below is written before any pane exists.
+    const warnings: string[] = [];
+
+    // The SESSION-OPEN RECORD. Written here because `spawn` is the only command
+    // that knows who was actually spawned, and the teardown guard cannot confirm
+    // "everyone left" without knowing who was supposed to be here.
+    //
+    // Deriving that set from `config.seats` instead would mean a seat that was
+    // never spawned has no departure record and blocks teardown FOREVER — the
+    // always-block degradation arriving by another road.
+    //
+    // Written AFTER handle resolution and BEFORE any pane exists, deliberately:
+    // if the spawn half-fails, the guard must still know seats were intended,
+    // and erring toward "someone may be here" is the recoverable direction.
+    const openRecord = writeSessionOpen(config.teamDirPath(), config.channel, handles);
+    if (openRecord.warning) warnings.push(openRecord.warning);
+
     // Preflight: no half-spawn if tmux is missing.
     if (!hasTmux()) {
       emitError({
@@ -207,9 +227,6 @@ export const teamSpawnCommand = defineAnthillCommand({
       });
       process.exit(1);
     }
-    // A degraded-but-non-fatal spawn (a split or a missing pane) surfaces as a
-    // warning rather than a crash.
-    const warnings: string[] = [];
     for (const handle of handles.slice(1)) {
       const split = await splitAndTile(sessionName, cwd);
       if (!split.ok) {

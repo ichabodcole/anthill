@@ -24,8 +24,8 @@
  *     identity the roster never granted.
  */
 
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import type { SeatConfig } from "./config.ts";
 
 /** Where a channel's log lives, relative to the team dir. */
@@ -370,6 +370,154 @@ export interface SeatPositionRow {
  * null-on-damage rule is the kind of thing that drifts the moment it is
  * reimplemented beside its second caller.
  */
+/**
+ * Where one seat's DEPARTURE RECORD lives — the tombstone `comms stand-down`
+ * writes. Per-seat file, same reasoning as the position path: only the departing
+ * seat writes its own, so there is nothing to contend over.
+ *
+ * **A TOMBSTONE, never a deletion.** Deleting the position record would make a
+ * stood-down seat byte-identical to one that never followed, which is precisely
+ * the ambiguity the teardown guard now depends on separating: departure is a
+ * POSITIVE observation, absence is not. Deletion would restore the fused world.
+ */
+export function commsDeparturePath(teamDir: string, channel: string, handle: string): string {
+  if (!SAFE_CHANNEL.test(channel)) {
+    throw new Error(`unsafe channel name "${channel}" — it becomes a filename`);
+  }
+  if (!SAFE_CHANNEL.test(handle)) {
+    throw new Error(`unsafe seat handle "${handle}" — it becomes a filename`);
+  }
+  return resolve(teamDir, COMMS_DIR, `${channel}.departures`, `${handle}.json`);
+}
+
+/**
+ * Where the SESSION-OPEN RECORD lives: which seats this session spawned.
+ *
+ * The teardown guard cannot confirm "everyone left" without knowing who was
+ * supposed to be here. Deriving that set from `config.seats` instead would mean
+ * a seat that was never spawned has no departure record and blocks teardown
+ * forever — always-block by another road.
+ */
+export function commsSessionPath(teamDir: string, channel: string): string {
+  if (!SAFE_CHANNEL.test(channel)) {
+    throw new Error(`unsafe channel name "${channel}" — it becomes a filename`);
+  }
+  return resolve(teamDir, COMMS_DIR, `${channel}.session.json`);
+}
+
+export interface SessionOpenRecord {
+  /** Seats this session spawned. `[]` is a real value: a record naming nobody. */
+  spawned: string[];
+  /**
+   * When this session opened — the ORIGIN a departure is scoped against (D3).
+   *
+   * `writeSessionOpen` has always written this; the interface never declared
+   * it, so every reader cast it away. That is the enumeration defect in its
+   * quietest form: a field the writer emits and the type denies, which no gate
+   * can see because nothing ever asked for it.
+   *
+   * **Optional on purpose, and the optionality is load-bearing.** A record
+   * written before this field existed has no `openedAt`, and the honest reading
+   * of that is *"I cannot scope a departure"* — which must fail SAFE (nothing
+   * counts as departed, teardown blocks), never fail open.
+   */
+  openedAt?: number;
+}
+
+/**
+ * Read the session-open record.
+ *
+ * **Returns `null` when NO record exists, which is NOT the same as a record
+ * naming no seats** (`{spawned: []}`). Same discipline as `readPosition`'s
+ * never-followed: `null` is not a rounded-down empty, and the teardown guard
+ * reports the two through distinct branches.
+ */
+/**
+ * Write the session-open record. Atomic (tmp + rename) for the same reason the
+ * position write is: a reader must never see a half-written record, and this one
+ * feeds a verdict that authorises killing panes.
+ *
+ * NEVER THROWS — a spawn must not die because a record could not be written. It
+ * returns the warning instead, and the guard fails SAFE without it: no record
+ * means `spawned === null` means `unknown` means teardown blocks.
+ */
+export function writeSessionOpen(
+  teamDir: string,
+  channel: string,
+  spawned: string[],
+): { path: string | null; warning?: string } {
+  try {
+    const path = commsSessionPath(teamDir, channel);
+    mkdirSync(dirname(path), { recursive: true });
+    const tmp = `${path}.${process.pid}.tmp`;
+    writeFileSync(tmp, `${JSON.stringify({ channel, spawned, openedAt: Date.now() })}\n`, "utf8");
+    renameSync(tmp, path);
+    return { path };
+  } catch (err) {
+    return {
+      path: null,
+      warning: `could not write the session-open record: ${(err as Error).message} — teardown will refuse until it exists (fail-safe)`,
+    };
+  }
+}
+
+export function readSessionOpen(teamDir: string, channel: string): SessionOpenRecord | null {
+  try {
+    const path = commsSessionPath(teamDir, channel);
+    if (!existsSync(path)) return null;
+    const parsed = JSON.parse(readFileSync(path, "utf8")) as SessionOpenRecord;
+    return Array.isArray(parsed?.spawned) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Has this seat positively recorded a departure **IN THIS SESSION**?
+ * Absence is NOT a departure, and neither is a departure from a PAST one.
+ *
+ * **D3 — the tombstone had no session scope, and that was an ABSENT choice
+ * rather than a wrong one:** the record is `{handle, channel, at}` and
+ * `hasDeparted` was a bare `existsSync`, so a tombstone written by any past
+ * session counted forever. Contract 6(g)'s conjunct — *every spawned seat has
+ * departed* — was therefore satisfiable by files nobody wrote this session.
+ *
+ * **Measured on the real tree (session 10):** four session-9 tombstones on disk
+ * for exactly the four seats then working. With them, `commsPresence` returned
+ * `none` / `all-spawned-departed` — **teardown authorised while four seats
+ * worked.** Remove only those files, one variable, and it returns `unknown`.
+ * The hazard is reachable at the fresh-spawn instant (no seat has a position
+ * record yet, so nothing reaches the follower branches) **and at teardown**.
+ *
+ * **A mask fails safe; a stale departure fails OPEN.** That is the whole reason
+ * this is scoped rather than swept: nothing here deletes a tombstone, so
+ * session 9's records survive — they are the only copy of what its retro cites.
+ *
+ * **Fail-safe in every direction that is not a positive, in-session departure:**
+ * no session origin, no record, damaged record, or a record predating the
+ * session all return `false`. `false` blocks teardown. An unreadable world must
+ * never authorise killing a pane.
+ */
+export function hasDeparted(
+  teamDir: string,
+  channel: string,
+  handle: string,
+  /** This session's origin. `null` ⇒ nothing to scope against ⇒ never departed. */
+  sessionOpenedAt: number | null,
+): boolean {
+  if (sessionOpenedAt === null) return false;
+  try {
+    const path = commsDeparturePath(teamDir, channel, handle);
+    if (!existsSync(path)) return false;
+    const record = JSON.parse(readFileSync(path, "utf8")) as { at?: unknown };
+    // `>=`, not `>`: a departure stamped in the same millisecond as the open is
+    // this session's. The boundary is asserted rather than left to taste.
+    return typeof record?.at === "number" && record.at >= sessionOpenedAt;
+  } catch {
+    return false;
+  }
+}
+
 export function readPosition(
   teamDir: string,
   channel: string,

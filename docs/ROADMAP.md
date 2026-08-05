@@ -31,7 +31,7 @@ same day (`315fa56`, `2170636`, `3111f28`, `37852c2`). Test count 157 → 202.
    dependencies, and the strongest field evidence in the set (_"would have saved most of a session"_).
    Plus two one-liners worth folding in: correct the exclusive-human-channel claim (**M9**'s doc half)
    and route the structure reflection upstream (**phase 6 item 2** — the cheapest item anywhere here).
-   3c. **The next scope of work — [team comms spike](projects/team-comms-spike/proposal.md).** Build the
+   3c. **The next scope of work — [team comms spike](projects/_archive/team-comms-spike/proposal.md).** Build the
    smallest cross-terminal comms tool that knows it is a team (seat identity from the roster, which is
    free because `config.json` already declares it), run one real session on it, and let the friction
    decide the rest. **A spike, not a design** — the

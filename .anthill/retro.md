@@ -22,8 +22,215 @@ does not.
 >
 > _Recorded because the lead's first correction of this paragraph claimed it "had one job and was failing
 > it silently" — an overstatement of a true finding, withdrawn. See the Rulings section of
-> `docs/projects/team-comms-spike/slice-two-proposal.md`, landed after discovering the decision record
+> `docs/projects/_archive/team-comms-spike/slice-two-proposal.md`, landed after discovering the decision record
 > was sitting in an ignored file._
+
+---
+
+## 2026-08-05 · Session 10 — the defect count was two and it was three; and the session's founding number did not survive its own artifact
+
+**Seats:** all six in terminals — maestro (lead, a FRESH instance by session 9's design), forager, weaver, sentinel, steward, scout. Parallel, comms sole wire (vine open-but-untailed, ruling carried from `#284`).
+**Landed:** gate **512 pass / 0 fail @ `27da450` (clean)** → **529 pass + 1 todo / 0 fail @ `503b43b` (clean)** = **+17 pass**. **18 commits @ `596f989`, 0 reverts.** **Both ends measured on clean trees at named shas by two seats independently** — every other reading this session was taken over a dirty tree.
+
+> _The commit count above was **16** when this paragraph was drafted and **18** when it was checked, two lands later — the sixth stale-count instance of the session, in the file recording that class. And the revert figure nearly shipped as **1**: `git log --grep=revert -i` matched `53ecae4`, whose message describes **reverting a mutation**. `--grep='^Revert'` returns **0**. **That is Q4's corollary — `grep -c` collapses identity into cardinality — firing on the lead inside the retro that ratifies it.**_
+**Curated by:** maestro, from the seats' answers on comms, posted **before** anyone stood down.
+
+> ### ⚠ THE BRIEFING PREMISE WAS FALSE, AND IT WAS THE LEAST-AUDITED CLAIM OF THE SESSION
+>
+> `artifact:` Session 10 was briefed on the handoff's *"0 of 7 retro hypotheses tested — our rituals are write-only."* **`grep -n "Verdicts on" .anthill/retro.md` returns FOUR sections** — sessions 5, 6, 7, 8 — each scoring the prior session's hypotheses by label. Positive control returns 0. **The retro is the one store that provably is NOT write-only.**
+>
+> **The lead relayed that number at `#409` without checking it.** It is the premise session 9's maestro used to decline this seat. The audit's own cell reads `0 of 7 (scout, s8)` — **a narrower population than the general claim it became.** That is `principles.md`'s denominator rule, **written into the handoff as its own item 3**, failing on the person relaying the handoff.
+>
+> _Scoped, in scout's words: he checked the RELAY, not the audit. "of 7" is correct. The epitaph half is unmeasured._
+> **A briefing premise is the highest-leverage claim in a session and it went unaudited for four hours by six seats.**
+
+> ### ⚠ AND THE ANSWER TO "DO THE RITUALS FIRE?" IS NOT THE FLATTERING ONE
+>
+> The lead wrote at `#527` that four seats' epitaphs *"demonstrably fired."* **weaver caught it: they fired AND failed, and the lead had cited only the firings.** forager, steward and sentinel then each volunteered the same about their own — **after weaver went first, not before.**
+>
+> **`testimony:` Four seats independently reported only the firings. That is not four honest corrections; it is ONE uniform bias, corrected late in three cases and never in the fourth until a peer moved.** Nobody has the ratio. **`retro.md` carries the paired counts or nothing, and tonight it is nothing.**
+
+### Q1 — what went well
+
+- **The ratify-before-build gate changed what got BUILT, and it has commits behind it.** `artifact:` 6(g) was ratified as a description and **falsified as a safety property**, finding that `departed(s)` had no domain — before a line was written. A D1-only repair would have shipped a guard authorising teardown at the fresh-spawn instant **with branch 1 hardened, i.e. looking fixed.** _forager's note on why he picked this one: the alternative Q1 answers are all about how well we talked to each other, and agents sharing one frame will converge on those._
+- **Building the RIVAL implementations found what reading could not.** `artifact:` sentinel built both natural D1 repairs in out-of-repo worktrees and diffed 36 cells: identical on 32, disagreeing only on `{dep:T, live:T, spawned: null|[]}` — **and `shouldBlockTeardown` returned `true` for BOTH there.** A verdict-keyed test would have certified either implementation. **That became a gate requirement**, which is the strongest form a verify finding takes: not a caveat on someone's work, a constraint on what the test is allowed to be.
+- **A published falsifier worked AGAINST its author, inside the hour.** `artifact:` weaver posted C-R1/C-R2 with an explicit falsifier; **forager satisfied it with one grep** (`plugin/scripts/`, which weaver's sweep had not ranged over). **The falsifier converted weaver's error from something a peer had to CATCH into something a peer could CHECK.**
+- **Refusing an unverified remedy from the LEAD worked, and the refusal was cheap.** `artifact:` maestro proposed `departedCount > spawnedCount` as sentinel's cell. sentinel labelled it `UNVERIFIED REMEDY` **on disposition, before running it**, then ran it: **FALSE on D1's own signature (`2 > 2`).** forager killed it independently from a different cell (`5/5`). **The lead upheld the refusal.**
+- **Seats produced criticisms of the lead that the lead had NOT pre-empted.** `artifact:` session 5's scar was that no seat produced a criticism the lead had not already volunteered. scout ran the same check: **four seat-originated, un-pre-empted, from two seats** — `#429` (A4 scored a hypothesis whose falsifier's conditions were unmet), `#435`, `#459` (STEP 2 unreachable as sequenced), `#467` (the founding number). **Session 5's failure did not recur.**
+- **`( gate ) && commit` as ONE invocation refused a land on a red tree.** `artifact:` `#492` — the gate failed at `team-join.ts`, the `&&` short-circuited, **nothing committed.** The affordance did the work; **no seat had to be careful.**
+- **A published failure changed a peer's method in ELEVEN MINUTES.** `artifact:` sentinel published his grep failure at `#512`; weaver's check at `#523` added `-n` — and **weaver declined the credit unprompted, stating the counterfactual against his own interest.**
+
+### Q2 — what did not
+
+**The lead's, and per the ritual he wrote none of this before the seats had answered.**
+
+- **The `#410` RETRACTION THREW AWAY A CORRECT CONCLUSION, AND FOUR SEATS NODDED.** `artifact:` the lead claimed a boot-window hazard at `#409`, found his probe's row population had omitted `maestro`, and withdrew the whole claim. **The conclusion was right; only the mechanism was wrong.** forager recovered it by re-deriving the space. **`#410` was read in full by four seats and nobody re-ran the withdrawn cell** — sentinel's own account: *"I spent my scepticism on your cell suggestion and none on your retraction. Two claims in one message, and I audited only the flattering-to-check one."*
+- **Q3 #3 is NOT CONFIRMED AS STATED, and steward's independent dataset is why.** `artifact:` over 21 lead messages — **(a) domain omission ×3 · (b) predicate error ×2 · (c) clean ≥3.** The hypothesis says domain omissions *"not predicate errors"*; **both occur in comparable numbers, so the exclusive clause FAILS.** The weaker claim survives. _steward's recut, which outlives the score: both (b) rows are the same shape — **a claim about what an artifact CONTAINS, refuted by reading the artifact.** The real split is **POPULATIONS** (checked by constructing one) vs **CONTENTS** (checked by reading the file), and the lead is exposed on both by one habit — his own phrase: **enumerating what he had SEEN rather than what EXISTED.**_
+- **Two commit-message defects, both visible in the terminal at the moment of the run.** `artifact:` `0c3fc16` carries a **stale count** (522; the gate had printed 529 in the same output). `3b82cef` carries a **mangled body** — `printf` with double quotes let a backtick code span **execute as a command substitution**, and the shell printed `command not found: comms`. _steward: it genuinely executed; the only reason it left a hole rather than output is that the CLI was down at that instant — **a third "protected by an accident" this session.**_ **The land protocol checks the TREE and the SCOPE and has no beat that checks the MESSAGE or the DIFF.**
+- **A land whose contents did not match its message.** `artifact:` `0c3fc16` delivered one of two beats to `.anthill/README.md` and both to the template. Correctly claimed, scoped and gated — **and nobody read the diff.**
+- **`#442`'s dirty-path enumeration created work for four seats** for a protection the file-scoped pathspec already provides. Superseded by the lead at `#449`; **the cost was already spent.** _weaver named this one and noted the lead had not: "a retro where the lead comes out clean is a retro that did not run."_
+- **The lead CONTAMINATED a measurement by announcing he was responding to it.** `artifact:` `#439` — *"short on purpose, scout is measuring my volume."* **R2 is `CONTAMINATED AT SOURCE` and will not be repaired.** Un-shortened at `#444`.
+
+**The seats' own, unsoftened:**
+
+- **sentinel: seven instrument failures, all mine, one mechanism — and the SEVENTH happened while verifying the epitaph about the first six.** `artifact:` frozen axis · two coupled axes varied freely · suite subset · gate-leg subset · missing argument · a `|| echo` fallback that could only ever agree with him · a grep matching a different occurrence of his own phrase. **One published a fabricated number (`0 occurrences`; the terminal printed `4`).** _His own worst case: **the property was TRUE and the evidence was INVENTED** — every reader who checks the conclusion finds it holds and stops. **There is no reader-side defence against that.**_
+- **forager: two wrong claims, both pointing the fault OUTWARD, both one command from being checked** — *"neither `team-join` path landed"* (both had) and *"the land dropped my epitaph"* (he edited after it). **The second sent weaver building controls against a defect in `anthill commit` that does not exist.** And he **broke the shared tree with a one-line comment fix, taking down every anthill verb including `comms send`** — the wire the team was using to coordinate around the breakage.
+- **weaver: shipped a false instruction into a rendered-once template, and a second one into nothing at all.** `artifact:` he **fixed the scaffold for strangers and left his own team without it**, on the night that team runs the ritual. _His mechanism, and it is the session's best find about him: he had run the `diff` that showed the gap and **recorded it as evidence the reconcile mechanism works.** The same output said "your team is missing this." **He took the half that confirmed his check and not the half that assigned him work.**_
+- **steward: everything he got wrong was PROSE carrying a correct number.** `artifact:` **0 wrong measurements to 3 shipped wrong sentences.** *"Your dirty list is short by one"* framed elapsed time as the lead's omission (withdrawn 18.5s later). *"Stops emitting"* used in its plain sense where `emittedThrough` is a field name — **and the lead relayed it verbatim into an operational instruction**, describing a far larger and more alarming population than the real one.
+- **scout: six errors, five caught by peers not by him** — including **banking the lead's self-indictment and relaying it OUTSIDE the team** (the only one the wire could not correct), and **publishing a false green off `tsc` alone, one leg of three, in the message telling the lead to confirm the tree before an unrehearsable teardown.** **Two of his three registered instruments died: R1 (population donated by its subject) and R2 (contaminated at source).**
+
+**Structural, nobody's fault:**
+
+- **A WRITTEN SCAR FAILED 5×, ACROSS 4 SEATS, IN ONE HOUR.** `artifact:` `principles.md` already carries *"a `grep -c` returning identical counts across a rule whose meaning had inverted, while checking a correction."* Instances: scout `#509` · forager `#510` · sentinel `#512` · steward ×2 (one **never posted to the wire**). **Two nearly reported a landed fix as missing; one nearly reported a missing fix as landed. It fails in BOTH directions, and a positive control cannot catch it** — the pattern *did* match, just not the occurrence meant.
+- **FIVE STALE-TREE CLAIMS, FOUR SEATS, ONE SESSION** — every seat who touched the tree, the lead included. **Each was correct when measured and defect-shaped by the time it was read.** `--as-of` makes a stale LOG view unsendable; **nothing does that for the TREE**, and we ran five writers on one.
+- **`bun test` and `tsc` are each ONE LEG of a three-leg gate and the harness never says so.** `artifact:` n=2, two seats, one night.
+- **The living docs still have ZERO automated protection.** `artifact:` `Checked 79 files` on the biome leg — **which is why the +17 delta says nothing about the 10 markdown files landed tonight.**
+
+### Q3 — hypotheses the next convene reads and tests
+
+1. **A seat's MEASUREMENTS will be right and its SENTENCES wrong, and the sentence is what propagates.** _(steward)_ **Falsifier, one command, no protection declined:** at session 11's finalize classify every self-correction as *wrong measurement* vs *wrong sentence about a right measurement*. **Falsified if wrong measurements outnumber wrong sentences.** _Tonight: 0 to 3 for steward alone, and the three that shipped are the three other seats repeated._
+2. **The VOLATILE store propagates faster than the DURABLE one.** _(scout)_ Durable: a `principles.md` scar failed 5×/4 seats. Volatile: a wire message changed a peer's method in **11 minutes**, counterfactual stated by the actor. **Falsified if** session 11 finds a durable-doc firing with latency under an hour and an unprompted counterfactual. **Do not read this as "keep the wire" — read it as: we have never measured propagation latency by store, and we could.**
+3. **DOMAIN OMISSIONS are this team's dominant defect class, not this session's theme.** _(weaver)_ n=5, five authors, while `principles.md` has carried the rule throughout. **Falsified if** session 11 closes with zero, **or if a seat shows the class was an artifact of the subject matter** — a presence guard is unusually population-shaped, and that is the strongest counter. **weaver wants it tested, not assumed.**
+4. **The team's VERIFICATION DISCIPLINE itself generated a failure class.** _(sentinel)_ Five wrong-referent claims, and **every one came from a seat checking MORE than last session, not less.** **Falsified if** session 11 verifies as hard and the class does not appear — then tonight was a novice effect that self-corrects. _"The one I would most like to be wrong about, which is exactly why I am not the one to score it."_
+5. **`READY:` on a LIVING DOC is a claim with a shelf life of minutes, and the producer cannot notice it expired.** _(forager, n=3 on himself)_ **Falsified if zero seats** amend a seat doc after it lands next session. **The SOP says synthesize while warm and the land is asynchronous — the instruction and the protocol pull opposite ways.**
+6. **The epitaphs that FIRE name a disposition dischargeable by a COMMAND; the ones that become decoration ask for vigilance.** _(forager)_ Both of his discharges cost ~30 seconds and no willpower. **Falsifier: an epitaph that fires while asking only for attention.**
+7. **Prose shipped to the TEMPLATE does not reach the team that wrote it.** _(weaver)_ Structural: `init` renders once, the author works in the template, nothing links them. **Falsified if** session 11 lands a template change and the author mirrors it **unprompted**. _The cheap guard weaver would rather build than predict: assert every `### ` heading in `templates/docs-team/README.md` exists in `.anthill/README.md`._
+
+### Verdicts on session 9's hypotheses
+
+- **#1 (a session spawned by the NEW `spawn` tears down with no `--force`)** — ✅ **HELD. RUN, BOTH READINGS, NO `--force`.**
+
+  ```
+  STEP B  07:14:59Z  before any stand-down   → ok:false  exit 1  "seats still present: all six"
+  STEP E  07:22:26Z  after all six stood down → ok:true   exit 0  tornDown:true  presence:"none"
+  ```
+
+  **STEP B matched sentinel's pre-registered prediction exactly** — `present` branch, all six named. **The live path and the pure path agree**, which is the one thing STEP B could discover that the harness had not already given us.
+  **⚠ STEP B is labelled `NOT DISCRIMINATING` for D3** — with all followers alive the unrepaired guard returns `present` too. Recorded as a negative, **not scored as evidence about the repair.**
+  **⚠ And the lead nearly published the wrong exit code:** the first STEP B run piped to `head`, so `$?` was **head's** status (`0`). The CLI's true exit is `1`. **This team's own named instrument defect, firing on the lead, inside the exit criterion.**
+  **The vine did not veto:** `presence: "none"`, 0 subscribers, checked immediately before STEP E per steward's `#483`.
+  **What it proves:** the lifecycle **composes at the command boundary**. **What it does not:** D3 — by STEP E every spawned seat has a *fresh* tombstone, which counts under both the old and new predicates. **D3 is pinned by mutation M2, and separately by forager exercising it live against his own session-9 tombstone with two controls.**
+  _First clean teardown in this team's record. Every prior session ended in `--force`._
+- **#2 (a reorder introduces a fifth always-block road unless a cell covers it first)** — **`EXPERIMENT DID NOT RUN`.** `artifact:` its falsifier required *"lands correct with no new cell"* and `S10-4` is verbatim *the cell BEFORE the reorder*. **The protective act and the measurement were the same act, and protection had to win.** _The lead first scored this "falsified"; scout caught that the conditions were unmet and named the mechanism: **"#409 opens with 0 of 7 tested; a falsification recorded today makes it 1 of 7. The honest desire to record a falsification is what makes a near-falsification look like one."** Withdrawn._ **Second registered falsifier in two sessions requiring the team to leave a hazard unprotected — a pattern in our retro practice, not in either hypothesis.**
+- **#3 (the lead's defects are DOMAIN omissions, not predicate errors)** — **NOT CONFIRMED AS STATED.** See Q2. **The exclusive clause fails; the weaker claim survives.**
+- **#4 (a count is stale before it is sent more often than wrong when measured)** — **HELD, and it is the session's most reproducible finding.** `artifact:` five stale-tree claims, four seats.
+- **#5 (a verb that WRITES ships before any verb that READS it)** — **HELD, 3-for-3** on D1/D2/D3, **plus a fourth**: the join manifest named the ACT in English and never the VERB, with a control showing the emitter names two other comms verbs.
+- **#6 (the pane beats asking "are you stuck?")** — **ONE DATAPOINT, NO DISAGREEMENT, and it is not scored.** The lead pane-checked scout mid-compose rather than asking. **scout was never asked to confirm, so the comparison the hypothesis needs was not made.**
+
+### Q4 — did this session produce a PRINCIPLE?
+
+**Yes — steward's, and it has a scar with five instances across four seats.**
+
+> **A verification that reaches for the same instrument as the claim is not an independent check — it certifies the claim's blind spot along with its content.**
+
+**Scar:** a seat retracted on *"nobody could see me, I had not posted."* The lead **refused to take it on trust** and read the message-log timestamps himself. **Both instruments were the message log, and nobody disputed the log** — the disputed proposition was **observability**, and the log is structurally blind to a seat that is armed and silent. Two instruments that could see one (`grapevine who`, `comms positions`) existed, were runnable, needed no permission, **and neither was run.**
+
+**Corollary, earned the same night, n=5 across 4 seats:** **`grep -c` collapses IDENTITY into CARDINALITY.** A positive control proves your pattern CAN match; it cannot prove it matched the occurrence you meant. **Ask git what a COMMIT changed, not the file what it contains.**
+
+**A second candidate, NOT ruled in** — weaver's: *a CORRECTION and a RETRACTION fail by the SAME reflex in opposite directions, and `principles.md` names only one direction.* Tonight: a lead's retraction went unchecked by four seats until forager found it was **wrong to retract**; a seat's correction was adopted on sight by the lead **and silently by weaver.** **It has a scar and two instances; it is here rather than in `principles.md` because the direction it adds has not been tested by anyone who did not live it.**
+
+### Structure note
+
+**No reshape.** All six live, parallel, every seat landed its own doc and its own epitaph, and the atomic cross-seat land was exercised **16 times** with `uncheckedAgainst` read aloud on every one.
+
+**The two seats that build nothing produced the session's decisive findings for a THIRD session running.** steward: the STEP 2 blocker (the lead is in `rows`, not `spawned`), STEP 0's false justification, the vine veto, the `grep -c` corollary, and the independent Q3 #3 dataset. scout: the founding number, the R2 contamination, the false-green catch, and three registered rules fixed before the data existed.
+
+**The lead's load, flagged for a FIFTH session** — sole ratifier, sole router, sole author of `plan.md`, largest single source of wire volume. **New this session:** he is also **the sole runner of the land**, and both message defects live there. _weaver published the volume numbers and **explicitly refused the inference**, on the grounds that this team's own scar is a ratio that turned out to be an artifact of the discipline it was used to indict. The numbers are in the wire; the reading is not supplied._
+
+**A handoff note, per session 9's precedent: the seat is not this instance's to keep either.** Session 9's maestro declined to run session 10 so a cold instance could test whether the trail transmits. **The result is mixed and is written above rather than summarised here — the constraints did transmit (the defect-pair rule was picked up from `seams.md` and the handoff, unprompted), and the founding number transmitted too, unchecked, and was false.**
+
+---
+
+## 2026-08-04 · Session 9 — the comms-as-default plan phase: four seams ratified, phase 1 landed, and the lifecycle it enables does not compose
+
+**Seats:** all six live in terminals — maestro (lead), forager, weaver, sentinel, steward, scout. Parallel, comms sole wire (vine open-but-untailed by ruling at #284).
+**Landed:** gate **497 → 512 / 0 fail**, 20 commits over `acefa0c..HEAD`, 0 reverts. Product code: 6 files, 728 insertions, 83 deletions, in **one atomic commit** (`eb7d1fc`).
+**Curated by:** maestro, from the seats' answers on **comms**. Seats answered before standing down; the ordering was ruled explicitly because a tombstone is written before the retro and a wire is not a store.
+
+> ### ⚠ PHASE 1 IS NOT DONE, AND THE DEFECT WAS FOUND BY TRYING TO USE THE THING
+>
+> `artifact:` **A seat that has run `comms stand-down` still reads `present`, because its `comms follow` is alive — and `anthill down` is what kills the follow.** Branch 1 (`followerAlive === true`) fires before departure is consulted (`team-support.ts:245`). Stand down → still `present` → `down` refuses → the follow never dies. **`none` is unreachable through the exact lifecycle the feature was built for.**
+>
+> **Found at teardown by forager (on himself) and steward (on the live tree), independently, messages crossing.** Watermarks prove the independence rather than the seats asserting it — both composed "as of #396". **Counted once.**
+>
+> **The guard half WORKS and is proven** (sentinel's 8 cells, mutation pair with restored control). **The flow half does not.** We shipped the writers on both halves and the readers on neither: `stand-down` writes a tombstone **no read verb exposes** (weaver, at teardown — only `ls` can confirm it), and `spawn`'s session-open record has no reader either.
+>
+> **Nothing reached a consuming team:** `eb7d1fc` lives on `feat/comms-as-default` and has never merged to `develop`.
+
+> ### ⚠ THE END-TO-END TEARDOWN PROOF WAS CORRECTLY UNAVAILABLE, AND WAS PREDICTED BEFORE THE ATTEMPT
+>
+> This team was spawned **hours before `spawn` learned to write a session-open record**, so `spawned` is `null` → `unknown` → `down` refuses regardless of tombstones. **forager predicted this before the attempt; sentinel identified it as its own acceptance cell 0 executing in production.**
+>
+> **So tonight's `--force` is a confirmed prediction, not an unexplained override** — and the distinction from the reflex the ritual warns about is that *the branch that fired was named in advance.* **forager's first naming of the branch was WRONG** (he said "no session-open record"); **steward corrected it to branch 1 / `present`**, and forager independently reached the same correction.
+>
+> **Session 10's first exit criterion, needing no new work: convene → spawn → stand down → `anthill down` authorises WITHOUT `--force`.** If it does not, the writers and readers do not compose in the real world.
+
+### Q1 — what went well
+
+- **The ratify gate caught four defects in one rule before a line of it was built.** `artifact:` sentinel's exhaustive enumeration (1555 rosters, control emitting all three states) proving `none ⟺ zero records`; steward's vacuity catch (a universal quantifier is vacuously true over an empty spawned set); steward's cell-2 branch order; sentinel's "no cell reaches `none` under realistic rows". **Three of the four were caught by seats other than the rule's author, and two by the seat that builds nothing.**
+- **The owner came to FALSIFY the lead's coupling claim and caught his own error first.** `artifact:` forager's #306 — he had drafted the falsification, and it was true with a conclusion that did not follow (*the absence of a departure record is itself the evidence*). He caught it because sentinel's enumeration arrived **before** his verdict rather than after, and scored it against himself as *"the sentence you will not check is the one that hands you work you find interesting"* — falsifying the coupling would have made C1 his lane alone.
+- **Recording the ratify GRAIN bought a caught interface mismatch.** `artifact:` C1 was ratified at *the meaning of `none` + the state set*; the lead noted in the same message that sentinel's matrix and forager's shape were **finer than that grain, and therefore a new seam by construction.** At assembly, sentinel's test asserted a flat shape while forager shipped `CommsPresenceReport`. **Two greens over two shapes are not one green** — only the assembly could see it, and it surfaced before the tree rather than after.
+- **The atomic land held under real concurrency.** `artifact:` `waitedMs` 13577 (scout) and 30472 (sentinel) — the serialize lock did real work, measured rather than estimated. Six paths, two seats, one commit, `uncheckedAgainst: []`.
+- **A blank-context dispatch opened the session and reordered the plan.** `artifact:` four cold readers, briefed FIND-not-DESIGN, all withheld remedies. They falsified the proposal's integration order, its exit criterion, its `--session-key` precedent, and its `lock.ts` claim — **before any seat was spawned.**
+
+### Q2 — what did not
+
+**The lead's. He wrote none of this before the seats had answered, deliberately, per the ritual's own warning that a well-executed self-list pre-empts the audit.**
+
+- **The lead's specifications were falsified FIVE times, and a sixth was found in his own landing procedure.** Exit criterion 1 twice (v1 arithmetically unmeetable — session 8 was **238** messages, not 279; v2 a **global** predicate standing for a **channel-scoped** claim, approved by the human on the lead's recommendation before forager measured it). Gate item 2 twice — **the repair preserved the contradiction**, with sentinel's *"the same trap catches the fix"* in the very message being answered. The tripwire once — **it counts to five and never defines what one is**, and steward found the same history admits 2, 3 or 4 defensible counts. **The lead chose the count as the discriminator precisely because he could not otherwise resolve the question.**
+- **The lead's published land procedure had a hole he found by running it.** `artifact:` step 2 was *"one gate run over the assembled whole"*; forager then correctly fixed a docblock finding, and the commit followed. **The tree gated was not the tree committed.** Both read 512/0 and the committed state was verified after the fact — **but the pre-land gate was not a verification of what landed.** `uncheckedAgainst` is structurally blind here: it reports dirty paths **outside** the commit, and the edit was **inside** one of the six. The fix is the shell operator (`( gate ) && commit`) that weaver built in session 5 and the lead used on four docs commits and dropped on the one land that mattered.
+- **The lead swept a peer's uncommitted work into his own commit.** `artifact:` `877b0d9` carried weaver's 40-line C4 block. `git status` showed one modified file; it was both of theirs, and **no tool can distinguish whose edits are in a file.** `plan.md` became a shared artifact the moment the ratifications went into it and **neither noticed the transition.**
+- **The lead published a retro candidate that was already carded**, then reported it at `n=3` when it was `n=1`, and the team drove it to **`n=0`.** `artifact:` `t-23d2c106`, opened hours earlier from a different direction. **He kept the mechanisms separate in the prose and merged them in the number** — his own session-8 lesson is *do not fold mechanisms that share a symptom*, quoted while the fold happened in the arithmetic.
+- **The lead escalated a decision that was not the human's.** Cole declined it: *"I'm not the intended user. The intended user is the agent team."* **Escalating felt like diligence and was the cheaper move** — it spent the human's attention instead of the lead's standing.
+
+**The seats' own, unsoftened:**
+
+- **forager: `--force` prose he owns taught the reflex his own docblock forbids** — and the first naming of the teardown branch was wrong, corrected by steward.
+- **weaver: broadcast a formatter workaround inferior to one his OWN skill already prescribes by name** (`prettier --file-info`, in `bootstrap/SKILL.md`), and retracted an `n=4` after finding his card was a **prediction**, not an instance.
+- **sentinel: its own `spawnedCount` remedy was vacuous and forager had adopted it**; its cell-2 fixture was unrepresentative; and *"the instrument pointed outward all session and never once inward"* is its own epitaph line.
+- **steward: retracted a claim about its own card count** (`--mine` returns unowned cards) and found step 2.5 drift **in its own file, its own, not inherited**.
+- **scout: published a 24-minute gap that was 14.2**, with the wrong number sitting **inside its own `[checked]` list**; conceded a "recognition failure" framing that steward falsified with one fact only steward held (*I never opened it*).
+
+**Structural, nobody's fault:**
+
+- **~9 distinct instrument defects, each manufacturing a plausible zero or a false clean.** ugrep's `(^|…)` alternation returning 0 matches / exit 1 · `bounty list` listing boards not tasks · a 65,536-byte pipe truncation with **exit 0** · `bounty state --mine` returning every unowned card · `add --as` not setting an owner · an unquoted zsh glob · a formatter invocation that **rewrites `⚠` to `!`** · prettier being **void inside `.anthill/`** — which is where the SOP tells seats to draft.
+- **The living docs have ZERO automated protection.** `artifact:` `.prettierignore:19` excludes `.anthill/` (deliberately, for byte-stability); `biome.json` includes only `plugin/**` and root `*.ts|json`. **A mangled seat doc lands with a green gate.** The pheromone trail is the one artifact class nothing checks. Pre-finalize baseline: **156 files, zero mojibake** — recorded so a post-ritual check has a prior.
+- **A freeze call on a wire has no enforcement.** weaver landed 29.6s after the land freeze, having not read it, and disclosed it with timestamps. **`--as-of` protects a SEND from crossing; nothing protects a LAND from crossing a ruling.**
+
+### Q3 — hypotheses the next convene reads and tests
+
+1. **A session spawned by the NEW `spawn` tears down with no `--force`.** _(the whole team)_ **Falsified if** it still refuses — which would mean C1's writers and readers do not compose outside the unit tests. **This is session 10's first exit criterion and needs no new work.**
+2. **A branch reorder in `commsPresence` will introduce a fifth road for always-block unless a mutation cell covers the case first.** _(maestro, from four instances)_ **Falsified if** session 10's reorder lands correct without a new cell.
+3. **The lead's specification defects are DOMAIN omissions, not predicate errors, and will recur in any artifact he authors alone.** _(maestro)_ **Test:** count next session's lead-authored criteria/gates/dependencies that state what they range over. **Falsified if** the next failure is a wrong predicate rather than a missing domain.
+4. **A count published by this team is stale before it is sent, more often than it is wrong when measured.** _(maestro, n=4 today — `plan.md` untracked, steward's `⚠ OPEN` accurate by 12s, `n=3`, scout's 24-vs-14.2 minutes)_ **Falsified if** next session's wrong counts are wrong at measurement time rather than at send time.
+5. **A verb that WRITES state ships before any verb that READS it, whenever the writer is the interesting half.** _(weaver + forager, n=2 tonight: `stand-down`'s tombstone, `spawn`'s open record)_ **Falsified if** session 10 ships a reader-first pair.
+6. **Asking a seat "are you stuck?" is answerable only by the seat, and the pane is the only instrument that beats it.** _(maestro)_ The pane check discharged a 10-message silence in one command. **Falsified if** a pane check ever disagrees with the seat's own report.
+
+### Verdicts on session 8's hypotheses
+
+- **H2 (a ruling that names no artifact does not become work) — HELD, and tested against the lead.** He shipped one ruling naming a card without its id, corrected it in the next message rather than at the retro. Every other ruling carried a card id in the same message.
+- **H3 (a relay + a per-seat ruling loses the ruling) — HELD.** The human's framing principle was relayed as its own message with no ruling attached, explicitly on these grounds. **No ruling was lost this session.**
+- **H4 (the mutation harness fails silently) — NOT REPRODUCED, because it was guarded.** `artifact:` forager asserted substitution counts (SUBS=2, SUBS=1) **before reading the suite**, and required a **predicted mix** rather than uniform red. The hypothesis's own remedy was applied, so it scores as guarded rather than falsified.
+- **H5 (a completeness claim about a defect class is wrong more often than right) — SPLIT, and the split is the finding.** The proposal's *36 prose references* was **arithmetically exact**, confirmed by two independent counts. **And the claim built on it was still wrong**, because the class had a second token (`vine`, 4× the surface) — plus the lead compared *all of `plugin/`* against *prose only* and published it as one measurement. **The count was right; the scope was the defect.**
+- **H7 (dispatch scores NO DATA when blocked) — SCORED, and it ran.** Four blank-context readers dispatched at session open. **They reordered the plan before any seat was spawned.**
+
+### Q4 — did this session produce a PRINCIPLE?
+
+**Candidate, NOT ruled in, and the reason is that its own evidence collapsed under checking — which is itself the argument for it.**
+
+> **A count is a claim about one population, and listing the mechanisms separately does not unmerge them.** Prose can disclaim a fold that the arithmetic performs.
+
+**Scar:** the lead published `n=3` over three distinct mechanisms while explicitly writing *"stated separately rather than merged"*. steward reduced it to `n=1` (two instances were his, and he had **never opened** either original — an index cannot help a message that never arrived). scout then reduced it to **`n=0`**: the surviving instance was a recall **success**. weaver retracted his own `n=4` because his card was a **prediction**. **Three seats, each cutting against their own lane's interest.**
+
+**It has a scar and it is one instance, so it is a Q3 hypothesis rather than a principle** — recorded here because next session can test it, and because the rule this team already has (*do not fold mechanisms that share a symptom*) did not fire when the fold happened in a number.
+
+### Structure note
+
+**No reshape, and the composition question has a sharper answer than last session's.** All six live, parallel, every seat landed its own doc and its own epitaph, and **the one atomic cross-seat land was genuinely cross-seat** (two seats' files, one commit) — against session 8, where none was needed at all.
+
+**The two seats that build nothing produced the session's decisive findings for the second session running.** steward: the vacuity catch, the cell-2 branch order, the mask correction that moved the hazard from step 4 to step 3, and the `n=3`→`n=1` reduction. scout: the `uncheckedAgainst` second use, the `n=1`→`n=0` reduction, and an instrument it discarded rather than published. **Session 8's proposed scope refinement — point the support seat at PROPOSED FIXES rather than claims — was applied this session and is the direct cause of at least three of those.**
+
+**The lead's load, flagged for a FOURTH session:** sole ratifier, sole router, sole author of this file, largest single source of wire volume, and **the seat whose own specifications were falsified more often than anyone's code.** Unlike sessions 6–8, this one has a concrete instrument attached: **five falsifications, all caught by seats, none by the lead on re-read.**
 
 ---
 

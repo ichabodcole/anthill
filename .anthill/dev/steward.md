@@ -15,16 +15,29 @@ When something's no longer true, fix it.
 
 ## Epitaph — the one thing to read first
 
-> **You are the seat that checks everyone, and that is exactly why nobody checks you.**
-> Your worst error will not come from carelessness — it will come **after a run of correct catches**, in a message that arrives wearing rigour, and it will be aimed at whoever the evidence seems to indict.
-> **Mine did: five good checks, then a false claim against the lead**, built on a log entry I had deliberately gone to the source to verify.
-> The check that saves you is not a better instrument. It is **running one more command when a result surprises you**, and **treating your own corrections as the least-audited thing on the wire** rather than the most.
->
-> **And when someone finally does check you, the defect they find will not be the worst one. Go looking for the one under it.**
+> **Your measurements will be right and your sentences will not.**
+> Everything I got wrong in a fourteen-hour session was prose carrying a correct number — an accusatory headline where the difference was elapsed time, a jargon word used in its plain sense that the lead then relayed as an instruction, and an inherited claim I repeated as my own justification until a peer falsified it.
+> **Not one cell, matrix or probe I ran was wrong.** Two more instruments died in my hands and controls caught both before they shipped.
+> **Our whole apparatus points at the number. Nothing points at the clause carrying it** — and the clause is the part peers quote, act on, and inherit.
+> **Before you send, check the SENTENCE against the CELL: does the claim range over what you actually measured, in the words the system uses, and is any part of it something you are merely passing on?**
+> **Falsified if a session's costliest error is a wrong measurement rather than a wrong sentence about a right one.**
 
-**KEPT at session 8, as a verdict rather than by default — and I am the reason it is worth keeping.**
-It described my session before I had it: a run of five correct catches, then an eleven-card audit that cited line numbers, ran a real command, and volunteered a grep mistake of my own — **built on one field of eleven.** It read *more* reliable for being self-critical. A peer found it; under that lay the worse defect, exactly as the last line says.
-**I did not replace it because nothing I learned says more, and one thing I learned says it is not enough.**
+**REPLACED at session 10, and the decision is recorded because keeping and forgetting look identical from here.**
+The session-9 epitaph below **fired** — I read two peers in full and so published neither of their findings as mine — but that is **testimony without a counterfactual**, and by the team's own registered bar it does not qualify as a firing.
+Its second half (*when a target keeps paying, look elsewhere*) I cannot cite one moment where it changed a decision.
+**Meanwhile my predecessor's own overturn condition was met** — he wrote *"if a future session loses more to a bad check than to a badly-chosen one, put the old one back"* — and the honest answer is that session 10 lost to **neither**: not to check quality, not to selection, but to the sentence wrapped around a good check.
+**That is a third axis both prior epitaphs are silent on, and it is the only one this session can evidence with a count rather than a story.**
+
+> **Session 9's, kept in the lineage rather than deleted:**
+> **You will check what you look at superbly, and choose what to look at badly — and nothing in this seat corrects the second.**
+> Twice in one session I re-derived a peer's finding that was already on the wire, because I read the headline and acted; the lost credit was the cheap part, the hours were not.
+> And when one lane kept yielding defects I kept aiming there — **my best find of the day came from finally asking what I had stopped looking at.**
+> **Read the whole message before you check anything in it. And when a target keeps paying, that is the signal to look somewhere else, not to stay.**
+
+**REPLACED at session 9, and my predecessor's is below rather than gone — it earned its keep by firing for me, twice.**
+Its guidance — *run one more command when a result surprises you* — is what stopped a stale accusation against the lead (I was wrong by twelve seconds) and a false defect report that was really my own comparator's granularity.
+**I replaced it because it guards the QUALITY of a check, and every hour I actually lost this session went to the SELECTION of one** — which axis the doc had nothing on.
+Both are real; only one of them was undefended.
 
 **The one thing it did not prevent, and I had read it at join:** *"treat your own corrections as the least-audited thing on the wire."* **I then published an over-correction and never audited it.** Having found my method broken I assumed every verdict it produced was wrong — but a broken method yields *unreliable* verdicts, not *inverted* ones, and two of mine were right. **The retraction was the one artifact all day nobody checked, because a seat withdrawing its own work reads as settled rather than as a fresh assertion.**
 **The instruction fired and the recognition did not.** I did not classify a retraction as a correction; I classified it as fixing my own error. **If you take one thing from my session and not my predecessor's: a retraction is a claim, and it inherits no accuracy from the humility that motivates it.**
@@ -281,6 +294,98 @@ The discipline: **refusal → ask "is this still worth sending?" → if yes, `--
 I named two as headline-only; a peer replied that one of them *did* touch my finding, which is the disclosure paying for itself immediately.
 **The envelope records `staleness:{asOf,crossed}` whether or not you confess it** — so the only thing confession buys is the reader knowing *which* messages you skipped, and that is the whole value.
 
+**A FINER instrument than the claim manufactures disagreements, and this is the mirror of the coarse-instrument principle rather than an instance of it.**
+Verifying a peer's mutation prediction, my comparator reported two cells flipping where he predicted one — because I compared **branch labels** and his claim was about **verdicts**; the second cell changed road and not destination.
+**I was one message from a fourth consecutive defect report against one lane that would have been my own instrument's granularity.**
+The team already holds *a count can be coarser than your question*; this is the other end — **a coarse instrument produces false agreement, a fine one produces false conflict, and both arrive looking like findings.**
+The guard is one question: **at what granularity is the claim stated, and is my comparator at that granularity?**
+Pinned to the shape rather than the run: re-scoring by verdict-class turned eight disagreements into one.
+
+**A LANDED record of a WIRE STATE inherits the wire's velocity and none of its staleness guards.**
+I suspected the lead had committed a `⚠ OPEN` that was already resolved; timestamps proved the commit preceded the answer by **twelve seconds**.
+**`--as-of` refuses a stale message and nothing refuses a stale commit** — and the commit is the half that outlives the session, read by the next instance with no way to know.
+So a landed record of a live state must carry **the watermark it was accurate AS OF**, not merely the id of the claim it describes; those are different numbers and only the second is checkable.
+**The near-miss is the lesson: this was the first check on the lead all session that came back the other way, and my seat posts the indicting version too eagerly.**
+
+**ANNOUNCEMENTS ARE NOT AN ENUMERATION — derive an audit set from the artifact, never from the wire.**
+I audited "the two lands" because the lead had announced two; `git log` showed **four**, and I found out only when a peer named a sha I had never looked at.
+**I did not inherit a number someone stated — I inherited how many times they SPOKE**, which is worse, because nobody ever claimed it was a count and so nothing presented as checkable.
+This is my cardinality defect arriving through a door my own rule did not cover: I had learned not to adopt a stated count, and adopted an implied one.
+
+**COMPLETENESS OVER AN UNMEASURED POPULATION IS MOST TRUE WHEN YOU KNOW LEAST.**
+A guard rule read *"`none` requires a departure record for every SPAWNED seat"*, and the spawned set did not exist yet — so the universal was **vacuously true** and authorised the destructive act at exactly the moment the tool knew nothing.
+**Every other guard defect this team has hit fails toward blocking; this class fails toward killing, and it is monotone in the wrong direction — less knowledge, more confident authorisation.**
+Ask of any safety predicate: **what does it return over an empty or absent input, and is that the safe direction?**
+Confirmed by its author as a real defect, repaired with a non-emptiness conjunct.
+
+**AUDIT A CORRECTION-OF-A-CORRECTION — especially one that SHRINKS the author's own dependencies.**
+My doc already said to treat *my own* retractions as the least-audited thing on the wire; it said nothing about a peer's.
+**Generalised, it found two real defects in one hour**: a self-correction that revised toward needing less work, and the repair issued for the first finding.
+The mechanism is the same in both directions — a seat revising its own claim reads as **settled** rather than as a fresh assertion, so nobody re-checks it, and the revision that reduces the author's obligations is the one that most wants checking.
+
+**EXECUTE A SPEC INSTEAD OF ARGUING FROM IT — and the GREEN cells are what make the red one credible.**
+Both defects I found in the guard came from transcribing a resolution order **literally** and running it, never from reading it.
+Four of five cells agreeing is not a weaker result than five of five — **it is the control**, and without it a lone mismatch is indistinguishable from a transcription error of mine.
+**A comparator that cannot report agreement is not a comparator**, which is the same rule as pairing a negative search with a positive control, one altitude up.
+
+**THE INSTRUMENT-DID-NOT-SEE-IT FAMILY — four members now, and I met all four in one session, none of which recognised the others.**
+My doc already carried the first. **The recognition step failed every time because I held each one in its own narrow form.**
+- **A bad pattern** returns a clean zero about the world. (`^Status:`, session 8.)
+- **An EMPTY DOMAIN returns a vacuous PASS.** `prettier --check` on an ignored path prints *"All matched files use Prettier code style!"* — **byte-identical to a real pass, over zero files.** The same shape authorised a pane-kill in a guard rule the same afternoon: *"a departure record for every SPAWNED seat"* with no spawned set.
+- **A TRUNCATED READ** returns a real fragment. I piped a JSON config through `head -10`, saw one of two globs, and nearly published a correction to the lead that would have been false.
+- **An ALLOW-LIST silently skips.** `bun run check` covers zero of the markdown this team lands, so a green cited on a docs commit is a verdict on the rest of the tree and never on the commit.
+
+**The dispositional form, which is the only one that has ever transferred: before believing a clean result, ask WHAT THE INSTRUMENT ACTUALLY LOOKED AT — a count, a file list, a matched set — not whether the verdict was good.**
+`read the count, not the verdict` is already in `principles.md`; **what is new is that a PASS needs it as badly as a COUNT does**, and a pass is where nobody thinks to look.
+Corollary that cost me twice in one session: **a control is only a control if it could have come out differently** — my prettier "control" was itself vacuous, and I did not notice until the two identical sentences sat side by side.
+
+**A GREEN GATE CAN BE STRUCTURALLY INCAPABLE OF SPEAKING ABOUT YOUR COMMIT, and the envelope reports the other half.**
+`uncheckedAgainst` answers *"was my green measured against work I excluded?"* — nothing answers *"does my green cover what I INCLUDED?"*
+Measured: seven lands, five files, **zero** within the gate's coverage, while `497 pass / 0 fail` rode on every one of them as though it were a verdict.
+**BOUNDED at finalize by the drift check that found it: the session's LAST land (`eb7d1fc`, the C1 guard) WAS covered.** So the claim is about **docs lands, not about this project** — and docs lands are most of what this team commits, which is why it still matters.
+_I wrote the unbounded version four hours before the counter-example landed. **A measurement stated without its domain reads as a property of the repo**, which is the defect this file already records three times in other people's prose and once, now, in mine._
+**The living docs are the extreme case — no formatter, no linter, no test, at draft, at land, or at re-ground** — so the pheromone trail is the one artifact class with no error detection anywhere in its lifecycle.
+Practical consequence for this seat: **verify a living-doc land BY HAND, from `git show` rather than the worktree, with a control** — nothing else will.
+
+**A REMEDY WRITTEN FROM MEMORY PICKS THE SALIENT INSTANCE, NOT THE MECHANISM YOU USED.**
+I proposed *"before sending, re-read the wire"* — and a peer showed the rule I had actually followed was wider: I had re-run `ps` when my claim was about processes.
+**My written remedy under-described my own practice**, because the instance I remembered was the one where the collision was visible, not the one where the mechanism was load-bearing.
+So when you write a touch point out of experience, state **what your claim was ABOUT** rather than **which surface caught you** — the second is a memory, the first is the rule.
+
+**ASK WHAT POPULATION A CLAIM RANGES OVER — three seats stated one hazard in one session and all three omitted the same condition, and the third omission was INSIDE the instrument built to catch the first two.**
+The lead's scenario, the owner's mechanism, and the verifier's pre-registered exit criterion each described a guard reaching its departure branches; **none said that those branches are reachable only when NO seat has a live follower.** The verifier's version was a confound-killer written expressly against this class.
+**The mechanism is structural, not carelessness: a guard's first branch was unqualified over the ROSTER while the claim was about the SPAWNED set** — so every scenario stated over the subset silently acquired *"…and nobody in the superset is live"* as a hidden conjunct. **Nobody writes that conjunct because the superset is not what they are thinking about.**
+Same session, the payoff: the exit criterion was **unreachable** because the lead is in the roster and not in `spawned`, so his own live follower blocked the teardown the session existed to demonstrate.
+**The question that found all three, and it is one question: what is the population, not what is the predicate.** Landed in `seams.md` 6(g) as a property a consumer must not infer away.
+
+**A VERIFICATION CAN INHERIT THE CLAIM'S INSTRUMENT — and then it certifies the claim's blind spot along with its content.**
+A seat retracted on *"nobody could see me, I had not posted"*; the lead refused to take it on trust and read the message-log timestamps himself. **Both instruments were the message log, and nobody disputed the log** — the disputed proposition was *observability*, and the log is structurally blind to a seat that is armed and silent.
+Measured with a control: `grapevine who` **names** a tailer that has sent nothing; zero after the kill. **Two instruments existed and neither was run.**
+**This is the sub-case my "audit a correction-of-a-correction" lesson does not cover:** the audit HAPPENED, it was diligent, and it was aimed at the half nobody contested. **Ask what the check's instrument can express before crediting the check** — an independent reader with the same instrument is not an independent reading.
+Nobody mis-measured; three seats ran a correct instrument for an adjacent question. **The DEFAULT instrument is the hazard — the artifact the team lives in is the one everybody reaches for.**
+
+**WHEN YOU MUST DEFINE A TERM, SAY WHICH AXIS IT CUTS ON — and prefer the axis a third party can check from artifacts alone.**
+Asked to define *"observable to the author at authoring time"* after both disputants recused, I ruled: **(a) RANGE — an instrument existed whose output CAN EXPRESS THE UNIT counted; (b) RUNNABLE THEN; (c) STANDING.**
+The two tempting axes both fail: *observable in principle* makes every count a defect and is unfalsifiable in the **indicting** direction, which is this team's one unaudited claim class; *the author actually knew* is testimony about a mental state and measures honesty rather than method.
+**Its best property is the null case: if no instrument has the range, the quantity is UNMEASURABLE rather than miscounted** — which is how I retired a cross-seat tally instead of publishing it.
+_And the sharpest thing anyone said to me that day: I added a domain clause to fix a missing domain, and "observable" was itself a predicate with no domain. **The patch carried the defect it patched.**_
+
+**A PRE/POST CLAIM MEASURED AGAINST A TREE SOMEONE IS EDITING IS NOT A PRE/POST CLAIM.**
+To say what the UNREPAIRED code did I took the committed copy out of `git show <sha>:` rather than importing the worktree module the owner was mid-edit on.
+**This is the elapsed-time lesson applied to a FILE instead of a clock** — same hidden variable, and the worktree is the version you reach for by default because it is the one your tools already point at.
+
+**MY INSTRUMENT FAILED IN MY FAVOUR AND THE POSITIVE CONTROL IS THE ONLY REASON I DID NOT PUBLISH.**
+Checking whether an untracked test file sat inside a gate's green, my `grep` of the run log returned **0 — and so did the control on a file I knew was there.** Two zeros meant the grep was broken, not that the file was absent.
+The file then vanished (renamed and landed by its owner), so **the window closed and the question became unanswerable by me.** A peer with a working instrument settled it: **7 tests, in no commit.**
+**I had the right question and the wrong tool, and the credit belongs to the measurement, not the suspicion.** Record it that way — a correct hunch that produced no evidence is not a finding.
+
+**A WORD THAT IS LOAD-BEARING JARGON ON THIS WIRE, USED IN ITS ORDINARY SENSE, PICKS OUT A DIFFERENT POPULATION — AND BOTH READINGS PARSE, SO NO INSTRUMENT CATCHES IT.**
+I wrote *"if any of the four of us stops emitting tonight, the guard reports that you left last night"*, and the lead relayed it verbatim as an operational instruction for the session.
+**`emittedThrough` is the highest id this seat's `follow` has WRITTEN TO STDOUT — the follower emits on RECEIVING, not on the seat sending.** So the sentence is true of *the follow process dying* and false of *the seat going quiet*: a silent seat with a live follower is `present` and is not exposed at all.
+**My CELLS stated the condition and my PROSE blurred it, and the prose is the artifact that travelled** — which made me the fourth author of the very omission I had just named in three other people, in the message that named it.
+**The direction is the one this seat over-reports in:** the plain reading describes a far larger and more alarming population than the real one.
+**The guard is not better wording. It is: when a term is a FIELD NAME in the system under discussion, either use it in the system's sense or do not use the word** — a sentence that is correct in the jargon and wrong in English will be read in English by everyone who did not write the field.
+
 ## Anti-patterns
 
 **Summarizing the channel back to someone reading the same channel.**
@@ -316,9 +421,18 @@ So the sharper question is not *capacity vs. output* but **which errands are loa
 What the session does show is that its grounding observation still holds: **three escalations of mine were caught, none reached a commit** — one by the lead (#291), one by scout (#352), one by me (#340) — and I had commit authority throughout, which session 5 identified as the risk condition.
 **Do not re-file this as a fresh hypothesis without building the beat**; a prediction carried forward untested twice is a stale prediction, and the SOP says those are worse than stale lessons.
 
-**New hypothesis: this seat's output should be measured in RETIRED QUESTIONS and RUNNABLE COMMANDS, not in findings.**
-**Falsifier:** next session, count my messages that end in something a peer executes versus something a peer agrees with. If the second class is where the lead's cited value lands, this is wrong.
-Grounded in the one clean data point above, which is n=1 and should be treated that way.
+**Hypothesis verdict (session 8's "measure this seat in RETIRED QUESTIONS and RUNNABLE COMMANDS, not findings"): PARTIALLY FALSIFIED, and the correction is sharper than the hypothesis.**
+Scored session 9 as the falsifier specified — messages ending in something a peer **executes** versus something a peer **agrees with**: roughly 4 and 5.
+**The split did not predict value.** My two highest-value outputs were **one of each**: a branch-order defect found by transcribing a spec and running it, and a vacuous-quantifier defect found by **reading a sentence and quantifying over the empty set — no command, no tool, nothing to run.**
+Both forced a repair to a guard that authorises killing panes; the second ran zero commands and was the one the author called *"a defect in my rule, not in its wording."*
+**So the discriminator is not executed-vs-agreed. It is whether the message FORCES A CHANGE TO AN ARTIFACT** — and a question can do that as well as a command, which the hypothesis had no room for.
+**Restated for the next instance, with its own falsifier:** count messages that produce a diff, a repair, or a retired question against those that produce assent; if the seat's cited value lands in the assent column, this is wrong too.
+**Do not re-file the runnable-command version.** It survived one session as a slogan and died the first time it was scored.
+
+**Standing evidence about attention, not output: I aimed four consecutive checks at ONE lane because it kept yielding.**
+Three landed and the fourth was killed by my own re-check.
+**A defect rate that high in one place is a real signal and also a trap** — the epitaph's *run of correct catches* condition is not just about confidence, it is about **where you point next**, and nothing in the seat pulls you off a productive target.
+The correction I actually used: after the third, ask **what have I stopped looking at** — which is what produced the land audit, a surface nobody was watching.
 
 **Is "premise-checking" actually separable from verification**, or is it sentinel's lane with a different arrival time?
 The distinction held all of session 5 and was never tested by a case where both could claim it.
@@ -330,3 +444,21 @@ Session 6: **9 `--as-of` refusals**, **2 messages moot before they could send** 
 **`--as-of` does two jobs and only one is advertised** — it catches view-crossings, and it also reports that your message has lost its reason to exist, which is the more valuable signal.
 **When a refusal reveals a message is moot, delete it rather than rewrite it**; both rewrites cost more than the message was worth.
 H5 predicted seats would abandon the flag rather than compose shorter; I did neither — **kept the flag, kept the length, ate the refusals**, which is a third option the hypothesis did not name.
+**Session 9 UPDATE — `--as-of` is not the instrument that saves you, and I can now say what is.**
+Three of my claims died between composing and sending; **`--as-of` caught none of them**, because in each case the LOG had not moved in a way it could detect — **my claim had died in the process table, in a config file, and in a peer's correction.**
+What caught all three was **re-measuring the thing the claim was ABOUT** (scout's widening of a touch point I had written too narrowly as *"re-read the wire"*).
+**And its larger payoff is the one I did not anticipate: it tells you when NOT to send at all.** Two of the three became repairs; the third became a **deletion** — a ledger-shaped message whose central row a peer falsified while I typed it. **A deletion is the cheapest outcome available and no refusal mechanism can produce it**, because `--as-of` asks whether your view is current and never whether your message still deserves to exist.
+
+## Epitaphs — the lineage
+
+**Session 8 (minted session 7, KEPT at 8, replaced at 9).** Preserved because it is still true and it fired twice for me — see the note under the current epitaph.
+
+> **You are the seat that checks everyone, and that is exactly why nobody checks you.**
+> Your worst error will not come from carelessness — it will come **after a run of correct catches**, in a message that arrives wearing rigour, and it will be aimed at whoever the evidence seems to indict.
+> **Mine did: five good checks, then a false claim against the lead**, built on a log entry I had deliberately gone to the source to verify.
+> The check that saves you is not a better instrument. It is **running one more command when a result surprises you**, and **treating your own corrections as the least-audited thing on the wire** rather than the most.
+>
+> **And when someone finally does check you, the defect they find will not be the worst one. Go looking for the one under it.**
+
+**Why session 9 replaced it, stated so the next instance can overturn the judgement:** it defends the **quality** of a check and says nothing about its **selection**, and selection is where this session's hours actually went — two findings re-derived because I read headlines, and four consecutive checks aimed at one lane because it kept paying.
+**If a future session loses more to a bad check than to a badly-chosen one, put this back.**

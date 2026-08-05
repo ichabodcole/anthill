@@ -1,10 +1,15 @@
 import { describe, expect, test } from "bun:test";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import {
   buildCommsIncantation,
   buildPositionsReport,
+  commsDeparturePath,
   commsLogPath,
   commsPositionPath,
   encodeMessage,
+  hasDeparted,
   nextMessageId,
   parseLog,
   positionState,
@@ -468,5 +473,82 @@ describe("buildPositionsReport — the consumer must not flatten what the produc
   test("carries the roster role, so a reader need not re-resolve identity", () => {
     const rows = buildPositionsReport(1, seats, new Map());
     expect(rows.map((r) => r.role)).toEqual(["hands", "verify", "lead"]);
+  });
+});
+
+/**
+ * D3 — a departure is scoped to THIS session, and the tombstone lifetime bug.
+ *
+ * Session 10, measured on the real tree before a line was changed: four
+ * session-9 tombstones sat on disk for exactly the four seats then working.
+ * `hasDeparted` was a bare `existsSync`, so Contract 6(g)'s conjunct — *every
+ * spawned seat has departed* — was satisfied by files nobody wrote that
+ * session, and `commsPresence` returned `none` / `all-spawned-departed`:
+ * **teardown authorised while four seats worked.** Remove only those files, one
+ * variable, and it returns `unknown`.
+ *
+ * **A mask fails safe; a stale departure fails OPEN.** Nothing here deletes a
+ * tombstone — session 9's records are the only copy of what its retro cites.
+ */
+describe("hasDeparted — a PAST session's tombstone is not this session's departure (D3)", () => {
+  const OPENED_AT = 1_785_911_170_127; // this session's real openedAt
+  const STALE = 1_785_900_211_050; // the real session-9 forager tombstone, 3.04h earlier
+
+  const tree = (at: number | null) => {
+    const dir = mkdtempSync(join(tmpdir(), "anthill-d3-"));
+    if (at !== null) {
+      const path = commsDeparturePath(dir, "ch", "seat");
+      mkdirSync(dirname(path), { recursive: true });
+      writeFileSync(path, `${JSON.stringify({ handle: "seat", channel: "ch", at })}\n`);
+    }
+    return dir;
+  };
+
+  // The discriminator, asserted as a SET. Any single row is satisfied by a
+  // hardcoded `false`; the set is not — and the FIRST element is the positive
+  // anchor, without which a permanently-false predicate passes everything else
+  // here and `none` becomes unreachable (always-block, which trains --force).
+  test("stale / fresh / absent produce three distinct answers", () => {
+    expect([
+      hasDeparted(tree(OPENED_AT + 60_000), "ch", "seat", OPENED_AT), // departed THIS session
+      hasDeparted(tree(STALE), "ch", "seat", OPENED_AT), // session 9's tombstone
+      hasDeparted(tree(null), "ch", "seat", OPENED_AT), // never departed
+    ]).toEqual([true, false, false]);
+  });
+
+  // The real numbers from the incident, so the case is the one that happened
+  // rather than a synthetic pair either side of an arbitrary line.
+  test("the session-9 tombstone does not count against session 10 (the live case)", () => {
+    expect(hasDeparted(tree(STALE), "ch", "seat", OPENED_AT)).toBe(false);
+  });
+
+  // `>=`, not `>`. Stated as an assertion because the boundary is exactly the
+  // kind of thing a later "tidy" flips without anything noticing.
+  test("a departure stamped AT the session origin counts — the boundary is inclusive", () => {
+    expect(hasDeparted(tree(OPENED_AT), "ch", "seat", OPENED_AT)).toBe(true);
+  });
+
+  /**
+   * Fail-safe in every direction that is not a positive, in-session departure.
+   * `false` BLOCKS teardown, so an unreadable world must never authorise a kill.
+   * A session-open record written before `openedAt` existed yields `null` here —
+   * that is the upgrade path, not a hypothetical.
+   */
+  test("no session origin, or a damaged record, is NOT a departure", () => {
+    const withRecord = tree(OPENED_AT + 60_000);
+    expect(hasDeparted(withRecord, "ch", "seat", null)).toBe(false);
+
+    const damaged = mkdtempSync(join(tmpdir(), "anthill-d3-bad-"));
+    const path = commsDeparturePath(damaged, "ch", "seat");
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, "{not json");
+    expect(hasDeparted(damaged, "ch", "seat", OPENED_AT)).toBe(false);
+
+    // A record with no `at` at all — the pre-D3 tombstone shape.
+    const noAt = mkdtempSync(join(tmpdir(), "anthill-d3-noat-"));
+    const p2 = commsDeparturePath(noAt, "ch", "seat");
+    mkdirSync(dirname(p2), { recursive: true });
+    writeFileSync(p2, `${JSON.stringify({ handle: "seat", channel: "ch" })}\n`);
+    expect(hasDeparted(noAt, "ch", "seat", OPENED_AT)).toBe(false);
   });
 });

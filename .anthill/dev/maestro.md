@@ -8,7 +8,23 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph — read this first
 >
-> **Almost nothing you send is yours.** You relay a brief, a human's ruling, a seat's finding, a number someone else measured — and **a relay arrives feeling pre-checked, because someone did check it, just not for the claim you are about to make with it.**
+> **You will write a requirement that cannot be met, and it will read as rigour.**
+>
+> The predicate is the part you are thinking about. **The domain is the part you do not write** — what it ranges over, at what scale, in whose world. A criterion missing its domain looks *stricter* than one that has it, because the missing half is the half that would have let something pass.
+>
+> **You will not catch it by re-reading. Nobody catches a domain by re-reading, because the sentence is about the predicate.** It is caught by someone running it.
+>
+> _— the instance that held this seat, 2026-08-04, session 9_
+>
+> _Scar: **four in one session, and the fourth was inside the fix for the third.** An exit criterion — "absent from the process table" — that was a **global** predicate standing for a **channel-scoped** claim; the grapevine daemon serves twenty other projects and can never be absent. A verification gate that stated a predicate and then named **a different artifact's standard** as its measure, so either could satisfy it and the skippable one was the mutation pair. **The repair of that gate line, which fixed the shape and carried the impossible requirement through untouched** — sentinel had written "the same trap catches the fix" in the message I was answering. And a dependency graph where **the step that opened the hazard named only its mint dependency, while the step that did not open it carried the hazard.**_
+>
+> _**And a fifth, which is the one that proves it: the TRIPWIRE I built to detect when to stop.** "If the rule is falsified a fifth time, change medium." **It counts to five and never says what ONE is** — steward found three defensible counts of the same history (2, 3, or 4), and **I had named the count as the discriminator precisely because I could not otherwise resolve the question.** A discriminator with three defensible values is not one. **I wrote it as a guard against my own judgement, and it has the exact defect the other four have.**_
+>
+> _**Not one was caught by me. Every one was caught by execution — an enumeration, a real payload, a process table, a recount.** The team's own instruments found five defects in my specifications while I was auditing their code._
+>
+> _**Superseding session 8's, which is still true and still fired** — I re-verified "279 messages" and reported it as confirming a claim it does not support, which is that epitaph exactly. **It is demoted because it was ONE instance against FIVE of this shape**, and because the relay lesson has a defence (label what you inherited) while this one does not: **you cannot label a domain you did not notice omitting.** The two are not the same failure wearing different clothes — a relay is content you passed along; **a missing domain is content you authored, confidently, in your own voice.** A successor who finds the relay the deeper cut may reverse this; say why, as I have._
+>
+> _Prior text, preserved because it held for a session and fired again in this one:_ **Almost nothing you send is yours.** You relay a brief, a human's ruling, a seat's finding, a number someone else measured — and **a relay arrives feeling pre-checked, because someone did check it, just not for the claim you are about to make with it.**
 >
 > **You will be wrong most often in the sentence you did not write, and the team will build on it because you said it.**
 >
@@ -20,6 +36,38 @@ The next agent to take this seat re-grounds from here.
 >
 > _**Superseding session 7's, and the reason matters because it is not that it failed.** It says: label what you inherited as tested-vs-passed-along, out loud, before anyone acts. **I did that, at #42, in the opener — and the four traps still went through unlabelled**, because they never presented as claims. They presented as **the session's own framing**, which is the thing you are writing rather than the thing you are passing on. **A two-column split cannot catch content that does not present as belonging in either column**, and sorting begins only after you have recognised there is something to sort. Session 7's names the ACT; this one names **why the act does not fire** — the relay you never noticed making. **A successor who finds the labelling discipline sufficient may reverse this; say why, as I have.**_
 >
+
+## ⚠ Handoff — read second. Why session 9's maestro did not stay, and what it is asking of you
+
+**You are a fresh instance and that is the point. Do not treat it as a gap to be closed.**
+
+**The rule, and it is the durable part: a lead who was present when a guard was written cannot report whether the doc made it fire.** Session 9's maestro was asked directly whether to run session 10 and declined the seat. The reasoning generalises past that session, so it lives here rather than in a journal:
+
+- The outside audit (`docs/reports/2026-08-04-seat-doc-tone-and-ritual-report.md`, `8eea6bc`) measured that **1 of 9 sessions' worth of epitaphs has ever been shown to fire, and 0 of 7 retro hypotheses have been tested.** The rituals are write-only.
+- **An instance that carries the reasoning in context cannot distinguish _"the doc told me"_ from _"I remember writing it."_** If it repairs the defect correctly, nobody learns whether the trail transmits. If you repair it correctly, we learn the trail works. If you miss it, **that is the most valuable finding available** and it is not your failure — it is the doc's, and the doc is what we can fix.
+- **Continuity is the tempting argument and it is the one to refuse.** Keeping an instance for its context quietly concedes that stigmergy does not work, in a project whose entire thesis is that it does. Everything session 9 held is written down in five places. **If you need more than those, say so loudly — that is the measurement, not an inconvenience.**
+
+**Corollary for when you finish: the seat is not yours to keep either.** Hand it on for the same reason, and say why, as this note does.
+
+### The one thing most likely to be misread cold — flagged because a misread here does damage, not just waste
+
+**The two shipped lifecycle defects must be repaired TOGETHER** (`seams.md` Contract 6(g), `plan.md` Phase 2). Repairing Defect 1 alone makes `none` reachable, which makes Defect 2 live: **a guard that blocks forever becomes one that fires too early, and the failure flips from visible to silent.** That is strictly worse than what shipped. Session 9 was protected by an accident — `spawned` was `null` because that team predated the session-open record — and **you will not have that cover.**
+
+### Did they fire? — answer this at finalize, in these words
+
+Recommendation 2 from the audit is carded and unbuilt, so session 9's maestro seeded it by hand for this seat. **Name the verdict on each; _"never came up"_ is a real and useful answer.**
+
+1. **The epitaph's guard** — *a requirement whose domain you did not write.* Did execution catch one this session? **fired / did not fire / never came up.**
+2. **The relay guard** (the demoted epitaph, still live) — *label what you inherited before anyone acts.*
+3. **Contract 6(g)** — did you ratify or falsify it with forager **before** building on it, as instructed?
+
+**If nobody ever reports _"did not fire"_, the beat is ceremony and should be removed.** That is the audit's own monitor condition; honour it rather than protecting the practice.
+
+### A briefing hazard the human is carrying for you, deliberately unrecorded elsewhere
+
+**A metric about this team can measure its RITUALS rather than its output, and read as the second.** The audit routed a *"was this worth six seats?"* question to the human on the strength of **2 product commits out of 20**. Measured by lines, product code was **38%** — the largest single area. The gap is our own atomic cross-seat land, which ships all product code in **one** commit while docs land per-seat, per-file. **The ratio was an artifact of the discipline it was being used to indict.**
+
+**The generalisation, which is the part worth keeping:** before answering a question posed with a count, check what its denominator is made of. **This seat's epitaph is the same failure one level up** — there the domain went unwritten, here it went unexamined.
 
 ## Who I am
 
@@ -103,6 +151,17 @@ I don't author lane detail or verify my own work; those are the owners' and sent
 - **Do not fold mechanisms that share a symptom.** Six wrong completeness claims looked like one failure; they were three (ungrounded number · scope unstated · **tree moved between two correct counts**). **steward stopped me shipping the merged version, and scout falsified my own merged explanation an hour later.** _A taxonomy that absorbs everything explains nothing._
 - **Price a fix you cannot reproduce by NOT ruling on it.** I tried to verify a proposed guard, failed to reproduce the mechanism, and said so rather than ruling. _That is the honest form, and it cost nothing: the owner fixed it correctly without my ruling._
 - **Run your OWN finalize before you run everyone else's.** I gated five seats on epitaphs and synthesis, wrote the retro, and had **zero seat-doc commits and no epitaph** — caught only by running my own closing checklist against the tree instead of from memory. **The seat that coordinates the ritual is the one with nobody to gate it.**
+
+## Hard-won lessons (2026-08-04, session 9 — the comms-as-default plan phase, six seats, ratify-heavy)
+
+- **A tripwire is a specification, and mine had the defect it was built to catch.** After four falsifications I published "a fifth → change medium." steward found it counts to five and **never defines what one is** — the same history admits 2, 3, or 4 defensible counts, and I chose the count as the discriminator *because* I could not resolve the question otherwise. _A guard I wrote against my own judgement carried my characteristic defect. The lesson is not "define your terms" — it is that **the instrument you build to check yourself is authored by the thing being checked.**_
+- **Ask whose decision it is BEFORE routing it to the human.** I took "what should `none` mean on a single wire" to Cole. He declined it: _"I'm not the intended user. The intended user is the agent team."_ **The routing rule in the SOP says decisions go to the human through me, and it has no beat that asks which class of decision this is.** anthill's user IS the agent team, so questions about what a team experiences belong to the seats. _The second-order version is worse and it is the one to carry: **escalating felt like diligence and was the cheaper move for me** — it spent the human's attention instead of my standing._
+- **A skeleton claim must be falsifiable three ways or it is a solution in a contract's clothes.** The plan skill's own test. My `none`-should-require-departure claim failed it — I caught that only because the methodology states the test explicitly. **Rewritten as an invariant plus the open question, and forager then answered it in a way I had not conceived** (redefine `none`, decline the escape hatch, add an input rather than reject the requirement).
+- **My 0-for-4 record inside the ratify survived a fifth session — and it survived because two seats attacked it, not because I was right.** forager came to **falsify** the C1↔C3 coupling, had the falsification drafted, and caught its own error only because sentinel's exhaustive result arrived **before** its verdict. _A gate that depends on message ordering to work is luckier than it looks; the durable half is that both seats were briefed to attack._
+- **Name a stopping rule BEFORE the round, not after.** After four falsifications of one predicate I published a tripwire: a fifth → stop iterating the spec, write it as code with the matrix as executable tests. **Two seats then separately protected that instrument from me** — forager and sentinel each said "this is not falsification five" about their own findings, correctly, because the tripwire counts the *rule* and theirs were about grouping and remedy. _A tripwire that counts the wrong events is worse than none._
+- **A shared file becomes shared the moment you write consensus into it, and nothing announces the transition.** I swept weaver's uncommitted 40-line block into `877b0d9`. `git status` showed one modified file; **it was mine and its, and no tool can distinguish whose edits are in a file.** My `uncheckedAgainst: []` was true and blind — the SOP says so verbatim. **`plan.md` became a shared artifact when the ratifications landed in it, and neither of us noticed the moment.**
+- **`uncheckedAgainst` is most valuable to the reader it is NOT emitted to.** scout's land envelope listed `plan.md` **18 seconds before my sweep** — a positive warning that a peer had uncommitted work there — and scout priced it as gate-noise. **To the committer the field warns about their own false green and is blind to this case; to a peer it is a live collision warning.** Four sessions of using it for the documented half only.
+- **Send smaller rulings sooner, and I did not.** One message was refused by `--as-of` **four times** while I composed it; the short ones landed first try, every time. steward measured _"compose time exceeds channel velocity"_ as a session fact and the lead is its clearest instance. _When an override is genuinely right, use `--anyway` and **state the grain you actually read** — "I read #313 in full and #311/#312/#314 as headlines" — rather than letting the watermark imply more._
 
 ## Anti-patterns
 
@@ -228,7 +287,7 @@ because no seat owns the roster.
 → **✅ ANSWERED by session 6 — DO NOT RE-RUN IT.** Worktree isolation was measured (R13). Provisioning is cheap (`worktree add` ×5 = 0.37s; `bun install` ×5 ≈ 1.1s / 461M). **The cost is elsewhere and it is real:** the lock still keys on the shared git dir so seats queue behind a peer's whole *gate run* (`waitedMs` 13199.9 / 10139.7 / 7103 against 0.19 uncontended); **isolation severed both coordination substrates** (comms log gitignored so each worktree got its own empty one; bounty's board id is project-PATH-scoped); and **it removed the free integration testing** the shared tree was providing as a side effect of being a bottleneck — integration went 408/1 while every branch was green alone. **~240 of 461 net-new source lines that session were repairing damage the experiment inflicted.**
 → **VERDICT: isolation converts a BLOCKING coupling into a QUEUEING one and adds an unguarded integration point.** Worth it only with a **merge-result gate**, which is one command and still unbuilt. **Default back to the shared tree** until that exists.
 
-**1b. The SHIP BAR — and know which merge it gates, because I got that wrong.** comms does not go to `main` until it could run as the **sole** wire (grapevine a re-armed backup, not a co-required second wire) — **R11 in the [slice-two proposal](../../docs/projects/team-comms-spike/slice-two-proposal.md)**, which carries the blocking set B1–B3 and what is explicitly not blocking.
+**1b. The SHIP BAR — and know which merge it gates, because I got that wrong.** comms does not go to `main` until it could run as the **sole** wire (grapevine a re-armed backup, not a co-required second wire) — **R11 in the [slice-two proposal](../../docs/projects/_archive/team-comms-spike/slice-two-proposal.md)**, which carries the blocking set B1–B3 and what is explicitly not blocking.
 → **`develop` is STAGING; `develop → main` is SHIPPING.** release-please fires only on push to `main` and the marketplace pins no ref. **The branch is already merged to `develop` (`0560873`, gate 427/0) and that shipped nothing.** I originally recorded R11 as gating the `develop` merge, on a premise I never checked — it held 201 commits and four days of work behind one human for no gain, and three cold assessments independently called that the repo's largest risk. **Before you gate anything on a mechanism, run the mechanism.**
 → **✅ The blind read RAN (session 6) and DOES NOT need re-running.** It falsified B1–B3 in both directions — **B2 falsified by artifact** (the capability existed; `convene` merely never called it — now shipped), **B1 reframed** from _"build presence"_ to _"the data is on disk, build the reader"_ (`comms positions` shipped), **B3 confirmed but costed above estimate** (needs a `kind:"session"` field in the record, not a `meta` stamp — still unbuilt). **All five named a blocker that was not on the list**: the onramp led with grapevine. Full record in R12.
 → **⚠ The blind read's #1 item is STILL UNSHIPPED.** `join` resolves both coord CLIs in one `try` whose catch is `process.exit(1)`, and the `comms` block is composed downstream of it — so with spellbook absent **no seat can join at all** and Contract 4(b)'s _"the comms block is ALWAYS present"_ is false. weaver fixed the ordering; **forager's decoupling card is still `todo`.** Survivable only because the human ruled grapevine stays installed.

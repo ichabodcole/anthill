@@ -122,7 +122,7 @@ A prose-only seat is maximally exposed: it can never cause the red and can alway
 **This belongs in finalize's structure reflection**, and it is the first thing this session produced
 that reads as a genuine composition question rather than a defect. It also connects directly to the
 worktree-isolation material in the
-[shared-tree investigation](../../investigations/2026-07-27-shared-tree-failure-modes.md).
+[shared-tree investigation](../../../investigations/2026-07-27-shared-tree-failure-modes.md).
 
 **B2a. A verification principle worth keeping, from the verifier declining to run something.**
 Asked to confirm B1, sentinel verified it **statically** and said why it refused to reproduce live:
