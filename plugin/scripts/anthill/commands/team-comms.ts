@@ -36,8 +36,6 @@ import {
   buildPositionsReport,
   type CommsMessage,
   commsDeparturePath,
-  commsLogPath,
-  commsPositionPath,
   encodeMessage,
   type IdentityResult,
   nextMessageId,
@@ -45,6 +43,8 @@ import {
   parseLog,
   positionState,
   readPosition,
+  resolveCommsLog,
+  resolveCommsPosition,
   resolveSeatIdentity,
   type SeatPosition,
   type SeatPositionRow,
@@ -89,7 +89,7 @@ function resolveChannel(config: ResolvedConfig | null, flag: unknown): string | 
 }
 
 function readChannel(teamDir: string, channel: string) {
-  const path = commsLogPath(teamDir, channel);
+  const path = resolveCommsLog(teamDir, channel);
   if (!existsSync(path)) return { path, messages: [] as CommsMessage[], warnings: [] as string[] };
   const { messages, warnings } = parseLog(readFileSync(path, "utf8"));
   return { path, messages, warnings };
@@ -654,7 +654,7 @@ interface FollowStartData {
 
 function recordPosition(teamDir: string, channel: string, handle: string, emittedThrough: number) {
   try {
-    const path = commsPositionPath(teamDir, channel, handle);
+    const path = resolveCommsPosition(teamDir, channel, handle);
     mkdirSync(dirname(path), { recursive: true });
     const position: SeatPosition = {
       handle,
@@ -703,7 +703,7 @@ const followCommand = defineCommand({
     }
 
     const teamDir = config.teamDirPath();
-    const path = commsLogPath(teamDir, channel);
+    const path = resolveCommsLog(teamDir, channel);
     // Start from the current end: `follow` shows what happens FROM NOW. It has
     // no flag to replay history — that is `read`'s job, and the separation is
     // the point.

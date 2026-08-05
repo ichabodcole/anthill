@@ -24,7 +24,15 @@
  *     identity the roster never granted.
  */
 
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, resolve } from "node:path";
 import type { SeatConfig } from "./config.ts";
 
@@ -170,14 +178,182 @@ export function buildCommsIncantation(i: {
 // The log. NDJSON, append-only: one message per line, never rewritten.
 // ---------------------------------------------------------------------------
 
-export function commsLogPath(teamDir: string, channel: string): string {
+export function commsLogPath(teamDir: string, channel: string, sessionId?: string): string {
   if (!SAFE_CHANNEL.test(channel)) {
     throw new Error(
       `unsafe channel name "${channel}" — must match ${String(SAFE_CHANNEL)} ` +
         "(it becomes a filename)",
     );
   }
-  return resolve(teamDir, COMMS_DIR, `${channel}.ndjson`);
+  if (sessionId === undefined) return resolve(teamDir, COMMS_DIR, `${channel}.ndjson`);
+  if (!SAFE_CHANNEL.test(sessionId)) {
+    throw new Error(`unsafe session id "${sessionId}" — it becomes a filename`);
+  }
+  return resolve(teamDir, COMMS_DIR, channel, `${sessionId}.ndjson`);
+}
+
+// ---------------------------------------------------------------------------
+// ROTATION. A session is an ADDRESSABLE UNIT: its own log, its own positions.
+//
+// ⚠ NOTHING HERE DELETES ANYTHING, EVER. The log is the provenance of
+// everything a session ships — a lead pulled a peer's upstream issue draft out
+// of it after teardown, and a whole measurement lane read from it. Rotation
+// MINTS a successor and leaves every predecessor on disk, addressable by id.
+// **Deleting is the human's choice, never the tool's.** That is why this is
+// rotation and not the `--fresh`/clear it replaces.
+//
+// ⚠ AND ROTATING A LIVE CHANNEL IS THE HAZARD seams.md 6(e) DESCRIBES, fired
+// deliberately and on every follower at once. `follow` resolves its log path
+// ONCE at attach, so a survivor across a boundary reads a dead path forever
+// while carrying its old `emittedThrough` — reporting `current`, gap 0, having
+// emitted none of the new log. **The tool cannot observe that**, because 6(a)
+// gives us `emitted` and never `delivered`.
+//
+// THE MECHANISM IS THEREFORE SAFE TO LAND AND NOT SAFE TO FIRE ON A CHANNEL
+// WITH LIVE FOLLOWERS. Rotate at a session boundary, when nobody is attached.
+// Stated here rather than in a card because the next reader meets this function
+// and not the card.
+// ---------------------------------------------------------------------------
+
+/** The CURRENT pointer: which session id this channel is writing to now. */
+export function commsCurrentPath(teamDir: string, channel: string): string {
+  if (!SAFE_CHANNEL.test(channel)) {
+    throw new Error(`unsafe channel name "${channel}" — it becomes a filename`);
+  }
+  return resolve(teamDir, COMMS_DIR, `${channel}.current`);
+}
+
+/**
+ * Which session is this channel writing to?
+ *
+ * **`null` means the LEGACY layout** — a pre-rotation `<channel>.ndjson` with
+ * no pointer — and it is a positive answer, not a failure. Every existing
+ * footprint is in that state, and none of them may become unreadable because
+ * this function shipped. `null` is what keeps them working, so it is handled
+ * everywhere rather than treated as an error.
+ */
+export function readCurrentSession(teamDir: string, channel: string): string | null {
+  try {
+    const path = commsCurrentPath(teamDir, channel);
+    if (!existsSync(path)) return null;
+    const id = readFileSync(path, "utf8").trim();
+    return id.length > 0 && SAFE_CHANNEL.test(id) ? id : null;
+  } catch {
+    return null;
+  }
+}
+
+/** The log this channel is writing to NOW — session-scoped, or legacy. */
+export function resolveCommsLog(teamDir: string, channel: string): string {
+  const id = readCurrentSession(teamDir, channel);
+  return commsLogPath(teamDir, channel, id ?? undefined);
+}
+
+/** The positions dir in force NOW — session-scoped, or legacy. */
+export function resolveCommsPosition(teamDir: string, channel: string, handle: string): string {
+  const id = readCurrentSession(teamDir, channel);
+  return commsPositionPath(teamDir, channel, handle, id ?? undefined);
+}
+
+/**
+ * Mint a session id. Sortable, and it carries its own timestamp so a directory
+ * listing is chronological without reading any file.
+ */
+export function mintSessionId(atMillis: number): string {
+  return `s${new Date(atMillis).toISOString().replace(/[:.]/g, "-").replace(/Z$/, "")}`;
+}
+
+export interface RotationResult {
+  sessionId: string;
+  logPath: string;
+  /** The session this one succeeds — `null` when rotating out of the legacy layout. */
+  previous: string | null;
+  warnings: string[];
+}
+
+/**
+ * Rotate: mint a new session, point CURRENT at it, and DROP the session-open
+ * record.
+ *
+ * **DROPPING the record is the safe half and it is NOT the tidy-looking one.**
+ * The alternative — carrying it across — leaves `spawned` naming the previous
+ * session's seats while the positions directory is empty, which is the
+ * pane-kill conjunction: blinded positions AND in-window tombstones AND a
+ * spawned set to satisfy. `c9a33e7` instruments both: a DROPPED record blocks
+ * teardown (`spawned` unknowable ⇒ `unknown` ⇒ block) and a record naming
+ * NOBODY blocks and is distinct from no record at all. **Preserving it is the
+ * one unsafe design and it is the one that looks like housekeeping.**
+ *
+ * Never throws: rotation failing must not take the wire down with it.
+ */
+export function rotateSession(
+  teamDir: string,
+  channel: string,
+  atMillis: number,
+): RotationResult | { sessionId: null; warnings: string[] } {
+  const warnings: string[] = [];
+  try {
+    const previous = readCurrentSession(teamDir, channel);
+    const sessionId = mintSessionId(atMillis);
+    const logPath = commsLogPath(teamDir, channel, sessionId);
+    mkdirSync(dirname(logPath), { recursive: true });
+    // Create the log empty so the successor exists before anything points at
+    // it. A CURRENT naming a file that is not there would make a fresh channel
+    // indistinguishable from a broken one.
+    if (!existsSync(logPath)) writeFileSync(logPath, "", "utf8");
+
+    const currentPath = commsCurrentPath(teamDir, channel);
+    const tmp = `${currentPath}.${process.pid}.tmp`;
+    writeFileSync(tmp, `${sessionId}\n`, "utf8");
+    renameSync(tmp, currentPath);
+
+    // DROP the session-open record. Not deleted for tidiness — deleted because
+    // a carried-over `spawned` set is the middle term of the pane-kill
+    // conjunction. Its ABSENCE is what makes teardown block (fail-safe).
+    try {
+      const sessionPath = commsSessionPath(teamDir, channel);
+      if (existsSync(sessionPath)) rmSync(sessionPath);
+    } catch (err) {
+      warnings.push(
+        `could not drop the session-open record: ${(err as Error).message} — ` +
+          "the new session may inherit the previous spawned set, which is the UNSAFE direction; " +
+          "remove it by hand before relying on the teardown guard",
+      );
+    }
+
+    return { sessionId, logPath, previous, warnings };
+  } catch (err) {
+    return {
+      sessionId: null,
+      warnings: [`rotation failed: ${(err as Error).message} — the channel is unchanged`],
+    };
+  }
+}
+
+/**
+ * Every session on disk, newest last. The LEGACY log appears as `null` when it
+ * exists, because "the log from before rotation" is a real session that simply
+ * has no id — reporting only the ids would make it unaddressable, which is the
+ * one thing rotation promised not to do.
+ */
+export function listSessions(teamDir: string, channel: string): (string | null)[] {
+  const out: (string | null)[] = [];
+  if (existsSync(commsLogPath(teamDir, channel))) out.push(null);
+  try {
+    const dir = resolve(teamDir, COMMS_DIR, channel);
+    if (existsSync(dir)) {
+      out.push(
+        ...readdirSync(dir)
+          .filter((f) => f.endsWith(".ndjson"))
+          .map((f) => f.slice(0, -".ndjson".length))
+          .sort(),
+      );
+    }
+  } catch {
+    // A listing that cannot be produced is an empty listing, never a throw:
+    // callers use this to OFFER history, not to decide anything safety-bearing.
+  }
+  return out;
 }
 
 /**
@@ -245,7 +421,12 @@ export function nextMessageId(existing: CommsMessage[]): number {
  * writes only its own, so concurrent followers never contend and this needs no
  * lock at all. A single shared positions file would reintroduce the
  * read-compute-write race that duplicate message ids already cost us. */
-export function commsPositionPath(teamDir: string, channel: string, handle: string): string {
+export function commsPositionPath(
+  teamDir: string,
+  channel: string,
+  handle: string,
+  sessionId?: string,
+): string {
   if (!SAFE_CHANNEL.test(channel)) {
     throw new Error(`unsafe channel name "${channel}" — it becomes a filename`);
   }
@@ -255,7 +436,19 @@ export function commsPositionPath(teamDir: string, channel: string, handle: stri
   if (!SAFE_CHANNEL.test(handle)) {
     throw new Error(`unsafe seat handle "${handle}" — it becomes a filename`);
   }
-  return resolve(teamDir, COMMS_DIR, `${channel}.positions`, `${handle}.json`);
+  if (sessionId === undefined) {
+    return resolve(teamDir, COMMS_DIR, `${channel}.positions`, `${handle}.json`);
+  }
+  if (!SAFE_CHANNEL.test(sessionId)) {
+    throw new Error(`unsafe session id "${sessionId}" — it becomes a filename`);
+  }
+  // Positions are PER SESSION, and that is the point rather than a side effect:
+  // a position is a claim about a specific log, so carrying one across a
+  // rotation would assert a watermark into a log that never contained it —
+  // seams.md 6(e)'s false `current`, manufactured by us. A new session starts
+  // every seat at `never-followed`, which is the honest state: the tool has no
+  // idea what this seat has seen of THIS log.
+  return resolve(teamDir, COMMS_DIR, channel, `${sessionId}.positions`, `${handle}.json`);
 }
 
 export interface SeatPosition {
@@ -524,7 +717,11 @@ export function readPosition(
   handle: string,
 ): SeatPosition | null {
   try {
-    const path = commsPositionPath(teamDir, channel, handle);
+    // Resolve through CURRENT: a position belongs to the session whose log it
+    // is a watermark into. Reading the legacy path after a rotation would hand
+    // back a number measured against a DIFFERENT log — 6(e)'s false `current`,
+    // manufactured by the reader rather than by a swap.
+    const path = resolveCommsPosition(teamDir, channel, handle);
     if (!existsSync(path)) return null;
     return JSON.parse(readFileSync(path, "utf8")) as SeatPosition;
   } catch {
