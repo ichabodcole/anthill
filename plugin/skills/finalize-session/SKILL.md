@@ -378,9 +378,22 @@ it has gone wrong.**
      momentum merge it unseen.
    - ◻ **Tear down:** **`anthill down`** — the session is named after the **channel**
      (`config.channel`) by default, so it resolves with no arguments. It **refuses to kill while seats
-     are still present on the vine** (pass `--force` to override) — that presence guard is your backstop
-     against yanking a seat out mid-ritual. (If you spawned with a custom `--session <name>`, pass the
-     same here.)
+     are still present on the channel** (pass `--force` to override) — that presence guard is your
+     backstop against yanking a seat out mid-ritual. (If you spawned with a custom `--session <name>`,
+     pass the same here.)
+     - **It refuses on TWO states, not one, and the second is the one you will actually meet.** It
+       blocks when seats are **present**, and equally when presence **cannot be established** — because
+       tearing down panes without knowing whether anyone is working in them is the failure the guard
+       exists to prevent, and _"I could not tell"_ is not _"nobody is there."_
+     - **So `--force` at the end of a finished session is EXPECTED, not a workaround.** A seat that has
+       stood down cleanly leaves no positive signal saying so, which reads as _cannot establish_ rather
+       than _gone_. **Do not let that train you to reach for `--force` reflexively** — the one session
+       where it matters is the one where a seat really is still working, and it looks identical from
+       here. Read who it names before you override it.
+     - **The refusal names the CHANNEL and no wire, deliberately** — don't "fix" it to name one. The
+       verdict is drawn from more than one wire, the message cannot know which were consulted, and a
+       sentence naming today's wires goes wrong the next time one is added. _This paragraph itself said
+       "on the vine" for a full release after that stopped being true._
 
 ## Output
 
