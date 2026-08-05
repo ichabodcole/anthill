@@ -10,16 +10,16 @@
 
 The human asked three questions, then a fourth after the first draft. They have sharply different answers:
 
-1. **Is comms ready to replace grapevine for intra-team communication?** — **Yes, one blocker.**
+1. **Is comms ready to replace grapevine for intra-team communication?** — **Yes. One item blocks the SWAP (rotation); a second blocks a clean TEARDOWN (`stand-down`) without blocking the swap.**
 2. **What features do we still want first?** — **Two are blockers; the rest are wants.**
 3. **Have we settled on a communication PATTERN worth shipping as guidance?** — **No, and more sessions of the current kind will not get us there.**
-4. **What about the skills that still teach grapevine?** — **34 shipped references (at `bdbafae`), and removing grapevine entirely is a simplification with a defect-class payoff.**
+4. **What about the skills that still teach grapevine?** — **36 shipped references, and removing grapevine entirely is a simplification with a defect-class payoff.**
 
 The third answer is the reason this is a plan and not a checklist. **The stated goal is to avoid a
 cycle of feeling close without converging**, and the honest diagnosis is that our pattern evidence
 cannot converge under the method we have been using. That is fixable, and fixing it is most of this plan.
 
-## Question 1 — comms vs grapevine: ready, with one blocker
+## Question 1 — comms vs grapevine: ready, with one blocker ON THE SWAP
 
 **The gate passed at the hardest setting we have run.** Session 8: **279 messages, six live seats,
 parallel (not staged), sole wire, zero fallbacks** from convene to teardown. `grapevine pull` → 1
@@ -47,7 +47,7 @@ gate a swap. It gates _treating attribution as proof_, which is a larger and sep
 | **BLOCKER** | **session rotation**                                        | the wire opens carrying the previous session's log; a team will read old history as current                                                 |
 | **BLOCKER** | **`comms stand-down`**                                      | departure and death are indistinguishable, so every session ends in `--force` — which trains the reflex the teardown guard exists to resist |
 | want        | capability state ([slice three](./slice-three-proposal.md)) | unblocks four things: guest identity, human-on-wire, mute, substrate-as-sender                                                              |
-| want        | ratify record (the human's poll idea)                       | the durable half is the real gap — see below                                                                                                |
+| want        | ratify record (the human's poll idea)                       | the durable per-seam ratify record is the real gap; the tally half is ceremony — carded, not specified here                                 |
 | want        | addressed delivery                                          | [backlog](../../backlog/2026-08-01-comms-has-no-addressed-delivery.md)                                                                      |
 
 ### Session rotation — NOT a clear verb
@@ -75,11 +75,16 @@ positions directory, with a `CURRENT` pointer. Prior sessions stay on disk, addr
    weaver `behind` gap 8 **before either seat existed** — session 7's records surviving, because
    positions are keyed by **channel**. Per-session paths make that structurally impossible rather than
    something a guard must catch.
-3. **Contract 6(e)'s repair.** That clause is a known-unfixed defect: a live follower whose log is
-   swapped underneath it carries `emittedThrough` across and reports `current`, gap 0, having emitted
-   none of the new log. 6(e) says the fix is _"a change to what `follow` RECORDS"_ — **a session id in
-   the path is exactly that**, because the follower can detect its path no longer resolves to `CURRENT`.
-   Two seats measured 6(e) on themselves in session 6.
+3. **Contract 6(e) — rotation ENABLES the repair; it does not CONSTITUTE it.**
+   _Corrected after a cold read, which caught this document overclaiming and then contradicting itself._
+   6(e)'s prescribed repair is that **`follow` invalidates its own position when the log identity
+   changes under it (inode/device, or a generation stamp)** — a change to what the position **record**
+   contains. **A path is not a position record.** An earlier draft claimed a session id in the path
+   "is exactly that"; it is not, and the tell was in this document: **B2 below requires a new external
+   guard against the same failure mode**, which would be redundant if the follower already
+   self-protected. **What rotation actually buys is a generation to stamp** — the thing 6(e) says the
+   repair needs and which does not exist today. **Building the stamp is still work, and it is not
+   scheduled here.** Two seats measured 6(e) on themselves in session 6.
 
 **It also retires the mtime trap** in cross-session measurement: session 7's report records a transcript
 whose mtime sat inside session 7's window while containing only session-6 messages, nearly
@@ -138,10 +143,12 @@ comms is not done when the code works: **every skill that teaches grapevine is t
 ### The measured surface
 
 ```
-SHIPPED PROSE   (measured at bdbafae)
-                plugin/skills      28 refs / 6 files   (join 11 · convene 8 · comms 4 · bootstrap 3 · upgrade 1 · finalize 1)
-                plugin/templates    6 refs / 3 files
-CODE            plugin/scripts    106 refs / 12 files
+MEASURED: git grep -in "grapevine" bdbafae -- <paths>     ← CASE-INSENSITIVE, at bdbafae
+
+SHIPPED PROSE   plugin/skills      29 refs / 6 files   (join 11 · convene 9 · comms 4 · bootstrap 3 · upgrade 1 · finalize 1)
+                plugin/templates    7 refs / 3 files
+                                   36 total
+CODE            plugin/scripts    118 refs / 12 files
                 ...but only TWO live call sites:
                   team-convene.ts:260   resolveCoordCli("grapevine")   opens the channel
                   team-support.ts:312   resolveCoordCli("grapevine")   seatPresence reads `who`
@@ -176,7 +183,7 @@ skill shipped to every consuming team.
 
 **The prose migration must follow the code, not accompany it.** Session 8's characteristic failure was
 prose asserting something about a tool that was still moving — six instances, three of them introduced
-_by seats fixing other false prose_. **Rewrite the 34 shipped references once, after presence is
+_by seats fixing other false prose_. **Rewrite the 36 shipped references once, after presence is
 single-wire and settled**, and cold-read the result against a `git archive` surface.
 
 _Fits in session 9 if presence lands early; otherwise it is session 9.5 and should be said so rather
@@ -249,6 +256,23 @@ anthill convene   →  no CURRENT, or CURRENT is CLOSED   →  mint a new sessio
 and removes the orphaning failure entirely — there is no path where a mid-session re-convene mints an
 empty log, because minting requires a closed or absent CURRENT.
 
+> ### ⚠ The mint must be ATOMIC and LOCKED — both primitives already exist in this repo
+>
+> _Added after a cold read found two blocking gaps in this section's first version. **The feature built
+> to stop losing logs could lose one during its own mint** — this team's guard-that-does-not-guard class,
+> applied to a design rather than a test._
+>
+> **Atomicity.** Minting is at least two writes — the new `<session-id>.ndjson` and the `CURRENT`
+> pointer. **Killed between them, the next `convene` sees a state neither branch of B3 describes.**
+> `team-comms.ts:668` already does `renameSync(tmp, path)` — **the atomic-swap pattern is in the very
+> file that would mint.** Write the log, then swap `CURRENT` by rename, so the pointer is never
+> half-written.
+>
+> **Locking.** _"No CURRENT, or CURRENT is CLOSED -> mint"_ is **check-then-act**. Two `convene`s, or a
+> `convene` racing a `down` writing the CLOSED marker, and both mint — **two live sessions each
+> believing it owns `CURRENT`.** `lock.ts` already provides `acquireLock`/`releaseLock` with stale-lock
+> stealing, used by `anthill commit`. **Take the lock around the read-decide-write, not around the write.**
+
 **`down` writing the closed marker is new work** (`grep` → no marker logic today) and it pairs naturally
 with `comms stand-down`, which is already a session-9 blocker. **The two are one piece of work: giving
 the session a lifecycle it can observe.**
@@ -264,13 +288,23 @@ re-reads).
 
 **Run:** the session itself on comms with the vine **closed, not merely untailed**.
 
-**Exit criterion — testable, not aspirational:**
+**Exit criteria — one per thing built, at session-8 scale.**
+_Revised after a cold read: the single earlier criterion was satisfiable by a light serial run, and it
+never exercised `stand-down` or the measurement fix at all._
 
-> A session convenes, runs, and tears down cleanly with **no grapevine at all**, **and** the previous
-> session's log is still readable by id afterwards.
+> 1. **The swap.** A session convenes, runs and tears down with **no grapevine at all** — at
+>    **session-8 scale or above: six seats, parallel, >=250 messages.** A light or serial run does not
+>    count; the readiness verdict rests on the hard setting, so the confirmation must too.
+> 2. **Rotation.** The previous session's log is readable **by id** afterwards, and `CURRENT` resolves
+>    to this session's log throughout.
+> 3. **`stand-down`.** **At least one seat departs mid-session and is reported as DEPARTED rather than
+>    unknown**, and teardown completes **without `--force`**. If no seat would otherwise leave, stand
+>    one down deliberately — the verb is untested otherwise.
+> 4. **The measurement fix.** The session's own report leads with **output** tokens and contains **no
+>    tokens-per-commit efficiency claim.**
 
 **Also in scope, sequenced after presence lands:** collapse `seatPresence` to a single wire, drop the
-two `resolveCoordCli("grapevine")` call sites, and rewrite the **34 shipped prose references** (see
+two `resolveCoordCli("grapevine")` call sites, and rewrite the **36 shipped prose references** (see
 Question 4). **If presence does not land early enough to leave the prose settled, split the rewrite to
 9.5 rather than cramming it** — session 8 proved that rewriting prose about a still-moving tool is how
 false prose gets introduced.
@@ -299,11 +333,15 @@ observer cannot contaminate, that is the argument for slice three landing here r
 **Draft the guidance from what actually has controls behind it**, and run a second within-session
 control on whatever the draft leans on hardest.
 
-**Exit criterion:**
+**Exit criterion.** _Revised after a cold read: the earlier version was "A or not-A" and no outcome
+could fail it. A criterion that cannot fail cannot verify._
 
-> **Either** the guidance is defensible, **or** we can name precisely which claims lack evidence.
-> **Both outcomes are shippable** — "here is what we know and here is what we do not" is more useful to
-> another team than confident advice with n=1 underneath it.
+> **Every claim in the guidance draft carries either (a) a named within-session control — what was held
+> constant, what varied, what would have falsified it — or (b) an explicit `UNCONTROLLED` label.**
+> **The session fails if any claim carries neither.**
+>
+> Shipping with many `UNCONTROLLED` labels is a legitimate outcome and still useful to another team.
+> **Shipping with unlabelled claims is not**, and that is the distinction the earlier wording lost.
 
 **Confidence: medium.** This is the session where the answer could legitimately be "not yet", and the
 plan should not pretend otherwise.
@@ -328,6 +366,20 @@ rediscovered, and so a lead who skips them is skipping something rather than not
    which is the thing it exists to prevent. `docs/projects/TEMPLATES/TEST-PLAN.template.md` exists.
 6. **The pipeline depends on `develop → main` cutting.** If the release does not ship, none of this
    reaches a consuming team and the work is internal-only.
+
+**Added by the cold read of this document (three readers, session 8's close):**
+
+7. **No recourse for a consuming team that upgrades into a regression.** B2 makes the release the
+   switch — no flag, no opt-in — and Q4 removes grapevine's guidance from their skills. **Is the
+   upgrade one-directional, and if so is that acceptable?**
+8. **Message identity across the rotation boundary.** Positions are channel-keyed today; after
+   rotation a reference by offset needs `(session-id, offset)`. **What else addresses a message by
+   position — scout's cross-session tooling, knowledge entries, existing scripts — and who updates it?**
+9. **No independent reviewer is named** for the cold reads this plan requires twice, beyond "someone
+   who did not write it." **Given composition is unstated, is genuine independence available in the
+   composition each session actually runs?**
+10. **No resource ceiling across the pipeline.** This document treats session cost as a live
+    measurement concern. **What stops session 11 extending open-endedly under a legitimate "not yet"?**
 
 _This section is the gap analysis's own output. It was run by the document's author, which is the wrong
 auditor by this team's own finding — **nobody who fixes an instance is positioned to bound the class**,
