@@ -180,6 +180,16 @@ and if you want that known about yourself, someone else has to.**
 **Read it as a question about the LOG, not about the seat.** The seat may be fine; what is established is that the record cannot speak for this log. Re-attach the follow and the position becomes real again.
 **Why this is worth knowing before it happens to you:** this defect was found by a lead running the cross-seat read as its **first user of the session**, and being told **every seat was current, gap 0** — against an empty log, with most of those seats not yet existing. A surviving record subtracted from a fresh head produced a _negative_ gap, and a negative rounded down into the most reassuring answer available. **On a wire whose entire purpose is to stop silence being mistaken for safety, the audit instrument was the thing reassuring everyone.** If your team's positions look implausibly healthy at the very start of a session, that is the shape of it.
 
+**⚠ AND THE TELL ABOVE ONLY FIRES ON ONE OF THE TWO SHAPES — do not read `staleRecord: false` as _"my position is trustworthy."_** A record is caught **only when it is arithmetically impossible** — ahead of the head. When a log is replaced underneath a live follower and the new log's head happens to land **at or above** the carried position, the position is perfectly plausible and **nothing in the instrument can see it**:
+
+```
+new head BELOW your carried position   -> impossible -> never-followed · gap null · staleRecord TRUE   HONEST
+new head AT or ABOVE it                -> plausible  -> current · gap 0 · staleRecord FALSE            SILENT
+```
+
+**Reproduced, not reasoned:** a follower carrying position 3 across a genuine replacement (proved by inode) onto a new log whose head was also 3 reported **`current`, gap 0, follower alive, `staleRecord: false`** — having emitted **none** of that log's messages, with a pre-swap message it _had_ emitted as the positive control. **That is the most reassuring row the instrument can print, on the seat least entitled to it.**
+**So the protection you get from the impossible case is a property of ID NUMBERING, not a guard** — it holds only while a replacement restarts ids low enough to be caught. **What settles it is not a better reading of the row: it is asking whether the LOG under you is the one your position was taken against.**
+
 ## 3. `read` terminates; `follow` streams. Don't make one do the other's job.
 
 - **Catch-up → `read`.** It prints and exits, so it is the one to pipe into other tools.
