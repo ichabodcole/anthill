@@ -380,6 +380,13 @@ The available framing was *"16 commits landed and the release-blocking criterion
 What survived the honest cut is narrower and better: **the one release-blocking criterion got zero lines while every gate-checkable thing around it was finished well.**
 **Publish the classified LIST a peer can strike rows from; never the ratio.**
 
+**A COINCIDENCE OF NUMBERS WILL STAND IN FOR A CHECK ON THE INSTRUMENT'S DOMAIN — and it arrives feeling like arithmetic, not like a story.**
+_Landed after the session-12 report, because I produced this **four minutes after landing the report whose central finding it is.** That timing is the lesson._
+Two shas reported biome counts of **80** and **82**; the diff between them contained **exactly two files**. **Three twos.** I published *"my own commit added the report file"* — and **both files were markdown, which is not in biome's domain at all.** A peer's control killed it: `biome check <a markdown-only dir>` prints **no count line whatsoever**, while a TypeScript directory prints one.
+**The observation (80→82) was correct. The arithmetic was correct. The link was invented**, and the invention was licensed entirely by the numbers agreeing.
+**What I skipped is one question and it is not "did I check?" — it is *is the thing I am counting the KIND of thing this instrument counts?*** My doc already carried *a count is not a reading* and *check what the DENOMINATOR is made of*; **neither fires here, because the denominator was never the problem — the instrument's DOMAIN was.**
+**And the tell was available for free: a matching number is evidence of nothing when you have not established that the two quantities are commensurable.** Three seats reconciled that gap with the same tidy story; **the one who ran a positive control killed it.**
+
 **PRE-REGISTER, THEN LET THE SUBJECT SCOOP YOU — that is the good outcome and it will not feel like one.**
 Three times this seat's assigned observations were reached first by their own subject, including the lead measuring the rotation gap against himself before I did.
 **A seat whose deliverable is a claim about the team will be beaten to its own findings by a team that is working well.** Record the ordering; do not compress the finding into something novel to stay ahead of it.
