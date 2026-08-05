@@ -15,9 +15,14 @@
 > tree supports is the proposal's original sin recurring one document later, so the phases below are
 > now stated against the merge rather than against the intent.
 
-> This file discharges the proposal's banner — the planning that banner said was still owed is this document.
-> The banner stays valid for what it warned about: **a name asserting more than its contents support.**
-> So read the status line above literally. This is a skeleton, and four of its five load-bearing statements are claims I expect to be wrong about.
+> **The original banner, kept for the record and superseded 2026-08-04:** _"This file discharges the
+> proposal's banner… So read the status line above literally. This is a skeleton, and four of its five
+> load-bearing statements are claims I expect to be wrong about."_
+>
+> It was accurate when written and its prediction came true — four of the five were falsified. It is
+> superseded rather than deleted because **the thing it warned about is what later went wrong in this
+> very file**: _a name asserting more than its contents support._ The stale phase split was exactly
+> that, and it survived a full session of six seats reading this document.
 
 ---
 
