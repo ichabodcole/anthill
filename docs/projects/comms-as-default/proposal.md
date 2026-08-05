@@ -1,12 +1,32 @@
 # Comms as the default team wire — the route from "it works" to "we can recommend it"
 
-**Created:** 2026-08-04 · **Status:** Draft, for session 9's lead to convene against
+**Created:** 2026-08-04 · **Status:** Draft — a PROPOSAL. **There is no `plan.md` yet and session 9
+must produce one.**
 **Supersedes:** the [team-comms spike](../_archive/team-comms-spike/), archived 2026-08-04 — the spike's
 question (_does an in-repo wire work?_) is answered; this project ships it and decides the guidance.
 **Author:** maestro (session 8), from the human's three questions at session 8's close
 **Follows:** [slice-two](../_archive/team-comms-spike/slice-two-proposal.md) · [capability state](./capability-state-proposal.md) · [session 8 retro](../../../.anthill/retro.md)
 
 ---
+
+> ### ⚠ THIS IS A PROPOSAL, NOT A DEV PLAN — and session 9 still owes `anthill:plan`
+>
+> _Renamed from `plan.md` 2026-08-04, after the human asked whether it was actually a dev plan. It was
+> not._ Per `docs/projects/README.md`: **proposal = the why and what · plan = the how, phased with
+> validation gates.** This document is four questions, a session pipeline, non-goals and risks — the
+> proposal template almost section-for-section. It has **no Phases, no Testing & Validation Strategy,
+> no Rollback Plan, no Implementation Notes.**
+>
+> **The filename was the whole risk.** A lead opening `plan.md` would reasonably conclude the planning
+> was done and skip the plan phase. That is the same defect as a card titled with a diagnosis instead of
+> a symptom — **a name asserting more than its contents support** — and it is the author's fourth
+> instance of it in one session.
+>
+> **Session 9 runs `anthill:plan`, and the seam is real rather than ceremonial:** rotation changes what
+> `follow` RECORDS and what `positions` READS (**forager**, Contract 6 territory) while 36 prose
+> references describe that behaviour to seats (**weaver**, Contract 4 territory). **Two owners meeting
+> at a contract is exactly the condition the ratify gate exists for.** Session 8 is the counter-example
+> — weaver ratified Contract 4(b) on the wire and it existed nowhere durable for four hours.
 
 ## Why this document exists
 
