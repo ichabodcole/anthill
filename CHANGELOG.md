@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.10.0...anthill-v2.0.0) (2026-08-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **skills:** guidance that directed agents to a grapevine channel is removed from the shipped skills; teams upgrading should run anthill:upgrade section 4.0 to reconcile their own in-repo references.
+* **step4:** anthill convene no longer accepts --fresh or --topic, and the join manifest no longer carries tailCommand.
+
+### Features
+
+* **step4:** convene opens NOTHING and join composes no vine tail -- grapevine leaves the lifecycle ([14cf678](https://github.com/ichabodcole/anthill/commit/14cf67849e5b3bd81005843d5755405d0f795554))
+
+
+### Documentation
+
+* **skills:** the shipped surface stops pointing at grapevine, and upgrade documents the migration ([cbafb2b](https://github.com/ichabodcole/anthill/commit/cbafb2be48ad44bd8840c212cd6fb7f0bf8d5734))
+
 ## [1.10.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.9.0...anthill-v1.10.0) (2026-08-05)
 
 
