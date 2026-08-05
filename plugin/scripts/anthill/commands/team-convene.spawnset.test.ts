@@ -120,6 +120,28 @@ describe("convene's coordination spawn set — criterion 2, absence of OPENING",
     // `team-support.ts`'s readBoardCounts -> `bounty state` lands in the same
     // ledger, and that third entry is not a bonus: it is part of why this
     // assertion has a positive control at all.
+    //
+    // ⚠ `toEqual` ON AN ARRAY IS ORDER-SENSITIVE, AND THAT IS DELIBERATE.
+    // DO NOT weaken this to a set comparison. Beyond the spawn SET this test is
+    // named for, the sequence pins seams.md CONTRACT 3: convene opens the board
+    // BEFORE it reads counts, so `bounty state` resolves the PINNED board
+    // rather than the daemon's global `latest` — which, with two boards live,
+    // silently reads a stranger's board (anthill #23/#19; it froze live
+    // sessions).
+    //
+    // Found by steward, who controlled it rather than assuming it
+    // (["a","b","c"] vs ["a","c","b"] fails); ruled deliberate by sentinel, who
+    // specified the artifact and did not know he was holding it (comms
+    // #752/#753). Written here because that ruling otherwise lives only on a
+    // wire that does not survive teardown.
+    //
+    // THE HAZARD THIS COMMENT EXISTS TO STOP: a future seat hits a red after a
+    // legitimate reorder, reads this test's name — "the SET, not the absence of
+    // a member" — concludes order was never the point, relaxes the assertion,
+    // and drops Contract 3's ONLY executable proof without ever knowing they
+    // held it. `principles.md`: A MASK IS NOT A DEPENDENCY — a side effect that
+    // happens to be load-bearing appears in no graph, so nothing announces when
+    // a correct, unrelated decision removes it.
     expect(ledger).toEqual([
       "<bounty-cli> sessions",
       "<bounty-cli> open --session-key anthill-dev --pin --no-open",
