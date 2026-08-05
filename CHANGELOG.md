@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.10.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.9.0...anthill-v1.10.0) (2026-08-05)
+
+
+### Features
+
+* **comms:** a teardown may no longer be authorised by an absence of data ([eb7d1fc](https://github.com/ichabodcole/anthill/commit/eb7d1fc01ee1364e35638300875d55e1cf512450))
+
+
+### Bug Fixes
+
+* **comms:** the tombstone had no session, so last night's departure authorised tonight's teardown ([53ecae4](https://github.com/ichabodcole/anthill/commit/53ecae473e83271e0622fcb09476f144d58fc872))
+* **join:** 'scratch is gitignored so it does not survive the session' was false, and shipped ([3b82cef](https://github.com/ichabodcole/anthill/commit/3b82cef26c6024c55360805f910f81ea07c9958a))
+
 ## [1.9.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.8.0...anthill-v1.9.0) (2026-08-05)
 
 
