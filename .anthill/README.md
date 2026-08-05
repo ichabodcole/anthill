@@ -223,6 +223,17 @@ you treat a green as a verdict on your commit.**_
   no notion of a message being in flight. A read-watermark lets the other seat see instantly that your
   call predates their falsification, instead of discovering it later. (New convention — tell us
   whether it earned its keep.)
+- **When ONE message answers SEVERAL, index it by the message ids it answers — never by topic.**
+  A table (`| msg | from | ask | answered in |`) turns an unanswered ask into a **visible blank cell**;
+  a topic-shaped ruling leaves it an **absence**, and an absence is not readable.
+  This is the read-watermark's counterpart: a seat stamps **what it had read**, and whoever rules stamps **what it answered**.
+  It bites hardest for the lead, because answering several asks at once is the lead's default rather than an occasional act.
+  **Why writing "be thorough" cannot fix it:** a _"what I am NOT ruling on"_ section is enumerated from the author's **agenda** — the questions they are consciously holding — and not from the **inbox** of asks that arrived.
+  The omission and the deferral are produced by the same pass, so **the guard is blind in exactly the case it exists for**, and the ruling reads _more_ complete for having the section.
+  Same move as a total field whose `false` you can read: a readable blank beats a missing entry.
+  _Scar (session 10): a lead ruled six asks and explicitly named three he was not ruling on, and a seat's two asks appeared in neither list._
+  _One of them was **nearly** covered by a ruling on the same class — and "nearly" is the defect, because **a ruling that resolves the class without naming the instance is indistinguishable from one that missed it**, so the seat cannot tell whether it has been answered or overlooked._
+  _The table earned its keep a second way nobody predicted, within the hour: it makes a **wrong** entry auditable. A row recorded a claim whose own author retracted it minutes later, and the row is what made the stale entry findable and struck._
 - **The atomic cross-seat land: assemble, don't marinate.** When several seats' halves are
   uncompilable until all of them land, the naive approach parks everyone's red work in the shared tree
   for as long as the slowest seat drafts. Instead: **draft out-of-tree in gitignored scratch → post
