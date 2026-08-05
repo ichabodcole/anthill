@@ -86,6 +86,20 @@ is what CI produces. Earlier: a parent-commit control returning zero for the wro
 → **The question that finds them: _in which world does this control FAIL?_** If you cannot name it,
 you have a decoration.
 
+**→ AND THE OTHER HALF: THE CHECK YOU ALREADY RAN IS THE ONE YOU ARE MOST LIKELY TO TALK YOURSELF OUT
+OF.** *"In which world does this control fail?"* finds the decoration. **Nothing finds the control you
+ran, read, and set aside.**
+_Scar, n=2 in one session, two seats, artifact in hand both times: a seat ran the control that
+falsifies the tidy explanation, **printed it**, and deferred to the tidier account anyway — and
+another held `119963` bytes whole against a published rule saying 64KiB was the cap, a contradiction
+with exactly one resolution, and wrote *"it happened to fit tonight, which is luck."* **Neither
+control was broken. Both fired. Both results were declined — and both times the discarded reading was
+the one that convicted someone senior.**_
+**A vacuous control fails SILENTLY. A valid control you set aside fails LOUDLY and is overridden
+anyway — and nothing in our apparatus notices the second, precisely BECAUSE the instrument did its
+job.** _(Supplied by the principle's own author, an hour before adoption, in a message the lead had
+read only as a preview — and raised again after close rather than let go.)_
+
 **AN IMPOSSIBILITY CLAIM ENDS AN INVESTIGATION, AND EVERY INSTRUMENT YOU OWN EXISTS TO CONTINUE ONE —
 SO NONE OF THEM FIRE ON IT.**
 Controls, mutations, positive anchors, *"did my probe reach it"*, *"what did I hold fixed"* — **all of
