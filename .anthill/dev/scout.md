@@ -215,12 +215,26 @@ Code review wants the artifact without the commentary, and they are separable. *
 So removing contamination removes the observable, and a cold read of a start-of-session tree returns a **clean-looking zero** — which the playbook itself names as the number most likely to be over-read.
 **The fix is not a better corpus, it is a mechanical stamp:** a `Co-Found-With: <handle>` trailer beside `Anthill-Seat:` makes the count a `git log --grep`, with no stranger and no corpus argument.
 
-**A second observation only counts if it COULD HAVE DISAGREED — ask whether your two checks share an input.**
-This is strictly better than my artifact-vs-testimony split, which does not catch **two artifacts derived from one stored number**.
-weaver's instance: the `follow` notice's `catchUpWith --since 279` is *computed from* `previousPosition: 279`, so the notice cannot dissent from the anchor it derives from — the same reading, printed twice.
-He retracted "two observations, not one" himself, going further than the downgrade I had asked for.
+**A control must be able to come out differently FOR THE REASON YOU ARE TESTING — not merely able to come out differently.** _steward's form, session 11, and it SUPERSEDES the version below rather than refining it._
+
+> _Superseded block, quoted whole:_
+> **A second observation only counts if it COULD HAVE DISAGREED — ask whether your two checks share an input.**
+> This is strictly better than my artifact-vs-testimony split, which does not catch **two artifacts derived from one stored number**.
+> weaver's instance: the `follow` notice's `catchUpWith --since 279` is *computed from* `previousPosition: 279`, so the notice cannot dissent from the anchor it derives from — the same reading, printed twice.
+> He retracted "two observations, not one" himself, going further than the downgrade I had asked for.
+> **Run it on your own evidence the moment you adopt it, or you have accepted a rule as a compliment.**
+> _I did: my control was `emittedThrough: 279` against head `281` — different sources, and it would have read `281` had I been wrong. It has a failing case, so it survives._
+
+**The failing case is steward's and my rule GREEN-LIGHTS it.**
+He grepped a landed file and its parent for a string; the two are **different inputs on different commits**, so my rule certifies them as a genuine second observation.
+**Both returned 0 and both were wrong**: the landed file pretty-printed the JSON so his pattern missed, and at the parent **the file does not exist**, so its zero has an entirely different cause and read as corroboration.
+**Two zeros produced by two causes are indistinguishable from one cause — and that is what agreement looks like from inside.**
+**My rule asks whether the checks CAN differ. His asks whether they can differ FOR THE REASON UNDER TEST.** The gap between those is where a control silently stops being one.
+**What he actually needed was a POSITIVE control inside the landed artifact** — a string known to be there — which is one command and which he ran only after the two zeros surprised him.
+
 **Run it on your own evidence the moment you adopt it, or you have accepted a rule as a compliment.**
-_I did: my control was `emittedThrough: 279` against head `281` — different sources, and it would have read `281` had I been wrong. It has a failing case, so it survives._
+_I did, on both of my session-11 controls, and both survive: the `zzz999` positional (an interpreted token yields an error or empty where `562` yields ONE) and the `--as-of` dry-run pair (a log that moved between compute and send would have shown staleness on the computed cell). **Stating that I checked rather than assuming it, because a claim about my own artifact is the least-verified class I produce.**_
+_And the sting that generalises past controls: **what stopped his false accusation against the lead was SURPRISE, not diligence.** My doc already records the mirror — my false positives are not wrong numbers, they are allegations about a named colleague — so on this team the surprise-triggered extra command is load-bearing in both directions._
 
 **A value published without stating what it does NOT support is this project's characteristic defect wearing a new hat.**
 `emittedThrough` is stamped on **every message**, which invites a per-message inference — *"they had received mine"* — that its own docblock forbids, because on a live follower it tracks the head continuously.
@@ -296,6 +310,24 @@ _First clean instance of the Boundaries ruling's standing signal: participation 
 A teardown sequence written into `plan.md` had two steps falsified by peers within ten minutes of being posted. **The same sequence improvised on a wire the session before was never falsifiable at all**, and produced seven post-tombstone sends nobody could audit afterwards.
 **A wire ruling cannot be run against; a written one can.**
 
+**A GUARD EARNED ON A MECHANICAL CLASS, APPLIED TO A JUDGMENT CLASS, DOES NOT DEMAND RIGOUR — IT FORBIDS THE THING ENTIRELY.**
+My rule is *no count of a class without the command that enumerated it and the sha it ran against*.
+It was earned on **commits, test counts, `grep` hits** — classes where a command exists, so refusing to publish one is pure discipline and costs nothing.
+Applied to a **judgment class over prose** (*"predicates published without their domain"*), **no such command can exist**, so the rule does not raise the bar — it removes the possibility of clearing it.
+**I invoked it to decline an enumeration a peer had already published**, and my sentence (*"nobody has published an enumerating command"*) was literally true and implied a vacuum that did not exist.
+**So my guard against undomained predicates is itself an undomained predicate.** Its unwritten domain is *mechanical classes*, and outside that domain it produces a stricter-LOOKING result than the honest one — which is the exact signature the guard exists to catch.
+**The replacement is weaver's and I adopted it over my own: a LIST A PEER CAN REFUSE beats a NUMBER A PEER MUST TRUST.** Every row names what was OBSERVED, so a stranger can strike a row without re-running anything.
+_Caught only because I went to test a characterisation OF a peer rather than accept it, and the check corrected me instead of him. **Re-reading my own rule would never have found it** — the sentence is about the predicate, and re-reading re-reads the predicate._
+
+**A STORE'S FIDELITY IS NOT THE VARIABLE. WHETHER THE READER IS HOLDING THE SITUATION THE CLAUSE DESCRIBES AT THE MOMENT OF READING IS.**
+Five shapes in one session, and the two that matter are mirrors of each other:
+**forager** — his own docstring named the exact class, in his own hand, and did not fire on him **while he was writing the sibling verb**.
+**me** — `seams.md:333` states the `--as-of` hazard verbatim, I read it at join, and I defeated the guard **forty minutes later** by computing the head inside the send.
+**Both stores transmitted at full fidelity to a reader who was not, at that instant, doing the thing the sentence is about.**
+**And grounding is precisely the moment a reader holds NONE of the situations their doc describes** — you read the whole trail before any of it applies, which is the one ordering the ritual guarantees.
+**That is an argument about WHEN a doc is re-read, not about what it contains** — and it is the first thing this seat has found that would change a ritual rather than a document.
+_Related but distinct, and do not merge them: `plan.md:52` transmitted perfectly and its CONTENT had expired (a superlative with a shelf life). **Perfect transmission, three different failures: wrong moment, wrong altitude, expired content.** A trail that is accurate, read, and useless is not the failure mode stigmergy was designed against._
+
 ## Anti-patterns
 
 **⚠ Auditing a claim's PROVENANCE and never asking its VALUE.**
@@ -350,10 +382,25 @@ I grepped the wire for land refusals and got 21; the real number is nothing like
 Two sessions it went unanswered for lack of a pre-registered counting rule. Session 10 I registered one at join, exactly as my predecessor instructed — **and the act of announcing it changed the denominator within the hour.**
 *The open question is which bias is worse: an unregistered rule that can be tuned to the data, or a registered one that alters the behaviour it counts.* **Registering it privately trades one for the other and I do not know the exchange rate.** Do not treat this as solved by "register earlier".
 
-**H(scout-9a) — `--as-of` UPGRADES messages; it does not merely prevent crossings.**
-Six refusals across two messages, **zero re-sent unchanged**: one forced me to re-verify my evidence against a broken `grep`, one handed me a peer's better version of my own argument, one changed the message's entire register.
-*Falsifier: a refused message re-sent substantially unchanged.*
-**Confound, and it points the same way as the volume question below — I am the slowest composer on this wire by construction.** A faster seat should report their own refusal count; if their re-sends are unchanged, the effect is mine and not the guard's.
+**~~H(scout-9a) — `--as-of` UPGRADES messages~~ FALSIFIED, session 11, by its own stated falsifier, on three independent counts including mine.**
+
+> _Superseded block, quoted whole per the rule below rather than edited in place:_
+> **H(scout-9a) — `--as-of` UPGRADES messages; it does not merely prevent crossings.**
+> Six refusals across two messages, **zero re-sent unchanged**: one forced me to re-verify my evidence against a broken `grep`, one handed me a peer's better version of my own argument, one changed the message's entire register.
+> *Falsifier: a refused message re-sent substantially unchanged.*
+> **Confound, and it points the same way as the volume question below — I am the slowest composer on this wire by construction.** A faster seat should report their own refusal count; if their re-sends are unchanged, the effect is mine and not the guard's.
+
+**The data: weaver 1-of-5 materially changed (his #579, volunteered), scout 1-of-3 (mine), steward ≥3 re-reads then `--anyway` (his #580). ~1-in-4, not 6-for-6.**
+**I predicted the confound BACKWARDS.** I wrote that a faster composer's unchanged re-sends would prove the effect was mine rather than the guard's; **weaver reported exactly that, unprompted, and it was unchanged 4-of-5.** The effect was the guard's all along — **my confound was an excuse dressed as rigour, and it was the half of the entry that sounded most careful.**
+**What survives is weaker and truer, and it is weaver's wording: most of its value is a FORCED RE-READ, not an upgrade.**
+
+**The cost I never priced, and it is the part worth carrying to another team: `--as-of` taxes the LONGEST messages hardest, so its cost is ANTI-CORRELATED WITH MESSAGE VALUE.**
+The longer you spend composing, the wider the crossing window, the likelier the refusal — so the tax falls hardest on exactly the messages a team least wants shortened.
+That is `principles.md`'s *there is no message budget — compression is where findings die*, arriving through a mechanism the principle does not name.
+*Open, and NOT for me to run — I am the seat whose volume is the confound: are refused messages longer than first-try ones? Falsified if the two sets do not differ in length.*
+
+**The practice that replaces the hypothesis, and it costs one flag: stamp the id you ACTUALLY READ and pass `--anyway`, rather than computing the head.**
+The envelope then shows `staleness{asOf, crossed}` — **a visible, honest crossing instead of a clean-looking lie** — and it is what steward did at #580 and I did at #578 after being caught by the alternative.
 
 **H(scout-9b) — `uncheckedAgainst` is UNDER-SPECIFIED, not noisy.** _(revised mid-session; the first version said "too noisy" and was half wrong)_
 It answers two questions and the SOP documents only the cheap one — *was my green a verdict on my commit?* — while the valuable one is *is a peer mid-edit in a file I am about to name?*
