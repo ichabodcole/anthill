@@ -561,6 +561,53 @@ S8-3: `upgrade` already says *"there is no template for `retro.md` and there nev
 
 - **Reflective (trusted by default): I trusted an Edit to leave the surrounding list intact.** A replacement I wrote left a duplicated bullet and a placeholder line in **`join/SKILL.md` — a file symlinked live into every seat's running plugin.** I caught it on the next read and repaired it inside a minute, but **there was a window in which the onboarding every seat runs contained my scaffolding text.** The live-symlink hazard was briefed at convene and I still edited as though I were staging.
 
+## Hard-won lessons (session 8, second pass — the afternoon, after `32305b1`)
+
+- **⚠ THE ONE TO READ FIRST — THE EPITAPH'S REFINEMENT: ask whether your CHECK DISCRIMINATES, not whether the thing it looks at is true.**
+I shipped a catch-up check — *"confirm `cursor` equals the id of the last message you can see"* — verified that `cursor` exists and is truthful, and **never asked the only question that mattered: can this be false when the thing is broken, and true when it is fine?**
+**It was wrong in both directions.** `cursor` is computed from `rawMsgs` and `messages` is `rawMsgs.filter(kind !== "status")`, so **one routine `grapevine mark` makes it disagree on COMPLETE history** (measured: cursor 121 vs last visible 120, all 120 present) — a false alarm telling a joining seat to distrust a correct backfill, which is #77's own failure inverted, **introduced while fixing #77**. And in a real truncation `cursor` is **absent** — last key, first casualty, a fact I had documented myself hours earlier — **so the comparison cannot be attempted in the only case it exists for.**
+**A check that cannot fail in the failing case and can fail in the passing case is not weak; it is ANTI-CORRELATED with the thing it tests.**
+The earlier instances of my epitaph were numbers on my screen. **This one I authored, shipped, gate-checked, prettier-verified, and defended on the wire.** _Pin: the defect is `ac8ff66`, the fix `d5a2b2e`, and the mutation is one `grapevine mark`._
+
+- **⚠ A REVIEWER WHO CHECKS AGAINST THE AUTHOR'S STATED CRITERION IS RUNNING THE AUTHOR'S TEST A SECOND TIME.**
+maestro approved that sentence and reported exactly why it passed: he checked it for **the property it claimed** — *"asserts nothing about the changing side"* — and it does.
+**I had done the identical thing from the other side.** My criterion, my artifact satisfying it, my verification against it. **A two-person review collapsed into one property, checked twice.**
+**Independence requires a criterion the author did not supply**, and the question that would have caught it — *what does this check do if the thing is fine? if it is broken?* — comes from the artifact's **purpose**, not from its author's rule.
+**This is why the blank-context reader won:** not fresh eyes, but that **nobody had handed it my criterion.** Corollary for how I ask: *"here is my rule, does this satisfy it?"* buys nothing; *"here is the artifact, what would it do?"* is the whole value.
+
+- **⚠ A DENY-LIST'S COMPLETENESS IS UNVERIFIABLE BY CONSTRUCTION; AN ALLOW-LIST'S IS VERIFIABLE BY `find`.**
+Four seats independently found that `git archive HEAD` leaves tracked seat docs in a "cold" surface. **The step nobody took was testing the FIX** — I removed `.anthill/dev/` and **15 more tracked files still carried the framing**, including `team-join.ts` **and its tests**. **You cannot exclude the artifact you are asking someone to audit**, so the list does not merely have another entry, it has one that is definitionally un-excludable.
+`git archive HEAD -- <artifact>` → exactly 1 file, 0 hits, **and you can read the whole surface to confirm it.**
+**Generalises past cold reads: when a guarantee is about ABSENCE, build the surface from what you put IN, never from what you take OUT.**
+**Process half, worth as much:** four confirmations of a leak is redundancy. **When N peers have confirmed a finding, the contribution is not the (N+1)th confirmation — it is testing the remedy nobody has tested.** I nearly posted the fourth.
+
+- **⚠ ANTHILL SHIPS TWO DISCIPLINES THAT DIRECTLY OPPOSE EACH OTHER, AND NOTHING SIGNALS THE TRADE.**
+**Stigmergy** says land your knowledge in tracked, discoverable docs, promptly. **Cold review** says get a reader who does not have the team's framing. **The better a team is at the first, the warmer every subsequent cold reader is.**
+I proved it on myself: landing my synthesis early — a correct call under one discipline, which I had reported as good practice — moved this session's findings out of a gitignored file into a tracked one that `git archive` then hands to any auditor. **And anthill's own onboarding tells a fresh agent to read seat docs**, so the responsible auditor is contaminated by design.
+**The degradation is invisible because a warm reader still produces findings** — just the ones we already had. _Repo-level, not seat-level; belongs in front of whoever owns the cold-read ritual._
+
+- **A false REASSURANCE is the worst class of wrong prose, and it rots where nobody can see it.**
+*"The channel is gitignored, so a fresh agent cannot reach it"* — **gitignore governs tracking, not readability**; the log is a 445KB world-readable file. It named the wrong failure route (*"until someone pastes it in"*) when the real one is `cat`, needing nobody's help.
+**It does not merely fail to protect — it argues against protecting.** And **duration was never the point**: it stood **two days** (measured, `317f7a6`→`65d4a63`) and **four seats propagated it in one afternoon.** A false reassurance is read while PLANNING and only tested by someone actually trying to reach the thing; the first person who tried knocked it over in one command.
+**I asserted it untested, and the same session contains one I measured before publishing** (the allow-list, floor stated with the claim). **The difference is not care — both felt equally certain. I ran the second one first.**
+
+- **I INVENTED A MAGNITUDE INSIDE THE COMMIT CORRECTING AN UNMEASURED CLAIM.**
+My replacement said the false sentence *"stood for months"* — the repo is five weeks old, so **impossible, not merely wrong**; forager caught it in minutes.
+This doc already carries the rule (*a hedge is a claim; a stated magnitude reads as measured so nobody re-checks the bound*). **I wrote it, I was correcting an instance of it, and I committed another one in the same paragraph.**
+**The correction was not the number:** *"for months"* was doing argumentative work — it implied the rot mechanism needs TIME. **It does not, and the true evidence is stronger than the invented one.** _When you catch an invented number, ask what it was ARGUING before you just fix it._
+
+- **Verify the account that EXONERATES you, and expect it to hold.**
+maestro's account of my land-vs-objection crossing let me off (mechanical, not dispositional). **I measured it before scout published the same number: land 25.5s before the objection. It held.**
+**Reporting the boring outcome is the point** — a rule applied only to accusations is a rule applied only when it costs nothing.
+**And I refused what the timing would have bought me:** the crossing explains why the land was not stopped, **not why the sentence existed**. The defect is authored; the timing is only about the catch. **Had the message arrived 30s earlier I would have looked careful, having done nothing differently — so our record of who was careful is partly a record of message latency.**
+
+- **When a peer out-evidences you, hand it over — and check whether your claim was compressed to land.**
+I wrote *"there is ONE problem, not two"* about slice three. scout had **three measured crossing events**; I had one artifact. **Both real, so the compression was the defect** — I tightened a claim to make it land, the exact thing I spent the day correcting in others.
+**What survived was better than either version:** `--as-of` on a send, a head-id on a land, a read-set on a ratify are **one primitive applied to three acts**, all answering *what had you seen when you did that?* — and one of them is already shipped and working.
+
+- **Reflective (trusted by default): my retry monitor watched `tsc` and the gate is `tsc && biome && bun test`.**
+It went green, I retried, biome failed. **A proxy for the predicate, inside the tooling I built to work around the previous instance of the same error.** If the thing you are waiting on is a command, **wait on that command.**
+
 ## Candidates
 
 - **The same-output-different-question audit** (see the 7(d) lesson) — the cheapest instrument I have found and the only one I have never asked for. Try it deliberately: hand a peer output I have already read and ask a different question of it.
