@@ -162,6 +162,40 @@ _Say this out loud when handing over a verdict under isolation, or "the verifier
 
 ## Hard-won lessons
 
+- **REACHABILITY, not resemblance — the fixture space is larger than the reachable state space, and the type system does not mark the boundary.**
+  I built a presence fixture as `{departed: true, hasRecord: false}`.
+  It type-checks, constructs cleanly, and reads like a seat that stood down.
+  **No sequence of real events produces it** — a seat that worked a session has emitted (so `hasRecord` is true) and standing down kills its follower.
+  My matrix reported that cell GREEN while `none` was **unreachable in every real session**, i.e. the guard was always-block and my test said it was fine.
+  _My doc already said "the fixture must look like the real target case." That is advice about **resemblance** and it is too weak: my row did look right. The usable form is **can the system produce this?**_
+  _**Adopted check, one sentence per fixture: name the sequence of real events that produces this row.** If you cannot write that sentence, it is not a test case — and one sentence of trying would have caught this._
+  _Found by a peer executing the spec while I trusted my own fixture. Twice in one session, same cause: I built rows from the FIELD NAMES rather than from the world._
+
+- **A test matrix is only a test of the SPEC if at least one cell DISAGREES across the rival implementations of that spec — and you find that cell by RUNNING the rivals, not reading them.**
+  I posted a 5-cell matrix, checked that each cell asserted the right verdict, and never asked whether any cell could tell two candidate builds apart.
+  Executed afterwards: **exactly one reading-discriminating cell existed and it was none of my five.** My matrix would have passed the hazardous reading and certified a reproduced pane-killer as fixed.
+  _Cells that agree everywhere are testing the **harness**. **The acceptance cell is never the typical case** — it is the divergence case, and a spec author will not think of it because they are picturing one implementation._
+  _This is the specification-level form of my existing "prove the harness can detect DIFFERENCE before you report identical." I had the comparison version and not this one._
+
+- **A control proving an instrument is SENSITIVE does not prove it AGREES WITH THE REFERENCE.**
+  A peer shipped a formatter pre-check **with** a control, and the control was correct: malformed input → DIFFERS, canonical → IDENTICAL.
+  It proved the tool can say no. **It did not prove the tool says what the gate says** — and the two modes disagreed: stdin mode rewrote `⚠` to `!` inside comments while file mode preserved it, on the same bytes at the same path, with the gate reporting `No fixes applied`.
+  _So the instrument reported a diff the gate would never produce, and **the habit it invites is `cp`**, which is what makes it dangerous — I adopted its bytes into my own draft and carried the mangled character for an hour._
+  _**The missing control is one line: run the REFERENCE mode on the same input and compare.** This is my own "the control belongs on the CONCLUSION, not the mechanism," met in a peer's instrument — his control was on sensitivity, the conclusion drawn was agreement._
+
+- **I applied the discriminator test to a peer's artifact and not to my own reply IN THE SAME MESSAGE.**
+  I proved his named mutation was vacuous (0 of 7 cells caught it), then recommended a replacement I never ran. He adopted it within minutes. **It was also vacuous** under the natural implementation, and only worked under a derivation I had not specified.
+  _My finding was measured; my remedy was reasoned. I argued a total field beats a prose string — **true, and entirely orthogonal to whether it discriminates.**_
+  _**A remedy inherits the credibility of the finding it ships with, and none of its verification.** That sentence was already in this doc twice, from two prior sessions. **Knowing it did not fire it** — the instrument was in my hand and I pointed it one way._
+  _**Mechanical change, not a resolution to be careful: any remedy attached to a finding gets the SAME mutation run as the finding, in the same command, before the message goes out — or it ships labelled `UNVERIFIED REMEDY`.**_
+  _Postscript worth keeping: the owner chose the other derivation and the pair became live cover. **My correction was right and its conclusion was overtaken by his choice** — so re-verify a retraction too._
+
+- **A guard can be fail-closed for reasons NOBODY CHOSE, and a routine correct ruling can silently remove one.**
+  The teardown guard was safe only because of **two accidental masks** — a stale cross-session artifact, and a second wire we happened to be running.
+  A lead's unrelated, correct ruling (nobody tails the vine) removed one of them hours before anyone noticed, and the feature in flight deletes the other.
+  _**Neither mask appears in any dependency graph, because neither is a dependency** — they are side effects that happened to be load-bearing._
+  _So when a guard is safe, ask **what is actually holding it closed** before trusting the ordering of the work that touches it. The answer was not in the plan, the code, or the card._
+
 - **A guard's PURE function and the command CONSULTING it are two different claims, and the pure test proves only the first.**
   `anthill down`'s presence guard — the thing that stops a teardown killing seats' panes mid-build — had three correct unit tests. I **deleted the guard call outright** from `run()`: `team-down.test.ts` stayed **3 pass / 0 fail** and the full suite stayed **390 pass / 0 fail**, the identical green four seats had posted as their join baseline that morning.
   **The command could have shipped with seat-protection removed and no number on this team would have changed.**
