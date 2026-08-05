@@ -1,10 +1,11 @@
 # Comms as the default team wire — plan
 
-**Status:** **PHASE 1 PARTIALLY SHIPPED**, merged to `develop` at `5697eca` with **two known lifecycle defects**. Phases 2 and 3 unbuilt. Seams below are **RATIFIED** except Contract 6(g), which is marked UNRATIFIED in `seams.md`.
-**Created:** 2026-08-04 (session 9) · **Author:** maestro (lead) · **Last revised:** 2026-08-04, after the session-9 merge, to replace a phase split the tree had falsified.
+**Status:** **PHASE 2 SHIPPED (session 10).** The lifecycle defects are repaired — and there were **THREE**, not two. Contract 6(g) is now **RATIFIED as a description and FALSIFIED as a safety property** (`ca6c41b`). Phase 3 (the prose migration + the swap run) is **DEFERRED to session 11** by the human's ruling.
+**Created:** 2026-08-04 (session 9) · **Author:** maestro (lead) · **Last revised:** 2026-08-05 (session 10), against what shipped rather than what was intended.
 **Follows:** [proposal.md](./proposal.md) · [capability-state](../capability-state/proposal.md) _(moved out of this folder — it is slice three, not this project)_
-**Sessions:** [session 9 — phase 1](./sessions/2026-08-04-session-9-phase-1.md)
-**Branch:** `feat/comms-as-default` (merged) · **Gate:** `bun run check` · **Baseline:** 497 pass at `acefa0c` → **512 pass at `5697eca`**
+**Sessions:** [session 9 — phase 1](./sessions/2026-08-04-session-9-phase-1.md) · session 10 — phase 2 (this revision)
+**Branch:** `feat/comms-as-default` · **Gate:** `bun run check`
+**Baseline, both ends measured on CLEAN trees at named shas** (weaver, comms #501): **512 pass / 0 fail @ `27da450`** → **529 pass + 1 todo / 0 fail @ `13a4ae7`** = **+17 pass**. Every other reading taken this session was over a dirty tree; those two were not.
 
 > **This file was authored as a SKELETON and is no longer one.** That banner has been discharged: every
 > seam below was ratified or falsified on the wire before it was built, and four of the lead's five
@@ -49,6 +50,16 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
   > `classifyPresence` returns `unknown` on **failure paths only** (`!ok`, unparseable JSON, `daemon:false`, missing `subscribers` key — `team-support.ts:265–284`). **A healthy vine with nobody on it returns `none`, not `unknown`.** Measured: real payload `{"subscribers":[]}` → vine leg `none` → combined `none` → **`shouldBlockTeardown` PERMITS teardown.** Control: vine with a subscriber → `present`.
   >
   > **So mask #1 is not removed by the swap at step 4 — it was already spent at #284, by ruling, the moment this team stopped tailing the vine.** The only mask still standing is the stale position files, and the step that removes those is **(3) rotation**.
+  >
+  > ### 🔴 CORRECTED AT SESSION 10, AND THE CORRECTION REVERSES THE SIGN
+  >
+  > **The sentence above is incomplete in the one direction that matters, and the word "mask" is what hid it.** A **mask** fails **SAFE** — it makes the guard over-block. The bullet enumerates only masks, so it can only ever find hazards that make the guard too cautious.
+  >
+  > **Stale cross-session DEPARTURE records fail OPEN.** `hasDeparted` was a bare `existsSync` at `<teamDir>/comms/<channel>.departures/<handle>.json` — **channel-scoped, over the channel's entire history** — and the record `{handle, channel, at}` carries **nothing to scope by**, so the domain was **absent rather than wrong**.
+  >
+  > Measured on the real tree with a control differing in exactly one variable: with session 9's tombstones on disk the guard returned **`none` / `all-spawned-departed`** and **authorised killing panes full of working seats**; with the same rows and the tombstones removed, **`unknown`**, blocked.
+  >
+  > **Same lifetime bug as the position files, opposite sign — and this plan's prose only knew the safe direction.** That is D3, repaired at `53ecae4`.
 
 - **Therefore the pane-kill window opens at step (3), not step (4).**
 
@@ -67,11 +78,29 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
 
 **The dependency order above is unchanged and still correct. What follows is where the phase boundaries actually fell**, which is not where this plan predicted. One branch, one release, per the human's framing — the phases are review-and-validation boundaries, not separate deliverables.
 
-|             | steps                   | status                             | validation criterion                                                                                                                                        |
-| ----------- | ----------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Phase 1** | 1–2                     | **SHIPPED** `5697eca`, two defects | gate green at 512; guard mutation pair kills on both cells                                                                                                  |
-| **Phase 2** | defect repair, then 3–4 | **NOT BUILT**                      | `none` reachable through the intended lifecycle **and** unreachable while any seat is working; `resolveCoordCli("grapevine")` absent from `plugin/scripts/` |
-| **Phase 3** | 5–6                     | **NOT BUILT**                      | the swap run: a session convenes, works and tears down with grapevine never opened **on this channel**                                                      |
+|             | steps                        | status                                 | validation criterion                                                                                                                                               |
+| ----------- | ---------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Phase 1** | 1–2                          | **SHIPPED** `5697eca`, two defects     | gate green at 512; guard mutation pair kills on both cells                                                                                                         |
+| **Phase 2** | the defect repair (D1+D2+D3) | **SHIPPED session 10** `53ecae4`       | `none` unreachable at the **fresh-spawn instant** as well as mid-session; three mutations, each with its substitution count asserted before the suite was believed |
+| **Phase 3** | 3–6                          | **NOT BUILT — deferred to session 11** | rotation, grapevine removal, the prose migration, and the swap run                                                                                                 |
+
+**⚠ Session 10 did NOT do steps 3–4.** The human ruled scope as **Phase 2 + the templates fix**, and the C4 prose migration is **sized and deferred**, not abandoned: prose-only `grapevine` 37 vs `\bvine\b` **59**, and every category-(2) site needs a **decision**, not a sweep.
+
+#### THE DEFECT COUNT WAS TWO AND IT IS THREE — one lifetime bug with three faces
+
+- **D1** — `none` unreachable: branch 1 (`followerAlive → present`) fired before departure was consulted, and `down` is what kills the follow. Circular.
+- **D2** — `departed(s)` does not mean the seat has stopped. Measured 4/4 seats, 7 messages after their own departure record.
+- **D3 — `departed(s)` had NO DOMAIN.** Found session 10. Session 9 added the non-emptiness conjunct to kill a vacuous quantifier; **the same class of hole survived inside the quantified predicate.**
+
+**All three are the same shape: a writer shipped with no lifecycle and no reader.** That is session 9's Q3 hypothesis #5 at **3-for-3**.
+
+**"Never D1 alone" is now an EXECUTABLE FACT rather than a constraint we agreed to.** sentinel measured that `{departed:T, hasRecord:F}` is **identical on main and on both candidate D1 repairs** — a seat with no position record never reaches branch 1, so no D1 fix can move that cell **by construction.** Only session-scoping `departed(s)` does. A D1-only repair would have left the hazard live **with branch 1 hardened, which reads like it was addressed.**
+
+#### The repair, and why rotation did NOT become a precondition
+
+`departed(s) ⟺ tombstone exists ∧ tombstone.at >= sessionOpen.openedAt`. **Nothing is deleted**, so session 9's tombstones survive and simply stop counting — which matters, because that log is the only copy of what the retro cites by id.
+
+**The lead raised the strongest counter (rotation becomes a precondition of Phase 2, reordering the integration order again) and the owner broke it.** `writeSessionOpen` already stamped `openedAt`; `stand-down` already stamped `at`. **D3 needed no writer change at all — only a reader that uses them.** Rotation stays a **successor**.
 
 **Phase 2 opens with a hard constraint and it is the single most important line in this plan.** The two shipped defects (`seams.md` Contract 6(g)) **must be repaired together.**
 
@@ -288,6 +317,18 @@ Assembled and correct means all of:
 
    - **(b) Mutation pair** — with the fix landed, **revert the guard → RED**, unmutated control → **GREEN**. Proves _the test can fail at all_. Same command, same file, opposite result.
 
+   - **(c) ADDED SESSION 10 — the assertion keys on `state` AND `because`, NEVER on `shouldBlockTeardown` alone.**
+
+     > **Measured, not reasoned.** Two natural repairs of D1 exist — qualify branch 1, or hoist the departure test above it. Exhaustively over 36 cells they agree on 32 and disagree only on `{departed:T, followerAlive:T, spawned: null | []}`, where one returns `unknown`/`no-open-record` and the other `present`/`live-follower`.
+     >
+     > **And `shouldBlockTeardown` returns `true` for BOTH on every one of those cells.** So the distinction differs on **zero cells by authorisation verdict and two by `because`** — a test keyed on the verdict **certifies both implementations identically.**
+     >
+     > That is the **"untestable as specified"** shape this team shipped once and regretted, **arriving one level up.** `because` is not a convenience here: it is the only surface on which the distinction is observable at all, which is what the enum was introduced for (`team-support.ts:211`).
+
+     **Two further limits on this gate, both found by the verifier against its own instrument:**
+     - **A predicted mix that cannot discriminate is a harness test wearing a coverage badge.** The first mix posted fixed `spawned` on all four cells and therefore sat entirely inside the rivals' **agreeing** region. **Necessary, not sufficient.**
+     - **A cell count over a space production cannot emit is inflated.** "6 of 36 moved" became **3 of 24 reachable** once the caller-side invariant was applied (the single production caller cannot emit `hasRecord:false` with `followerAlive` non-null).
+
    **Landing discipline for (a), ruled at session 9:** the red is observed **out of checkout** and posted to the wire with its output; the test then lands **atomically in one commit with the owner's fix** (`READY: <paths>` → the lead calls the land). The red-before-green is observed; it is simply not observed _in the shared tree_, where it would block every other seat's land.
 
 3. **The pane-kill scenario is reproduced, not reasoned about.** I have labelled it INFERRED throughout; it stays INFERRED until someone stands up a session and runs `down` against it.
@@ -301,6 +342,43 @@ Assembled and correct means all of:
 - **No `--as` authentication.** Real, filed, does not gate the swap because grapevine shares the hole. Note it makes any capability model advisory-only.
 - **No new measurement of cross-session token cost.** Confounded by construction.
 - **No rewrite of grapevine itself.** It is being removed from anthill's model, not fixed.
+
+## Session 10's teardown — the exit criterion, and what it does NOT prove
+
+**Written down before it was run, and corrected twice by seats before it ran. That is the point of writing it down.**
+
+```
+STEP A   every seat lands its own doc.                          ← the safety, not ceremony
+STEP B   READING 1 — `anthill down` MUST REFUSE via the `present` branch, naming all six.
+STEP C   each seat posts retro answers, THEN `comms stand-down --as <handle>`.
+STEP D   the lead lands `plan.md`, THEN runs `comms stand-down --as maestro`.
+STEP E   READING 2 — `anthill down` MUST AUTHORISE. `none` / `all-spawned-departed`. NO `--force`.
+```
+
+**STEP A exists because STEP B is not a rehearsal.** There is no `--dry-run`, and the obvious rehearsal is a trap: `down --session <nonexistent>` returns at `team-down.ts:85` **before the guard at `:109`** and reports `presence: "unknown"` **having never consulted presence** — an honest envelope in the perfect shape to be misread as a safe dry run. **So STEP B is the real thing run early, and if the guard is wrong it tears the session down while measuring whether it would.** Landing every doc first makes a wrongful kill cost the panes and nothing else.
+
+**STEP D exists because the lead is the blocker.** `maestro` is in `rows` but **not in `spawned`** — branch 1 is unqualified over the whole roster, so with all five spawned seats stood down and the lead still wired, the verdict is `present`/`live-follower` and `down` **refuses.** A dead follow is **not** sufficient: that is the `unexplained-follower` case. **Found by steward, reproduced independently by forager and sentinel. Three seats, one blocker, and it was the lead.**
+
+### What this criterion proves, stated BEFORE it ran
+
+- **It proves the lifecycle COMPOSES AT THE COMMAND BOUNDARY** — convene → spawn → stand down → `down` authorises with no `--force`. That is session 9's Q3 #1 and it was genuinely untested.
+- **It does NOT prove D3.** By STEP E every spawned seat has a **fresh** tombstone, which counts under both the old and new predicates. **The populations coincide.** D3 is pinned by mutation M2 (revert to the bare `existsSync` → 3 fail), not by this run.
+- **STEP B is `NOT DISCRIMINATING` for D3 either** — with all followers alive, the unrepaired guard returns `present` too. Recorded as a negative, **not scored as evidence**, because banking a green that both the defect and the repair predict is the confound the paired reading exists to kill.
+- **It does not prove `down` kills the right PANES.** That assertion (`killSession` not invoked) is pinned in the suite; **a live teardown is the last thing that happens, so its own verification cannot be re-run.** Structural limit, not a gap.
+
+### The vine can veto STEP E, and turning a wire off does not remove it from the verdict
+
+`combinePresence` lets a vine `unknown` override a comms `none`. **Measured tonight the vine leg is `none`** (0 subscribers, 0 connections), so it will not veto — and the failure direction is safe: a broken vine can only **cost us the criterion**, never authorise a wrong teardown. **If the vine leg is `unknown` at STEP E, the criterion is `INCONCLUSIVE`, not `FAILED`.**
+
+## The lead's own procedure defects, recorded as touch points rather than apologies
+
+**The land protocol checks the TREE (`( gate ) && commit`) and the SCOPE (`uncheckedAgainst`). It has no beat that checks the MESSAGE or the DIFF.** Both holes were found by using it:
+
+- **`0c3fc16` carries a stale test count** (522, carried from the previous sha; the gate had printed 529 in the same output). **A tree-grounded claim travels with its sha** — this one travelled with someone else's, and that someone was me one commit earlier.
+- **`3b82cef` carries a mangled body** — `printf` with double quotes let a backtick-quoted code span **execute as a command substitution**. The shell printed `command not found: comms` in the same block as the successful commit. **The tool's own help says `--stdin` is REQUIRED for bodies with backticks**, and the eight lands before it used quoted heredocs correctly. _(steward: the substitution genuinely **executed** something; the only reason it left a hole rather than output is that the CLI was down at that instant — a third "protected by an accident" this session.)_
+- **`0c3fc16` delivered one of two beats to `.anthill/README.md`** and both to the template. **The path was correctly claimed, scoped and gated, and nobody read the diff of what was being landed.** A path being the right path is not the same as its contents being what the message says.
+
+**Neither commit was amended.** Three seats were verifying lands **by content against a named sha** at the time; an amend invalidates a verification practice this team had just built, for a garbled sentence and a wrong number. **Recorded here instead — which is the whole reason this section exists.**
 
 ## Open questions — to settle at ratify or during build
 

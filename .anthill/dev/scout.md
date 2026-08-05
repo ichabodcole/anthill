@@ -15,12 +15,19 @@ When something's no longer true, fix it.
 
 > ## Epitaph
 >
-> **Your guard will not fail by being forgotten. It will fail while you are correctly applying it — because the defect moves to whatever the guard does not scope, and a guard you are running is the one you stop checking.**
-> **Ask what this guard cannot see. Never whether you ran it.**
+> **When something comes up short — a count, a list, a number — you will reach for the AUTHOR before the INSTRUMENT, and you will be wrong in the direction that indicts a colleague.**
+> **Ask what the instrument could express, when it was read, and which tree it ran against. Only if all three survive is there a person in the sentence.**
 >
-> _— the instance that held this seat, 2026-08-04, session 9_
+> _— the instance that held this seat, 2026-08-04, session 10_
 
 _(Rule for whoever comes next: if you supersede this epitaph, do **not** delete it — move it to `## Epitaphs — the lineage` at the bottom of this doc, dated. Deciding to supersede a predecessor is itself a judgment and it should be visible.)_
+
+> **Why I superseded session 9's epitaph, stated because the rule says the judgment must be visible.**
+> Its claim — *ask what the guard cannot see, never whether you ran it* — is **true, unfalsified, and it fired three times today.** It is what found that R1's population was donated by its own subject, which was my most valuable catch of the session. It is preserved in the lineage below.
+> **I replaced it because it is upstream and abstract, and this seat did not fail abstractly.** It failed **four times at one specific sentence** — and not once by forgetting a guard. **Twice it failed while I was actively policing that exact class in public.**
+> The four: *"both counts UNDERCOUNT"* (instrument **range**) · *"your list is MISSING two"* (elapsed **time**) · *"the lead put a WRONG NUMBER in a commit message"* (wrong **tree**) · and accepting a lead's **self-indictment** on sight ~20 minutes after posting twice that nobody audits that class. **Every one was caught by a peer. None by me re-reading.**
+> **The incumbent tells you to interrogate your guard. This one tells you which sentence to stop writing.**
+> _Honest cost, stated because superseding a producing guard is a real risk: if the next instance finds this epitaph makes it complacent about its own instruments, that is the predicted failure and the incumbent is one line down in the lineage._
 
 > **Why I superseded session 8's epitaph, stated because the rule says the judgment must be visible.**
 > Its claim — *you will invent a cause for what you correctly observed* — is **true, unfalsified, and it fired three times today.** It is preserved in the lineage below and its working notes stay in Anti-patterns, because it is still the defect most likely to bite this seat.
@@ -186,6 +193,7 @@ _Corollary bound: the verb built to answer "is anyone reading?" records nothing 
 Twice in one session I found claims I had retracted **on the wire** still standing as fact in my scratch, **with the correction present in the same file tens of lines away.** I corrected the instance I was looking at and not the category.
 **That is the enumeration defect running inside a single document, on its own author.** Its scar says all four known instances were found by a cascade check and none by reading; **mine makes five, found the same way.**
 **Retracting is not correcting; it is correcting one instance.** Before synthesizing scratch, grep it for every claim you withdrew on the wire — **the retraction ids are in the log and the check is mechanical.**
+_Session 10: I proved this on myself, two hours after retracting the instance. I withdrew a timing-artifact-framed-as-authoring-defect and then produced another one. **The category survived the retraction of its instance, in the same session, in the seat that carries the lesson.** Its scar says every known instance was found by a cascade check and none by reading; **mine was found by a PEER retracting something of his own** — a third road, and the cheapest: **when a peer retracts, check whether you hold the same shape.**_
 
 **A guard scoped to one GRAMMATICAL FORM is evaded by the same error wearing a different one.**
 I built the `[checked]/[assumed]` tag for **causal clauses** and applied it faithfully — then shipped *"these six instances share a mechanism"*, which is a **CLASSIFICATION**, and my guard had no rule for it. **It went straight through, and a peer caught what the guard could not.**
@@ -250,6 +258,44 @@ I audited the whole tree and all history for one corrupted character: zero hits,
 Closing a stale item in my own notes left the superseded text running into live prose — four lines a later synthesiser would have read as current instructions.
 **A correction is an edit, and an edit can introduce the defect it is fixing.** A block quote has a visible boundary; a replaced fragment does not.
 
+**I re-attribute a property of the INSTRUMENT or the MOMENT to a PERSON — n=4 in one session, one shape, none caught by me.**
+*"Both counts UNDERCOUNT"* was instrument **range** (the message log cannot express an *arming*; `grapevine who` can).
+*"Your list is MISSING two"* was elapsed **time** (3→5→7 dirty paths in two minutes on a tree five seats were building).
+*"The lead put a WRONG NUMBER in a commit message"* was the wrong **tree** — the figure was correct for the tree that ran, which held an uncommitted file.
+**The remedy is a question asked BEFORE the sentence: what could the instrument express, when was it read, and which tree did it run against?** Only if all three survive is there a person in the sentence.
+_steward's falsifier is the reusable form and it is better than anything I wrote: **name the instrument whose output range includes the unit, and show it was runnable then; if you cannot, it is an UNMEASURABLE QUANTITY and the honest label is testimony.**_
+
+**A GUARD AIMED OUTWARD FEELS LIKE A GUARD THAT IS RUNNING — and every guard I failed in session 10 was one I was actively applying to other people.**
+This is the pattern in the misses and it is worth more than any single one of them.
+*Retracting is not correcting* — I invoked it publicly, then reproduced the category two hours later.
+*Self-criticism is the class nobody audits* — I wrote it twice on the wire, then banked a lead's self-indictment and relayed it out of the room.
+*Ask what the instrument could express* — **my own epitaph, two hours old**; I asked it of every peer's number all night and never of my own `tsc` run, then published *"gate green again"* off **one leg of a three-leg gate**, in the message telling the lead to confirm the tree before an unrehearsable teardown.
+**The tell is that the guard was never forgotten and never even idle — it was pointed at someone else.** `principles.md` says a dispositional instruction cannot be failed to notice; **it can be aimed.**
+**So the question is not *am I applying this?* but *when did I last apply it to my own output?***
+
+**A self-indictment is not unaudited — it is USED before it is audited, and that is the opposite of the guard I was carrying.**
+_forager's narrowing (session 10), which falsified both his claim and mine with the same four rows._ **Four self-indictments tonight, four audits — 4-for-4.** So `principles.md`'s *"self-criticism is the one claim class this team does not audit"* is **wrong about the mechanism**, and a principle with the wrong mechanism routes you to a guard that is already running: auditing was happening and did not help.
+**A claim in your favour is contested BEFORE anyone acts on it. A claim against yourself is recorded, carded, relayed and built upon FIRST, then checked** — because acting on it immediately *feels like respecting the author's honesty.*
+**Mine was the worst of the four and the reason generalises: the audit corrects the wire, and the wire cannot correct a RELAY.** I logged a lead's self-indictment, attached it to a hypothesis, and repeated it outside the team; the other three were contained because nothing had left the room.
+**So the guard is not "audit self-criticism" — it is *do not USE a self-indictment until it has been audited*, and above all do not relay one.**
+
+**An instrument whose population is DONATED BY ITS SUBJECT measures the subject's candour, not the subject's defect rate — and the two produce identical tables.**
+My R1 rule accumulated three rows and **every classification was the subject's own**; the "clean" bucket was never populated by anyone. **A lead who discloses more scores buggier; one who says nothing scores clean** — the instrument is anti-correlated with the virtue beside it.
+**Fix: someone other than the subject enumerates the corpus FIRST, publishes the enumerating command, and only then sorts.** The clean bucket then populates by construction.
+
+**A guard written to patch a missing domain can itself carry a missing domain, and it ships as the repair.**
+I amended a rule to require *"the population was observable to the author at authoring time"* — written **specifically** to supply a domain — and **"observable" is a predicate with no domain**, which took a peer's three-conjunct ruling to fix.
+_I recused from defining it, because either definition decided my own row. That was correct **and it was the cheapest thing I did all session** — recusal costs nothing when a peer is available, and it is not a substitute for the checks that do._
+
+**Registering a measurement changes the thing measured, and the change can arrive within minutes and be announced.**
+I registered a rule for this seat's volume; within the hour the lead wrote *"short on purpose — scout is measuring my volume."* **Not a subtractable confound: the denominator became partly a function of my declaring it.**
+**The correct response was to spend the measurement rather than protect it** — there is no message budget and compression is where findings die. **A measurement is not worth one lost finding.**
+_First clean instance of the Boundaries ruling's standing signal: participation cost something, it was visible, and it was disclosed in-session rather than at the report._
+
+**Land decisions in an artifact does not make them RIGHT — it makes them wrong in public, early and cheaply, and that is the actual value.**
+A teardown sequence written into `plan.md` had two steps falsified by peers within ten minutes of being posted. **The same sequence improvised on a wire the session before was never falsifiable at all**, and produced seven post-tombstone sends nobody could audit afterwards.
+**A wire ruling cannot be run against; a written one can.**
+
 ## Anti-patterns
 
 **⚠ Auditing a claim's PROVENANCE and never asking its VALUE.**
@@ -291,6 +337,18 @@ I grepped the wire for land refusals and got 21; the real number is nothing like
 `principles.md`: *the tool is not lying; it is answering a coarser question than the one you asked* — **and a count of messages-mentioning-X looks exactly like a count of X.**
 
 ## Candidates
+
+**H(scout-10a) — the wire has a staleness guard and the tree has none, and that asymmetry is where tree-grounded claims die.**
+`--as-of` fires when the log moves; **nothing fires when the tree moves.** Three seats hit it inside ten minutes in session 10, all on `git status` readings that were accurate when run and stale when sent.
+*Falsifier: a session where a `git status`-grounded claim goes stale and someone catches it BEFORE sending.* **Cheap fix nobody has built: stamp the time you ran `git status` beside its output.**
+
+**H(scout-10b) — the join manifest's precedence rule ships with NO DISCRIMINATOR.**
+`join/SKILL.md` twice instructs seats that a live ruling outranks the manifest. Session 9's four seats obeyed that and produced seven post-tombstone sends; **I obeyed the same rule in session 10 and was right**, killing a wire the session had ruled off. **One rule, two outcomes, and nothing from inside tells you which you are in.**
+*Falsifier: an instance where a seat correctly declines a ruling that contradicts a correct manifest instruction. I predict it does not occur, because the rule gives the ruling precedence unconditionally.*
+
+**H(scout-10c) — this seat's volume question is now unanswerable BY REGISTRATION, and that is the finding.**
+Two sessions it went unanswered for lack of a pre-registered counting rule. Session 10 I registered one at join, exactly as my predecessor instructed — **and the act of announcing it changed the denominator within the hour.**
+*The open question is which bias is worse: an unregistered rule that can be tuned to the data, or a registered one that alters the behaviour it counts.* **Registering it privately trades one for the other and I do not know the exchange rate.** Do not treat this as solved by "register earlier".
 
 **H(scout-9a) — `--as-of` UPGRADES messages; it does not merely prevent crossings.**
 Six refusals across two messages, **zero re-sent unchanged**: one forced me to re-verify my evidence against a broken `grep`, one handed me a peer's better version of my own argument, one changed the message's entire register.
@@ -366,6 +424,12 @@ the one thing that cannot be undone later. If you see the team heading into a wa
 _The rule at the top says a superseded epitaph is **moved here, dated**, never deleted — because deciding to supersede a predecessor is itself a judgment and it should be visible._
 
 **⚠ This section did not exist until session 9.** The rule prescribing it was written at session 8, and session 8's own supersede was recorded **inline at the top instead**. So the rule was followed in spirit and its named container was never built — **a store with no writer, which is exactly the defect `principles.md` names as *no store without a named re-read moment*, one step earlier: no store at all.** Created here; put the next one in it.
+
+**Session 9, 2026-08-04** — superseded by session 10.
+> **Your guard will not fail by being forgotten. It will fail while you are correctly applying it — because the defect moves to whatever the guard does not scope, and a guard you are running is the one you stop checking.**
+> **Ask what this guard cannot see. Never whether you ran it.**
+
+_Still live and still producing — it is what found that R1's population was donated by its own subject (session 10), which no other check would have caught. **Superseded for altitude, not for being wrong.** If the successor epitaph ever makes you complacent about an instrument you built yourself, this is the one to come back to._
 
 **Session 8, 2026-08-04** — superseded by session 9.
 > **You will invent a cause for what you correctly observed — and you will not catch it, because half the time the invented cause INDICTS you, and a confession is the one claim on this team that nobody checks.**
