@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-28
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-05 (scope ratified — see Now)
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -14,39 +14,76 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Now
 
-**In flight: unreleased fixes on `develop` awaiting a release cut.** The 2026-07-27/28 feedback
-triage took 29 open issues from four consuming projects and shipped three of its four batches the
-same day (`315fa56`, `2170636`, `3111f28`, `37852c2`). Test count 157 → 202.
+# ▶ THE SCOPE OF WORK: **SHIP THE ONE-WIRE TEAM**
 
-### ▶ Do these next, in this order
+**Ratified by Cole, 2026-08-05.** _Everything needed before anthill can recommend comms as the default
+wire to consuming projects._ **In flight on `feat/comms-as-default-phase-3` (unmerged, 33 commits, gate
+green).**
 
-1. **Cut a release.** Four batches of fixes are sitting on `develop`, including a live regression
-   that has been mis-teaching every late joiner since 2026-07-09 and a warning for a board-destroying
-   data-loss bug. Consuming teams cannot benefit until this ships.
-2. **Close the fixed issues as part of the cut.** Several of the 29 are now fixed. This is not
-   bookkeeping — a team that files a report and sees nothing visibly happen stops filing, which is
-   the same feedback-loop health problem
-   [phase 6](briefs/2026-07-28-coordination-hardening-arc.md) is about.
-3. **Phase 1 of the arc — the ratify-gate pass.** Three skill-text items, no design needed, no
-   dependencies, and the strongest field evidence in the set (_"would have saved most of a session"_).
-   Plus two one-liners worth folding in: correct the exclusive-human-channel claim (**M9**'s doc half)
-   and route the structure reflection upstream (**phase 6 item 2** — the cheapest item anywhere here).
-   3c. **The next scope of work — [team comms spike](projects/_archive/team-comms-spike/proposal.md).** Build the
-   smallest cross-terminal comms tool that knows it is a team (seat identity from the roster, which is
-   free because `config.json` already declares it), run one real session on it, and let the friction
-   decide the rest. **A spike, not a design** — the
-   [coordination-layer investigation](investigations/2026-07-31-team-native-coordination-layer.md)'s
-   eight design areas are hypotheses to be earned, not a backlog. bounty stays in use; grapevine keeps
-   cross-project.
-   3b. **Two cheap experiments, whenever there's an appetite** — both gate the
-   [team-native coordination layer](investigations/2026-07-31-team-native-coordination-layer.md)
-   question (should anthill own its own comms/board rather than depending on spellbook): **run a
-   mixed-model team** (the anti-groupthink argument is currently reasoning, not evidence), and
-   **trial a heads-down mute** (the fail-safe attention mechanism). Neither is a build.
-4. **Then pick ONE experiment**, not a build. Recommended: the
-   [scar test](investigations/2026-07-28-practice-transmission-between-teams.md) — ship a judgment
-   rule with its originating scenario and without it, and see which changes a seat's behaviour. It is
-   the cheapest experiment available and it gates the entire practice-transmission loop.
+> ### ⚠ THIS SECTION WENT STALE FOR THREE SESSIONS AND NOBODY NOTICED, INCLUDING ITS OWN LEADS
+>
+> Until 2026-08-05 this block still said _"cut a release"_ (cut at `6bca04e`) and pointed **"the next
+> scope of work"** at the **archived** team-comms spike. **Sessions 9, 10 and 11 each ran a full
+> convene→finalize cycle without reading or updating it**, while this file's own header names both
+> moments. _A roadmap nothing re-reads is a wish list — its words, and it was one._
+> **The repair is a ritual beat, not resolve: card `S12-1`, weaver's lane.**
+
+### The exit criteria — all seven, every one mechanically checkable
+
+**The scope is met when a stranger can run these and get these answers. Not before, and no criterion
+is discharged by argument.**
+
+| #     | criterion                                                 | how it is checked                                                             |
+| ----- | --------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **1** | **Rotation landed**, with `seams.md` 6(g) amended         | one commit names both paths (write-trigger)                                   |
+| **2** | **The swap run passes exit criterion v3 — BOTH halves**   | cited from `convene`'s **own envelope**, never a live `grapevine who`         |
+| **3** | **`comms read` positional guard**, at parser altitude     | 3 controls green: `commit -- <paths>` · `comms send <body>` · `join <handle>` |
+| **4** | 🔴 **grapevine is GONE** — the ruling made literally true | `grep -rn grapevine plugin/scripts --include=*.ts` → **0**                    |
+| **5** | **The sweep-the-plan touchpoint** shipped                 | present in `skills/finalize-session/` **and** `templates/docs-team/`          |
+| **6** | **Merged and released**                                   | `develop` → `main`, release cut                                               |
+| **7** | **This section points at live work**                      | every active project has a status line and a named next action                |
+
+**Why 4 and 7 are in the set rather than assumed:**
+
+- **(4)** Cole ruled _"grapevine leaves entirely."_ **It has not.** `team-support.ts:469` still invokes
+  `grapevine who` — a **read**, deliberately out of step 4's scope (it feeds `combinePresence`, and
+  moving it is a presence-semantics change with a ratify gate). **Until it goes, the shipped sentence
+  may say _"anthill no longer opens or joins a grapevine"_ and may NOT say _"anthill does not depend on
+  grapevine."_**
+- **(7)** is the criterion that stops this recurring. **The reason nothing was phased beyond the next
+  session is that this router was stale** — so the scope ends by fixing the thing that hid the scope.
+
+### Order, and the one hard sequencing constraint
+
+**(3) rotation → (6) the swap run → the guard → grapevine's last call site → merge → re-triage.**
+
+> 🔴 **ROTATION MUST BE LANDED BEFORE THE FIRST `comms stand-down` OF ITS SESSION.** The pane-kill is a
+> **three-term conjunction** and the middle term is _our own finalize ritual_ — `stand-down` is
+> advisory, so a seat that files its tombstone and keeps working **is** an in-window tombstone at a
+> live desk. **If rotation is not ready before finalize begins, it does not land that session, and
+> that is an acceptable outcome rather than a failure.**
+>
+> **The safe design set is already LANDED AS TESTS** (`c9a33e7`): _re-mint or drop the session-open
+> record; **preserving** it is the one unsafe design_ — and preserving it is the tidiest-looking
+> option. **Do not re-derive this.**
+
+**→ The working runway is [`projects/comms-as-default/plan.md` § NEXT PHASE](projects/comms-as-default/plan.md#-next-phase--what-session-12-picks-up).** That file carries the
+per-step detail, the carried debt, and the merge decision that is **Cole's to make, not the lead's to
+assume** (his framing: _"one feature, one release"_).
+
+### Deliberately NOT in this scope
+
+- **The coordination-hardening arc, phases 2–6** — real, sequenced in its
+  [brief](briefs/2026-07-28-coordination-hardening-arc.md), and **months rather than sessions.** Phase 3
+  overlaps [session-branch-strategy](projects/session-branch-strategy/proposal.md), which is a separate
+  Draft; that collision is unresolved and should be resolved **at the re-triage (criterion 7)**, not before.
+- **Two cheap experiments, whenever there's an appetite** — both gate the
+  [team-native coordination layer](investigations/2026-07-31-team-native-coordination-layer.md)
+  question: **run a mixed-model team** (the anti-groupthink argument is currently reasoning, not
+  evidence), and **trial a heads-down mute**. Neither is a build.
+- **The [scar test](investigations/2026-07-28-practice-transmission-between-teams.md)** — the cheapest
+  experiment available, and it gates the whole practice-transmission loop. **Pick it up at the
+  re-triage.**
 
 **Deliberately held:** per-seat worktree isolation (pending the staged-snapshot evaluation, phase 2),
 and the memory bundle (#8–#10) / parity close-out (#12), which keep their place in **Next** behind the
