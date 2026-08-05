@@ -13,7 +13,7 @@ The human asked three questions, then a fourth after the first draft. They have 
 1. **Is comms ready to replace grapevine for intra-team communication?** — **Yes, one blocker.**
 2. **What features do we still want first?** — **Two are blockers; the rest are wants.**
 3. **Have we settled on a communication PATTERN worth shipping as guidance?** — **No, and more sessions of the current kind will not get us there.**
-4. **What about the skills that still teach grapevine?** — **34 shipped references, and removing grapevine entirely is a simplification with a defect-class payoff.**
+4. **What about the skills that still teach grapevine?** — **34 shipped references (at `bdbafae`), and removing grapevine entirely is a simplification with a defect-class payoff.**
 
 The third answer is the reason this is a plan and not a checklist. **The stated goal is to avoid a
 cycle of feeling close without converging**, and the honest diagnosis is that our pattern evidence
@@ -138,7 +138,8 @@ comms is not done when the code works: **every skill that teaches grapevine is t
 ### The measured surface
 
 ```
-SHIPPED PROSE   plugin/skills      28 refs / 6 files   (join 11 · convene 8 · comms 4 · bootstrap 3 · upgrade 1 · finalize 1)
+SHIPPED PROSE   (measured at bdbafae)
+                plugin/skills      28 refs / 6 files   (join 11 · convene 8 · comms 4 · bootstrap 3 · upgrade 1 · finalize 1)
                 plugin/templates    6 refs / 3 files
 CODE            plugin/scripts    106 refs / 12 files
                 ...but only TWO live call sites:
@@ -180,6 +181,77 @@ single-wire and settled**, and cold-read the result against a `git archive` surf
 
 _Fits in session 9 if presence lands early; otherwise it is session 9.5 and should be said so rather
 than crammed._
+
+## Resolved before session 9 — the three blocking questions
+
+_A gap analysis of this document's first draft found nine gaps; three blocked "what exactly are we
+building." Answered here. The remaining six are convene-beat work for session 9's lead._
+
+### B1 — the footprint migration, and what happens to the existing log
+
+**`migrate.ts` is sequential, version-stamped and never skips a version, so rotation needs a step.**
+It already carries comms-aware gitignore logic (`.anthill/comms/` as a directory), so that half is free.
+
+**The existing log migrates to `<channel>/pre-rotation.ndjson`, NOT to `<session-1>.ndjson`** — because
+it is provably **not one session**:
+
+```
+.anthill/comms/anthill-dev.ndjson — 279 messages, one file
+  #1    08-03 18:13   ← session 7 opens
+  #41   08-04 11:16   ← session 7 ends
+  #42   08-04 15:59   ← session 8 opens.  4h43m gap, NO marker in the file
+  #279  08-04 17:24   ← session 8 ends
+```
+
+**Naming it `session-1` would assert a boundary the data does not contain.** `pre-rotation` is true,
+and a human who wants to split it can — the ids and timestamps are all there.
+
+**The positions directory migrates alongside, and its contents are dropped with a note.** They are
+stale by construction — that is the bug rotation exists to fix, and carrying them forward would
+preserve it across the migration that removes it.
+
+### B2 — what a consuming team receives, and when
+
+**Split the structural change from the behavioural one; they ship on different triggers.**
+
+|                                                                            | trigger                               | effect                                           |
+| -------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------ |
+| **Structural** (layout + version stamp)                                    | `anthill migrate` / `anthill:upgrade` | idempotent, always safe, no behaviour change     |
+| **Behavioural** (convene stops opening grapevine; presence is single-wire) | the **plugin version** they install   | arrives with the release, not with the migration |
+
+**So a team can migrate the layout early and keep working**, and gets the wire swap when it upgrades
+the plugin. No flag, no opt-in — the release is the switch.
+
+> **⚠ NEW REQUIREMENT, surfaced by this question: `migrate` must refuse on a live session.**
+> Moving the log out from under a live follower **is Contract 6(e)'s failure mode performed
+> deliberately** — the follower carries `emittedThrough` across and reports `current`, gap 0, against a
+> log it has emitted none of. `migrate.ts` has **no presence check today** (`grep` → 0). It needs the
+> same guard `down` has, and for a stronger reason: `down` risks killing a working seat, `migrate`
+> risks silently lying to one.
+
+### B3 — the session id, and the lifecycle that mints it
+
+**Human-readable and date-stamped** — `2026-08-04-1559` — not opaque. The stated purpose is that a
+human can _"go back and analyze"_, and scout's cross-session measurement reads these by hand. An
+opaque id would need a lookup table, which is a store with no named re-read moment.
+
+**Minting uses the lifecycle we already have, which is what makes the idempotence trap structurally
+impossible rather than guarded against:**
+
+```
+anthill down      →  writes a CLOSED marker to CURRENT        (down writes NO marker today — new work)
+anthill convene   →  no CURRENT, or CURRENT is CLOSED   →  mint a new session id
+                  →  CURRENT is LIVE                    →  re-attach, mint nothing
+                  →  --new-session                      →  mint regardless (explicit human act)
+```
+
+**Re-convene during a live session re-attaches by default**, which preserves the documented idempotence
+and removes the orphaning failure entirely — there is no path where a mid-session re-convene mints an
+empty log, because minting requires a closed or absent CURRENT.
+
+**`down` writing the closed marker is new work** (`grep` → no marker logic today) and it pairs naturally
+with `comms stand-down`, which is already a session-9 blocker. **The two are one piece of work: giving
+the session a lifecycle it can observe.**
 
 ## The pipeline
 
@@ -235,6 +307,31 @@ control on whatever the draft leans on hardest.
 
 **Confidence: medium.** This is the session where the answer could legitimately be "not yet", and the
 plan should not pretend otherwise.
+
+## Open, and deliberately left for session 9's convene
+
+**Six gaps from the analysis are convene-beat work, not plan work.** Named so they are not
+rediscovered, and so a lead who skips them is skipping something rather than not seeing it:
+
+1. **Session 9 has no failure branch** — if the swap does not hold, does session 10 retry or does the
+   pipeline re-plan? _Decide at the shape check._
+2. **Session 10's control is under-designed.** The plan says the design of the control is the risk and
+   does nothing to reduce it. **This is the session the whole Q3 answer rests on** and it needs a real
+   design beat, probably `anthill:plan` with a ratified seam.
+3. **Session 8's seven Q3 hypotheses are unscheduled.** The convene ritual reads them back and names
+   which this session tests. At least three bear directly on how these sessions run: _a ruling that
+   names no artifact does not become work_ · _a message carrying a relay and a ruling loses the ruling_
+   · _a completeness claim is wrong more often than right._
+4. **Team composition per session is unstated.** Session 8 ran six; session 9 may not need six, and
+   session 10's control may require a specific shape to be valid at all.
+5. **No test plan for rotation** — a data-layout change whose failure mode is orphaning a live log,
+   which is the thing it exists to prevent. `docs/projects/TEMPLATES/TEST-PLAN.template.md` exists.
+6. **The pipeline depends on `develop → main` cutting.** If the release does not ship, none of this
+   reaches a consuming team and the work is internal-only.
+
+_This section is the gap analysis's own output. It was run by the document's author, which is the wrong
+auditor by this team's own finding — **nobody who fixes an instance is positioned to bound the class**,
+and authoring has the same shape. **Cold-read it before session 9 convenes.**_
 
 ## Non-goals
 
