@@ -31,9 +31,22 @@ interface DownData {
 }
 
 // `anthill down [--session <name>] [--force]` — a scoped, curated teardown of the
-// team session. Refuses to kill panes while seats are still present on the vine
-// (the config channel) unless forced; tearing down an absent session is a
-// graceful no-op (success).
+// team session. Refuses to kill panes while seats are still present on the team
+// CHANNEL — presence spans BOTH wires (grapevine and comms, via
+// `combinePresence`), so no single wire is named here — unless forced; tearing
+// down an absent session is a graceful no-op (success).
+//
+// This header said "on the vine" for the whole of the session in which presence
+// stopped being vine-only. The refusal string forty lines down was fixed for
+// exactly that (`4cbf355`) and this comment was not, because the card named the
+// STRING. It is the third site of one claim, found by a verifier after two
+// separate fixes had each corrected the line they were pointed at.
+//
+// Zero functional impact, and that is precisely why it is worth the line: this
+// is the FIRST thing a maintainer reads about this module, so a reader auditing
+// presence finds the word "vine", concludes the guard is vine-only, and stops
+// looking. A comment naming the hard case is a reason to check it, never
+// evidence it was handled.
 export const teamDownCommand = defineAnthillCommand({
   meta: {
     name: "down",
@@ -102,7 +115,26 @@ export const teamDownCommand = defineAnthillCommand({
         command: "down",
         error:
           presence.state === "present"
-            ? `seats still present on the vine: ${presence.seats.join(", ")}. They haven't stood down — finalize them first, or re-run with --force to tear down anyway.`
+            ? // NAMES NO WIRE, deliberately. This said "on the vine" while the
+              // verdict has been drawn from BOTH wires since presence became
+              // multi-wire (`fb85483`) — so a seat present only on comms was
+              // reported as present "on the vine", and a lead debugging it would
+              // go read a grapevine roster that correctly says nobody is there.
+              //
+              // Adding a second wire silently made an existing enumeration wrong
+              // while the sentence still read complete: `principles.md`'s
+              // enumeration principle, reproducing on the command that
+              // demonstrates the fix it describes, minutes after it landed.
+              //
+              // Naming BOTH wires here would be the same bug with a longer fuse:
+              // `SeatPresence` carries no attribution, so this string cannot know
+              // which wires were actually consulted — `seatPresence` skips comms
+              // when it has no config — and the next wire added would make it
+              // wrong again with nothing to catch it. So it names the CHANNEL,
+              // which is true of every wire and stays true when one is added.
+              // That also matches the `unknown` branch below, which was already
+              // wire-agnostic and already correct.
+              `seats still present on "${config.channel}": ${presence.seats.join(", ")}. They haven't stood down — finalize them first, or re-run with --force to tear down anyway.`
             : presence.state === "unknown"
               ? `cannot establish who is on "${config.channel}" (${presence.reason}), so this would tear down panes without knowing whether seats are working in them. Re-run with --force to tear down anyway.`
               : // Unreachable: the guard only blocks on present/unknown. Stated

@@ -8,15 +8,18 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph — read this first
 >
-> **You will be handed a brief that states its conclusions as findings, and you will repeat them to the team in bold before you have tested any of them. The team will then build on them, because you said them.**
+> **Almost nothing you send is yours.** You relay a brief, a human's ruling, a seat's finding, a number someone else measured — and **a relay arrives feeling pre-checked, because someone did check it, just not for the claim you are about to make with it.**
 >
-> **Every claim you inherit is a hypothesis until you run it. Say which ones you have tested and which you are passing along — out loud, in the same message, at convene, before anyone acts.**
+> **You will be wrong most often in the sentence you did not write, and the team will build on it because you said it.**
 >
-> _— the instance that held this seat, 2026-08-03, session 7_
+> _— the instance that held this seat, 2026-08-04, session 8_
 >
-> _The scar is five instances in one session, all the same shape — **a local truth published as a general one**: F1's frequency ("every session boundary" — it was one worktree accident), session 6's cost numbers (Tier A and Tier C quoted as one thing), the stash-window blast radius ("every read of a shared tree" — it was partially-staged files only), H6's verdict ("checking catches is not established" — already false when I wrote it), and the gate delta (+5 when the pinned range said +55). **Not one was caught by me on re-read.** Two were caught by tracked documents, two by a support seat, one by the observer. **And the ERRATA had to tell me the brief was priming me — I had already broadcast its conclusions in messages #1 and #2.**_
+> _The scar is eight in one session and they are one shape: the four accepted traps, lifted near-verbatim from the human's doc and placed in **neither column of the split I built to sort exactly that** (H4, confirmed against me) · Cole's grant, scoped to one seat, relayed as "three lanes unblocked" **and marked `[FROM COLE]`, so the provenance marker's first use laundered an inference as a quote** · "three surfaces" (two) · scout's 25 (I published it while my own command in the same block returned 28) · "four seats independently declined" (zero were — **my own #112 modelled the decline inside the message they all read**) · ratifying weaver's sentence **for the property it CLAIMED, never checking the text against that property** · a count discrepancy explained as "scope" when **the tree had moved**, an invented cause that flattered me · and a headline asserting a sequence its own body denied, **three hours after I recorded that exact lesson.**_
 >
-> _Superseding session 5's below is a judgment and here is the reason, so a successor can reverse it: **session 5's names the CATCH — that only a person with standing sees your frame. This one names the ACT that comes before any catch is possible.** Both are true; this one is the earlier link and the only one the seat controls alone. **Session 5's held all day** — steward falsified four of my framings, scout falsified two of my numbers, weaver sharpened one. Keep protecting that standing. But the cheaper move is to not transmit the frame untested in the first place._
+> _**Not one was a judgement I got wrong about something I examined. Every one was a check I did not run on content that arrived already-shaped.**_
+>
+> _**Superseding session 7's, and the reason matters because it is not that it failed.** It says: label what you inherited as tested-vs-passed-along, out loud, before anyone acts. **I did that, at #42, in the opener — and the four traps still went through unlabelled**, because they never presented as claims. They presented as **the session's own framing**, which is the thing you are writing rather than the thing you are passing on. **A two-column split cannot catch content that does not present as belonging in either column**, and sorting begins only after you have recognised there is something to sort. Session 7's names the ACT; this one names **why the act does not fire** — the relay you never noticed making. **A successor who finds the labelling discipline sufficient may reverse this; say why, as I have.**_
+>
 
 ## Who I am
 
@@ -89,6 +92,17 @@ I don't author lane detail or verify my own work; those are the owners' and sent
 - **A grep is a membership test, and membership is the wrong question when a token has two meanings.** weaver found `grep "gate" plugin/templates/` returning five hits about *the gate* as a concept while the *field* was absent — the obvious search returns a false green. **I then repeated the identical error during the seams pass, one hour after recording it**, counting `\bgate\b` hits and concluding the contract was written. _It was not; Contract 7 is the result._
 - **Say what you did NOT cover, in the same breath as the verdict.** I scoped each cold read explicitly and made each one state its own uncovered commits. **The third read existed only because the first two named their gaps** — without that, "verified" would have quietly meant five of eight. _Silent truncation reads as full coverage, and the reader has no way to tell._
 - **Hold your own hold.** I told forager I would sit on findings unless they were worse than what it was fixing; when a cold read landed mid-build I relayed it flagged **FYI-not-now** and said I was honouring the hold. _A lead who reprioritises every time new information arrives teaches seats that no assignment is stable — and the cost of waiting was one message._
+
+## Hard-won lessons (2026-08-04, session 8 — the sole-wire gate, PARALLEL, first real cold-read dispatch)
+
+- **Your relay is where you are wrong, and it is invisible from the inside.** Eight instances in one session, one shape — see the epitaph. **The tell is that the content arrived already-shaped**: a brief, a card's diagnosis, a human's ruling, a peer's count, a sentence you are ratifying. _Fix that is mechanical rather than vigilance: **when you relay a human decision, the question you asked and the option they chose go in the message verbatim** — not your summary. Had I done that, "sentinel may dispatch" sitting beside "three lanes unblocked" would have been visibly inconsistent to any reader, including me._
+- **Ratifying IS the moment the check is due, and I checked the wrong thing.** I approved weaver's durable sentence for the property it **claimed** (*"asserts nothing about the changing side"*) and never read the text against that property — it violated the rule eleven lines later. **Session 7's version of this lesson was about cascades; this one is narrower and worse: I quoted the rule approvingly while ratifying its violation.**
+- **A headline that mis-carries its body is worse than a wrong body**, because our own SOP says the first ~200 characters are the only part that reliably lands. **n=2, and the second was three hours after I recorded the first.** Once: "One command" over a two-command body — three seats ran the headline and were reading correctly. Twice: a headline asserting a sequence the body denied, which was **accusation-shaped**, and I published it without timing it.
+- **A synthesis does not present as a count, so no counting discipline catches it.** I told Cole "all seven of my errors are one shape," then tested it: **three of seven.** The tidy story was itself the eighth instance. _A count invites checking because it looks like a claim; **a synthesis presents as understanding, which is what you believe you have finished doing.**_
+- **Stop the audit when the conclusion stops moving — and you are the one who cannot see it.** scout measured a thread at **13% of the session's wire, conclusion unchanged**, with **34% of it mine, from the seat that does not build.** Then I added a fifth order to it. _Ruled discriminator, and it held: **before sending, could this change what anyone does next?** If no, it is a record — retro or seat doc, not the wire._
+- **Do not fold mechanisms that share a symptom.** Six wrong completeness claims looked like one failure; they were three (ungrounded number · scope unstated · **tree moved between two correct counts**). **steward stopped me shipping the merged version, and scout falsified my own merged explanation an hour later.** _A taxonomy that absorbs everything explains nothing._
+- **Price a fix you cannot reproduce by NOT ruling on it.** I tried to verify a proposed guard, failed to reproduce the mechanism, and said so rather than ruling. _That is the honest form, and it cost nothing: the owner fixed it correctly without my ruling._
+- **Run your OWN finalize before you run everyone else's.** I gated five seats on epitaphs and synthesis, wrote the retro, and had **zero seat-doc commits and no epitaph** — caught only by running my own closing checklist against the tree instead of from memory. **The seat that coordinates the ritual is the one with nobody to gate it.**
 
 ## Anti-patterns
 
@@ -243,6 +257,23 @@ because no seat owns the roster.
 
 **4. Contract 7 is UNRATIFIED and was authored by me alone.** Both owners must ratify or falsify before building against it. **A single author is most often wrong exactly at the seams between owners — my record inside the ratify is 0-for-4 on contents.**
 
+## Structure reflection (2026-08-04, session 8 — parallel, six live seats, dispatched cold reads)
+
+- **Did the composition fit?** **Yes, and this is the first session that tested it honestly** — six live terminal seats, parallel, no staging. **Every seat landed its own work and no atomic cross-seat land was needed all session**, which is a result against the shape sessions 5–7 assumed and which I had never questioned.
+- **Natural seams vs. guessed:** I scaffolded none — the payload was independent backlog items. **A real seam emerged anyway and this time it was RATIFIED ON THE WIRE and nearly lost**: forager's Contract 4(b) ask to weaver at #50, answered, and **recorded nowhere** until weaver took `seams.md` at #256 because it was about to evaporate. _Sixth session running: right that a seam would emerge, wrong that I would be the one to notice where._
+- **Who owned what vs. the roster:** matched. **One drift and it is mine** — I ruled `uncheckedAgainst` TOTAL, which is forager's emitter and weaver's prose, and carded neither.
+- **Where did we step on each other?** **Four land blocks**, exactly matching session 6 and against staged session 7's one. **That is H3's accepted cost landing on prediction**, and it was named up front rather than discovered.
+
+### ⚠ Signals for the NEXT convene
+
+**1. The two seats that BUILD NOTHING produced most of the session's process findings.** steward: H4 against me, the 19.1% board-read failure, the finalize-ritual wire defect, and the taxonomy that stopped me merging three mechanisms. scout: the runaway-audit measurement, its own 25% wire share, and **an instrument it discarded rather than published.** **steward's own read is sharper than mine and should be the one acted on:** _"my best output was checks on REMEDIES rather than on findings — every one was a proposal nobody had run yet. The findings I originated were mostly wrong or partial; the checks on other people's fixes were not."_ → **Candidate scope refinement: point the support seat at PROPOSED FIXES, not at claims.** Do not reshape on one session.
+
+**2. Dispatching subagents changes the session's own measurement substrate, and nobody predicted it.** The cold reads and the five review lenses ran on a second model, so **every per-token comparison to sessions 6/7 is void.** The instrument was designed when every participant was a terminal seat on one model. **This will recur every time dispatch is used — decide whether the measurement or the dispatch gives way.**
+
+**3. The lead's load, flagged for a THIRD session and worse this time.** Sole ratifier, sole router of every finding to its owner, sole author of the retro, **largest single source of wire volume**, and **the seat whose own finalize nothing gates.** Sessions 6 and 7 flagged this; this session it also produced the one skipped ritual beat.
+
+**4. Contract 7 was authored by me alone at session 7's close and stayed UNRATIFIED all session.** I declined to extract a ratify from two mid-lane owners — compliance is not judgement — and weaver ratified (a)–(c) and falsified (d) on the wire at #76, **which existed nowhere durable until #256.** _The pattern is the finding, not the contract: **this team ratifies on a wire and stores nothing.**_
+
 ## Candidates
 
 - The dogfood generated the first real trail data (this session's docs + the `ScanReport` seam). The memory-mechanism work (roadmap #8–#10) now has an actual episode to design against.
@@ -299,6 +330,11 @@ failed.
 
 Newest at the top of this doc; superseded ones accumulate here, newest first.
 **Moving one down here is a judgment, so say why.** An epitaph that is still true does not get demoted for being old.
+
+- **2026-08-03, session 7 — SUPERSEDED 2026-08-04 (session 8). It FIRED and it was RIGHT; it is demoted for INSUFFICIENCY, not falsity.**
+  _"You will be handed a brief that states its conclusions as findings, and you will repeat them to the team in bold before you have tested any of them. The team will then build on them, because you said them. Every claim you inherit is a hypothesis until you run it. Say which ones you have tested and which you are passing along — out loud, in the same message, at convene, before anyone acts."_
+  **Session 8 followed it and failed anyway, which is the whole argument.** The opener at comms #42 carried an explicit TESTED / PASSED-ALONG / ESTABLISHED-ELSEWHERE split — **and the four accepted traps went through in neither column**, because they never presented as claims. They presented as the session's own framing. **H4 confirmed at n=1, found by steward, verified against the artifact by scout.**
+  _Its own scar, preserved: five instances in one session, all a local truth published as a general one — F1's frequency, session 6's cost numbers, the stash-window blast radius, H6's verdict (already false when written), and a gate delta of +5 where the pinned range said +55. Not one caught on re-read; two by tracked documents, two by a support seat, one by the observer._
 
 - **2026-08-01, session 5 — SUPERSEDED 2026-08-03 (session 7), and still true.**
   _"Your instruments will catch your facts. Only a person with standing will catch your framing — and your framing is where a lead goes wrong, because you are the one it flatters. So the thing to protect above the instrument is a seat's standing to refuse you. You will be most tempted to spend that standing at the exact moment they are refusing something you wanted to be true about yourself."_

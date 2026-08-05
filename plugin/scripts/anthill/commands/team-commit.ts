@@ -23,8 +23,20 @@ interface CommitData {
   /** Dirty paths OUTSIDE this commit at the moment it landed. The gate ran over
    * the whole tree; the commit contains only `paths`. When this is non-empty the
    * gate's green was measured against work this commit does not include, so the
-   * commit was never checked in isolation. Field-reported: the FALSE-GREEN. */
-  uncheckedAgainst?: string[];
+   * commit was never checked in isolation. Field-reported: the FALSE-GREEN.
+   *
+   * TOTAL — always present. `[]` means "measured, nothing dirty"; a populated
+   * array means the false-green. It was OPTIONAL, and the SOP tells every seat
+   * to read it before treating a green as a verdict on their commit — so a
+   * careful seat and a careless one produced the SAME observation, which is the
+   * definition of a check that is not one. Four seats hit it in one session,
+   * one of them holding both states across three lands on one machine.
+   *
+   * Contract 5(a), which this seat owns and which says exactly this: an
+   * optional field populated on one path makes its ABSENCE unreadable — you
+   * cannot tell "inapplicable" from "unpopulated", or from an older binary that
+   * never emitted it. */
+  uncheckedAgainst: string[];
 }
 
 function git(args: string[], cwd: string): { ok: boolean; stdout: string; stderr: string } {
@@ -515,7 +527,7 @@ export const teamCommitCommand = defineAnthillCommand({
         message,
         waitedMs,
         ...(warnings.length > 0 && { warnings }),
-        ...(unchecked.length > 0 && { uncheckedAgainst: unchecked }),
+        uncheckedAgainst: unchecked,
       };
       emit({
         format,
@@ -530,7 +542,10 @@ export const teamCommitCommand = defineAnthillCommand({
           if (d.waitedMs && d.waitedMs > 500) {
             lines.push(`(waited ${Math.round(d.waitedMs)}ms for the serialize lock)`);
           }
-          const u = d.uncheckedAgainst ?? [];
+          // No `?? []` — the field is TOTAL now, and a fallback here would
+          // silently absorb a regression to optional, which is precisely the
+          // defect being fixed. Let the type carry it.
+          const u = d.uncheckedAgainst;
           if (u.length > 0) {
             lines.push(
               "",

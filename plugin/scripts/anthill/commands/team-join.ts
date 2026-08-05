@@ -36,11 +36,17 @@ interface JoinData {
   handle: string;
   channel: string;
   grounding: GroundingEntry[];
-  tailCommand: string;
-  boardTailCommand: string;
-  /** The team comms wire (`seams.md` Contract 4(b)). ALWAYS present — the
-   * consumer branches on this block rather than probing the filesystem or
-   * interpreting an exit code to decide what to render. */
+  /** The spellbook wires. TOTAL — always present, `null` when spellbook did not
+   * resolve, which is a positive observation and never an unpopulated field. The
+   * reason is carried in `warnings`. */
+  tailCommand: string | null;
+  boardTailCommand: string | null;
+  /** The team comms wire (`seams.md` Contract 4(b)). Present in EVERY manifest
+   * `join` emits — the consumer branches on this block rather than probing the
+   * filesystem or interpreting an exit code to decide what to render. It needs
+   * no spellbook, so it survives a coord failure (S8-1). The paths that emit no
+   * manifest at all (unknown seat, no config) are the error surface, not this
+   * one. */
   comms: { channel: string; incantation: string };
   checklist: string[];
   /** Surfaced when a configured grounding path doesn't exist — a dangling
@@ -49,13 +55,52 @@ interface JoinData {
   warnings?: string[];
 }
 
+/**
+ * ONE spellbook-backed wire's resolution outcome.
+ *
+ * `available: false` is a POSITIVE observation carrying its reason, not an
+ * absence. A consumer must never have to tell "this wire did not resolve" from
+ * "nobody populated the field" — Contract 5(a)'s rule, applied to the data side.
+ *
+ * Everything downstream — the checklist lines, the manifest's `tailCommand` /
+ * `boardTailCommand` — is a PROJECTION of these, never a second derivation.
+ *
+ * _(This docstring previously described the wires as ONE verdict for both, and
+ * argued for it. That design was the defect below, and the prose outlived it by
+ * one commit — the "prose about code, written by the person who just wrote the
+ * code" failure this seat records against itself. Rewritten, not amended.)_
+ */
+export type WireStatus = { available: true; cli: string } | { available: false; reason: string };
+
+/**
+ * PER WIRE, not one verdict for both — and this is a CORRECTION of the first
+ * version of this fix, found by a blank-context reader.
+ *
+ * S8-1's whole thesis is that one wire's missing dependency must not suppress
+ * another's. The first fix applied that to comms-vs-spellbook and then **left
+ * the identical bug one level in**: grapevine and bounty are separate CLIs that
+ * can independently fail to resolve, and a single `available` flag meant a
+ * missing BOUNTY told the seat *"NO GRAPEVINE AND NO BOARD … you cannot tail the
+ * vine"* while the grapevine resolved perfectly. Reproduced with a fake cache
+ * carrying grapevine 9.0.0 and no bounty.
+ *
+ * That is this seat's *"a defect's NAME bounds your attention, not the bug"*
+ * lesson, third instance: I fixed the coupling I was pointed at and shipped the
+ * same coupling in the code that fixed it.
+ */
+export interface CoordWires {
+  grapevine: WireStatus;
+  bounty: WireStatus;
+}
+
 export interface ChecklistInput {
-  tailCommand: string;
-  boardTailCommand: string;
+  /** The spellbook wires, each carrying its own availability + reason. */
+  coord: CoordWires;
   /** The team comms wire — fully resolved, run verbatim, filter-free. */
   commsIncantation: string;
-  bountyCli: string;
   handle: string;
+  /** The team channel — the grapevine tail is composed here, per wire. */
+  channel: string;
   seatDocRel: string;
   lead: string | undefined;
   /** The PROJECT's gate command (`config.gate`), or undefined if none declared. */
@@ -63,6 +108,9 @@ export interface ChecklistInput {
   /** Gitignored scratch path a seat writes its commit message to, so the body
    * never passes through a shell. */
   msgFileRel: string;
+  /** Absolute path to the emitting cli.ts, so the LAND string resolves to the
+   * binary that composed it rather than through PATH. */
+  cliPath: string;
 }
 
 /**
@@ -147,8 +195,24 @@ export function buildLandCommand(i: {
   handle: string;
   gate: string | undefined;
   msgFileRel: string;
+  /** Absolute path to the cli.ts that EMITTED this string. See below. */
+  cliPath: string;
 }): string {
-  const commit = `anthill commit --as ${i.handle} -F ${i.msgFileRel} <path>…`;
+  // FULLY RESOLVED, never a bare `anthill` — Contract 4(a), which this string
+  // was violating while the comms incantation beside it obeyed.
+  //
+  // A bare `anthill` resolves through PATH to the launcher, which picks the
+  // highest CACHED RELEASE. Measured on this machine: that launcher has no
+  // `-F`, so the string a seat is told to run VERBATIM fails outright — and it
+  // fails on the one flag that exists to stop a backticked message body being
+  // executed by the shell. A verifier declined to run it and was right to.
+  //
+  // Resolving to the emitting cli.ts makes the string self-consistent by
+  // construction: whatever binary composed the instruction is the binary that
+  // executes it, so the two can never disagree about which flags exist. That is
+  // the same guarantee `--version`'s `source` field reports, applied rather
+  // than merely observed.
+  const commit = `bun ${i.cliPath} commit --as ${i.handle} -F ${i.msgFileRel} <path>…`;
   const decision = decideGate(i.gate);
   // The returned value is A COMMAND OR NOTHING ELSE. It previously concatenated
   // the no-gate warning INTO the string under a label reading "LAND with this
@@ -198,10 +262,30 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // analogy; before, the two lines below teach the filter and a seat may go
     // back and "fix" this one. The exception has to be named at the line it
     // applies to either way — proximity to the analogy was never the guard.
-    `Monitor the grapevine — wrap with Monitor: ${i.tailCommand} | grep --line-buffered '"from"'`,
-    `Monitor your board lane — wrap with Monitor: ${i.boardTailCommand} | grep -E --line-buffered '"type":"(task|unblocked|closed)"'`,
-    `Find your card BEFORE you claim it — read the board fresh (\`bun ${i.bountyCli} state --mine --as ${i.handle}\`) rather than trusting a listing already in your context; a stale listing is how seats claim a card by title-adjacency after the lead renumbered the board (anthill#40).`,
-    "Own your card lifecycle: advance with `bounty update <id> --status doing` when you start, `--status review` when green (the bounty CLI has no `move` verb).",
+    // The spellbook wires are a PROJECTION of one verdict. When they are
+    // unavailable the checklist says so in the seat's own voice and names the
+    // remedy — it does NOT emit a command with a hole in it. A half-resolved
+    // incantation is the thing Contract 4(a) exists to forbid, and "run this
+    // verbatim" makes an unusable string worse than an honest absence.
+    // EACH WIRE REPORTS ITSELF. A single verdict told a seat "NO GRAPEVINE AND
+    // NO BOARD … you cannot tail the vine" when only BOUNTY was missing — a
+    // manifest asserting something false about a wire that was working.
+    ...(i.coord.grapevine.available
+      ? [
+          `Monitor the grapevine — wrap with Monitor: bun ${i.coord.grapevine.cli} tail ${i.channel} --as ${i.handle} | grep --line-buffered '"from"'`,
+        ]
+      : [
+          `⚠ NO GRAPEVINE THIS JOIN — ${i.coord.grapevine.reason} You cannot tail the discussion channel. Your comms wire above is UNAFFECTED (it is anthill's own and needs no spellbook), and so are your grounding docs. **Tell your lead rather than working around it.**`,
+        ]),
+    ...(i.coord.bounty.available
+      ? [
+          `Monitor your board lane — wrap with Monitor: bun ${i.coord.bounty.cli} tail --mine --as ${i.handle} | grep -E --line-buffered '"type":"(task|unblocked|closed)"'`,
+          `Find your card BEFORE you claim it — read the board fresh (\`bun ${i.coord.bounty.cli} state --mine --as ${i.handle}\`) rather than trusting a listing already in your context; a stale listing is how seats claim a card by title-adjacency after the lead renumbered the board (anthill#40).`,
+          "Own your card lifecycle: advance with `bounty update <id> --status doing` when you start, `--status review` when green (the bounty CLI has no `move` verb).",
+        ]
+      : [
+          `⚠ NO BOARD THIS JOIN — ${i.coord.bounty.reason} You cannot claim or advance a card, so you will be INVISIBLE on the board — which looks exactly like a seat with nothing to do. **Tell your lead rather than working around it.**`,
+        ]),
     // The composed land goes FIRST and verbatim. Everything after it is the
     // reasoning; a seat that reads only the first clause still lands correctly,
     // which is the property the previous prose-only form did not have.
@@ -210,7 +294,7 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // error carrying backticks — the defect this line exists to prevent, inside
     // the line that prevents it. A notice that cannot be run is not a safer
     // notice; it is an unusable command.
-    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel })}${(() => {
+    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel, cliPath: i.cliPath })}${(() => {
       const d = decideGate(i.gate);
       return d.composable ? "" : `\n  ${d.notice}`;
     })()}\n  Do NOT pipe the gate to \`tail\`/\`head\`/\`grep\` to shorten its output: \`&&\` would then test the FILTER's exit status, which is always 0, and your commit runs on a red gate while the guard is still visibly there. Redirect to a file and read that instead. Do NOT pass the body with \`-m\` if it contains backticks — the shell executes them before the tool sees them. Both of these defeated agents who had just read the warning against them.`,
@@ -224,7 +308,14 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // point (Contract 4(d)) is that it carries none. Point at the skill.
     `Catching up after joining mid-session? The two wires need different verbs AND different anchors. The lead clears the vine at convene, so \`grapevine pull\` (finite, exits) gives you THIS session. Nothing clears the comms log — so the same move there replays every session the team has ever had; anchor it to an id and see the \`anthill:comms\` skill. On BOTH: NEVER catch up with a live stream (\`tail --from-start | grep\`, \`follow\`) — a live stream never exits and a filtered one never flushes, so you get zero output and then a timeout, which reads as "the channel is empty".`,
     `Finalize BEFORE you drop off: synthesize durable lessons into ${i.seatDocRel}, commit, THEN stand down. Scratch is gitignored — it does not survive the session, so synthesize earlier if the reasoning is warm.`,
-    `Route questions + decisions to the lead${i.lead ? ` (${i.lead})` : ""} on the vine — not direct to the human.`,
+    // NAMES NO WIRE — found by grepping this scope after the same collapse was
+    // fixed three times elsewhere today. This said "on the vine", and it is
+    // EMITTED to every consuming project: a team running comms-only (which this
+    // one did, all session) was being told to route decisions on a wire nobody
+    // was reading. The instruction is about WHO and the wire is incidental, so
+    // the fix is to stop naming one rather than to name the right one — the
+    // next wire added would make any named list wrong again.
+    `Route questions + decisions to the lead${i.lead ? ` (${i.lead})` : ""} on the team's channel — whichever wires this session armed, NOT direct to the human.`,
   ];
 }
 
@@ -347,15 +438,35 @@ export const teamJoinCommand = defineAnthillCommand({
       process.exit(1);
     }
 
-    let grapevineCli: string;
-    let bountyCli: string;
-    try {
-      grapevineCli = resolveCoordCli("grapevine");
-      bountyCli = resolveCoordCli("bounty");
-    } catch (err) {
-      emitError({ format, command: "join", error: (err as Error).message });
-      process.exit(1);
-    }
+    // S8-1 — a SPELLBOOK absence must not suppress an ANTHILL block that does
+    // not depend on it, and must not withhold the grounding list, which depends
+    // on nothing but the repo.
+    //
+    // This used to `process.exit(1)` here, before a single line of the manifest
+    // was built. The same function degrades a failed grounding-doc READ forty
+    // lines below, under the comment "must not sink the whole manifest — the
+    // grounding list is the seat's lifeline"; that rule simply stopped one layer
+    // short of the thing that sank the whole manifest.
+    //
+    // The two remaining fatal paths above (unknown seat, no config) STAY fatal
+    // and are not an oversight: there is no seat doc to ground in and no roster
+    // to emit, so there is no manifest to degrade to. That is why Contract 4(b)'s
+    // "ALWAYS present" is bounded to every manifest `join` EMITS — an unbounded
+    // "always" is false no matter what this function does.
+    // Resolved INDEPENDENTLY per wire: they are separate CLIs and can fail
+    // separately, and a shared try/catch made a missing bounty report the
+    // grapevine as gone too.
+    const resolveWire = (tool: "grapevine" | "bounty"): WireStatus => {
+      try {
+        return { available: true, cli: resolveCoordCli(tool) };
+      } catch (err) {
+        return { available: false, reason: (err as Error).message };
+      }
+    };
+    const coord: CoordWires = {
+      grapevine: resolveWire("grapevine"),
+      bounty: resolveWire("bounty"),
+    };
 
     // Grounding docs, in read order: product context (config.grounding) → SOP →
     // principles → seam contract → own seat doc. All resolved to absolute paths.
@@ -406,22 +517,34 @@ export const teamJoinCommand = defineAnthillCommand({
       );
     }
 
-    const tailCommand = `bun ${grapevineCli} tail ${channel} --as ${handle}`;
-    const boardTailCommand = `bun ${bountyCli} tail --mine --as ${handle}`;
+    // One warning PER unavailable wire, naming that wire. A single combined
+    // warning asserted both were gone whenever either was.
+    if (!coord.grapevine.available) {
+      warnings.push(
+        `NO GRAPEVINE: ${coord.grapevine.reason} You cannot tail the discussion channel. The comms wire and your grounding docs are UNAFFECTED — they are anthill's own and need no spellbook.`,
+      );
+    }
+    if (!coord.bounty.available) {
+      warnings.push(
+        `NO BOARD: ${coord.bounty.reason} You cannot claim or advance a card. Tell your lead: a seat that cannot claim a card is invisible on the board, which looks identical to a seat with nothing to do.`,
+      );
+    }
+
     const seatDocRel = relative(root, config.seatDocPath(handle));
 
+    const cliPath = fileURLToPath(new URL("../cli.ts", import.meta.url));
     const commsIncantation = buildCommsIncantation({
-      cliPath: fileURLToPath(new URL("../cli.ts", import.meta.url)),
+      cliPath,
       channel,
       handle,
     });
 
     const checklist = buildChecklist({
-      tailCommand,
-      boardTailCommand,
+      coord,
       commsIncantation,
-      bountyCli,
+      cliPath,
       handle,
+      channel,
       seatDocRel,
       lead: config.lead,
       gate: config.gate,
@@ -434,8 +557,16 @@ export const teamJoinCommand = defineAnthillCommand({
       handle,
       channel,
       grounding,
-      tailCommand,
-      boardTailCommand,
+      // TOTAL, and `null` is a positive statement — "spellbook did not resolve",
+      // never "nobody populated this". Same discipline as Contract 6(c)'s
+      // null-is-not-a-rounded-down-zero: a consumer that cannot tell an
+      // inapplicable field from an unpopulated one has been handed a guess.
+      tailCommand: coord.grapevine.available
+        ? `bun ${coord.grapevine.cli} tail ${channel} --as ${handle}`
+        : null,
+      boardTailCommand: coord.bounty.available
+        ? `bun ${coord.bounty.cli} tail --mine --as ${handle}`
+        : null,
       comms: { channel, incantation: commsIncantation },
       checklist,
       ...(warnings.length > 0 && { warnings }),
@@ -461,11 +592,42 @@ export const teamJoinCommand = defineAnthillCommand({
               : "";
           lines.push(`  ${i + 1}. ${rel}${note}`);
         });
+        // A `null` interpolated into text renders the literal string "null",
+        // which reads as a COMMAND — and this block is labelled "wire these
+        // watches", so a seat would try to run it. The JSON side is honest
+        // (`null` is a value there); the text side is a different audience and
+        // needs a sentence. Caught by RUNNING the command: the pure functions
+        // and the JSON payload were both already correct, which is this seat's
+        // standing pattern — every assertion lands on the half that never broke.
+        // PER WIRE. This line was `tailCommand !== null && boardTailCommand
+        // !== null` — a CONJUNCTION — so one wire down printed BOTH as
+        // UNAVAILABLE. With grapevine up and bounty missing, the summary told
+        // the seat the grapevine was gone while the checklist eight lines below
+        // handed them the working grapevine tail, and "see the warning below"
+        // pointed at a warning that does not exist because grapevine did not
+        // fail.
+        //
+        // THIRD INSTANCE OF ONE DEFECT, IN ONE DIFF: comms-vs-spellbook, then
+        // grapevine-vs-bounty in the JSON payload, then grapevine-vs-bounty
+        // here. I wrote the comment above `CoordWires` describing instance two
+        // — "left the identical bug one level in" — while introducing this one.
+        // The collapse is not a slip you catch by care; it is what happens
+        // whenever two independent things are summarised by one boolean.
+        //
+        // The test gap had the matching shape: the partial world was covered in
+        // JSON and never in text, because the only text test used an empty HOME
+        // where BOTH wires are down — a guard that exists and does not reach the
+        // path the bug is on.
+        const wireLine = (label: string, cmd: string | null) =>
+          `  ${label}${cmd ?? "UNAVAILABLE — see the warning below"}`;
+        const wiredCount = [d.tailCommand, d.boardTailCommand].filter((c) => c !== null).length;
         lines.push(
           "",
-          "Then wire BOTH watches (wrap each with Monitor — do not block):",
-          `  grapevine:  ${d.tailCommand}`,
-          `  board:      ${d.boardTailCommand}`,
+          wiredCount === 2
+            ? "Then wire BOTH watches (wrap each with Monitor — do not block):"
+            : "Then wire your watches (wrap each with Monitor — do not block):",
+          wireLine("grapevine:  ", d.tailCommand),
+          wireLine("board:      ", d.boardTailCommand),
           `  comms:      ${d.comms.incantation}`,
           "",
           "Checklist — your action items as this seat:",

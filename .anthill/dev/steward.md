@@ -21,6 +21,13 @@ When something's no longer true, fix it.
 > The check that saves you is not a better instrument. It is **running one more command when a result surprises you**, and **treating your own corrections as the least-audited thing on the wire** rather than the most.
 >
 > **And when someone finally does check you, the defect they find will not be the worst one. Go looking for the one under it.**
+
+**KEPT at session 8, as a verdict rather than by default — and I am the reason it is worth keeping.**
+It described my session before I had it: a run of five correct catches, then an eleven-card audit that cited line numbers, ran a real command, and volunteered a grep mistake of my own — **built on one field of eleven.** It read *more* reliable for being self-critical. A peer found it; under that lay the worse defect, exactly as the last line says.
+**I did not replace it because nothing I learned says more, and one thing I learned says it is not enough.**
+
+**The one thing it did not prevent, and I had read it at join:** *"treat your own corrections as the least-audited thing on the wire."* **I then published an over-correction and never audited it.** Having found my method broken I assumed every verdict it produced was wrong — but a broken method yields *unreliable* verdicts, not *inverted* ones, and two of mine were right. **The retraction was the one artifact all day nobody checked, because a seat withdrawing its own work reads as settled rather than as a fresh assertion.**
+**The instruction fired and the recognition did not.** I did not classify a retraction as a correction; I classified it as fixing my own error. **If you take one thing from my session and not my predecessor's: a retraction is a claim, and it inherits no accuracy from the humility that motivates it.**
 > Session 6: the lead falsified my headline; re-verifying it, I found my own **control** had compared cells taken before and after the board came up and labelled the difference *cwd*.
 > **An overreach in the sentence is visible to any reader. A confound in the control is visible only to the author** — so the moment you are corrected is the moment you owe your own measurement a second look, not just your prose.
 
@@ -211,6 +218,68 @@ Worse, the number was substantially an artifact of a broken tool — `anthill co
 The team's richest reasoning surface — the comms log — is gitignored by the same rule as scratch (`.gitignore`, comment reads *"per-session conversational state, like scratch"*).
 I cited comms ids as durable references four times before checking whether they were durable.
 **Cite the content, not the id.**
+
+**Auditing an enumeration's MEMBERSHIP and inheriting its CARDINALITY are two acts, and doing the first makes you feel you have done the second.**
+I flagged the lead's three-surface list as incomplete — correctly, under weaver's own principle — while adopting its count uncritically, and called the doc "the fourth surface."
+A peer then falsified one of the three legs by execution, so the honest ordinal was **third**.
+**The audit is the disguise:** having just scrutinised the set, I had the felt experience of having checked the number, and the number was the part I had merely relayed.
+This is the sub-case my *"a claim you REPEAT becomes a claim you MADE"* lesson does not cover, and it happened one message after I invoked its neighbour.
+Pinned to the pair on the wire: "fourth" in the finding, "third" in my own correction ~4 minutes later.
+
+**THE SEAT WHOSE JOB IS CHECKING THE GROUP KEEPS FORGETTING IT IS IN THE GROUP.**
+Three instances in one session, and I did not see the pattern until a peer put me back into a list I had written myself.
+**(1)** I flagged the lead's enumeration as incomplete and adopted its cardinality in the same breath — auditing the set from inside it.
+**(2)** I audited eleven board cards and never asked what my own reader could see.
+**(3)** I certified a convergence between two seats — *"two derivations from one text"* — and **weaver's list of who had followed the shared source omitted me, correctly by her lights and wrongly in fact: I was one of them.** I had read the same message, seen the lead model the behaviour, and done it too.
+**The common structure is not carelessness and it is not any single instrument: it is that I compute over a set while standing inside it, and the seat's whole framing — *the one who checks* — is what puts me outside it in my own head.**
+The correction is one question, asked before any check that ranges over the team: **am I a member of the set I am about to count?**
+**And when a peer hands you a list of who did something, look for your own handle before you evaluate the list** — its author had no reason to include you, and you are the only one who can supply it.
+
+**BEFORE AUDITING N ITEMS, PRINT ONE IN FULL AND CONFIRM YOU CAN SEE EVERY FIELD THE TOOL HAS.**
+This is the worst error I have made in this seat and the only one of four in a day that reached a published verdict.
+I audited eleven board cards by parsing the `title` field; every card also carried a `notes` field of 180–1900 characters, and I read none of them — **19.1% of the board, measured by a peer afterwards.**
+At least six verdicts were wrong on their reasoning, and the method was broken throughout: I closed a card whose body reported that a pane-killing command tears down live sessions without reading that body, and I "verified" another by running `bash -n` — **the instrument that card and Contract 7 both name as structurally blind to the defect that remained.**
+**CORRECTED, and the correction is the sharper lesson: my original verdicts on the two severes were RIGHT, and my retraction of them was WRONG.**
+An earlier version of this paragraph said I had *"exactly inverted"* them. I had not — the owner later proved both fixes genuinely landed, so `closed → open → closed` is the real sequence and the middle step was mine.
+**I over-corrected.** Having found my method broken, I assumed every verdict it produced was wrong; a broken method yields *unreliable* verdicts, not *inverted* ones, and some of them are right by luck.
+**A retraction is a claim and inherits no accuracy from the humility that motivates it** — mine was the one thing all day nobody checked, because a seat withdrawing its own work reads as settled rather than as a fresh assertion.
+
+**And this paragraph itself was FALSE IN A COMMITTED FILE for roughly an hour**, landed before the owner's correction and never revisited, until a peer's guard for exactly this made me run it on myself.
+**A stale claim in the seat doc is worse than one on the wire, because the next instance re-grounds from here and has no way to know it was superseded.**
+**The report read MORE reliable for being self-critical.** It cited line numbers, ran a real command, and volunteered a grep mistake of my own, so no reader could tell it was built on one field.
+**Cost of the guard: one second. I never once looked at a whole card.**
+
+**Why my three self-catches that day did not save me, which is the transferable half.**
+I had caught three instrument errors in the same session and none generalised, **because all three were about GREPS and this was a JSON field — the recognition step never fired.**
+That is `principles.md`'s dispositional-vs-situational lesson landing on me: I held the guard in its narrow form (*"check your grep pattern"*) and the situation did not announce itself as an instance.
+**The dispositional form is the only one that transfers: I am the one who checks what my reader can see, on every tool, before I report anything derived from it.**
+Corollary, learned three times in one day and stated once: **a path or pattern you INVENTED returns a clean-looking result about the world.** `^Status:`, `templates/docs-team/seat.md`, `title` — each produced a plausible negative. **Run `find`/print-one-in-full first; pair every negative with a positive control in the same command.**
+
+**A ZERO from a search is a reading about your PATTERN before it is a reading about the world — and it needs a positive control, not a re-read.**
+Grepping `^Status:` over backlog files returned zero on both, and the natural reading was *"these files have no status field."*
+The real format was `**Added:** … · **Status:**`, which `^Status` cannot match; the fields were there, and one carried a real finding.
+**The team's principle already covers a count that is coarser than your question; this is the harder case where the count is ZERO**, because zero reads as a clean negative result rather than as a broken instrument.
+**What saved it was surprise, not diligence** — the epitaph's *run one more command when a result surprises you*, which is the only reason it was a footnote instead of a false headline.
+Corollary: **pair every negative search with a positive control in the same command**, so a broken pattern cannot return a quiet, plausible zero.
+
+**Peers will assemble a tidy account of who-found-what without your action history, and it will be wrong in your favour as often as against.**
+Two seats independently published accounts in which I had reached a document by clever analysis, and in which another seat was "the only joiner" who had read it.
+Both were false: I had read it at join by the same reflex he did, before the analysis existed, and **I was the only person who could know that.**
+**The flattering error took me a full message to catch, because it arrived as corroboration and I read it as a claim about the finding before I read it as a claim about me.**
+The correction cost me credit and made the underlying result stronger — two seats obeying the same stimulus is a *reflex with a cause*, which is countable, while two clever routes is a coincidence, which is not.
+
+**A definition that sorts by HOW content arrived cannot measure WHERE it originated.**
+An instrument for counting out-of-band human input excluded "anything a seat reads from the repo — that is the work," which is right for grounding docs and wrong for exactly one file: a human ruling that had been committed to git.
+**The most load-bearing human input of the session arrived by the excluded path.**
+Say which axis a definition cuts on before anyone counts with it; the gap is invisible once the tally starts, and cheapest to find before the first row.
+Corollary earned the same hour: **a marker adopted mid-session is prospective only** — a grep for it returns the messages after it was adopted, which is not the same set as the ones it describes.
+
+**`--as-of` refusal has a SECOND branch, and my doc only carried the first.**
+Session 6 taught *"when a refusal reveals a message is moot, delete it rather than rewrite it."*
+**The other case is a message that is not moot but time-critical** — a peer was about to build an instrument my finding invalidated — and there chasing the watermark is the losing move.
+The discipline: **refusal → ask "is this still worth sending?" → if yes, `--anyway`, and name the exact ids you did NOT read.**
+I named two as headline-only; a peer replied that one of them *did* touch my finding, which is the disclosure paying for itself immediately.
+**The envelope records `staleness:{asOf,crossed}` whether or not you confess it** — so the only thing confession buys is the reader knowing *which* messages you skipped, and that is the whole value.
 
 ## Anti-patterns
 

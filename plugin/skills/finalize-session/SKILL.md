@@ -19,12 +19,21 @@ _live_. Don't skip it on a real session.
 
 ### Kickoff — the lead triggers the ritual
 
-0. **Broadcast the start on the vine.** The seats are in **separate panes** — nothing makes them
-   synthesize unless told. The lead posts on the channel: _"Finalizing — every seat run your
-   `anthill:finalize-session` synthesis (steps 1–2) now and confirm on the vine when your seat doc is
+0. **Broadcast the start on the wires this session actually armed.** The seats are in **separate
+   panes** — nothing makes them synthesize unless told. The lead posts: _"Finalizing — every seat run
+   your `anthill:finalize-session` synthesis (steps 1–2) now and confirm when your seat doc is
    landed."_ Then the lead **gathers confirmations** and does not proceed to land + teardown (step 6)
    until **every present seat has confirmed** — knowledge capture is the whole point, and a torn-down
    pane can't synthesize.
+   - **⚠ Do NOT name a wire here without checking what this session armed.** A session may deliberately
+     run on one wire and leave another open-but-unsubscribed. **Broadcasting the ritual on a wire
+     nobody tails is indistinguishable from not broadcasting it** — every seat stays silent, the lead
+     reads that as "nobody has finalized", and the ritual stalls at its first beat with no error
+     anywhere. _This step said "on the vine" through a session that ran comms-only by ruling; it was
+     caught minutes before the ritual ran, by a seat reading ahead rather than by anything mechanical._
+   - **The rule that survives a new wire: broadcast where the seats are, and if you are not certain
+     where that is, ask before you announce.** A confirmation you never receive and a confirmation
+     nobody sent look identical from the lead's chair.
 
    **Subagent-mode finalize (bake the capture into the task, don't chase it after).** A one-shot
    `Task`/`Agent` subagent isn't on the vine waiting to be told to finalize. You _can_ resume it
@@ -378,9 +387,22 @@ it has gone wrong.**
      momentum merge it unseen.
    - ◻ **Tear down:** **`anthill down`** — the session is named after the **channel**
      (`config.channel`) by default, so it resolves with no arguments. It **refuses to kill while seats
-     are still present on the vine** (pass `--force` to override) — that presence guard is your backstop
-     against yanking a seat out mid-ritual. (If you spawned with a custom `--session <name>`, pass the
-     same here.)
+     are still present on the channel** (pass `--force` to override) — that presence guard is your
+     backstop against yanking a seat out mid-ritual. (If you spawned with a custom `--session <name>`,
+     pass the same here.)
+     - **It refuses on TWO states, not one, and the second is the one you will actually meet.** It
+       blocks when seats are **present**, and equally when presence **cannot be established** — because
+       tearing down panes without knowing whether anyone is working in them is the failure the guard
+       exists to prevent, and _"I could not tell"_ is not _"nobody is there."_
+     - **So `--force` at the end of a finished session is EXPECTED, not a workaround.** A seat that has
+       stood down cleanly leaves no positive signal saying so, which reads as _cannot establish_ rather
+       than _gone_. **Do not let that train you to reach for `--force` reflexively** — the one session
+       where it matters is the one where a seat really is still working, and it looks identical from
+       here. Read who it names before you override it.
+     - **The refusal names the CHANNEL and no wire, deliberately** — don't "fix" it to name one. The
+       verdict is drawn from more than one wire, the message cannot know which were consulted, and a
+       sentence naming today's wires goes wrong the next time one is added. _This paragraph itself said
+       "on the vine" for a full release after that stopped being true._
 
 ## Output
 

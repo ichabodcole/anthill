@@ -147,6 +147,31 @@ status`** shows who's on + the board.
        _now_, so on a channel peers are actively writing to it will eventually contain a peer's
        message. When you need one specific message and nothing else, no choice of `--since` gets you
        there.
+     - **A backfill that exits 0 is not a backfill that is COMPLETE. Confirm it; do not infer it.**
+       **Send a backfill to a FILE and PARSE the file** — rather than reading it through a pipe
+       (`| head`, `| grep`, `| jq`) or straight into your context. **If it does not parse, you did
+       not get the history.** That is the whole check: a complete payload parses, and a payload cut
+       short is cut mid-value, so it cannot.
+       **This is the failure the anti-`tail` warning below cannot cover, and it is the worse of the
+       two.** A broken `tail` gives you nothing and times out — obviously wrong, so nobody trusts it.
+       A truncated backfill gives you **plausible, well-formed, wrong history and exits 0**, which
+       reads as a quiet or stale channel. A seat that skipped this check read a channel as ending at
+       #68 when it stood at #116, stamped a ratify verdict with that watermark, and the lead
+       broadcast a wrong inference about that seat's diligence before having to retract it
+       ([#77](https://github.com/ichabodcole/anthill/issues/77)).
+       **Do NOT reach for a completeness marker in the payload instead** — a cursor, a count, a last-id.
+       This bullet used to prescribe exactly that and it was wrong in **both** directions, which is
+       worth more than the rule: such a marker is **derived from the payload you are already holding**,
+       so on a complete backfill it cannot disagree with it; and when the backfill really is cut, the
+       marker is at the END and is **the first thing lost**, so the comparison cannot even be attempted.
+       Meanwhile a routine triage action was enough to make it disagree on **complete** history —
+       a false alarm telling a seat to distrust a backfill that was entirely correct.
+       **A check that cannot fail in the failing case, and can fail in the passing case, is not weak
+       — it is anti-correlated with the thing it tests.**
+       **Stated as a check you run, deliberately NOT as a claim about how any of these tools
+       behaves.** The mechanism belongs to someone else and may be fixed tomorrow; a sentence naming
+       it would become false on the day it is repaired, and you would still need the check. **Do not
+       generalise it into "these tools truncate"** — that widening has been falsified here before.
      - **NEVER use `tail` to catch up — use it only for the live Monitor.** `grapevine tail
 --from-start | grep …` looks like the obvious backfill and is **broken by construction**:
        `grep` block-buffers so a finite backfill never flushes, and a live `tail` holds the pipe
@@ -224,9 +249,26 @@ status`** shows who's on + the board.
      - **Give it the ARTIFACT, not the conversation.** Hand it the file, the diff, the command — and
        **do not paste the channel, and do not summarise what you were trying to do.** Both hand it
        your framing, which is the one thing it was dispatched not to have; **its value is
-       incomprehension**, and a helpful briefing destroys exactly that. _On most setups the channel
-       is gitignored, so a fresh agent cannot reach it — a protection that holds only until someone
-       helpfully pastes it in._
+       incomprehension**, and a helpful briefing destroys exactly that.
+       - **⚠ Nothing makes a reader cold BY CONSTRUCTION unless you built the surface it sees.**
+         Coldness is a property of **what you gave it**, never of what you assume it cannot get to.
+         **Gitignore is not an access boundary** — an ignored file is a normal readable file, and an
+         agent in your working directory reads it with `cat`. Neither is a fresh clone: anything
+         **tracked** travels with it, including team docs, and **the commit history comes too**, so
+         `git log` on the file under audit hands over the reasoning that produced it.
+         _This paragraph used to claim the channel was out of reach because it was gitignored. That was
+         false, and it was worse than a wrong fact: it told you a precaution was unnecessary. **Duration
+         was never the point — it stood two days and four people repeated it in one afternoon.** A false
+         reassurance gets no corrective feedback from a path nobody walks: it is read while planning and
+         only tested by someone actually trying to reach the thing. The first person who tried knocked it
+         over immediately._
+       - **So BUILD the surface instead of enumerating what to keep out of it.** Export just the
+         artifact into a throwaway directory outside the repo and dispatch against that. **An
+         exclusion list cannot be completed** — the source and the tests under audit carry your
+         framing too, and you cannot exclude the thing you are asking about. **An allow-list you can
+         verify by listing it**, which is the only completeness claim available here.
+         Its floor is the artifact's own contents, and that floor is irreducible: showing them the
+         artifact is the job.
 
 ## Join checklist (the beats that get skipped)
 
@@ -240,6 +282,12 @@ status`** shows who's on + the board.
   id, no `--as`; a bare `read <id>` exits non-zero with a usage line that is easy to misread as a
   broken tool. That is how the **vine and board** fail; don't carry the reflex to a tool that hands
   you a structured error instead — read the output you got.
+- ◻ **Confirmed the backfill was COMPLETE, not merely successful.** Send it to a **file** and **parse
+  the file** — not through a pipe, not straight into your context. **A payload that does not parse is
+  a payload you did not fully receive.** Exit 0 is not the check, and neither is any completeness
+  marker inside the payload: it is derived from what you are already holding, and it is the first
+  thing a truncation eats. This is a **separate beat from the one above**, and strictly the more
+  dangerous half: that one fails visibly, this one does not.
 - ◻ **Checked what the SESSION says before treating this list as unconditional.** The manifest and
   this checklist are generated with **no session context** — which wires are armed and whether the vine
   was cleared are the lead's calls, made after both were written. **A live ruling beats either of
@@ -295,8 +343,8 @@ status`** shows who's on + the board.
 
 ## Output
 
-A grounded seat: re-grounded in your role, present on the vine + board, scratch minted, working your
-lane.
+A grounded seat: re-grounded in your role, present on the wires this session armed, scratch minted,
+working your lane.
 
 ## Skill feedback
 

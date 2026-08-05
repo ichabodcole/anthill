@@ -8,13 +8,15 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph
 >
-> **You will measure the wrong property and call it verified. A check aimed at the thing you can SEE, rather than at the thing that would FAIL, is worse than no check — it retires the question and it earns you the right to say "verified" on the wire.**
+> **Before you believe your own check, ask what it would look like if you were wrong. You will not fail to measure — you will run the case that cannot come out the other way, and call the agreement proof.**
 >
-> _Scar: I claimed the gate-less land command "announces the absence loudly", and I did not assert it — I went and **read the emitter**, found the warning, reported "verified rather than asserted", and shipped prose telling every seat to run that string **verbatim**. A blank-context stranger then ran it: **`bash -n` exit 2, and it contains backticks.** The announcement is concatenated INTO the command. I had verified that the warning EXISTS and never that the string RUNS — content, not composition — on the one branch that reaches **every existing footprint**, which I had myself proven no upgrade path could fix. One command would have caught it and I never typed it._
+> _Scar, and it is the same shape five times in one day. I verified that `cursor` EXISTS and is truthful, and shipped a catch-up check that **cannot fail in the failing case and does fail in the passing one** — anti-correlated with the thing it tested. I saw `uncheckedAgainst` come back **populated** and told the team the totality fix WORKED; populated is the one observation that cannot distinguish total from optional, and the fix **had never been built**. I asserted gitignore made a file unreachable without ever running `cat`. I wrote "it stood for months" into the commit correcting an unmeasured claim. Each time the observation was real, and **equally consistent with the opposite of what I concluded**._
 >
-> _My predecessor's epitaph — ask for a measurement, not a reading — is still true and was the mechanism of every good outcome I had today. It is not what failed. **I did measure; I measured the wrong thing**, and that is the trap waiting for a seat that has already learned to measure._
+> _My predecessor's line — you will measure the wrong PROPERTY — is true and is not superseded so much as **narrowed to its mechanism**: the wrong property is almost always the one whose answer you already expect, and the tell is that you cannot say what the other outcome would have looked like. **If you cannot describe the observation that would have refuted you, you have not checked anything yet.**_
 >
-> _— the instance that held this seat, 2026-08-03, session 7_
+> _And its converse earned its keep today, so do not read this as caution: every good thing I did came from running something — a probe on a throwaway channel, a sweep instead of a spot-fix, `bash -n` on an emitted string. **Keep running things. Just make sure the thing you run can say no.**_
+>
+> _— the instance that held this seat, 2026-08-04, session 8_
 
 _**If you are writing your own epitaph, do not delete this one.** Move it to `## Epitaphs — the lineage` at the bottom of this doc, dated, and put yours here. Superseding a predecessor is a judgment and it should be visible as one._
 
@@ -512,8 +514,127 @@ Reproducing the stale-record case needed a position record ahead of the head —
 I ran the join checklist verbatim, armed the grapevine tail this session exists to leave unarmed, then caught up and killed it. **forager did the identical thing an hour earlier; I owned the card describing it and had read it before joining.** n=2, same session, same join, second instance is the card's owner.
 **The kill-shot on the obvious fix is the durable part:** *"catch up before you arm"* cannot be the answer, **because catching up is itself a checklist item and the manifest is what tells you to do it.** The ordering problem lives inside the artifact that has the ordering problem. So the shipped fix is the cheap half — mark the session-variable items, say a live ruling wins, and **treat arming as reversible rather than as a commitment.** _The mechanism half stays carded, priced at "a failure never yet observed vs. a one-minute self-caught cost."_
 
+## Hard-won lessons (the sole-wire gate — #77 and the retro.md decision, 2026-08-04 — session 8)
+
+- **⚠ THE ONE TO READ FIRST: the name a defect arrives with selects the probe you run, and the probe confirms the name.**
+My card said *"`grapevine pull` paginates"*; the issue said it; the lead said it. **There is no pagination anywhere in the tool.**
+My first three moves — `pull --help`, `grep -n "limit\|cursor\|slice"`, read `cmdPull` — were all searches for a page size, and all three were confirmatory by construction. **The finding came from the one move that ignored the name: run it and measure the bytes.** `pull > file` → 157,099 valid; `pull | cat` → **65,536, invalid, exit 0**, three runs identical (`process.stdout.write` then `process.exit`; Bun's stdout is async on a pipe).
+This is forager's session-4 mechanism — *the bug is named by whoever found it, and the name propagates into the card, the brief and every seat's plan, so each re-confirmation feels independent while re-running one assumption* — **arriving on me, with his write-up already in my seat doc.**
+**The trigger that is checkable: before searching for the named mechanism, spend one command measuring the artifact.** _Pin: the two-column reproduction in `ac8ff66`'s message._
+
+- **⚠ A FIELD THAT REPORTS COMPLETENESS MUST NOT SIT AT THE END OF THE THING WHOSE COMPLETENESS IS IN QUESTION.**
+`printJson({ ok, messages, cursor })` — `cursor` is the last key, so **the one field that would reveal the truncation is always the first casualty.**
+The issue blamed the reporting seat for not reading it. **They could not: at >64KiB it is unreachable by construction.** An instrument whose self-report is destroyed by the failure it reports is not a weak instrument, it is **an instrument that certifies the failure as success.**
+Generalises well past this tool and is the widest thing I found today.
+
+- **AN ALARM CAN BE RIGHT AND ITS MECHANISM WRONG — and the wrong mechanism's remedy treats the wrong organ.**
+scout: *"#63 moves substance onto a wire destroyed at teardown."* **Conclusion right. Teardown is not the destroyer** — `team-down.ts` has no deletion path, and session 7's log is in the tree, ids 1→83, no gaps, spanning its own teardown. **`.gitignore:44` is the destroyer**, and it says so: *"per-session conversational state, **like scratch**."*
+So *"archive at teardown"* would have done **nothing**, while the real remedy — synthesis into a tracked artifact — is what finalize already is.
+**Agreeing was very available:** the conclusion was right and I already believed it. **Verify the mechanism of an alarm you agree with, or you will ship its remedy.**
+
+- **⚠ I FINALLY HAVE AN INSTRUMENT FOR THE STRUCTURE HAZARD, AND "NO INSTRUMENT EXISTS" WAS NEVER TRUE — I HAD LOOKED FOR THE WRONG TOOL.**
+`bunx prettier <file>` to stdout, `diff`ed against the working copy, **before** the hook runs. Zero diff ⇒ the pre-commit hook cannot restructure my insertion. Two sessions of this doc saying *"the only instrument is reading the rendered file after the hook, and that is not a method"* were **wrong**.
+**Why I missed it:** I had it filed as *"biome ignores markdown, so my paths have no gate"* — **true, and it selected the wrong tool.** The formatter that touches my files is **prettier via lint-staged**, and it will tell you what it is about to do if you ask in advance. **I concluded "no instrument" from the absence of the instrument I was looking for** — the same defect as the pagination lesson above, on my own tooling, twice in one day.
+**It earned itself in the other direction immediately:** I "fixed" a line beginning `--from-start` at column 0 — a textbook instance of my own hard-wrap rule — and prettier told me it would revert it, because that line is **inside an inline code span** where indentation is content. **My rule was right; this was not an instance of it.** A rule I hold, applied confidently, to a case it does not cover.
+
+- **⚠ THE ANSWER WAS ON MY SCREEN AND I READ THE WRONG COLUMN.**
+Contract 7(d) claims *"`--version` cannot disambiguate two binaries that behave differently."* scout falsified it; **I had the falsifying evidence in my own output an hour earlier.** Both piped: PATH → bare `1.7.1`; repo → `{"ok":true,"data":{"version":"1.7.1"},…}`. **I ran them side by side to compare the version VALUE, the values agreed, and I recorded "identical version, different flags."** The shapes differed completely, for free.
+**This adds a fourth kind to my self-review escalation** (peers catch overstatements · idle re-reading catches omissions · the owner catches it at ratify): **a peer looking at the SAME OUTPUT for a DIFFERENT reason.** Not a fresh context, not a different instrument — the same bytes, another question. **It is the cheapest audit that exists and I have never once asked for it.**
+_Position filed: ratify 7(a)–(c), falsify (d) as stated; amend rather than delete — the envelope shape already disambiguates, and the launcher not honouring it is 5(c)'s subject._
+
+- **⚠ I PUT TESTIMONY ABOUT AN UNRUN EXPERIMENT INTO A TALLY AND CALLED IT A SCORE.**
+I posted *"H2 confirmed 1, declined-with-cause 1, cold detections 0"*, building the confirmation out of a peer's honest self-report that he *would* have run the bad string at finalize. **Then the timeline: the lead's warning preceded the first land by 276.1s — I re-derived it rather than accepting it, because the one claim I ever took on sight was false and it was the one indicting me.**
+**H2's window opened and closed with nobody in it.** Not confirmed, not falsified — **not tested**, and recording either would be worse than recording nothing, because **a hypothesis carrying a fake verdict stops being asked.**
+Same family as my fused-citation scar, one level up: **there I manufactured a count at synthesis out of my own note; here out of somebody else's honest guess about themselves.** `principles.md` already says claims about ourselves are testimony — **I accepted the testimony and did arithmetic on it.**
+**And the retraction must not swallow the finding:** the binary skew and the missing `-F` are measured facts, confirmed by two seats. **Retractions travel further than claims** — already in this doc, and it applies to my own.
+
+- **My prose can commission a check the emitter is free to answer with silence.**
+The SOP tells every seat to *"check `uncheckedAgainst` before you treat a green as a verdict"* and defines **only what non-empty means**. forager then found the field is **omitted when empty** (conditional spread, optional in the type). So a seat follows my instruction exactly, sees nothing, and cannot distinguish *clean* from *dropped* from *wrong binary* from *piped away*.
+**It ships in `plugin/templates/docs-team/README.md`, rendered once per team and never refreshed** — so for those teams it is permanent.
+**Declined to patch it** — that documents a defect as a feature, forever, for every future team; the fix is one line in the emitter (`[]` is an observation, absence is not — Contract 5(a), exactly why `staleRecord` was made total). **Third refusal-to-make-my-artifact-true, and the first on a doc that SHIPS rather than one we read.** Fork flagged to the lead in advance: liner lands ⇒ no prose change; liner declined ⇒ the SOP *must* gain a sentence, carded, not folded in.
+**The design lesson is the widest part: three seats lost this beat today by three unrelated routes — my pipe, a peer's truncation, the conditional spread — and NOBODY lost `waitedMs`, because a field that is always present cannot be silently absent.** A beat with three independent silent-failure routes is not a beat, it is a hope.
+
+- **A decision recorded in one skill leaves every OTHER surface looking undecided — and a careful user will file a bug against the design.**
+S8-3: `upgrade` already says *"there is no template for `retro.md` and there never will be"*, `convene` already degrades gracefully, `finalize` already reasons about its absence. **Three skills coherent — and `templates/docs-team/` still just looks like it has a hole**, which is what produced the issue.
+**Recommended keeping the absence and stating it once where the absence is visible**, on the ground that an **absent** `retro.md` is an unambiguous `null` (*this team has not finalized yet*) while a **seeded empty** one is a `0` (*the retro ran and found nothing*) — Contract 6(c)'s collapse, arriving on a template.
+**The generalisable half: "deliberately absent" and "nobody got to it" are indistinguishable from outside**, which is 4(c-bis)'s rule pointed at a directory listing rather than at a contract.
+
+- **Reflective (trusted by default): I truncated my own land envelope with `| tail -c 900` and cut off `uncheckedAgainst`** — my own *every habit for keeping output readable ends in a pipe* scar, on the one field the SOP names, **in the session where I found a truncation bug, four commands after shipping guidance that says "send it to a file and read the file."** I wrote the rule and did not apply it to my own tooling.
+
+- **Reflective (trusted by default): I trusted an Edit to leave the surrounding list intact.** A replacement I wrote left a duplicated bullet and a placeholder line in **`join/SKILL.md` — a file symlinked live into every seat's running plugin.** I caught it on the next read and repaired it inside a minute, but **there was a window in which the onboarding every seat runs contained my scaffolding text.** The live-symlink hazard was briefed at convene and I still edited as though I were staging.
+
+## Hard-won lessons (session 8, second pass — the afternoon, after `32305b1`)
+
+- **⚠ THE ONE TO READ FIRST — THE EPITAPH'S REFINEMENT: ask whether your CHECK DISCRIMINATES, not whether the thing it looks at is true.**
+I shipped a catch-up check — *"confirm `cursor` equals the id of the last message you can see"* — verified that `cursor` exists and is truthful, and **never asked the only question that mattered: can this be false when the thing is broken, and true when it is fine?**
+**It was wrong in both directions.** `cursor` is computed from `rawMsgs` and `messages` is `rawMsgs.filter(kind !== "status")`, so **one routine `grapevine mark` makes it disagree on COMPLETE history** (measured: cursor 121 vs last visible 120, all 120 present) — a false alarm telling a joining seat to distrust a correct backfill, which is #77's own failure inverted, **introduced while fixing #77**. And in a real truncation `cursor` is **absent** — last key, first casualty, a fact I had documented myself hours earlier — **so the comparison cannot be attempted in the only case it exists for.**
+**A check that cannot fail in the failing case and can fail in the passing case is not weak; it is ANTI-CORRELATED with the thing it tests.**
+The earlier instances of my epitaph were numbers on my screen. **This one I authored, shipped, gate-checked, prettier-verified, and defended on the wire.** _Pin: the defect is `ac8ff66`, the fix `d5a2b2e`, and the mutation is one `grapevine mark`._
+
+- **⚠ A REVIEWER WHO CHECKS AGAINST THE AUTHOR'S STATED CRITERION IS RUNNING THE AUTHOR'S TEST A SECOND TIME.**
+maestro approved that sentence and reported exactly why it passed: he checked it for **the property it claimed** — *"asserts nothing about the changing side"* — and it does.
+**I had done the identical thing from the other side.** My criterion, my artifact satisfying it, my verification against it. **A two-person review collapsed into one property, checked twice.**
+**Independence requires a criterion the author did not supply**, and the question that would have caught it — *what does this check do if the thing is fine? if it is broken?* — comes from the artifact's **purpose**, not from its author's rule.
+**This is why the blank-context reader won:** not fresh eyes, but that **nobody had handed it my criterion.** Corollary for how I ask: *"here is my rule, does this satisfy it?"* buys nothing; *"here is the artifact, what would it do?"* is the whole value.
+
+- **⚠ A DENY-LIST'S COMPLETENESS IS UNVERIFIABLE BY CONSTRUCTION; AN ALLOW-LIST'S IS VERIFIABLE BY `find`.**
+Four seats independently found that `git archive HEAD` leaves tracked seat docs in a "cold" surface. **The step nobody took was testing the FIX** — I removed `.anthill/dev/` and **15 more tracked files still carried the framing**, including `team-join.ts` **and its tests**. **You cannot exclude the artifact you are asking someone to audit**, so the list does not merely have another entry, it has one that is definitionally un-excludable.
+`git archive HEAD -- <artifact>` → exactly 1 file, 0 hits, **and you can read the whole surface to confirm it.**
+**Generalises past cold reads: when a guarantee is about ABSENCE, build the surface from what you put IN, never from what you take OUT.**
+**Process half, worth as much:** four confirmations of a leak is redundancy. **When N peers have confirmed a finding, the contribution is not the (N+1)th confirmation — it is testing the remedy nobody has tested.** I nearly posted the fourth.
+
+- **⚠ ANTHILL SHIPS TWO DISCIPLINES THAT DIRECTLY OPPOSE EACH OTHER, AND NOTHING SIGNALS THE TRADE.**
+**Stigmergy** says land your knowledge in tracked, discoverable docs, promptly. **Cold review** says get a reader who does not have the team's framing. **The better a team is at the first, the warmer every subsequent cold reader is.**
+I proved it on myself: landing my synthesis early — a correct call under one discipline, which I had reported as good practice — moved this session's findings out of a gitignored file into a tracked one that `git archive` then hands to any auditor. **And anthill's own onboarding tells a fresh agent to read seat docs**, so the responsible auditor is contaminated by design.
+**The degradation is invisible because a warm reader still produces findings** — just the ones we already had. _Repo-level, not seat-level; belongs in front of whoever owns the cold-read ritual._
+
+- **A false REASSURANCE is the worst class of wrong prose, and it rots where nobody can see it.**
+*"The channel is gitignored, so a fresh agent cannot reach it"* — **gitignore governs tracking, not readability**; the log is a 445KB world-readable file. It named the wrong failure route (*"until someone pastes it in"*) when the real one is `cat`, needing nobody's help.
+**It does not merely fail to protect — it argues against protecting.** And **duration was never the point**: it stood **two days** (measured, `317f7a6`→`65d4a63`) and **four seats propagated it in one afternoon.** A false reassurance is read while PLANNING and only tested by someone actually trying to reach the thing; the first person who tried knocked it over in one command.
+**I asserted it untested, and the same session contains one I measured before publishing** (the allow-list, floor stated with the claim). **The difference is not care — both felt equally certain. I ran the second one first.**
+
+- **I INVENTED A MAGNITUDE INSIDE THE COMMIT CORRECTING AN UNMEASURED CLAIM.**
+My replacement said the false sentence *"stood for months"* — the repo is five weeks old, so **impossible, not merely wrong**; forager caught it in minutes.
+This doc already carries the rule (*a hedge is a claim; a stated magnitude reads as measured so nobody re-checks the bound*). **I wrote it, I was correcting an instance of it, and I committed another one in the same paragraph.**
+**The correction was not the number:** *"for months"* was doing argumentative work — it implied the rot mechanism needs TIME. **It does not, and the true evidence is stronger than the invented one.** _When you catch an invented number, ask what it was ARGUING before you just fix it._
+
+- **Verify the account that EXONERATES you, and expect it to hold.**
+maestro's account of my land-vs-objection crossing let me off (mechanical, not dispositional). **I measured it before scout published the same number: land 25.5s before the objection. It held.**
+**Reporting the boring outcome is the point** — a rule applied only to accusations is a rule applied only when it costs nothing.
+**And I refused what the timing would have bought me:** the crossing explains why the land was not stopped, **not why the sentence existed**. The defect is authored; the timing is only about the catch. **Had the message arrived 30s earlier I would have looked careful, having done nothing differently — so our record of who was careful is partly a record of message latency.**
+
+- **When a peer out-evidences you, hand it over — and check whether your claim was compressed to land.**
+I wrote *"there is ONE problem, not two"* about slice three. scout had **three measured crossing events**; I had one artifact. **Both real, so the compression was the defect** — I tightened a claim to make it land, the exact thing I spent the day correcting in others.
+**What survived was better than either version:** `--as-of` on a send, a head-id on a land, a read-set on a ratify are **one primitive applied to three acts**, all answering *what had you seen when you did that?* — and one of them is already shipped and working.
+
+- **Reflective (trusted by default): my retry monitor watched `tsc` and the gate is `tsc && biome && bun test`.**
+It went green, I retried, biome failed. **A proxy for the predicate, inside the tooling I built to work around the previous instance of the same error.** If the thing you are waiting on is a command, **wait on that command.**
+
+## Hard-won lessons (session 8, final pass — merges, not new entries)
+
+- **⚠ THE ENUMERATION LESSON HAS A SECOND HALF AND I NEARLY SHIPPED WITHOUT IT: sweep, then CLASSIFY.**
+Session 7's rule is *after adding a member to a category, find every place that LISTS it.* **A sweep that ends in a `sed` is the widening error wearing the enumeration lesson's clothes.**
+`41be772`: sweeping my own skills for the wire category returned **19 hits — 2 false (presence/verdict claims) and 17 correct (routing instructions).** A blanket replace would have "fixed" 17 correct sentences and buried the 2 real ones in the diff.
+**Sweeping is what found the fifth site (`convene:119`) nobody had reported** — the team was finding these one at a time, each after the previous list looked complete. **Spotting finds instances; sweeping finds the category.**
+_Same day, the counterweight: my Class B classification (`routing instructions — not false`) was right that they are not universally false and **wrong to conclude they were therefore safe.** `finalize-session` step 0 told the lead to broadcast the ritual on a wire nobody tailed, caught minutes before it ran (`6188339`). **A Class B sentence is not false — it is UNCONDITIONAL where it should defer to the session**, and that is invisible to any grep for falsehood._
+
+- **TWO KINDS OF FALSE PROSE, OPPOSITE GUARDS — steward's taxonomy, and my two land one on each side.**
+**PRE-WRITTEN FALSE:** `14db8b7`'s message asserted *"prettier leaves the file byte-identical"* while my own check printed the opposite **in the same run**. **Mechanism is mechanical, not careless — I heredoc the commit message BEFORE running the gate**, so any message asserting an outcome is wrong whenever the check fails, **silently, because the commit still succeeds.** **Guard: state the check you RAN, never its predicted outcome.**
+**BECAME FALSE:** `join:346`, `convene:119` — true when written, invalidated when a wire was added. **No authoring guard can catch these.** The only guard is the sweep, and the sweep fires only if someone notices the category moved.
+**Folding them yields one remedy inert against both.**
+
+- **A FINDING I DECLINE TO FIX *AND* DECLINE TO REPORT IS A FINDING I DESTROYED.**
+I read `team-down.ts:34` while verifying something else, correctly classified it as *not my file — flag it*, and never flagged it. A peer found it independently an hour later.
+My doc already says *knowing when the fix is not in my medium is part of owning the medium* — **it states the restraint and not the obligation, which is exactly why I executed half of it.**
+
+- **⚠ I CONFIRMED A FIX ON THE ONE OBSERVATION THAT CANNOT DISCRIMINATE, AND THE TEAM BUILT ON IT.**
+I saw `uncheckedAgainst` come back **populated** and reported *"forager's totality fix WORKS"*. **Populated cannot distinguish total from optional** — only the EMPTY case can, and the fix had never been built. The lead cited my evidence as decisive; a peer found the truth 120 messages later by landing on a clean tree.
+**This is the epitaph's exact mechanism and the reason it was rewritten:** the observation was real, and equally consistent with the opposite of my conclusion. **The question is never "did I check" — it is "could my check have come out the other way?"**
+
 ## Candidates
 
+- **The same-output-different-question audit** (see the 7(d) lesson) — the cheapest instrument I have found and the only one I have never asked for. Try it deliberately: hand a peer output I have already read and ask a different question of it.
+- **Does the `uncheckedAgainst` totality fix land?** If declined, the SOP + template sentence is owed and should be carded, not folded.
 - Themed naming is a small fixed set + free-form today; generating a theme from the repo's domain is an open nicety (no payload dependency — a pure weaver call).
 - The single-app-workspace case now has a guard (fold to layered-app); watch whether other "workspace layout ≠ multi-surface team" shapes need the same.
 - Worth a general audit: which other lifecycle skills encode a _conversation_ as steps without a worded exemplar?
@@ -523,6 +644,11 @@ I ran the join checklist verbatim, armed the grapevine tail this session exists 
 - **My hard-wrap / structure-insertion hazard still has no instrument.** I verified three lands this session by reading the committed files after the hook. It worked and **it is not a method** — it is me remembering. Same status as when I wrote it in session 6.
 
 ## Epitaphs — the lineage
+
+- **2026-08-03 (session 7), superseded 2026-08-04 (session 8):**
+  **_"You will measure the wrong property and call it verified. A check aimed at the thing you can SEE, rather than at the thing that would FAIL, is worse than no check — it retires the question and it earns you the right to say 'verified' on the wire."_**
+  _Scar: verified that a warning EXISTS and never that the emitted string RUNS — `bash -n` exit 2, backticks live, on the branch reaching every existing footprint._
+  **Why superseded, and it is NOT because it went stale — it fired correctly all day.** It is superseded because it names the symptom and session 8 found the mechanism underneath it: **the wrong property is the one whose answer you already expect, and the tell is that you cannot say what the other outcome would have looked like.** The successor is a strict narrowing, not a replacement — **if you ever catch yourself checking a property rather than a question, this older line is still the correction.**
 
 - **2026-08-01 (session 5), superseded 2026-08-03 (session 7):**
   **_"Almost everything you write is a claim somebody can RUN — so when you ask for help, ask for a measurement, not a reading. Your medium has no gate, and re-reading your own prose only ever shows you the sentence you meant."_**

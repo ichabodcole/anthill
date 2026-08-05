@@ -140,8 +140,31 @@ describe("anthill down — command path honours the presence guard", () => {
 
     expect(rec.exits).toContain(1);
     expect(rec.stderr).toContain('"ok":false');
-    expect(rec.stderr).toContain("seats still present on the vine");
+    expect(rec.stderr).toContain("seats still present");
     expect(rec.stderr).toContain("forager, weaver");
+
+    // THE REFUSAL MAY NOT NAME A SINGLE WIRE. Presence spans grapevine AND
+    // comms, and `SeatPresence` carries no attribution — so any wire named here
+    // is a guess that reads as a fact, and it sends a lead debugging a
+    // comms-only session to a grapevine roster that correctly says nobody is
+    // there. It named "the vine" for a whole session after that stopped being
+    // true.
+    //
+    // WIDENED after a blank-context reader defeated the first version: it
+    // banned two literal PHRASINGS, and `"seats still present, per the
+    // grapevine, on …"` sailed through at 6 pass / 0 fail. Banning a phrasing
+    // is not banning the claim — the third time this seat has made exactly that
+    // mistake, twice while writing a test for an honesty rule.
+    //
+    // So the assertion is now on the REFUSAL STRING as a whole: it may not
+    // name a wire ANYWHERE, in any construction, because `SeatPresence` carries
+    // no attribution and any wire named here is a guess that reads as a fact.
+    // The channel name is what it may say, and the positive anchor pins that.
+    const refusal = JSON.parse(rec.stderr).error as string;
+    expect(refusal).not.toMatch(/grapevine|vine|comms/i);
+    // Positive anchor, so this cannot pass by refusing with no reason at all.
+    expect(refusal).toContain("test-channel");
+    expect(refusal).toContain("forager, weaver");
 
     // Stream separation: the refusal must NOT reach stdout, where an agent
     // parsing the success channel would read it as output.
