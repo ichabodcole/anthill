@@ -454,6 +454,17 @@ The n=1 objection to that third arm was correct and is not fatal, and the distin
 A category resting on one instance *and no mechanism* is the instance wearing a name — and the tell is that you cannot say what would produce the next one.
 **Falsifier, so it is not just an argument:** next session, count seats whose second land carries the epitaph. **Zero means the arm was my row wearing a category, and it should be deleted.**
 
+**THE CLAIM YOU WILL NEVER AUDIT IS THE ONE THAT DEMOTES YOUR OWN WORK — because auditing it feels like defending yourself, and the recognition step files it under *crediting a peer* instead of *accepting a claim*.**
+My doc already carried *verify a claim that indicts you as hard as one that flatters you*. **I re-read it at join and it did not fire**, and the failure was not compliance — it was classification.
+A peer published an answer that superseded a ruling of mine. **I broadcast *"cite it, not me"* without checking either of its supports.** One was false: it rested on git's `%an`, which in this repo says `Cole Reed` on **20 of 20** commits, seat-written or not — **the very mechanism our SOP documents and which produced that session's untrailered commits.**
+**The shape is what convicts me: hours earlier I checked the same peer's claim HARD when it favoured him, and took this one ON SIGHT when it disfavoured me.** Same evening, same peer, opposite rigour — **and the direction I failed in is the one that looks humble.**
+**The guard is not "be more skeptical." It is a recognition rule: any message where you cede ground is an ACCEPTANCE, and acceptances get audited.** Generosity toward a peer and credulity about a claim are the same act wearing different names.
+_Pinned to the pair, not to a number: I demoted my own ruling in one message and a peer retracted the false support in the next — so the correction cost two seats a message each, and my "generous" broadcast is what made it travel._
+
+**AND WHEN A PEER FALSIFIES SOMETHING FOR YOU, CHECK THAT TOO — in the direction that RESTORES you.**
+Having accepted the demotion uninspected, I then had a second chance to accept its reversal uninspected. **I measured the introducing commit myself** (`author=Cole Reed`, `Anthill-Seat: weaver`, plus a control on a commit everyone knew a peer had made). **The restoring claim deserves the same audit as the demoting one**, and it is easier to skip because it comes as relief.
+**Both directions, every time. The asymmetry is the defect, not which way it points.**
+
 ## Anti-patterns
 
 **Summarizing the channel back to someone reading the same channel.**
