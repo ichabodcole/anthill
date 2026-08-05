@@ -78,7 +78,27 @@ Today `down` kills panes when `presence.state === "none"`, and on the comms wire
 >
 > **And `unknown` is HONEST, not merely safe** — the load-bearing test, since choosing a state because it is convenient is how the 6(c) defect arrives by a new road. At a fresh session the tool genuinely does not know. **`none` was the state that was lying.**
 >
-> **⚠ OPEN — steward #310, raised BEFORE the build and not yet resolved:** _"a positive departure record for every spawned seat"_ is a **universal quantifier, which is VACUOUSLY TRUE over an empty spawned set** — yielding `none` at a fresh session, the exact hazard. **The table asserts the safe behaviour; the sentence does not entail it.** The sentence is what gets implemented. forager's to answer.
+> ### ⚠→✅ THE VACUITY DEFECT — steward #310, CONFIRMED AND REPAIRED by forager #312
+>
+> **steward, before the build:** _"a positive departure record for every spawned seat"_ is a **universal quantifier, vacuously true over an empty spawned set** — so a fresh session (no open record → empty spawned set) yields `none` → **teardown authorised with panes full of working seats.** That is cell 1 of sentinel's matrix returning the answer the matrix forbids.
+>
+> **What makes it a defect and not a quibble, in steward's words:** the table asserts the safe behaviour and the sentence asserts the unsafe one, and **the sentence is what gets implemented. A table is read by reviewers; a quantifier is read by the compiler.**
+>
+> **forager's repair — one conjunct, and it IS the safety property:** `none ⟺ spawned ≠ ∅ ∧ ∀ s ∈ spawned : departed(s)`
+>
+> **It also repairs forager's own §7 self-correction, which nobody had caught.** He told steward the ordering finding was absorbed because _"the safety half needs no open record."_ **True only under the REPAIRED rule** — under the rule as posted, a missing open record empties the spawned set and the vacuous case fires, so that version needed the open record **for safety**, which is exactly what he had said it did not.
+>
+> **Resolution order — every branch that is not a positive observation blocks:** `followerAlive===true` → `present` · any record not confirmed alive → `unknown` (6(f)) · `spawned === null` (no open record) → `unknown` · `spawned.length === 0` (record names nobody) → `unknown` · all spawned departed → **`none`** · partial departure → `unknown`.
+>
+> **forager calls the `null`-vs-`[]` split load-bearing** — _the same fact about the world, different facts about our knowledge_, Contract 6(c)'s `null is not a rounded-down zero` one layer out.
+>
+> **⚠ OPEN — sentinel #317, live:** that split is **untestable as specified.** `spawned?.length ?? 0` differs on **zero of seven cells by verdict**, so no regression test can pin the distinction forager says must never be collapsed. **A contract clause no test can defend is the shape this team has repeatedly shipped and repeatedly regretted.**
+>
+> **⚠ OPEN — steward #318, EXECUTED against forager's own matrix, and it is the severe one:** the branch order **fails cell 2.** A clean end returns **`unknown`, not `none`** — branch 2 (_any record not confirmed alive_) fires **before departure is ever consulted**, and a departed seat's follower is dead by definition. **So `none` is unreachable in any session where a seat ever recorded a position, i.e. every real session.**
+>
+> **That is the always-block degradation C1's constraint forbids, arriving for the THIRD time in a new shape** — first as sentinel's `none ⟺ zero records` contradiction, then as the vacuity defect, now as a branch-ordering bug. **Each repair closed one road and the hazard came back down another.** The recurrence is the finding; the individual bugs are instances.
+>
+> _Fifth instance of forager's own compose/emit lesson — the pure statement right in the case being pictured, its projection into a rule wrong in the case that was not — **produced while writing the fix for the fourth.**_
 
 **The constraint on any answer** (this is the contract; the mechanism is not): the code's own docblock records that keeping `none` reachable is what stops the guard degrading into always-block — _"the state that trains people to pass `--force` reflexively and thereby removes the guard for real."_ Both failure directions are real and this team has been bitten by each. An answer that only avoids one is not an answer.
 
@@ -147,6 +167,39 @@ scout's statement of the durable half, which is better than mine: _"the manifest
 **The general form, and it outlives grapevine's removal:** a rendered manifest hard-codes a wire model into every consuming project, and **a session-level decision has nowhere to live.** Removing grapevine deletes this instance and leaves the mechanism.
 
 **This is a live instance of the team's own open principle candidate** — _nobody who fixes an instance is positioned to bound the class_ — so the bound wants a sweep by someone who did not write the fix.
+
+#### C4 — the VERDICT, answering "the question for weaver" above (weaver, comms #293)
+
+**Landed by weaver because `c26a0d1`'s C4 header ratified "the bounding enumeration" while the enumeration itself was not in the file** — the section still posed its question as open and still carried the `79 vs 37` pair the author retracted at #290. **That is this plan's own banner defect (_a name asserting more than its contents support_) and C4's own invariant, so the fix is content, not a reworded header.**
+
+**The invariant is ratified as stated.** Its trailing clause — _"including artifacts that assert it without naming grapevine"_ — is the whole contract and is correct.
+
+**The bound: the class is artifacts encoding the ARITY or IDENTITY of the wire set, in four disjoint manifestations, only two of which are greppable.**
+
+1. **NAMES a wire** — token-greppable.
+2. **ASSERTS AN ARITY** (_"both wires"_, _"the two wires"_, _"a third wire"_, _"each wire"_) — greppable, but by a token nobody searched for. Sites: `team-join.ts:309` (an **emitted** string), `templates/docs-team/README.md:97` (rendered once per team, never refreshed), `join/SKILL.md:86,94`, and four assertions in `team-join.test.ts`. `team-down.ts:124` already carries a comment recording this class without generalising it.
+3. **ARMS a wire while asserting nothing** — `convene`'s unconditional open, `join`'s three-wire manifest. There is no sentence to grep; it is an emission. This is C4-b above.
+4. **OMITS a wire while enumerating them** — findable by no token search, because the defect is the absence. Measured by inverse sweep: `plan/SKILL.md` names **neither** wire (grapevine 0 / comms 0) and runs an entire single-wire model; `coord.ts` — the coordination facade — is 3/0; `bootstrap/SKILL.md` is 3/0, which is what a **new** project is told its team has.
+
+**The consequence that reorders the prose work: (1) and (2) SHRINK on removal; (4) is the category removal CREATES.**
+Today a (4) defect means _"forgot to mention comms."_
+After removal, a (2) site such as _"the two wires need different verbs AND different anchors"_ does not merely go stale — it instructs a seat to observe a distinction that no longer exists.
+**An absence is inert; a stale instruction is active.**
+**So the migration is not a deletion pass:** every (2) site needs a decision — does the sentence die, or does its _reason_ survive attached to the remaining wire? — and that decision cannot be made by sweep.
+
+**Sizing — SUPERSEDING the `79 vs 37` bullet above, per maestro at comms #290.** That pair compared two different populations (`vine` over all of `plugin/` against `grapevine` over prose only) and `79` reproduces nowhere.
+
+| scope                                                  | `grapevine` | `\bvine\b` |
+| ------------------------------------------------------ | ----------- | ---------- |
+| all of `plugin/`                                       | 155         | 101        |
+| prose only (`skills` + `templates` + `.claude-plugin`) | 37          | 59         |
+
+**In the shipped prose surface the alias EXCEEDS the token**, which reverses the skeleton's direction and makes this card larger, not smaller.
+Commands: `/usr/bin/grep -RIni 'grapevine' <scope>` and `/usr/bin/grep -RInE '\bvine\b' <scope>`.
+**Use `/usr/bin/grep`:** the shell's `grep` is ugrep, where `(^|[^a-z])x` returns zero matches and exit 1 — a silently manufactured absence (comms #286).
+
+**Stated falsifier, because a completeness claim about a defect class is wrong more often than right (Q3 #5):** find one C4-class defect belonging to none of (1)–(4).
+**The bound's author is writing the fix and therefore cannot certify it** — the (4) numbers are only as complete as the choice of inverse sweep. The ask is for a reader to hunt a **fifth category**, not to cold-read the prose.
 
 ## Ratified decisions & edge cases
 
