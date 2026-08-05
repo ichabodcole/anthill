@@ -187,6 +187,70 @@ rule in the very commit that creates the truth being restated.
   three found violations — including the two seats who had personally authored the contracts they were
   restating.
 
+3.75. **The docs-of-record sweep — reconcile what the project CLAIMS against what actually shipped.**
+The lead runs it and names who checks each doc; it happens **before** the retro, because a falsified
+claim found here is usually a Q3 hypothesis.
+
+**Step 2.5 already asks every seat to re-read the docs it OWNS. This beat exists because the docs that
+go stale are the ones NOBODY owns.** A plan of record, a roadmap, a proposal, a principles file — each
+makes claims about the tree, and none of them appears in any seat's scope, so 2.5's sweep passes
+cleanly over a doc that has been wrong for three sessions. **The predicate was right and its domain was
+seats.**
+
+- **The evidence, and it is the reason this is a step rather than advice.** One session spent its night
+  hunting predicates whose domain had gone unwritten — and its own `plan.md` carried **four stale
+  claims** pointing at itself, one of them **falsified by a test that landed in the same session**.
+  The finalize ritual caught none of them. **All four surfaced because the human asked whether the
+  runway was clean.**
+- **Three sibling shapes, so scope this as a CLASS and not as a file:** a **plan/proposal of record**
+  that outlived the decisions it describes; a **principles file** the retro fed and nobody promoted
+  into (a store with a named writer that the writer did not use); a **roadmap** whose own header names
+  a read-trigger and a write-trigger that three consecutive sessions ran neither of.
+
+**The project names the set; anthill only supplies the trigger.** Ask once: _which docs here claim
+something that must stay true of the tree?_ Take the answer from the project's config or its grounding
+docs. **Never hard-code a list** — a doc set baked into this skill is exactly the convention-in-a-default
+anti-pattern, and it would be wrong in the first repo that filed its plans somewhere else.
+
+**A doc that claims nothing about the tree is OUT of scope.** Archives, history, scars, superseded
+records and anything deliberately kept as a record of what used to be true are not drift — rewriting
+them **destroys** the record. The test is whether a reader would ACT on the sentence today.
+
+### How to run it so it is a write-trigger and not a reminder
+
+**For each doc in the set, write a dated reconciliation line INTO the doc**, naming the sha it was
+checked at:
+
+```
+_Reconciled 2026-08-05 @ <sha> — "rotation opens the pane-kill window": FALSIFIED by <test>, claim removed.
+ "6-of-8 is the release bar": HELD. "the archive link in Now": UNCHECKED, nobody owned it._
+```
+
+**The line is the deliverable. Its absence for this session is the signal.** A doc carrying lines for
+sessions 9 and 11 and none for 10 says so on its face — which is the entire mechanism, and it is the
+same move as indexing a ruling by the message ids it answers: **a visible blank cell beats an absence,
+because an absence is not readable.**
+
+- **State the CLAIM and then the verdict — never "reviewed".** _"Re-read the plan"_ is the shape that
+  went **0-for-4**: a situational warning fails at the recognition step, so the beat has to name what
+  was checked or it has not fired. **`UNCHECKED` is a legitimate verdict and must be WRITTEN** — an
+  unchecked claim you silently skip is indistinguishable from one you confirmed.
+- **A tree-grounded claim travels with its sha or it does not travel.** A count measured at one commit
+  and quoted at another is stale in a way nothing in the sentence shows, and re-stamping an inherited
+  number with your own newer sha is worse than leaving it unstamped.
+- **⚠ The dangerous case is the claim that is still TRUE while its REASON has died.** Ask what each
+  sentence's justification **rested on**, not what the sentence is about. A reason resting on a
+  property the world no longer has does not go stale — it **inverts**, and the sentence still reads
+  fine. _"Capture it now, the wire evaporates"_ survives the wire becoming durable as a sentence and
+  loses the argument for the step it justifies.
+- **The set is self-seeding.** Next session's sweep finds its own scope by looking for the docs
+  carrying a reconciliation line, so the first run is the only one that has to enumerate.
+
+**This is also the handoff.** A fresh agent picking the work up later reads these lines to learn what
+is still true, so an unmet item's line says **what remains**, not merely that it was checked. That is
+what makes the sweep load-bearing for whoever continues the work rather than a tidiness pass for the
+team that ran it.
+
 4. **Structure reflection** — turn the lens on the team itself (the anthill adapts to the work):
    - **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)
    - **What were the natural seams?** (the contracts that actually emerged vs. the ones we guessed.)
@@ -311,6 +375,12 @@ it has gone wrong.**
    - ◻ **Every seat reconciled its doc against contracts that CHANGED this session** (step 3.5) —
      restatement replaced with a pointer. The ordering makes this violation the default, not the
      exception: a four-seat team hit it in all five docs at once.
+   - ◻ **The docs of record were swept and each one carries a dated reconciliation line** (step 3.75)
+     — claim by claim, `HELD` / `FALSIFIED` / `UNCHECKED`, stamped with the sha it was checked at.
+     **The docs nobody owns are the ones this catches**, because step 2.5 ranges over the docs a SEAT
+     owns and a plan of record is in no seat's scope. A doc with no line for this session is the
+     signal; **do not settle for "we looked at it"** — an unwritten verdict and a skipped check are
+     the same artifact.
    - ◻ **Principle question asked** (Q4) — did this session produce one? **Usually no.** If yes it
      goes to `.anthill/principles.md` **with its scar**; if it has no scar it is a Q3 hypothesis, and
      if it only holds for this tool it is an SOP practice.

@@ -286,6 +286,32 @@ re-read at join), and to exactly one of them. State it once: a prediction copied
 drifts, and a **stale prediction is worse than a stale lesson** because it commissions work against a
 world that has already moved.
 
+**Then sweep the DOCS OF RECORD — the ones that claim something true of the tree, and that nobody
+owns.** Every seat re-reads the docs it owns at finalize; a plan of record, a roadmap, a proposal, a
+principles file is in **no seat's scope**, so that sweep passes cleanly over a doc that has been wrong
+for sessions. **The predicate was right and its domain was seats.**
+
+**The project names which docs are in the set, not anthill** — ask _which docs here claim something
+that must stay true of the tree?_ and take the answer from this project's own config or grounding docs.
+**Anything deliberately kept as a record of what USED to be true — archives, scars, superseded
+decisions — is out of scope**; rewriting those destroys the record. The test is whether a reader would
+ACT on the sentence today.
+
+**Write a dated reconciliation line INTO each doc, claim by claim, stamped with the sha you checked at:
+`HELD` / `FALSIFIED <what> → <where it moved>` / `UNCHECKED`.** The line is the deliverable and its
+absence for a session is the signal — a doc carrying lines for two sessions and none for the third says
+so on its face. **`UNCHECKED` is a real verdict and must be written**: a claim you silently skipped is
+indistinguishable from one you confirmed.
+_"Re-read the plan" is the shape that goes 0-for-4 — a situational warning fails at the recognition
+step, so the beat has to name what was checked or it has not fired._
+**And the case that bites hardest is the claim that is still TRUE while its REASON has died:** ask what
+each sentence's justification RESTED on, not what it is about. A reason resting on a property this
+world no longer has does not go stale, it **inverts**, and the sentence still reads fine.
+
+_Scar: a session spent its night hunting predicates whose domain had gone unwritten, while its own
+plan of record carried **four stale claims** — one falsified by a test that landed the same session.
+The ritual caught none. **All four surfaced because the human asked whether the runway was clean.**_
+
 Then the **structure reflection** — the team turns the lens on itself:
 
 - **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)
