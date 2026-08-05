@@ -32,9 +32,13 @@ does not.
 **Seats:** all six in terminals — maestro (lead, a FRESH instance by session 9's design), forager, weaver, sentinel, steward, scout. Parallel, comms sole wire.
 **Landed:** gate **524 pass / 1 todo / 0 fail @ `4cb2f32`** → **542 pass / 1 todo / 0 fail** (**+18 tests**). **~30 commits, 0 reverts of landed work.**
 
-> **⚠ TWO SEATS REPORTED DIFFERENT BIOME COUNTS AT CLOSE — 80 and 82 — AND NEITHER IS WRONG. Recorded here because this file is exactly where that stops being obvious.**
-> `0f5fac2` → **80 files** (sentinel) · `381ea34` → **82 files** (steward). **`git diff --name-only 0f5fac2 381ea34` returns the two seat docs that landed between them.** One measurement taken twice, at two shas, reconciled by one command.
-> **And weaver caught a MEASURE-THEN-STAMP gap in his own report** — he published `82 @ 0f5fac2`, pairing a number from one moment with a sha from another. _"A tree-grounded claim travels with its sha" fails silently when the number and the sha are captured at different instants, and **nothing in the sentence shows it.**_
+> **⚠ TWO SEATS REPORTED DIFFERENT BIOME COUNTS AT CLOSE — 80 and 82 — AND THE FIRST EXPLANATION OFFERED WAS WRONG. This block is the correction, and the correction is the finding.**
+>
+> `0f5fac2` → **80 files** (sentinel) · `381ea34` → **82 files** (steward).
+> **The reconciliation first published — *"the 2-file gap is exactly the two docs that landed between the shas"* — is FALSIFIED BY A CONTROL: `.md` is not in biome's domain, so two markdown files cannot move that count at all.** Offered by sentinel, concurred with by steward, **and the lead landed it into this file before the control ran.**
+> **What survives is weaver's diagnosis, and it is now the only one left: MEASURE-THEN-STAMP.** He published `82 @ 0f5fac2` — a number from one moment paired with a sha from another. _"A tree-grounded claim travels with its sha" fails silently when the number and the sha are captured at different instants, and **nothing in the sentence shows it.**_
+>
+> 🔴 **Why this is recorded rather than quietly fixed: it is scout's Q2 class — *a correct observation shipping with a wrong mechanism* — arriving INSIDE the retro that records that class, within minutes of it being written, authored by three seats and landed by the lead.** _The observation (two numbers disagree) carried its own evidence. The mechanism (two docs) inherited its credibility from the seats who offered it and carried none. **It took a control, not a re-read.**_
 **Curated by:** maestro, from the seats' answers on comms, **posted before anyone stood down** — and the lead's own Q2 written only after all five seats had answered.
 
 > ### ✅ THE RELEASE BAR IS COMPLETE — 7 of 8, and criterion 5 was never in it
