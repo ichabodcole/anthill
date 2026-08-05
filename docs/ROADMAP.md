@@ -17,10 +17,16 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 # ▶ THE SCOPE OF WORK: **SHIP THE ONE-WIRE TEAM**
 
 **Ratified by Cole, 2026-08-05.** _Everything needed before anthill can recommend comms as the default
-wire to consuming projects._ **Steps 4+5 MERGED to `develop` at `cdf907a` (2026-08-05); release PR [#82](https://github.com/ichabodcole/anthill/pull/82) open to `main`.**
-**⚠ `feat/comms-as-default-phase-3` is DONE — do not continue on it. The next work (rotation + the swap
-run) branches FRESH off `develop`**, per Cole's ruling: the old branch's name misdescribes the
-remaining work, and rotation wants its own clean hold/revert story.
+wire to consuming projects._ **✅ STEPS 4+5 SHIPPED — released as `anthill-v2.0.0` (2026-08-05, `a130be3`), a MAJOR bump for the breaking change.** `develop` == `main`.
+**3 of 8 criteria met (4, 4b, 6). Remaining: 1 rotation · 2 the swap run · 3 the positional guard · 5 the sweep touchpoint · 7 the re-triage.**
+
+> ⚠ **CONSUMING TEAMS ON v1.x MUST RUN `anthill:upgrade`.** `convene` no longer accepts `--fresh` or
+> `--topic`, and the `join` manifest no longer carries `tailCommand` — **a team that upgrades without
+> reconciling will have its own docs pointing at a wire that no longer exists.** That is what the new
+> `§4·0 GRAPEVINE → COMMS` section of the upgrade skill exists for, and it shipped in this release.
+> **⚠ `feat/comms-as-default-phase-3` is DONE — do not continue on it. The next work (rotation + the swap
+> run) branches FRESH off `develop`**, per Cole's ruling: the old branch's name misdescribes the
+> remaining work, and rotation wants its own clean hold/revert story.
 
 > ### ⚠ THIS SECTION WENT STALE FOR THREE SESSIONS AND NOBODY NOTICED, INCLUDING ITS OWN LEADS
 >
