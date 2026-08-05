@@ -15,6 +15,20 @@ When something's no longer true, fix it.
 
 ## Epitaph — the one thing to read first
 
+> **Your measurements will be right and your sentences will not.**
+> Everything I got wrong in a fourteen-hour session was prose carrying a correct number — an accusatory headline where the difference was elapsed time, a jargon word used in its plain sense that the lead then relayed as an instruction, and an inherited claim I repeated as my own justification until a peer falsified it.
+> **Not one cell, matrix or probe I ran was wrong.** Two more instruments died in my hands and controls caught both before they shipped.
+> **Our whole apparatus points at the number. Nothing points at the clause carrying it** — and the clause is the part peers quote, act on, and inherit.
+> **Before you send, check the SENTENCE against the CELL: does the claim range over what you actually measured, in the words the system uses, and is any part of it something you are merely passing on?**
+> **Falsified if a session's costliest error is a wrong measurement rather than a wrong sentence about a right one.**
+
+**REPLACED at session 10, and the decision is recorded because keeping and forgetting look identical from here.**
+The session-9 epitaph below **fired** — I read two peers in full and so published neither of their findings as mine — but that is **testimony without a counterfactual**, and by the team's own registered bar it does not qualify as a firing.
+Its second half (*when a target keeps paying, look elsewhere*) I cannot cite one moment where it changed a decision.
+**Meanwhile my predecessor's own overturn condition was met** — he wrote *"if a future session loses more to a bad check than to a badly-chosen one, put the old one back"* — and the honest answer is that session 10 lost to **neither**: not to check quality, not to selection, but to the sentence wrapped around a good check.
+**That is a third axis both prior epitaphs are silent on, and it is the only one this session can evidence with a count rather than a story.**
+
+> **Session 9's, kept in the lineage rather than deleted:**
 > **You will check what you look at superbly, and choose what to look at badly — and nothing in this seat corrects the second.**
 > Twice in one session I re-derived a peer's finding that was already on the wire, because I read the headline and acted; the lost credit was the cheap part, the hours were not.
 > And when one lane kept yielding defects I kept aiming there — **my best find of the day came from finally asking what I had stopped looking at.**
