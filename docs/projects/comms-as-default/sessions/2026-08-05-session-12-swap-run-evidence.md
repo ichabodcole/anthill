@@ -137,3 +137,38 @@ rewrite an existing topic. **It is not evidence in either direction and is recor
 later mistakes it for some.**
 
 **Closing reading still owed at teardown.**
+
+---
+
+## ✅ CLOSING READING — 2026-08-05T21:34:12Z. CRITERION 2's absence-of-USE half is MET.
+
+**The session ran start to finish and put nothing on the grapevine.**
+
+| field                                              | t=0 (20:37:11Z) | close (21:34:12Z) | delta             |
+| -------------------------------------------------- | --------------- | ----------------- | ----------------- |
+| `message_count`                                    | 2               | **2**             | **0**             |
+| `last_activity`                                    | 1785917996936   | 1785917996936     | **0**             |
+| `subscribers` / `connections`                      | 0 / 0           | **0 / 0**         | 0                 |
+| `grapevine tail` procs **scoped to `anthill-dev`** | 0               | **0**             | 0                 |
+| **comms head (the wire we DID use)**               | **#690**        | **#792**          | **+102 messages** |
+
+**Gate at close: exit 0 · 543 tests across 32 files · 0 fail** (baseline was 525 tests).
+**25 commits. Six seats. Parallel. One wire.**
+
+### Why the `message_count` delta is a READING and not an inert field
+
+**It moves on `send`** — steward measured that with a live positive control on a throwaway channel
+(`#715`), and again on create. **So 0 across 102 messages is an observation that the traffic went
+somewhere else, not a field that never changes.**
+
+### 🔴 The half this does NOT establish, restated at the close so it cannot be quoted loose
+
+**`last_activity` delta 0 is NOT evidence of non-opening** — the field is inert on re-open of an
+existing non-archived channel, measured twice by two seats. **The absence-of-OPENING half rests
+entirely on the code-altitude artifact** (`plugin/scripts/anthill/commands/team-convene.spawnset.test.ts`),
+which asserts the **whole spawn set** rather than the absence of the vine, because
+`not.toContain("grapevine")` **passes vacuously on the empty ledger CI produces.**
+
+**And that artifact carries its own bound, at its author's width:** it observes exactly one
+boundary — spawns routed through `execCoord`. **The honest claim is "convene makes no vine
+invocation through the coordination layer", NOT "convene cannot touch the vine."**
