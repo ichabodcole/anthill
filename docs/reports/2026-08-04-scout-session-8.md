@@ -37,7 +37,22 @@ A **gate**: could this team run a full session on `comms` alone, with the grapev
 
 ## 2. Tier A — artifact, re-runnable
 
-**Instrument:** `.anthill/scratch/scout/close-measure.py` (gitignored; recreate from §5).
+**Instrument — stated inline, because a pointer at a gitignored file is a pointer at nothing.**
+_(The first version of this line said "recreate from §5". §5 is this seat's self-scoring and contains no script — **a proof pointer with two dead legs, in the report arguing that findings must live where they survive a clone.** Caught after landing; the fix is to stop pointing and just say it.)_
+
+```
+# tokens: over the transcripts under ~/.claude/projects/<project-slug>/
+#   1. recurse into <session>/subagents/  — omitting these made four
+#      independent measurements agree and all be wrong
+#   2. filter by MESSAGE TIMESTAMP (>= session start), never file mtime
+#   3. DEDUPE on requestId (or message.id) BEFORE summing — one API request
+#      is written as several records, each carrying the FULL usage object.
+#      Over-count runs 1.86-2.24x and VARIES BY SESSION, so it does not
+#      cancel in a ratio.
+#   4. record the MODEL SET. Mixed tiers void cross-session comparisons.
+# git:    git log --no-merges <join>..<close>   |   git diff --numstat <join>..<close>
+# gate:   at a pinned sha in a CLEAN tree, or labelled contaminated
+```
 
 ### 2.1 The gate
 
