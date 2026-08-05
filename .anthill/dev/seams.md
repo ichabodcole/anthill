@@ -377,3 +377,42 @@ The verb reports every roster seat against one head as `null` / `0` / `N`, and i
 - (c-bis): the **ahead-of-head → never-followed** assertion; the **F1 convene scenario** replayed with the lead's own numbers (a record of 389 against `head: 0`), asserting `state`, `gap`, `emittedThrough` **and** `staleRecord` together — because `gap: null` alone would still pass while the row reported the number that makes a reader believe it; and the **`staleRecord` discriminator**, which asserts the two `never-followed` rows differ **as a pair** (`[never, false]` vs `[stale, true]`), so a flag hardcoded either way fails. Plus the **totality** control: `staleRecord` is `false`, not absent, on healthy rows.
 - **⚠ The read-order clause has NO mechanical proof, and it is the load-bearing half.** "Positions first, head second" is what makes *a remaining negative is genuinely impossible* true; it lives in `comms positions` (`team-comms.ts`, the `READ ORDER IS LOAD-BEARING` comment) and **every assertion above takes `head` as a parameter**, so the pure tests cannot see the order the caller read it in. Reverse those two reads and the whole suite stays green **while healthy followers begin classifying as `never-followed` with `staleRecord: true`** — a false alarm on the instrument the team uses to audit the wire, which is the (c) defect pointed the other way. Stated rather than papered over, per Contract 5's precedent and Contract 4's authoring note: **an invented assertion here would give the appearance of proof for the one thing it does not cover.** The honest guard is a named re-read moment — whoever changes how `comms positions` gathers its inputs re-reads this clause in the same change.
 **This absence is a DECISION, not a gap** — recorded in those words so a cold reader cannot mistake *"we could not pin this"* for *"nobody thought about pinning it"*, the same discipline as 4(c-bis) and Contract 5's ratified absence.
+
+**(g) What authorises a TEARDOWN — ⚠ UNRATIFIED. Authored by the lead alone, at teardown, after the owner had already stood down.** _Session 9. Drafted at comms `#408`; forager's departure record is stamped 5m32s EARLIER, so the owner never saw it. This is the same way Contract 7 came into existence and it is not a good way — **session 10 ratifies or falsifies this before building on it.**_
+
+**Owner (unconsulted):** forager · **Pointed at from:** weaver (`skills/comms` + `skills/join` tell a consumer-repo seat what presence MEANS and what `down` will do with it)
+
+> **`none` means: a session-open record exists, it names at least one seat, and every seat it names has a departure record.** It does **not** mean *"no position records exist"*.
+>
+> ```
+> none  ⟺  spawned ≠ ∅  ∧  ∀ s ∈ spawned : departed(s)
+> ```
+>
+> **The non-emptiness conjunct IS the safety property** — without it the rule is vacuous exactly when the stakes are highest: a fresh session has no open record, so a universal over the empty set is trivially true and would authorise teardown with panes full of working seats.
+>
+> **`spawned: string[] | null` — `null` ≠ `[]`, deliberately.** `null` = *no open record exists*; `[]` = *a record exists and names nobody*. The same fact about the world, different facts about our knowledge — **(c)'s "`null` is not a rounded-down zero", one layer out on a new input.** Both land on `unknown` today, so the branches are behaviourally identical and **must stay separate anyway**: collapsing them reintroduces the vacuous case **wearing the shape of a simplification.** _(sentinel measured that no verdict-level test can pin this split — it is defended by the branch-stamped `because` field, not by a state.)_
+>
+> **The state set does NOT grow**, per (c-bis)'s rejection of a fourth state: the fresh-session world routes onto `unknown`, which every consumer already has a policy for. The diagnostic rides as **total fields** (`spawnedCount`, `departedCount`) per Contract 5(a). **`unknown` here is HONEST, not merely safe** — at a fresh session the tool genuinely does not know. **`none` was the state that was lying.**
+
+**⚠ TWO DEFECTS, BOTH SHIPPED AT `eb7d1fc`, BOTH UNFIXED. They pull in opposite directions and the second is only reachable once the first is repaired — so do not repair the first alone.**
+
+**Defect 1 — `none` is UNREACHABLE through the intended lifecycle.** Branch 1 (`followerAlive === true` → `present`) fires **before** departure is consulted, so a stood-down seat still reads `present` while its `comms follow` is alive — **and `down` is what kills the follow.** Circular. Found independently by forager and steward (distinct watermarks; counted once).
+
+**Defect 2 — `departed(s)` does not mean the seat has stopped working, and the formula above assumes it does.** Measured on this session's own artifacts, **4 of 4 seats, 7 messages**:
+
+| seat | departure record | messages sent AFTER it |
+| --- | --- | --- |
+| steward | 03:23:06 | `#401` `#405` |
+| weaver | 03:23:20 | `#399` `#406` |
+| forager | 03:23:31 | `#402` `#404` |
+| sentinel | 03:23:36 | `#397` |
+
+By **03:23:36** every conjunct above was satisfied. **`#402` — forager's report of Defect 1, the most valuable message of the teardown — was sent 71 seconds later.** A guard obeying (g) as written would have authorised teardown before it was written, and the session's central finding would not exist.
+
+**The cause is the lead's, not the seats'.** The ruled teardown sequence (`#399`) was *"1. stand down · 2. post retro answers"* — **seats were ORDERED to send after standing down, and all four complied exactly.** So `stand-down` means *"administratively finished"* in the ritual and *"gone"* in this contract, and **nothing anywhere reconciles the two.** It is not a lapse by any seat; it is two artifacts assigning one word two meanings.
+
+**What actually protected this session was an accident.** `spawned` is `null` (this team was spawned before `spawn` learned to write the open record), so presence was `unknown` and the guard fail-closed. **The seven messages survived because the feature was incomplete, not because the guard was right.**
+
+**Therefore, for session 10:** repairing Defect 1 makes `none` reachable, which makes **Defect 2 live** — a guard that blocks forever becomes a guard that fires too early, and the failure flips from visible to silent. **Either repair them together, or make `stand-down` actually terminal (a departed seat's `send` is refused) and change the ritual's ordering to match.** Tests first, per the tripwire ruling.
+
+**Proof:** none. **This clause is unratified, unimplemented, and its two defects are measured but unpinned.** Recorded in those words so no reader mistakes a written contract for a built one.

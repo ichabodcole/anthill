@@ -394,11 +394,19 @@ it has gone wrong.**
        blocks when seats are **present**, and equally when presence **cannot be established** — because
        tearing down panes without knowing whether anyone is working in them is the failure the guard
        exists to prevent, and _"I could not tell"_ is not _"nobody is there."_
-     - **So `--force` at the end of a finished session is EXPECTED, not a workaround.** A seat that has
-       stood down cleanly leaves no positive signal saying so, which reads as _cannot establish_ rather
-       than _gone_. **Do not let that train you to reach for `--force` reflexively** — the one session
-       where it matters is the one where a seat really is still working, and it looks identical from
-       here. Read who it names before you override it.
+     - **`--force` at the end of a clean session is NOT expected, and if you need it, something did
+       not stand down.** Departure is a **positive observation**: `anthill comms stand-down --as <seat>`
+       records it, and the guard authorises teardown once **every spawned seat** has one. So a session
+       that ended properly tears down with no override at all.
+     - **Which makes `--force` a signal rather than a formality.** Reach for it and you are asserting
+       that a seat which never said it left is safe to kill — **the one session where that is wrong is
+       the one where a seat really is still working, and it looks identical from here.** Read who it
+       names before you override it, and prefer standing the seat down to overriding the guard.
+     - **A crashed seat still blocks, and that is the point.** A record with a dead follower and **no**
+       departure is unexplained, so it refuses — while a seat that stood down is explained, and does
+       not. _(Earlier guidance here said the opposite — that `--force` was expected because a clean
+       stand-down left no positive signal. That was true of the guard before `stand-down` existed, and
+       it trained exactly the reflex the guard exists to prevent.)_
      - **The refusal names the CHANNEL and no wire, deliberately** — don't "fix" it to name one. The
        verdict is drawn from more than one wire, the message cannot know which were consulted, and a
        sentence naming today's wires goes wrong the next time one is added. _This paragraph itself said
