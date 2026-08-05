@@ -287,7 +287,9 @@ drifts, and a **stale prediction is worse than a stale lesson** because it commi
 world that has already moved.
 
 **Then sweep the DOCS OF RECORD — the ones that claim something true of the tree, and that nobody
-owns.** Every seat re-reads the docs it owns at finalize; a plan of record, a roadmap, a proposal, a
+owns. THE LEAD runs this beat and names who checks each doc** — unlike the synthesis above, it is
+not a per-seat act, and the docs it covers are in no seat's scope by definition.
+Every seat re-reads the docs it owns at finalize; a plan of record, a roadmap, a proposal, a
 principles file is in **no seat's scope**, so that sweep passes cleanly over a doc that has been wrong
 for sessions. **The predicate was right and its domain was seats.**
 
