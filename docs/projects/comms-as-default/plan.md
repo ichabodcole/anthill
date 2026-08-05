@@ -1,11 +1,12 @@
 # Comms as the default team wire — plan
 
-**Status:** **PHASE 2 SHIPPED (session 10).** The lifecycle defects are repaired — and there were **THREE**, not two. Contract 6(g) is now **RATIFIED as a description and FALSIFIED as a safety property** (`ca6c41b`). Phase 3 (the prose migration + the swap run) is **DEFERRED to session 11** by the human's ruling.
-**Created:** 2026-08-04 (session 9) · **Author:** maestro (lead) · **Last revised:** 2026-08-05 (session 10), against what shipped rather than what was intended.
+**Status:** **STEPS 4 AND 5 SHIPPED (session 11). Grapevine no longer participates in CONVENE or JOIN** — it is still consulted at **teardown** (`team-support.ts:469`, `grapevine who`, fired by `status` and `down`), which is why the sentence is scoped rather than absolute. `convene` opens nothing, `join` composes no vine tail, and the whole C4 prose surface is migrated. **Gate item 3 — the pane-kill — is DISCHARGED**: INFERRED since session 9, reproduced and instrumented at `c9a33e7`.
+**⏭ REMAINING: step 3 (rotation) and step 6 (the swap run). See [NEXT PHASE](#-next-phase--what-session-12-picks-up) at the foot of this file — read that before anything else.**
+**Created:** 2026-08-04 (session 9) · **Author:** maestro (lead) · **Last revised:** 2026-08-05 (session 11), against what shipped rather than what was intended.
 **Follows:** [proposal.md](./proposal.md) · [capability-state](../capability-state/proposal.md) _(moved out of this folder — it is slice three, not this project)_
-**Sessions:** [session 9 — phase 1](./sessions/2026-08-04-session-9-phase-1.md) · session 10 — phase 2 (this revision)
-**Branch:** `feat/comms-as-default` · **Gate:** `bun run check`
-**Baseline, both ends measured on CLEAN trees at named shas** (weaver, comms #501): **512 pass / 0 fail @ `27da450`** → **529 pass + 1 todo / 0 fail @ `13a4ae7`** = **+17 pass**. Every other reading taken this session was over a dirty tree; those two were not.
+**Sessions:** [session 9 — phase 1](./sessions/2026-08-04-session-9-phase-1.md) · session 10 — phase 2 · [session 11 — phase 3](./sessions/2026-08-05-session-11-phase-3.md) + [the step-6 evidence](./sessions/2026-08-05-session-11-step6-evidence.md)
+**Branch:** ✅ `feat/comms-as-default-phase-3` **MERGED to `develop` at `cdf907a`**, 2026-08-05, release PR [#82](https://github.com/ichabodcole/anthill/pull/82). **⚠ That branch is closed — rotation and the swap run branch FRESH off `develop`.** · **Gate:** `bun run check`
+**Baseline — ⚠ THIS IS SESSION 10'S, NOT CURRENT.** (weaver, comms #501): **512 pass @ `27da450`** → **529 pass + 1 todo @ `13a4ae7`** = **+17 pass**. **Session 11 ended at 524 pass / 1 todo / 0 fail** — the suite went DOWN deliberately (−12 deleted `interpretFresh`/mirror cells, +7 rotation instrument). **Measure at your own sha; do not quote either number.** Every other reading taken this session was over a dirty tree; those two were not.
 
 > **This file was authored as a SKELETON and is no longer one.** That banner has been discharged: every
 > seam below was ratified or falsified on the wire before it was built, and four of the lead's five
@@ -30,7 +31,7 @@
 ## How this plan is authored
 
 - **maestro (lead)** owns this skeleton, the seams _as claims_, the integration order, and the verification gate. Not the lane detail.
-- **forager** owns `plugin/scripts/anthill/` — presence, the guard, rotation, `stand-down`, migration — and authors `plan/forager.md`.
+- **forager** owns `plugin/scripts/anthill/` — presence, the guard, rotation, `stand-down`, migration. ⚠ **`plan/forager.md` was never authored** — he worked from this file plus his board cards. Only `plan/weaver.md` exists.
 - **weaver** owns `plugin/skills/` + `plugin/templates/` — the shipped prose and the wire model it teaches — and authors `plan/weaver.md`.
 - **sentinel** owns the verification points; it is pulled in **mid**, not at the end (see the gate).
 - **steward / scout** build nothing. See Slices.
@@ -51,6 +52,51 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
   >
   > **So mask #1 is not removed by the swap at step 4 — it was already spent at #284, by ruling, the moment this team stopped tailing the vine.** The only mask still standing is the stale position files, and the step that removes those is **(3) rotation**.
   >
+  > ### 🔴 CORRECTED AT SESSION 11 — "ALREADY SPENT" HAS A TIME WINDOW FOR A DOMAIN, AND THE MASK CAME BACK THE NEXT MORNING
+  >
+  > **Found by sentinel at comms `#574`, before forager designed rotation against it.** The sentence above is
+  > true of _the remainder of session 10_ and false as the permanent claim it reads as. **A superlative —
+  > _"the only mask still standing"_ — whose domain is a time window.** It was true when written and false
+  > when executed, and nothing in between touches it.
+  >
+  > **The mask refilled at session 11's convene, measured:** `convene` 08:13Z → `channelOpened: true`
+  > (maestro, `#563`); `grapevine who` → `subscribers: ['scout','steward']`, climbing as seats booted — three
+  > seats armed the vine from the join manifest before reading the brief. **So the teardown guard ran on TWO
+  > legs again for the first hour of a session whose plan says it runs on one.** Ruling R1 (kill the tails)
+  > then spent it a second time: `{"subscribers":[],"count":0}` (sentinel, `91e9c5c`).
+  >
+  > **The structural correction, which is the part that binds step 3:**
+  >
+  > ```
+  > pane-kill window open  ⟸  (positions blinded — ROTATION, in the diff)
+  >                       AND  (vine subscribers empty — A RULING, per session, in nobody's diff)
+  > ```
+  >
+  > **The plan names one conjunct and calls it the window.** The second is not a property of the code, no
+  > card can hold it still, and it oscillated four times in one morning — false at 08:13Z, true at `#284`,
+  > false at 08:19Z, true after R1. **"Do not land rotation before the reproduction is standing" is correct
+  > and under-specified in the direction that bites:** rotation's safety depends on a wire state that is not
+  > in its diff.
+  >
+  > **⚠ AND THE OSCILLATION STOPS — PINNED TO THE UNSAFE SIDE — THE MOMENT STEP 4 LANDS.** _(maestro's
+  > extension of sentinel's finding, and it is **reasoning about unbuilt code, not a measurement** — it is
+  > owed a cell in `t-ac09ffa9`.)_ After step 4, `convene` opens nothing and `join` emits no tail, so
+  > `grapevine who` returns `subscribers: []` **for every future team, permanently.** Per the measured line
+  > two paragraphs up, an empty subscriber list makes the vine leg return **`none`** — which contributes no
+  > blocking signal ever again. **So in the shipped world the second conjunct is not oscillating; it is
+  > satisfied by construction.** Mask #1 is not "spent per session" — after step 4 it does not exist.
+  >
+  > **Therefore rotation's safety may not rest on the vine leg at all**, and the reproduction that gates it
+  > must be built in the single-leg world (ruling **R8**). A matrix measured against two live legs would be
+  > testing a configuration this session deletes: it would pass, ship, and say nothing about the only
+  > configuration that will ever exist again.
+  >
+  > **What is NOT established, stated because it decides urgency and sentinel refused to derive it:** that
+  > the conjunction actually reaches **`none`**. Positions-blinded plausibly lands on `outstanding-departures`
+  > → **`unknown`, which BLOCKS**. `none` additionally requires `spawned ≠ ∅` **and** every spawned seat
+  > carrying an **in-window** departure record (D3). **What rotation does to the session-open record and the
+  > tombstones is what decides it, and that is unbuilt code.**
+  >
   > ### 🔴 CORRECTED AT SESSION 10, AND THE CORRECTION REVERSES THE SIGN
   >
   > **The sentence above is incomplete in the one direction that matters, and the word "mask" is what hid it.** A **mask** fails **SAFE** — it makes the guard over-block. The bullet enumerates only masks, so it can only ever find hazards that make the guard too cautious.
@@ -61,7 +107,7 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
   >
   > **Same lifetime bug as the position files, opposite sign — and this plan's prose only knew the safe direction.** That is D3, repaired at `53ecae4`.
 
-- **Therefore the pane-kill window opens at step (3), not step (4).**
+- ~~**Therefore the pane-kill window opens at step (3), not step (4).**~~ 🔴 **FALSIFIED session 11 by execution (`c9a33e7`): rotation ALONE fails CLOSED.** The window needs a THREE-term conjunction — see the correction block above. _This line went unmarked when its sibling at the integration-order list was struck; found by a cold read._
 
 **Therefore: presence first, removal second, the swap run last.** Nothing lands in the reverse order.
 
@@ -69,7 +115,32 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
 
 1. **Presence semantics + the teardown guard** — `commsPresence` / `combinePresence` / `shouldBlockTeardown`. Gated by sentinel before anything downstream lands.
 2. **`comms stand-down` + `down` writing a session-close marker** — one piece of work, not two: giving the session a lifecycle it can observe.
-3. **Session rotation** — depends on (2) for its mint trigger, **and on (1) because THIS is the step that opens the pane-kill window.** Rotation empties the positions directory, which is the last surviving mask. _Corrected by steward: the original line named only (2), so "land 2 then 3 while C1 is still in review" read as sanctioned. **The step that opens the window named only its mint dependency; the step that does not open it named the hazard.**_
+3. **Session rotation** — depends on (2) for its mint trigger. ~~**and on (1) because THIS is the step that opens the pane-kill window.**~~ 🔴 **FALSIFIED BY EXECUTION, session 11 — see the correction directly below.** _Corrected by steward at session 10: the original line named only (2), so "land 2 then 3 while C1 is still in review" read as sanctioned. **The step that opens the window named only its mint dependency; the step that does not open it named the hazard.**_
+
+   > ### 🔴 CORRECTED AT SESSION 11 BY A RUN, NOT A READ — ROTATION ALONE FAILS **CLOSED**
+   >
+   > **`artifact:` `c9a33e7`** — sentinel's landed instrument, 7 assertions + 2 mutations, with **C0 as the positive control** so that every `blocks` is a reading rather than a harness that never fires.
+   >
+   > | cell                                                  | verdict                                                                              |
+   > | ----------------------------------------------------- | ------------------------------------------------------------------------------------ |
+   > | **rotation ALONE**                                    | `unknown` / `outstanding-departures` → **BLOCKS**                                    |
+   > | rotation + **stale** (out-of-window) tombstones       | `unknown` / `outstanding-departures` → **BLOCKS** _(D3 re-run, session 10's killer)_ |
+   > | 🔴 rotation + **in-window** tombstones, seats working | `none` / `all-spawned-departed` → **AUTHORISES**                                     |
+   >
+   > **Why rotation alone cannot fire it:** positions emptied ⇒ every row `hasRecord:false` ⇒ `followerAlive:null`, so **branch 1 cannot fire (it needs `=== true`) and branch 2 is keyed on `hasRecord`.** It falls to the conjunct with `departedCount: 0`.
+   >
+   > **THE HAZARD IS A THREE-TERM CONJUNCTION AND THE PLAN NAMED ONE TERM:**
+   >
+   > ```
+   > panes die  ⟸  positions blinded (ROTATION)
+   >            AND in-window tombstones          ← D2 made stand-down ADVISORY, so this is OUR FINALIZE RITUAL
+   >            AND vine subscribers empty        ← pinned TRUE FOREVER by step 4 (landed 14cf678)
+   > ```
+   >
+   > **⚠ So: rotation is NOT the hazard. _Rotation after finalize has begun_ is the hazard** — a seat that files its tombstone and keeps working **is** an in-window tombstone at a live desk.
+   >
+   > **AND THE ONE NOBODY PREDICTED — ROTATION DELETES THE LEAD'S TEARDOWN VETO.** Pre-rotation the lead is `present`/`live-follower` with `seats: ["maestro"]`, blocking alone _(re-run live at session 11's teardown: `down` refused, exit 1, exactly one name)_. **Post-rotation he contributes nothing** — his liveness is observable only _through_ a position record, and rotation deletes it. **Contract 6(g)'s clause is true pre-rotation, false post-rotation, and says so nowhere. Its amendment rides with rotation's land (R20).**
+
 4. **Grapevine removal** — the three live call sites. **No longer the step that spends the presence mask** (that was already spent by ruling at #284), but still gated on (1) because it deletes the vine leg of `combinePresence` permanently rather than situationally.
 5. **The prose migration** — depends on (4) being settled. Session 8 measured six instances of prose asserting things about a still-moving tool, three of them introduced _by seats fixing other false prose_.
 6. **The swap run** — the session that convenes, runs and tears down with grapevine never opened.
@@ -78,11 +149,12 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
 
 **The dependency order above is unchanged and still correct. What follows is where the phase boundaries actually fell**, which is not where this plan predicted. One branch, one release, per the human's framing — the phases are review-and-validation boundaries, not separate deliverables.
 
-|             | steps                        | status                                 | validation criterion                                                                                                                                               |
-| ----------- | ---------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Phase 1** | 1–2                          | **SHIPPED** `5697eca`, two defects     | gate green at 512; guard mutation pair kills on both cells                                                                                                         |
-| **Phase 2** | the defect repair (D1+D2+D3) | **SHIPPED session 10** `53ecae4`       | `none` unreachable at the **fresh-spawn instant** as well as mid-session; three mutations, each with its substitution count asserted before the suite was believed |
-| **Phase 3** | 3–6                          | **NOT BUILT — deferred to session 11** | rotation, grapevine removal, the prose migration, and the swap run                                                                                                 |
+|             | steps                        | status                                                                                                                                           | validation criterion                                                                                                                                               |
+| ----------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Phase 1** | 1–2                          | **SHIPPED** `5697eca`, two defects                                                                                                               | gate green at 512; guard mutation pair kills on both cells                                                                                                         |
+| **Phase 2** | the defect repair (D1+D2+D3) | **SHIPPED session 10** `53ecae4`                                                                                                                 | `none` unreachable at the **fresh-spawn instant** as well as mid-session; three mutations, each with its substitution count asserted before the suite was believed |
+| **Phase 3** | **4 + 5**                    | ✅ **SHIPPED session 11** `14cf678` (step 4 + Contract 4's amendment, one commit) · prose lane `f642cfb` `caa9376` `a787f9a` `977a021` `8924924` | gate 524 pass / 0 fail; `convene` opens nothing, `join` composes no vine tail; **gate item 3 DISCHARGED** at `c9a33e7`                                             |
+| **Phase 4** | **3 + 6**                    | ⏭ **NOT BUILT — session 12**                                                                                                                     | rotation, then the swap run. **Rotation's safe set is already LANDED AS TESTS** (`c9a33e7`) — do not re-derive it                                                  |
 
 **⚠ Session 10 did NOT do steps 3–4.** The human ruled scope as **Phase 2 + the templates fix**, and the C4 prose migration is **sized and deferred**, not abandoned: prose-only `grapevine` 37 vs `\bvine\b` **59**, and every category-(2) site needs a **decision**, not a sweep.
 
@@ -293,7 +365,7 @@ Commands: `/usr/bin/grep -RIni 'grapevine' <scope>` and `/usr/bin/grep -RInE '\b
 
 ## Slices
 
-- **forager** → `plan/forager.md` — C1, C2, C3, and the three call sites of C4's code half.
+- **forager** → ⚠ **`plan/forager.md` does not exist and never did.** C1, C2, C3 and C4's code half were carried in this file, `seams.md` and the board. Do not go looking for it; do not treat its absence as lost work.
 - **weaver** → `plan/weaver.md` — C4's prose half; the wire model taught by `join`, `convene`, `comms`, `finalize-session`, `bootstrap`, `upgrade`, and the templates.
 - **sentinel** — the gate at each verification point below. **Not an end-slot.**
 - **steward** — pointed at **proposed fixes, not at claims**, per session 8's structure note in its own words: _"my best output was checks on REMEDIES rather than on findings."_ This session's remedies are unusually load-bearing, so this is the session to test that refinement.
@@ -379,6 +451,59 @@ STEP E   READING 2 — `anthill down` MUST AUTHORISE. `none` / `all-spawned-depa
 - **`0c3fc16` delivered one of two beats to `.anthill/README.md`** and both to the template. **The path was correctly claimed, scoped and gated, and nobody read the diff of what was being landed.** A path being the right path is not the same as its contents being what the message says.
 
 **Neither commit was amended.** Three seats were verifying lands **by content against a named sha** at the time; an amend invalidates a verification practice this team had just built, for a garbled sentence and a wrong number. **Recorded here instead — which is the whole reason this section exists.**
+
+## ⏭ NEXT PHASE — what session 12 picks up
+
+**Two steps remain and they must run in this order: (3) rotation, then (6) the swap run.**
+
+### The goal, in one sentence
+
+**Land session rotation safely, then convene a session that never opens a grapevine and prove it — which is this project's exit criterion and the last thing between it and a merge.**
+
+### Step 3 — session rotation · card `t-ce6f0c2e` (forager)
+
+**⚠ You are NOT starting from a blank page. The safe design set is already landed as tests at `c9a33e7`. Do not re-derive it.**
+
+| what rotation does to the session-open record      | verdict                                                             | safe?                                     |
+| -------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------- |
+| **PRESERVES** it (same `openedAt`, same `spawned`) | `none` / `all-spawned-departed` once any in-window tombstone exists | 🔴 **NO**                                 |
+| **RE-MINTS** it (new `openedAt`)                   | `unknown` / `outstanding-departures`                                | ✅ **yes — and it is the natural design** |
+| **DROPS** it                                       | `unknown` / `no-open-record`                                        | ✅ yes                                    |
+
+**⚠ The trap is the design that looks tidiest: rotate the LOG and leave the session record alone.** It touches less, reads as minimal, **and it is the only one that kills panes.** Re-minting needs no new guard — `writeSessionOpen` already stamps `openedAt`, `stand-down` already stamps `at`, and D3's `at >= openedAt` then does the work for free.
+
+**Two things ride with the land, not after it:**
+
+- **The `seams.md` Contract 6(g) amendment** — the lead's-veto clause is false post-rotation (above). The write-trigger binds: _whoever moves a boundary updates this file **and** its proof, in the same change._
+- **Sequencing: rotation must be LANDED before the first `comms stand-down` of the session.** That is the three-term conjunction's middle term. If rotation is not ready before finalize begins, **it does not land — and that is an acceptable outcome, not a failure.**
+
+### Step 6 — the swap run · card `t-4116eb8f` (lead)
+
+**Exit criterion v3, and its two halves are separable only by us, not by the guard** — `classifyPresence` never reads `topic`, so it cannot distinguish _"never opened"_ from _"open and quiet"_ (`c9a33e7`).
+
+| half                                        | check                                                                                           |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **absence of OPENING** ← _the real subject_ | `convene` never invokes `grapevine open`. **Cite convene's own envelope**, not a live `who`.    |
+| **absence of USE**                          | `grapevine who` → `subscribers []` · no tail process · `message_count` unchanged across the run |
+
+🔴 **CITE THE CONVENE ENVELOPE, NEVER A LIVE `grapevine who`.** Session 11 failed this criterion permanently and **a live `who` reads GREEN anyway** — the remedy that emptied the subscriber list blinded the instrument that reports the failure. The full reasoning and the preserved envelopes are in [the step-6 evidence file](./sessions/2026-08-05-session-11-step6-evidence.md). **`anthill down` consults `grapevine who` automatically at teardown, so the false green is scheduled, not hypothetical.**
+
+**There is a PRE-REGISTERED PREDICTION against this run** (`docs/reports/2026-08-05-scout-prereg-swap-run.md`, `606650c`, scout's — **not the lead's, and it is the one to score against**): with the anchor delivered **out of band** and **no mechanical guard** behind it, ≥1 fresh seat over-reads. Session 11 had three of five seats violate the anchor, one of them twice.
+
+### Carried debt — none of it blocks steps 3 or 6
+
+| card                                  | what                                                                                                                                                                                                                                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `t-e25cd535`                          | `convene --fresh` never reached comms _(now moot: `--fresh` was deleted with step 4 — **verify and close**)_                                                                                                                                                                          |
+| **the `comms read` positional guard** | **LIVE at HEAD.** 13 leaf commands swallow unknown positionals silently. **Parser altitude** (`define.ts`), and it **MUST** carry a control proving `commit -- <paths>`, `comms send <body>` and `join <handle>` still work — the reverted version broke **7 `anthill commit` tests** |
+| `t-c012c84c`                          | `openedAt` has two answers 246s apart (convene vs spawn) and nothing names which — **the field that implements D3's safety property**                                                                                                                                                 |
+| —                                     | `grapevine who` (`team-support.ts:469`) — the last vine call site. A **read**, so out of step 4's scope by design; removing it is a presence-semantics change with a ratify gate                                                                                                      |
+| `t-02235085`                          | 13 `review` cards nobody verified, named so the audit's silence cannot read as coverage                                                                                                                                                                                               |
+| —                                     | `anthill commit` should **require or resolve `--as`** — 9 of session 11's first 11 commits carried no `Anthill-Seat` trailer                                                                                                                                                          |
+
+### The merge decision, which is the human's
+
+**`feat/comms-as-default-phase-3` is unmerged, 30 commits, gate green.** Steps 4+5 are a coherent release on their own. **Ask Cole whether session 12 merges first and branches fresh for rotation, or continues on this branch** — his session-11 framing was _"one feature, one release."_ **Do not assume; it changes what `git log` means for everything after.**
 
 ## Open questions — to settle at ratify or during build
 

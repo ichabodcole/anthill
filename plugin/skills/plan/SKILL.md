@@ -38,7 +38,7 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
    - **How this plan is authored** — the ownership split (you own the skeleton + seams + gate; each
      owner owns its lane file).
    - **Integration / dependency order** — the sequence the slices come together in.
-   - **Shared interfaces — _ratify on the vine, then fill_** — one subsection per cross-seam
+   - **Shared interfaces — _ratify on `comms`, then fill_** — one subsection per cross-seam
      contract, each `(CLAIM — awaiting <owner>)`, with the concrete interface (signature, units,
      invariants) an owner can falsify.
    - **Slices** — one paragraph of scope per seat, each pointing at its `plan/<seat>.md` lane file.
@@ -66,7 +66,7 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
    _before_ it moves its card `todo→doing`** — an explicit acknowledgement (_"ratified"_ /
    _"falsified — here's the correction"_), never silence. Flip each seam's marker to
    **`RATIFIED at <grain>`** as it settles — the grain is part of the flip. Two paths (mirror `convene`/`join`):
-   - **Terminal seats:** post the skeleton on the vine; owners ratify/falsify over the vine.
+   - **Terminal seats:** post the skeleton on `comms`; owners ratify/falsify over `comms`.
    - **Subagent seats:** no tails — **dispatch each seat to ratify its seams** and **collect the
      verdicts** yourself.
    - **Record WHERE each ratification ends.** Not just _"ratified"_ but **_"ratified at \<grain\>"_** —
@@ -105,14 +105,14 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
      everything". A gate expensive enough to route around costs more than the occasional bad clause.
 
 5. **Rule once on what's contested.** When owners disagree, do a **read-all-owners synthesis pass** —
-   read every affected position, then **rule once**. Don't let the vine ping-pong. Then **promote
+   read every affected position, then **rule once**. Don't let the channel ping-pong. Then **promote
    each ratified load-bearing contract into `.anthill/dev/seams.md`** (its durable home), owned by
    the authoritative seat — asserting the load-bearing ones up front while the long tail accretes.
 
 6. **Owners author lanes; build in lockstep.** Each owner writes its `plan/<seat>.md` against the
    **ratified** seams (the lane-authoring craft is in `methodology.md` — grounded paths, right-sized
    TDD tasks, no placeholders, self-review against the seams), then builds. Orchestrate per the SOP
-   (vine = substance, board = state, file-scoped atomic land); at wrap, run
+   (`comms` = substance, board = state, file-scoped atomic land); at wrap, run
    **`anthill:finalize-session`**. Verify → land → finalize are unchanged. _(Subagent build seats: bake
    the finalize-capture into each build brief per `anthill:convene` — the seat self-synthesizes into
    its seat doc as the final step of its task; mechanism in `anthill:finalize-session` step 0.)_

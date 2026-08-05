@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-07-28
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-05 (scope ratified — see Now)
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -14,39 +14,120 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Now
 
-**In flight: unreleased fixes on `develop` awaiting a release cut.** The 2026-07-27/28 feedback
-triage took 29 open issues from four consuming projects and shipped three of its four batches the
-same day (`315fa56`, `2170636`, `3111f28`, `37852c2`). Test count 157 → 202.
+# ▶ THE SCOPE OF WORK: **SHIP THE ONE-WIRE TEAM**
 
-### ▶ Do these next, in this order
+**Ratified by Cole, 2026-08-05.** _Everything needed before anthill can recommend comms as the default
+wire to consuming projects._ **Steps 4+5 MERGED to `develop` at `cdf907a` (2026-08-05); release PR [#82](https://github.com/ichabodcole/anthill/pull/82) open to `main`.**
+**⚠ `feat/comms-as-default-phase-3` is DONE — do not continue on it. The next work (rotation + the swap
+run) branches FRESH off `develop`**, per Cole's ruling: the old branch's name misdescribes the
+remaining work, and rotation wants its own clean hold/revert story.
 
-1. **Cut a release.** Four batches of fixes are sitting on `develop`, including a live regression
-   that has been mis-teaching every late joiner since 2026-07-09 and a warning for a board-destroying
-   data-loss bug. Consuming teams cannot benefit until this ships.
-2. **Close the fixed issues as part of the cut.** Several of the 29 are now fixed. This is not
-   bookkeeping — a team that files a report and sees nothing visibly happen stops filing, which is
-   the same feedback-loop health problem
-   [phase 6](briefs/2026-07-28-coordination-hardening-arc.md) is about.
-3. **Phase 1 of the arc — the ratify-gate pass.** Three skill-text items, no design needed, no
-   dependencies, and the strongest field evidence in the set (_"would have saved most of a session"_).
-   Plus two one-liners worth folding in: correct the exclusive-human-channel claim (**M9**'s doc half)
-   and route the structure reflection upstream (**phase 6 item 2** — the cheapest item anywhere here).
-   3c. **The next scope of work — [team comms spike](projects/_archive/team-comms-spike/proposal.md).** Build the
-   smallest cross-terminal comms tool that knows it is a team (seat identity from the roster, which is
-   free because `config.json` already declares it), run one real session on it, and let the friction
-   decide the rest. **A spike, not a design** — the
-   [coordination-layer investigation](investigations/2026-07-31-team-native-coordination-layer.md)'s
-   eight design areas are hypotheses to be earned, not a backlog. bounty stays in use; grapevine keeps
-   cross-project.
-   3b. **Two cheap experiments, whenever there's an appetite** — both gate the
-   [team-native coordination layer](investigations/2026-07-31-team-native-coordination-layer.md)
-   question (should anthill own its own comms/board rather than depending on spellbook): **run a
-   mixed-model team** (the anti-groupthink argument is currently reasoning, not evidence), and
-   **trial a heads-down mute** (the fail-safe attention mechanism). Neither is a build.
-4. **Then pick ONE experiment**, not a build. Recommended: the
-   [scar test](investigations/2026-07-28-practice-transmission-between-teams.md) — ship a judgment
-   rule with its originating scenario and without it, and see which changes a seat's behaviour. It is
-   the cheapest experiment available and it gates the entire practice-transmission loop.
+> ### ⚠ THIS SECTION WENT STALE FOR THREE SESSIONS AND NOBODY NOTICED, INCLUDING ITS OWN LEADS
+>
+> Until 2026-08-05 this block still said _"cut a release"_ (cut at `6bca04e`) and pointed **"the next
+> scope of work"** at the **archived** team-comms spike. **Sessions 9, 10 and 11 each ran a full
+> convene→finalize cycle without reading or updating it**, while this file's own header names both
+> moments. _A roadmap nothing re-reads is a wish list — its words, and it was one._
+> **The repair is a ritual beat, not resolve: card `S12-1`, weaver's lane.**
+
+### The exit criteria — all seven, every one mechanically checkable
+
+**The scope is met when a stranger can run these and get these answers. Not before, and no criterion
+is discharged by argument.**
+
+| #         | criterion                                                                                                                              | how it is checked                                                                                                                                                                                                                             |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1**     | **Rotation landed**, with `seams.md` 6(g) amended                                                                                      | one commit names both paths (write-trigger)                                                                                                                                                                                                   |
+| **2**     | **The swap run passes exit criterion v3 — BOTH halves**                                                                                | absence of USE is runnable as-is. **Absence of OPENING now needs a POSITIVE artifact** — `channelOpened` was deleted with step 4, and an absent field is not an observation (Contract 6(c)). **Name the artifact before the run, not after.** |
+| **3**     | **`comms read` positional guard**, at parser altitude                                                                                  | 3 controls green: `commit -- <paths>` · `comms send <body>` · `join <handle>`                                                                                                                                                                 |
+| **4** ✅  | ~~🔴~~ **MET `cbafb2b`** — **WHAT WE SHIP POINTS AT NO GRAPEVINE** _(Cole's ruling, 2026-08-05 — scoped to the RELEASE, not the repo)_ | `grep -rni grapevine plugin/skills plugin/templates plugin/.claude-plugin` returns **only** recorded history and the `upgrade` migration note — **no line telling an agent to USE it.** Baseline: **8 hits, 6 live-wrong** (see below)        |
+| **4b** ✅ | **MET `cbafb2b`** — **`anthill:upgrade` documents the migration**                                                                      | `skills/upgrade/SKILL.md` states grapevine→comms for an **existing** team, and what to do with that team's own in-repo references                                                                                                             |
+| **5**     | **The sweep-the-plan touchpoint** shipped                                                                                              | in `skills/finalize-session/`, `templates/docs-team/` **and** `.anthill/README.md` — the team's own copy, per its own scar                                                                                                                    |
+| **6** ◐   | **Merged and released** — _merged to `develop` `cdf907a`; PR #82 open to `main`; **release not yet cut**_                              | `develop` → `main`, release cut                                                                                                                                                                                                               |
+| **7**     | **This section points at live work**                                                                                                   | every dir in `docs/projects/` except `_archive`/`TEMPLATES` has a `**Status:**` at the **start of a line**, plus a named next action or an explicit `parked`/`superseded` marker                                                              |
+
+> ### 🔴 Criterion 4 — what it is and is NOT, because the first version of it was unrunnable
+>
+> **Cole's framing, and it is narrower and better than a repo-wide sweep:** _"when we do a release, if
+> another team does the upgrade, there shouldn't be anything in the skills or guidance we're providing
+> that mentions grapevine — other than an upgrade skill explicitly documenting the change. The idea
+> isn't to go back and update history, certainly not archive documents. It's to make sure that **what
+> we're releasing is consistent and no longer pointing to grapevine.**"_
+>
+> **So the test is agent confusion in the SHIPPED surface, not token count in the repo.** Scars,
+> comments, archived docs and the tests that _assert_ grapevine's absence all stay.
+>
+> _The first version of this criterion read `grep -rn grapevine plugin/scripts --include=*.ts` → 0.
+> **It was wrong twice.** Under this project's zsh the unquoted glob expands, the command never runs and
+> the pipeline prints `0` — the pass condition — so it was a **false green by construction**. Quoted, it
+> returns 63, and driving that to 0 means **deleting the regression tests that prove the removal**. It
+> was unsatisfiable at its predicate and trivially passed at its command. Found by a blank-context cold
+> read; the author had hit the identical glob failure an hour earlier and written the broken form in
+> anyway._
+>
+> **The six live-wrong sites, measured 2026-08-05 — this is the work, and it is small:**
+>
+> | site                              | what it tells an agent to do                                                                                                                                                                     |
+> | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+> | `skills/comms/SKILL.md:94`        | _"If comms drops mid-session, say so on **the grapevine**"_ — fall back to a wire that no longer exists                                                                                          |
+> | `skills/comms/SKILL.md:34`        | _"the lead clears the channel at convene (`--fresh`)"_ — **doubly dead**: `--fresh` was deleted by step 4                                                                                        |
+> | `skills/comms/SKILL.md:82`        | _"`anthill status` reports the grapevine roster"_ — **the THIRD site of a falsehood weaver deleted from two others** on 2026-08-05 (`caa9376`, `977a021`). A cascade that stopped one file short |
+> | `skills/bootstrap/SKILL.md:47–48` | tells a **brand-new** team to verify `spellbook:grapevine` is installed                                                                                                                          |
+> | `skills/convene/SKILL.md:120`     | leftover two-wire presence guidance                                                                                                                                                              |
+> | `skills/upgrade/SKILL.md:224`     | says convene warns the **grapevine**/bounty daemons aren't running                                                                                                                               |
+>
+> **`skills/comms/SKILL.md:57` STAYS** — it is a scar about importing a sibling tool's verb by habit.
+> Recorded history, and deleting it is the thing Cole's ruling explicitly excludes.
+>
+> **⚠ The remaining CODE invocation (`team-support.ts:469`, `grapevine who`) is NOT criterion 4.** That
+> is a _dependency_ question, not a guidance one — it belongs to the
+> [coordination-layer investigation](investigations/2026-07-31-team-native-coordination-layer.md) and the
+> carried debt, and conflating them is what made version one unrunnable.
+
+**Why 4/4b and 7 are in the set rather than assumed:**
+
+- **(4/4b)** Cole ruled _"grapevine leaves entirely."_ **The consuming-team half has not happened** —
+  six shipped guidance sites still route an agent to a wire that no longer exists, and a **brand-new**
+  team is still told to install it. The upgrade path is the other half: an **existing** team has its own
+  in-repo references, and nothing currently tells it they are now wrong.
+  **The bound on shipped prose is unchanged and still binds:** it may say _"anthill no longer opens or
+  joins a grapevine"_ and may **not** say _"anthill does not depend on grapevine"_ — because
+  `team-support.ts:469` still invokes `grapevine who`. **That invocation is carried debt and the
+  coordination-layer question, deliberately NOT criterion 4** (see the box above).
+- **(7)** is the criterion that stops this recurring. **The reason nothing was phased beyond the next
+  session is that this router was stale** — so the scope ends by fixing the thing that hid the scope.
+
+### Order, and the one hard sequencing constraint
+
+**Plan-step order (NOT the criterion numbers above — these are `plan.md` steps):** rotation (plan step 3) → the swap run (plan step 6) → the positional guard → the shipped-surface grapevine sweep → merge & release → re-triage.
+
+> 🔴 **ROTATION MUST BE LANDED BEFORE THE FIRST `comms stand-down` OF ITS SESSION.** The pane-kill is a
+> **three-term conjunction** and the middle term is _our own finalize ritual_ — `stand-down` is
+> advisory, so a seat that files its tombstone and keeps working **is** an in-window tombstone at a
+> live desk. **If rotation is not ready before finalize begins, it does not land that session, and
+> that is an acceptable outcome rather than a failure.**
+>
+> **The safe design set is already LANDED AS TESTS** (`c9a33e7`): _re-mint or drop the session-open
+> record; **preserving** it is the one unsafe design_ — and preserving it is the tidiest-looking
+> option. **Do not re-derive this.**
+
+**→ The working runway is [`projects/comms-as-default/plan.md` § NEXT PHASE](projects/comms-as-default/plan.md#-next-phase--what-session-12-picks-up).** That file carries the
+per-step detail, the carried debt, and the merge decision that is **Cole's to make, not the lead's to
+assume** (his framing: _"one feature, one release"_).
+
+### Deliberately NOT in this scope
+
+- **The coordination-hardening arc, phases 2–6** — real, sequenced in its
+  [brief](briefs/2026-07-28-coordination-hardening-arc.md), and **months rather than sessions.** Phase 3
+  overlaps [session-branch-strategy](projects/session-branch-strategy/proposal.md), which is a separate
+  Draft; that collision is unresolved and should be resolved **at the re-triage (criterion 7)**, not before.
+- **Two cheap experiments, whenever there's an appetite** — both gate the
+  [team-native coordination layer](investigations/2026-07-31-team-native-coordination-layer.md)
+  question: **run a mixed-model team** (the anti-groupthink argument is currently reasoning, not
+  evidence), and **trial a heads-down mute**. Neither is a build.
+- **The [scar test](investigations/2026-07-28-practice-transmission-between-teams.md)** — the cheapest
+  experiment available, and it gates the whole practice-transmission loop. **Pick it up at the
+  re-triage.**
 
 **Deliberately held:** per-seat worktree isolation (pending the staged-snapshot evaluation, phase 2),
 and the memory bundle (#8–#10) / parity close-out (#12), which keep their place in **Next** behind the

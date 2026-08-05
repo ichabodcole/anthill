@@ -229,6 +229,72 @@ ruling _"sweep once, land silently, post nothing."_
 lead in one project interviewing a lead in another (done this week, worked precisely because grapevine
 _doesn't_ know about rosters). Nothing here argues for replacing that.
 
+### B′. The BOARD half — field evidence, 2026-08-05, and one coupling nobody predicted
+
+**Added after session 11. It does not make the build decision this investigation defers; it changes
+what the decision is about.** Two things happened on 2026-08-05.
+
+**1. The comms half shipped — so spellbook's remaining role in an anthill team is now EXACTLY the board.**
+
+`14cf678` removed grapevine from the team lifecycle: `convene` opens no channel, `join` composes no
+tail. The [Ship the one-wire team](../ROADMAP.md) scope drives the last invocation (`grapevine who`) to
+zero. **When it lands, an anthill team depends on spellbook for one thing and one thing only: `bounty`.**
+
+That is worth stating plainly because it collapses this investigation's scope. The question is no
+longer _"comms or board or both"_ — **it is only ever the board from here**, and the dependency surface
+is now small enough to reason about completely.
+
+> ⚠ **And it happened against this section's own Recommendation.** _"Do not choose yet — three things
+> first"_, none of which were run. The comms half was chosen by a spike and then by execution.
+> **Recorded as a fact about how this decision actually gets made, not as a defence of it:** the
+> recommendation was for the whole layer, the team shipped half of it on friction alone, and **the
+> half that shipped is the half nobody had to be talked into.** A reader deciding the board half should
+> know the comms precedent did not go through the gate this file proposes.
+
+**2. 🔴 THE COUPLING: shipping comms made the un-owned bounty dependency MORE dangerous, and no one
+predicted it.**
+
+The board data-loss bug ([spellbook#74](https://github.com/ichabodcole/spellbook/issues/74),
+[#73](https://github.com/ichabodcole/spellbook/issues/73)) has now destroyed a board **three times, on
+three teams, across three spells** — 9 tasks (operator), 10 card histories (mind-mapper), and **95 tasks
+on anthill's own board on 2026-08-05**, reproduced by the lead at teardown with every step reporting
+`ok`.
+
+**What makes the third one different is the recovery.** spellbook#74 records that the first was
+survivable _"only because every card mutation had been narrated on a grapevine channel."_
+
+**That mitigation no longer exists.** anthill deleted grapevine the same day, and the `comms` log that
+replaced it is gitignored (`.gitignore:44`) — so it is absent from a fresh clone. **The out-of-band
+narration that made board loss recoverable was a side effect of the two-wire architecture, and the
+one-wire migration removed it.** The 95 tasks survived only because the lead happened to `cp` the
+snapshot file before the destructive step; **nothing in the tool, the docs or the skills prompts that.**
+
+_This is `principles.md`'s **a mask is not a dependency**, applied one level up: grapevine's narration
+was never a backup, it was a side effect that happened to be load-bearing — so it appeared in no
+dependency graph, and removing the vine silently raised the blast radius of a component nobody was
+touching._
+
+**What this does and does not establish:**
+
+- ✅ **Establishes:** the board's failure modes are (a) recurrent across independent teams, (b) filed
+  and open for weeks, (c) **data-destroying rather than annoying**, and (d) **now un-mitigated for
+  anthill specifically.** Six open board issues at time of writing: `#73`, `#74`, `#78`, `#79`, `#64`,
+  `#11`.
+- ❌ **Does NOT establish that owning it is correct.** The fix may land upstream — these are filed on a
+  repo the same human maintains, which is a materially different position from a third-party
+  dependency, and this investigation's §"What the existing tools genuinely provide" applies unchanged.
+- 🔴 **Sharpens Open Question 5 into the deciding one.** _"What is the zero-dependency cost?"_ The
+  shipped subtree has **no runtime dependencies by deliberate choice**. `comms` cleared that bar
+  because an append-only NDJSON log needs no daemon. **A board does not obviously clear it** — the
+  three failures above are all _daemon-lifecycle_ failures, and a daemon is the thing the constraint
+  makes expensive. **Whatever anthill builds must not reproduce the failure class it is replacing**,
+  and "own it" does not by itself avoid that.
+  → **The cheap probe, and it needs no build decision: does the board need a daemon at all?** `comms`
+  answered its own version of that question by being a file. **If board state can be an append-only
+  log of typed acts with the UI as a projection, the entire failure class above is structural rather
+  than a bug to re-fix** — which is exactly design area **F (one surface or two)**, arriving with
+  evidence instead of as a preference.
+
 ## Options Considered
 
 - **(a) Status quo** — keep pushing team-shaped features upstream. Honest baseline. Cost: continued
@@ -277,6 +343,24 @@ less than the wrong answer to that.
 - [ ] Consider a **convened team session** on this design specifically — it spans engine, skills and
       verify, and is exactly the multi-seat shape `anthill:plan` exists for. It would also dogfood the
       ratify gate on a genuinely contested design.
+
+**Added 2026-08-05 (see §B′), and these are the board half's, which is now the whole of it:**
+
+- [ ] **Probe, before any build decision: does a team board need a DAEMON?** All three recorded
+      data-loss incidents are daemon-lifecycle failures, and the no-runtime-deps constraint is what
+      makes a daemon expensive. `comms` cleared its version of this bar by being a **file**. If board
+      state can be an append-only log of typed acts with the UI as a projection, the failure class is
+      **structural, not a bug to re-fix.** Cheap, needs no commitment, and it answers design area **F**
+      with evidence rather than preference.
+- [ ] **Decide whether the fix is ours or upstream's.** `#73`/`#74` are open on a repo the same human
+      maintains — a materially different position from a third-party dependency. **Owning it is not
+      the only way to fix it, and this file should not let the friction list decide that** (its own
+      Recommendation says exactly this).
+- [ ] **Until either lands: the recovery procedure is the mitigation, and it is undocumented.** Back up
+      `~/.bounty/snapshots/<id>.json` **before** any `close`. Steps verified 95/95 on
+      [spellbook#74](https://github.com/ichabodcole/spellbook/issues/74). **Belongs in a playbook —
+      the existing anthill-side guard says _"do not close it"_ and nothing says what to do once you
+      already have.**
 
 ## Open Questions
 

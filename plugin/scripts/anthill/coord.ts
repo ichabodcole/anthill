@@ -84,7 +84,7 @@ export function resolveCoordCli(tool: CoordTool): string {
   } catch {
     throw new Error(
       `anthill: spellbook plugin cache not found at ${SPELLBOOK_CACHE_ROOT}. ` +
-        "Is the spellbook plugin installed? (anthill depends on spellbook for grapevine + bounty.)",
+        `Is the spellbook plugin installed? (anthill depends on spellbook for \`${tool}\`.)`,
     );
   }
 

@@ -2,8 +2,11 @@
 
 The standard operating procedure for the agent team that builds this project. A **map, not a
 manual** — it points at the source of truth rather than restating it. This is a **seed**: everything
-here is meant to evolve by use, not stand as the final answer. The team coordinates on the
-**`anthill-dev`** grapevine channel (substance) and the bounty board (task state); **maestro** leads.
+here is meant to evolve by use, not stand as the final answer. The team coordinates on
+**`anthill comms`** (the seat-aware log, durable across sessions) on the **`anthill-dev`** channel
+(substance) and the bounty board (task state); **maestro** leads.
+**`anthill-dev` is not only the wire's name** — it also keys the bounty board and names the tmux
+session, so it identifies this team rather than any one tool.
 
 ## The idea: living context (stigmergy)
 
@@ -59,7 +62,7 @@ Route it by **where it lives**:
   for that; this doc doesn't restate it).
 
 **On a team, the lead owns the outward send.** A seat that hits anthill friction **surfaces** the
-candidate to the lead (on the vine, or as a `--submit`-ready draft) — it does **not** `anthill feedback
+candidate to the lead (on comms, or as a `--submit`-ready draft) — it does **not** `anthill feedback
 --submit` itself. The lead **dedupes** (N seats hitting one bug shouldn't file N issues) and submits the
 deduped set, the same way the lead owns the atomic land and routes decisions to the human. **Solo?
 You're the lead** — compose, confirm with the human, submit.
@@ -79,13 +82,13 @@ direct.
 > Why it matters: a lead who believes it is the only channel will not look for a seat that is stuck on
 > a human answer — and **a correctly-waiting seat produces no signal at all.** Not on the board, not in
 > the tree, not in any sweep. One session lost an unknown stretch to exactly this, surfacing only when
-> the seat volunteered it. **If you are waiting on a human, say so on the vine**; waiting silently is
+> the seat volunteered it. **If you are waiting on a human, say so on comms**; waiting silently is
 > indistinguishable from working.
 
 ## Tools
 
 - **Bounty board** — task state (`todo → doing → review → done`). The **doer owns its card's
-  lifecycle**; the lead creates + assigns (leaves in `todo`) and hands off on the vine; the reviewer
+  lifecycle**; the lead creates + assigns (leaves in `todo`) and hands off on comms; the reviewer
   closes. The board is _state_. **It's key-bound:** `convene` owns the board-open (keyed to the team
   channel, pinned via `.bounty-session`), so **in one shared working tree** every seat + the lead
   target this board **ambiently** — no one threads `--session`.
@@ -96,10 +99,19 @@ direct.
   ambient guarantee is the thing you traded.
   The mechanism lives once in the **board-binding contract** in
   [`dev/seams.md`](./dev/seams.md); this points at it, never restates it.
-- **Grapevine (`anthill-dev`)** — the back-channel. Seats discuss, coordinate, reconcile. The vine is
-  _substance_. Decisions route to the human **through maestro**, not direct.
+- **Comms (`anthill comms`, channel `anthill-dev`)** — the team's **seat-aware message log**, and the
+  wire. Seats discuss, coordinate, reconcile; comms is _substance_. Decisions route to the human
+  **through maestro**, not direct. Identity is a seat from the roster rather than a free-form alias,
+  and **nothing clears the log** — it accumulates across sessions, so a bare read replays every
+  session this team has ever had. Anchor a catch-up to an id.
+  **⚠ There is one wire, so there is no second one to fall back to** — and a wire that silently
+  delivers nothing looks exactly like a quiet channel. **`anthill comms positions` is what answers
+  it:** it reports every seat against the head as `null` / `0` / `N`, needs no seat of its own, and is
+  what you reach for when you suspect **your own** wire. A gap of `null` means the tool has no idea
+  what that seat has seen — it is **not** a rounded-down zero. The mechanism lives once in
+  [`dev/seams.md`](./dev/seams.md) Contract 6; this points at it, never restates it.
 - **The CLI** — `anthill` (run from the plugin; `convene` / `join` / `spawn` / `status` / `commit` /
-  `down` wrap grapevine + bounty + tmux). `anthill join <handle>` emits your grounding docs + an
+  `down` wrap comms + bounty + tmux). `anthill join <handle>` emits your grounding docs + an
   action checklist — that checklist is the single source; don't restate it.
 
 ## Workflow — convene → plan → work → finalize
@@ -180,7 +192,7 @@ fires**, because from git's point of view nothing is wrong. Worse, **the committ
 cannot see it** — _"my paths are clean"_ is true and blind.
 
 `seams.md` is where this recurs by design, since ownership there is per-contract inside one file. So
-for a **shared** file: say on the vine that you're taking it, and land your edit promptly rather than
+for a **shared** file: say on comms that you're taking it, and land your edit promptly rather than
 holding it while others write. A short hold is the only real protection the tooling gives you here.
 
 **Read the envelope your land returns — it already answers two questions we kept reconstructing by

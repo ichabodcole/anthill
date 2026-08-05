@@ -12,7 +12,13 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
   New session? skim `docs/memories/` first for a recap of recent work.
 - `docs/architecture/2026-06-28-anthill-portable-team-os-design.md` — the design-of-record
   (thesis, the three stigmergy principles, the D1–D9 decisions, the config schema).
-- `docs/briefs/2026-06-30-anthill-v0.2-next-release.md` — the active roadmap.
+- 🧭 **`docs/ROADMAP.md` — THE prioritized view: what we're working on, in what order, and the
+  exit criteria for the current scope.** The lead **reads it at convene** and **updates it at
+  finalize**. _Added 2026-08-05: it had gone stale for three sessions because nothing pointed
+  here — every grounding doc named the v0.2 brief instead, so no fresh lead had a reason to open it._
+- `docs/briefs/` — release bundles and multi-session arcs (e.g. the
+  [coordination-hardening arc](docs/briefs/2026-07-28-coordination-hardening-arc.md)). **Scoped
+  plans, not the priority order** — `ROADMAP.md` is that.
 - `docs/backlog/` — small ready-to-pick tasks · `docs/investigations/` — research ·
   `docs/lessons-learned/` — field lessons · `docs/projects/` — larger bodies of work.
 - `docs/PROJECT_MANIFESTO.md` — vision & boundaries.
