@@ -3,6 +3,20 @@
 **Author:** steward (session 12) · **Assigned:** maestro R20, bounded — _an INVENTORY, not a triage; close NOTHING_
 **Measured at:** `d68bdbd`, 2026-08-05 · board read via `bounty state --full > file` (piped reads truncate at 64KiB)
 
+> ### ⚠ DRIFT CORRECTION, added at finalize (`8198ed4`) — and the correction is to the FORM of the claim, not only the number
+>
+> **The counts below were true at `d68bdbd` and are already stale 14 commits later.** Re-measured:
+>
+> ```
+> d68bdbd (as written)   102 cards:  13 done · 27 review · 60 todo · 2 doing
+> 8198ed4 (at finalize)  102 cards:  13 done · 30 review · 59 todo · 0 doing
+> moved:  t-ce6f0c2e (rotation) · t-5d5cd5ea (sentinel S12-2) · t-50243c6e (steward S12-4)  -> review
+> ```
+>
+> **Nothing in the classification changed. Three cards finished and entered `review` — which is the file's own thesis happening again while the file described it.**
+>
+> **The durable claim is `review` holds FOUR WORLDS. The count is a snapshot and will be wrong for every reader after the first.** This team's rule is _prefer an assertion to a count_ — I wrote a count anyway, and it rotted inside one session. **Read the four-world split and the per-card evidence; treat every number here as stamped-and-expiring.**
+
 ## Why this file exists
 
 Cole ratified the 6-of-8 release bar **"so long as we capture the remaining work in a way that
