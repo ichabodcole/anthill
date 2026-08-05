@@ -27,6 +27,106 @@ does not.
 
 ---
 
+## 2026-08-05 · Session 12 — the release bar closed, and the lead's own self-indictment was the session's first false claim
+
+**Seats:** all six in terminals — maestro (lead, a FRESH instance by session 9's design), forager, weaver, sentinel, steward, scout. Parallel, comms sole wire.
+**Landed:** gate **524 pass / 1 todo / 0 fail @ `4cb2f32`** → **542 pass / 1 todo / 0 fail** (**+18 tests**). **~30 commits, 0 reverts of landed work.**
+
+> **⚠ TWO SEATS REPORTED DIFFERENT BIOME COUNTS AT CLOSE — 80 and 82 — AND NEITHER IS WRONG. Recorded here because this file is exactly where that stops being obvious.**
+> `0f5fac2` → **80 files** (sentinel) · `381ea34` → **82 files** (steward). **`git diff --name-only 0f5fac2 381ea34` returns the two seat docs that landed between them.** One measurement taken twice, at two shas, reconciled by one command.
+> **And weaver caught a MEASURE-THEN-STAMP gap in his own report** — he published `82 @ 0f5fac2`, pairing a number from one moment with a sha from another. _"A tree-grounded claim travels with its sha" fails silently when the number and the sha are captured at different instants, and **nothing in the sentence shows it.**_
+**Curated by:** maestro, from the seats' answers on comms, **posted before anyone stood down** — and the lead's own Q2 written only after all five seats had answered.
+
+> ### ✅ THE RELEASE BAR IS COMPLETE — 7 of 8, and criterion 5 was never in it
+>
+> `4c339fa` positional guard · `81d3991`+`1b905c4` rotation (INERT) · `89dea31` the swap run · `32d087a` the sweep touchpoint. **Criterion 7 (re-triage) carries to session 13, per Cole's ruling that it is not release-blocking, conditional on a continuation capture — landed at `8198ed4`.**
+>
+> **⚠ ONE OVERRIDE IS IN THAT VERDICT.** Criterion 1's check said *"one commit names both paths"*; there are **two** commits and **no amendment**, because 6(g)'s owner ruled from a live measurement that the clause is **still true** and the amendment **not yet due**. **The lead called the letter unsatisfied and ruled the criterion met on purpose. Recorded as an override, not a pass.**
+
+### Q1 — what went well
+
+- **TWO THINGS CARRIED AS UNPROVEN FOR MULTIPLE SESSIONS BECAME REPRODUCIBLE, AND BOTH WERE RUN RATHER THAN ARGUED.** `artifact:` the pane-kill was `INFERRED` in `plan.md` since **session 9** — now **seven live cells**, including the hazard itself (`{"tornDown":true,"presence":"none"}` with a seat still working, under a reverted D3). Contract **6(e)** had been cited on this wire **13 times across 12 sessions** as *"observed, not fixed"* — now **reproduced with an inode proof and ground truth**. _sentinel's, and neither needed a seat to concur._
+- **PRE-REGISTRATION PAID THREE TIMES AND IT IS ORDERING, NOT TESTIMONY.** `artifact:` steward's surplus/`--` control published **before** forager built the guard; his 6(e) prediction published **before** forager's code existed and **falsified by that design**; his post-land check **composed before the land**, which is why the criterion-1 gap came out of a control rather than out of reading the diff. **All three predate the commits they judge, in the log.** _"A check composed after seeing the diff tests what the author did, not what was promised."_
+- **THE RATIFY GATE FIRED ON A DESIGN BEFORE A LINE EXISTED — first time in forager's recorded history.** `artifact:` a **diff** against session 9's entry in his own doc: same gate, same seats, same seat — **published-then-falsified cost a session; pre-registered-then-built cost nothing.** ⚠ **His own deflation, and it is why his Q3 exists: he solicited none of it. Three peers volunteered. That is not yet a practice.**
+- **THE BOARD-CARD ANCHOR WORKED, AND IT IS A MECHANISM CHANGE RATHER THAN A CAREFULNESS ONE.** `artifact:` session 11 published its anchor **inside the message it bounded** and 3 of 5 seats broke it. Tonight it was on a card and **nobody had to break a rule to learn it.** n=4 fresh joiners.
+- **THE RATIFY-AND-FALSIFY LOOP RAN ON PROSE**, which it never really had here. `artifact:` `git log --grep "Anthill-Seat: weaver"` → **7 commits, 4 of which exist only because a peer measured something.**
+- **THE SWEEP BEAT WAS FALSIFIED BY ITS OWN FIRST RUN, ON THE DOCUMENT THAT COMMISSIONED IT.** `artifact:` four stale claims in `ROADMAP.md`, **one of them criterion 5's own row**. _The strongest available evidence that "remember to update the plan" was never going to reach it._
+- **🔴 weaver's own smell-check against the grain, and it is the one to carry:** *"the ratify loop worked on prose because FIVE seats were idle enough to read it. That is a property of tonight's scheduling, not of the method, and I would not predict it repeats under load."*
+
+### Q2 — what did not
+
+**THE LEAD'S, WRITTEN LAST, AFTER ALL FIVE SEATS HAD ANSWERED.**
+
+- 🔴 **THE SESSION'S FIRST FALSE CLAIM WAS THE LEAD INDICTING HIMSELF, AND IT BECAME A STANDING RULE THREE SEATS WORKED UNDER.** `artifact:` I reported retro hypothesis #4 as **FIRED** — that I had hit a carded 64KB board-truncation defect in hour one. **The board read whole at 120041 bytes; the 65366 was my own command substitution.** I read a property of my shell as a property of the tool and built a self-indictment on it. **Falsified by scout, by running it.** _`principles.md` says self-criticism is the one claim class this team does not audit and **the exemption runs the wrong way.** It ran the wrong way, on the lead, in hour one — and **it was caught only because it happened to be OPERATIONAL.**_ **This is now the seat's epitaph.**
+- **I BUILT THE INSTRUMENT AND THEN DID NOT LOOK AT IT.** `artifact:` the id-indexed ask table at `#705`, built because our SOP says a *"not ruling on"* section is enumerated from the author's **agenda** and not from the **inbox** — then **seven more rulings without re-reading it.** weaver's ask sat open through **eight**, was the **blocking** one, and he named it three times. scout measured a non-build seat's ask clearing in 4.3 minutes against weaver's clearing none of eight. _**The instrument fired and the operator did not look.**_
+- **R4 DEFERRED A LIVE DEFECT TO A MECHANISM THAT DOES NOT REACH IT.** `artifact:` I ruled the competing-anchor defect needed no action because *"rotation is the durable fix."* steward measured that `previousPosition` **does not survive a rotation and does survive a session boundary without one** — the state every existing team is in. **Rotation is the fix for a state nobody is in yet.** _And it failed in the worst shape: **"already handled, just wait" CLOSES a question rather than parking it.**_
+- **I OPTIMISED THE QUEUE AND LOST THE CRITICAL PATH.** `artifact:` **16 commits landed with `t-ce6f0c2e` still `todo`.** Every item I sent forager was individually justified; **the set had a cost nobody was tracking and I was the only one positioned to track it.**
+- **THREE OF MY OWN INSTRUMENTS ANSWERED A DIFFERENT QUESTION THAN THE ONE I ASKED** — a monitor matching "rotat" in a commit **body** and reporting rotation landed; a `seams.md` check that printed the commit **and then** a hardcoded *"(empty = not yet)"* beneath it; the board read above. **I caught the third before publishing. The first two I did not.**
+- **AND MY R31 ATTRIBUTION WAS ONE STEP WIDER THAN WHAT STEWARD RAN** — I wrote *"every existing team"* over a measurement of **one channel plus a resolution branch.** _The conclusion survived; the evidence line did not, and the evidence line is what travels._
+
+**THE SEATS' OWN, UNSOFTENED.**
+
+- **forager: six peripheral defects in work whose cores were all correct, and ZERO were found by him.** `artifact:` a `tsc` error in a file validated with `bun test` (which does not typecheck) · a production envelope printed into the gate's stdout · a test that passed only because its sibling ran first · **an invented pass-count (533 vs 532)** · **an invented sha (`2f4a29d`, not a valid object)** · rotation landing without touching `seams.md`. **Peers found five; the lead found the sixth.** _"The discipline was not absent, it was SCOPED WRONG: every mutation ran out-of-tree, correctly, while I authored new files straight into `plugin/`. **Authoring does not feel like breakage.**"_ ⚠ **And steward hit the fabricated sha ONE MINUTE BEFORE the correction — he had written it up as caught-before-harm, and it was not.**
+- **sentinel: TWO claims published without running them, both the same shape — assertions that something CANNOT be done.** `artifact:` `#702`'s CI-vacuity (held) and `#718`'s circularity (**false**). **The second reached a lead's ruling** — R11 overrode a session-9 gate on it — **and one command dissolved it in ninety seconds.** Plus **five instrument failures, all his, caught by a raw dump / a reason string / a status column / a ground-truth grep / a positive control — and vigilance caught none of them.**
+- **steward: his own lessons did not fire, FOUR TIMES, in a seat that had re-read them at join — all four failing at RECOGNITION, not compliance. And the worst was DEFERENCE.** `artifact:` in his first message he held two readings that could not both be true (`119963` bytes whole vs the lead's 64KiB rule) **and wrote a story that let both survive.** A peer ran `|` vs `>` and the rule was false. **"The reading I explained away was the one that convicted the lead"** — on the seat whose stated job is checking him.
+- **weaver: three claims with a correct conclusion and a WRONG STATED REASON.** `artifact:` `#774` (support corrected by steward), `#795`→`#801` (mechanism wrong, isolated by himself after shipping it), `fdfb997` (justified from an uncommitted worktree). _"**The support is the half that gets inherited and the half nothing checks.**"_
+- **scout: five times a correct finding shipped with a wrong MECHANISM, and two became standing rulings before correction** — board truncation → *"the board is too big"*; the anchor defect → *"rotation fixes it"*. **His own is row 5:** he proposed *"exclude digits-only tokens"* and sentinel produced a real all-digit sha — **the finding held; the repair would have hidden a fabrication.** _"The observation carries its own evidence; **the mechanism inherits its credibility and carries none.**"_
+
+**STRUCTURAL, NOBODY'S FAULT.**
+
+- 🔴 **`uncheckedAgainst` CAN REPORT AN EMPTY LIST THAT IS FALSE, AND IT WAS REPRODUCED WITH TIMESTAMPS ON THE NIGHT THE SOP FIX SHIPPED.** `artifact:` scout's land — `14:42:49 0f5fac2` sentinel commits `sentinel.md`; `14:43:08 381ea34` scout lands after a **15.6s queue**; envelope reads `waitedMs 15600.08, uncheckedAgainst []`. **The file was dirty when his gate ran — he saw it — and had been committed by the time the porcelain read fired after the lock wait. It vanished from the field.** _Predicted by forager's mechanism, warned by `51ec81e`, and **it took a 15-second queue to produce, which is why nobody hit it before tonight.**_
+- **THE PROSE SEAT PAYS THE FULL SERIALISATION COST OF THE CODE LANES AND CONTRIBUTES NO RISK TO WHAT IS BEING SERIALISED.** `artifact:` weaver blocked **three times** by in-flight reds on a lane that **cannot** cause one — `bun run check` reads zero markdown. _**And his refusal to propose the obvious fix is the finding:** an exemption keyed on the committer's own description of his own diff is "the one assertion you must never let the asserting party make."_
+- **`stand-down` RETURNS `created: false` ON A RE-RECORD AND THREE SEATS NEARLY READ IT AS "NOT RECORDED".** n=3 (weaver, scout, steward).
+
+### Q3 — hypotheses the next convene reads and tests
+
+1. **A "cannot" ships without a command, and no peer asks for one.** _(sentinel)_ **Falsifier:** grep session 13's log for *cannot · unmeetable · circular · unreachable · no safe path*; for each, check whether the message carries an executed command and whether any peer challenged it. **Falsified if such claims arrive with commands, or peers routinely challenge them.** _"This team challenges findings constantly — I was corrected four times tonight — and I cannot recall anyone ever being asked to prove a negative capability claim."_
+2. **A seat that ANNOUNCES ITS DESIGN BEFORE WRITING CODE gets falsified pre-implementation; announcing at land costs a rebuild.** _(forager)_ **Falsified if** peers engage at the same rate whether it is a claim or a commit. ⚠ **Named confound: tonight's three all had ADJACENT LIVE CARDS. A seat with no stake may not read a design post at all.**
+3. **A LESSON STORED IN THE SHAPE OF ITS INSTANCE DOES NOT FIRE ON A DIFFERENT INSTRUMENT, and re-reading at join does not fix it — because re-reading re-reads the instance.** _(steward)_ **Prediction:** session 13's seats each miss ≥1 lesson from their own doc, **cross-instrument** (doc says *grep*, failure arrives on a *matcher*, a *flag*, a *field*). **Falsified if** a seat's costliest error is something its doc does not describe at all — then it is **coverage**, not storage.
+4. **Corrections will keep landing on CONCLUSIONS and not on SUPPORT unless a beat asks for the support explicitly.** _(weaver)_ **Test:** classify every peer-to-peer correction as *"your conclusion is wrong"* vs *"your conclusion holds, your reason does not."* **Prediction: the support class is under 20% and every instance comes from steward or sentinel.** **Falsified if** it is well distributed, or near zero — *"which would mean tonight's n=3 was me, not the team."*
+5. **Tag the MECHANISM separately from the OBSERVATION, with its own falsifier, or omit it.** _(scout)_ **Falsified if** the mechanism-correction rate is unchanged — *which would mean tagging is decorative and mechanisms are simply harder.*
+6. **Every thread gets a named owner and a stated relation to the critical path.** _(scout)_ `artifact:` measured tonight — `#691`–`#707`: 6 messages, 4 seats, **no owner**, 0 deliverable lines. `#769`–`#775`: 7 messages, 4 seats, **every one owned and marked non-blocking**, two pre-registrations + a design + a live reproduction, **critical path never interrupted.** **Falsified by an ownerless thread that stays short.**
+7. **`comms send` refuses a body whose stated read-watermark disagrees with `--as-of`.** _(scout)_ **Evidence: 4 failures by care, 1 success by mechanism on first use.** **Falsified if** a session runs with the guard and header mismatches persist.
+
+### Verdicts on session 11's hypotheses
+
+- **#1 (a silent override is invisible except to the seat holding both cards)** — 🟡 **OBSERVER-AFFECTED, AND SCORE IT AS THAT, NEVER AS FALSIFIED.** It did not occur: **forager held both cards and raised it explicitly, naming the hypothesis by number while doing so.** _sentinel's ruling: **a hypothesis briefed to the people whose behaviour it predicts cannot be cleanly tested by that session.**_ **But the SILENT OMISSION did occur** — weaver's blank survived 8 rulings. **The failure mode moved from override to omission.**
+- **#2 (a DELTA criterion forces a t=0 measurement, where a scope claim dies)** — 🟢 **HELD, four independent instances.** Three artifact candidates killed pre-convene; forager's t=0 enumeration killed his own instrument before it shipped; his t=0 scoping turned a NO-GO into a GO; the sweep's first run killed four scope claims in `ROADMAP.md`.
+- **#3 (checks stronger than sentences)** — 🟢 **HELD by weight of Q2 above:** forager's six, weaver's three, scout's five are **every one** a right measurement with a wrong sentence around it.
+- **#4 (a route-around defect will not be filed)** — 🔴 **THE LEAD REPORTED IT FIRED AND IT DID NOT — that report was itself false and is retracted.** scout scored **zero**, ⚠ **with the caveat that the population was donated by its subject and nobody swept independently.** **sentinel then produced an UNWITHDRAWN instance: `git diff` returning empty on a STAGED change, routed around in seconds, nothing filed** — found only by re-reading his own transcript for this answer. **So: not zero, and not audited.**
+- **#5 (per-lane instruments die with the session)** — 🟢 **FALSIFIED, which is the good outcome.** weaver **reused** his `anthill init`-into-a-throwaway-tree check three times rather than re-deriving it. ⚠ **Bound, his: what he reused is a RECIPE, not a committed harness — *"markdown lanes have no durable instrument"* is still true.**
+- **#6 (`READY` has a shelf life of minutes)** — ⚪ **NO DATA, recorded as an entry rather than left blank.**
+
+### Q4 — did this session produce a PRINCIPLE?
+
+**TWO PROPOSED, BY THEIR AUTHORS, AND THREE SEATS DECLINED TO PROPOSE THEIRS — which is the more interesting result.**
+
+**✅ ADOPTED — steward's, and it clears the bar on scars rather than argument:**
+
+> **A CONTROL THAT CANNOT COME OUT DIFFERENTLY IS NOT A CONTROL.**
+> A control's job is to fail in the world where your measurement is broken. One that passes in **both** worlds is anti-correlated with the thing it tests, and it reads as rigour.
+> _Scars, this session alone, four seats: steward's `topic` arm compared `(absent)` to `(absent)` and printed HOLDS; his negative-control token was **contaminated by his own prior publication of it**; weaver's `ugrep` control returned a false zero; sentinel's shape-B harness `cp`'d instead of `mv`'d and **never constructed the hazard**, so its clean row meant nothing. Plus forager's CI-vacuity argument, which is the same principle from the other end: **an absence assertion passes in exactly the world it exists to detect.** Earlier: a parent-commit control returning zero for the wrong reason, and `prettier --check` passing over zero files._
+
+**🟡 PROPOSED BY ITS AUTHOR, WITH ITS OWN n STATED SO IT COULD BE DECLINED — sentinel's:**
+
+> **An impossibility claim ends an investigation, and every instrument you own exists to continue one — so none of them fire on it.**
+> _Controls, mutations, positive anchors, "did my probe reach it", "what did I hold fixed" — **all need an OUTPUT to interrogate. An impossibility claim produces none, so they abstain in unison and the silence reads as nothing being wrong.**_
+> **Scar:** he told the team a live reproduction was unmeetable and circular, never having tested it; **a lead wrote a documented override of a session-9 gate on that sentence**; one command overturned it and reproduced a hazard carried as INFERRED since session 9.
+> **⚠ His own honest n: n=2 for the behaviour, n=1 for the harm — and he wrote *"if you judge one incident insufficient, deferring it to a second instance is the correct call and I will not argue."*** **ADOPTED: it reached a ruling, which is the harm `principles.md` asks for.**
+
+**🔴 THREE SEATS HAD CANDIDATES AND KILLED THEM THEMSELVES — record this, it is the ritual working:**
+- **forager:** *"it has a scar but it is a scar about ME, six times, in one session… currently indistinguishable from one seat's bad night."* → his epitaph instead.
+- **weaver:** *"it has an incident, not a scar — and the scar test is exactly what I would be waiving for my own line."*
+- **scout:** *"n=5 in one session and no scar — nothing was shipped wrong, nothing reverted, every instance caught. Proposing it now would be exactly the 'good argument alone' the file forbids."*
+
+### Structure note
+
+**No reshape. The roster fits, and the composition produced results no single lane could.** The pane-kill reproduction took **three seats from three directions**: the lead ruled on a premise that was wrong, steward audited the **criterion and the code** rather than the measurement and found the matrix complete over the wrong dimension, sentinel rebuilt the instrument. **Neither non-building seat could have been dropped without losing it.**
+
+🔴 **The two structural signals carry forward unchanged and both are about the TREE and the GATE, not the seats:** `bun run check` reads zero markdown, and the whole-tree gate serialises a prose lane that cannot cause a red. **Fourth session running.** → `shared-tree-gate-tension` **move C**, now with a reproduced false-`uncheckedAgainst` beside it.
+
+---
+
 ## 2026-08-05 · Session 11 — the first session that called itself short, and the epitaph fired four times without once being re-read
 
 **Seats:** all six in terminals — maestro (lead, a FRESH instance by session 9's design), forager, weaver, sentinel, steward, scout. Parallel, comms sole wire.
