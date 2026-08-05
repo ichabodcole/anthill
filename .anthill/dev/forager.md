@@ -406,6 +406,14 @@ _The sharpening this instance forces: the earlier two say *look for another copy
 > **When a card names a STRING, grep the scope before you fix the line. When it names a COMMAND, ask what else computes the same answer.**
 _And the reason the disposition kept failing is worth more than the rule: every one of those four fixes felt COMPLETE, because the thing I was pointed at was genuinely fixed. **Completeness is a feeling about the item, not a property of the class**, and nothing in the item can tell you the class is bigger._ (Pinned: `cc22e0c`, which fixes sites 3 and 4 together and carries the grep in its message; the renderer collapse is `1235955`.)
 
+**FIFTH INSTANCE, SESSION 10 — AND HERE I WAS THE ONE WHO MINTED THE NAME, AND IT SENT A PEER HUNTING A DEFECT THAT DOES NOT EXIST.**
+I reported *"`13a4ae7` LANDED MY SEAT DOC WITHOUT THE NEW EPITAPH"* — every word true, and **accusation-shaped**: it reads as *the land lost my content*, i.e. a defect in the lead's protocol and in **my own** `anthill commit`. A peer began building negative controls against the commit path on the strength of it.
+**Measured afterwards: `13a4ae7` contained everything in the file at the instant it ran. I wrote the epitaph AFTER it. Nothing was dropped.** The true sentence was *"I edited my seat doc after it was landed"* — which is not a defect in anything; it is me continuing to work.
+**Second instance the same night of me asserting a fault in someone else's artifact without running the command that observes it** (the first: *"neither `team-join` path landed"*, when both had, in a commit that predated my reading of the log).
+**Both of my wrong claims that session pointed the fault OUTWARD — at the tooling or at the lead — and both were mine, and both were one command from being checked.**
+_The cheap discriminator, because "dropped" and "not yet written" are the SAME OBSERVATION and OPPOSITE findings: **before reporting that a tool or a peer lost your work, check whether your work EXISTED when they acted.** One timestamp comparison. **A dirty file looks identical whether it was never landed or landed-then-edited**, and only the clock tells them apart._
+**Family resemblance worth keeping — three seats hit this shape in one hour:** a verifier's grep matched a *different occurrence* of his own string; two seats corrected elapsed-time claims about a moving dirty list; and this. **In every case the artifact moved between the observation and the claim, and the claim named a culprit.**
+
 _Lesson: when you inherit a defect with a name, re-derive the axis before adopting the fix the name implies. The unprobed cell is where the known-good path meets the unknown-bad one._ (Pinned: the invariant test in `cli.test.ts`; commit `01745cf`.)
 
 - **A guardrail that fires AFTER you have announced your conclusion will be read as confirmation.**
