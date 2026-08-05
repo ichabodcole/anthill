@@ -44,8 +44,9 @@ write a half-working config.
 
 - **Bun** (runs the CLI): `bun --version`. Missing → `curl -fsSL https://bun.sh/install | bash` (or
   `brew install oven-sh/bun/bun`).
-- **spellbook** (grapevine + bounty — the coordination layer anthill builds on): confirm the plugin is
-  installed by checking your **available skills** for `spellbook:grapevine` + `spellbook:bounty`.
+- **spellbook** (**bounty** — the task board anthill builds on; the team's message wire is anthill's
+  own `comms` and needs nothing installed): confirm the plugin is installed by checking your
+  **available skills** for `spellbook:bounty`.
   (anthill's CLI resolves their underlying scripts itself, so you don't need their install paths — only
   that the plugin is present.) Missing → install the spellbook plugin from its marketplace, then re-run.
 - **tmux** (pane mode): `tmux -V`. Missing → `brew install tmux`. **Non-fatal** — without tmux you lose

@@ -116,9 +116,9 @@ stay solo.
        was the one not on the wire, and no check it ran could have told it so.)_
    - **`anthill status`** confirms the result (who is present on the channel + the board column
      counts). **Presence spans every wire, not the vine alone** — `status` and `down` both read it
-     from one multi-wire source, so a seat present only on `comms` counts as present. Don't read a
-     name here as "on the grapevine", and don't go looking for it on one wire when it disagrees
-     with your expectation.
+     from one source, so a seat present on `comms` counts as present. **What it does NOT tell you is how
+     far behind a seat is** — `anthill comms positions` is the verb for that, and a `never-followed`
+     seat there means _no record at all_, never a rounded-down zero.
      _(This bullet used to be followed by a ⚠ saying `status` reports only the other wire and cannot
      see comms. **That was false from the moment presence became multi-source, and it contradicted the
      sentence directly above it** — two adjacent bullets, one right and one wrong, and only a reader
