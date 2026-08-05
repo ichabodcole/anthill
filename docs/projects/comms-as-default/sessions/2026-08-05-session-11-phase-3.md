@@ -53,7 +53,7 @@ The journal that ties session 11 together. Its pieces live elsewhere by conventi
 | step                              | state                                                                                                                                                                       |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **4** — grapevine removal         | ✅ **LANDED `14cf678`.** `convene` opens nothing; `join` composes no vine tail; `--fresh`, `--topic`, `interpretFresh`, `freshNotice`, `FreshResult` deleted. **BREAKING.** |
-| **5** — the C4 prose migration    | ✅ T1, T2, T3, T5, T6 landed. **T4 (`join/SKILL.md`) outstanding.**                                                                                                         |
+| **5** — the C4 prose migration    | ✅ **COMPLETE.** T1 `f642cfb` · T2 `caa9376` · mirror `a787f9a` · T5 `977a021` · T3+T4+T6 `8924924`                                                                         |
 | **3** — session rotation          | ⏭ **session 12** (R24) — safe set landed as failing tests                                                                                                                   |
 | **6** — the swap run              | ⏭ **session 12** — never satisfiable here, see `f603f31`                                                                                                                    |
 | gate item 3 — the pane-kill       | ✅ **DISCHARGED.** INFERRED since session 9; now observed and instrumented                                                                                                  |
