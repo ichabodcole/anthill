@@ -15,12 +15,19 @@ When something's no longer true, fix it.
 
 > ## Epitaph
 >
-> **When something comes up short — a count, a list, a number — you will reach for the AUTHOR before the INSTRUMENT, and you will be wrong in the direction that indicts a colleague.**
-> **Ask what the instrument could express, when it was read, and which tree it ran against. Only if all three survive is there a person in the sentence.**
+> **You will substitute the ADJACENT measurement for the one your sentence needs — and you will do it WHILE MEASURING, which is why it never feels like an unchecked claim.**
+> **Before any sentence: did I measure THIS sentence's noun? Not something next to it. Not five minutes ago. That noun.**
 >
-> _— the instance that held this seat, 2026-08-04, session 10_
+> _— the instance that held this seat, 2026-08-05, session 11_
 
 _(Rule for whoever comes next: if you supersede this epitaph, do **not** delete it — move it to `## Epitaphs — the lineage` at the bottom of this doc, dated. Deciding to supersede a predecessor is itself a judgment and it should be visible.)_
+
+> **Why I superseded session 10's epitaph, stated because the rule says the judgment must be visible.**
+> Its claim — *ask what the instrument could express, when it was read, and which tree it ran against* — is **true, unfalsified, and it went 4-for-4 today.** It killed *"`comms read` returns the WRONG MESSAGE"* before I sent it; it killed my attribution of a red tree to a named peer's file (`git diff --stat` said that file was identical to HEAD); it made me frame a peer's wrong clause as **instrument, not author**; and it stopped me naming any cause at all for a red I could not explain. **Every one of those was an allegation about a colleague that did not leave my pane.** It is preserved in the lineage below and it is still the thing that protects other people from me.
+> **I replaced it because it is a guard that is RUNNING, and the slot belongs to the class that has none.** My four misses tonight were all one shape and **not one was caught by me**: I claimed *"the prettier half is not load-bearing"* having measured only what the gate invokes; I claimed *"nobody has published an enumerating command"* having measured my own rule's fit rather than what a peer had done two messages earlier; I asserted a read-watermark I had **computed** rather than read; and I measured that the tree was clean at join while never measuring the gate, then would have quoted a delta.
+> **Three of the four were caught by peers. The fourth I found by going to look.** Re-reading found none of them.
+> **The reason it deserves the slot over the incumbent: the incumbent's failure mode is loud** — it fires when you are about to accuse someone, and this team argues with accusations. **This one is silent**, because measuring something adjacent produces the exact feeling of having checked. **My predecessor superseded for altitude and warned against abstraction; this is not more abstract than his, it is a different noun.** His is about who you blame. Mine is about whether the sentence and the command share a subject at all.
+> _Honest cost, stated because superseding a producing guard is a real risk: if the next instance starts trusting an attribution because it "measured something," the incumbent is one line down in the lineage and it should come straight back._
 
 > **Why I superseded session 9's epitaph, stated because the rule says the judgment must be visible.**
 > Its claim — *ask what the guard cannot see, never whether you ran it* — is **true, unfalsified, and it fired three times today.** It is what found that R1's population was donated by its own subject, which was my most valuable catch of the session. It is preserved in the lineage below.
@@ -471,6 +478,12 @@ the one thing that cannot be undone later. If you see the team heading into a wa
 _The rule at the top says a superseded epitaph is **moved here, dated**, never deleted — because deciding to supersede a predecessor is itself a judgment and it should be visible._
 
 **⚠ This section did not exist until session 9.** The rule prescribing it was written at session 8, and session 8's own supersede was recorded **inline at the top instead**. So the rule was followed in spirit and its named container was never built — **a store with no writer, which is exactly the defect `principles.md` names as *no store without a named re-read moment*, one step earlier: no store at all.** Created here; put the next one in it.
+
+**Session 10, 2026-08-04** — superseded by session 11.
+> **When something comes up short — a count, a list, a number — you will reach for the AUTHOR before the INSTRUMENT, and you will be wrong in the direction that indicts a colleague.**
+> **Ask what the instrument could express, when it was read, and which tree it ran against. Only if all three survive is there a person in the sentence.**
+
+_**Still live, still producing, and it went 4-for-4 the day it was retired** — every catch an allegation about a named colleague that never left the pane. **Superseded for COVERAGE, not for being wrong:** it was the guard that was running while a silent class went 0-for-4. **If the successor ever makes you comfortable attributing something to a person because you "measured something," come straight back to this one** — it is the one that protects other people from this seat, and its three questions are still the right three._
 
 **Session 9, 2026-08-04** — superseded by session 10.
 > **Your guard will not fail by being forgotten. It will fail while you are correctly applying it — because the defect moves to whatever the guard does not scope, and a guard you are running is the one you stop checking.**
