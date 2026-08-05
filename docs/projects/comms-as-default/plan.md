@@ -27,7 +27,15 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
 **That ordering does not survive contact with the code.** Two independent cold reads, plus my own read of the three functions:
 
 - `anthill convene` opens grapevine **unconditionally** (`commands/team-convene.ts:260`) with no opt-out flag. So exit criterion 1 (_"no grapevine at all"_) is **unreachable while convene is the tool that stands the session up.** Removal is a precondition of the session's own headline criterion, not a follow-on to it.
-- The teardown guard is fail-closed today because of **two masks**, and this feature removes both: grapevine's `unknown` verdict (removed by the swap) and stale cross-session position files (removed by rotation).
+- The teardown guard is fail-closed today because of **two masks** — but they do not expire together, and the first sentence of this bullet was wrong about both.
+
+  > ⚠ **CORRECTED at session 9 by steward, executed against the real `who` payload with a control.** This bullet originally read: _"grapevine's `unknown` verdict (removed by the swap) and stale cross-session position files (removed by rotation)."_ **Both halves of the first mask were wrong.**
+  >
+  > `classifyPresence` returns `unknown` on **failure paths only** (`!ok`, unparseable JSON, `daemon:false`, missing `subscribers` key — `team-support.ts:265–284`). **A healthy vine with nobody on it returns `none`, not `unknown`.** Measured: real payload `{"subscribers":[]}` → vine leg `none` → combined `none` → **`shouldBlockTeardown` PERMITS teardown.** Control: vine with a subscriber → `present`.
+  >
+  > **So mask #1 is not removed by the swap at step 4 — it was already spent at #284, by ruling, the moment this team stopped tailing the vine.** The only mask still standing is the stale position files, and the step that removes those is **(3) rotation**.
+
+- **Therefore the pane-kill window opens at step (3), not step (4).**
 
 **Therefore: presence first, removal second, the swap run last.** Nothing lands in the reverse order.
 
@@ -35,8 +43,8 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
 
 1. **Presence semantics + the teardown guard** — `commsPresence` / `combinePresence` / `shouldBlockTeardown`. Gated by sentinel before anything downstream lands.
 2. **`comms stand-down` + `down` writing a session-close marker** — one piece of work, not two: giving the session a lifecycle it can observe.
-3. **Session rotation** — depends on (2) for its mint trigger.
-4. **Grapevine removal** — the three live call sites. Depends on (1); would otherwise convert `down` into a silent pane-killer.
+3. **Session rotation** — depends on (2) for its mint trigger, **and on (1) because THIS is the step that opens the pane-kill window.** Rotation empties the positions directory, which is the last surviving mask. _Corrected by steward: the original line named only (2), so "land 2 then 3 while C1 is still in review" read as sanctioned. **The step that opens the window named only its mint dependency; the step that does not open it named the hazard.**_
+4. **Grapevine removal** — the three live call sites. **No longer the step that spends the presence mask** (that was already spent by ruling at #284), but still gated on (1) because it deletes the vine leg of `combinePresence` permanently rather than situationally.
 5. **The prose migration** — depends on (4) being settled. Session 8 measured six instances of prose asserting things about a still-moving tool, three of them introduced _by seats fixing other false prose_.
 6. **The swap run** — the session that convenes, runs and tears down with grapevine never opened.
 
@@ -44,7 +52,7 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
 
 ## Shared interfaces — ratify on the vine, then fill
 
-### C1 — forager ↔ weaver · What presence may CLAIM, and what it AUTHORISES (CLAIM — awaiting forager, weaver)
+### C1 — forager ↔ weaver · What presence may CLAIM, and what it AUTHORISES (**RATIFIED at the MEANING OF `none` + the state set** — forager #306 × sentinel #292 × weaver #300)
 
 **The invariant, stated for one wire:** a destructive act may proceed only on a **positive observation** — never on an absence of data.
 
@@ -54,13 +62,45 @@ Today `down` kills panes when `presence.state === "none"`, and on the comms wire
 
 **The question, which is forager's to answer and not mine:** on a single wire, what must be observed before `down` may kill panes, and before `migrate` may move a log?
 
+> ### ✅ ANSWERED — forager, #306 §1. **RATIFIED at the meaning of `none` and the state set.**
+>
+> > **`none` must mean "a positive departure record for every SPAWNED seat". It must NOT mean "zero position records".**
+>
+> | world         | records                         | verdict   | teardown                         |
+> | ------------- | ------------------------------- | --------- | -------------------------------- |
+> | fresh session | zero records, **no tombstones** | `unknown` | **blocks** ✅ hazard closed      |
+> | clean end     | a tombstone per spawned seat    | `none`    | authorises ✅ no `--force` habit |
+> | mid-build     | a live follower                 | `present` | blocks ✅ unchanged              |
+>
+> **This declines sentinel's escape hatch rather than taking it** — premise (3) is kept, and the contradiction dissolves by _adding an input_, which sentinel's own result explicitly permits (_"pick one, or add an input"_).
+>
+> **No fourth state.** The set stays `present | unknown | none`; the fresh-session world routes onto **`unknown`, which every consumer already has a policy for** — so weaver's 6(c-bis) objection (three consumers, three chances to reach for the reassuring fallback) has **zero** instances here. The diagnostic rides as **total fields** (`spawned`, `departed`), per Contract 5(a), so `departed: 0` reads as an observation and never as an unpopulated field.
+>
+> **And `unknown` is HONEST, not merely safe** — the load-bearing test, since choosing a state because it is convenient is how the 6(c) defect arrives by a new road. At a fresh session the tool genuinely does not know. **`none` was the state that was lying.**
+>
+> **⚠ OPEN — steward #310, raised BEFORE the build and not yet resolved:** _"a positive departure record for every spawned seat"_ is a **universal quantifier, which is VACUOUSLY TRUE over an empty spawned set** — yielding `none` at a fresh session, the exact hazard. **The table asserts the safe behaviour; the sentence does not entail it.** The sentence is what gets implemented. forager's to answer.
+
 **The constraint on any answer** (this is the contract; the mechanism is not): the code's own docblock records that keeping `none` reachable is what stops the guard degrading into always-block — _"the state that trains people to pass `--force` reflexively and thereby removes the guard for real."_ Both failure directions are real and this team has been bitten by each. An answer that only avoids one is not an answer.
 
 **Consumers of the verdict, all of which must move together:** `down` (kills panes), `migrate` (moves data — B2's proposed guard is **circular** as specified: it blocks on stale records, and only the migration it blocks clears them), `status` (renders it to a human).
 
-**UNRESOLVED and named so it is not silently absorbed:** `TeamPresence.humans` is populated **only** from grapevine's `who`. comms has no notion of a human observer (`grep -ci human comms.ts` → 0). Removing grapevine deletes that capability. Is that acceptable, deferred, or blocking?
+**RESOLVED — `humans` is DELETABLE. Measured by forager (#306 §7), reframed by steward (#302 §5), and not opined.**
 
-### C2 — forager ↔ weaver (+ scout) · The session as an addressable unit (CLAIM — awaiting forager)
+steward established the field is **already dark**: it is populated only from the vine's `who.humans`, and today's real payload is `"humans":[]` because nobody tails — the state ruled at #284. So the question was never _"do we accept losing it"_ but _"did we already lose it, and is anyone relying on it?"_
+
+forager then ran the consumer sweep, with a control and a named false positive:
+
+```
+producer   team-support.ts:302,310,317,323,339,342
+consumer   team-status.ts:18,63,77,100  →  :100 if (d.humans.length > 0) push(`Humans: …`)
+FALSE POSITIVE, named:  team-commit.ts:305 — the English word, in a comment
+CONTROL    same command shape, token known-present → 45 rows (the instrument CAN return rows)
+```
+
+**One consumer, a conditional display line. Nothing branches on it, no guard reads it, no verdict derives from it.** Cost of deletion: the `Humans:` line in `status`, in sessions where a human tails a wire we are removing.
+→ **Verdict: not blocking, safe to delete with grapevine.** A human-observer notion on comms would be a **new feature with a new source**, not a rescue of this field. **Flagged to Cole as a user-visible capability deletion; cheap and reversible, so it is reported rather than blocked on.**
+
+### C2 — forager ↔ weaver (+ scout) · The session as an addressable unit (**RATIFIED at the INVARIANT, not the layout** — forager #306 §5)
 
 **The invariant:** after rotation, a reader must be able to determine (a) which log is current, (b) which session any given message belongs to, and (c) that every prior session's log remains readable by id. **Deleting is the human's choice, never the tool's.**
 
@@ -73,7 +113,7 @@ Today `down` kills panes when `presence.state === "none"`, and on the comms wire
 - `--session-key` is cited as precedent for distinguishing _new session_ from _re-attach_. It does the opposite: the key is `(channel, repo-root)`, constant across sessions, which is what makes keyed open **always re-attach**.
 - `lock.ts` is offered as off-the-shelf. Its own source documents a dead window in the stale-lock steal, and the existing lock path is derived from the **log** path — which moves per session, so a mint and a concurrent `send` would take different lock files.
 
-### C3 — forager ↔ weaver · Departure as a positive observation (CLAIM — awaiting forager)
+### C3 — forager ↔ weaver · Departure as a positive observation (**RATIFIED at WHO MAY ASSERT + the tombstone shape** — forager #306 §3)
 
 **The invariant:** after a seat departs, every presence-consuming surface must be able to distinguish **departed** from **unreachable**. Today they are byte-identical, which is why every session ends in `--force`.
 
@@ -81,7 +121,7 @@ Today `down` kills panes when `presence.state === "none"`, and on the comms wire
 
 **Coupling to C1, stated rather than assumed:** if the answer to C1 is that `none` requires positive evidence, then `stand-down` is what manufactures that evidence and these are one piece of work. **If forager falsifies that coupling, C1 and C3 separate and the integration order above changes.** Say so explicitly if you falsify it.
 
-### C4 — weaver ↔ forager · What shipped prose may promise once there is ONE wire (CLAIM — awaiting weaver)
+### C4 — weaver ↔ forager · What shipped prose may promise once there is ONE wire (**RATIFIED at the INVARIANT + the bounding enumeration** — weaver #293)
 
 **The invariant:** after removal, no shipped artifact may assert a two-wire model — including artifacts that assert it **without naming grapevine**.
 
