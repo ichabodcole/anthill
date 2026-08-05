@@ -17,7 +17,7 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 # ▶ THE SCOPE OF WORK: **SHIP THE ONE-WIRE TEAM**
 
 **Ratified by Cole, 2026-08-05.** _Everything needed before anthill can recommend comms as the default
-wire to consuming projects._ **In flight on `feat/comms-as-default-phase-3` (unmerged, 33 commits, gate
+wire to consuming projects._ **In flight on `feat/comms-as-default-phase-3` (unmerged, 35+ commits, gate
 green).**
 
 > ### ⚠ THIS SECTION WENT STALE FOR THREE SESSIONS AND NOBODY NOTICED, INCLUDING ITS OWN LEADS
@@ -33,29 +33,71 @@ green).**
 **The scope is met when a stranger can run these and get these answers. Not before, and no criterion
 is discharged by argument.**
 
-| #     | criterion                                                 | how it is checked                                                             |
-| ----- | --------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| **1** | **Rotation landed**, with `seams.md` 6(g) amended         | one commit names both paths (write-trigger)                                   |
-| **2** | **The swap run passes exit criterion v3 — BOTH halves**   | cited from `convene`'s **own envelope**, never a live `grapevine who`         |
-| **3** | **`comms read` positional guard**, at parser altitude     | 3 controls green: `commit -- <paths>` · `comms send <body>` · `join <handle>` |
-| **4** | 🔴 **grapevine is GONE** — the ruling made literally true | `grep -rn grapevine plugin/scripts --include=*.ts` → **0**                    |
-| **5** | **The sweep-the-plan touchpoint** shipped                 | present in `skills/finalize-session/` **and** `templates/docs-team/`          |
-| **6** | **Merged and released**                                   | `develop` → `main`, release cut                                               |
-| **7** | **This section points at live work**                      | every active project has a status line and a named next action                |
+| #      | criterion                                                                                                      | how it is checked                                                                                                                                                                                                                             |
+| ------ | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1**  | **Rotation landed**, with `seams.md` 6(g) amended                                                              | one commit names both paths (write-trigger)                                                                                                                                                                                                   |
+| **2**  | **The swap run passes exit criterion v3 — BOTH halves**                                                        | absence of USE is runnable as-is. **Absence of OPENING now needs a POSITIVE artifact** — `channelOpened` was deleted with step 4, and an absent field is not an observation (Contract 6(c)). **Name the artifact before the run, not after.** |
+| **3**  | **`comms read` positional guard**, at parser altitude                                                          | 3 controls green: `commit -- <paths>` · `comms send <body>` · `join <handle>`                                                                                                                                                                 |
+| **4**  | 🔴 **WHAT WE SHIP POINTS AT NO GRAPEVINE** _(Cole's ruling, 2026-08-05 — scoped to the RELEASE, not the repo)_ | `grep -rni grapevine plugin/skills plugin/templates plugin/.claude-plugin` returns **only** recorded history and the `upgrade` migration note — **no line telling an agent to USE it.** Baseline: **8 hits, 6 live-wrong** (see below)        |
+| **4b** | **`anthill:upgrade` documents the migration**                                                                  | `skills/upgrade/SKILL.md` states grapevine→comms for an **existing** team, and what to do with that team's own in-repo references                                                                                                             |
+| **5**  | **The sweep-the-plan touchpoint** shipped                                                                      | in `skills/finalize-session/`, `templates/docs-team/` **and** `.anthill/README.md` — the team's own copy, per its own scar                                                                                                                    |
+| **6**  | **Merged and released**                                                                                        | `develop` → `main`, release cut                                                                                                                                                                                                               |
+| **7**  | **This section points at live work**                                                                           | every dir in `docs/projects/` except `_archive`/`TEMPLATES` has a `**Status:**` at the **start of a line**, plus a named next action or an explicit `parked`/`superseded` marker                                                              |
 
-**Why 4 and 7 are in the set rather than assumed:**
+> ### 🔴 Criterion 4 — what it is and is NOT, because the first version of it was unrunnable
+>
+> **Cole's framing, and it is narrower and better than a repo-wide sweep:** _"when we do a release, if
+> another team does the upgrade, there shouldn't be anything in the skills or guidance we're providing
+> that mentions grapevine — other than an upgrade skill explicitly documenting the change. The idea
+> isn't to go back and update history, certainly not archive documents. It's to make sure that **what
+> we're releasing is consistent and no longer pointing to grapevine.**"_
+>
+> **So the test is agent confusion in the SHIPPED surface, not token count in the repo.** Scars,
+> comments, archived docs and the tests that _assert_ grapevine's absence all stay.
+>
+> _The first version of this criterion read `grep -rn grapevine plugin/scripts --include=*.ts` → 0.
+> **It was wrong twice.** Under this project's zsh the unquoted glob expands, the command never runs and
+> the pipeline prints `0` — the pass condition — so it was a **false green by construction**. Quoted, it
+> returns 63, and driving that to 0 means **deleting the regression tests that prove the removal**. It
+> was unsatisfiable at its predicate and trivially passed at its command. Found by a blank-context cold
+> read; the author had hit the identical glob failure an hour earlier and written the broken form in
+> anyway._
+>
+> **The six live-wrong sites, measured 2026-08-05 — this is the work, and it is small:**
+>
+> | site                              | what it tells an agent to do                                                                                                                                                                     |
+> | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+> | `skills/comms/SKILL.md:94`        | _"If comms drops mid-session, say so on **the grapevine**"_ — fall back to a wire that no longer exists                                                                                          |
+> | `skills/comms/SKILL.md:34`        | _"the lead clears the channel at convene (`--fresh`)"_ — **doubly dead**: `--fresh` was deleted by step 4                                                                                        |
+> | `skills/comms/SKILL.md:82`        | _"`anthill status` reports the grapevine roster"_ — **the THIRD site of a falsehood weaver deleted from two others** on 2026-08-05 (`caa9376`, `977a021`). A cascade that stopped one file short |
+> | `skills/bootstrap/SKILL.md:47–48` | tells a **brand-new** team to verify `spellbook:grapevine` is installed                                                                                                                          |
+> | `skills/convene/SKILL.md:120`     | leftover two-wire presence guidance                                                                                                                                                              |
+> | `skills/upgrade/SKILL.md:224`     | says convene warns the **grapevine**/bounty daemons aren't running                                                                                                                               |
+>
+> **`skills/comms/SKILL.md:57` STAYS** — it is a scar about importing a sibling tool's verb by habit.
+> Recorded history, and deleting it is the thing Cole's ruling explicitly excludes.
+>
+> **⚠ The remaining CODE invocation (`team-support.ts:469`, `grapevine who`) is NOT criterion 4.** That
+> is a _dependency_ question, not a guidance one — it belongs to the
+> [coordination-layer investigation](investigations/2026-07-31-team-native-coordination-layer.md) and the
+> carried debt, and conflating them is what made version one unrunnable.
 
-- **(4)** Cole ruled _"grapevine leaves entirely."_ **It has not.** `team-support.ts:469` still invokes
-  `grapevine who` — a **read**, deliberately out of step 4's scope (it feeds `combinePresence`, and
-  moving it is a presence-semantics change with a ratify gate). **Until it goes, the shipped sentence
-  may say _"anthill no longer opens or joins a grapevine"_ and may NOT say _"anthill does not depend on
-  grapevine."_**
+**Why 4/4b and 7 are in the set rather than assumed:**
+
+- **(4/4b)** Cole ruled _"grapevine leaves entirely."_ **The consuming-team half has not happened** —
+  six shipped guidance sites still route an agent to a wire that no longer exists, and a **brand-new**
+  team is still told to install it. The upgrade path is the other half: an **existing** team has its own
+  in-repo references, and nothing currently tells it they are now wrong.
+  **The bound on shipped prose is unchanged and still binds:** it may say _"anthill no longer opens or
+  joins a grapevine"_ and may **not** say _"anthill does not depend on grapevine"_ — because
+  `team-support.ts:469` still invokes `grapevine who`. **That invocation is carried debt and the
+  coordination-layer question, deliberately NOT criterion 4** (see the box above).
 - **(7)** is the criterion that stops this recurring. **The reason nothing was phased beyond the next
   session is that this router was stale** — so the scope ends by fixing the thing that hid the scope.
 
 ### Order, and the one hard sequencing constraint
 
-**(3) rotation → (6) the swap run → the guard → grapevine's last call site → merge → re-triage.**
+**Plan-step order (NOT the criterion numbers above — these are `plan.md` steps):** rotation (plan step 3) → the swap run (plan step 6) → the positional guard → the shipped-surface grapevine sweep → merge & release → re-triage.
 
 > 🔴 **ROTATION MUST BE LANDED BEFORE THE FIRST `comms stand-down` OF ITS SESSION.** The pane-kill is a
 > **three-term conjunction** and the middle term is _our own finalize ritual_ — `stand-down` is
