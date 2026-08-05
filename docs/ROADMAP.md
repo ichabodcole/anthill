@@ -18,7 +18,26 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 **Ratified by Cole, 2026-08-05.** _Everything needed before anthill can recommend comms as the default
 wire to consuming projects._ **✅ STEPS 4+5 SHIPPED — released as `anthill-v2.0.0` (2026-08-05, `a130be3`), a MAJOR bump for the breaking change.** `develop` == `main`.
-**3 of 8 criteria met (4, 4b, 6). Remaining: 1 rotation · 2 the swap run · 3 the positional guard · 5 the sweep touchpoint · 7 the re-triage.**
+**5 of 8 criteria met (3, 4, 4b, 5, 6). Remaining: 1 rotation · 2 the swap run · 7 the re-triage.**
+
+> ### ✅ COLE RULED THE RELEASE BAR AT **6 OF 8**, 2026-08-05 — with a condition
+>
+> Verbatim, because the condition is the operative half and a paraphrase would lose it:
+> _"Ok, yes, 6-of-8 is good with me, **so long as we capture the remaining work in a way that makes
+> the continuation easy for a fresh agent.**"_ · _"I think the end of session sweep will of course be
+> part of that process."_
+>
+> **So criteria 1, 2, 3, 4, 4b and 6 close the RELEASE.** Criterion **7** (the re-triage) is real work
+> and is **not release-blocking** — it is session 13's. Criterion **5 was not in the release bar and
+> landed anyway** (`32d087a`).
+> **The condition is a DELIVERABLE, not a courtesy:** the continuation capture is judged on whether a
+> fresh agent can pick this up, and the session-12 lead owns it.
+>
+> **⚠ This block was 3-of-8-stale within four hours of being written, and the SWEEP BEAT caught it —
+> not a person.** weaver ran the touchpoint he had just landed against this file as its own falsifier,
+> and **criterion 5's own row was one of the four stale claims.** _The document that commissioned the
+> sweep was falsified by the sweep's first run. That is the strongest available evidence that
+> "remember to update the plan" was never going to reach this._
 
 > ⚠ **CONSUMING TEAMS ON v1.x MUST RUN `anthill:upgrade`.** `convene` no longer accepts `--fresh` or
 > `--topic`, and the `join` manifest no longer carries `tailCommand` — **a team that upgrades without
@@ -41,16 +60,16 @@ wire to consuming projects._ **✅ STEPS 4+5 SHIPPED — released as `anthill-v2
 **The scope is met when a stranger can run these and get these answers. Not before, and no criterion
 is discharged by argument.**
 
-| #         | criterion                                                                                                                                                         | how it is checked                                                                                                                                                                                                                             |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1**     | **Rotation landed**, with `seams.md` 6(g) amended                                                                                                                 | one commit names both paths (write-trigger)                                                                                                                                                                                                   |
-| **2**     | **The swap run passes exit criterion v3 — BOTH halves**                                                                                                           | absence of USE is runnable as-is. **Absence of OPENING now needs a POSITIVE artifact** — `channelOpened` was deleted with step 4, and an absent field is not an observation (Contract 6(c)). **Name the artifact before the run, not after.** |
-| **3**     | **`comms read` positional guard**, at parser altitude                                                                                                             | 3 controls green: `commit -- <paths>` · `comms send <body>` · `join <handle>`                                                                                                                                                                 |
-| **4** ✅  | ~~🔴~~ **MET `cbafb2b`** — **WHAT WE SHIP POINTS AT NO GRAPEVINE** _(Cole's ruling, 2026-08-05 — scoped to the RELEASE, not the repo)_                            | `grep -rni grapevine plugin/skills plugin/templates plugin/.claude-plugin` returns **only** recorded history and the `upgrade` migration note — **no line telling an agent to USE it.** Baseline: **8 hits, 6 live-wrong** (see below)        |
-| **4b** ✅ | **MET `cbafb2b`** — **`anthill:upgrade` documents the migration**                                                                                                 | `skills/upgrade/SKILL.md` states grapevine→comms for an **existing** team, and what to do with that team's own in-repo references                                                                                                             |
-| **5**     | **The sweep-the-plan touchpoint** shipped                                                                                                                         | in `skills/finalize-session/`, `templates/docs-team/` **and** `.anthill/README.md` — the team's own copy, per its own scar                                                                                                                    |
-| **6** ✅  | **MET — released as `anthill-v2.0.0`** (2026-08-05, `a130be3`). A **MAJOR** bump: release-please read the `BREAKING CHANGE` footers. `develop` == `main`, 0 ahead | `develop` → `main`, release cut                                                                                                                                                                                                               |
-| **7**     | **This section points at live work**                                                                                                                              | every dir in `docs/projects/` except `_archive`/`TEMPLATES` has a `**Status:**` at the **start of a line**, plus a named next action or an explicit `parked`/`superseded` marker                                                              |
+| #         | criterion                                                                                                                                                         | how it is checked                                                                                                                                                                                                                                 |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1**     | **Rotation landed**, with `seams.md` 6(g) amended                                                                                                                 | one commit names both paths (write-trigger)                                                                                                                                                                                                       |
+| **2**     | **The swap run passes exit criterion v3 — BOTH halves**                                                                                                           | absence of USE is runnable as-is. **Absence of OPENING now needs a POSITIVE artifact** — `channelOpened` was deleted with step 4, and an absent field is not an observation (Contract 6(c)). **Name the artifact before the run, not after.**     |
+| **3** ✅  | **MET `4c339fa`** — **`comms read` positional guard**, at parser altitude                                                                                         | **3 controls green, plus 4 more.** `commit -- <paths>` · `comms send <body>` · `join <handle>` — **verified by a NON-AUTHOR: steward ran 7 cells (forager's 4 controls, steward's own PRE-REGISTERED pair, and the defect itself), RUN not read** |
+| **4** ✅  | ~~🔴~~ **MET `cbafb2b`** — **WHAT WE SHIP POINTS AT NO GRAPEVINE** _(Cole's ruling, 2026-08-05 — scoped to the RELEASE, not the repo)_                            | `grep -rni grapevine plugin/skills plugin/templates plugin/.claude-plugin` returns **only** recorded history and the `upgrade` migration note — **no line telling an agent to USE it.** Baseline: **8 hits, 6 live-wrong** (see below)            |
+| **4b** ✅ | **MET `cbafb2b`** — **`anthill:upgrade` documents the migration**                                                                                                 | `skills/upgrade/SKILL.md` states grapevine→comms for an **existing** team, and what to do with that team's own in-repo references                                                                                                                 |
+| **5** ✅  | **MET `32d087a`** (+ `ec58802` naming the ACTOR) — **the sweep-the-plan touchpoint**, and it was **outside the ratified release bar; it landed anyway**           | **all three homes: `skills/finalize-session/`, `templates/docs-team/` AND `.anthill/README.md`** — the team's own copy, per its own scar. **Its own first run falsified THIS FILE in four places** (see the ruling box above)                     |
+| **6** ✅  | **MET — released as `anthill-v2.0.0`** (2026-08-05, `a130be3`). A **MAJOR** bump: release-please read the `BREAKING CHANGE` footers. `develop` == `main`, 0 ahead | `develop` → `main`, release cut                                                                                                                                                                                                                   |
+| **7**     | **This section points at live work**                                                                                                                              | every dir in `docs/projects/` except `_archive`/`TEMPLATES` has a `**Status:**` at the **start of a line**, plus a named next action or an explicit `parked`/`superseded` marker                                                                  |
 
 > ### 🔴 Criterion 4 — what it is and is NOT, because the first version of it was unrunnable
 >
