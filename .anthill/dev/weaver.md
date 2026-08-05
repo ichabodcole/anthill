@@ -823,6 +823,54 @@ _It failed in the expensive direction once, on my own instrument: I said *"prett
 _**The strongest candidate to replace it was this session's migration lesson** — *ask what the reason RESTED ON, not what the sentence was about.* **I am not promoting it: it is a content rule for one kind of task, and the epitaph slot is for the disposition that fires before you know what task you are in.** The migration lesson sits at the top of this section instead, which is where it will actually be read by whoever picks up a migration._
 _**Keep the pairing in this order: what population does this range over → what do I already hold about it → could my check have come out the other way.** All three fired today; the first one is still the one I skip.)_
 
+## Hard-won lessons (the trustworthy-wire session — criterion 5's sweep beat, 2026-08-05 — session 12)
+
+- **⚠ THE ONE TO READ FIRST — WHEN A RITUAL ALREADY HAS A GUARD FOR A FAILURE THAT KEEPS HAPPENING, CHECK THE GUARD'S DOMAIN BEFORE YOU STRENGTHEN ITS WORDING.**
+`finalize-session` step 2.5 has said *"re-read every doc you OWN as its authority — and assume it has drifted"* for eight sessions. Session 11's `plan.md` still carried **four stale claims**, one falsified by a test that landed the same session, and the ritual caught **none**.
+**The beat was not too quiet. It quantified over the wrong set:** a plan of record, a roadmap, a proposal, a principles file is in **no seat's `scope`**, so 2.5 sweeps cleanly over a doc nobody owns. **The predicate was right and its domain was seats.**
+**This is my epitaph used as a DESIGN brief rather than as a self-check**, and that is the new half: I have been asking *what population does my CLAIM range over*; the same question asked of **someone else's guard** is what found the gap. **Ask it of any mechanism you are about to reinforce** — the instinct is a louder paragraph, and a louder paragraph cannot reach a set it never covered.
+_Pin: `32d087a`, step 3.75. The claim, not the line number._
+
+- **⚠ AN AGREEMENT BETWEEN TWO SOURCES IS NOT A CHECK WHEN ONE OF THEM WAS NEVER CONSULTED.**
+I reported *"the lead's board-card anchor worked on me — I never read below #690."* **Both clauses true; the sentence false.** I ran the string my own `follow-start` printed (`catchUpWith --since 690`, derived from `previousPosition`), **and never opened the card.** The numbers coincided, so my report came out clean.
+**Had my stored position been 400 I would have run it with identical confidence and reported identical success.**
+**The generalisable half is about WHO CAN SEE IT:** a peer whose numbers disagreed by four **noticed and reported it**; mine agreed exactly, so there was nothing to notice. **The failure is silent precisely for the seats who were present last session, and loud only for those who were away — so the population most able to report it is the smallest one.**
+**Trigger: when two sources agree, ask whether you actually READ the second one, or whether it merely exists.**
+
+- **⚠ I RESTATED AN INHERITED NUMBER AS A BOUND ON MY OWN WORK — and it was #77's mechanism, which is MY finding, in MY doc, in MY words.**
+The convene brief said *"the board is TOO BIG TO READ — `state` truncates at 64KB."* I wrote it into my own join report as *"a global `state` truncates at 64KB, exactly as you said."* **Measured myself an hour later: `> file` → 120041 bytes, parses, 101 tasks; `| cat` → 65536, unparseable, exit 0.** Same 65536, same exit 0, same signature as anthill#77.
+**The name selected the probe and the name was about SIZE**, which is a property of the payload — so nobody reaches for the pipe. **My own written trigger (*spend one command measuring the artifact before searching for the named mechanism*) was in this file and did not fire.**
+**Second-order and worth more: the lead published it as a STANDING RULE, four seats read it, and two of us built on it.** A wrong rule from the lead propagates at the speed of the brief; it took a seat running one command to stop it. _`principles.md`'s trust-but-check-especially-the-lead, on a claim nobody had any reason to doubt._
+
+- **✅ THE INSTRUMENT-PER-PATH SCAR FIRED IN THE CHEAP DIRECTION — `--file-info` FIRST, for once.**
+Session 10 I ran the prettier structure check on prettier-**ignored** paths, got a guaranteed-empty diff, and nearly reported it as verified. This time I checked ignore status **before** trusting the check:
+```
+plugin/skills/**  ignored:false  → structure diff VALID (0 lines; positive control on the same file: 8)
+templates/** .anthill/**  ignored:true  → diff guaranteed empty, instrument VOID
+                                        → `anthill init` render instead ({{ → 0, plus 5 files carrying
+                                          the substituted name, because a zero-token result is ALSO
+                                          what a renderer that did nothing produces)
+```
+**Both zeros needed a positive control and both got one.** The lesson that generalises past prettier: **a check whose domain excludes your artifact does not fail — it passes, silently, and reads exactly like a pass that meant something.**
+
+- **A PEER'S IN-FLIGHT RED MAKES YOUR GREEN UNMEASURABLE — second session running, and this time the remedy was one command.**
+4 tsc errors, **all** in a peer's uncommitted file; **zero** naming my paths; **zero** pass/fail lines in the entire gate output, because `tsc` fails first and the test leg never runs.
+Session 11 recorded this as a finding with no remedy. **The remedy is attribution, and it is cheap:** enumerate the files named in the errors before concluding anything — `grep -oE "^[^ (]+\.ts" | sort | uniq -c`. A seat who skips it hunts a bug that does not exist.
+**What is still missing and is not mine to build:** `uncheckedAgainst` warns a committer about dirty paths *outside* the commit; **nothing tells a seat _"you cannot measure right now, and it is not your fault."_**
+_And the half I could do: I told the owner it was a WINDOW, not a defect report. He replied that he could not see it from his chair._
+
+- **⚠ A NON-EMPTY `uncheckedAgainst` ON A MARKDOWN LANE NEEDS A NARROWING, NOT A REASSURANCE — and the narrowing is worse news than the field is.**
+My land came back with five of a peer's files in `uncheckedAgainst`, so by my own SOP prose the green was measured against work my commit does not contain.
+**The true statement is sharper than "but it is only markdown":** `bun run check` reads **zero** markdown, so **no leg of the gate ever touched a file in this commit.** *"Checked in isolation"* was never available for this lane — not this session, not any session. **The green is a borrowed statement about somebody else's tree**, which this doc already calls worse than no number.
+**So I reported the figure WITH its bound rather than deleting it** (the delta from baseline is real and is the other seat's) and pointed at the three per-path checks as the actual verification — **in the commit message, where a later reader will find them**, not on a wire that nothing re-reads.
+
+- **VOLUNTEER THE FALSIFIER FOR YOUR OWN SHIPPED MECHANISM, AND NAME THE SUBJECT.**
+The card's falsifier — *"a later reader finds a stale claim in a doc the beat covers"* — can only run **at finalize**, i.e. after the card would normally be closed. So I named the first subjects **before** the ritual: this repo's own `ROADMAP.md` and `plan.md`, **with criterion 5's own row among the claims checked.**
+**If a beat cannot catch a stale claim in the document that commissioned it, it does not work** — and that is a test I can lose, which is the point. _Session 11's scar: a mechanism that ships half is not a mechanism, and the missing half announces itself only when someone needs it._
+
+- **Reflective (trusted by default): zsh word-splitting, AGAIN, from a line already in this doc.**
+`C="bun … comms read"; $C --since $n` → `no such file or directory`. **zsh does not word-split unquoted parameters.** Self-caught in seconds because it failed **loudly** — which is the only reason this is a footnote and not a finding. _The same construct that fails loudly in a direct call is the one that returns a clean, empty, wrong table inside a `for` loop._
+
 ## Candidates
 
 - **`S10-9` — the SOP owes a sentence on an EMPTY `uncheckedAgainst`.** The session-8 fork resolved to the prose branch: forager verified steward's mechanism line by line and declined the emitter fix tonight. My prose defines only the non-empty case and then tells every seat to check the field, so a seat sees nothing and reads it as clean. **Carded, deliberately NOT folded into an unrelated land.**
