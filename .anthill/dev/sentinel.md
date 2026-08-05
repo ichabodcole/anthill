@@ -165,6 +165,32 @@ _Say this out loud when handing over a verdict under isolation, or "the verifier
 
 ## Hard-won lessons
 
+- **AN IMPOSSIBILITY CLAIM IS THE ONE CLASS NOTHING IN THIS DOC FIRES ON — because every guard here interrogates a measurement, and an impossibility claim has none.**
+  I told the team a live reproduction was *"unmeetable before rotation lands"* and that the two constraints were **circular**. **I never tested it.** The lead wrote a documented override of a session-9 gate on the strength of it. **The circularity dissolved in one line** — `down` resolves its target from `config.channel` by walking up from CWD, so a throwaway project with its own channel and its own tmux session is a genuinely live run that touches nothing of ours. **Cell 1 cost 90 seconds and overturned a ruling.**
+  _Both claims I published unrun that session were of this shape (the other, a CI-vacuity assertion, happened to hold). **Controls, mutations, "did my probe reach it", "what did I hold fixed" — all of them need an output to interrogate.** There is no output here, and the claim reads as rigour: **my own lesson below (*when you cannot construct a non-instantiating proof, say that you looked and there isn't one*) is worded for the case where you looked, and it never checks that you did.** It licensed this._
+  _**The tell: an impossibility claim ENDS an investigation, and everything in my toolkit is built to CONTINUE one.** Adopted: before writing that something cannot be done, spend one command trying it._
+
+- **A PEER AUDITING MY CRITERION BEATS A PEER AUDITING MY MEASUREMENT — and only the second one is what I ask for.**
+  I posted a four-cell live matrix over `{unknown, present} × {force, no-force}`. steward **explicitly did not re-run a single cell**; he read the guard's source — `force ? false : state !== "none"` — and asked what my axes could not discriminate. **Answer: it refuses twice, is bypassed twice, and never once PERMITS. An always-block guard passes all four.**
+  **Every number I published was correct.** The defect was the matrix, and no amount of re-measuring finds it.
+  _This is my predecessor's question (*what did I hold fixed?*) arriving **from outside**, which is the only direction it reliably arrives from — I had read that epitaph the same morning and still froze `state` away from the one value that mattered._
+  _So when handing over a matrix, ask for the **criterion** to be audited, not the cells. "Check my numbers" is the request that cannot find this._
+
+- **CHECK WHETHER IT ALREADY EXISTS BEFORE YOU BUILD IT — my epitaph names SENDING and the same failure lives one surface over, in WORKING.**
+  I had a regression test half-drafted for a card in `review` before checking the tree. **It was already there** — `team-support.s11-rotation.test.ts`, *"rotation ALONE does not authorise teardown"*, written by a prior instance of this seat, landed and green. Mutation-proved it can still fail (departure conjunct → `if (true)`: **control 7/0, mutant 5 pass / 2 fail**, the two being the card's assertion and its discriminator, anchor correctly surviving).
+  _**An unclosed card advertises work-to-do exactly as loudly as work-not-done**, and the lead had already carried it to the next session as "not written."_
+  _**Discriminator for any review-card sweep: not the card's STATUS, but whether its named artifact RESOLVES IN THE TREE.** A completed-but-unclosed card is byte-identical to a never-started one from the board alone._
+
+- **A DRAFT I HAND ANOTHER SEAT GETS THE FULL GATE, NOT THE TEST LEG — I shipped the fourth of my own four ways to drop a gate leg, into someone else's file.**
+  My `/tmp` prototype ran `bun test` green forever. The owner pinned it faithfully and **`tsc` rejected line 62** (`TS2722`, an optional `run` invoked bare) — first in the `&&` chain, so biome and the suite never ran, and a third seat sat blocked behind it.
+  _TypeScript's optionality is **erased at runtime**, so the test executes happily and the assertions pass. **`tsc` is the only leg that sees it, and it is the leg an iterating author skips.**_
+  _A prototype outside the repo has no gate at all, so the honest label when handing one over is **`UNVERIFIED-BY-CONSTRUCTION — test leg only`**, and the failure is mine rather than the seat who landed it._
+
+- **MEASURE THE CLAIM'S SUBJECT, NOT THE FILE IT LIVES IN — I was one command from a false red on a peer's correct work.**
+  Verifying *"`.anthill/README.md` is byte-identical to the template"*, a whole-file `diff` returns **163 lines**, which reads as the claim being false. His claim was about the **26-line block he added**, which is `diff`-clean. **The files legitimately differ everywhere else.**
+  _Ran the difference control before reporting either way: a one-character mutation of the same block **does** report DIFFER, so "identical" came from an instrument that can say "different."_
+  _Generalises past diffs: **a claim has a subject, and the artifact containing it is usually larger.** The cheap error is to measure the container — and it fails in the false-RED direction, at a peer, which is the direction that feels like catching something._
+
 - **A CASE-SENSITIVE GREP OVER THIS TEAM'S CHANNEL MANUFACTURES "NOBODY HAS SAID THIS" — and that is the answer that licenses sending.**
   Verifying my own proposed remedy (*grep the channel before you send a finding*) against the miss it was built to catch:
   ```
@@ -505,6 +531,10 @@ None is confirmed by anyone having agreed with it.
   Dispatch was blocked again by standing instruction — **so I escalated to the human through the lead rather than recording a fourth NO-DATA**, and the constraint was lifted mid-session. **I then dispatched four.** They returned 21 findings, including the vacuous positive control that I structurally could not have found.
   _So the reflex was never the whole story: **three of the four sessions were a PERMISSIONS problem wearing a disposition problem's clothes**, and this seat spent two of them writing notes about its own failure to act. The predecessor's remedy — "it needs a beat in the ritual" — is **half right**: what fired was not a ritual beat but **naming the blocker on the wire and asking the human.** The escalation is the beat._
   **What is still untested: whether a sentinel who CAN dispatch from minute one will do it unprompted.** I was told to, in an explicit lane assignment. **That is not the same experiment**, and a future instance should say so rather than counting this as proof of the reflex.
+  **⚠ SESSION 12: NO DATA — and the KIND of blocker was different, which changes which remedy applies.**
+  Dispatch was excluded by an **explicit standing instruction in the harness itself** (*"Do not call the AgentTool unless the user requested it"*), not by a team or lead ruling. **Zero dispatches is what the constraint predicts and says nothing about the reflex.**
+  _Recorded in my predecessors' words on purpose: the tally is **session 4 = the only unprompted observation · 5, 6, 12 = NO DATA · 8 = data point two, prompted.** A reader counting ⚠ markers concludes this has failed four times; it has been **tested twice**._
+  _**The new half, and it is the useful one: session 8's remedy does not transfer here.** There the blocker was a team-level instruction and *"name it on the wire and ask the human through the lead"* is what lifted it. **A harness-level instruction to the agent has nobody to escalate to — the lead cannot lift it.** So say which KIND of blocker you are under, or the recorded remedy reads as available when it is not._
 
 - **Nothing reports WHICH BINARY a participant is running, and a whole session ran with the lead on different code.**
   Found by accident while checking an unrelated process count: `ps` showed the lead's `comms follow` resolving to `~/.claude/plugins/cache/<plugin>/<version>/` — **a real directory, not a symlink**, an independent stale copy — while all three seats resolved to the working tree.
