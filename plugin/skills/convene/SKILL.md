@@ -1,12 +1,12 @@
 ---
 name: convene
-description: Convene the project's agent team — the invoking agent BECOMES the lead, stands up coordination (grapevine + bounty), grounds in the team docs, gathers the work from the human, and briefs + spawns the seats. Use when the human says "convene the team", "spin up the team", "assemble the team", "let's get the team on this", or is moving from proposal/design into implementation and wants the multi-agent team. Requires a `.anthill/config.json` (run anthill:bootstrap first if there isn't one).
+description: Convene the project's agent team — the invoking agent BECOMES the lead, stands up coordination (comms + bounty), grounds in the team docs, gathers the work from the human, and briefs + spawns the seats. Use when the human says "convene the team", "spin up the team", "assemble the team", "let's get the team on this", or is moving from proposal/design into implementation and wants the multi-agent team. Requires a `.anthill/config.json` (run anthill:bootstrap first if there isn't one).
 ---
 
 # anthill: Convene (become the lead)
 
 Stand up the project's **agent team** for a working session. The agent that runs this **becomes the
-lead** (the `lead` handle in `.anthill/config.json`) and orchestrates the seats over the grapevine +
+lead** (the `lead` handle in `.anthill/config.json`) and orchestrates the seats over comms +
 bounty CLIs. This is the START touchpoint; the END is `anthill:finalize-session`.
 
 Convene when moving from proposal/design → **implementation**. For a quick question or a trivial fix,
@@ -67,18 +67,16 @@ stay solo.
      make the field look filled. Ask **once** at convene; if it is already set, say nothing.
 
 3. **Stand up coordination.**
-   - **Channel:** run **`anthill convene --topic "<one-line framing>"`** to open the grapevine channel
-     (idempotent) and report board state.
-     - **Reusing a channel from a prior session?** It still carries that session's messages — new work
-       inherits the old noise. Add **`--fresh`** to snapshot-then-clear the log before opening
-       (`anthill convene --fresh --topic "…"`). Per grapevine, it's a **no-op if seats are already
-       connected** (a live session is not wiped) and the log is archived to `~/.grapevine/archive/`
-       first. **Both are spellbook's guarantees, not anthill's** — `--fresh` is forwarded straight
-       through — so treat them as the dependency's to keep, and don't rely on them for anything you
-       couldn't recover from the archive. Do it **before** spawning seats, at the start of the session.
-       - **"Nothing is lost" means the log is recoverable, not that seats still see it.** After a
-         clear, a seat that backfills reads an empty channel — which is why this belongs at the start
-         of a session and not in the middle of one.
+   - **Channel:** run **`anthill convene`**. **There is no wire to open** — `anthill comms` is an
+     append-only log that exists as soon as the channel is named in config, so convene reports board
+     state and stands up the session rather than opening anything.
+     - **⚠ The log is NEVER cleared, and nothing offers to clear it.** A channel reused across
+       sessions carries **every message the team has ever sent**, so a seat that backfills from the
+       beginning replays all of them. **That is the durability the wire is for, and the cost is that
+       catch-up needs an ANCHOR rather than a starting point.**
+     - **So the lead owes every seat a session anchor**, out of band from the wire itself — a message
+       id, in the brief or the card. **Do not publish the anchor as a message on the channel it
+       bounds:** the only way to learn the rule is then to break it, which is not a rule.
    - **Board:** convene now **opens/attaches the team board itself** — keyed to the channel and pinned
      (writes `.bounty-session` at the repo root), so every seat's + the lead's bounty verbs bind **this**
      board by construction. **In a single working tree the binding is ambient — nobody passes
@@ -103,7 +101,7 @@ stay solo.
        remove it.** Tell the seats this when you brief them — the reasoning is not available to
        someone who only knows that worktrees isolate.
    - **Seed the cards** — one `todo` card per planned lane, in owner lanes. The doer owns its card's
-     lifecycle `todo→doing→review`, the reviewer closes. The board is _state_; the vine is _substance_.
+     lifecycle `todo→doing→review`, the reviewer closes. The board is _state_; comms is _substance_.
    - **⚠ WIRE YOURSELF FIRST — `convene` prints YOUR OWN comms line and you are not on that wire
      until you run it.** Look for the comms Monitor line in convene's own output and **run it exactly
      as printed, Monitor-wrapped, with no filter** (it emits no keepalives, so a `grep` there can only
@@ -121,8 +119,12 @@ stay solo.
      from one multi-wire source, so a seat present only on `comms` counts as present. Don't read a
      name here as "on the grapevine", and don't go looking for it on one wire when it disagrees
      with your expectation.
-   - **⚠ `status` does NOT tell you who is on `comms`** — it reports the grapevine roster, so a seat
-     can be wired to the vine, visible in `status`, and receiving nothing on comms with no symptom.
+     _(This bullet used to be followed by a ⚠ saying `status` reports only the other wire and cannot
+     see comms. **That was false from the moment presence became multi-source, and it contradicted the
+     sentence directly above it** — two adjacent bullets, one right and one wrong, and only a reader
+     running both together could tell which. Deleted rather than reworded: **a warning that survives
+     the thing it warns about is worse than no warning**, because it argues against the check that
+     does work.)_
    - **Confirm the comms wiring right after the seats introduce themselves — `anthill comms
 positions`.** This is the named moment to run it; without one it is a verb nobody reaches for.
      Run it **just after the introductions, while traffic has actually happened** — see the limit below.
@@ -156,14 +158,14 @@ positions`.** This is the named moment to run it; without one it is a verb nobod
    - **Brief, then spawn.** Post a framing opener on the channel (what we're building, the
      lanes, where the plan lives). Then stand the seats up with one command:
      **`anthill spawn <handles…>`** — it opens a tmux session (one `claude` pane per seat) and auto-fires
-     each seat's `anthill:join` (each boots, grounds, lands on the vine awaiting assignment). With no
+     each seat's `anthill:join` (each boots, grounds, lands on comms awaiting assignment). With no
      handles it spawns the config's default set (`spawn:true` seats); it **never spawns the lead** (that's
      you).
    - **Verifier (and any seat) engagement is YOUR per-phase call.** Pull a verify seat in at the
      verification point the plan calls for — early (tests first), mid (prove a feature), or late — and
      let it ping-pong with the owning seat. Don't reserve it for the end.
-   - **You spawn detached and coordinate over the vine.** A command you run isn't a TTY, so spawn just
-     creates the session; you drive the seats over the grapevine (which you monitor). The **human**
+   - **You spawn detached and coordinate over comms.** A command you run isn't a TTY, so spawn just
+     creates the session; you drive the seats over comms (which you monitor). The **human**
      watches/talks to the panes with **`anthill attach`**.
    - **Re-running over an existing session?** The session is named after the channel. If one already
      exists, spawn **errors** — pass **`--force`** to kill+recreate, or **`--session <name>`** for a
@@ -178,7 +180,7 @@ positions`.** This is the named moment to run it; without one it is a verb nobod
        seat doc, **return** (don't write) any `seams.md` candidate, don't commit. The full spec — the
        three-part split + the lead's residual pass — lives in `anthill:finalize-session` step 0.
 
-5. **Orchestrate** from here, per the SOP: the **vine** is discussion, the **board** is state; route the
+5. **Orchestrate** from here, per the SOP: **comms** is discussion, the **board** is state; route the
    human's decisions through you; you own the **file-scoped atomic land** (`anthill commit -- <paths>`,
    never `git add -A`). At wrap, run **`anthill:finalize-session`** for the team's knowledge.
    - **Pacing — two field-proven moves worth reaching for:**
@@ -211,10 +213,12 @@ The stand-up beats that get skipped when you're eager to spawn. Run them as a li
   verification command and did not guess one. A footprint bootstrapped before the field existed has it
   blank, and every land the team makes until it is set runs **no verification at all** (the land
   command says so, loudly — but it says it to a seat, not to you).
-- ◻ **Grapevine open** — `anthill convene --topic "<framing>"`.
+- ◻ **Session stood up** — `anthill convene`. **There is no wire to open**; what you owe the seats
+  instead is a **session anchor**, delivered out of band (the brief, the card), never as a message on
+  the channel it bounds.
 - ◻ **Board open + seeded** — one `todo` card per planned lane, in owner lanes; **size** them where the
   work is known enough to size.
-- ◻ **Seats briefed** on the vine (what we're building, the lanes, where the plan lives).
+- ◻ **Seats briefed** on comms (what we're building, the lanes, where the plan lives).
 - ◻ **Working branch confirmed** — you're on the intended branch for this session's commits; if the
   project has a branch policy (in the grounding docs), it's followed. _Do this **before** spawn — spawn
   is when seats gain commit power._
