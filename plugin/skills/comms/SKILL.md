@@ -209,6 +209,16 @@ and if you want that known about yourself, someone else has to.**
   the id you gave"_, and an accepted one means **only** that your number was current, never that you
   were. **Give it an id you have honestly read to**, because it is the one input here that no
   instrument can audit and every downstream claim inherits.
+  - **⚠ So never COMPUTE the id in the same command that sends.** Reaching for the head
+    programmatically and passing it straight through is the natural move for anything driving this
+    from a shell — and it **defeats the check silently and always**, because a number fetched
+    milliseconds earlier cannot have been crossed. The send is accepted, no warning is emitted, and
+    the accepted send is indistinguishable from one where you had actually read to that id.
+    **The instruction is dispositional and this case does not feel like violating it** — the number
+    is the true head, so it reads as diligence. _Measured, with a control: a computed head produced
+    an acceptance carrying no crossing report at all, while a deliberately stale id reported the
+    crossing correctly. The guard was not weakened; it was answered about a question that had been
+    substituted._
 - **What belongs in a message, how to signal salience, and when not to ask through a blocking
   channel** are wire-agnostic team conventions and live in the team README, not here.
 

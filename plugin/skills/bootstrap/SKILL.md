@@ -162,8 +162,10 @@ once the human has steered you to one seating, treat it as the ratified roster a
 
 - **Seats:** rename / merge / split / re-scope, or drop a seat that doesn't fit. (e.g. no separate
   engine layer → fold it into spine; or fold two same-stack surfaces into one `app` seat.)
-- **Channel:** replace `CHANGE-ME` with the team's grapevine channel name (default tmux session name
-  too) — usually the project's short name.
+- **Channel:** replace `CHANGE-ME` with the team's channel name — usually the project's short name.
+  **It names the team, not one tool:** the same value is the `anthill comms` channel, the bounty
+  board's session key, and the tmux session name. Pick it for the team and it is right for all of
+  them; pick it for a wire and it goes stale when the wires change.
 - **grounding / paths:** set `grounding` to the anchors you actually detected (step 2) — **drop any
   default that doesn't exist** rather than emit a dangling path. (`anthill join` warns when a configured
   grounding doc is missing, so a dangling ref won't stay silent — but don't write one in the first
