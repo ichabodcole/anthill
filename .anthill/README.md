@@ -305,6 +305,29 @@ rather than shape, and two rules are what make it more than a mood:
   make the audit easy, and scout then checked and found **no seat produced a criticism of the lead he
   had not already volunteered.**_ Say you are in scope; then say nothing until the seats have written.
 
+### Standing down — a seat's LAST act, and the verb has to be named
+
+**Every seat ends with `anthill comms stand-down --as <handle>` — after synthesis, after landing its own doc, and after its retro answers.**
+That order is the whole content of this beat: **stand down last.**
+
+**Name the verb when you call for it.** The instruction a seat receives at join says _"commit, **THEN stand down**"_ — in English, without naming the command — so a seat reads it as _"finish up and leave"_, which is an act with no artifact.
+**A departure only exists if the verb ran.** It writes a record, and for a **spawned** seat that record is what lets `anthill down` authorise a teardown **without `--force`**.
+
+**⚠ maestro is a seat and is NOT a spawned one — so the same act does a different job for the lead.**
+The teardown check quantifies over **the seats this session spawned**, and the lead convened rather than being spawned into that set, so **the lead's departure record does not enter that count at all.**
+The lead still stands down, for the other reason: **a live follower is what makes a seat look present**, and the lead's own follow is the last one running.
+**State which population you mean whenever you write a rule about "every seat"** — this beat was drafted saying the record authorises teardown, full stop, and that sentence was **true of spawned seats and false of the lead who reads it.**
+
+**What the record does NOT mean.** It is an **administrative** statement — _"I am finished"_ — **not** _"this pane is inert."_
+A seat that has stood down **may still send**, deliberately, and that is not a violation: `down` kills **panes**, and a pane is not a statement.
+So treat a late message as normal, and never let a departure record talk you out of reading one.
+
+_Scar (session 9): the lead improvised **"stand down, then post your retro answers"** on the wire — the **inverse** of the order above._
+_**All four seats followed the wire and not the instruction each had read at join.** Seven messages landed after their authors' own departure records, including the report of the session's central defect, **71 seconds after** its author had stood down._
+_**The order was not missing. It was present, correct, and overridden by a message that evaporates** — which is why it is written here, where it does not._
+
+_Scar (session 10, and it is about this file): the beat above shipped to `plugin/templates/` — what a NEW team receives at `init` — and **not here**, where this team actually reads. `init` renders once and nothing refreshes it, so **an author fixes the scaffold and leaves their own team without the fix.** Caught by grepping both copies, hours before this team ran the ritual. **When you land guidance into the template, mirror it here in the same breath.**_
+
 ## Onboarding a fresh agent
 
 Ground in the **product** first (the `grounding` docs in `.anthill/config.json`), then: this SOP →
