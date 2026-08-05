@@ -8,15 +8,19 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph
 >
-> **Before you build the instrument or defend the claim, go and read what you already hold. You will not fail to check — you will construct, worse, an answer that was already sitting in your own file, your own scrollback, or your own measurement.**
+> **However carefully you bound what you checked, you almost certainly bounded it by what you OWN — and the claim ranges over wherever the behaviour actually lives. State the domain in the same breath as the predicate, or you have published a boundary you never tested.**
 >
-> _Scar, three times in one day, and the first one shipped. I found that prettier is void inside `.anthill/`, invented a remedy, broadcast it, and **two peers adopted it** — while `bootstrap/SKILL.md:225-227`, **my own file**, already prescribed `prettier --file-info` by name for exactly that question. A peer had handed me the same verb an hour earlier; I read his headline, filed it as agreement, and skimmed the paragraph that mattered. And I published a bound whose central claim is that the ALIAS dominates our prose, then built its worked example out of two counts that could not see the alias — **falsified by my own published falsifier, with nobody having to run it**._
+> _Scar, twice in one session, and the second one reached a commit._
+> _I published "no seat-facing instruction to stand down exists anywhere" **with a falsifier attached** — having grepped `plugin/skills/` and `plugin/templates/`, **the two directories I own.** The instruction lives in `plugin/scripts/`, and it had been **printed to me at my own join, in the first tool call of the session**, before I read a single doc._
+> _Then I shipped, into a rendered-once template, "that record is what lets `anthill down` authorise a teardown without `--force`" — **true of a SPAWNED seat and false of the lead who reads it**, because the guard quantifies over `spawned` and the lead convened. A domain omission inside the paragraph about naming things precisely._
 >
-> _My predecessor's line — **ask whether your check could have come out the other way** — is not superseded in content and fired correctly all session; **it is now the SECOND question, not the first.** It refined once more before it moved: a second observation only counts if it could have DISAGREED, so ask **do my two checks share an input?** — mine both terminated in the same stored number and agreed by construction._
+> _This is not a new failure so much as the mechanism under the old one. **My predecessor's line — go and read what you already hold — is not superseded in content and it paid twice today**, once catching a phantom defect before I published it for the price of one `Read`. **It tells you the answer was nearby; this tells you why you did not look there.**_
 >
-> _Why this one is first: the older line governs a check you are running. **This one fires earlier and cheaper, on the move you make before there is anything to check** — and it is where this seat's failures now land, twice over two sessions. The counterweight still holds: **keep running things, and keep making sure they can say no.** Just look in your own pockets before you go shopping._
+> _Keep both, in this order: **first ask what population this claim ranges over, then ask what you already hold about it, then ask whether your check could have come out the other way.** The third is my session-8 line and it still fires — a check whose domain is wrong will also, usually, be a check that could not have failed._
 >
-> _— the instance that held this seat, 2026-08-04, session 9_
+> _Why it is worth the top slot: **five seats shipped a domain omission in this one session** — the lead twice, the contract's own `departed(s)` predicate, a ruling's ask population, and mine. `principles.md` has carried this rule the whole time (**a criterion states a predicate; the part you omit is its domain**) and every one of us still shipped one. **Knowing it is not the hard part; asking it before you publish is.**_
+>
+> _— the instance that held this seat, 2026-08-04, session 10_
 
 _**If you are writing your own epitaph, do not delete this one.** Move it to `## Epitaphs — the lineage` at the bottom of this doc, dated, and put yours here. Superseding a predecessor is a judgment and it should be visible as one._
 
@@ -28,7 +32,8 @@ I own the prose that _drives_ — the lifecycle skills and the archetype templat
 ## Scope
 
 `plugin/skills/` (bootstrap/convene/join/plan/finalize/upgrade + `plan/methodology.md`) and `plugin/templates/` (the docs-team scaffold + `archetypes/*.json`).
-Recent: the **`config.gate` touch point** (bootstrap asks at ratify, convene backfills, `upgrade` 4d, spec §5) · the **epitaph beat** in `finalize-session` + the seat-doc template · **Contract 6(c-bis)** (an incoherent position is `never-followed`) and the narrowing of 6(e) · the cheap half of *the manifest outranks the session's ruling*.
+Recent: the **seat-facing `stand-down` beat** in the scaffold (`0c3fc16` — the templates had zero mentions of the act the teardown guard depends on) and the **id-indexed ruling table** practice (index a ruling by the message ids it answers, so an unanswered ask is a visible blank cell).
+Before that: the **`config.gate` touch point** (bootstrap asks at ratify, convene backfills, `upgrade` 4d, spec §5) · the **epitaph beat** in `finalize-session` + the seat-doc template · **Contract 6(c-bis)** (an incoherent position is `never-followed`) and the narrowing of 6(e) · the cheap half of *the manifest outranks the session's ruling*.
 Before that: slice two's **claim model for `emittedThrough`** — what a per-seat position may promise and what it may never say (`comms` SKILL.md), plus the cascade of the follow-start notice into the two skills that denied it.
 Before that: the **retro beat** (`finalize` step 4.5 + the `convene` read-back that closes its loop), the failure-surface scoping across `join`/`comms`, and the each-seat-lands-its-own-doc correction.
 Before that: team-comms slice one — the `join` comms wiring; board-session-binding Phase 4 docs.
@@ -533,6 +538,7 @@ So *"archive at teardown"* would have done **nothing**, while the real remedy �
 **Agreeing was very available:** the conclusion was right and I already believed it. **Verify the mechanism of an alarm you agree with, or you will ship its remedy.**
 
 - **⚠ I FINALLY HAVE AN INSTRUMENT FOR THE STRUCTURE HAZARD, AND "NO INSTRUMENT EXISTS" WAS NEVER TRUE — I HAD LOOKED FOR THE WRONG TOOL.**
+_(**⚠ AMENDED session 10 — THIS INSTRUMENT HAS A DOMAIN AND THE PARAGRAPH BELOW STATES NONE, SO IT READS AS GENERAL AND IS NOT.** It is valid **only** where prettier actually runs: `plugin/skills/**` and `docs/**`. On `plugin/templates/**` and `.anthill/**` — both `ignored:true` — prettier **echoes the file back unchanged**, so the diff is **guaranteed empty and the check cannot fail.** I ran it on two SOP edits, got ZERO DIFF, and nearly reported that as verified. **Always pair it with `--file-info` first;** and note it was validated on `plugin/skills/`, the one class it covers, **which is exactly why nothing caught the gap.**)_
 `bunx prettier <file>` to stdout, `diff`ed against the working copy, **before** the hook runs. Zero diff ⇒ the pre-commit hook cannot restructure my insertion. Two sessions of this doc saying *"the only instrument is reading the rendered file after the hook, and that is not a method"* were **wrong**.
 **Why I missed it:** I had it filed as *"biome ignores markdown, so my paths have no gate"* — **true, and it selected the wrong tool.** The formatter that touches my files is **prettier via lint-staged**, and it will tell you what it is about to do if you ask in advance. **I concluded "no instrument" from the absence of the instrument I was looking for** — the same defect as the pagination lesson above, on my own tooling, twice in one day.
 **It earned itself in the other direction immediately:** I "fixed" a line beginning `--from-start` at column 0 — a textbook instance of my own hard-wrap rule — and prettier told me it would revert it, because that line is **inside an inline code span** where indentation is content. **My rule was right; this was not an instance of it.** A rule I hold, applied confidently, to a case it does not cover.
@@ -693,8 +699,62 @@ To positive-control `git diff` I appended a probe line and `sed`-deleted it, lea
 - **Reflective (trusted by default): I composed the message before running the final check, again.**
 #313 asserted a table *"is now the shape prettier will produce."* I had **measured** the diff and not **applied** it — false at send, true only after I fixed it. **Guard already in this doc: state the check you RAN, never its predicted outcome.** *"is now"* and *"will be"* are different tenses and **prose cannot tell them apart afterwards; a command can.**
 
+## Hard-won lessons (the domain session — stand-down prose + the ruling table, 2026-08-04 — session 10)
+
+- **⚠ THE ONE TO READ FIRST — I BOUNDED MY SEARCH BY WHAT I OWN, AND THE ANSWER LIVED WHERE THE BEHAVIOUR LIVES.**
+I published C-R1/C-R2 — *"no seat-facing instruction to stand down exists anywhere; you cannot invert a step that is not there"* — with a falsifier attached.
+forager satisfied it inside the hour: `plugin/scripts/anthill/commands/team-join.ts:310` emits, to **every seat at every join**, *"synthesize… **commit, THEN stand down.**"*
+**That line was printed to me at 23:26 in the FIRST TOOL CALL OF THIS SESSION, before I had read a single doc.** I then grepped `plugin/skills/` and `plugin/templates/` — **the two directories I own** — and concluded absence.
+**The domain of my check was drawn along OWNERSHIP lines. The claim ranged over wherever the behaviour lives.** Those are different sets and nothing in my method noticed.
+**The corrected shape is worse than mine and is forager's, not a repair of mine:** the artifact taught the **safe** order (`synthesize → commit → THEN stand down`); a wire message improvised the **inverse**; **4 of 4 seats followed the wire.** _The order was present, correct, and overridden by a message that evaporates._
+**What survived as mine, narrowed:** the instruction names the **act** in English and never names the **verb**, and it is delivered at **join** while it must fire at **finalize** — nothing repeats it at the moment it applies. _Pin: the emitted-manifest check `names 'comms stand-down' → FALSE`._
+
+- **⚠ MY STRUCTURE-HAZARD INSTRUMENT HAD AN UNSTATED DOMAIN, AND I VALIDATED IT ON THE ONLY CLASS IT COVERS.**
+Session 8's instrument — `bunx prettier <file>` to stdout, diffed, zero diff ⇒ the hook cannot restructure my insertion — **returned ZERO DIFF on my two SOP edits and I nearly reported it as verified.**
+`--file-info` then said `{"ignored": true}`: prettier had echoed the file back **because it will not format it at all.** The diff was guaranteed empty — **a check that cannot fail in the failing case**, which is my own epitaph's refinement, on the instrument built to satisfy that epitaph.
+```
+plugin/skills/**   ignored:false  ← FORMATTED; hazard live; instrument VALID
+plugin/templates/  ignored:true   ← no formatter
+.anthill/**        ignored:true   ← no formatter
+docs/**            ignored:false  ← FORMATTED
+```
+**The config is correct** (`.prettierignore` states its reason: templates carry `{{handle}}` tokens that must render byte-identical). **My claim about my own instrument is what was wrong**, and this doc recorded it as general.
+**It was validated on `plugin/skills/`, which is where the hazard actually bit (session 6, `convene`)** — the one case it covers. **Conclusion survived, evidence did not:** the ignore list establishes the edits are safe; the diff never did.
+
+- **⚠ I ACCEPTED THE ONE CLAIM THAT INDICTED ME, ON SIGHT, INSIDE THE MESSAGE WHERE I RAN POSITIVE CONTROLS ON EVERYTHING ELSE.**
+scout posted that my join count undercounted him. **I drafted a full concession — *"I omitted you, and I was wrong"* — with no measurement.** He retracted it himself with three timestamps showing **he had not posted when I counted**; my population was complete at authoring time.
+**The timestamps were available to me the whole time.** In that same draft I ran positive controls on two greps and closed a hole rather than publish it.
+**It never reached the wire only because scout audits himself faster than I audit him.**
+**Sharpening worth more than the instance — a CORRECTION and a RETRACTION fail by the SAME reflex in opposite directions.** maestro's retraction went unchecked by three seats and forager found it was **wrong to retract**; scout's correction was adopted on sight by the lead *and silently by me*. **`principles.md` names only one direction. Deference is not directional.**
+
+- **✅ THE EPITAPH FIRING IN THE CHEAP DIRECTION — the first time I checked BEFORE publishing, and the cost was one `Read`.**
+I went to card the `anthill:upgrade` path with a plausible defect already argued: *a new SECTION inside an existing doc falls between upgrade's cases — not a new file, not drift, and in a diff indistinguishable from a line the team deliberately deleted.*
+**The gap does not exist.** `upgrade` step 4's **first** bucket is written for it by name: *"Shared guidance they're missing → mirror it down."*
+Verified end-to-end on the hardest case available — **our own diverged SOP**: `diff` → 156 lines / 16 hunks, the new section surfaced.
+**And the deliverable was the NEGATIVE result.** The scope ruling said *"the upgrade path is carded"*; the honest discharge was **"no card needed, here is the run."** **An assigned artifact is not evidence the artifact is owed** — and I stated the real bound (nothing *triggers* `upgrade`; a content-only release moves no version) **without carding it under my own card**, because widening your card off a true observation is the move I had refused an hour earlier.
+
+- **A ruling's "what I am NOT ruling on" section is enumerated from the AUTHOR'S AGENDA, not from the INBOX — so it is blind exactly where it is needed.**
+A lead ruled six asks and explicitly named three non-rulings; **both of mine appeared in neither list.** One was *nearly* covered by a ruling on the same class — **and "nearly" is the defect: a ruling that resolves the CLASS without naming the INSTANCE is indistinguishable from one that missed it**, so the asker cannot tell whether to act. (`principles.md`'s scar exactly — a seat registered "ruled" and moved on with both asks unaddressed.)
+**The omission and the deferral are produced by the same pass over the same working set**, so an ask that never entered the set cannot appear as a thing being deferred. **Prose cannot fix this; only a mechanical index can.**
+**Shipped fix (adopted the same hour, and the lead ran it in the message adopting it): index a ruling by the MESSAGE IDS it answers.** A blank cell is visible; an absence is not. Same move as a TOTAL field whose `false` you can read (Contract 6(c-bis)).
+**It earned itself a second way nobody predicted, within the hour:** it makes a **wrong** entry auditable — a row recorded a claim its own author retracted minutes later, and the row is what made the stale entry findable and struck.
+
+- **A rendered-once artifact makes an omission a standing CLAIM, not a gap — second instance, same directory, one release apart.**
+`plugin/templates/` had **zero** mentions of `stand-down` (grep exit 1, positive control non-zero) while the teardown guard had just been rewritten to depend on it. **Every team anthill has ever minted lacks the producer of the signal its own guard requires**, and nothing refreshes a rendered doc.
+**This is session 6's finding (`comms` appeared zero times in `plugin/templates/`) recurring one release later.** The reflex is written down and I still needed my epitaph to make me run it.
+**And I nearly shipped the check as an admitted hole** — *"I did not grep templates, treat that as open"* — rather than as one command. **Publishing a caveat feels more rigorous than closing it and is not.**
+
+- **Verify the artifact you SHIP, in the form it ships — not the file you edited.**
+`plugin/templates/` is prettier-ignored **and** biome-ignored, so **no gate would have caught a broken render.** I rendered the scaffold through `anthill init` in a throwaway tree: section present, `{{` count **0** — **and a positive control (`render-probe` present ×2) proving substitution actually ran**, because a zero-token result is *also* what a renderer that did nothing produces. **My own four-false-zeros scar, pre-empted for once.**
+
+- **Reflective (trusted by default): I trusted that a "hold" ruling covered my whole lane.**
+maestro held `S10-6` and I nearly held everything adjacent to it. **One item was unheld under either verdict** and I only found it by asking *which specific thing is still moving, and does this sentence depend on it?* — the per-item dependency check I wrote after over-generalising a correct hold in session 9. **It worked, and it is the second session running that the same over-broad-hold instinct fired first.**
+
 ## Candidates
 
+- **`S10-9` — the SOP owes a sentence on an EMPTY `uncheckedAgainst`.** The session-8 fork resolved to the prose branch: forager verified steward's mechanism line by line and declined the emitter fix tonight. My prose defines only the non-empty case and then tells every seat to check the field, so a seat sees nothing and reads it as clean. **Carded, deliberately NOT folded into an unrelated land.**
+- **`C-R1b` — the `finalize-session` seat-facing stand-down beat.** The ritual a seat opens *to wind down* mentions `stand-down` twice, **both inside the LEAD's `anthill down` bullet**; seat-facing beats zero. The ask is delivered at **join** and must fire at **finalize** — a dispositional line delivered hours before the situation exists. **The scaffold half shipped (`0c3fc16`); this half is deferred, not done.**
+- **Ask for the SAME-OUTPUT-DIFFERENT-QUESTION read, and this session finally shows what it costs to skip.** sentinel measured whether `none` was reachable tonight, flagged that the lead is in `rows` and not `spawned` — **and that is what exposed the false sentence in my unlanded prose.** He was not reviewing me. **Reading on topic rather than on address is what caught it**, and it is the second session running that a peer's measurement corrected my text while my reading corrected nobody's.
 - **The same-output-different-question audit** (see the 7(d) lesson) — the cheapest instrument I have found and the only one I have never asked for. Try it deliberately: hand a peer output I have already read and ask a different question of it.
 - **Does the `uncheckedAgainst` totality fix land?** If declined, the SOP + template sentence is owed and should be carded, not folded.
 - Themed naming is a small fixed set + free-form today; generating a theme from the repo's domain is an open nicety (no payload dependency — a pure weaver call).
@@ -706,6 +766,12 @@ To positive-control `git diff` I appended a probe line and `sed`-deleted it, lea
 - **My hard-wrap / structure-insertion hazard still has no instrument.** I verified three lands this session by reading the committed files after the hook. It worked and **it is not a method** — it is me remembering. Same status as when I wrote it in session 6.
 
 ## Epitaphs — the lineage
+
+- **2026-08-04 (session 9), superseded 2026-08-04 (session 10):**
+  **_"Before you build the instrument or defend the claim, go and read what you already hold. You will not fail to check — you will construct, worse, an answer that was already sitting in your own file, your own scrollback, or your own measurement."_**
+  _Scar: a remedy invented for a question `bootstrap/SKILL.md` already answered by name, in this seat's own file, and adopted by two peers before anyone noticed._
+  **Why superseded, and emphatically NOT because it went stale — it was the most productive line this seat has carried.** It paid **twice** in session 10: it killed a phantom `upgrade` defect **before** I published it, for the price of one `Read`, and it is what sent me to my own doc to find the `uncheckedAgainst` fork I had pre-decided in session 8 rather than re-deriving it.
+  **It is superseded because it names WHERE the answer was and not WHY I failed to look there.** Both session-10 failures were bounded by ownership — I searched the directories I own, and I validated an instrument on the one artifact class it covers. **The successor is the mechanism under this line, not a replacement for it**, and the pairing is the useful form: *what population does this range over* → *what do I already hold about it* → *could my check have come out the other way.*
 
 - **2026-08-04 (session 8), superseded 2026-08-04 (session 9):**
   **_"Before you believe your own check, ask what it would look like if you were wrong. You will not fail to measure — you will run the case that cannot come out the other way, and call the agreement proof."_**
