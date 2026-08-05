@@ -120,6 +120,6 @@ default.
 
 ## References
 
-- [Session 2 friction log](../projects/team-comms-spike/session-2-friction.md) — §D4, and D1–D5 generally
+- [Session 2 friction log](../projects/_archive/team-comms-spike/session-2-friction.md) — §D4, and D1–D5 generally
 - [Parser errors bypass the agent envelope](../backlog/2026-07-31-parser-errors-bypass-the-agent-envelope.md)
   — its probe note records instances 1–2; instance 3 happened to a seat reading that note

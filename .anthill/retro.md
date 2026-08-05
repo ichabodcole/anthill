@@ -22,7 +22,7 @@ does not.
 >
 > _Recorded because the lead's first correction of this paragraph claimed it "had one job and was failing
 > it silently" — an overstatement of a true finding, withdrawn. See the Rulings section of
-> `docs/projects/team-comms-spike/slice-two-proposal.md`, landed after discovering the decision record
+> `docs/projects/_archive/team-comms-spike/slice-two-proposal.md`, landed after discovering the decision record
 > was sitting in an ignored file._
 
 ---

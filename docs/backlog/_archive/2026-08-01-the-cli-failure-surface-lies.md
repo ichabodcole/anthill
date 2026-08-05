@@ -108,7 +108,7 @@ The generalized trigger, from the same session:
 
 ## References
 
-- [Session 1 friction log](../projects/team-comms-spike/session-1-friction.md) — §B1, and the
+- [Session 1 friction log](../../projects/_archive/team-comms-spike/session-1-friction.md) — §B1, and the
   distinction between tool gaps, anthill defects, and operator errors.
 - [StoryLoom comms round](../reports/2026-07-31-story-loom-comms-round.md) — the `--stdin` warning's
   field evidence, and anthill#54's usage-error-vs-broken-tool shape.

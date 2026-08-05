@@ -1,7 +1,9 @@
 # Slice two — comms knows where each seat is in the log
 
-**Status:** Draft, for the seats to ratify · **Created:** 2026-08-01 · **Author:** maestro
-**Follows:** [session-2-friction.md](./session-2-friction.md) · [`.anthill/retro.md`](../../../.anthill/retro.md)
+**Status:** **Rulings ENACTED** — R15 (the sole-wire gate configuration) was ruled by the human
+2026-08-04 and executed by session 8: comms carried the session alone, zero seat fallbacks.
+See [ship-plan.md](../../comms-as-default/plan.md) for what follows. · **Created:** 2026-08-01 · **Author:** maestro
+**Follows:** [session-2-friction.md](./session-2-friction.md) · [`.anthill/retro.md`](../../../../.anthill/retro.md)
 
 ---
 
@@ -347,7 +349,7 @@ falsified is a lead's framing wearing a plan's clothes.
 
 **Collect it BLIND, before showing anyone B1–B3.** This is the spike's own established method (the
 first-contact capture, whose blind condition leaked all three times it was attempted) and the
-[observer-effect discipline](../../reports/2026-07-31-story-loom-comms-round.md) behind it. Handing
+[observer-effect discipline](../../../reports/2026-07-31-story-loom-comms-round.md) behind it. Handing
 seats a list and asking _"agree?"_ returns agreement — from a team that shares a channel, a session
 and a frame, which is the consensus failure the retro rules already name. So the order is fixed:
 
@@ -482,7 +484,7 @@ the merge, and the onramp defect (not the hard exit) is what the release actuall
 
 ### R13 — per-seat worktree isolation: measured, and it broke BOTH coordination substrates (2026-08-03)
 
-The [shared-tree investigation](../../investigations/2026-07-27-shared-tree-failure-modes.md) asked for
+The [shared-tree investigation](../../../investigations/2026-07-27-shared-tree-failure-modes.md) asked for
 two measurements it could not get by argument. Both are now taken, in this tree.
 
 **Provisioning cost is not the problem.** `git worktree add` ×5: **0.37s / 14M**. `bun install` ×5:

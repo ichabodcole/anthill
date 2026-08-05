@@ -109,7 +109,7 @@ then `read --since <head>` to fill the gap.
 ```sh
 D=~/.claude/anthill-beta-channel
 mkdir -p "$D/.claude-plugin"
-cp docs/projects/team-comms-spike/beta-channel/.claude-plugin/marketplace.json "$D/.claude-plugin/"
+cp docs/projects/_archive/team-comms-spike/beta-channel/.claude-plugin/marketplace.json "$D/.claude-plugin/"
 ln -sfn "$PWD/plugin" "$D/plugin"          # must persist — the loader re-resolves it
 
 claude plugin marketplace add "$D" --scope local

@@ -124,4 +124,4 @@ ratified?_
   — and what it is explicitly **not** evidence of.
 - [Shared-tree failure modes](../investigations/2026-07-27-shared-tree-failure-modes.md) — M1–M11, the
   mature-team mechanisms that a planning session cannot exercise.
-- [Team comms spike](../projects/team-comms-spike/proposal.md).
+- [Team comms spike](../projects/_archive/team-comms-spike/proposal.md).

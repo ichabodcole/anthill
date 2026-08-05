@@ -2,7 +2,7 @@
 
 **Status:** Draft, for the seats to ratify · **Created:** 2026-08-03 · **Author:** maestro
 **Origin:** the human, after session 7's measurements
-**Follows:** [slice-two-proposal.md](./slice-two-proposal.md) · [session 6 measurements](../../reports/2026-08-03-session-6-measurements.md) · [session 7 measurements](../../reports/2026-08-03-session-7-measurements.md)
+**Follows:** [slice-two-proposal.md](../_archive/team-comms-spike/slice-two-proposal.md) · [session 6 measurements](../../reports/2026-08-03-session-6-measurements.md) · [session 7 measurements](../../reports/2026-08-03-session-7-measurements.md)
 
 ---
 
@@ -44,9 +44,30 @@ alias hole Contract 4(c) closes.
 
 **A broadcast message does not cost one message. It costs N context re-reads.**
 
-`artifact:` Session 6 spent **563.8M tokens / ~$388**, of which **98.1% was cache read** — six agents
-re-reading a large context every turn. The wire's own text was **~92K tokens, 0.017% of spend.**
-`artifact:` Session 7, staged, spent **~$215** at **0.013%** on the wire.
+> ### ⚠ FIGURES CORRECTED 2026-08-04 — three layers, and the ARGUMENT SURVIVES ALL THREE
+>
+> **This paragraph quoted `563.8M / ~$388`. Session 6's own report superseded those figures and
+> explicitly named its downstream** — _"Everything downstream that quotes $388 or 563.8M"_ — **and this
+> document was that downstream and was not updated for a day.** The correction landing in the report
+> and not in the doc citing it is the _partial fix reads as complete_ pattern, with the fix naming its
+> own blast radius and still missing.
+>
+> 1. **Superseded:** the real session-6 figures are **~$166 / 251.7M**, not $388 / 563.8M.
+> 2. **Notional:** every dollar figure in these reports is arithmetic on an assumed rate card against a
+>    subscription. **No per-token money changes hands.** Tokens are the unit.
+> 3. **The headline measures RE-READS, not consumption** (found by the human, 2026-08-04): ~98% of any
+>    cumulative total is `cache_read` — the same context re-sent per request. Session 8 measured
+>    **median context 313,397 · max 623,634 (under the 1M limit, which is why no compaction fires) ·
+>    output 2,224,836 = 0.29% of total.**
+>
+> **Why the argument is unaffected — and is in fact SHARPENED by (3).** Mute's whole claim is that a
+> broadcast costs N context re-reads. **`cache_read` is precisely the quantity mute reduces**, so the
+> one metric that is misleading as a cost headline is the _correct_ metric here. **State it as
+> cache-read tokens, never as dollars or as "spend".**
+
+`artifact:` Session 6: **251.7M tokens**, of which **~98% was cache read** — six agents re-reading a
+large context every turn. The wire's own text was **~92K tokens, well under 0.1% of the total.**
+`artifact:` Session 7, staged, was smaller on the same ratio.
 
 **So the wire is free and waking up is expensive.** Session 6 carried 106 messages to 5 other seats
 each — on the order of **530 wake-induced turns** at ~241K tokens apiece. _(Derived, not measured:
@@ -311,6 +332,6 @@ Checked against the living docs before handing this over, because three of them 
   the correction that made it right.
 - [Session 7 measurements](../../reports/2026-08-03-session-7-measurements.md) — burn rate vs context
   count; the owner-vs-stranger defect split; scout's conclusion that the cold reads did the work.
-- [R10](./slice-two-proposal.md) guest identity · [R12](./slice-two-proposal.md) the human cannot send.
+- [R10](../_archive/team-comms-spike/slice-two-proposal.md) guest identity · [R12](../_archive/team-comms-spike/slice-two-proposal.md) the human cannot send.
 - [Addressed delivery](../../backlog/2026-08-01-comms-has-no-addressed-delivery.md) — the adjacent
   primitive this proposal deliberately does not absorb.

@@ -5,7 +5,7 @@
 
 > **⚠ MERGE BLOCKER (part of B1) as of 2026-08-03, and the failure INVERTS.** Presence is a side
 > effect of holding a tail. If comms becomes the sole wire (the human's merge bar — R11 in
-> [slice-two-proposal.md](../projects/team-comms-spike/slice-two-proposal.md)), seats stop holding
+> [slice-two-proposal.md](../projects/_archive/team-comms-spike/slice-two-proposal.md)), seats stop holding
 > vine tails, `grapevine who` goes empty, and this guard flips from **never passing** to **always
 > passing** — tearing down a live team in silence. **The flip reads as a fix, because it stops
 > nagging.** So repointing the guard at comms presence is not optional cleanup; it must land in the

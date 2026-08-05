@@ -119,5 +119,5 @@ drift that actually bit us, and proves the relevance filter before anything watc
   the pull/push framing; **this is the pull-shaped signal it predicted would ship as tooling**
 - Related: [file-activity heat map](../investigations/2026-06-30-file-activity-heatmap.md) — the
   other substrate signal, and the decay argument
-- Related: [slice three](../projects/team-comms-spike/slice-three-proposal.md) — a substrate
+- Related: [slice three](../projects/comms-as-default/capability-state-proposal.md) — a substrate
   notification has **no seat author**, so it needs the same capability model as guest/human/mute

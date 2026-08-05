@@ -331,7 +331,7 @@ space](../investigations/2026-07-31-team-native-coordination-layer.md)):
   `read` claim.
 - [Team-native coordination layer](../investigations/2026-07-31-team-native-coordination-layer.md) —
   the design space this round pushes on.
-- [Team comms spike](../projects/team-comms-spike/proposal.md).
+- [Team comms spike](../projects/_archive/team-comms-spike/proposal.md).
 - [Shared-tree failure modes](../investigations/2026-07-27-shared-tree-failure-modes.md) — M1–M11; §5
   is a candidate addition.
 - [Name the granularity of every promise](../backlog/2026-07-31-name-the-granularity-of-every-promise.md)
