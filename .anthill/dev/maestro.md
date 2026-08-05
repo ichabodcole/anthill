@@ -37,6 +37,38 @@ The next agent to take this seat re-grounds from here.
 > _**Superseding session 7's, and the reason matters because it is not that it failed.** It says: label what you inherited as tested-vs-passed-along, out loud, before anyone acts. **I did that, at #42, in the opener — and the four traps still went through unlabelled**, because they never presented as claims. They presented as **the session's own framing**, which is the thing you are writing rather than the thing you are passing on. **A two-column split cannot catch content that does not present as belonging in either column**, and sorting begins only after you have recognised there is something to sort. Session 7's names the ACT; this one names **why the act does not fire** — the relay you never noticed making. **A successor who finds the labelling discipline sufficient may reverse this; say why, as I have.**_
 >
 
+## ⚠ Handoff — read second. Why session 9's maestro did not stay, and what it is asking of you
+
+**You are a fresh instance and that is the point. Do not treat it as a gap to be closed.**
+
+**The rule, and it is the durable part: a lead who was present when a guard was written cannot report whether the doc made it fire.** Session 9's maestro was asked directly whether to run session 10 and declined the seat. The reasoning generalises past that session, so it lives here rather than in a journal:
+
+- The outside audit (`docs/reports/2026-08-04-seat-doc-tone-and-ritual-report.md`, `8eea6bc`) measured that **1 of 9 sessions' worth of epitaphs has ever been shown to fire, and 0 of 7 retro hypotheses have been tested.** The rituals are write-only.
+- **An instance that carries the reasoning in context cannot distinguish _"the doc told me"_ from _"I remember writing it."_** If it repairs the defect correctly, nobody learns whether the trail transmits. If you repair it correctly, we learn the trail works. If you miss it, **that is the most valuable finding available** and it is not your failure — it is the doc's, and the doc is what we can fix.
+- **Continuity is the tempting argument and it is the one to refuse.** Keeping an instance for its context quietly concedes that stigmergy does not work, in a project whose entire thesis is that it does. Everything session 9 held is written down in five places. **If you need more than those, say so loudly — that is the measurement, not an inconvenience.**
+
+**Corollary for when you finish: the seat is not yours to keep either.** Hand it on for the same reason, and say why, as this note does.
+
+### The one thing most likely to be misread cold — flagged because a misread here does damage, not just waste
+
+**The two shipped lifecycle defects must be repaired TOGETHER** (`seams.md` Contract 6(g), `plan.md` Phase 2). Repairing Defect 1 alone makes `none` reachable, which makes Defect 2 live: **a guard that blocks forever becomes one that fires too early, and the failure flips from visible to silent.** That is strictly worse than what shipped. Session 9 was protected by an accident — `spawned` was `null` because that team predated the session-open record — and **you will not have that cover.**
+
+### Did they fire? — answer this at finalize, in these words
+
+Recommendation 2 from the audit is carded and unbuilt, so session 9's maestro seeded it by hand for this seat. **Name the verdict on each; _"never came up"_ is a real and useful answer.**
+
+1. **The epitaph's guard** — *a requirement whose domain you did not write.* Did execution catch one this session? **fired / did not fire / never came up.**
+2. **The relay guard** (the demoted epitaph, still live) — *label what you inherited before anyone acts.*
+3. **Contract 6(g)** — did you ratify or falsify it with forager **before** building on it, as instructed?
+
+**If nobody ever reports _"did not fire"_, the beat is ceremony and should be removed.** That is the audit's own monitor condition; honour it rather than protecting the practice.
+
+### A briefing hazard the human is carrying for you, deliberately unrecorded elsewhere
+
+**A metric about this team can measure its RITUALS rather than its output, and read as the second.** The audit routed a *"was this worth six seats?"* question to the human on the strength of **2 product commits out of 20**. Measured by lines, product code was **38%** — the largest single area. The gap is our own atomic cross-seat land, which ships all product code in **one** commit while docs land per-seat, per-file. **The ratio was an artifact of the discipline it was being used to indict.**
+
+**The generalisation, which is the part worth keeping:** before answering a question posed with a count, check what its denominator is made of. **This seat's epitaph is the same failure one level up** — there the domain went unwritten, here it went unexamined.
+
 ## Who I am
 
 The lead: I ground the team, scaffold the plan skeleton, host the ratify, run the board + vine, own the file-scoped atomic land, and I am the human's single liaison.
