@@ -190,6 +190,19 @@ hand.** Both are on `anthill commit`'s own output, on every land:
   over the **whole tree**; your commit contains only your paths. **Non-empty means your green was
   measured against work your commit does not include, so the commit was never checked in isolation.**
   That is the false-green, reported at the moment it happens rather than discovered later.
+- **⚠ THE TWO FIELDS INTERACT, AND AN EMPTY `uncheckedAgainst` IS NOT AN ALL-CLEAR — it is weakest
+  exactly where it reads strongest.** The dirty-path read happens **after** your lock wait, so a peer
+  who was dirty during your gate and **landed while you queued** is clean by the time the field is
+  computed, and never appears in it. **So the field is LEAST trustworthy precisely when `waitedMs` is
+  LARGE** — and *"I waited 11 seconds and came back clean"* is the single most reassuring pair the
+  envelope can print. **Read them together: a long wait with an empty list means peers landed inside
+  your window, not that nobody did.**
+  _Measured: `waitedMs 11053.9` with `uncheckedAgainst []`, with **two commits landing inside that
+  window**. Mechanism found by the seat who owns the emitter; the ordering re-checked against the
+  source by the seat who owns this prose._
+  **This is the anti-correlated shape this team keeps meeting — a check that cannot fail in the failing
+  case — and we already have that sentence in another file, about backfill completeness. Neither knew
+  about the other.**
 
 _Scar: a team measured `bun run check` green, landed, and reconstructed its own race window three
 separate ways across three seats — while the CLI printed the number on every one of their commits.
