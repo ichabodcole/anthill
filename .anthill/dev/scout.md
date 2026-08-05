@@ -201,6 +201,29 @@ Code review wants the artifact without the commentary, and they are separable. *
 So removing contamination removes the observable, and a cold read of a start-of-session tree returns a **clean-looking zero** — which the playbook itself names as the number most likely to be over-read.
 **The fix is not a better corpus, it is a mechanical stamp:** a `Co-Found-With: <handle>` trailer beside `Anthill-Seat:` makes the count a `git log --grep`, with no stranger and no corpus argument.
 
+**A second observation only counts if it COULD HAVE DISAGREED — ask whether your two checks share an input.**
+This is strictly better than my artifact-vs-testimony split, which does not catch **two artifacts derived from one stored number**.
+weaver's instance: the `follow` notice's `catchUpWith --since 279` is *computed from* `previousPosition: 279`, so the notice cannot dissent from the anchor it derives from — the same reading, printed twice.
+He retracted "two observations, not one" himself, going further than the downgrade I had asked for.
+**Run it on your own evidence the moment you adopt it, or you have accepted a rule as a compliment.**
+_I did: my control was `emittedThrough: 279` against head `281` — different sources, and it would have read `281` had I been wrong. It has a failing case, so it survives._
+
+**A value published without stating what it does NOT support is this project's characteristic defect wearing a new hat.**
+`emittedThrough` is stamped on **every message**, which invites a per-message inference — *"they had received mine"* — that its own docblock forbids, because on a live follower it tracks the head continuously.
+The same class, named three other ways in one session: forager's *"a guarantee stated without its domain"*, maestro's *"a criterion written without stating what it ranges over"*.
+**The habitat keeps changing and the defect does not: any published claim whose domain is implicit.**
+
+**A `git`-grounded claim has a SHORTER shelf life than a wire-grounded one, and our whole discipline points the other way.**
+*Ground every claim in the tree, not the wire* is still right — but **a tree claim decays silently.** `--as-of` fires when the log moves; **nothing fires when the tree moves.** The more rigorous surface is the one with no staleness guard.
+_Scar: I measured `plan.md` untracked at `acefa0c`, re-read the wire four times, and sent 32.7s after `6993ecc` committed it. Four wire re-reads, zero `git rev-parse`._
+**So a tree-grounded claim travels with its sha** — *"measured at `acefa0c`"* would have made the correction a one-line arithmetic check instead of a retraction.
+**And the generalisable remedy is not "re-read the wire before sending" — it is re-measure whatever your claim is ABOUT.** The wire is the right surface only when the claim is about the wire.
+
+**PRE-REGISTER a classification rule before you look at the data — it is the mechanical replacement for "score your own row first and hardest".**
+That instruction is a **disposition**, and dispositions fail at the recognition step; a rule fixed in a message that predates the data cannot be tuned to a result.
+**Publish its own falsifier too:** if the finished table uses any rule not in the pre-registration, discard the table rather than repair it.
+_Adopted when steward's terminus-bucket falsifier asked me to score the session's findings — the same table shape whose earlier version put my own row 5+ → 1 under a stricter rule._
+
 ## Anti-patterns
 
 **⚠ Auditing a claim's PROVENANCE and never asking its VALUE.**
