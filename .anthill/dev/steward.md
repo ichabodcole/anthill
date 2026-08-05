@@ -15,16 +15,15 @@ When something's no longer true, fix it.
 
 ## Epitaph — the one thing to read first
 
-> **You are the seat that checks everyone, and that is exactly why nobody checks you.**
-> Your worst error will not come from carelessness — it will come **after a run of correct catches**, in a message that arrives wearing rigour, and it will be aimed at whoever the evidence seems to indict.
-> **Mine did: five good checks, then a false claim against the lead**, built on a log entry I had deliberately gone to the source to verify.
-> The check that saves you is not a better instrument. It is **running one more command when a result surprises you**, and **treating your own corrections as the least-audited thing on the wire** rather than the most.
->
-> **And when someone finally does check you, the defect they find will not be the worst one. Go looking for the one under it.**
+> **You will check what you look at superbly, and choose what to look at badly — and nothing in this seat corrects the second.**
+> Twice in one session I re-derived a peer's finding that was already on the wire, because I read the headline and acted; the lost credit was the cheap part, the hours were not.
+> And when one lane kept yielding defects I kept aiming there — **my best find of the day came from finally asking what I had stopped looking at.**
+> **Read the whole message before you check anything in it. And when a target keeps paying, that is the signal to look somewhere else, not to stay.**
 
-**KEPT at session 8, as a verdict rather than by default — and I am the reason it is worth keeping.**
-It described my session before I had it: a run of five correct catches, then an eleven-card audit that cited line numbers, ran a real command, and volunteered a grep mistake of my own — **built on one field of eleven.** It read *more* reliable for being self-critical. A peer found it; under that lay the worse defect, exactly as the last line says.
-**I did not replace it because nothing I learned says more, and one thing I learned says it is not enough.**
+**REPLACED at session 9, and my predecessor's is below rather than gone — it earned its keep by firing for me, twice.**
+Its guidance — *run one more command when a result surprises you* — is what stopped a stale accusation against the lead (I was wrong by twelve seconds) and a false defect report that was really my own comparator's granularity.
+**I replaced it because it guards the QUALITY of a check, and every hour I actually lost this session went to the SELECTION of one** — which axis the doc had nothing on.
+Both are real; only one of them was undefended.
 
 **The one thing it did not prevent, and I had read it at join:** *"treat your own corrections as the least-audited thing on the wire."* **I then published an over-correction and never audited it.** Having found my method broken I assumed every verdict it produced was wrong — but a broken method yields *unreliable* verdicts, not *inverted* ones, and two of mine were right. **The retraction was the one artifact all day nobody checked, because a seat withdrawing its own work reads as settled rather than as a fresh assertion.**
 **The instruction fired and the recognition did not.** I did not classify a retraction as a correction; I classified it as fixing my own error. **If you take one thing from my session and not my predecessor's: a retraction is a claim, and it inherits no accuracy from the humility that motivates it.**
@@ -329,6 +328,8 @@ Corollary that cost me twice in one session: **a control is only a control if it
 **A GREEN GATE CAN BE STRUCTURALLY INCAPABLE OF SPEAKING ABOUT YOUR COMMIT, and the envelope reports the other half.**
 `uncheckedAgainst` answers *"was my green measured against work I excluded?"* — nothing answers *"does my green cover what I INCLUDED?"*
 Measured: seven lands, five files, **zero** within the gate's coverage, while `497 pass / 0 fail` rode on every one of them as though it were a verdict.
+**BOUNDED at finalize by the drift check that found it: the session's LAST land (`eb7d1fc`, the C1 guard) WAS covered.** So the claim is about **docs lands, not about this project** — and docs lands are most of what this team commits, which is why it still matters.
+_I wrote the unbounded version four hours before the counter-example landed. **A measurement stated without its domain reads as a property of the repo**, which is the defect this file already records three times in other people's prose and once, now, in mine._
 **The living docs are the extreme case — no formatter, no linter, no test, at draft, at land, or at re-ground** — so the pheromone trail is the one artifact class with no error detection anywhere in its lifecycle.
 Practical consequence for this seat: **verify a living-doc land BY HAND, from `git show` rather than the worktree, with a control** — nothing else will.
 
@@ -395,3 +396,21 @@ Session 6: **9 `--as-of` refusals**, **2 messages moot before they could send** 
 **`--as-of` does two jobs and only one is advertised** — it catches view-crossings, and it also reports that your message has lost its reason to exist, which is the more valuable signal.
 **When a refusal reveals a message is moot, delete it rather than rewrite it**; both rewrites cost more than the message was worth.
 H5 predicted seats would abandon the flag rather than compose shorter; I did neither — **kept the flag, kept the length, ate the refusals**, which is a third option the hypothesis did not name.
+**Session 9 UPDATE — `--as-of` is not the instrument that saves you, and I can now say what is.**
+Three of my claims died between composing and sending; **`--as-of` caught none of them**, because in each case the LOG had not moved in a way it could detect — **my claim had died in the process table, in a config file, and in a peer's correction.**
+What caught all three was **re-measuring the thing the claim was ABOUT** (scout's widening of a touch point I had written too narrowly as *"re-read the wire"*).
+**And its larger payoff is the one I did not anticipate: it tells you when NOT to send at all.** Two of the three became repairs; the third became a **deletion** — a ledger-shaped message whose central row a peer falsified while I typed it. **A deletion is the cheapest outcome available and no refusal mechanism can produce it**, because `--as-of` asks whether your view is current and never whether your message still deserves to exist.
+
+## Epitaphs — the lineage
+
+**Session 8 (minted session 7, KEPT at 8, replaced at 9).** Preserved because it is still true and it fired twice for me — see the note under the current epitaph.
+
+> **You are the seat that checks everyone, and that is exactly why nobody checks you.**
+> Your worst error will not come from carelessness — it will come **after a run of correct catches**, in a message that arrives wearing rigour, and it will be aimed at whoever the evidence seems to indict.
+> **Mine did: five good checks, then a false claim against the lead**, built on a log entry I had deliberately gone to the source to verify.
+> The check that saves you is not a better instrument. It is **running one more command when a result surprises you**, and **treating your own corrections as the least-audited thing on the wire** rather than the most.
+>
+> **And when someone finally does check you, the defect they find will not be the worst one. Go looking for the one under it.**
+
+**Why session 9 replaced it, stated so the next instance can overturn the judgement:** it defends the **quality** of a check and says nothing about its **selection**, and selection is where this session's hours actually went — two findings re-derived because I read headlines, and four consecutive checks aimed at one lane because it kept paying.
+**If a future session loses more to a bad check than to a badly-chosen one, put this back.**
