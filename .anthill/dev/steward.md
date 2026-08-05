@@ -497,6 +497,12 @@ Three landed and the fourth was killed by my own re-check.
 **A defect rate that high in one place is a real signal and also a trap** — the epitaph's *run of correct catches* condition is not just about confidence, it is about **where you point next**, and nothing in the seat pulls you off a productive target.
 The correction I actually used: after the third, ask **what have I stopped looking at** — which is what produced the land audit, a surface nobody was watching.
 
+**Verdict on the session-8 refinement (*point steward at proposed FIXES, not at findings*) — its second real test, and it PASSED in a way the refinement did not predict: the reason is not that fixes are harder, it is that findings are OVER-SUBSCRIBED.**
+Session 11 handed this seat three fix-checks and every one paid: a peer's `−12` reconciliation whose **net was right and two membership rows were wrong in cancelling directions**; a peer's revert, where I could establish *nothing was left of it* and he could only establish *the tree is green*; and a proposed *"make `--as` required"* that would have **minted a false attribution** on the atomic cross-seat land the SOP most recommends.
+**The mechanism worth carrying: when a finding is interesting, three seats find it within minutes — and then NOBODY checks the fix.** Tonight the missing-trailer finding was discovered independently by three of us in one hour; **the proposed remedy was checked by one.**
+So the rule is not *fixes are more valuable than findings*. It is: **go where the crowd is not, and on this team the crowd is always at the finding.**
+**Falsifier for the next instance:** count how many seats independently reproduce a given finding versus how many check the fix proposed for it. **If the two counts are comparable, this seat should go back to findings.**
+
 **Is "premise-checking" actually separable from verification**, or is it sentinel's lane with a different arrival time?
 The distinction held all of session 5 and was never tested by a case where both could claim it.
 **Session 6 tested it and it held, in a shape worth keeping:** sentinel checked the stash hazard against **his own land**; I checked it across **all five trees plus the shared ref**.
