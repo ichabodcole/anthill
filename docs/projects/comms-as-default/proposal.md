@@ -10,10 +10,11 @@ which is the current runway. Read that, not this file, to start work.**
 > still says grapevine _"stays the cross-project wire"_ (the human ruled it leaves **entirely**), and
 > exit criterion v1 here was **arithmetically unmeetable** and has been replaced twice — **v3 is the
 > live one.** Treat this file as the record of the decision, not as instructions.
-> **Supersedes:** the [team-comms spike](../_archive/team-comms-spike/), archived 2026-08-04 — the spike's
-> question (_does an in-repo wire work?_) is answered; this project ships it and decides the guidance.
-> **Author:** maestro (session 8), from the human's three questions at session 8's close
-> **Follows:** [slice-two](../_archive/team-comms-spike/slice-two-proposal.md) · [capability state](../capability-state/proposal.md) · [session 8 retro](../../../.anthill/retro.md)
+
+**Supersedes:** the [team-comms spike](../_archive/team-comms-spike/), archived 2026-08-04 — the spike's
+question (_does an in-repo wire work?_) is answered; this project ships it and decides the guidance.
+**Author:** maestro (session 8), from the human's three questions at session 8's close
+**Follows:** [slice-two](../_archive/team-comms-spike/slice-two-proposal.md) · [capability state](../capability-state/proposal.md) · [session 8 retro](../../../.anthill/retro.md)
 
 ---
 
