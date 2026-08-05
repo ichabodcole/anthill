@@ -155,7 +155,9 @@ Ratified on the vine (`anthill-dev` #7–#17, three seats, both directions) ahea
 
 **(a) The incantation is a literal, fully-resolved, per-seat command string, composed by the CLI and rendered verbatim.**
 The consumer never composes it, never interpolates a handle into it, and never encodes the tool's location.
-House precedent is already in the tree: `anthill join` emits `tailCommand` / `boardTailCommand` fully resolved (handle already substituted), not a template.
+House precedent is already in the tree: `anthill join` emits `boardTailCommand` fully resolved (handle already substituted), not a template.
+_🔴 **This sentence read "`tailCommand` / `boardTailCommand`" until minutes after step 4 landed, and `tailCommand` no longer exists.** Caught by a residual sweep of this file, NOT by the amendment: I amended clause **(b)** — where the field is the subject — and did not re-read **(a)**, where it is only cited as precedent. **That is this contract's OWN authoring note failing on its author: "after strengthening any clause here, re-read the Proof section and ask which assertion would fail if the new words were false."** The note says re-read the PROOF; **the drift was in a SIBLING CLAUSE**, which the note does not name and which nothing else looks at._
+_Durable form, and it is the amendment's cost rather than the field's: **a field cited as evidence in one clause and defined in another has two homes, and the definition is the only one anybody remembers to update.**_
 
 **(b) It reaches the consumer as a `comms` block in the join manifest, present in EVERY MANIFEST `join` EMITS**, carrying `{ channel, incantation }` — so the consumer renders it and never probes the filesystem or interprets an exit code to decide what to render.
 
@@ -252,7 +254,9 @@ So the remedy is scoping, not rewording: name the tools the claim is about, tell
 **(c) Prose may not condition a promise about the envelope on a flag the CLI's own emitted commands do not pass.**
 The envelope is **not** conditional on `--format json`; it is conditional on **not being a TTY** (`resolveFormat`: an explicit `json`/`text` wins, otherwise `isTTY ? text : json`).
 A piped agent that passes no flag already gets JSON, and **the anthill-CLI invocations we emit pass no `--format`** — `comms follow` in the join manifest, and `submitCmd` in `feedback` (Contract 2), which is the stronger case because it is a string we hand a seat to **re-invoke**, so it will actually produce an envelope when run.
-The join manifest's other two commands are **spellbook's** (grapevine, bounty), not anthill's CLI, so they have no anthill envelope to promise and are not evidence here.
+The join manifest's other command is **spellbook's** (bounty), not anthill's CLI, so it has no anthill envelope to promise and is not evidence here.
+_🔴 **This read "other two commands … (grapevine, bounty)" until step 4 removed the vine, and the correction is pointed: THIS IS THE CLAUSE WHOSE OWN SCAR IS AN INFLATED COUNT.** Its next sentence records an earlier draft "inflating n=1 to n=3" — an overstated claim inside the contract against overstated claims, caught at ratify. **The number then went stale in the opposite direction by a code change**, so the same clause has now carried a wrong count twice, by two different mechanisms: once by miscounting, once by the world moving underneath a correct count._
+_**That is the sharper lesson and it belongs here rather than in a seat doc: a count corrected for accuracy is still a count, and correcting it does not stop it rotting.** The clause's own rule — cite what you can point at, not how many — would have produced "the join manifest's OTHER commands are spellbook's", which is true before and after step 4 and needs no maintenance at all._
 That exclusion is stated rather than left silent because it is clause (b) applied to this clause's own footnotes: an earlier draft counted all three, **inflating n=1 to n=3** — an overstated claim inside the contract against overstated claims, caught by the owner at ratify.
 So prose saying *"pass `--format json` to get an envelope"* would be wrong three ways: false as a condition, contradicted by our own emitted output, and an invocation rather than a dialogue (Contract 4(d)).
 **The honest form is format-agnostic: an agent gets a parseable envelope; it does not ask for one.**
