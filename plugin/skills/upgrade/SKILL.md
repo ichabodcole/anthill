@@ -140,6 +140,45 @@ story — a pure relocate (`git mv` preserves every byte), so nothing needs merg
 **But relocation is not the only thing an upgrade owes the team, and this step runs even when there
 was no migration at all.**
 
+#### 4·0. 🔴 GRAPEVINE → COMMS — read this first if the team predates it
+
+**anthill no longer opens or joins a grapevine channel.** `convene` opens no channel and sets no
+topic; `join` composes no vine tail; `convene`'s `--fresh` and `--topic` flags are **gone**, and the
+join manifest no longer carries a `tailCommand`. The team's message wire is **anthill's own `comms`** —
+an append-only log under `.anthill/comms/`, which needs nothing installed.
+
+**spellbook is still required, for `bounty` (the task board).** Only the vine left.
+
+**This is the one change that leaves a team's OWN documents wrong, and nothing else in this skill
+will catch them** — `init` skips existing files, so every reference the team wrote itself survives
+untouched. **Go and look:**
+
+```bash
+grep -rni 'grapevine\|\bvine\b' .anthill/ docs/ --exclude-dir=_archive
+```
+
+**Sort the hits into three piles — the middle one is the one that matters:**
+
+| pile                                                                                                                                       | what to do                                                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **History** — retros, scars, session notes, lessons, anything dated                                                                        | **LEAVE IT.** Do not rewrite the record. A scar that names the vine is still true about the day it happened.                                            |
+| 🔴 **Live instruction** — anything telling a seat to _use_ the vine, tail it, fall back to it, or check `spellbook:grapevine` is installed | **FIX IT.** This is the pile that misroutes an agent, and it is why this beat exists. Point it at `comms` (`anthill comms send/read/follow/positions`). |
+| **Ambiguous** — a doc that reads as both                                                                                                   | **Add a dated addendum** rather than editing in place, so the original still parses as the record it is.                                                |
+
+**Two specific replacements worth naming, because they have no obvious successor:**
+
+- **_"the lead clears the channel at convene (`--fresh`)"_** — there is **no clear verb and no flag.**
+  The comms log is **cumulative and never cleared**, deliberately: it is the provenance of everything
+  the team shipped. **Catch-up therefore needs an ANCHOR, not a starting point** — the lead names the
+  id the session starts at, **out of band** (in the brief or on the board), because an anchor published
+  on the channel it bounds can only be read by breaking it.
+- **_"if one wire drops, say so on the other"_** — **there is no other wire.** The remedy is
+  `anthill comms positions`, which reports each seat's lag and distinguishes `never-followed`
+  (_no record at all_) from `current`. Say so in your pane and move your card.
+
+**Tell the human what you changed here.** A team that finds its own SOP contradicting the tool has no
+way to know which one is stale, and **this is the only moment anyone looks.**
+
 #### 4a. Refresh the shared guidance the team never receives automatically
 
 **`anthill init` skips every existing doc — that protects the team's content and freezes it.** A
@@ -221,8 +260,8 @@ config is where a silent gap survives an upgrade that reports success.
 
 - **Verify:**
   - **`anthill status`** _resolves_ the config (it reads `.anthill/config.json`). With no live session
-    it will **warn** the grapevine/bounty daemons aren't running and show `Board: unavailable` — that's
-    fine; you only care there's **no config error**.
+    it will **warn** the bounty daemon isn't running and show `Board: unavailable` — that's fine; you
+    only care there's **no config error**.
   - **`anthill init`** _clobbers nothing_ — every existing doc is **skipped**. It MAY **add** a scaffold
     file a newer release introduced (or a doc a seat was missing); that's expected, not a failure —
     fold any additions into the commit below.

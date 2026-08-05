@@ -1,6 +1,6 @@
 ---
 name: join
-description: Join the project's agent team as a specific seat. Run by a seat agent at session start to re-ground in its role and get on the team's coordination channels. Use when the human says "join the team as <handle>", "take the <X> seat", "join as <handle>", or otherwise tells the agent which seat to take. The agent adopts the named handle, reads its own living doc, mints its session scratch, and joins the grapevine + bounty. Requires a `.anthill/config.json`.
+description: Join the project's agent team as a specific seat. Run by a seat agent at session start to re-ground in its role and get on the team's coordination channels. Use when the human says "join the team as <handle>", "take the <X> seat", "join as <handle>", or otherwise tells the agent which seat to take. The agent adopts the named handle, reads its own living doc, mints its session scratch, and joins the team's comms channel + bounty. Requires a `.anthill/config.json`.
 ---
 
 # anthill: Join (take a seat)
@@ -50,20 +50,21 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
      steps 3–5 mint scratch, claim a card, and register presence, all writes. Don't reach for a write
      until you're grounded; the read-only spine is what makes re-grounding robust.
 
-3. **Get on the wires.** From the `anthill join <handle>` output, run the resolved **grapevine tail**
-   and **board tail** commands — each wrapped with the **Monitor** tool (filter keepalives as the
-   checklist shows), so you wake on team messages and register presence as your handle. **`anthill
+3. **Get on the wires.** From the `anthill join <handle>` output, run the resolved **comms follow**
+   and **board tail** commands — each wrapped with the **Monitor** tool (filter keepalives where the
+   checklist shows one), so you wake on team messages and register presence as your handle. **`anthill
 status`** shows who's on + the board.
    - **⚠ FIRST, KNOW WHAT YOUR MANIFEST CANNOT KNOW — some of these steps are SESSION-VARIABLE and it
      states all of them unconditionally.** The manifest is generated from config, **before any session
-     context reaches you**, so it cannot know which wires this session armed, whether the lead cleared
-     the vine at convene, or what was ruled five minutes ago. **Where the manifest and a live ruling
+     context reaches you**, so it cannot know which wires this session armed, what anchor the lead set,
+     or what was ruled five minutes ago. **Where the manifest and a live ruling
      disagree, the ruling wins** — the manifest is not more authoritative for being mechanical, it is
      just earlier.
-     - **The two that are actually variable:** _which wires to arm_ (a session may deliberately run on
-       one wire and leave another open-but-unsubscribed), and _what the lead did at convene_ (the
-       checklist's "the lead clears the vine at `--fresh`" is a **default, not an observation** — a
-       lead who deliberately skipped it is a normal case, and it changes what your catch-up returns).
+     - **The two that are actually variable:** _which wires to arm_ (a session may deliberately leave
+       one unsubscribed), and _where this session starts_ — **your catch-up needs an ANCHOR the
+       manifest cannot know**, because nothing clears the log and a bare read replays every session
+       the team has ever had. The lead owes you that id; if you do not have one, **ask before you
+       read**, and do not infer it from the first message you happen to see.
      - **You will usually read the ruling AFTER you have acted, and that is structural, not
        carelessness.** The obvious remedy — _"catch up before you arm anything"_ — **cannot be the
        whole answer, because catching up is itself one of these steps and the manifest is what tells
@@ -83,67 +84,68 @@ status`** shows who's on + the board.
      path, a flag, or the resolution rule changes. This skill deliberately does **not** spell out those
      commands, not even as an example: the printed string is the single source, and a copy here would
      be the copy nobody remembers to update.
-   - **There is a third wire — `comms` — and your manifest always carries it.** Look for it under
-     **`comms`**, alongside the grapevine and board lines, and **run what it gives you**,
-     Monitor-wrapped, exactly as given. There is no second case to check for: the skill and the tool
-     ship together, so a project that runs this skill has the wire. Don't test for the tool, don't probe
-     the filesystem for it, don't interpret an exit code to decide.
+   - **`comms` is the wire, and your manifest always carries it.** Look for it under **`comms`**,
+     alongside the board line, and **run what it gives you**, Monitor-wrapped, exactly as given.
+     There is no second case to check for: the skill and the tool ship in one subtree from one
+     release, so a project that runs this skill has the wire. Don't test for the tool, don't probe the
+     filesystem for it, don't interpret an exit code to decide.
      - **`comms` missing from the manifest is a bug, not a project without comms.** Say so to your lead
        rather than quietly carrying on unwired — a dropped block and a deliberate absence would look
        identical to you, and the second one doesn't exist.
-     - **Do not add a keepalive filter to this one.** The other two wires need one; **`comms` emits no
-       keepalives, so there is nothing to strip** and the string is complete as given. This is the one
-       place the pattern below does _not_ transfer — appending a `grep` here filters out real messages
-       and leaves you silently missing team traffic, which looks exactly like a quiet channel.
+     - **Do not add a keepalive filter to this one.** The **board** line needs one; **`comms` emits no
+       keepalives, so there is nothing to strip** and the string is complete as given. **This is the
+       one place the board's pattern does _not_ transfer** — appending a `grep` here filters out real
+       messages and leaves you silently missing team traffic, which looks exactly like a quiet channel.
+     - **⚠ The board wire can come back `null` and `comms` cannot, so do not read them as a pair.**
+       The board is a **separate project on its own release cadence**, so its absence is a reachable
+       state the manifest reports (with the reason in `warnings`); comms lives inside this CLI. **A
+       `null` there is an observation, not an unpopulated field** — arm what you were given and tell
+       your lead what you were not.
    - **Were you dispatched as a subagent** (not a terminal seat)? A one-shot subagent can't hold a
      Monitor tail — **skip the tail wiring**. The lead drives you directly (dispatch → result) and
-     relays the vine. The tail wiring above is the **terminal-seat path**.
-   - **Joining mid-session? Backfill the vine history first.** A live tail only shows messages from
-     _now_ forward. To inherit the session's context, replay it with
-     **`grapevine pull <channel>`** — finite, it prints the history and **exits**. **When the lead
-     cleared the channel at convene (`--fresh`) that history is _this session_** rather than an
-     archive of past ones, which is what makes it the usual right catch-up. **Do not treat the
-     clearing as given: it is a default the lead can deliberately skip**, and a lead has — so if
-     what you pull reaches back further than this session, **the vine was not cleared; nothing is
-     broken.** Anchor at a known message id with `--since <id>`
-     on a long-running channel, then fill gaps selectively with
-     **`grapevine read <channel> <id>`** — note it takes the **channel _and_ the id**, and does not
-     take `--as`. A bare `grapevine read <id>` exits non-zero with a usage line. A seat who mis-called
-     it once read the non-zero exit as "this command is broken", fell back to `pull --since | head -c`
-     for an entire session, and reported the tool as defective — with the correct usage sitting in his
-     own scrollback. **On the vine and the board, a usage error and a broken tool look identical if
-     you don't read the output** — those tools answer every failure with the same bare usage line, so
-     the exit code is the only other signal and it cannot tell the two apart.
-     - **Scoped deliberately, and do not widen it.** That is a fact about _those_ tools, not a law
-       about command-line tools. A tool that hands you a **structured error** has already told you
-       which one happened — treating its error as "probably broken" throws away the answer you were
-       given. **Read what you actually got before deciding a tool is broken**; that instruction
-       holds everywhere, and it is the only part of this that generalizes.
-     - **Every wire needs this, not just the vine.** Your `comms` wire has
-       its own catch-up verb and the same rule applies: **a finite read to catch up, the live follow
-       only for the Monitor.** Reach for `--help` on the wire you're actually using rather than
-       assuming its verbs match the one you learned first — **these tools are siblings, not clones.**
-       - **On `comms` specifically, catching up is not the same job as on the vine, and
-         `anthill:comms` is the skill for it.** A vine the lead cleared at convene gives you this
-         session from `pull`. **Nothing clears the comms log — ever, by any lead** — no `--fresh`, and
-         convene has no notion
-         of a comms channel — so a bare read replays _every session the team has ever had_. Anchor
-         with `--since <id>`. That skill also covers the failure you cannot see from here: a wire
-         that silently delivers nothing looks exactly like a quiet channel. **Attaching `follow` is
-         the one moment that failure is visible** — it reports the gap it is skipping as it starts,
-         so read that notice. **A wire that dies later still goes quiet without saying so**, which
-         is why the confirm-receipt beat below is a separate check and not a duplicate of this one.
-     - **These wires are separate tools that happen to sit side by side — assume nothing carries
-       across them.** Not flags: `--as` identifies the writer on one verb, scopes the results on
-       another, and is refused outright by a third — each correct, on its own tool. Not even the way
-       you'd _ask_: some verbs honour `--help`, others silently ignore it and just run. **Every
-       cross-wire rule stated here has turned out to have an exception**, including the ones written
-       to warn you about exceptions, so this bullet deliberately gives you no procedure to carry.
-       **Prefer the commands your manifest already resolved.** Beyond those, reach for the tool's own
-       documentation rather than a habit from its neighbour — and when something surprises you, read
-       the output before concluding the tool is broken.
-     - **`read <channel> <id>` is the only way to fetch exactly one message**, and that matters more
-       than gap-filling: it is not a narrower range, it is _not a range_. Any `--since` window runs to
+     relays what lands on comms. The wiring above is the **terminal-seat path**.
+   - **Joining mid-session? Backfill first, and you need an ANCHOR to do it.** A live follow only
+     shows messages from _now_ forward, so it cannot give you the session you walked into. Catch up
+     with the **finite read** verb — it prints history and **exits** — and use the live follow **only**
+     for the Monitor. `anthill:comms` is the skill for this and it carries the craft.
+     - **⚠ NOTHING CLEARS THE COMMS LOG — ever, by any lead.** There is no `--fresh`, and convene
+       opens nothing. **So a bare read replays every session the team has ever had**, and "start at
+       the beginning" is not a catch-up, it is an archive dump. **Anchor to the session's starting id**
+       — which the lead owes you out of band, in the brief or on your card. **If you were not given
+       one, ask.** Do not reconstruct it by reading backwards until the messages look unfamiliar.
+     - **⚠ AND THE ANCHOR CANNOT BE PUBLISHED ON THE CHANNEL IT BOUNDS.** A lead who posts
+       _"do not read below #560"_ as message #560 has written a rule whose only route to the reader is
+       through the thing it forbids — **measured: two seats over-read it in one session, and both had
+       to break it to learn it.** If that is where your anchor came from, **you have not been given
+       one; you have been given evidence that this failed.** Say so rather than reporting a clean join.
+     - **⚠ AN UNKNOWN FLAG IS REFUSED BY NAME. AN UNKNOWN POSITIONAL IS SWALLOWED IN SILENCE — and
+       that is the direction that will cost you a session.** Measured on this wire, one command apart:
+       ```
+       comms read --channel <ch> --zzz999   ->  exit 1  ok:false  "Unknown option '--zzz999'.
+                                                          Valid flags: --channel, --format, --id, --last, --since"
+       comms read --channel <ch> zzz999     ->  exit 0  ok:true   THE ENTIRE LOG, from message #1
+       ```
+       **The second one is what a seat produces by reaching for a neighbouring tool's signature** —
+       positional-shaped `read <channel> <id>` habits are the common source — **and it does not fail.
+       It succeeds, plausibly, with the wrong answer.** You get a wall of history, exit 0, and nothing
+       anywhere says you asked the wrong question.
+       - **So use the FLAGS, always: `--since <id>` for a window, `--id <id>` for exactly one
+         message.** If a read hands you far more than you expected, **suspect your invocation before
+         you suspect the channel** — the size of the result is your only tell.
+       - **This asymmetry is a property of the tool as it stands today, not a law.** It may be closed;
+         a guard for it has been attempted. **Check what you actually got rather than trusting either
+         this paragraph or an exit code** — that instruction is the only part here that always holds.
+     - **`--help` on the verb you are actually using, rather than the one you learned first.** These
+       tools are siblings, not clones: a flag that identifies the writer on one verb scopes results on
+       another and is refused outright by a third, each correctly. **Prefer the commands your manifest
+       already resolved** over any invocation you derive.
+     - **And the failure you cannot see from here: a wire that silently delivers nothing looks exactly
+       like a quiet channel.** **Attaching the follow is the one moment that failure is visible** — it
+       reports the gap it is skipping as it starts, so read that notice. **A wire that dies later still
+       goes quiet without saying so**, which is why the confirm-receipt beat below is a separate check
+       and not a duplicate of this one.
+     - **`--id <id>` is the only way to fetch exactly one message**, and that matters more than
+       gap-filling: it is not a narrower range, it is _not a range_. Any `--since` window runs to
        _now_, so on a channel peers are actively writing to it will eventually contain a peer's
        message. When you need one specific message and nothing else, no choice of `--since` gets you
        there.
@@ -172,12 +174,12 @@ status`** shows who's on + the board.
        behaves.** The mechanism belongs to someone else and may be fixed tomorrow; a sentence naming
        it would become false on the day it is repaired, and you would still need the check. **Do not
        generalise it into "these tools truncate"** — that widening has been falsified here before.
-     - **NEVER use `tail` to catch up — use it only for the live Monitor.** `grapevine tail
---from-start | grep …` looks like the obvious backfill and is **broken by construction**:
-       `grep` block-buffers so a finite backfill never flushes, and a live `tail` holds the pipe
-       open forever so it never exits. You get **zero output and then a timeout** — and the natural
-       reading of that is "the channel is empty", so you'd join contextless and never know what you
-       missed. Three seats hit this independently in one session before it was diagnosed
+     - **NEVER catch up with a LIVE stream — the streaming verb is for the Monitor and nothing else.**
+       Piping a from-the-start live follow into `grep` looks like the obvious backfill and is **broken
+       by construction**: `grep` block-buffers so a finite backfill never flushes, and a live stream
+       holds the pipe open forever so it never exits. You get **zero output and then a timeout** — and
+       the natural reading of that is "the channel is empty", so you'd join contextless and never know
+       what you missed. Three seats hit this independently in one session before it was diagnosed
        ([#54](https://github.com/ichabodcole/anthill/issues/54)). `pull` for catch-up, `tail` for live.
 
 4. **Mint your session scratch.** Create your running-capture file:
@@ -200,14 +202,14 @@ status`** shows who's on + the board.
        the whole team** — from a directory the docs had called safe. Put throwaway _configs_ outside
        the repo entirely.
 
-5. **Signal ready on EVERY wire your manifest armed** — a short "in, grounded, here's my lane".
-   **Not the vine alone.** Your lead audits who showed up by looking at **comms**, so a seat that
-   introduces itself only on the vine is counted as **missing** — and the lead's next move is to go
-   chase a seat that was never told to post there. Post the substance on comms and a pointer on the
-   vine, or post on both; what you must not do is pick one and assume the other is covered.
-   _(This instruction said "on the vine" while `convene` told the lead to count on comms. Both were
-   individually reasonable and they only meet in a live session — found by an outside reader, not by
-   either document's author.)_
+5. **Signal ready on comms** — a short "in, grounded, here's my lane". **That is where your lead audits
+   who showed up**, so it is the post that decides whether you are counted as present or chased as
+   missing.
+   _(This instruction used to name a different wire than `convene` told the lead to count on. **Each
+   sentence was defensible in its own file** and together they produced a lead finding zero seats and
+   going to chase seats that were never told to post there — found by an outside reader running both
+   documents as one procedure, not by either author. **With one wire the contradiction is gone; the
+   lesson is that neither owner could see it**, so when a rule spans two files, check the other file.)_
    Then **claim your bounty card**
    — advance it to `doing` when you actually start with **`bounty update <id> --status doing`** (the
    bounty CLI has **no `move` verb** — `update <id> --status <col>` is how you change columns) — or
@@ -219,23 +221,23 @@ status`** shows who's on + the board.
      wrong card by _title-adjacency_ — it looks right, so nothing catches it.
    - **Ratify your seams, then author your lane (the plan-phase gate).** If the lead posted a plan
      **skeleton**, then _before_ you advance a card to `doing`: (1) **ratify or falsify each cross-seam
-     contract your lane touches** — an explicit vine acknowledgement (_"ratified"_ / _"falsified —
+     contract your lane touches** — an explicit acknowledgement on comms (_"ratified"_ / _"falsified —
      here's the correction"_), never silence; you hold your domain's reflexes, so catching a wrong
      seam now is the whole point. (2) **Author your own lane** — `plan/<seat>.md`, the file-level HOW
      for your slice, against the _ratified_ seams (grounded paths, right-sized TDD tasks, no
      placeholders — the craft is in `anthill:plan`'s `methodology.md`). Nothing to ratify (solo lane,
      no shared seam)? Proceed.
      - **Joined mid-plan-phase?** You weren't there for the lead's convene brief, which is where the
-       ratify gate normally gets explained — the discipline lives in those vine messages, not in your
+       ratify gate normally gets explained — the discipline lives in those comms messages, not in your
        grounding manifest, so a joiner can miss it entirely. If a plan skeleton exists, **read its
        "How this plan is authored" section** before you move a card; that's the gate's source of
        truth. Don't infer from a self-contained assignment message that there is no gate.
 
 6. **Work** your lane per the SOP + your seat doc. As you go, **capture ah-ha judgments to your
    scratch** (the reasoning + the generalizable lesson — not lesson-less events) for synthesis at
-   finalize. Route questions + decisions to the lead on the vine, not direct to the human — the lead
-   is the routing **default**, not proof the human isn't watching. **Blocked on a human? Say so on the
-   vine** — waiting silently looks exactly like working.
+   finalize. Route questions + decisions to the lead on comms, not direct to the human — the lead
+   is the routing **default**, not proof the human isn't watching. **Blocked on a human? Say so on
+   comms** — waiting silently looks exactly like working.
    - **Dispatching a subagent is available to you — it just never occurs to seats.** A survey of two
      implementation-heavy seats after a 16-slice build found **zero** dispatches, and neither seat had
      _considered_ them: serial lanes, small per-step verdicts, and a peer verifier already acting as a
@@ -276,12 +278,17 @@ status`** shows who's on + the board.
   `.anthill/principles.md` is short and is the highest-leverage read in that list. A doc flagged
   **⚠ unfilled template** in your join output is _not_ evidence the project lacks that content —
   it means nobody wrote it yet. Say so to the lead rather than inferring from it.
-- ◻ **Caught up** if you joined mid-session — `grapevine pull <channel>` (finite). **Never**
-  `tail --from-start | grep` for backfill: it returns nothing and then times out, which reads as
-  "empty channel". For **one specific message**, use `grapevine read <channel> <id>` — channel _and_
-  id, no `--as`; a bare `read <id>` exits non-zero with a usage line that is easy to misread as a
-  broken tool. That is how the **vine and board** fail; don't carry the reflex to a tool that hands
-  you a structured error instead — read the output you got.
+- ◻ **Caught up** if you joined mid-session — the **finite read** verb, anchored with `--since <id>`,
+  never the live follow. A live stream piped into `grep` returns nothing and then times out, which
+  reads as "empty channel". For **one specific message**, `--id <id>`.
+  **⚠ And you need an anchor from the lead**, because nothing clears this log and a bare read replays
+  every session the team has ever had. **An anchor published as a message on the channel it bounds is
+  not an anchor** — the only way to learn it is to break it, measured at n=2 in one session.
+- ◻ **Used the FLAGS, not a positional.** Measured, one command apart: an unknown **flag** is refused
+  by name, exit 1; an unknown **positional** is **swallowed — exit 0, `ok:true`, and the entire log
+  comes back.** The silent one is what you produce by reaching for a neighbouring tool's signature,
+  and it does not fail: **it succeeds with the wrong answer.** If a read hands you far more than you
+  expected, suspect your invocation before you suspect the channel.
 - ◻ **Confirmed the backfill was COMPLETE, not merely successful.** Send it to a **file** and **parse
   the file** — not through a pipe, not straight into your context. **A payload that does not parse is
   a payload you did not fully receive.** Exit 0 is not the check, and neither is any completeness
@@ -289,22 +296,23 @@ status`** shows who's on + the board.
   thing a truncation eats. This is a **separate beat from the one above**, and strictly the more
   dangerous half: that one fails visibly, this one does not.
 - ◻ **Checked what the SESSION says before treating this list as unconditional.** The manifest and
-  this checklist are generated with **no session context** — which wires are armed and whether the vine
-  was cleared are the lead's calls, made after both were written. **A live ruling beats either of
-  them.** Arming is reversible: if you armed a wire the session had ruled against, kill it and say so
+  this checklist are generated with **no session context** — which wires are armed, and what anchor
+  this session starts from, are the lead's calls, made after both were written. **A live ruling beats
+  either of them.** Arming is reversible: if you armed a wire the session had ruled against, kill it and say so
   — that is a minute, and it is how every recorded instance ended.
-- ◻ **On the vine** — grapevine tail wrapped in Monitor, presence registered (terminal-seat path)
-  **— unless this session says otherwise.**
+- ◻ **On `comms`** — your manifest always carries this wire, and it registers your presence. Monitor-wrap
+  what it gives you, exactly as given — **no `grep` filter on this one; it emits no keepalives, and a
+  filter here drops real messages.** Never reconstruct the command, and never go looking for the tool
+  to decide. **`comms` missing from the manifest is a bug — raise it**, don't carry on unwired.
+  **Catching up is a separate verb from following**: nothing clears this log, so a bare read replays
+  every past session. Anchor with `--since <id>`; see **`anthill:comms`**.
 - ◻ **On the board** — board tail wrapped in Monitor. Use the filter **verbatim from your join
   output**: it needs `grep -E` (plain `grep` treats `(a|b)` as a literal, so the Monitor stays
   silently empty) and `--line-buffered` (or frames are held back until a block fills).
-- ◻ **On `comms`** — your manifest always carries this wire. Monitor-wrap what it gives you, exactly as
-  given — **no `grep` filter on this one; it emits no keepalives, and a filter here drops real
-  messages.** Never reconstruct the command, and never go looking for the tool to decide.
-  **`comms` missing from the manifest is a bug — raise it**, don't carry on unwired.
-  Catching up on comms is **not** the vine's procedure — nothing clears that log, so a bare read
-  replays every past session. Anchor with `--since <id>`; see **`anthill:comms`**.
-- ◻ **Introduced** on the vine — a short "in, grounded, here's my lane".
+  **Unlike `comms`, this one can come back `null`** — the board is a separate project on its own
+  cadence, so its absence is a real state your manifest reports rather than a bug. **Arm what you were
+  given; tell your lead what you were not.**
+- ◻ **Introduced** on comms — a short "in, grounded, here's my lane".
 - ◻ **Confirmed received, not just sent.** Get an explicit acknowledgement that your "in, grounded"
   **landed** — from the lead, naming your message. A wire that delivers nothing is indistinguishable
   from a quiet channel, and the first minute is the only cheap time to find out you are unwired.
@@ -313,7 +321,7 @@ status`** shows who's on + the board.
   message is the only thing that tells you **your outgoing half works and a human-or-agent on the
   other end processed it.** Two directions, two checks; one has never covered the other.
 - ◻ **Code-bearing message? Send it safely — on _every_ wire, not just the one you learned this on.**
-  **Any** `send` on **any** of these tools — grapevine, comms, whatever the manifest hands you next —
+  **Any** `send` on **any** of these tools — comms, the board, whatever the manifest hands you next —
   whose body carries backticks or code MUST go via `--stdin` (or a quoted heredoc). An un-quoted body
   is command-substituted by bash (backticked spans get executed, apostrophes mangle) _before the tool
   ever sees it_, corrupting the message or partially running it. **The tool cannot defend against
@@ -334,9 +342,9 @@ status`** shows who's on + the board.
   **diff what you got against what you preserved** rather than trusting the exit code.
 - ◻ **Scratch minted** — `.anthill/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
 - ◻ **Route through the lead — and SAY when you're waiting.** Questions + decisions go to the
-  lead/liaison on the vine, not direct to the human. But routing through the lead is a **default, not
+  lead/liaison on comms, not direct to the human. But routing through the lead is a **default, not
   an exclusive channel** — the human can attach to your pane at any time, so never assume you're
-  unobservable. And if you end up **blocked waiting on a human answer, post that on the vine**:
+  unobservable. And if you end up **blocked waiting on a human answer, post that on comms**:
   correct waiting produces no signal anywhere — not on the board, not in the tree, not in any sweep —
   so a silently-waiting seat is indistinguishable from a working one. One team lost an unknown stretch
   to exactly this.

@@ -1,7 +1,16 @@
 # Comms as the default team wire — the route from "it works" to "we can recommend it"
 
-**Created:** 2026-08-04 · **Status:** Draft — a PROPOSAL. **There is no `plan.md` yet and session 9
-must produce one.**
+**Created:** 2026-08-04 · **Status:** ✅ **PROPOSAL ACCEPTED AND LARGELY DELIVERED.** `plan.md` exists
+(authored session 9) and steps 1–2, 4 and 5 have shipped across sessions 9–11. **Two steps remain:
+(3) rotation and (6) the swap run — [see the NEXT PHASE section of `plan.md`](./plan.md#-next-phase--what-session-12-picks-up),
+which is the current runway. Read that, not this file, to start work.**
+
+> ⚠ **This document is the WHY and the WHAT, and parts of it are now superseded by what execution
+> found.** Two known stale claims, both corrected in `plan.md` rather than here: the Non-goals section
+> still says grapevine _"stays the cross-project wire"_ (the human ruled it leaves **entirely**), and
+> exit criterion v1 here was **arithmetically unmeetable** and has been replaced twice — **v3 is the
+> live one.** Treat this file as the record of the decision, not as instructions.
+
 **Supersedes:** the [team-comms spike](../_archive/team-comms-spike/), archived 2026-08-04 — the spike's
 question (_does an in-repo wire work?_) is answered; this project ships it and decides the guidance.
 **Author:** maestro (session 8), from the human's three questions at session 8's close

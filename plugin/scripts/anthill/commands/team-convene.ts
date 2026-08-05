@@ -8,22 +8,7 @@ import { type BoardCounts, readBoardCounts, requireConfig } from "./team-support
 
 interface ConveneData {
   channel: string;
-  channelOpened: boolean;
   boardOpened: boolean;
-  /**
-   * NARROWED, deliberately: this is now `true` ONLY when a clear actually
-   * happened. It used to be "the flag was forwarded", so an existing
-   * `if (d.fresh)` reader becomes MORE correct rather than less — it now means
-   * what every consumer already believed it meant. That is the only safe
-   * direction to move a boolean whose readers you cannot all see.
-   */
-  fresh: boolean;
-  /** The full outcome, because `fresh: false` alone cannot distinguish
-   * "not requested" from "requested and suppressed" from "could not tell". */
-  freshOutcome: FreshOutcome;
-  /** Archive path written before a clear — evidence, non-null only when cleared. */
-  freshSnapshot: string | null;
-  topicSet: boolean;
   board: BoardCounts | null;
   leadDoc: string;
   /**
@@ -52,103 +37,6 @@ interface ConveneData {
  */
 export function bountyOpenArgs(channel: string): string[] {
   return ["open", "--session-key", channel, "--pin", "--no-open"];
-}
-
-/**
- * What `--fresh` ACTUALLY did — never what was requested.
- *
- * `fresh: true` used to mean "I forwarded the flag to grapevine", and a lead
- * read it as "the log was cleared" and told the team so on the vine. It was
- * false: he had wired his own tail first, `--fresh` is a documented no-op while
- * subscribers are connected, and **his own tail was the subscriber that
- * suppressed his own clear**. A joining seat had to date messages by hand to
- * separate two sessions.
- *
- * The honest answer was in grapevine's response the whole time (`cleared`,
- * `snapshot`) and convene discarded it to report the flag back. So this is not
- * new information — it is the existing information stopped being thrown away.
- *
- * `unknown` is a real state and must never collapse into `false`: "grapevine
- * did not clear" and "we could not tell whether grapevine cleared" are
- * different, and reporting the optimistic value for an unobserved thing is the
- * `gap: null`-vs-`0` rule (seams.md Contract 6(c)) on a second surface.
- */
-export type FreshOutcome = "not-requested" | "cleared" | "skipped-subscribers-present" | "unknown";
-
-export interface FreshResult {
-  outcome: FreshOutcome;
-  /** The archive path grapevine wrote before clearing — the EVIDENCE, and the
-   * thing the backlog report checked by hand to prove no clear had occurred.
-   * Non-null only on `cleared`. */
-  snapshot: string | null;
-}
-
-/**
- * PURE: read what `grapevine open [--fresh]` reports back about the clear.
- *
- * Measured on a scratch channel, one variable held (a subscriber attached or
- * not) — grapevine answers `{"ok":true,"channel":{…,"cleared":bool,"snapshot":
- * string|null,…}}`, with `cleared:true` + a snapshot path when it clears and
- * `cleared:false` + `snapshot:null` when a subscriber suppresses it.
- *
- * Anything we cannot read — unparseable stdout, a missing field, a failed open,
- * a spellbook output-format change — is `unknown`, NOT `false`. Degrading to
- * "did not clear" would be a fresh instance of the bug this function exists to
- * fix: an instrument answering a coarser question than the one asked, and
- * looking right doing it.
- */
-export function interpretFresh(requested: boolean, ok: boolean, stdout: string): FreshResult {
-  if (!requested) return { outcome: "not-requested", snapshot: null };
-  if (!ok) return { outcome: "unknown", snapshot: null };
-  let cleared: unknown;
-  let snapshot: unknown;
-  try {
-    const parsed = JSON.parse(stdout.trim()) as { channel?: Record<string, unknown> };
-    cleared = parsed?.channel?.cleared;
-    snapshot = parsed?.channel?.snapshot;
-  } catch {
-    return { outcome: "unknown", snapshot: null };
-  }
-  if (cleared === true) {
-    return { outcome: "cleared", snapshot: typeof snapshot === "string" ? snapshot : null };
-  }
-  if (cleared === false) return { outcome: "skipped-subscribers-present", snapshot: null };
-  return { outcome: "unknown", snapshot: null };
-}
-
-/**
- * PURE: the human-facing phrase for a fresh outcome, and the WARNING when the
- * clear a lead asked for did not happen.
- *
- * A warning rather than a quiet field, because the failure is a lead acting on
- * the value: he read `fresh: true`, told the team "what you see here IS this
- * session", and it wasn't. The field being honest is necessary and was not
- * sufficient — nobody re-reads a setup command's envelope, which is why
- * `principles.md` names setup commands as the worst place for a coarse
- * instrument.
- */
-export function freshNotice(r: FreshResult): { phrase: string; warning: string | null } {
-  switch (r.outcome) {
-    case "not-requested":
-      return { phrase: "", warning: null };
-    case "cleared":
-      return {
-        phrase: ` (fresh — prior log CLEARED, snapshot: ${r.snapshot ?? "unreported"})`,
-        warning: null,
-      };
-    case "skipped-subscribers-present":
-      return {
-        phrase: " (fresh — NOT cleared: subscribers connected)",
-        warning:
-          "`--fresh` did NOT clear the log: grapevine skips the clear while subscribers are connected, and your own tail counts as one. The channel still holds the PREVIOUS session's messages — do not tell the team that what they see is this session. Re-run with no tails attached, or anchor catch-up to an id instead.",
-      };
-    case "unknown":
-      return {
-        phrase: " (fresh — OUTCOME UNKNOWN)",
-        warning:
-          "`--fresh` was requested but grapevine's answer could not be read, so whether the log was cleared is UNKNOWN — not 'no'. Check `grapevine pull` before making any claim about what the channel contains.",
-      };
-  }
 }
 
 export interface BountySessionRow {
@@ -214,29 +102,39 @@ export function boardShadowWarning(
   );
 }
 
-// `anthill convene` — ensure the team infra is up: open the grapevine channel
-// (idempotent), optionally set the topic, and report the bounty board state.
-// Channel + lead come from config. Does NOT do human Q&A — that's the skill's job.
+// `anthill convene` — ensure the team infra is up: report the bounty board state
+// and emit the lead's own comms wire. Channel + lead come from config. Does NOT
+// do human Q&A — that's the skill's job.
 //
 // Note: bounty's `open` is NOT idempotent (always spawns a fresh daemon), so
 // convene only REPORTS the board state rather than force-opening one.
+//
+// STEP 4 (phase 3): convene OPENS NOTHING on the discussion wire. It used to
+// invoke `grapevine open` (and `grapevine topic`), which is what made
+// "absence of OPENING" false for every session that ran it — including the one
+// that deleted it. `comms` is an append-only log with no open/attach step, so
+// there is nothing to replace the call WITH; the capability is gone, not moved.
+//
+// `--fresh` and `--topic` went with it, and that is a DELETION rather than a
+// migration: `--fresh` forwarded a flag to `grapevine open` and reported
+// grapevine's answer back, so its only referent was the log this step removes.
+// Measured before it was cut (S11-8): `convene --fresh` cleared a FOUR-line vine
+// log while the comms log's 559 messages were untouched. It never reached the
+// wire we use, so nothing that worked stopped working. Starting a clean session
+// log is session ROTATION's job (a different card) and was never this flag's.
+// `--topic` has no successor: comms has no topic concept, and building one to
+// preserve a flag would be a want, not a migration.
 export const teamConveneCommand = defineAnthillCommand({
   meta: {
     name: "convene",
-    description: "Ensure the team channel + board are up (idempotent grapevine open)",
+    description: "Report the team board state and emit the lead's comms wire",
     scope: "workspace",
   },
   args: {
     channel: {
       type: "string",
-      description: "Grapevine channel (default: config.channel)",
+      description: "Team channel (default: config.channel)",
       valueHint: "name",
-    },
-    topic: { type: "string", description: "Channel topic to set", valueHint: "text" },
-    fresh: {
-      type: "boolean",
-      description:
-        "Snapshot + clear a dormant channel's prior-session log before opening (safe no-op if seats are connected)",
     },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
@@ -245,39 +143,7 @@ export const teamConveneCommand = defineAnthillCommand({
     const format = resolveFormat(ctx.args.format);
     const config = requireConfig(format, "convene");
     const channel = (ctx.args.channel as string | undefined) || config.channel;
-    const topic = ctx.args.topic as string | undefined;
-    const fresh = ctx.args.fresh === true;
     const warnings: string[] = [];
-
-    let channelOpened = false;
-    let topicSet = false;
-    // `unknown` until grapevine answers — so a throw on the path below (an
-    // unresolved CLI) leaves an honest "could not tell", never a confident false.
-    let freshResult: FreshResult = fresh
-      ? { outcome: "unknown", snapshot: null }
-      : { outcome: "not-requested", snapshot: null };
-    try {
-      const grapevineCli = resolveCoordCli("grapevine");
-      const open = await execCoord(grapevineCli, ["open", channel, ...(fresh ? ["--fresh"] : [])]);
-      freshResult = interpretFresh(fresh, open.ok, open.stdout);
-      if (open.ok) {
-        channelOpened = true;
-      } else {
-        warnings.push(`grapevine open failed: ${firstErrorLine(open.stderr, "unknown error")}`);
-      }
-      if (topic !== undefined) {
-        const setTopic = await execCoord(grapevineCli, ["topic", channel, topic]);
-        if (setTopic.ok) {
-          topicSet = true;
-        } else {
-          warnings.push(
-            `grapevine topic failed: ${firstErrorLine(setTopic.stderr, "unknown error")}`,
-          );
-        }
-      }
-    } catch (err) {
-      warnings.push(`grapevine CLI unresolved: ${(err as Error).message}`);
-    }
 
     // Own the board-open: keyed + pinned so every seat verb binds THIS team's
     // board ambiently (via `.bounty-session` / `$BOUNTY_SESSION_KEY`), never a
@@ -324,9 +190,6 @@ export const teamConveneCommand = defineAnthillCommand({
           handle: config.lead,
         })
       : null;
-    const freshWarning = freshNotice(freshResult).warning;
-    if (freshWarning !== null) warnings.push(freshWarning);
-
     if (!config.lead) {
       warnings.push(
         "no lead resolvable from config, so no comms incantation was emitted — the lead will be UNWIRED unless it runs `anthill join <handle>` itself",
@@ -335,12 +198,7 @@ export const teamConveneCommand = defineAnthillCommand({
 
     const data: ConveneData = {
       channel,
-      channelOpened,
       boardOpened,
-      fresh: freshResult.outcome === "cleared",
-      freshOutcome: freshResult.outcome,
-      freshSnapshot: freshResult.snapshot,
-      topicSet,
       board,
       leadDoc,
       commsIncantation,
@@ -353,9 +211,10 @@ export const teamConveneCommand = defineAnthillCommand({
       data,
       startedAt: started,
       renderText: (d) => {
-        const lines: string[] = [
-          `Channel "${d.channel}": ${d.channelOpened ? "up" : "NOT opened"}${freshNotice({ outcome: d.freshOutcome, snapshot: d.freshSnapshot }).phrase}${d.topicSet ? " (topic set)" : ""}`,
-        ];
+        // No "up"/"NOT opened" verdict: there is nothing to open. Reporting a
+        // liveness state for an append-only log would be a status claim the
+        // command never observed — the shape of defect `--fresh` was cut for.
+        const lines: string[] = [`Team channel: "${d.channel}" (comms)`];
         if (d.board) {
           lines.push(
             `Board "${d.channel}" (key-bound): todo ${d.board.todo} · doing ${d.board.doing} · review ${d.board.review} · done ${d.board.done}`,

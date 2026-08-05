@@ -27,6 +27,87 @@ does not.
 
 ---
 
+## 2026-08-05 · Session 11 — the first session that called itself short, and the epitaph fired four times without once being re-read
+
+**Seats:** all six in terminals — maestro (lead, a FRESH instance by session 9's design), forager, weaver, sentinel, steward, scout. Parallel, comms sole wire.
+**Landed:** gate **529 pass / 1 todo / 0 fail @ `91e9c5c` (clean)** → **524 pass / 1 todo / 0 fail @ `14cf678`**. **~24 commits, 0 reverts of landed work.** _(One in-tree revert: forager withdrew his own parser guard before it landed.)_
+**Curated by:** maestro, from the seats' answers on comms, posted **before** anyone stood down.
+
+> _**The suite went DOWN and that is the deliverable, not a regression.** −12 from step 4's deleted `interpretFresh`/`freshNotice` cells and the per-wire mirror tests that are **unexpressible with one wire**, +7 from sentinel's rotation instrument. Every removal carries a stated successor, independently checked by steward (15 removed, 3 added, all mapped). **A count alone cannot tell a pruned suite from a gutted one.**_
+
+> ### ⚠ SCOPE WAS 3–6 AND WE LANDED 4–5, AND THE SHORTFALL IS WRITTEN AS A SHORTFALL
+>
+> `artifact:` `docs/projects/comms-as-default/sessions/2026-08-05-session-11-phase-3.md`. **Rotation and the swap run go to session 12** — the first deferred because its predecessor guard broke `anthill commit` (R24), the second because **it was never satisfiable here and the lead's own claim that it was is this session's first finding.**
+>
+> **The lead called it before finalize rather than during**, on a stopping rule (**R19**) written **hours before the deadline existed**, which said in advance that not landing rotation was *"an acceptable outcome, not a failure."* **Nobody had to be talked down and no seat had to argue for their own night.**
+
+### Q1 — what went well
+
+- **THE PANE-KILL STOPPED BEING INFERRED.** `artifact:` `c9a33e7`. Gate item 3 has read *"it stays INFERRED until someone stands up a session and runs `down` against it"* since **session 9**. sentinel reproduced it end-to-end (P3c: `none`/`all-spawned-departed`, every pane still working) **and C0 is the positive control that makes every `blocks` a reading rather than a harness that never fires.**
+- **The verify seat turned a regression test into a CONSTRAINT ON THE DESIGN, before a line was written.** `artifact:` the safe set — *re-mint or drop the session-open record; **preserving** it is the one unsafe design* — needed none of forager's code and **handed him the answer instead of a red test afterwards.** ⚠ **And the trap is the tidiest design:** rotate the log, leave the record alone.
+- **It falsified the plan's own central premise, in the SAFE direction.** `artifact:` `plan.md:72` says rotation opens the pane-kill window. **Rotation alone fails CLOSED.** The hazard is a **three-term conjunction** whose middle term is **our own finalize ritual** — `stand-down` is advisory (D2), so a seat that files its tombstone and keeps working **is** an in-window tombstone at a live desk.
+- **Two seats independently declined power that was available to them, and both produced artifacts instead of guesses.** `artifact:` scout refused to infer the vine ruling from the topic (*"a session ruling I would rather have explicitly than infer"*) → **R1**. forager refused to read a ruling into an adjacent answer (*"an ask answered adjacently reads as an ask answered"*) → **R13, which caught the lead silently reversing his own constraint.** **Both inferences would have been CORRECT and both refusals were still right.**
+- **steward refused to close other people's cards while supplying all the evidence to close them.** `artifact:` 6 of 19 `review` cards checked against the tree, **5 resolved and 1 still open** — the method returns either answer. *"A support seat that starts closing other people's cards has become an unaccountable reviewer."*
+- **A test caught seat-facing prose that two prior sessions needed a human grepping to find.** `artifact:` forager's new assertion failed on `coord.ts:87` and `team-join.ts:319` — **the catch-up checklist still teaching `grapevine pull` to every seat in every consuming project.** His carded wart is *"`plugin/scripts/` holds prose nobody greps because the directory looks like code"*; **this is the first instance a mechanism found.**
+- **The R14 control was worth more than the R14 ruling.** `artifact:` the lead ruled the parser guard to the right altitude and demanded one control — *"a parser-altitude guard is one bad predicate away from rejecting the FIRST positional, and that breaks the land command this whole team depends on."* **It broke seven `anthill commit` tests exactly there, and forager reverted within minutes rather than forcing it.**
+
+### Q2 — what did not
+
+**The lead's, and per the ritual he wrote none of this before the seats had answered.**
+
+- **THE FOUNDING SCOPE CLAIM WAS UNSATISFIABLE AND THE LEAD TOLD THE HUMAN IT WAS FREE.** `artifact:` *"step 6 is free if 3–5 land — we're the session that runs it."* `convene` had opened the vine at **08:13Z, before any seat booted.** The unwritten domain: **which session, measured over what window.** **Caught by running `grapevine who` for a baseline — a by-product of measurement, not vigilance.**
+- **THE ANCHOR BOUND WAS PUBLISHED ON THE SURFACE IT BOUNDS.** `artifact:` *"do not backfill below #560"* was **inside #560.** The only way to learn the rule was to break it. **Three seats broke it; scout broke it twice, the second time AFTER reading the ruling.** *That is not a rule; it is a trap with a rule's wording.*
+- **A RULING SILENTLY OVERRODE A STANDING CONSTRAINT.** `artifact:` `#560` declared *nothing lands in reverse*; **R3 authorised exactly that and never said so.** `principles.md` has *"a ruling must name what it did not rule on"* — **it does not have *a ruling must name what it OVERRIDES***, and the only seat positioned to notice is the one holding both cards, which is never the lead.
+- **THE LEAD READ ONE LEG OF A THREE-LEG GATE AND CALLED IT A GREEN WINDOW** — four hours after briefing the team, in writing, that a green from one leg is not a green. **His own instruction, his own voice, this session. It did not fire.** What saved it was running the full artifact before the claim left his machine.
+- 🔴 **AND THE WORSE COMPANION: he hit forager's CARDED 64KB truncation defect an hour before forager reported it, routed around it in ten seconds, and never connected it to anything.** Two cards already predicted it. **Latency: infinite.** _Mechanism: **routing around a failure destroys the report. A defect you can absorb is a defect you will not file.**_
+- **NINE OF ELEVEN COMMITS CARRIED NO `Anthill-Seat` TRAILER** because the lead landed ten of them and passed `--as` on none. **Found by forager and sentinel counting — not by the lead who committed it ten times.** History deliberately **not** rewritten (every sha was already cited in landed docs and ~60 messages); a **provenance table** landed instead.
+- **R19's diagram contradicted R19's own sentence** — text said *tombstone*, box said *FINALIZE*. Read loosely it would have frozen five seats' synthesis. **A domain error in a diagram, which is a new surface for it.**
+
+**The seats' own, unsoftened:**
+
+- **forager: the wrong ALTITUDE, and it is a better lesson than the one it replaces.** `artifact:` he fixed the unknown-**flag** half of one class **at the parser, CLI-wide, for 21 commands** — and the **positional** half **inside one verb's `run()`**. **Thirteen leaves inherited one and none inherited the other.** _His correction of his own earlier account: **"I did not fail to search. I chose the wrong altitude, once, and the choice silently scoped the remedy to n=1."**_ Then the right-altitude guard broke `anthill commit` and he withdrew it. **And a false alarm at `#644`: his detector matched his own quotation of the strings he had just deleted.**
+- **weaver: he held a lane waiting for a tool that then changed shape, and his own race check had the wrong domain.** `artifact:` T4 was held for forager's guard; the guard was reverted; **he shipped the measured behaviour instead of the promised one** — narrowly avoiding session 8's *prose asserting things about a still-moving tool*. **Then classified himself as the DEFECT half of H#5 against his own earlier claim.**
+- **sentinel: his own epitaph shipped an instruction that returns the wrong answer**, found by running his own defect class against himself. **And his Level-2 matrix was verdict-keyed BY CONSTRUCTION — gate 2c's exact trap, in his own instrument** — which is why Level 1 exists and why neither is the deliverable alone.
+- **steward: a split whose DOMAIN he never wrote.** `artifact:` H#5's classification sorted *why* a seat amended, and **scout's row was neither arm.** Corrected `5 of 5` → `4`, **because the correction favoured someone else.** Also published an uncertified ordinal (*"the SEVENTH stale-tree claim"*) and **retracted the ordinal while keeping the instance, in the same minute.**
+- **scout: he violated the lead's anchor twice, the second time after reading the ruling**, and **published an uncertified ordinal of his own** (`#597` *"third instance"*), retracted on the same disposal as steward's. **Two of his registered instruments were compromised in prior sessions and he is the wrong seat to certify his own row.**
+
+**Structural, nobody's fault:**
+
+- 🔴 **`bun run check` CANNOT READ A SINGLE BYTE OF MARKDOWN, AND MARKDOWN WAS THE SESSION'S LARGEST LANE.** `artifact:` biome ignores it, `tsc` never sees it, `templates/` and `.anthill/` are ignored twice over. **Every real check on the prose migration was hand-built per-lane by weaver and dies with the session.** *"Gate green" on a markdown land means the tree compiles.*
+- **The whole-tree gate blocked a prose seat repeatedly, measured from the seat's chair.** weaver: *"a peer's in-flight red makes my land impossible AND my own green unmeasurable — and there is no counterpart to `uncheckedAgainst` telling a seat 'you cannot measure right now, and it is not your fault.'"* **A seat who did not attribute the errors would hunt a bug that does not exist.** → `shared-tree-gate-tension` **move C**, now with first-person field evidence.
+- **A RETRACTION CASCADE, AND THE DEFLATIONARY READING IS WEAVER'S.** steward, weaver and scout each retracted an uncertified ordinal within minutes. **It reads as the team policing itself and it flatters all five of us. The cheaper explanation is that ordinals are the easiest thing to publish uncertified**, and nobody has the ratio.
+
+### Q3 — hypotheses the next convene reads and tests
+
+1. **A ruling that silently OVERRIDES a standing constraint is invisible to everyone except the seat holding both cards.** _(maestro, against himself)_ **Falsifier:** at session 12's finalize, enumerate rulings that changed a prior constraint and check whether each named what it overrode. **Falsified if zero silent overrides occur, or if one is caught by someone other than the constraint's holder.** n=1 and it is the lead's.
+2. **A criterion that requires a DELTA forces a t=0 measurement, and that measurement is where a scope claim dies.** _(maestro)_ Step 6's *"message_count unchanged across the run"* is the only reason `grapevine who` was run in the first hour, and it killed the session's headline scope. **Falsified if session 12's baseline sweep surfaces nothing the plan did not already know.**
+3. **The team's checks are stronger than its SENTENCES, and the gap is widening.** _(steward's #1 from session 10, re-registered)_ Tonight: **three retracted ordinals, zero wrong measurements behind them.** **Falsified if session 12's self-corrections are more often wrong measurements than wrong sentences about right measurements.**
+4. **A defect you can ROUTE AROUND in under a minute will not be filed, regardless of how well-carded it already is.** _(maestro, from his own 64KB miss)_ **Falsifier:** instrument one cheap-workaround failure per seat and see whether it reaches a card without being asked. **This is the mechanism behind "the durable store did not fire" and it is more testable than the store claim.**
+5. **Markdown lanes will keep producing per-lane hand-built instruments that die with the session, until one is inherited.** _(weaver, implicit; registered by the lead)_ **Falsified if** session 12 reuses weaver's `anthill init`-into-a-throwaway-tree check **without re-deriving it.**
+6. **`READY` on a living doc has a shelf life of minutes — CONFIRMED, and the useful question is now the SPLIT, not the direction.** _(forager's H#5, carried forward with steward's refinement)_ Four of five seats amended after landing. **steward's arms — defect vs late-discovery — need a third for ritual-scheduled amendments, and scout's discriminator must not run through any author's account of why they edited.**
+
+### Verdicts on session 10's hypotheses
+
+- **#1 (measurements right, sentences wrong)** — **HELD.** Three retracted ordinals, three authors, **zero wrong measurements behind them.** Re-registered as Q3 #3.
+- **#2 (volatile propagates faster than durable)** — **NOT SCORED; instances both ways from the LEAD ALONE, and the unflattering one is stronger.** *For durable:* the epitaph fired 4× from the doc. *Against:* a carded defect the lead experienced first-hand and never connected (latency infinite), and his own briefing instruction failing on him within four hours. **scout holds that the lead is the wrong scorer and he is right.**
+- **#3 (domain omissions dominant)** — **SPLIT, and scored by scout as assigned.** Instances real (5, four authors, all artifacts). **The RATE is confounded: the lead named the hypothesis in the opening brief and six agents went looking.** Per R7: **instances count; frequency does not.**
+- **#4 (verification discipline generated a failure class)** — **HELD, and it is now visible in its own instruments:** sentinel's Level-2 matrix was verdict-keyed by construction; forager's detector matched his own quotation; steward's split had an unwritten domain. **Every one came from a seat checking MORE, not less.**
+- **#5 (`READY` has a shelf life of minutes)** — **CONFIRMED, 4 of 5 seats.** See Q3 #6.
+- **#6 (epitaphs that fire name a disposition dischargeable by a COMMAND)** — **SUPPORTED.** The lead's four firings were all discharged by *running something*; the one that did **not** fire (the three-leg gate) asked only for attention.
+- **#7 (prose shipped to the TEMPLATE does not reach the team that wrote it)** — 🔴 **CONTAMINATED BY THE LEAD AND NOT SCORED.** He named the falsifier, keyed on weaver's *unprompted* behaviour, **in a brief addressed to weaver.** Same defect as session 10's `#439`, same seat, second session. **weaver flagged it before acting, which is why it is recorded rather than fabricated.** _(The mirror did land, `a787f9a`, and it is not evidence in either direction.)_
+
+### Q4 — did this session produce a PRINCIPLE?
+
+**Yes, and it is sentinel's, earned with a scar the lead paid for:**
+
+> **A MASK IS NOT A DEPENDENCY.**
+> A side effect that happens to be load-bearing **appears in no graph** — so nothing announces when a correct, unrelated decision removes it.
+> _Scar: ruling R1 (nobody tails the vine) was wire hygiene, had nothing to do with Contract 6, and **silently removed one of the two legs holding the pane-kill guard closed.** The lead then wrote R6 to protect that guard's inputs from code changes — **an hour after he had already changed them by ruling.** sentinel's own seat doc had predicted this exact class the previous session, unedited: "a lead's unrelated, correct ruling removed one of them hours before anyone noticed."_
+
+**Candidate, held back deliberately for want of an enumerating command:** *a ruling must name what it OVERRIDES.* n=1, it is the lead's, and `principles.md` takes scars rather than cases. **Registered as Q3 #1 instead.**
+
+---
+
 ## 2026-08-05 · Session 10 — the defect count was two and it was three; and the session's founding number did not survive its own artifact
 
 **Seats:** all six in terminals — maestro (lead, a FRESH instance by session 9's design), forager, weaver, sentinel, steward, scout. Parallel, comms sole wire (vine open-but-untailed, ruling carried from `#284`).

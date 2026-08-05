@@ -31,8 +31,8 @@ flag below, it is because the flag needs a reason attached, not because the list
 
 ## 1. The log is CUMULATIVE. Nothing clears it. This breaks the habit you brought.
 
-On the grapevine the lead clears the channel at convene (`--fresh`), so `pull` gives you **this
-session**. That is the model most seats arrive with, and **it is wrong here**:
+Most seats arrive expecting a per-session channel — one a lead clears at convene, so a catch-up read
+gives you **this session**. **That model is wrong here**, and there is no flag that restores it:
 
 - `convene` does not open or clear a comms channel — it has no notion of one.
 - There is no `--fresh`, and no verb truncates the log.
@@ -79,9 +79,11 @@ grounded" and get an explicit acknowledgement **naming your message id** — _"g
 exchange in the first minute is the only cheap moment to discover you are shouting into a
 disconnected wire.
 
-**Leads — `anthill status` does NOT cover this wire.** It reports the grapevine roster; **comms has
-no presence at all**, so a seat can be wired to the vine, visible in `status`, and receiving nothing
-on comms with no symptom. Count it by hand:
+**Leads — `anthill status` DOES cover this wire, and it is not the whole story.** Presence is
+multi-wire: `status` and `down` read one combined source, so a seat present on comms counts as
+present. **What `status` cannot tell you is how far behind a seat is** — for that, and for
+`never-followed` (which is _no record at all_, not a rounded-down zero), use `anthill comms
+positions`. Count it by hand when you want the receipts:
 
 ```sh
 # --format json is explicit here because a lead reading in a terminal would otherwise get text
@@ -91,9 +93,10 @@ anthill comms read --since <session-anchor> --format json    # then count distin
 If you convened four seats and can name three, the fourth is not quiet, it is **missing** — go and
 ask it directly (dispatch it, or check its pane) rather than waiting.
 
-**If comms drops mid-session**, say so on **the grapevine** — the wire `anthill:join` also puts you
-on — and coordinate there until it is back. **Record where it broke**; that is the finding, not an
-inconvenience.
+**If comms drops mid-session there is no second wire to fall back to** — comms is the team's only
+channel. Say so **in your pane** so the human sees it, and if you can still reach the board, move your
+card and put the reason in its notes. **Record where it broke**; that is the finding, not an
+inconvenience. _(Teams used to fall back to a grapevine here. anthill no longer opens or joins one.)_
 
 ### What the tool knows about who got what — and the three things it may never say
 
@@ -209,6 +212,16 @@ and if you want that known about yourself, someone else has to.**
   the id you gave"_, and an accepted one means **only** that your number was current, never that you
   were. **Give it an id you have honestly read to**, because it is the one input here that no
   instrument can audit and every downstream claim inherits.
+  - **⚠ So never COMPUTE the id in the same command that sends.** Reaching for the head
+    programmatically and passing it straight through is the natural move for anything driving this
+    from a shell — and it **defeats the check silently and always**, because a number fetched
+    milliseconds earlier cannot have been crossed. The send is accepted, no warning is emitted, and
+    the accepted send is indistinguishable from one where you had actually read to that id.
+    **The instruction is dispositional and this case does not feel like violating it** — the number
+    is the true head, so it reads as diligence. _Measured, with a control: a computed head produced
+    an acceptance carrying no crossing report at all, while a deliberately stale id reported the
+    crossing correctly. The guard was not weakened; it was answered about a question that had been
+    substituted._
 - **What belongs in a message, how to signal salience, and when not to ask through a blocking
   channel** are wire-agnostic team conventions and live in the team README, not here.
 

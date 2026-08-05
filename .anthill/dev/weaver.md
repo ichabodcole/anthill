@@ -750,6 +750,79 @@ A lead ruled six asks and explicitly named three non-rulings; **both of mine app
 - **Reflective (trusted by default): I trusted that a "hold" ruling covered my whole lane.**
 maestro held `S10-6` and I nearly held everything adjacent to it. **One item was unheld under either verdict** and I only found it by asking *which specific thing is still moving, and does this sentence depend on it?* — the per-item dependency check I wrote after over-generalising a correct hold in session 9. **It worked, and it is the second session running that the same over-broad-hold instinct fired first.**
 
+## Hard-won lessons (the one-wire migration — C4's prose half, 2026-08-05 — session 11)
+
+- **⚠ THE ONE TO READ FIRST — A MIGRATED SENTENCE CARRIES A REASON YOU DID NOT WRITE DOWN, AND THE REASON CAN INVERT WHILE THE SENTENCE STILL READS FINE.**
+My lane's thesis was *"every arity site needs a decision, not a sweep"* — which I held as a claim about sentences going **stale**. That is the mild half.
+`finalize-session` said *"capture now, **the vine evaporates**."* Migrated mechanically that becomes *"the comms log evaporates"* — **false**, and it deletes the argument for the step it justifies. **The true reason never depended on the wire: the PANES evaporate.**
+And the replacement hazard points the other way: **a durable wire makes _"the log is the record"_ MORE tempting, not less — the words are still there, so it feels captured.**
+Second instance the same hour: `templates/README.md`'s *"each wire is the other's fallback"* — **hazard survived, remedy died**, so the fix was to move the reason to `comms positions` rather than delete the bullet.
+**The trigger, and it is checkable: for each sentence, ask what its REASON RESTED ON, not what its subject was. A reason resting on a property the new world lacks does not go stale — it INVERTS.**
+_Pin: `977a021`. The claim, not the line._
+
+- **⚠ MY HOLD CONDITION WAS OVER-BROAD AGAIN, AND A PEER'S REVERT IS WHAT EXPOSED IT — second session running.**
+I held T4 on *"wait for forager's parser guard"* because `:111` promised *"a bare `read <id>` exits non-zero."* **When the guard was reverted, the honest reading of my own rule was that T4 dies with the session.**
+It did not. **The real requirement was _do not ship a false promise about failure_, and I had encoded it as _wait for the tool to change_.** Those come apart: I satisfied the real one by **describing measured behaviour instead of promising future behaviour.**
+Measured, with a control, one command apart: an unknown **flag** → `exit 1`, refused by name; an unknown **positional** → `exit 0, ok:true, the entire log`. **The old sentence promised failure is loud. The truth is the inverse — it succeeds, plausibly, with the wrong answer.**
+**And it degrades in the safe direction:** if the guard lands later my paragraph becomes a warning about a fixed hazard — **inert**. The converted one would have been **active and wrong**, shipped to fresh instances, in the file where a peer learned the silent form.
+_Session 9 taught **check a hold's dependency per item**. It fired only because someone else changed the world. **A hold I set is a claim I stop auditing.**_
+
+- **⚠ THE STRUCTURE INSTRUMENT FIRED ON THE SIXTH FILE AFTER FIVE CLEAN RUNS — which is the argument for running it every time rather than when it feels risky.**
+`bunx prettier` vs working copy → **4 diff lines** on `join/SKILL.md`; prettier would have rewritten `*"…"*` to `_"…"_` **inside the pre-commit hook, after my last look.** Cosmetic this time; **it is the mechanism that demoted a step of `convene` into a caveat in session 6.**
+Fixed, re-run to zero, **positive control re-run at 4 lines so the zero means something.**
+**Five clean runs is exactly the evidence that makes you stop running it.**
+
+- **⚠ THE DOMAIN EPITAPH PAID TWICE AND I STILL SHIPPED ONE — and the one I shipped was about my OWN instrument.**
+**Paid:** forager wrote me *"T4's prose must not describe a wire-unavailable branch that no longer exists."* **True of the vine, false of the board** — `boardTailCommand` derives from `coord.bounty.available`, bounty is a separate project, it survives. **Taken at its stated width I would have deleted a live branch while citing him.** He ratified it as the emitter's owner; `t-38cab143` is **halved, not closed.**
+**Shipped:** I wrote *"`plugin/templates/` is prettier-ignored AND biome-ignored, so no gate catches a broken render."* scout widened it correctly — **biome's `includes` has no markdown glob at all**, so no markdown in the repo is reachable by any leg of the gate. **My sentence read as a claim about the gate because I never said which mechanism I meant.**
+**And half his correction was FALSE, which I checked instead of accepting** (session 10's scar was accepting exactly this on sight): he said the prettier half was not load-bearing. **`.husky/pre-commit` runs `lint-staged`, which runs `prettier --write` on `*.md` on every commit.** Prettier is not in the **gate**; it is in the **hook** — and the hook is the thing that rewrites my files.
+**Same config file, two mechanisms, opposite verdicts, both readings correct.** He asked *what does the gate READ*; I asked *what can REWRITE my file before it lands*.
+**The composite is the finding neither of us had: `plugin/skills/**/*.md` is MUTATED by the hook and VERIFIED by nothing** — the one class where something rewrites the artifact and no leg of the gate looks at the result. **`.anthill/` and `templates/` are the safer half:** unformatted *and* unverified, so at least nothing moves under you.
+
+- **THE INSTRUMENT MUST BE CHOSEN PER PATH, AND THE WRONG ONE IS SILENTLY VOID.**
+`plugin/skills/**` → `ignored:false` ⇒ hazard live, the prettier diff is **valid**. `plugin/templates/**` and `.anthill/**` → `ignored:true` ⇒ **hazard absent AND the check guaranteed to pass.**
+So T2 got a different instrument: **`anthill init` into a throwaway tree — `{{` → 0, plus a positive control of 5 files carrying the substituted name, because a zero-token result is also what a renderer that did nothing produces.**
+**Every verification I ran this session was hand-built per lane and dies with the session.** Said so rather than letting *"gate green"* stand in for it — **on a markdown lane the gate is a precondition for landing, never evidence about the work.**
+
+- **A PEER'S IN-FLIGHT RED MAKES YOUR OWN GREEN UNMEASURABLE, AND NOTHING SAYS SO.**
+13 tsc errors in a peer's file ⇒ my land impossible **and** no reading available: **`tsc` fails first, so the test leg never ran — 0 pass/fail lines.** The natural move is to quote the last green you saw, **which was measured on a different tree.**
+`uncheckedAgainst` warns a committer about dirty paths *outside* the commit; **there is no counterpart telling a seat _"you cannot measure right now, and it is not your fault."_** A seat who did not attribute the errors would hunt a bug that does not exist. _Recorded by the lead as a finding (R17)._
+
+- **PROSE CAN DISCHARGE A MECHANISM CARD — and this is the clearest instance this seat has.**
+The lead published *"do not read below #560"* **as message #560**: a bound on the surface it bounds, whose only route to the reader is through the thing it forbids. **n=2 over-read it in one session, and both had to break it to learn it.**
+It is now **`convene`'s Channel beat, its checklist, and `join`'s catch-up block**: the lead owes every seat a session anchor, **out of band**, and *an anchor published on the channel it bounds is not an anchor.* **`t-772653d5`'s prose half is discharged; the mechanism half stays the emitter's.**
+
+- **HISTORY IS NOT GUIDANCE — migrating a record of what a doc used to say FALSIFIES the record.**
+Kept deliberately and named twice on the wire so the absence is a record: `paper-cuts.md`'s daemon entry, `finalize-session`'s two scar notes.
+**Separately, four `vine` mentions survive because a live ruling forbids removing them** — `convene:118,120`, `bootstrap:47-48`, `upgrade:224` are **TRUE while `grapevine who` still feeds presence.** They go quietly false when that card lands and **none is greppable as a defect then**, which is why they are named as that card's prose half rather than left for a sweep.
+**Generalises: a migration has three exit states per site — migrate, keep-as-history, keep-because-still-true — and only the first is visible in a diff.**
+
+- **Reflective (trusted by default):** I trusted `B="bun …"; $B update …` would word-split. **zsh does not word-split unquoted parameters** — my own recorded scar, fired again, self-caught in seconds.
+I also labelled `( grep | wc -l ); echo $?` as `vine-exit`. **That is `wc`'s status.** No published number was affected; **the label was false and I published the label.**
+And I read #361–#560 **before** reading #560, which forbids it — **the anchor is inside the message you need the anchor to find**, n=2 with a peer, now fixed in `convene`.
+
+- **`--as-of`: 5 refusals, 1 material change — and the cost nobody priced.**
+Falsified a peer's `H(scout-9a)` (*"six refusals, zero re-sent unchanged"*) from my own row: **1 of 5.**
+**The cost I found and nearly buried in a subordinate clause: the guard taxes the LONGEST messages hardest** — longer composition, wider window, likelier refusal — **so it falls on exactly the messages carrying findings.** `principles.md`'s *compression is where findings die*, by a mechanism the principle does not name.
+**He built the hypothesis; I reported it as an aside.** That is the scar, not the credit.
+
+- **⚠ A MECHANISM THAT SHIPS HALF IS NOT A MECHANISM — and I found that out by NEEDING it, a full session later.**
+Session 10's id-indexed ruling table is mine, was ruled *"a deliverable, not a favour"*, and shipped **only the template half** (`0c3fc16`). **The repo-SOP half and the `convene` pointer never landed, and this session's own `.anthill/` mirror did not carry them.**
+So tonight the lead ruled by **R-number** — a fine index of *his* agenda, and **exactly the shape the card says is blind: enumerated from what the author is holding, never from the inbox of asks received.** My `#606` ask (*did you split my five-path READY deliberately?*) was **resolved by action at `8924924` and never answered**, and I still cannot tell which it was. **That is the blank cell the mechanism exists to make visible, on my own row, in the session where the mechanism was missing.**
+**The half that is missing announces itself only at the moment you needed it** — and *I* was the one who would have used it. **Not the lead's omission; mine, and the engineering account is that the mechanism was not there to fire.**
+**Corollary for how I close a card: "the template half landed" is not "shipped."** Ask which surface a reader is standing on when the mechanism is supposed to fire, and check that one.
+
+- **ANNOUNCE BEFORE YOU EDIT A FILE SOMEONE ELSE IS ABOUT TO COMMIT — the scar fired correctly for once.**
+My seat doc sat `READY` with the lead when the retro produced this entry. **Session 9's version of this ended with my 40-line block inside the lead's commit under his `Anthill-Seat`**, with his pathspec, his `--as` and his verification all correct — and **`uncheckedAgainst` unable to see it, because my edit was INSIDE his pathspec rather than outside it.**
+This time I posted *"hold my land, I am taking the file"* **before** touching it. **The trigger that worked: not _"is this file clean?"_ but _"does anyone else have a reason to touch it in the next ten minutes?"_** — and the answer was *yes, the lead, by name.*
+_Worth keeping as a property of the RITUAL rather than of me: finalize runs **synthesise → post READY → answer the retro**, and the retro is where seat-level lessons actually get articulated — **so the ritual generates a post-READY amendment every time.** The `READY` is not stale; the work moved after it._
+
+_(**Epitaph deliberately NOT superseded — and the verdict is that it FIRED and I violated it anyway, which is the argument for keeping it rather than against it.**_
+_It paid in the cheap direction once: forager's *"a wire-unavailable branch that no longer exists"* was a domain error in a sentence addressed to me, and asking **what population does this range over** is what caught it before I acted on it — he ratified the correction as the emitter's owner._
+_It failed in the expensive direction once, on my own instrument: I said *"prettier-ignored AND biome-ignored"* about the two paths **I was standing on**, and the true domain was **every markdown file in the repo**. **Bounded by what I was touching rather than by where the behaviour lives — the same shape as bounding by what I own.**_
+_**The strongest candidate to replace it was this session's migration lesson** — *ask what the reason RESTED ON, not what the sentence was about.* **I am not promoting it: it is a content rule for one kind of task, and the epitaph slot is for the disposition that fires before you know what task you are in.** The migration lesson sits at the top of this section instead, which is where it will actually be read by whoever picks up a migration._
+_**Keep the pairing in this order: what population does this range over → what do I already hold about it → could my check have come out the other way.** All three fired today; the first one is still the one I skip.)_
+
 ## Candidates
 
 - **`S10-9` — the SOP owes a sentence on an EMPTY `uncheckedAgainst`.** The session-8 fork resolved to the prose branch: forager verified steward's mechanism line by line and declined the emitter fix tonight. My prose defines only the non-empty case and then tells every seat to check the field, so a seat sees nothing and reads it as clean. **Carded, deliberately NOT folded into an unrelated land.**

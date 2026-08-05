@@ -418,26 +418,39 @@ describe("buildChecklist — claim + catch-up guidance", () => {
     expect(line("Find your card")).toContain("state --mine --as forager");
   });
 
-  test("steers catch-up to a bounded verb and names the broken one (anthill#54)", () => {
+  // anthill#54, re-keyed by STEP 4 onto the only wire left. The DEFECT this
+  // guards is unchanged and is not about the vine: a live stream used for
+  // catch-up returns nothing and then times out, which reads as "the channel is
+  // empty" — so a seat joins contextless and never learns what it missed.
+  // `--from-start` was the vine's name for that trap; on comms the trap is
+  // `follow`, so the assertion names the verb that can actually be typed here.
+  test("steers catch-up AWAY from the live stream and says why (anthill#54)", () => {
     const l = line("Catching up");
-    expect(l).toContain("grapevine pull");
     expect(l).toContain("NEVER");
-    expect(l).toContain("--from-start");
+    expect(l).toContain("follow");
+    // The CONSEQUENCE, not just the prohibition — a rule with no failure mode
+    // attached is the half a reader drops.
+    expect(l).toMatch(/the channel is empty/i);
   });
 
-  // The catch-up line covered ONE of the two wires it is the only catch-up
-  // instruction for. A seat told "use `grapevine pull`" on a comms-bearing team
-  // replays every session the team has ever had, and nothing in the manifest
-  // said otherwise. Asserted as the DISTINCTION rather than as a comms mention:
-  // a line naming comms while still implying one procedure would pass a
-  // `toContain("comms")` check and be exactly as wrong.
-  test("the catch-up line distinguishes the two wires, not just names them", () => {
+  // This used to assert the line DISTINGUISHED two wires, because the danger was
+  // one procedure being applied to both. STEP 4 removed the second wire, so the
+  // distinction is gone — but the FACT it existed to convey is not, and it is
+  // now the whole hazard rather than half of it: nothing clears the comms log,
+  // so a bare read replays every session this team has ever had.
+  //
+  // Deliberately NOT asserted as `toContain("comms")`: a line that mentions
+  // comms while still implying a fresh log would pass that and be exactly as
+  // wrong. The assertion is on the CLAIM, not the token — this seat's own
+  // anti-pattern about banning a word instead of a proposition.
+  test("the catch-up line states WHY comms needs an anchor, not just that it does", () => {
     const l = line("Catching up");
     expect(l).toContain("anthill:comms");
-    // The load-bearing asymmetry — it is WHY the two verbs differ, and a future
-    // edit that drops it leaves a reader with two commands and no rule.
     expect(l).toMatch(/nothing clears the comms log/i);
-    expect(l).toMatch(/clears the vine/i);
+    // The consequence that makes the rule actionable.
+    expect(l).toMatch(/every session/i);
+    // And no resurrected vine procedure.
+    expect(l).not.toMatch(/grapevine|vine/i);
   });
 
   // Contract 4(d): this emitted text IS a consuming team's onboarding, so item
@@ -655,12 +668,17 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
     const without = joinWithoutSpellbook();
     // The discriminating pair. If the fixture silently resolved a real
     // spellbook, these two would be equal and the assertion dies.
+    // STEP 4 re-keyed this onto `boardTailCommand`. The control's SHAPE is the
+    // load-bearing part, not which wire carries it: one field, two constructed
+    // worlds, asserted as a SET, because a single case is satisfied by a
+    // hardcoded value. `tailCommand` is gone, `boardTailCommand` still has both
+    // worlds (bounty is spellbook's), so the discriminator survives intact.
     expect([
-      typeof withSpellbook.envelope?.data?.tailCommand,
-      typeof without.envelope?.data?.tailCommand,
+      typeof withSpellbook.envelope?.data?.boardTailCommand,
+      typeof without.envelope?.data?.boardTailCommand,
     ]).toEqual(["string", "object"]); // typeof null === "object"
-    expect(without.envelope?.data?.tailCommand).toBeNull();
-    expect(withSpellbook.envelope?.data?.tailCommand).toContain("tail");
+    expect(without.envelope?.data?.boardTailCommand).toBeNull();
+    expect(withSpellbook.envelope?.data?.boardTailCommand).toContain("tail --mine");
   });
 
   test("emits a manifest at all — a missing spellbook is not fatal", () => {
@@ -743,92 +761,54 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
   test("the degraded checklist TELLS the seat what it lost, and to tell the lead", () => {
     const r = joinWithoutSpellbook();
     const checklist = (r.envelope?.data?.checklist as string[]).join("\n");
-    expect(checklist).toMatch(/NO GRAPEVINE/);
     expect(checklist).toMatch(/NO BOARD/);
     // The consequence, not just the fact — a seat that cannot claim a card is
     // invisible, which looks identical to a seat with nothing to do.
     expect(checklist).toMatch(/invisible on the board|cannot claim or advance/i);
     expect(checklist).toMatch(/tell your lead/i);
     // ...and it must NOT hand out a broken command in place of the real one.
-    expect(checklist).not.toMatch(/Monitor the grapevine — wrap with Monitor: bun null/);
+    expect(checklist).not.toMatch(/wrap with Monitor: bun null/);
+    // STEP 4: the vine is gone, so the checklist must not mention it AT ALL —
+    // neither as a wire to arm nor as one that is unavailable. "Told there is
+    // none" and "wasn't told anything" must not look alike (Contract 4), and
+    // here the honest state is that the concept no longer exists.
+    expect(checklist).not.toMatch(/grapevine/i);
   });
 
   /**
-   * PARTIAL RESOLUTION — the manifest asserted something FALSE.
+   * STEP 4 REMOVED THE FOUR PER-WIRE "MIRROR" TESTS THAT STOOD HERE, AND THIS
+   * NOTE IS WHY — deleting a guard is exactly where a real assertion gets lost.
    *
-   * grapevine and bounty are separate CLIs that can fail separately. Under one
-   * shared verdict, a missing BOUNTY told the seat "NO GRAPEVINE AND NO BOARD …
-   * you cannot tail the vine" while the grapevine resolved perfectly — and the
-   * `reason` named only bounty. Reproduced by a blank-context reader with a
-   * fake cache; reproduced again here, which is what makes this a test rather
-   * than a note.
+   * They asserted that a missing BOUNTY must not report the GRAPEVINE as gone,
+   * and the mirror, in JSON and in text. That property is about TWO wires
+   * summarised by one verdict. With the vine deleted there is one wire, so the
+   * coupling they guarded is not merely untested — it is UNEXPRESSIBLE.
+   * Keeping them re-keyed onto a single wire would assert that one boolean does
+   * not collapse one boolean, which passes against any implementation.
    *
-   * The defect is S8-1's own thesis violated one level in: I fixed "one wire's
-   * missing dependency must not suppress another" for comms-vs-spellbook and
-   * shipped the same coupling between grapevine and bounty.
+   * WHAT SURVIVES THEM, and where it now lives, so nothing is silently dropped:
+   *   - "one wire down must not black out the others" -> the comms + grounding
+   *     tests above, which are the S8-1 thesis itself and still fail if bounty's
+   *     absence leaks into either.
+   *   - "a null must never render as a command" -> the text test directly below,
+   *     which is the one that caught the real shipped defect (`1efc161`).
+   *   - "the fixture's two worlds differ" -> the CONTROL, re-keyed onto
+   *     `boardTailCommand`.
+   * Below is the single-wire successor: bounty down must say UNAVAILABLE and
+   * must not invent a vine to blame.
    */
-  test("a missing BOUNTY does not report the GRAPEVINE as gone", () => {
-    const r = joinWith(fakeHome(["grapevine"])); // grapevine only
+  test("bounty down: the manifest reports the BOARD gone and invents no other wire", () => {
+    const r = joinWithoutSpellbook();
     const d = r.envelope?.data as Record<string, unknown>;
-    // The grapevine resolved, so it must be offered — this is the assertion
-    // that fails against the shared-verdict version.
-    expect(d.tailCommand).toContain("tail");
     expect(d.boardTailCommand).toBeNull();
-    const checklist = (d.checklist as string[]).join("\n");
-    expect(checklist).toMatch(/NO BOARD/);
-    expect(checklist).not.toMatch(/NO GRAPEVINE/);
-    // And no warning may claim the vine is gone when it is not.
-    expect((d.warnings as string[]).join("\n")).not.toMatch(/NO GRAPEVINE/);
-  });
-
-  test("a missing GRAPEVINE does not report the BOARD as gone — the mirror", () => {
-    const r = joinWith(fakeHome(["bounty"])); // bounty only
-    const d = r.envelope?.data as Record<string, unknown>;
-    expect(d.boardTailCommand).toContain("tail --mine");
-    expect(d.tailCommand).toBeNull();
-    const checklist = (d.checklist as string[]).join("\n");
-    expect(checklist).toMatch(/NO GRAPEVINE/);
-    expect(checklist).not.toMatch(/NO BOARD/);
-  });
-
-  // THE TEXT SIDE IS A DIFFERENT AUDIENCE AND IT BROKE WHILE THE JSON WAS RIGHT.
-  // `null` interpolated into a line labelled "wire these watches" renders the
-  // literal "null", which reads as a command to run. The pure functions and the
-  // JSON payload were both already correct — found by RUNNING the binary, which
-  // is the only reason it was found at all.
-  /**
-   * THE PARTIAL WORLD IN TEXT — the gap the JSON tests above did not reach.
-   *
-   * The summary line was a CONJUNCTION (`tail !== null && board !== null`), so
-   * one wire down printed BOTH as UNAVAILABLE: the seat was told the grapevine
-   * was gone while the checklist eight lines lower handed them the working
-   * grapevine tail, and "see the warning below" pointed at a warning that does
-   * not exist. Third instance of one collapse in one diff — comms-vs-spellbook,
-   * then grapevine-vs-bounty in JSON, then here.
-   *
-   * The test gap had the same shape as the bug: the partial world WAS covered
-   * in JSON and never in text, because the only text test used an empty HOME
-   * where both wires are down. A guard that exists and does not reach the path
-   * the bug is on.
-   */
-  test("TEXT mode reports each wire separately — one down must not black out both", () => {
-    const r = joinWith(fakeHome(["grapevine"])); // grapevine up, bounty missing
-    const out = r.textOut as string;
-    const summary = out.slice(out.indexOf("Then wire"), out.indexOf("Checklist"));
-    // The working wire is offered, in the SUMMARY, not only in the checklist.
-    expect(summary).toMatch(/grapevine:\s+bun .*grapevine.*tail/);
-    // ...and only the genuinely missing one is called unavailable.
-    expect(summary).toMatch(/board:\s+UNAVAILABLE/);
-    expect(summary).not.toMatch(/grapevine:\s+UNAVAILABLE/);
-  });
-
-  test("TEXT mode — the mirror, so this cannot pass by hardcoding one wire", () => {
-    const r = joinWith(fakeHome(["bounty"])); // bounty up, grapevine missing
-    const out = r.textOut as string;
-    const summary = out.slice(out.indexOf("Then wire"), out.indexOf("Checklist"));
-    expect(summary).toMatch(/board:\s+bun .*bounty.*tail --mine/);
-    expect(summary).toMatch(/grapevine:\s+UNAVAILABLE/);
-    expect(summary).not.toMatch(/board:\s+UNAVAILABLE/);
+    // The comms wire is anthill's own and must be untouched by a spellbook miss.
+    expect((d.comms as { incantation: string }).incantation).toContain("comms follow");
+    const all = JSON.stringify(d);
+    // No resurrected vine anywhere in the payload — not as a wire, not as a
+    // warning, not as a field. `tailCommand` is GONE, not null: a consumer must
+    // not be able to read its absence as "the vine is unavailable".
+    expect(all).not.toMatch(/grapevine/i);
+    expect(Object.keys(d)).not.toContain("tailCommand");
   });
 
   test("text mode never renders a null as if it were a command", () => {

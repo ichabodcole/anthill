@@ -36,7 +36,7 @@ _live_. Don't skip it on a real session.
      nobody sent look identical from the lead's chair.
 
    **Subagent-mode finalize (bake the capture into the task, don't chase it after).** A one-shot
-   `Task`/`Agent` subagent isn't on the vine waiting to be told to finalize. You _can_ resume it
+   `Task`/`Agent` subagent isn't on comms waiting to be told to finalize. You _can_ resume it
    (retain its id, `SendMessage` it back with context) — but that means holding every seat's id and
    firing a second round at teardown, and a resumed agent may not outlive the session. Far simpler and
    warmer: **the seat self-captures as the FINAL step of its own work task**, while its context is
@@ -155,7 +155,7 @@ artifact may have been moved or deleted since you wrote the line.
 - Stigmergy is the whole thesis here: a trail that confidently points the wrong way is **worse than
   no trail**, because the next ephemeral agent has no way to know it's being misled.
 
-### Shared — the lead coordinates over the vine
+### Shared — the lead coordinates over comms
 
 3. **Seams pass.** As a team, look at `.anthill/dev/seams.md`: did we learn anything at the **team
    level** — a contract that shifted, a boundary that moved? If so, update it **single-source** (the
@@ -218,7 +218,7 @@ before teardown, from the seats' answers on the wire.**
 Name the writer or the file does not get written: seats answer, and every one of them can follow
 this step exactly while the artifact still fails to exist. **The first run of this ritual produced
 no file for exactly that reason** — the step said what and where, and nobody owned the act.
-Capture what you have rather than holding teardown for completeness: **the vine evaporates**, so a
+Capture what you have rather than holding teardown for completeness: **the panes evaporate**, so a
 partial retro that exists beats a complete one that died with the panes —
 _(**and a durable comms log does not discharge this.** Nothing clears comms, so the words survive —
 but a retro nobody re-reads is a write-only store, and the next convene reads `retro.md`, not a log.
@@ -291,7 +291,7 @@ it has gone wrong.**
 
 5. **Aggregate the team's anthill-upstream feedback.** Beside the seams pass, do the same single-source
    move for the feedback candidates the team surfaced this session about **anthill itself** (not this
-   project). Read the **same intake** you already swept — the vine, the seats' scratch, their finalize
+   project). Read the **same intake** you already swept — comms, the seats' scratch, their finalize
    returns (no separate store). **Dedupe** them (N seats hitting one bug is one issue, not N) and
    **submit** the deduped set with `anthill feedback "…" --submit` — the outward send the lead owns,
    mirroring how you single-source `seams.md` from the returns. _(Distinct from this ritual's own
@@ -302,9 +302,9 @@ it has gone wrong.**
 
 6. **Stand the team down — the closing checklist.** End-of-session "we're done" momentum is exactly
    when these get skipped, so run them as a list, in order:
-   - ◻ **Every seat confirmed** its finalize on the vine (step 0). Knowledge capture is the whole
+   - ◻ **Every seat confirmed** its finalize on comms (step 0). Knowledge capture is the whole
      point; a torn-down pane can't synthesize. _(Subagent mode: the seats' returned in-task syntheses
-     **are** the confirmation — no vine gate; the seat docs are already written.)_
+     **are** the confirmation — no wire gate; the seat docs are already written.)_
    - ◻ **Every seat re-read the docs it owns as their authority** (step 2.5) and verified each claim
      — proofs especially — against current code. Assume drift; the one session that measured this
      found it in **every** seat's docs.
@@ -316,9 +316,10 @@ it has gone wrong.**
      if it only holds for this tool it is an SOP practice.
    - ◻ **Retro written to `.anthill/retro.md` BY THE LEAD** (step 4.5), newest first — the seats
      answered on the wire; **a wire is not a store — the file is the thing the next convene reads.**
-     _(True whichever wire they answered on: the vine is cleared at convene and the comms log is
-     never read back by anything. **Surviving and being re-read are different properties**, and only
-     the file has the second.)_
+     _(**The comms log survives and nothing ever reads it back** — no ritual, no command, no next
+     convene. **Surviving and being re-read are different properties**, and only the file has the
+     second. A durable wire makes this failure MORE tempting, not less: the words are still there, so
+     it feels captured.)_
      **Every Q3 answer is a
      hypothesis the next convene can test**, not a preference. Check one thing before you land it:
      **is any Q1/Q2 answer carried only by everyone agreeing?** If it has no artifact, no number and
@@ -374,12 +375,13 @@ it has gone wrong.**
        as `<red-paths…>` is disjoint from the doc paths so a doc edit isn't stashed away with it.)_
    - ◻ **Board settled — best-effort, never a gate** (cards → review/done). If the board idle-died or is
      unreachable, **don't block finalize on it**: the **git history and the comms log ARE the session's
-     durable record**. Attempt a settle once; if the board's gone, say so on a wire and move on.
-     - **Do not substitute the grapevine here.** The lead clears the vine at convene (`--fresh`), so
-       it is the wire that is _designed_ not to outlive the session; **nothing clears the comms log.**
-       Naming the vine as the durable record is the exact inversion this ritual exists to prevent —
-       and per the standing principle, **a decision that must outlive the session belongs in an
-       artifact anyway**, not in either wire.
+     durable record**. Attempt a settle once; if the board's gone, say so on comms and move on.
+     - **⚠ The comms log SURVIVING is not the comms log being a record, and this is the substitution
+       to refuse.** Nothing clears it, so every word is still there — which makes it the most
+       tempting thing in reach to call the session's record. **But nothing re-reads it**: no ritual,
+       no command, no next convene, and it is gitignored, so it does not survive a clone either.
+       Per the standing principle, **a decision that must outlive the session belongs in an artifact**
+       — and the wire's durability is precisely what makes that easy to forget.
    - ◻ **Human sign-off before the code branch merges to `develop`.** Green tests and a checked-off
      board are the team's _own_ signals — but the human's look (UI bugs, the feel, feedback) is a gate
      the team **cannot run itself**. Get an explicit "yes, merge it" before you land the feature branch

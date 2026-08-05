@@ -82,7 +82,7 @@ turn-by-turn. Its section set (adapt, don't pad):
 - **How this plan is authored** — the ownership split, stated up front (lead owns the skeleton +
   seams + verification gate; each owner owns its lane file).
 - **Integration / dependency order** — the sequence the slices come together in (often bottom-up).
-- **Shared interfaces — _ratify on the vine, then fill_** — the seams section (format below). The
+- **Shared interfaces — _ratify on `comms`, then fill_** — the seams section (format below). The
   load-bearing part of the whole plan.
 - **Ratified decisions & edge cases** — the cross-cutting calls owners agreed on.
 - **Slices** — one paragraph of scope per seat (which owner owns what), each pointing at its lane
@@ -154,14 +154,14 @@ boundary visible; this must not become a taxonomy exercise.
 
 Ratification is a **discipline in the skills, not a bounty schema change** — no new card state. The
 gate: **an owner ratifies the seam(s) it touches before it moves its card `todo→doing`.** A ratify
-is a short, explicit vine acknowledgement of each interface — _"ratified"_, or _"falsified —
+is a short, explicit acknowledgement on `comms` of each interface — _"ratified"_, or _"falsified —
 here's the correction"_ — never silence.
 
-- **Terminal seats:** the lead posts the skeleton on the vine; owners ratify/falsify over the vine.
+- **Terminal seats:** the lead posts the skeleton on `comms`; owners ratify/falsify over `comms`.
 - **Subagent seats:** no tails — the lead **dispatches each seat to ratify its seams** and
   **collects the verdicts** (mirrors how `convene`/`join` handle the subagent path).
 
-**Say what you had read when you ratified** — _"ratified as of #14."_ Verdicts cross: on a live vine,
+**Say what you had read when you ratified** — _"ratified as of #14."_ Verdicts cross: on a live channel,
 one owner can ratify a contract that another owner's in-flight message has **already falsified**, and
 neither can tell. It happened at least four times in one planning session, once with a seat ratifying
 a strategy the falsification of which was already sent. **Volume is not the cause — a single message
@@ -186,7 +186,7 @@ UNVERIFIED, not still-fine.**
 
 **Contested seams settle with one ruling** — and **the ruling must name what it did _not_ settle.** The
 lead does a **read-all-owners synthesis pass** — reads every affected owner's position, then **rules
-once** — rather than letting the vine ping-pong. But a long, authoritative ruling that silently omits
+once** — rather than letting the channel ping-pong. But a long, authoritative ruling that silently omits
 someone's item is **indistinguishable from one that resolved it**: a seat read a substantial rulings
 message, registered "ruled", and moved on with both of his asks unaddressed, discovering it much later
 by re-reading his own list. Silence and resolution look the same, so list the open items you are

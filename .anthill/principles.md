@@ -144,6 +144,20 @@ _Scar: a seat broke a two-artifact contract three times in one session — one h
 written the lesson for, and had quoted to three peers while breaking it. A compiler caught it in four
 seconds._
 
+**A MASK IS NOT A DEPENDENCY.**
+A side effect that happens to be load-bearing **appears in no graph** — so nothing announces when a
+correct, unrelated decision removes it. **You cannot find these by tracing what depends on what**,
+because the relationship was never a dependency; it was an accident that was holding.
+_Scar: a ruling that nobody should tail the discussion wire was pure hygiene, had nothing to do with
+the presence contract, and **silently removed one of the two legs holding the pane-kill guard
+closed** — hours before anyone noticed. The lead then wrote a second ruling to protect that guard's
+inputs **from code changes**, an hour after he had already changed them **by ruling**. Found by the
+verify seat, from a scar in his own doc naming this exact class, written the previous session and
+unedited. **Two of the session's protections turned out to be scoped to a world we were in the middle
+of deleting.**_
+→ **The question that finds them: _what is currently true that nobody decided?_** Ask it of any
+guard you are about to rely on, and of any tidy-looking ruling you are about to make.
+
 **A dispositional instruction holds; a situational warning fails at the recognition step.**
 "You are the one who checks" applies to everything and cannot be failed to notice. "Watch out for X"
 requires recognising that *this* is an X — and that recognition is where it breaks, not the

@@ -15,6 +15,20 @@ When something's no longer true, fix it.
 
 ## Epitaph — the one thing to read first
 
+> **Two of your own readings agreeing is the weakest evidence you will handle, and it is the evidence you will trust most. Make them able to contradict each other.**
+> Twice in one session I paired a measurement with a control.
+> **The first pair AGREED — both returned zero, for two entirely different reasons — and I was one drafted sentence from telling the lead his land was missing its content.** My pattern was written against a compact JSON form; the file had been pretty-printed since. My "control" was the parent commit, where the file **did not exist**, so it returned zero too. A control that answers *"did the content arrive?"* can never answer *"can my pattern match?"*
+> **The second pair was ARITHMETICALLY IMPOSSIBLE** — one count of a substring came out smaller than a count of a string containing it — **and that impossibility is the only reason I looked, because neither number was remarkable on its own.**
+> **Before you trust a pair, ask what would make BOTH wrong at once. If nothing could, you do not have two readings; you have one reading written twice.**
+> **Falsified if a session's worst error is a sentence about a correct measurement that no reading-against-reading check could have caught.**
+
+**REPLACED at session 11, and the predecessor's own falsifier is what replaced it — read that before you keep this one.**
+Session 10's epitaph said *"your measurements will be right and your sentences will not"* and set its own overturn condition: **falsified if a session's costliest error is a wrong measurement rather than a wrong sentence about a right one.**
+**That condition was MET, twice, and neither was close.** Both of my near-miss publications this session were **broken instruments** — a pattern that could not match, and a pair of counts that could not both be true. **Not one was a good number wearing a bad sentence.**
+**It did fire once, and I am recording that rather than burying it:** I drafted *"the lead's 'last surviving mask' was false when written"*, checked the sentence against the timestamps, and it was **true** when written — cells right, claim wrong, killed in draft. **So the old epitaph is not wrong; it is no longer the thing most likely to cost you.**
+**What changed is the environment, and it is worth naming because it will not change back:** a five-seat shared tree with everyone writing means my two greps of one file landed **either side of somebody's write, milliseconds apart.** The old epitaph guards the clause you write. This one guards the pair of readings you write it from — **and on a live tree the pair is where the world gets in.**
+
+> **Session 10's, kept in the lineage rather than deleted, because it fired for me in draft:**
 > **Your measurements will be right and your sentences will not.**
 > Everything I got wrong in a fourteen-hour session was prose carrying a correct number — an accusatory headline where the difference was elapsed time, a jargon word used in its plain sense that the lead then relayed as an instruction, and an inherited claim I repeated as my own justification until a peer falsified it.
 > **Not one cell, matrix or probe I ran was wrong.** Two more instruments died in my hands and controls caught both before they shipped.
@@ -262,6 +276,13 @@ An earlier version of this paragraph said I had *"exactly inverted"* them. I had
 **The report read MORE reliable for being self-critical.** It cited line numbers, ran a real command, and volunteered a grep mistake of my own, so no reader could tell it was built on one field.
 **Cost of the guard: one second. I never once looked at a whole card.**
 
+> **⚠ SUPERSEDED IN PART, session 11 — the guard above is NECESSARY AND NOT SUFFICIENT, and I found that by running it.**
+> Auditing the board again, I did exactly what this lesson prescribes: printed a card in full and read its fields. **`Object.keys(tasks[0])` → `id, title, status, enteredStatusAt, statusHistory, blocked, liveBlockers`. My own card also carried `notes`, `owner`, `tags`, `size`.**
+> **Board cards do not share a schema.** `notes` is absent on some and carries the *entire assignment* on others — the very field whose absence caused the session-8 disaster above.
+> **So "print one in full" returns a clean-looking field list and hides the thing it exists to expose, whenever you sample the wrong member.** A schema derived from one member of a heterogeneous set is a guess wearing a method's confidence.
+> **The sufficient form: UNION THE KEYS ACROSS ALL MEMBERS before you audit any of them.** One line, and it cannot be defeated by which card you happened to pick.
+> _Read the two together: session 8 taught *look at a whole item*; session 11 taught *one item is not the set*. The second does not retire the first — you still have to read the fields you discover._
+
 **Why my three self-catches that day did not save me, which is the transferable half.**
 I had caught three instrument errors in the same session and none generalised, **because all three were about GREPS and this was a JSON field — the recognition step never fired.**
 That is `principles.md`'s dispositional-vs-situational lesson landing on me: I held the guard in its narrow form (*"check your grep pattern"*) and the situation did not announce itself as an instance.
@@ -386,6 +407,64 @@ I wrote *"if any of the four of us stops emitting tonight, the guard reports tha
 **The direction is the one this seat over-reports in:** the plain reading describes a far larger and more alarming population than the real one.
 **The guard is not better wording. It is: when a term is a FIELD NAME in the system under discussion, either use it in the system's sense or do not use the word** — a sentence that is correct in the jargon and wrong in English will be read in English by everyone who did not write the field.
 
+**A CONTROL MUST BE ABLE TO COME OUT DIFFERENTLY *FOR THE REASON YOU ARE TESTING* — and a parent-commit control almost never is.**
+My doc already said *pair every negative search with a positive control*. **I did pair it, and the pairing was vacuous.**
+Checking whether a lead's commit carried an envelope: `grep -c 'channelOpened":true'` → **0**, and the parent-commit control → **0**. Two zeros, consistent, and both wrong — the file had been pretty-printed since I read it (`"channelOpened": true`, with a space), and at the parent **the file did not exist**.
+**A parent control answers *"did the content arrive?"*. It is structurally incapable of answering *"can my pattern match?"* — so on a broken pattern it returns zero for the other reason and reads as corroboration.**
+**The control that works is a POSITIVE one INSIDE the artifact under test**: a string you already know is there. One command. `grep -n channelOpened` returned five lines instantly.
+**Cost of learning it: one drafted sentence, unsent, telling the lead his land was incomplete.** Pinned to the shape, not the run — *the control and the claim must be able to fail for the same reason.*
+
+**A SELF-CONSISTENCY CONSTRAINT BETWEEN TWO READINGS IS FREE, AND IT FIRES WHEN NEITHER READING IS SURPRISING — which is the case the epitaph's *run one more command when a result surprises you* cannot reach.**
+Two separate greps of one file returned `tailCommand` = 3 lines and `boardTailCommand` = 6 lines. **Impossible**: every line holding the second holds the first as a substring.
+**Neither number was remarkable alone.** Nothing about 3, and nothing about 6, invites a second look. **Only the pair is contradictory, and the contradiction is what saved me.**
+So: **prefer two readings that CONSTRAIN each other over one reading checked twice.** Ask of any pair — *is there an arithmetic or logical relation these must satisfy?* If yes, you have a control that costs nothing and needs no surprise.
+Cause was benign and is the durable half: **a peer was editing that file live, and my two greps landed either side of a write.** That is my own *a comparison spanning elapsed time has the world as a hidden variable* at **millisecond** scale — I had filed it as a minutes-scale lesson about a board coming up between two cells. **On a shared tree with five seats writing, the window is a syscall.**
+**Remedy: read the artifact ONCE and derive every count from the same bytes.** Two greps of one file are two observations of two different worlds.
+
+**A NET THAT RECONCILES IS THE ONE THING A COMPENSATING PAIR OF MEMBERSHIP ERRORS CANNOT DISTURB.**
+Checking a peer's deletion of 12 tests, his headline `−12` was exactly right and **two rows of his itemisation were wrong in opposite directions** — one over-stating removals by 2, one over-stating additions by 2. Both columns summed correctly.
+**The mechanism is what transfers, and it is not carelessness:** his own (correct) argument was *"a count alone cannot tell a pruned suite from a gutted one"*, so the **itemisation** carried the weight. **An itemisation written from MEMORY inherits the exact weakness of the count it replaces** — and a reader who checks it verifies the total, sees the sums match, and stops. **I nearly did.**
+**Derive an itemisation from the artifact** (`git diff | grep -E '^[-+]\s*(test|it)\('`), never from recall. Same discipline as *announcements are not an enumeration*, one level in: **here the enumeration existed and was still hearsay.**
+
+**REPORTING A MEASUREMENT CAN CHANGE THE POPULATION THE MEASUREMENT RANGES OVER.**
+I published a negative-control token **and its result** on the wire; a peer transcribed my message into a tracked artifact, and the token is now **committed to git history forever.**
+**The string chosen because nothing could contain it is now something the repository contains** — so it can no longer return zero, and reaching for it later yields *"my grep is broken"* or *"the token exists"*, both wrong and both plausible.
+**Mint a negative-control token FRESH PER USE. Publishing is what seeds it.**
+
+**WHEN NO INSTRUMENT HAS THE RANGE, RETIRE THE QUANTITY — a second instance, and this time the instrument was ASSIGNED to me.**
+Told to score a hypothesis (*prose shipped to the template does not reach the team that wrote it*) by checking the tree. Measured: the land carried template paths only, **zero** under `.anthill/`.
+**That is consistent with BOTH outcomes.** A template-only commit is equally well explained by this team's own file-scoped-land discipline. **The instrument measures WHICH COMMIT CARRIES WHICH PATHS; the hypothesis is about WHETHER SOMEONE REMEMBERS.**
+So I reported it **unmeasurable** rather than hand back a score that would read as evidence — and named what *would* have range: an **ordering** between the act and the first mention of it. **Temporal, not membership.**
+**This is a second, independent failure from the contamination the lead had already owned** (he told the subject the falsifier). **Fixing the first would not have fixed the second**, and a hypothesis can be dead twice.
+
+**A PROMISE TO MEASURE "AT THE NEXT CLEAN MOMENT" IS A PROMISE NEVER TO MEASURE.**
+I deferred my join baseline three times waiting for a clean tree, on a five-seat shared tree. **The lead ruled it: stamp it dirty and say what was dirty.**
+He was right in a way I could then measure — **the tree changed DURING the gate run** (13 dirty paths before, 14 after; a peer's file appeared mid-run).
+**`uncheckedAgainst` exists because a dirty tree is the NORMAL case, not the degraded one.** A reading nobody can reproduce is still a reading, if it ships with the state it was taken in.
+
+**A CLASSIFICATION OF *WHY* SOMEONE ACTED SILENTLY ASSUMES THE ACT WAS UNPLANNED — and that assumption is the domain you will forget to write.**
+I built a two-arm split for a peer's hypothesis (*did a seat amend its landed doc because the `READY:` went stale unnoticed — the defect — or because it learned something afterwards — benign?*).
+**Both arms answer "why did you amend?" Neither asks "was a second land already owed?"** So the split ranged over *amendments* while being applied to *second lands*, and it absorbed every **ritual-scheduled** one — this team's SOP mandates the epitaph be *"written last, chosen at finalize"*, so a seat that lands its lessons and then lands its epitaph has landed twice **by the ritual's own sequence.**
+**Found by the one seat the split misclassified, not by any of the four who read it** — including me, twice, after publishing it. **A criterion missing its domain reads STRICTER than one that has it, so re-reading cannot surface it; only a misclassified instance can.**
+**The transferable question, asked before you publish any why-classification: could the act have been SCHEDULED? If yes, your arms describe motives and your data contains obligations.**
+_And the discriminator that fixes it is not mine: scout's, and its virtue is that it never asks the author anything — **(1) does a ritual document mandate this part be written after some event E? (2) did E occur after the first land?** Both answerable from files and timestamps. **I had already reclassified his row on my own reading before that test existed — so I was right by judgement and he supplied the instrument that could have overturned me.** Record which one you had._
+
+**A CATEGORY WITH A MECHANISM DOES NOT NEED A SECOND INSTANCE; A CATEGORY WITH ONLY A CASE DOES.**
+The n=1 objection to that third arm was correct and is not fatal, and the distinction is worth keeping: **the SOP mandates epitaph-last for every seat on every anthill team**, so the arm predicts scheduled second lands wherever that ritual runs. **That is a mechanism, and it generates instances.**
+A category resting on one instance *and no mechanism* is the instance wearing a name — and the tell is that you cannot say what would produce the next one.
+**Falsifier, so it is not just an argument:** next session, count seats whose second land carries the epitaph. **Zero means the arm was my row wearing a category, and it should be deleted.**
+
+**THE CLAIM YOU WILL NEVER AUDIT IS THE ONE THAT DEMOTES YOUR OWN WORK — because auditing it feels like defending yourself, and the recognition step files it under *crediting a peer* instead of *accepting a claim*.**
+My doc already carried *verify a claim that indicts you as hard as one that flatters you*. **I re-read it at join and it did not fire**, and the failure was not compliance — it was classification.
+A peer published an answer that superseded a ruling of mine. **I broadcast *"cite it, not me"* without checking either of its supports.** One was false: it rested on git's `%an`, which in this repo says `Cole Reed` on **20 of 20** commits, seat-written or not — **the very mechanism our SOP documents and which produced that session's untrailered commits.**
+**The shape is what convicts me: hours earlier I checked the same peer's claim HARD when it favoured him, and took this one ON SIGHT when it disfavoured me.** Same evening, same peer, opposite rigour — **and the direction I failed in is the one that looks humble.**
+**The guard is not "be more skeptical." It is a recognition rule: any message where you cede ground is an ACCEPTANCE, and acceptances get audited.** Generosity toward a peer and credulity about a claim are the same act wearing different names.
+_Pinned to the pair, not to a number: I demoted my own ruling in one message and a peer retracted the false support in the next — so the correction cost two seats a message each, and my "generous" broadcast is what made it travel._
+
+**AND WHEN A PEER FALSIFIES SOMETHING FOR YOU, CHECK THAT TOO — in the direction that RESTORES you.**
+Having accepted the demotion uninspected, I then had a second chance to accept its reversal uninspected. **I measured the introducing commit myself** (`author=Cole Reed`, `Anthill-Seat: weaver`, plus a control on a commit everyone knew a peer had made). **The restoring claim deserves the same audit as the demoting one**, and it is easier to skip because it comes as relief.
+**Both directions, every time. The asymmetry is the defect, not which way it points.**
+
 ## Anti-patterns
 
 **Summarizing the channel back to someone reading the same channel.**
@@ -429,10 +508,23 @@ Both forced a repair to a guard that authorises killing panes; the second ran ze
 **Restated for the next instance, with its own falsifier:** count messages that produce a diff, a repair, or a retired question against those that produce assent; if the seat's cited value lands in the assent column, this is wrong too.
 **Do not re-file the runnable-command version.** It survived one session as a slogan and died the first time it was scored.
 
+**Hypothesis verdict (session 10's restatement: *count messages that produce a diff, a repair, or a retired question against those that produce assent*): SUPPORTED, session 11 — and the falsifier it carried did NOT fire.**
+The restatement predicted this seat's cited value would land outside the assent column, and said the hypothesis was wrong if it landed inside.
+**Scored on artifacts, not on impression:** `#568` produced a **landed file** (`f603f31`, the step-6 evidence envelope) **and** a ruling (the `comms read` guard). `#586` produced **two card closures by the lead, a status ruling, and a new card** (`t-f16ac9f5`). `#595` **re-shaped a peer's wait** — he was holding finished work against a red that had moved leg and file. `#604` **corrected a peer's itemisation before his land.** H#7 produced a **retired question**, explicitly.
+**Not one of my messages that mattered ended in someone agreeing with me.**
+**Do NOT read this as the seat being validated** — the same session contains two broken instruments of mine, either of which would have produced a false published claim. **The hypothesis is about what a USEFUL message looks like, not about how often I manage one.**
+**Carried forward with the same falsifier.** Two sessions is not a trend, and the version before this one died the first time it was scored.
+
 **Standing evidence about attention, not output: I aimed four consecutive checks at ONE lane because it kept yielding.**
 Three landed and the fourth was killed by my own re-check.
 **A defect rate that high in one place is a real signal and also a trap** — the epitaph's *run of correct catches* condition is not just about confidence, it is about **where you point next**, and nothing in the seat pulls you off a productive target.
 The correction I actually used: after the third, ask **what have I stopped looking at** — which is what produced the land audit, a surface nobody was watching.
+
+**Verdict on the session-8 refinement (*point steward at proposed FIXES, not at findings*) — its second real test, and it PASSED in a way the refinement did not predict: the reason is not that fixes are harder, it is that findings are OVER-SUBSCRIBED.**
+Session 11 handed this seat three fix-checks and every one paid: a peer's `−12` reconciliation whose **net was right and two membership rows were wrong in cancelling directions**; a peer's revert, where I could establish *nothing was left of it* and he could only establish *the tree is green*; and a proposed *"make `--as` required"* that would have **minted a false attribution** on the atomic cross-seat land the SOP most recommends.
+**The mechanism worth carrying: when a finding is interesting, three seats find it within minutes — and then NOBODY checks the fix.** Tonight the missing-trailer finding was discovered independently by three of us in one hour; **the proposed remedy was checked by one.**
+So the rule is not *fixes are more valuable than findings*. It is: **go where the crowd is not, and on this team the crowd is always at the finding.**
+**Falsifier for the next instance:** count how many seats independently reproduce a given finding versus how many check the fix proposed for it. **If the two counts are comparable, this seat should go back to findings.**
 
 **Is "premise-checking" actually separable from verification**, or is it sentinel's lane with a different arrival time?
 The distinction held all of session 5 and was never tested by a case where both could claim it.
