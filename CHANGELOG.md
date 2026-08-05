@@ -1,5 +1,48 @@
 # Changelog
 
+## [1.9.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.8.0...anthill-v1.9.0) (2026-08-05)
+
+
+### Features
+
+* **commit:** --stdin and -F for the commit message (retro H1's test) ([a3707c3](https://github.com/ichabodcole/anthill/commit/a3707c37b860d4e8fac0c64aac28f672205c516a))
+* **comms:** add `positions` — the cross-seat read of emittedThrough ([32a9d46](https://github.com/ichabodcole/anthill/commit/32a9d46eac38236486c65a1c36a3cf7f036cf8ce))
+* **comms:** follow announces its gap instead of starting silently from now ([1fb02af](https://github.com/ichabodcole/anthill/commit/1fb02aff1a72145653567d48bfbbdf2d77d2b45a))
+* **comms:** per-seat emittedThrough position, recorded by follow ([8d4569d](https://github.com/ichabodcole/anthill/commit/8d4569deafa980f0b67b3000091fb72584ad490c))
+* **comms:** send --dry-run and read --last N ([c9e156f](https://github.com/ichabodcole/anthill/commit/c9e156fecd55805a06216ade848614a3b6384fc4))
+* **comms:** send-time staleness check and the emittedThrough stamp ([fd0fe7d](https://github.com/ichabodcole/anthill/commit/fd0fe7d99dbe1cf2bf255f6e8674851b8c7d6e92))
+* **join:** comms leads the manifest, and the catch-up line stops covering one of the two wires it serves ([231d39a](https://github.com/ichabodcole/anthill/commit/231d39a4c47a7db4036bab655b9bcff9f0cd03d4))
+* **join:** emit the LAND command composed, so a shell idiom cannot defeat the gate ([451e1aa](https://github.com/ichabodcole/anthill/commit/451e1aa3088692176bbbfd4292f4bd5d2c844414))
+* **team:** add steward and scout, and regenerate the roster from config ([6a4fbfe](https://github.com/ichabodcole/anthill/commit/6a4fbfe731731371e4db247dbc577df190fb9d49))
+
+
+### Bug Fixes
+
+* **agent-layer:** make the TTY half of the dual-audience matrix reachable from a test ([97fbee9](https://github.com/ichabodcole/anthill/commit/97fbee9e87825025b6facf81d4deee9008659228))
+* **cli:** --version says WHICH cli.ts answered, not just what it claims ([5bfd97f](https://github.com/ichabodcole/anthill/commit/5bfd97f7244ac68c481050d59189fb6cf58b261c))
+* **commit:** make the seat trailer idempotent ([3123bb2](https://github.com/ichabodcole/anthill/commit/3123bb2052572bcdc7635ee5bd48bc23f9ab55be))
+* **commit:** resolve the git common dir so anthill commit works in a worktree ([4acba7c](https://github.com/ichabodcole/anthill/commit/4acba7c8384b5734eafb8e061e5b9ae38def6d80))
+* **commit:** uncheckedAgainst is TOTAL — ruled at [#112](https://github.com/ichabodcole/anthill/issues/112), built 132 messages later ([7ed0f53](https://github.com/ichabodcole/anthill/commit/7ed0f537f402826927d266c19018553f52e959e0))
+* **comms:** an incoherent position is never-followed, not `current` — F1's cheap half ([1edca84](https://github.com/ichabodcole/anthill/commit/1edca8403ce858f908c0c7fbb535eae28f329e3d))
+* **comms:** follow-start reports gap null when it cannot be known, never 0 ([400e348](https://github.com/ichabodcole/anthill/commit/400e34837c123da12a305dfadfad18b5eaa0dbf5))
+* **convene:** emit the LEAD's own comms incantation ([2563d94](https://github.com/ichabodcole/anthill/commit/2563d943f30d91d60fb24c09a9fd5733ce0e41d5))
+* **convene:** report what --fresh DID, not that the flag was forwarded ([73e8fea](https://github.com/ichabodcole/anthill/commit/73e8fea323e33c63bf6a03a93f83fe7c32a010d3))
+* **down,join:** the third AND fourth sites of "on the vine" — found by grepping, not by being pointed at ([cc22e0c](https://github.com/ichabodcole/anthill/commit/cc22e0ca295174a1a8b253563e4f42a2ca560eef))
+* **down,status:** presence is three states, and an unknown one must not read as empty ([bc14193](https://github.com/ichabodcole/anthill/commit/bc141935f3a8b93c61fa08351fb930fbc1f8ae56))
+* **down:** a dead comms follower is UNKNOWN, never absence (F1) ([b28c3b5](https://github.com/ichabodcole/anthill/commit/b28c3b5ecfc594425b7f721da72ece863e3d00e1))
+* **down:** presence spans BOTH wires — the teardown guard was fail-open on a comms-only session ([fb85483](https://github.com/ichabodcole/anthill/commit/fb8548385ba8b7fe7a1731a6fe7b736edc7f2002))
+* **down:** the teardown refusal no longer names a single wire ([4cbf355](https://github.com/ichabodcole/anthill/commit/4cbf355d4bb0cb02ebb2ca1d9f1903c25ece4bd4))
+* **gitignore:** drop the trailing slash so the comms path matches a symlink too ([ab3e66d](https://github.com/ichabodcole/anthill/commit/ab3e66de9b4e24f5d2faca646e23a40e6fb6887f))
+* **init:** drop the trailing slash from COMMS_GITIGNORE_LINE ([7b2b4cd](https://github.com/ichabodcole/anthill/commit/7b2b4cd5f064005d3df9df2dffa78d7b4ecfa147))
+* **join,down,cli:** four cold-read severes — three tests that passed for the wrong reason, one manifest that lied ([8ba7c8d](https://github.com/ichabodcole/anthill/commit/8ba7c8d599b249ef5c1abec5206273458a2dc8b5))
+* **join:** a missing spellbook no longer sinks the whole manifest (S8-1) ([1efc161](https://github.com/ichabodcole/anthill/commit/1efc161e458884226bc034d357ba0db7a2255375))
+* **join:** put principles.md in the grounding manifest, and split the missing-doc remedy by origin ([322a48a](https://github.com/ichabodcole/anthill/commit/322a48ad18ebe416b5fcbc24e64577474b3e59eb))
+* **join:** repair three guards found by blank-context verify — D1 vacuous, D2 mis-justified, D3 absent ([0c4f3f6](https://github.com/ichabodcole/anthill/commit/0c4f3f6e0c654e190b36fec700fe6d9ba9025259))
+* **join:** the emitted LAND string is a command or nothing — never prose (F2/F2b) ([10bae00](https://github.com/ichabodcole/anthill/commit/10bae002ad9dff010d4706d414e149a4539d35cc))
+* **join:** the LAND string resolves to the emitting cli.ts, never a bare `anthill` ([98ade49](https://github.com/ichabodcole/anthill/commit/98ade496aafd01c2df62857792ef1b3a93c4f0b4))
+* **join:** the TEXT renderer collapsed the partial-wire case — third instance, one diff ([1235955](https://github.com/ichabodcole/anthill/commit/1235955c845e77d67abab088abbddcbd7e6dab7e))
+* **status:** fold the SECOND copy of the presence logic into seatPresence ([afb4a02](https://github.com/ichabodcole/anthill/commit/afb4a02bb47bf9d03a381c3f94cbd41a4970a873))
+
 ## [1.8.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.7.2...anthill-v1.8.0) (2026-08-01)
 
 
