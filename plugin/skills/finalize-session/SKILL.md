@@ -19,12 +19,21 @@ _live_. Don't skip it on a real session.
 
 ### Kickoff — the lead triggers the ritual
 
-0. **Broadcast the start on the vine.** The seats are in **separate panes** — nothing makes them
-   synthesize unless told. The lead posts on the channel: _"Finalizing — every seat run your
-   `anthill:finalize-session` synthesis (steps 1–2) now and confirm on the vine when your seat doc is
+0. **Broadcast the start on the wires this session actually armed.** The seats are in **separate
+   panes** — nothing makes them synthesize unless told. The lead posts: _"Finalizing — every seat run
+   your `anthill:finalize-session` synthesis (steps 1–2) now and confirm when your seat doc is
    landed."_ Then the lead **gathers confirmations** and does not proceed to land + teardown (step 6)
    until **every present seat has confirmed** — knowledge capture is the whole point, and a torn-down
    pane can't synthesize.
+   - **⚠ Do NOT name a wire here without checking what this session armed.** A session may deliberately
+     run on one wire and leave another open-but-unsubscribed. **Broadcasting the ritual on a wire
+     nobody tails is indistinguishable from not broadcasting it** — every seat stays silent, the lead
+     reads that as "nobody has finalized", and the ritual stalls at its first beat with no error
+     anywhere. _This step said "on the vine" through a session that ran comms-only by ruling; it was
+     caught minutes before the ritual ran, by a seat reading ahead rather than by anything mechanical._
+   - **The rule that survives a new wire: broadcast where the seats are, and if you are not certain
+     where that is, ask before you announce.** A confirmation you never receive and a confirmation
+     nobody sent look identical from the lead's chair.
 
    **Subagent-mode finalize (bake the capture into the task, don't chase it after).** A one-shot
    `Task`/`Agent` subagent isn't on the vine waiting to be told to finalize. You _can_ resume it
