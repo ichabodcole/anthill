@@ -55,65 +55,85 @@ mock.module("../coord.ts", () => ({
   parseJsonLine: () => null,
 }));
 
+/**
+ * Drive the real `run()` once and return the ledger it produced.
+ *
+ * ⚠ EACH TEST CALLS THIS FOR ITSELF. An earlier draft populated the ledger in
+ * test 1 and read it in test 2, so test 2 passed only while its sibling ran
+ * first and FAILED IN ISOLATION (found by steward, comms #752). That is this
+ * seat's own recorded rule — an assertion must positively pin its subject
+ * WITHIN the same test, because the sibling it silently leans on is exactly
+ * what a later refactor or a `--test-name-pattern` run removes. It failed
+ * safe, but a test that depends on execution order is not evidence about the
+ * code; it is evidence about the runner.
+ */
+async function conveneLedger(): Promise<{ ledger: string[]; emitted: string }> {
+  const { teamConveneCommand } = await import("./team-convene.ts");
+  // `run` is optional on CommandDef (a group may only dispatch subcommands),
+  // so assert it exists rather than reaching through it — the prototype this
+  // was adapted from passed `bun test`, which does not typecheck, and tsc
+  // rejected it. Asserting also makes "convene lost its run()" a named failure
+  // instead of a confusing undefined-call.
+  const run = teamConveneCommand.run;
+  expect(typeof run).toBe("function");
+  calls.length = 0;
+
+  // ⚠ CAPTURE stdout for the duration. Driving the real `run()` makes it
+  // `emit()` a PRODUCTION-SHAPED envelope into the middle of `bun test`'s
+  // output — naming the live channel, with `board: null` and a "bounty board
+  // not running" warning. weaver stopped a land to check whether the team's
+  // board had died, and was one command from posting "the board is down"
+  // (comms #747).
+  //
+  // The finding is the shape, not the incident: THE GATE'S STDOUT IS THE ONE
+  // SURFACE EVERY SEAT READS, and a test that prints a production envelope
+  // into it is indistinguishable from the real thing at a glance.
+  //
+  // Restored in `finally` — if an assertion throws while stdout is patched,
+  // every later test in the run goes silent and the suite's own output becomes
+  // untrustworthy, which is a worse defect than the one being fixed.
+  const realWrite = process.stdout.write.bind(process.stdout);
+  const chunks: string[] = [];
+  process.stdout.write = ((chunk: unknown) => {
+    chunks.push(String(chunk));
+    return true;
+  }) as typeof process.stdout.write;
+  try {
+    await run?.({ args: { format: "json" } } as never);
+  } finally {
+    process.stdout.write = realWrite;
+  }
+  return { ledger: [...calls], emitted: chunks.join("") };
+}
+
 describe("convene's coordination spawn set — criterion 2, absence of OPENING", () => {
   test("invokes EXACTLY the bounty verbs — the SET, not the absence of a member", async () => {
-    const { teamConveneCommand } = await import("./team-convene.ts");
-    // `run` is optional on CommandDef (a group may only dispatch subcommands),
-    // so assert it exists rather than reaching through it — the prototype this
-    // was adapted from passed `bun test`, which does not typecheck, and tsc
-    // rejected it. Asserting also makes "convene lost its run()" a named
-    // failure instead of a confusing undefined-call.
-    const run = teamConveneCommand.run;
-    expect(typeof run).toBe("function");
-    calls.length = 0;
-
-    // ⚠ CAPTURE stdout for the duration. Driving the real `run()` makes it
-    // `emit()` a PRODUCTION-SHAPED envelope into the middle of `bun test`'s
-    // output — naming the live channel, with `board: null` and a
-    // "bounty board not running" warning. weaver stopped a land to check
-    // whether the team's board had died, and was one command from posting
-    // "the board is down" (comms #747).
-    //
-    // The finding is the shape, not the incident: THE GATE'S STDOUT IS THE ONE
-    // SURFACE EVERY SEAT READS, and a test that prints a production envelope
-    // into it is indistinguishable from the real thing at a glance.
-    //
-    // Restored in `finally` — if an assertion throws while stdout is patched,
-    // every later test in the run goes silent and the suite's own output
-    // becomes untrustworthy, which is a worse defect than the one being fixed.
-    const realWrite = process.stdout.write.bind(process.stdout);
-    const emitted: string[] = [];
-    process.stdout.write = ((chunk: unknown) => {
-      emitted.push(String(chunk));
-      return true;
-    }) as typeof process.stdout.write;
-    try {
-      await run?.({ args: { format: "json" } } as never);
-    } finally {
-      process.stdout.write = realWrite;
-    }
+    const { ledger, emitted } = await conveneLedger();
 
     // The capture is not merely suppression — it is the positive control that
-    // the command actually RAN and emitted. A silent stdout here would mean
-    // `run()` did nothing, and the ledger assertion below would then be
-    // passing over an empty set for the wrong reason.
-    expect(emitted.join("")).toContain(`"command":"convene"`);
+    // the command actually RAN and emitted. A silent stdout would mean `run()`
+    // did nothing, in which case the equality below would be passing over an
+    // empty set for the wrong reason — the exact vacuity this test exists to
+    // prevent.
+    expect(emitted).toContain(`"command":"convene"`);
 
     // `team-support.ts`'s readBoardCounts -> `bounty state` lands in the same
     // ledger, and that third entry is not a bonus: it is part of why this
     // assertion has a positive control at all.
-    expect(calls).toEqual([
+    expect(ledger).toEqual([
       "<bounty-cli> sessions",
       "<bounty-cli> open --session-key anthill-dev --pin --no-open",
       "<bounty-cli> state",
     ]);
   });
 
-  test("the ledger is NON-EMPTY — the control that makes the equality mean something", async () => {
-    // Stated as its own assertion rather than trusted as a side effect of the
-    // one above: an empty ledger would satisfy any membership check, and this
-    // is the cell that fails first if the harness ever stops recording.
-    expect(calls.length).toBeGreaterThan(0);
-    expect(calls.every((c) => c.startsWith("<bounty-cli> "))).toBe(true);
+  test("the ledger is NON-EMPTY and wholly bounty — self-contained, runs alone", async () => {
+    // Drives its OWN run. An empty ledger satisfies any membership check, so
+    // this is the cell that fails first if the harness ever stops recording —
+    // which only means anything if it cannot inherit a populated ledger from
+    // the test above.
+    const { ledger } = await conveneLedger();
+    expect(ledger.length).toBeGreaterThan(0);
+    expect(ledger.every((c) => c.startsWith("<bounty-cli> "))).toBe(true);
   });
 });
