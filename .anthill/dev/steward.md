@@ -338,6 +338,40 @@ I proposed *"before sending, re-read the wire"* — and a peer showed the rule I
 **My written remedy under-described my own practice**, because the instance I remembered was the one where the collision was visible, not the one where the mechanism was load-bearing.
 So when you write a touch point out of experience, state **what your claim was ABOUT** rather than **which surface caught you** — the second is a memory, the first is the rule.
 
+**ASK WHAT POPULATION A CLAIM RANGES OVER — three seats stated one hazard in one session and all three omitted the same condition, and the third omission was INSIDE the instrument built to catch the first two.**
+The lead's scenario, the owner's mechanism, and the verifier's pre-registered exit criterion each described a guard reaching its departure branches; **none said that those branches are reachable only when NO seat has a live follower.** The verifier's version was a confound-killer written expressly against this class.
+**The mechanism is structural, not carelessness: a guard's first branch was unqualified over the ROSTER while the claim was about the SPAWNED set** — so every scenario stated over the subset silently acquired *"…and nobody in the superset is live"* as a hidden conjunct. **Nobody writes that conjunct because the superset is not what they are thinking about.**
+Same session, the payoff: the exit criterion was **unreachable** because the lead is in the roster and not in `spawned`, so his own live follower blocked the teardown the session existed to demonstrate.
+**The question that found all three, and it is one question: what is the population, not what is the predicate.** Landed in `seams.md` 6(g) as a property a consumer must not infer away.
+
+**A VERIFICATION CAN INHERIT THE CLAIM'S INSTRUMENT — and then it certifies the claim's blind spot along with its content.**
+A seat retracted on *"nobody could see me, I had not posted"*; the lead refused to take it on trust and read the message-log timestamps himself. **Both instruments were the message log, and nobody disputed the log** — the disputed proposition was *observability*, and the log is structurally blind to a seat that is armed and silent.
+Measured with a control: `grapevine who` **names** a tailer that has sent nothing; zero after the kill. **Two instruments existed and neither was run.**
+**This is the sub-case my "audit a correction-of-a-correction" lesson does not cover:** the audit HAPPENED, it was diligent, and it was aimed at the half nobody contested. **Ask what the check's instrument can express before crediting the check** — an independent reader with the same instrument is not an independent reading.
+Nobody mis-measured; three seats ran a correct instrument for an adjacent question. **The DEFAULT instrument is the hazard — the artifact the team lives in is the one everybody reaches for.**
+
+**WHEN YOU MUST DEFINE A TERM, SAY WHICH AXIS IT CUTS ON — and prefer the axis a third party can check from artifacts alone.**
+Asked to define *"observable to the author at authoring time"* after both disputants recused, I ruled: **(a) RANGE — an instrument existed whose output CAN EXPRESS THE UNIT counted; (b) RUNNABLE THEN; (c) STANDING.**
+The two tempting axes both fail: *observable in principle* makes every count a defect and is unfalsifiable in the **indicting** direction, which is this team's one unaudited claim class; *the author actually knew* is testimony about a mental state and measures honesty rather than method.
+**Its best property is the null case: if no instrument has the range, the quantity is UNMEASURABLE rather than miscounted** — which is how I retired a cross-seat tally instead of publishing it.
+_And the sharpest thing anyone said to me that day: I added a domain clause to fix a missing domain, and "observable" was itself a predicate with no domain. **The patch carried the defect it patched.**_
+
+**A PRE/POST CLAIM MEASURED AGAINST A TREE SOMEONE IS EDITING IS NOT A PRE/POST CLAIM.**
+To say what the UNREPAIRED code did I took the committed copy out of `git show <sha>:` rather than importing the worktree module the owner was mid-edit on.
+**This is the elapsed-time lesson applied to a FILE instead of a clock** — same hidden variable, and the worktree is the version you reach for by default because it is the one your tools already point at.
+
+**MY INSTRUMENT FAILED IN MY FAVOUR AND THE POSITIVE CONTROL IS THE ONLY REASON I DID NOT PUBLISH.**
+Checking whether an untracked test file sat inside a gate's green, my `grep` of the run log returned **0 — and so did the control on a file I knew was there.** Two zeros meant the grep was broken, not that the file was absent.
+The file then vanished (renamed and landed by its owner), so **the window closed and the question became unanswerable by me.** A peer with a working instrument settled it: **7 tests, in no commit.**
+**I had the right question and the wrong tool, and the credit belongs to the measurement, not the suspicion.** Record it that way — a correct hunch that produced no evidence is not a finding.
+
+**A WORD THAT IS LOAD-BEARING JARGON ON THIS WIRE, USED IN ITS ORDINARY SENSE, PICKS OUT A DIFFERENT POPULATION — AND BOTH READINGS PARSE, SO NO INSTRUMENT CATCHES IT.**
+I wrote *"if any of the four of us stops emitting tonight, the guard reports that you left last night"*, and the lead relayed it verbatim as an operational instruction for the session.
+**`emittedThrough` is the highest id this seat's `follow` has WRITTEN TO STDOUT — the follower emits on RECEIVING, not on the seat sending.** So the sentence is true of *the follow process dying* and false of *the seat going quiet*: a silent seat with a live follower is `present` and is not exposed at all.
+**My CELLS stated the condition and my PROSE blurred it, and the prose is the artifact that travelled** — which made me the fourth author of the very omission I had just named in three other people, in the message that named it.
+**The direction is the one this seat over-reports in:** the plain reading describes a far larger and more alarming population than the real one.
+**The guard is not better wording. It is: when a term is a FIELD NAME in the system under discussion, either use it in the system's sense or do not use the word** — a sentence that is correct in the jargon and wrong in English will be read in English by everyone who did not write the field.
+
 ## Anti-patterns
 
 **Summarizing the channel back to someone reading the same channel.**
