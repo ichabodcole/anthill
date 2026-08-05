@@ -1,12 +1,12 @@
 # Comms as the default team wire — plan
 
-**Status:** **STEPS 4 AND 5 SHIPPED (session 11). Grapevine no longer participates in the team lifecycle.** `convene` opens nothing, `join` composes no vine tail, and the whole C4 prose surface is migrated. **Gate item 3 — the pane-kill — is DISCHARGED**: INFERRED since session 9, reproduced and instrumented at `c9a33e7`.
+**Status:** **STEPS 4 AND 5 SHIPPED (session 11). Grapevine no longer participates in CONVENE or JOIN** — it is still consulted at **teardown** (`team-support.ts:469`, `grapevine who`, fired by `status` and `down`), which is why the sentence is scoped rather than absolute. `convene` opens nothing, `join` composes no vine tail, and the whole C4 prose surface is migrated. **Gate item 3 — the pane-kill — is DISCHARGED**: INFERRED since session 9, reproduced and instrumented at `c9a33e7`.
 **⏭ REMAINING: step 3 (rotation) and step 6 (the swap run). See [NEXT PHASE](#-next-phase--what-session-12-picks-up) at the foot of this file — read that before anything else.**
 **Created:** 2026-08-04 (session 9) · **Author:** maestro (lead) · **Last revised:** 2026-08-05 (session 11), against what shipped rather than what was intended.
 **Follows:** [proposal.md](./proposal.md) · [capability-state](../capability-state/proposal.md) _(moved out of this folder — it is slice three, not this project)_
 **Sessions:** [session 9 — phase 1](./sessions/2026-08-04-session-9-phase-1.md) · session 10 — phase 2 · [session 11 — phase 3](./sessions/2026-08-05-session-11-phase-3.md) + [the step-6 evidence](./sessions/2026-08-05-session-11-step6-evidence.md)
-**Branch:** `feat/comms-as-default-phase-3` (off `develop`, **unmerged** — 30 commits) · **Gate:** `bun run check`
-**Baseline, both ends measured on CLEAN trees at named shas** (weaver, comms #501): **512 pass / 0 fail @ `27da450`** → **529 pass + 1 todo / 0 fail @ `13a4ae7`** = **+17 pass**. Every other reading taken this session was over a dirty tree; those two were not.
+**Branch:** `feat/comms-as-default-phase-3` (off `develop`, **unmerged** — 35+ commits; count at your own sha, do not quote this one) · **Gate:** `bun run check`
+**Baseline — ⚠ THIS IS SESSION 10'S, NOT CURRENT.** (weaver, comms #501): **512 pass @ `27da450`** → **529 pass + 1 todo @ `13a4ae7`** = **+17 pass**. **Session 11 ended at 524 pass / 1 todo / 0 fail** — the suite went DOWN deliberately (−12 deleted `interpretFresh`/mirror cells, +7 rotation instrument). **Measure at your own sha; do not quote either number.** Every other reading taken this session was over a dirty tree; those two were not.
 
 > **This file was authored as a SKELETON and is no longer one.** That banner has been discharged: every
 > seam below was ratified or falsified on the wire before it was built, and four of the lead's five
@@ -31,7 +31,7 @@
 ## How this plan is authored
 
 - **maestro (lead)** owns this skeleton, the seams _as claims_, the integration order, and the verification gate. Not the lane detail.
-- **forager** owns `plugin/scripts/anthill/` — presence, the guard, rotation, `stand-down`, migration — and authors `plan/forager.md`.
+- **forager** owns `plugin/scripts/anthill/` — presence, the guard, rotation, `stand-down`, migration. ⚠ **`plan/forager.md` was never authored** — he worked from this file plus his board cards. Only `plan/weaver.md` exists.
 - **weaver** owns `plugin/skills/` + `plugin/templates/` — the shipped prose and the wire model it teaches — and authors `plan/weaver.md`.
 - **sentinel** owns the verification points; it is pulled in **mid**, not at the end (see the gate).
 - **steward / scout** build nothing. See Slices.
@@ -107,7 +107,7 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
   >
   > **Same lifetime bug as the position files, opposite sign — and this plan's prose only knew the safe direction.** That is D3, repaired at `53ecae4`.
 
-- **Therefore the pane-kill window opens at step (3), not step (4).**
+- ~~**Therefore the pane-kill window opens at step (3), not step (4).**~~ 🔴 **FALSIFIED session 11 by execution (`c9a33e7`): rotation ALONE fails CLOSED.** The window needs a THREE-term conjunction — see the correction block above. _This line went unmarked when its sibling at the integration-order list was struck; found by a cold read._
 
 **Therefore: presence first, removal second, the swap run last.** Nothing lands in the reverse order.
 
@@ -365,7 +365,7 @@ Commands: `/usr/bin/grep -RIni 'grapevine' <scope>` and `/usr/bin/grep -RInE '\b
 
 ## Slices
 
-- **forager** → `plan/forager.md` — C1, C2, C3, and the three call sites of C4's code half.
+- **forager** → ⚠ **`plan/forager.md` does not exist and never did.** C1, C2, C3 and C4's code half were carried in this file, `seams.md` and the board. Do not go looking for it; do not treat its absence as lost work.
 - **weaver** → `plan/weaver.md` — C4's prose half; the wire model taught by `join`, `convene`, `comms`, `finalize-session`, `bootstrap`, `upgrade`, and the templates.
 - **sentinel** — the gate at each verification point below. **Not an end-slot.**
 - **steward** — pointed at **proposed fixes, not at claims**, per session 8's structure note in its own words: _"my best output was checks on REMEDIES rather than on findings."_ This session's remedies are unusually load-bearing, so this is the session to test that refinement.
