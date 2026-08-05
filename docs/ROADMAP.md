@@ -118,6 +118,47 @@ is discharged by argument.**
 > [coordination-layer investigation](investigations/2026-07-31-team-native-coordination-layer.md) and the
 > carried debt, and conflating them is what made version one unrunnable.
 
+---
+
+# ▶ NEXT UP: **SESSION 13 — THE STORES STOP LYING**
+
+**Proposed by the session-12 lead, 2026-08-05, from that session's own outputs. Awaiting Cole's ratification.**
+
+> **Why this scope and not a list of fixes:** session 12 found **three stores that disagreed with the tree inside ninety minutes** — the roadmap (4 stale claims, one of them its own row), the board (**13 of 27 `review` cards mis-stating the tree, ~48%**), and a carried card whose work was already landed. `principles.md` says **no store without a named re-read moment**; the board has a write trigger and **no read-back across sessions**, and it is the surface Cole's continuation condition is judged on.
+
+## S13 · what gets delivered
+
+| #         | item                                                                      | why it is not an experiment                                                                                                                                                                                                                                                  | source                  |
+| --------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **S13-A** | **`comms stand-down`'s `created` flag is session-scoped**                 | `team-comms.ts:924` is `!existsSync(path)` — **bare file existence, which is D3's exact defect one field over.** `comms.ts:694` already has the repaired predicate (`record.at >= sessionOpenedAt`). **n=4 seats misread it in one session.** One predicate, already written | session 12 wire, n=4    |
+| **S13-B** | **`uncheckedAgainst` stops reporting a false empty**                      | the porcelain read is at `team-commit.ts:526`, **after** `acquireLock` at `:346` — so a peer committing during your queue vanishes from the list. **Reproduced with timestamps** (15.6s queue, empty list, a peer's commit inside the window)                                | card `t-42dd65bf`, n=2  |
+| **S13-C** | **Test output that mimics a production envelope carries a marker**        | a seat nearly read a test's `convene` envelope in the gate's stdout as **our board dying**, in a session that had opened with a real board-loss scare                                                                                                                        | scout §8.3              |
+| **S13-D** | **`anthill commit` requires or resolves `--as`**                          | 9 of session 11's first 11 commits carried no seat trailer. Carried from session 11, unbuilt                                                                                                                                                                                 | S11 debt                |
+| **S13-E** | 🎯 **CRITERION 7 + THE BOARD READ-BACK, AS ONE PIECE**                    | **triaging without fixing the read-back just re-does the triage next session.** Needs the `MOOT` class steward found (_the subject was deleted_) — _"we fixed it"_ and _"the thing it was about is gone"_ send a fresh agent to different places, and one word covers both   | criterion 7 + `c2a4114` |
+| **S13-F** | **Close the discharged cards** — `t-ac09ffa9`, `t-07a131f5`, `t-e25cd535` | all three verified dischargeable in session 12; `--fresh` is moot since step 4 deleted it. **Minutes, and they are three of the 13 lying cards**                                                                                                                             | continuation doc        |
+
+**⚠ Needs ONE ruling before it is buildable, not a typing job:** **`comms send` refusing a body whose stated read-watermark disagrees with `--as-of`** (scout, n=4 — including inside the message correcting the first two). **It couples the tool to a PROSE convention** — it must parse _"reading as of #N"_ out of a body. **Decide the coupling first; if it is refused, the item dies rather than drifting.**
+
+## S14 · defined now so it is not re-derived from a report
+
+| #         | item                                                                        | why it is S14 and not S13                                                                                                                                                                                                                                                                                            |
+| --------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **S14-A** | **ONE EXECUTED ROTATION**, deliberately, on a channel nobody is standing on | discharges **6(e)'s live half** (decisive cell already written: _rotate, then `comms positions` WITHOUT restarting a follower_), clears **6(g)'s amendment trigger** (`1b905c4`), and answers whether `previousPosition` survives. **Rotation landed INERT in S12 — running it is a separate act with its own risk** |
+| **S14-B** | **Remove the vine leg** (`commands/team-support.ts:469`)                    | 🔴 **it is a LOAD-BEARING MASK, measured:** an unresolvable vine makes `down` **always-block**, so removing it leaves `commsPresence` as the sole input. A presence-semantics change **with a ratify gate**                                                                                                          |
+| **S14-C** | **`t-c012c84c` — `openedAt` has two answers 246s apart** (convene vs spawn) | it is the field implementing D3's safety property, and **S14-A may move or resolve it.** Sequencing it after the executed rotation is deliberate                                                                                                                                                                     |
+
+## Backlog — real, placed, NOT scoped to a session
+
+- **`down`'s envelope carries no `because` field** — verified at source; **gate 2c's _"state AND because"_ is unsatisfiable at the command boundary by anyone.** Not a defect, a stated limit. → `docs/backlog/`
+- **`bun run check` reads ZERO markdown** — **fourth session running.** The prose lane has no automated verification at all, and _"gate green" on a markdown land means the tree compiles._
+- **The whole-tree gate serialises a lane that cannot cause a red** — weaver blocked **3× in one session** on a markdown lane. → **[`shared-tree-gate-tension`](projects/shared-tree-gate-tension/proposal.md) move C**, now with first-person field evidence **and** a reproduced false-`uncheckedAgainst` beside it. **Decide at a convene; it is a tree-model question, not a fix.**
+
+## Upstream to spellbook — deduped, drafted, NOT yet sent
+
+**Cole approves the drafts before they go.** `bounty open --restore <id>` **silently no-ops** when a live board already holds the key (it attaches and ignores the flag — this is how session 12's board recovery nearly failed) · **`bounty state` truncates to a PIPE** (~64KB, whole to a file), and `--owner <name>` does not filter while `--mine` does.
+
+---
+
 **Why 4/4b and 7 are in the set rather than assumed:**
 
 - **(4/4b)** Cole ruled _"grapevine leaves entirely."_ **The consuming-team half has not happened** —
