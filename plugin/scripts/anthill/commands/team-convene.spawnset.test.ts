@@ -66,7 +66,38 @@ describe("convene's coordination spawn set — criterion 2, absence of OPENING",
     const run = teamConveneCommand.run;
     expect(typeof run).toBe("function");
     calls.length = 0;
-    await run?.({ args: { format: "json" } } as never);
+
+    // ⚠ CAPTURE stdout for the duration. Driving the real `run()` makes it
+    // `emit()` a PRODUCTION-SHAPED envelope into the middle of `bun test`'s
+    // output — naming the live channel, with `board: null` and a
+    // "bounty board not running" warning. weaver stopped a land to check
+    // whether the team's board had died, and was one command from posting
+    // "the board is down" (comms #747).
+    //
+    // The finding is the shape, not the incident: THE GATE'S STDOUT IS THE ONE
+    // SURFACE EVERY SEAT READS, and a test that prints a production envelope
+    // into it is indistinguishable from the real thing at a glance.
+    //
+    // Restored in `finally` — if an assertion throws while stdout is patched,
+    // every later test in the run goes silent and the suite's own output
+    // becomes untrustworthy, which is a worse defect than the one being fixed.
+    const realWrite = process.stdout.write.bind(process.stdout);
+    const emitted: string[] = [];
+    process.stdout.write = ((chunk: unknown) => {
+      emitted.push(String(chunk));
+      return true;
+    }) as typeof process.stdout.write;
+    try {
+      await run?.({ args: { format: "json" } } as never);
+    } finally {
+      process.stdout.write = realWrite;
+    }
+
+    // The capture is not merely suppression — it is the positive control that
+    // the command actually RAN and emitted. A silent stdout here would mean
+    // `run()` did nothing, and the ledger assertion below would then be
+    // passing over an empty set for the wrong reason.
+    expect(emitted.join("")).toContain(`"command":"convene"`);
 
     // `team-support.ts`'s readBoardCounts -> `bounty state` lands in the same
     // ledger, and that third entry is not a bonus: it is part of why this
