@@ -8,11 +8,12 @@
 
 ## Why this document exists
 
-The human asked three questions and they have sharply different answers:
+The human asked three questions, then a fourth after the first draft. They have sharply different answers:
 
 1. **Is comms ready to replace grapevine for intra-team communication?** — **Yes, one blocker.**
 2. **What features do we still want first?** — **Two are blockers; the rest are wants.**
 3. **Have we settled on a communication PATTERN worth shipping as guidance?** — **No, and more sessions of the current kind will not get us there.**
+4. **What about the skills that still teach grapevine?** — **34 shipped references, and removing grapevine entirely is a simplification with a defect-class payoff.**
 
 The third answer is the reason this is a plan and not a checklist. **The stated goal is to avoid a
 cycle of feeling close without converging**, and the honest diagnosis is that our pattern evidence
@@ -129,6 +130,57 @@ constant but one variable:
 
 **So pattern guidance needs a different instrument, not more sessions.**
 
+## Question 4 — the prose migration, and whether grapevine leaves entirely
+
+**Raised by the human after the first draft, and it is a workstream this plan had missed.** Shipping
+comms is not done when the code works: **every skill that teaches grapevine is teaching the wrong wire.**
+
+### The measured surface
+
+```
+SHIPPED PROSE   plugin/skills      28 refs / 6 files   (join 11 · convene 8 · comms 4 · bootstrap 3 · upgrade 1 · finalize 1)
+                plugin/templates    6 refs / 3 files
+CODE            plugin/scripts    106 refs / 12 files
+                ...but only TWO live call sites:
+                  team-convene.ts:260   resolveCoordCli("grapevine")   opens the channel
+                  team-support.ts:312   resolveCoordCli("grapevine")   seatPresence reads `who`
+```
+
+**The code removal is two call sites.** The 106 is tests and comments trailing them.
+
+### The second call site is the argument for full removal
+
+`seatPresence` spans **both** wires today (`fb85483`). **Every one of the five false _"on the vine"_
+sentences fixed in session 8 existed because presence is multi-wire** — the code stopped naming one
+wire and five pieces of prose did not follow.
+
+**Dropping grapevine collapses presence to a single wire and retires that defect class**, rather than
+fixing its five instances. That is a stronger reason than tidiness.
+
+### Recommendation: remove grapevine from anthill's model entirely
+
+**Including the cross-project mention.** The human's reasoning, sharpened by anthill's own principle
+that _it supplies the trigger and the project supplies the content_: **cross-project communication is
+human-initiated, not something anthill orchestrates.** It belongs in the human's prompting, not in a
+skill shipped to every consuming team.
+
+**Two caveats stated so they are not discovered:**
+
+1. **Spellbook remains a dependency** — `bounty` is the board, 2 call sites, unaffected. This **halves**
+   the coupling; it does not remove it. Do not sell it as dependency elimination.
+2. **The teardown guard reads presence.** Changing presence semantics touches the guard that prevents
+   yanking a live seat mid-ritual. **That is the careful part of this work — not the prose.**
+
+### Sequencing
+
+**The prose migration must follow the code, not accompany it.** Session 8's characteristic failure was
+prose asserting something about a tool that was still moving — six instances, three of them introduced
+_by seats fixing other false prose_. **Rewrite the 34 shipped references once, after presence is
+single-wire and settled**, and cold-read the result against a `git archive` surface.
+
+_Fits in session 9 if presence lands early; otherwise it is session 9.5 and should be said so rather
+than crammed._
+
 ## The pipeline
 
 ### Session 9 — "comms replaces grapevine" · _ships the swap_
@@ -145,8 +197,14 @@ re-reads).
 > A session convenes, runs, and tears down cleanly with **no grapevine at all**, **and** the previous
 > session's log is still readable by id afterwards.
 
-**Confidence: high.** The work is small and mostly specified. **Slice three may land in parallel — it
-blocks nothing here.**
+**Also in scope, sequenced after presence lands:** collapse `seatPresence` to a single wire, drop the
+two `resolveCoordCli("grapevine")` call sites, and rewrite the **34 shipped prose references** (see
+Question 4). **If presence does not land early enough to leave the prose settled, split the rewrite to
+9.5 rather than cramming it** — session 8 proved that rewriting prose about a still-moving tool is how
+false prose gets introduced.
+
+**Confidence: high on the comms work, medium on fitting the prose migration in the same session.**
+**Slice three may land in parallel — it blocks nothing here.**
 
 ### Session 10 — "the within-session control" · _makes pattern claims possible_
 
