@@ -186,6 +186,11 @@ export const teamCommitCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
+    paths: {
+      type: "positionals",
+      description: "Explicit path(s) to commit — never a bare `git add -A`",
+      valueHint: "path…",
+    },
     message: { type: "string", alias: "m", description: "Commit message", valueHint: "text" },
     stdin: {
       type: "boolean",

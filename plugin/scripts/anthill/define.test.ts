@@ -179,3 +179,95 @@ describe("m10 — a VALUE beginning with a dash names both escapes", () => {
     }
   });
 });
+
+// t-7bc57308 — an UNKNOWN POSITIONAL is swallowed in silence, and that is the
+// direction that costs a session. Measured on the live wire, one command apart:
+//
+//   comms read --channel <ch> --zzz999   ->  exit 1  "Unknown option '--zzz999'"
+//   comms read --channel <ch> zzz999     ->  exit 0  ok:true  THE ENTIRE LOG
+//
+// The second is what a seat produces by reaching for a neighbouring tool's
+// positional-shaped `read <channel> <id>` signature. It does not fail: it
+// succeeds, plausibly, with the wrong answer, and the size of the result is the
+// only tell. This is the asymmetry `strict: true` closed for FLAGS and left open
+// for POSITIONALS.
+//
+// ⚠ THE CRITERION HAS TWO CONJUNCTS AND SESSION 11 SHIPPED THE FIRST ALONE:
+//   (1) the command declares NO positional, AND
+//   (2) the command never consumes `ctx.args._`.
+// Conjunct (2) is a property of the function BODY and `parseArgs` cannot see it
+// — implementing (1) alone caught `commit`, `spawn` and `feedback`, i.e. broke
+// the LAND path for every seat. So the exceptions must DECLARE themselves, which
+// is what `type: "positionals"` is for. Enumerated at leaf altitude: 19 leaf
+// commands, 3 declare a named positional, 3 declare free-form, 13 are targets.
+describe("t-7bc57308 — an unrecognised POSITIONAL is refused, not swallowed", () => {
+  const NO_POSITIONAL = {
+    channel: { type: "string" as const, description: "Channel" },
+    since: { type: "string" as const, description: "Only messages after this id" },
+    id: { type: "string" as const, description: "Fetch EXACTLY ONE message by id" },
+  };
+  const NAMED_POSITIONAL = {
+    handle: { type: "positional" as const, required: false },
+    format: { type: "string" as const },
+  };
+  const FREE_FORM = {
+    paths: { type: "positionals" as const, description: "Paths to commit" },
+    message: { type: "string" as const, alias: "m" },
+  };
+
+  // POSITIVE ANCHOR FIRST — assertion-(4) shape. (1)-(3) below can all be green
+  // while this one was never implemented, and nothing would notice the guard had
+  // disappeared.
+  test("the live case: `comms read 690` is REFUSED and names what it saw", () => {
+    expect(() => parseArgs(["--channel", "anthill-dev", "690"], NO_POSITIONAL)).toThrow(CLIError);
+    try {
+      parseArgs(["--channel", "anthill-dev", "690"], NO_POSITIONAL);
+      throw new Error("expected a CLIError");
+    } catch (e) {
+      const m = (e as Error).message;
+      expect(m).toContain("690"); // the token, so the reader sees their own input
+      expect(m).toMatch(/--since/); // where an id actually goes
+      expect(m).toMatch(/--id/);
+    }
+  });
+
+  test("a command that DECLARES a named positional still takes it", () => {
+    expect(parseArgs(["forager"], NAMED_POSITIONAL).handle).toBe("forager");
+  });
+
+  test("a command that DECLARES free-form positionals still takes them", () => {
+    const a = parseArgs(["-m", "msg", "a.ts", "b.ts"], FREE_FORM);
+    expect(a._).toEqual(["a.ts", "b.ts"]);
+    expect(a.message).toBe("msg");
+  });
+
+  test("the LAND path survives: `commit -m msg -- <paths>`", () => {
+    // The exact shape the reverted version broke — 7 anthill commit tests.
+    const a = parseArgs(["-m", "msg", "--", "plugin/x.ts", ".anthill/dev/forager.md"], FREE_FORM);
+    expect(a._).toEqual(["plugin/x.ts", ".anthill/dev/forager.md"]);
+  });
+
+  test("`--` does not launder a positional past the guard", () => {
+    // Otherwise the guard is one character from being bypassed, and `--` is a
+    // token seats already reach for.
+    expect(() => parseArgs(["--", "690"], NO_POSITIONAL)).toThrow(CLIError);
+  });
+
+  // THE DISCRIMINATOR, asserted as a SET. Any single row above is satisfied by a
+  // hardcoded verdict; three distinguishable outcomes over one function are not.
+  test("three specs, three distinct outcomes — refuse / name / collect", () => {
+    const outcomes = [
+      (() => {
+        try {
+          parseArgs(["x"], NO_POSITIONAL);
+          return "accepted";
+        } catch {
+          return "refused";
+        }
+      })(),
+      parseArgs(["x"], NAMED_POSITIONAL).handle,
+      parseArgs(["x"], FREE_FORM)._.join(","),
+    ];
+    expect(outcomes).toEqual(["refused", "x", "x"]);
+  });
+});
