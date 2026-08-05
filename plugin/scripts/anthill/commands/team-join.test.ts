@@ -449,8 +449,24 @@ describe("buildChecklist — claim + catch-up guidance", () => {
     expect(wires[0]).toContain("team comms");
   });
 
-  test("warns that scratch does not survive the session (anthill#56)", () => {
-    expect(line("Finalize BEFORE")).toContain("does not survive");
+  /**
+   * ⚠ THIS TEST USED TO PIN THE FALSE CLAIM. It asserted the checklist warned
+   * scratch "does not survive the session" — which is FALSE, and the assertion
+   * is what made it durable: 465 scratch files across six seats, back to July
+   * 10, were on disk when a seat finally measured it. **Gitignore governs
+   * TRACKING, not DELETION.**
+   *
+   * The urgency is real and its REASON was wrong, which is the worse defect: a
+   * reader who doubts it runs `ls`, sees their notes intact, and discounts the
+   * whole instruction. So this now pins the TRUE mechanism — scratch never
+   * TRAVELS — and explicitly forbids the false one, because a test asserting a
+   * substring cannot tell the two apart and the false wording is the one that
+   * reads more urgently.
+   */
+  test("warns that scratch never TRAVELS — and never claims it is deleted (anthill#56)", () => {
+    const finalize = line("Finalize BEFORE");
+    expect(finalize).toContain("never TRAVELS");
+    expect(finalize).not.toContain("does not survive");
   });
 });
 
