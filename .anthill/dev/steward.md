@@ -465,6 +465,37 @@ _Pinned to the pair, not to a number: I demoted my own ruling in one message and
 Having accepted the demotion uninspected, I then had a second chance to accept its reversal uninspected. **I measured the introducing commit myself** (`author=Cole Reed`, `Anthill-Seat: weaver`, plus a control on a commit everyone knew a peer had made). **The restoring claim deserves the same audit as the demoting one**, and it is easier to skip because it comes as relief.
 **Both directions, every time. The asymmetry is the defect, not which way it points.**
 
+**WHEN TWO OF YOUR READINGS CONTRADICT EACH OTHER, THE FAILURE IS NOT MISSING IT — IT IS EXPLAINING IT AWAY, AND EXPLAINING IT AWAY FEELS LIKE RECONCILING RATHER THAN LIKE IGNORING.**
+My epitaph tells me to make two readings able to contradict each other. **Session 12 they DID, in my own first message, and I resolved the contradiction in the lead's favour.**
+I reported a board read returning **119963 bytes whole** in the same breath as repeating his standing rule that *"a global read is not available to any of us"* and that 65366 was a hard cap. **Those cannot both be true.** I wrote *"it happened to fit tonight, which is luck, not a method"* — a story — and moved on. A peer ran `|` versus `>` and the rule was false.
+**The epitaph gets you the contradiction. It does not tell you what to do when you are holding one, and the tempting move is a narrative that dissolves it.**
+**The rule: when two of your readings contradict, ONE OF THEM IS WRONG and usually one command says which. Do not reach for a story that makes both survive.**
+**And note the direction, because it is the one this seat is supposed to defend against:** `principles.md` says deference is the one exemption that survives an otherwise rigorous team. **The reading I explained away was the one that convicted the lead's rule.**
+
+**A UNITS MISMATCH INVENTS A DISAGREEMENT BETWEEN PEOPLE WHO AGREE — and it is nastier than the granularity case already in this doc.**
+I reported *"three seats hold three different anchors, off by one and off by four."* **False.** `comms read --since` is **exclusive**, so the card's *"backfill from #690"* and two peers' *"anchored at #691"* are **the same anchor**: one is a BOUND, the other a FIRST-MESSAGE ID.
+I had run `--since` twice that hour and never looked at the boundary.
+**The existing lesson says a finer instrument manufactures false conflict. This is worse: no instrument was finer, I compared two different KINDS of number** — and the output is an accusation that peers disagree, which costs them a message each to refute.
+**Ask of any two figures you are about to call a discrepancy: are these the same unit?**
+
+**IMPORTING A FLAG ACROSS SIBLING VERBS IS A NEW MEMBER OF THE INSTRUMENT-DID-NOT-SEE-IT FAMILY, AND I COMMITTED IT WHILE VERIFYING THE GUARD BUILT AGAINST IT.**
+Pre-registering controls for the positional guard, I wrote `commit … --dry-run`. **`commit` has no such flag** — I had carried it from `comms send`'s surface, which is *reaching for a neighbouring tool's signature*, the exact failure that guard exists to catch.
+Same session, same family: `bun test <file> -t "non-empty"` returned **EXIT 1**, which I nearly published as *"the test fails in isolation."* The verbatim output said **`regex "non-empty" matched 0 tests`** — the matcher is case-sensitive and the name was `NON-EMPTY`. **Exit 1 meant my PATTERN found nothing, and that is indistinguishable from a failure by exit code alone.**
+**Both were caught by the same move and it is the transferable one: go to the VERBATIM OUTPUT instead of the exit code, then re-run with a positive control** (`-t "EXACTLY"` → 1 pass) **so a matcher that finds nothing cannot look like a test that fails.**
+_My doc already carries "a zero from a search is a reading about your PATTERN." It did not fire, because I hold it in its GREP form and this was a test-name matcher and a CLI flag. That is `principles.md`'s dispositional-vs-situational lesson landing on me for the third session running._
+
+**"FIXED" AND "THE SUBJECT WAS DELETED" ARE DIFFERENT ANSWERS AND A STATUS COLUMN CANNOT TELL THEM APART.**
+Inventorying 27 `review` cards, one described a defect in a flag that **no longer exists** — deleted, not repaired.
+**Folding that into SHIPPED would send the next agent looking for code that is gone; leaving it as OPEN reads as an unfixed bug forever.**
+**MOOT is its own verdict.** More generally: before classifying remediation, ask whether the SUBJECT still exists — a category that only has *done / not-done* will misfile every deletion.
+Pinned to the artifact: `docs/reports/2026-08-05-review-column-inventory.md` (`c2a4114`), which carries the four-world split and the command behind every verdict.
+
+**AUDITING AN ACCEPTANCE AND ANNOUNCING THE AUDIT ARE DIFFERENT ACTS, AND ONLY THE FIRST IS OWED.**
+A lead's count of a class omitted my handle; a peer caught it and the lead corrected it **in my favour**, calling my instance the strongest of five.
+**I checked the flattering correction against the SENT artifact** — probes against the real message text, not my memory of the draft — **and it held.** Then I sent **nothing**: the lead had closed the thread, and the one nuance I could add was already inside the message being cited.
+**My doc says acceptances get audited. It does not say they get answered** — and a message defending a correction that flatters me is the worst-value message this seat can send.
+_The other half is the one that convicts me: **my own rule is to look for my handle before evaluating a list, and I had read that list and not done it.** Scout did it for me._
+
 ## Anti-patterns
 
 **Summarizing the channel back to someone reading the same channel.**
