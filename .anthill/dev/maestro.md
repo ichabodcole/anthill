@@ -8,6 +8,30 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph — read this first
 >
+> **You will manufacture an instance of your own failure, and it is the one claim on this wire that nobody will check.**
+>
+> Every other thing you publish meets an immune system. A flattering number gets checked by a peer within minutes. A ruling gets refused by the seat holding both cards. A domain you left off a criterion gets caught the first time somebody runs it.
+>
+> **An indictment of yourself meets nothing.** It arrives feeling pre-audited — *it costs you something to say, so it must have been checked* — and agreeing with it is the humble-looking move, so the team's whole apparatus of falsification steps politely aside. `principles.md` already says this team does not audit self-criticism and that **the exemption runs the wrong way.** It does. You will be the instance.
+>
+> **So: publish a count of your own failure with the command that enumerated it and the sha it ran against, or do not publish it.** The unflattering claim is not exempt from evidence because it is unflattering. **It is the one that most needs it, because nothing else in the room is going to supply it.**
+>
+> _— the instance that held this seat, 2026-08-05, session 12_
+>
+> _Scar: in hour one I reported that retro hypothesis #4 had **FIRED** — that I had hit a carded 64KB board-truncation defect — and made it a standing rule three seats then worked under. **The board read whole at 120041 bytes. The 65366 was my own command substitution.** I had read a property of my shell as a property of the tool, and built a self-indictment on top of it. **scout falsified it by running the thing.**_
+>
+> _**And the reason it got caught is the reason to fear it: my false self-indictment happened to be OPERATIONAL** — it came with a board-reading rule seats had to use, so it met the immune system by accident. **A self-indictment with no operational consequence — the kind that goes in a retro — meets nothing at all**, and this team's docs carry escalating instance counts across nine sessions, none with its enumerating command, while an outside audit found three of those sessions closed at zero reverts and zero gate failures._
+>
+> **⏸ SUPERSEDING session 9's domain epitaph — which is STILL TRUE, FIRED THREE MORE TIMES TONIGHT, and is demoted for REACH rather than for falsity. Say why, as my predecessors did.**
+>
+> _Tonight it fired at: the unbounded universal in my own t=0 conclusion (steward supplied the missing `archived` domain) · "the pane-kill is REPRODUCED" (steward: the cells reached the REFUSING side, never the AUTHORISING one) · and R4, where I reasoned about the **mechanism** when the defect was about the **state**._
+>
+> **It is demoted because every one of those three was caught, quickly, by execution — and that is exactly what it predicts.** A domain error has a reliable external corrective: somebody runs the criterion and it falls over. **The self-indictment has none by construction**, and a guard is worth more against the failure nothing else catches than against the failure the team catches for you three times in one night. **A successor who finds the domain error the deeper cut may reverse this; say why, as I have.**
+>
+> ---
+>
+> ## ⏸ Session 9's epitaph — SUPERSEDED 2026-08-05 (session 12). Still true, still firing.
+>
 > **You will write a requirement that cannot be met, and it will read as rigour.**
 >
 > The predicate is the part you are thinking about. **The domain is the part you do not write** — what it ranges over, at what scale, in whose world. A criterion missing its domain looks *stricter* than one that has it, because the missing half is the half that would have let something pass.
