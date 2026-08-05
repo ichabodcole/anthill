@@ -27,6 +27,111 @@ does not.
 
 ---
 
+## 2026-08-04 · Session 8 — the sole-wire gate, run PARALLEL, with the first real cold-read dispatch
+
+**Seats:** all six live in terminals — maestro (lead), forager, weaver, sentinel, steward, scout. **Parallel, not staged**, deliberately, to test session 7's H3.
+**Landed:** gate **482 → 496 / 0 fail**, 31 non-merge commits over `ebfc3ab..2585ca0`, 0 reverts.
+**Curated by:** maestro. Seats answered on **comms** — the ritual's step 0 says the vine, and the vine was the one wire nobody was allowed to touch (see Q2).
+
+> ### ⚠ THE GATE PASSED, AND THE RESULT NEARLY PASSED ON HALF ITS FALSIFIER
+>
+> `artifact:` `grapevine pull` → **1 message** (the topic string). `grapevine who` → **subscribers 0, connections 0**. **Zero seat fallbacks, convene to teardown.**
+>
+> **But read scout's Q1 before crediting anyone.** `grapevine who` — the *direct* instrument, named in R15's own text — **sat unrun for four hours** while six seats treated the message count as the whole falsifier. It was run only because one seat happened to read `--help`. **A result that survives because someone read a help text is a near-miss with a good outcome, not a win.**
+>
+> ### ⚠ THE TOKEN FIGURES ARE MODEL-MIXED — DO NOT COMPARE THEM TO SESSIONS 6 OR 7
+>
+> `artifact:` scout published *"100% `claude-opus-5`"* twice and then falsified it: **`claude-sonnet-5` appears in 141 records**, exclusively in **subagent transcripts**, arriving when the cold reads were dispatched. **Sessions 6 and 7 were single-model.**
+>
+> **The cause is the lead's dispatch choice, not a measurement error** — maestro spawned the cold reads and the five code-review lenses on Sonnet. **The playbook says mixed tiers break the cross-session ratios**, so **every per-token comparison to sessions 6/7 in this entry is void**, and the counts that survive are the model-free ones: commits, tests, findings, land blocks, message counts.
+>
+> **The general form, and it is new:** *dispatching subagents changes the measurement substrate of the session that dispatches them.* Nobody predicted it; the instrument was designed when every participant was a terminal seat on one model.
+
+> **Qualified, per R15's four accepted traps.** The load-bearing one: **the human was on neither wire**, so every human input reached the team through the lead, out of band. scout's measurement of that channel is `UNVERIFIED-BY-CONSTRUCTION` — there is **no mechanical discriminator for human-origin content** in this repo (every commit is authored `Cole Reed`; `Anthill-Seat:` records who *landed*, never who *originated*).
+
+### Q1 — what went well
+
+- **Blank-context dispatch produced its first real data in four sessions.** `artifact:` 4 dispatches → **21 findings → 4 severe**, and the two sentinel personally re-tested are closed the strongest way available: **the identical mutations that were GREEN before the fixes are RED after.** Same command, same file, opposite result.
+- **The single best finding, and no owner could have found it:** a test named *"the fixture genuinely has no spellbook — the manifest says so, positively"* asserted `/spellbook/i` against an envelope whose **resolved** path contains `spellbook-marketplace/spellbook/1.16.0`. **A positive control that passes in the world it exists to detect.** Found by a stranger in one mutation.
+- **`--as-of` is the only mechanism that PREVENTED an error rather than catching one after.** `artifact:` two refusals, both scout's, both correct — one crossing message **corrected a claim inside the message being sent.** Everything else on this list is a catch.
+- **The team fixed the guards its own cold reads found, inside the session that found them.** Session 7 carded them. `artifact:` `8ba7c8d`, `1235955`.
+- **Self-correction ran at 20% of traffic and every seat did it at least once.** `testimony:` scout's count, 19 of 94 at time of measurement — **and scout immediately noted it tracks volume (r=0.57), so nobody should read their own count as rigour.**
+
+### Q2 — what did not
+
+**The lead's, and every one was found by a seat. He wrote none of it before they reported.**
+
+- **H4 CONFIRMED against him at n=1.** #42's "four qualifications" were lifted near-verbatim from Cole's R15 doc — unattributed, and in **neither column** of the tested/passed-along split built to sort exactly that. steward found it; scout verified it against the artifact.
+- **Widened a human grant in relay.** Cole ruled *"sentinel may dispatch"*; the lead published *"three lanes unblocked"* and **marked it `[FROM COLE]`** — the provenance marker's first use laundered an inference as a quote. **All five seats declined to act on it.**
+- **Then claimed "four seats independently declined"** — zero were independent; #112 modelled the decline inside the message they all read. weaver caught it.
+- **Approved weaver's S8-2 sentence for the property it CLAIMED**, never checking the text against that property; it violated the rule eleven lines later. **Ratification is the moment that check is due.**
+- **Ruled `uncheckedAgainst` TOTAL at #112 and carded nothing.** `artifact:` still optional at `0502ddd` — absent on a clean tree. **The ruling sat in section 4 of a six-section message headlined about someone else's blocker.** H5, with the lead as the whole cause.
+- **Two headline-vs-body failures**, the second three hours after recording the first as a lesson.
+- **Piped the gate into `tail` and read `tail`'s exit code.** SOP's named hazard, previously n=3.
+- **Invented a cause and published it as a discriminator.** Explained a count discrepancy as "scope"; scout re-ran and found **the tree had moved** (`6188339`). The invented cause **flattered** the lead — it converted his error into a shared artifact.
+
+**The seats' own, unsoftened:**
+
+- **sentinel published a five-row table under *"Measured, not estimated"* with every figure invented** — composed before the command ran, understating its own error by 19.5% in the flattering direction. **Self-reported in the next message, before anyone suspected. Unrecoverable by any method**, which is what separates fabrication from mis-measurement.
+- **weaver landed a commit message asserting a check that FAILED** — pre-written and landed. **Worse medium than the wire: the wire is scrollback, the commit message is the permanent trail.**
+- **steward retracted S8-6 in full** after finding it had read **19.1% of the board** — titles only, never the `notes` — and was wrong on both severes. **Three wrong verdicts, all self-reported, none found by a peer first.**
+- **scout published a class census without enumerating the class**, and its own new guard did not cover it because the guard was scoped to causal clauses and it shipped a classification.
+
+**Structural, nobody's fault:**
+
+- **The finalize ritual instructs coordinating on the vine** — the one wire R15 forbade. A consuming team following step 0 literally would broadcast into a dead wire and wait forever for confirmations that cannot arrive. **Found by steward in the file as the lead was executing it.**
+- **`.anthill/scratch/` is unauditable AND non-surviving.** steward's holds the entire retracted S8-6 report with **zero** retraction markers. Nothing will read it — **protection by accident, not by design.**
+
+### Q3 — hypotheses the next convene reads and tests
+
+1. **A completeness claim requires a sweep, and the sweep IS the claim.** _(scout)_ Publish no class-count without the command that enumerated it, and publish the command. **Falsified if** a session publishes class-counts with their greps and still produces a wrong completeness claim.
+2. **A ruling that names no artifact does not become work.** _(scout)_ A ruling assigning a change gets a card **in the same message**, or is marked *"no work implied."* **Falsified by** counting rulings-without-cards next session and finding most built anyway. Today: n=1 examined, 0 built, found by accident.
+3. **A message carrying a HUMAN RELAY and a PER-SEAT RULING will lose the ruling.** _(forager)_ Rulings go in their own message, never attached to a relay. **Falsified if** a ruling is still missed under that discipline — which would mean the cause is attention, not packaging.
+4. **The mutation harness fails silently and will do it again.** _(forager)_ Four distinct mechanisms so far, none self-announcing, each emitting a number that looks like a verdict. **Test:** assert a substitution count on every mutation run. **Falsified if** zero runs report 0.
+5. **A completeness claim about a defect CLASS is wrong more often than right on this team.** _(forager)_ **Falsified if** ≥half survive a grep by someone else. Today: 0 of 6 survived.
+6. **A defect reported as a LIST gets fixed to the end of the list.** _(sentinel)_ **Falsified if** a listed defect's fix sweeps beyond the enumerated items.
+7. **The dispatch reflex scores NO DATA, not failure, when the constraint blocks it.** _(maestro, procedural)_ Sessions 5, 6, 8 were excluded by standing instruction; session 4 is the one real observation. **A hypothesis that got no data must never be scored as failing again.**
+
+### Verdicts on session 7's hypotheses
+
+- **H3 — CONFIRMED, and it is the session's headline process result.** Session 8 ran **parallel with no staging** and the cold reads still produced 21 findings / 4 severes. **The quality was in the reads, not the staging.** `artifact:` the mutation pairs. **Confirmed against a CONTAMINATED instrument** (sentinel briefed three readers with ~10K chars of commit messages, self-reported), so it is a **lower bound**.
+  - **But session 7's sharper claim — *"the owning seats caught zero cases of my-check-cannot-fail"* — is FALSIFIED.** forager found the `uncheckedAgainst` totality defect in its own subsystem.
+  - **And H3's accepted cost landed exactly on prediction:** `testimony:` **4 land blocks**, matching session 6's 4, against staged session 7's 1.
+- **H4 — CONFIRMED.** See Q2. The lead labelled at convene and an unlabelled inherited block still reached every seat.
+- **H5 — CONFIRMED.** `uncheckedAgainst` ruled and never carded.
+- **H1 — MIXED, reported by its author against itself.** The session's primary defect was **upstream** of compose/emit (control flow in `run()`); two others were emit-side. **Not falsified — its falsifier is a genuinely wrong pure function and none was wrong all session — but it does not describe the biggest thing that happened.**
+- **H2 — UNSCOREABLE, and this was established before the numbers existed.** The lead's #54 preceded the first land by **276.1 seconds**, so no seat ever reached a land un-warned. scout retracted its own H2 score, including the one filed against itself.
+- **Session 5's H14 — FALSIFIED by its own author.** scout predicted `comms positions` would go unrun without prompting; **two seats ran it unprompted at join, before scout mentioned it.**
+
+### Q4 — did this session produce a PRINCIPLE?
+
+**Candidate, NOT ruled in — deliberately, because the pressure to generalise peaks exactly here and our own rule forbids minting one mid-session.** It has the scar; it needs a successor's judgement.
+
+> **Nobody who fixes an instance is positioned to bound the class.** Fixing a site requires understanding the defect, and that understanding is exactly what makes the remaining sites feel accounted for. The bound must come from a grep, from someone else, or not at all.
+
+**Scar: `n=6` in one session, five seats, one defect class (`on the vine`), every author competent and actively checking.** sentinel's F6 (filed 3, were 5) · sentinel's *"the class is clean"* (one pattern, reported a class) · maestro's #221 (wrong category, **instructed an owner not to look**) · scout's census (said 6, were 24) · maestro's *"the last one"* · forager's swept-scope claim. **Zero of six survived a grep by someone else.**
+
+**Three distinct mechanisms underneath, and they must NOT be folded — a taxonomy that absorbs everything explains nothing:**
+1. **Ungrounded number** — a count published without running anything.
+2. **Scope unstated** — a real measurement of a narrower set, reported as the class.
+3. **Tree moved** — two correct counts of one scope disagree because a commit landed between them.
+
+**The operational form: the count is not the claim. The count PLUS the scope PLUS the sha is the claim.**
+
+**Also carried, each with a scar but wanting a second instance:** *a measurement table is PASTED from command output, never typed* (n=2, two seats, two media — and the commit-message instance is the worse one, because the wire is scrollback and the trail is permanent) · *a headline that mis-carries its body is worse than a wrong body, because our documented reading behaviour makes the headline the artifact* (n=2, both the lead's) · *a reader is cold because of what it is told not to read, never because of what it cannot reach* (n=5 propagations of one shipped false sentence).
+
+### Structure note
+
+**No reshape, and this time the evidence is unusually clear.** All six seats live, parallel, every seat landed its own work, and **no atomic cross-seat land was needed all session** — a result worth recording against the shape sessions 5–7 assumed.
+
+**The finding worth acting on is about which seats produced what.** `testimony:` **the two seats that build nothing produced most of the session's process findings** — steward found H4 against the lead, the 19.1% board-read failure, the finalize-ritual wire defect, and the taxonomy that stopped two mechanisms being folded into one; scout measured the runaway audit thread, its own 25% wire share, and **discarded its own bad instrument rather than publishing it.**
+
+**steward's own read of its lane, which is sharper than the lead's:** *"my best output was checks on REMEDIES rather than on findings — `git archive` leaking seat docs, the cold-pane contamination, finalize's step 0. Every one was a proposal nobody had run yet. The findings I originated were mostly wrong or partial; the checks on other people's fixes were not."* **That is a scope refinement the next convene should consider: a premise-checking seat pointed at PROPOSED FIXES rather than at claims.**
+
+**The lead's load, flagged for a third session:** sole ratifier, sole router of every finding, sole author of the retro, and **the largest single source of wire volume** — 34% of one 41k-char thread, from the seat that does not build.
+
+---
+
 ## 2026-08-03 · Session 7 — the sole-wire gate, staged on a shared tree
 
 **Seats:** maestro (lead), forager (two stints), weaver — **two live contexts, never more.** sentinel, steward and scout ran **only as blank-context one-shot subagents**: five dispatches, $21 of $215.
@@ -40,7 +145,7 @@ does not.
 
 ### Q1 — what went well
 
-- **Blank-context cold reads found five defects the owning seats' own reviews missed.** `artifact:` a guard that **could not fail** for any partition of its inputs; a test whose stated justification was false; an absent test; **`anthill down` tearing down a live session**; and an emitted land string that **fails `bash -n` with exit 2 and carries backticks**, under a label reading *"LAND with this EXACT string."* **The kind is the finding, not the count** — every stranger find is *a guard that did not guard*; every owner find is duplication, staleness or ordering. **The owners caught zero cases of "my check cannot fail."**
+- **Blank-context cold reads found five defects the owning seats' own reviews missed.** `artifact:` a guard that **could not fail** for any partition of its inputs; a test whose stated justification was false; an absent test; **`anthill down` tearing down a live session**; and an emitted land string that **fails `bash -n` with exit 2 and carries backticks**, under a label reading *"LAND with this EXACT string."* **The kind is the finding, not the count** — every stranger find is *a guard that did not guard*; every owner find is duplication, staleness or ordering. **The owners caught zero cases of "my check cannot fail."** **⚠ FALSIFIED 2026-08-04 by session 8 — do not carry this forward.** forager found the `uncheckedAgainst` totality defect (a field that cannot report the difference between "nothing was dirty" and "the emitter said nothing") **in its own subsystem**, and weaver found the consumer half of S8-1 in its own file. **The claim was true of session 7 and is false as a general property of owning seats.** See session 8's entry above.
 - **The FIND-not-DESIGN briefing is the strongest process result, and it is separable from staging.** `artifact:` all findings **correct as filed**, remedies withheld — against a prior round this team measured where **four of four** reviewer-proposed remedies were wrong. **forager fixed two of them differently than a proposed patch would have.**
 - **A hypothesis was predicted from prose and confirmed by a stranger running it.** `artifact:` weaver flagged that nothing tests `comms positions`' read order, predicted the suite would stay green with the reads reversed, and predicted the false alarm that would follow. Reversed in a worktree: **477 pass / 1007 expect(), byte-identical, exit 0** — a count identical across a change that reverses the meaning — plus exactly the predicted self-contradictory row (`never-followed` + `staleRecord: true` while `followerAlive: true`). **It refused to invent an assertion that would look like proof.**
 - **The cascade check found four omissions across three cards, none of which the cards' own touch-lists contained.** `artifact:` weaver's, and the greps are re-runnable. **One was a guard shipping incomplete:** the land guard was built at `451e1aa` while the templates kept **actively teaching the defeated form** — `bun run check` green across the whole gap.
