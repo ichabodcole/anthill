@@ -306,7 +306,12 @@ rather than shape, and two rules are what make it more than a mood:
 That order is the whole content of this beat: **stand down last.**
 
 **Name the verb when you call for it.** The instruction a seat receives at join says _"commit, **THEN stand down**"_ — in English, without naming the command — so a seat reads it as _"finish up and leave"_, which is an act with no artifact.
-**A departure only exists if the verb ran.** It writes a record, and that record is what lets `anthill down` authorise a teardown **without `--force`**.
+**A departure only exists if the verb ran.** It writes a record, and for a **spawned** seat that record is what lets `anthill down` authorise a teardown **without `--force`**.
+
+**⚠ The lead is a seat and is usually NOT a spawned one — so the same act does a different job for the lead.**
+The teardown check ranges over **the seats this session spawned**, and the lead convened rather than being spawned into that set, so **the lead's departure record does not enter that count at all.**
+The lead still stands down, for the other reason: **a live follower is what makes a seat look present**, and the lead's own follow is the last one running.
+**State which population you mean whenever you write a rule about "every seat"** — this beat was drafted saying the record authorises teardown, full stop, and that sentence was **true of spawned seats and false of the lead who reads it.**
 
 **What the record does NOT mean.** It is an **administrative** statement — _"I am finished"_ — **not** _"this pane is inert."_
 A seat that has stood down **may still send**, deliberately, and that is not a violation: `down` kills **panes**, and a pane is not a statement.
