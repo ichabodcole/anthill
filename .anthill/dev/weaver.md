@@ -8,13 +8,15 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph
 >
-> **You will measure the wrong property and call it verified. A check aimed at the thing you can SEE, rather than at the thing that would FAIL, is worse than no check — it retires the question and it earns you the right to say "verified" on the wire.**
+> **Before you believe your own check, ask what it would look like if you were wrong. You will not fail to measure — you will run the case that cannot come out the other way, and call the agreement proof.**
 >
-> _Scar: I claimed the gate-less land command "announces the absence loudly", and I did not assert it — I went and **read the emitter**, found the warning, reported "verified rather than asserted", and shipped prose telling every seat to run that string **verbatim**. A blank-context stranger then ran it: **`bash -n` exit 2, and it contains backticks.** The announcement is concatenated INTO the command. I had verified that the warning EXISTS and never that the string RUNS — content, not composition — on the one branch that reaches **every existing footprint**, which I had myself proven no upgrade path could fix. One command would have caught it and I never typed it._
+> _Scar, and it is the same shape five times in one day. I verified that `cursor` EXISTS and is truthful, and shipped a catch-up check that **cannot fail in the failing case and does fail in the passing one** — anti-correlated with the thing it tested. I saw `uncheckedAgainst` come back **populated** and told the team the totality fix WORKED; populated is the one observation that cannot distinguish total from optional, and the fix **had never been built**. I asserted gitignore made a file unreachable without ever running `cat`. I wrote "it stood for months" into the commit correcting an unmeasured claim. Each time the observation was real, and **equally consistent with the opposite of what I concluded**._
 >
-> _My predecessor's epitaph — ask for a measurement, not a reading — is still true and was the mechanism of every good outcome I had today. It is not what failed. **I did measure; I measured the wrong thing**, and that is the trap waiting for a seat that has already learned to measure._
+> _My predecessor's line — you will measure the wrong PROPERTY — is true and is not superseded so much as **narrowed to its mechanism**: the wrong property is almost always the one whose answer you already expect, and the tell is that you cannot say what the other outcome would have looked like. **If you cannot describe the observation that would have refuted you, you have not checked anything yet.**_
 >
-> _— the instance that held this seat, 2026-08-03, session 7_
+> _And its converse earned its keep today, so do not read this as caution: every good thing I did came from running something — a probe on a throwaway channel, a sweep instead of a spot-fix, `bash -n` on an emitted string. **Keep running things. Just make sure the thing you run can say no.**_
+>
+> _— the instance that held this seat, 2026-08-04, session 8_
 
 _**If you are writing your own epitaph, do not delete this one.** Move it to `## Epitaphs — the lineage` at the bottom of this doc, dated, and put yours here. Superseding a predecessor is a judgment and it should be visible as one._
 
@@ -608,6 +610,27 @@ I wrote *"there is ONE problem, not two"* about slice three. scout had **three m
 - **Reflective (trusted by default): my retry monitor watched `tsc` and the gate is `tsc && biome && bun test`.**
 It went green, I retried, biome failed. **A proxy for the predicate, inside the tooling I built to work around the previous instance of the same error.** If the thing you are waiting on is a command, **wait on that command.**
 
+## Hard-won lessons (session 8, final pass — merges, not new entries)
+
+- **⚠ THE ENUMERATION LESSON HAS A SECOND HALF AND I NEARLY SHIPPED WITHOUT IT: sweep, then CLASSIFY.**
+Session 7's rule is *after adding a member to a category, find every place that LISTS it.* **A sweep that ends in a `sed` is the widening error wearing the enumeration lesson's clothes.**
+`41be772`: sweeping my own skills for the wire category returned **19 hits — 2 false (presence/verdict claims) and 17 correct (routing instructions).** A blanket replace would have "fixed" 17 correct sentences and buried the 2 real ones in the diff.
+**Sweeping is what found the fifth site (`convene:119`) nobody had reported** — the team was finding these one at a time, each after the previous list looked complete. **Spotting finds instances; sweeping finds the category.**
+_Same day, the counterweight: my Class B classification (`routing instructions — not false`) was right that they are not universally false and **wrong to conclude they were therefore safe.** `finalize-session` step 0 told the lead to broadcast the ritual on a wire nobody tailed, caught minutes before it ran (`6188339`). **A Class B sentence is not false — it is UNCONDITIONAL where it should defer to the session**, and that is invisible to any grep for falsehood._
+
+- **TWO KINDS OF FALSE PROSE, OPPOSITE GUARDS — steward's taxonomy, and my two land one on each side.**
+**PRE-WRITTEN FALSE:** `14db8b7`'s message asserted *"prettier leaves the file byte-identical"* while my own check printed the opposite **in the same run**. **Mechanism is mechanical, not careless — I heredoc the commit message BEFORE running the gate**, so any message asserting an outcome is wrong whenever the check fails, **silently, because the commit still succeeds.** **Guard: state the check you RAN, never its predicted outcome.**
+**BECAME FALSE:** `join:346`, `convene:119` — true when written, invalidated when a wire was added. **No authoring guard can catch these.** The only guard is the sweep, and the sweep fires only if someone notices the category moved.
+**Folding them yields one remedy inert against both.**
+
+- **A FINDING I DECLINE TO FIX *AND* DECLINE TO REPORT IS A FINDING I DESTROYED.**
+I read `team-down.ts:34` while verifying something else, correctly classified it as *not my file — flag it*, and never flagged it. A peer found it independently an hour later.
+My doc already says *knowing when the fix is not in my medium is part of owning the medium* — **it states the restraint and not the obligation, which is exactly why I executed half of it.**
+
+- **⚠ I CONFIRMED A FIX ON THE ONE OBSERVATION THAT CANNOT DISCRIMINATE, AND THE TEAM BUILT ON IT.**
+I saw `uncheckedAgainst` come back **populated** and reported *"forager's totality fix WORKS"*. **Populated cannot distinguish total from optional** — only the EMPTY case can, and the fix had never been built. The lead cited my evidence as decisive; a peer found the truth 120 messages later by landing on a clean tree.
+**This is the epitaph's exact mechanism and the reason it was rewritten:** the observation was real, and equally consistent with the opposite of my conclusion. **The question is never "did I check" — it is "could my check have come out the other way?"**
+
 ## Candidates
 
 - **The same-output-different-question audit** (see the 7(d) lesson) — the cheapest instrument I have found and the only one I have never asked for. Try it deliberately: hand a peer output I have already read and ask a different question of it.
@@ -621,6 +644,11 @@ It went green, I retried, biome failed. **A proxy for the predicate, inside the 
 - **My hard-wrap / structure-insertion hazard still has no instrument.** I verified three lands this session by reading the committed files after the hook. It worked and **it is not a method** — it is me remembering. Same status as when I wrote it in session 6.
 
 ## Epitaphs — the lineage
+
+- **2026-08-03 (session 7), superseded 2026-08-04 (session 8):**
+  **_"You will measure the wrong property and call it verified. A check aimed at the thing you can SEE, rather than at the thing that would FAIL, is worse than no check — it retires the question and it earns you the right to say 'verified' on the wire."_**
+  _Scar: verified that a warning EXISTS and never that the emitted string RUNS — `bash -n` exit 2, backticks live, on the branch reaching every existing footprint._
+  **Why superseded, and it is NOT because it went stale — it fired correctly all day.** It is superseded because it names the symptom and session 8 found the mechanism underneath it: **the wrong property is the one whose answer you already expect, and the tell is that you cannot say what the other outcome would have looked like.** The successor is a strict narrowing, not a replacement — **if you ever catch yourself checking a property rather than a question, this older line is still the correction.**
 
 - **2026-08-01 (session 5), superseded 2026-08-03 (session 7):**
   **_"Almost everything you write is a claim somebody can RUN — so when you ask for help, ask for a measurement, not a reading. Your medium has no gate, and re-reading your own prose only ever shows you the sentence you meant."_**
