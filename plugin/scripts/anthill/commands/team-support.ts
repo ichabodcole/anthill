@@ -8,7 +8,7 @@
  */
 
 import { emitError, type OutputFormat } from "../agent-layer.ts";
-import { readPosition } from "../comms.ts";
+import { hasDeparted, readPosition, readSessionOpen } from "../comms.ts";
 import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
 import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
 
@@ -149,41 +149,162 @@ export type SeatPresence =
  * a new pid reads identically to a dead one; an instrument that cannot separate
  * those two may not be the one that authorises a teardown.
  *
- * So only **the absence of a record at all** contributes to `none`. That keeps
- * `none` reachable (a roster where nobody ever followed), which is what stops
- * the guard degrading into "always block" — the state that trains people to pass
- * `--force` reflexively and thereby removes the guard for real.
+ * **`none` NO LONGER MEANS "no records".** It used to, and that was an ABSENCE
+ * OF DATA authorising a destructive act: a freshly-convened team has an empty
+ * positions directory (`recordPosition` only fires once a follower has emitted,
+ * `team-comms.ts`), so the guard permitted teardown during exactly the window
+ * when seats were spawning. sentinel reproduced the kill — `tornDown: true` on a
+ * session with a pane doing work, no `--force`, no warning.
+ *
+ * So `none` now requires a POSITIVE observation of departure:
+ *
+ *   **none  ⟺  spawned ≠ ∅  ∧  every spawned seat has a departure record**
+ *
+ * The non-emptiness conjunct is not decoration — it is the whole safety
+ * property. `∀ s ∈ ∅` is vacuously TRUE, so without it a fresh session (no
+ * open record ⇒ no spawned set) satisfies the rule and authorises the very kill
+ * this exists to prevent. That defect was caught in review before it was built.
+ *
+ * And `none` stays REACHABLE — by the normal clean ending rather than by an
+ * empty directory — which is what stops the guard degrading into "always block",
+ * the state that trains people to pass `--force` reflexively and thereby removes
+ * the guard for real. Both failure directions are real and an answer that avoids
+ * only one is not an answer.
  */
+export interface CommsPresenceReport {
+  presence: SeatPresence;
+  /**
+   * TOTAL — present on every branch, per seams.md Contract 5(a), so `0` reads as
+   * an observation rather than as an unpopulated field.
+   *
+   * **`null` and `0` are different facts and must never be fused.** `null` = no
+   * session-open record EXISTS; `0` = a record exists and names no seats. That is
+   * Contract 6(c)'s *`null` is not a rounded-down zero*, one layer out.
+   *
+   * **What this field does and does NOT protect — the distinction cost a peer a
+   * vacuous test, so it is stated precisely rather than reassuringly.**
+   *
+   * It reports the ARGUMENT, computed once before any branch is chosen. So it
+   * distinguishes the two INPUTS (`null` vs `0`) and **survives a fusion of the
+   * two branches unchanged** — fuse `no-open-record` into `empty-open-record`
+   * and this still reads `[null, 0]` exactly as before. **It therefore cannot
+   * detect the collapse it looks like it guards.**
+   *
+   * **`because` is what makes the split observable**, because it is stamped by
+   * the branch that fired. Assert the pair there, not here. Measured: a mutation
+   * fusing the branches fails the `because` pair and **no** count assertion.
+   */
+  spawnedCount: number | null;
+  /** TOTAL — seats with a positively-observed departure record. */
+  departedCount: number;
+  /**
+   * TOTAL — WHICH BRANCH decided this verdict, stamped by that branch.
+   *
+   * **This exists because the verdict alone cannot discriminate the branches.**
+   * `no-open-record` and `empty-open-record` both resolve to `unknown` by
+   * design, so no assertion over `state` — and none over a count DERIVED FROM
+   * THE INPUT — can tell them apart. Measured: a count computed once from the
+   * argument reports `[null, 0]` both before and after the two branches are
+   * fused, so it passes against the exact mutation it was proposed to catch.
+   * Only a value stamped BY the branch that fired distinguishes them.
+   *
+   * Deliberately an enum and NOT the `reason` prose: a reason string is
+   * ungated and rename-fragile, so keying a test on it breaks the day someone
+   * improves the wording. This is the same choice as `staleRecord` in Contract
+   * 6(c-bis) — carry the diagnostic as a total field rather than growing the
+   * state set, so no consumer switching on `state` meets a case it has no
+   * policy for.
+   */
+  because:
+    | "live-follower"
+    | "unexplained-follower"
+    | "no-open-record"
+    | "empty-open-record"
+    | "outstanding-departures"
+    | "all-spawned-departed";
+}
+
 export function commsPresence(
-  rows: { handle: string; hasRecord: boolean; followerAlive: boolean | null }[],
-): SeatPresence {
+  rows: {
+    handle: string;
+    hasRecord: boolean;
+    followerAlive: boolean | null;
+    /** TOTAL — a departure record was positively observed for this seat. */
+    departed: boolean;
+  }[],
+  /** `null` = no session-open record exists. `[]` = one exists naming nobody. */
+  spawned: string[] | null,
+): CommsPresenceReport {
+  const spawnedCount = spawned === null ? null : spawned.length;
+  const departedCount = rows.filter((r) => r.departed).length;
+  const report = (
+    presence: SeatPresence,
+    because: CommsPresenceReport["because"],
+  ): CommsPresenceReport => ({ presence, spawnedCount, departedCount, because });
+
   const live = rows.filter((r) => r.followerAlive === true).map((r) => r.handle);
-  if (live.length > 0) return { state: "present", seats: [...new Set(live)].sort() };
-  // A record we could not check is not evidence of absence.
+  if (live.length > 0)
+    return report({ state: "present", seats: [...new Set(live)].sort() }, "live-follower");
+
+  // An UNEXPLAINED non-live follower. `&& !r.departed` is the qualifier that
+  // makes `none` reachable at all: this branch exists to demand an EXPLANATION
+  // for a follower that is not confirmed alive, and a departure record IS that
+  // explanation — the seat said it left, so its dead follower is expected rather
+  // than mysterious. Without the qualifier this fired before departure was ever
+  // consulted, so any session in which anyone spoke ended in `unknown` and every
+  // teardown needed `--force`. A CRASHED seat (record, dead pid, no departure)
+  // is still unexplained and still blocks, which is the case this protects.
   //
-  // Keyed on `hasRecord`, NOT on a lag state. It was briefly keyed on
-  // `state !== "never-followed"`, and the F1 fix — which reclassifies an
-  // incoherent record as `never-followed` — silently turned every unchecked
-  // follower into an ABSENCE, i.e. a fail-open regression on the pane-killing
-  // command, introduced one commit after the guard itself. Presence asks "is
-  // there a follower and is it alive"; it must never be derived from a value
-  // that means something about LAG.
-  // A record whose follower is not CONFIRMED ALIVE is not evidence the seat is
-  // gone. Both cases land here, and they are the same fact about our KNOWLEDGE
-  // and different facts about the WORLD — so the reason says which, per the
-  // `staleRecord` precedent in Contract 6(c-bis).
-  const dead = rows.filter((r) => r.hasRecord && r.followerAlive === false);
-  const unchecked = rows.filter((r) => r.hasRecord && r.followerAlive === null);
+  // Keyed on `hasRecord`, NOT on a lag state (6(f)): a dead pid means
+  // `emittedThrough` is a high-water mark, not that the seat is gone. `down`
+  // kills PANES; `followerAlive` observes FOLLOW PROCESSES; a follow process is
+  // not a pane.
+  const dead = rows.filter((r) => r.hasRecord && r.followerAlive === false && !r.departed);
+  const unchecked = rows.filter((r) => r.hasRecord && r.followerAlive === null && !r.departed);
   if (dead.length + unchecked.length > 0) {
     const why = [
       dead.length > 0 &&
-        `${dead.length} follower process(es) not running — the SEAT may still be working (6(f): a dead pid means the position is a high-water mark, not that the seat is gone)`,
+        `${dead.length} follower process(es) not running with no departure record — the SEAT may still be working (6(f): a dead pid means the position is a high-water mark, not that the seat is gone)`,
       unchecked.length > 0 &&
         `${unchecked.length} comms follower(s) could not be checked (liveness unknown, not dead)`,
     ].filter((s): s is string => typeof s === "string");
-    return { state: "unknown", reason: why.join(" · ") };
+    return report({ state: "unknown", reason: why.join(" · ") }, "unexplained-follower");
   }
-  return { state: "none" };
+
+  // No session-open record: we cannot know who SHOULD be here, so we cannot
+  // establish that everyone left. Distinct from the empty-record case below —
+  // same verdict, different knowledge, and the counts carry the difference.
+  if (spawned === null) {
+    return report(
+      {
+        state: "unknown",
+        reason:
+          "no session-open record — cannot establish which seats were spawned, so departure cannot be confirmed",
+      },
+      "no-open-record",
+    );
+  }
+  if (spawned.length === 0) {
+    return report(
+      {
+        state: "unknown",
+        reason: "session-open record names no seats — no departure can be confirmed against it",
+      },
+      "empty-open-record",
+    );
+  }
+
+  const departed = new Set(rows.filter((r) => r.departed).map((r) => r.handle));
+  const outstanding = spawned.filter((h) => !departed.has(h));
+  if (outstanding.length === 0) return report({ state: "none" }, "all-spawned-departed");
+
+  return report(
+    {
+      state: "unknown",
+      reason: `${outstanding.length} spawned seat(s) have not departed (${outstanding.sort().join(", ")})`,
+    },
+    "outstanding-departures",
+  );
 }
 
 /**
@@ -234,20 +355,26 @@ function pidAlive(pid: number): boolean | null {
 /** Read the comms wire's view of who is here. Any failure is `unknown`, never absence. */
 function commsPresenceFor(config: ResolvedConfig, channel: string): SeatPresence {
   try {
+    const teamDir = config.teamDirPath();
+    // `null` (no record) and `[]` (a record naming nobody) are different facts
+    // and are carried through as such — see `CommsPresenceReport.because`.
+    const session = readSessionOpen(teamDir, channel);
     // Deliberately NOT via `buildPositionsReport`: that report is about LAG, and
     // borrowing it meant inventing a `head` to satisfy a parameter presence does
     // not care about. The invented value then changed the lag classification and
     // broke this guard. Presence reads the two things it actually needs.
     return commsPresence(
       config.seats.map((s) => {
-        const position = readPosition(config.teamDirPath(), channel, s.handle);
+        const position = readPosition(teamDir, channel, s.handle);
         return {
           handle: s.handle,
           hasRecord: position !== null,
           followerAlive: position ? pidAlive(position.pid) : null,
+          departed: hasDeparted(teamDir, channel, s.handle),
         };
       }),
-    );
+      session === null ? null : session.spawned,
+    ).presence;
   } catch (err) {
     return { state: "unknown", reason: `comms positions unreadable: ${(err as Error).message}` };
   }
