@@ -31,9 +31,22 @@ interface DownData {
 }
 
 // `anthill down [--session <name>] [--force]` — a scoped, curated teardown of the
-// team session. Refuses to kill panes while seats are still present on the vine
-// (the config channel) unless forced; tearing down an absent session is a
-// graceful no-op (success).
+// team session. Refuses to kill panes while seats are still present on the team
+// CHANNEL — presence spans BOTH wires (grapevine and comms, via
+// `combinePresence`), so no single wire is named here — unless forced; tearing
+// down an absent session is a graceful no-op (success).
+//
+// This header said "on the vine" for the whole of the session in which presence
+// stopped being vine-only. The refusal string forty lines down was fixed for
+// exactly that (`4cbf355`) and this comment was not, because the card named the
+// STRING. It is the third site of one claim, found by a verifier after two
+// separate fixes had each corrected the line they were pointed at.
+//
+// Zero functional impact, and that is precisely why it is worth the line: this
+// is the FIRST thing a maintainer reads about this module, so a reader auditing
+// presence finds the word "vine", concludes the guard is vine-only, and stops
+// looking. A comment naming the hard case is a reason to check it, never
+// evidence it was handled.
 export const teamDownCommand = defineAnthillCommand({
   meta: {
     name: "down",

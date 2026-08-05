@@ -308,7 +308,14 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // point (Contract 4(d)) is that it carries none. Point at the skill.
     `Catching up after joining mid-session? The two wires need different verbs AND different anchors. The lead clears the vine at convene, so \`grapevine pull\` (finite, exits) gives you THIS session. Nothing clears the comms log — so the same move there replays every session the team has ever had; anchor it to an id and see the \`anthill:comms\` skill. On BOTH: NEVER catch up with a live stream (\`tail --from-start | grep\`, \`follow\`) — a live stream never exits and a filtered one never flushes, so you get zero output and then a timeout, which reads as "the channel is empty".`,
     `Finalize BEFORE you drop off: synthesize durable lessons into ${i.seatDocRel}, commit, THEN stand down. Scratch is gitignored — it does not survive the session, so synthesize earlier if the reasoning is warm.`,
-    `Route questions + decisions to the lead${i.lead ? ` (${i.lead})` : ""} on the vine — not direct to the human.`,
+    // NAMES NO WIRE — found by grepping this scope after the same collapse was
+    // fixed three times elsewhere today. This said "on the vine", and it is
+    // EMITTED to every consuming project: a team running comms-only (which this
+    // one did, all session) was being told to route decisions on a wire nobody
+    // was reading. The instruction is about WHO and the wire is incidental, so
+    // the fix is to stop naming one rather than to name the right one — the
+    // next wire added would make any named list wrong again.
+    `Route questions + decisions to the lead${i.lead ? ` (${i.lead})` : ""} on the team's channel — whichever wires this session armed, NOT direct to the human.`,
   ];
 }
 

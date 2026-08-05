@@ -457,7 +457,13 @@ describe("buildChecklist — claim + catch-up guidance", () => {
 describe("buildChecklist — shape", () => {
   test("omits the lead's name when no lead is configured", () => {
     const l = line("Route questions", { ...base, lead: undefined });
-    expect(l).toContain("Route questions + decisions to the lead on the vine");
+    // RE-KEYED off "the vine": this line is EMITTED to every consuming project,
+    // and a comms-only team was being told to route decisions on a wire nobody
+    // reads. Keyed on the CLAIM (route to the lead, never direct to the human),
+    // which is the durable part, rather than on which wire happens to exist.
+    expect(l).toContain("Route questions + decisions to the lead");
+    expect(l).toMatch(/NOT direct to the human/i);
+    expect(l).not.toMatch(/on the vine/i);
     expect(l).not.toContain("()");
   });
 
