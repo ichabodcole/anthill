@@ -51,6 +51,51 @@ The proposal sequences the grapevine removal as _"also in scope, sequenced after
   >
   > **So mask #1 is not removed by the swap at step 4 — it was already spent at #284, by ruling, the moment this team stopped tailing the vine.** The only mask still standing is the stale position files, and the step that removes those is **(3) rotation**.
   >
+  > ### 🔴 CORRECTED AT SESSION 11 — "ALREADY SPENT" HAS A TIME WINDOW FOR A DOMAIN, AND THE MASK CAME BACK THE NEXT MORNING
+  >
+  > **Found by sentinel at comms `#574`, before forager designed rotation against it.** The sentence above is
+  > true of _the remainder of session 10_ and false as the permanent claim it reads as. **A superlative —
+  > _"the only mask still standing"_ — whose domain is a time window.** It was true when written and false
+  > when executed, and nothing in between touches it.
+  >
+  > **The mask refilled at session 11's convene, measured:** `convene` 08:13Z → `channelOpened: true`
+  > (maestro, `#563`); `grapevine who` → `subscribers: ['scout','steward']`, climbing as seats booted — three
+  > seats armed the vine from the join manifest before reading the brief. **So the teardown guard ran on TWO
+  > legs again for the first hour of a session whose plan says it runs on one.** Ruling R1 (kill the tails)
+  > then spent it a second time: `{"subscribers":[],"count":0}` (sentinel, `91e9c5c`).
+  >
+  > **The structural correction, which is the part that binds step 3:**
+  >
+  > ```
+  > pane-kill window open  ⟸  (positions blinded — ROTATION, in the diff)
+  >                       AND  (vine subscribers empty — A RULING, per session, in nobody's diff)
+  > ```
+  >
+  > **The plan names one conjunct and calls it the window.** The second is not a property of the code, no
+  > card can hold it still, and it oscillated four times in one morning — false at 08:13Z, true at `#284`,
+  > false at 08:19Z, true after R1. **"Do not land rotation before the reproduction is standing" is correct
+  > and under-specified in the direction that bites:** rotation's safety depends on a wire state that is not
+  > in its diff.
+  >
+  > **⚠ AND THE OSCILLATION STOPS — PINNED TO THE UNSAFE SIDE — THE MOMENT STEP 4 LANDS.** _(maestro's
+  > extension of sentinel's finding, and it is **reasoning about unbuilt code, not a measurement** — it is
+  > owed a cell in `t-ac09ffa9`.)_ After step 4, `convene` opens nothing and `join` emits no tail, so
+  > `grapevine who` returns `subscribers: []` **for every future team, permanently.** Per the measured line
+  > two paragraphs up, an empty subscriber list makes the vine leg return **`none`** — which contributes no
+  > blocking signal ever again. **So in the shipped world the second conjunct is not oscillating; it is
+  > satisfied by construction.** Mask #1 is not "spent per session" — after step 4 it does not exist.
+  >
+  > **Therefore rotation's safety may not rest on the vine leg at all**, and the reproduction that gates it
+  > must be built in the single-leg world (ruling **R8**). A matrix measured against two live legs would be
+  > testing a configuration this session deletes: it would pass, ship, and say nothing about the only
+  > configuration that will ever exist again.
+  >
+  > **What is NOT established, stated because it decides urgency and sentinel refused to derive it:** that
+  > the conjunction actually reaches **`none`**. Positions-blinded plausibly lands on `outstanding-departures`
+  > → **`unknown`, which BLOCKS**. `none` additionally requires `spawned ≠ ∅` **and** every spawned seat
+  > carrying an **in-window** departure record (D3). **What rotation does to the session-open record and the
+  > tombstones is what decides it, and that is unbuilt code.**
+  >
   > ### 🔴 CORRECTED AT SESSION 10, AND THE CORRECTION REVERSES THE SIGN
   >
   > **The sentence above is incomplete in the one direction that matters, and the word "mask" is what hid it.** A **mask** fails **SAFE** — it makes the guard over-block. The bullet enumerates only masks, so it can only ever find hazards that make the guard too cautious.
