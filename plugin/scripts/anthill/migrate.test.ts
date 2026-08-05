@@ -34,6 +34,7 @@ describe("planV1ToV2 — default layout (no paths override)", () => {
       { kind: "git-mv", from: "docs/team/dev", to: ".anthill/dev" },
       { kind: "rm", path: "docs/team" },
       { kind: "gitignore", remove: ".team/scratch/", add: ".anthill/scratch/" },
+      { kind: "gitignore", remove: ".anthill/comms/", add: ".anthill/comms/" },
       { kind: "rm", path: ".team" },
       { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
     ]);
@@ -45,6 +46,29 @@ describe("planV1ToV2 — default layout (no paths override)", () => {
   });
 });
 
+describe("planV1ToV2 — the comms log gitignore (ensure, not swap)", () => {
+  const plan = planV1ToV2(V1_DEFAULT);
+
+  test("ensures .anthill/comms/ so a migrating team does not commit its message log", () => {
+    // Without this, an EXISTING team gets the ignore line only if something
+    // happens to re-run `init` — invisible until they upgrade and commit a log.
+    const op = plan.ops.find((o) => o.kind === "gitignore" && o.add === ".anthill/comms/");
+    expect(op).toBeDefined();
+  });
+
+  test("is an ensure (remove === add), so it cannot eat an unrelated line", () => {
+    // The executor filters lines equal to `remove`. A pure-add spelled with an
+    // empty `remove` would match every BLANK line and silently reflow the file.
+    const op = plan.ops.find((o) => o.kind === "gitignore" && o.add === ".anthill/comms/");
+    expect(op).toEqual({ kind: "gitignore", remove: ".anthill/comms/", add: ".anthill/comms/" });
+  });
+
+  test("does not disturb the scratch line swap", () => {
+    const scratch = plan.ops.find((o) => o.kind === "gitignore" && o.add === ".anthill/scratch/");
+    expect(scratch).toBeDefined();
+  });
+});
+
 describe("planV1ToV2 — bespoke paths override (genuine escape hatch)", () => {
   // A NON-default location the team deliberately chose → honored, docs left in place.
   const plan = planV1ToV2({ ...V1_DEFAULT, pathsExplicit: true, teamDir: "team-docs" });
@@ -53,6 +77,7 @@ describe("planV1ToV2 — bespoke paths override (genuine escape hatch)", () => {
     expect(plan.ops).toEqual([
       { kind: "git-mv", from: ".team/config.json", to: ".anthill/config.json" },
       { kind: "gitignore", remove: ".team/scratch/", add: ".anthill/scratch/" },
+      { kind: "gitignore", remove: ".anthill/comms/", add: ".anthill/comms/" },
       { kind: "rm", path: ".team" },
       { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
     ]);
@@ -81,6 +106,7 @@ describe("planV1ToV2 — redundant-default paths override (the media-buffet trap
       { kind: "rm", path: "docs/team" },
       { kind: "config-drop-paths", file: ".anthill/config.json" },
       { kind: "gitignore", remove: ".team/scratch/", add: ".anthill/scratch/" },
+      { kind: "gitignore", remove: ".anthill/comms/", add: ".anthill/comms/" },
       { kind: "rm", path: ".team" },
       { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
     ]);

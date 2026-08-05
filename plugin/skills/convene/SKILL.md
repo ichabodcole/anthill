@@ -46,12 +46,25 @@ stay solo.
      / merge / re-draw it now** (and `anthill init` any new seat doc). This is the forward half of the
      finalize re-scope reflection: last session's captured misfit is this session's signal to act on.
    - **Read the last retro's Q3 hypotheses (`.anthill/retro.md`, newest first) and say which ones this
-     session will test.** They were written to be falsifiable; a hypothesis nobody checks is the same
+     session will test.** **No `retro.md`?** That is the normal state before this team's first
+     finalize — `init` does not render one, it is written at finalize. **Say so in the brief and move
+     on; do not go looking for it or report it as missing.** They were written to be falsifiable; a hypothesis nobody checks is the same
      shape as an untested backup — it reads as protection and has never once been exercised. **Name
      them in the convene brief**, so the seats know what they're testing, and carry the verdict into
      the next retro. **A prediction that comes back _wrong_ is the valuable outcome**, not a failure of
      the previous team — say so when you brief it, or seats will quietly protect it.
    - Anything constraining: what's already in flight, deadlines, sensitivities.
+   - **Is `gate` set in `.anthill/config.json`? If not, ask for it now — this is the one field a
+     footprint cannot backfill on its own.** Every seat's land runs the project's gate in front of
+     the commit, and the field has **no default on purpose**: a guessed gate hands seats a green that
+     means nothing. Any team bootstrapped before the field existed has it unset, so **the absence is
+     the normal state of an older footprint, not a sign anything is broken.**
+     Propose a candidate (the `check`/`verify`/`ci` script in the manifest, a `Makefile` target, or
+     whatever this repo's own grounding docs tell contributors to run) and let the human ratify or
+     correct it — **anthill supplies the trigger, the project supplies the content.**
+     **"We don't have one" is a real answer:** leave it unset and the land command announces the
+     absence loudly instead of skipping the gate silently. What you must not do is invent one to
+     make the field look filled. Ask **once** at convene; if it is already set, say nothing.
 
 3. **Stand up coordination.**
    - **Channel:** run **`anthill convene --topic "<one-line framing>"`** to open the grapevine channel
@@ -68,12 +81,64 @@ stay solo.
          of a session and not in the middle of one.
    - **Board:** convene now **opens/attaches the team board itself** — keyed to the channel and pinned
      (writes `.bounty-session` at the repo root), so every seat's + the lead's bounty verbs bind **this**
-     board by construction. The binding is **ambient**: no one ever passes `--session`. It's idempotent
+     board by construction. **In a single working tree the binding is ambient — nobody passes
+     `--session`, and that is the guarantee this design is for.** It's idempotent
      and headless (`--no-open`), so a re-convene re-attaches rather than spawning a stranger board, and
-     the reported URL is yours to open when you want it. Then **seed one `todo` card per planned lane, in
-     owner lanes** — the doer owns its card's lifecycle `todo→doing→review`, the reviewer closes. The
-     board is _state_; the vine is _substance_.
-   - **`anthill status`** confirms the result (who's on the vine + the board column counts).
+     the reported URL is yours to open when you want it.
+     - **⚠ Putting seats in separate GIT WORKTREES breaks that guarantee, and it breaks it silently.**
+       The board id is derived from the repo path, and a worktree is a different path — so every
+       key-based route resolves to a _different_ board, and the pinned `.bounty-session` is gitignored
+       and never crosses. **Measured, and every seat hit it.** A verb that misses does not error
+       usefully; it reports no running session, which reads as _"the board isn't up."_
+       **If you spawn seats into worktrees, resolve the board id once and hand it to them explicitly.**
+       That is the case where a seat does pass a session flag — **the ambient guarantee is what you
+       are trading away, so trade it deliberately rather than discovering it seat by seat.**
+     - **⚠ And under worktrees, seats must land through `anthill commit` — NEVER raw `git commit`.**
+       Worktrees give each seat its own index, so the intuition is that nothing is shared and a bare
+       commit is now safe. **That intuition is wrong, and it is wrong on a path nobody looks at:** a
+       repo with a pre-commit hook that stashes (lint-staged does, on every commit) is writing to
+       **`refs/stash`, which git shares across all worktrees of a repo** — while `HEAD` and the index
+       are per-worktree. So the one thing seats still share is **the ref that holds uncommitted work**,
+       and `anthill commit`'s lock is the only mutex over it. **Isolation moves the race; it does not
+       remove it.** Tell the seats this when you brief them — the reasoning is not available to
+       someone who only knows that worktrees isolate.
+   - **Seed the cards** — one `todo` card per planned lane, in owner lanes. The doer owns its card's
+     lifecycle `todo→doing→review`, the reviewer closes. The board is _state_; the vine is _substance_.
+   - **⚠ WIRE YOURSELF FIRST — `convene` prints YOUR OWN comms line and you are not on that wire
+     until you run it.** Look for the comms Monitor line in convene's own output and **run it exactly
+     as printed, Monitor-wrapped, with no filter** (it emits no keepalives, so a `grep` there can only
+     lose messages). **Do this before you brief anyone**: everything below asks you to audit a wire,
+     and every one of those checks reads as _"nobody is there"_ if the one who is missing is you.
+     - **If convene instead reports that no lead is resolvable, you got a WARNING saying so, and you
+       are unwired until you run `anthill join <your-handle>` yourself.** That is a real branch, not a
+       theoretical one — **and it announces itself rather than showing up as an absent line**, which
+       is the only reason you can act on it. Never infer your wiring state from a line you did not see.
+       _(Scar: a lead spent a morning counting handshakes by hand to find seats "missing from comms",
+       because convene did not emit this and nothing said it was needed. The seats were fine. The lead
+       was the one not on the wire, and no check it ran could have told it so.)_
+   - **`anthill status`** confirms the result (who is present on the channel + the board column
+     counts). **Presence spans every wire, not the vine alone** — `status` and `down` both read it
+     from one multi-wire source, so a seat present only on `comms` counts as present. Don't read a
+     name here as "on the grapevine", and don't go looking for it on one wire when it disagrees
+     with your expectation.
+   - **⚠ `status` does NOT tell you who is on `comms`** — it reports the grapevine roster, so a seat
+     can be wired to the vine, visible in `status`, and receiving nothing on comms with no symptom.
+   - **Confirm the comms wiring right after the seats introduce themselves — `anthill comms
+positions`.** This is the named moment to run it; without one it is a verb nobody reaches for.
+     Run it **just after the introductions, while traffic has actually happened** — see the limit below.
+     - **Three states, three different facts, and they must never be read as one number.**
+       `never-followed` means **no record at all** — that seat has never attached a follower and the
+       tool has no idea what it has seen. `current` means level with the head. `behind` means behind
+       by N. **`never-followed` is not a rounded-down zero:** reporting it as _"missed nothing"_ is
+       the one claim it is not entitled to make, on the wire whose whole purpose is to stop silence
+       being mistaken for safety.
+     - **Its honest limit, which you need BEFORE you trust a green.** The position is stamped when a
+       byte leaves the follower's process — not when an agent received it — and lag is measured
+       **against the head, not against the clock.** So on a quiet channel nothing moves and every
+       follower looks equally healthy: **it can only convict a wire once somebody sends.** A green
+       during a lull means "no traffic", not "everyone is fine".
+     - **If you convened four and can account for three, the fourth is not quiet — it is missing.**
+       One minute here, or an hour of a seat working from stale context. See **`anthill:comms`**.
 
 4. **Confirm the branch, brief the seats, then spawn them.**
 
@@ -142,6 +207,10 @@ The stand-up beats that get skipped when you're eager to spawn. Run them as a li
   `.anthill/principles.md` is short and is the highest-leverage read in that list.
 - ◻ **Work gathered** from the human; **plan phase** run (`anthill:plan`) if it's a multi-seat feature
   without a ratified plan.
+- ◻ **`gate` set in `.anthill/config.json`** — if it is unset, you asked the human for this project's
+  verification command and did not guess one. A footprint bootstrapped before the field existed has it
+  blank, and every land the team makes until it is set runs **no verification at all** (the land
+  command says so, loudly — but it says it to a seat, not to you).
 - ◻ **Grapevine open** — `anthill convene --topic "<framing>"`.
 - ◻ **Board open + seeded** — one `todo` card per planned lane, in owner lanes; **size** them where the
   work is known enough to size.
@@ -150,6 +219,8 @@ The stand-up beats that get skipped when you're eager to spawn. Run them as a li
   project has a branch policy (in the grounding docs), it's followed. _Do this **before** spawn — spawn
   is when seats gain commit power._
 - ◻ **Seats spawned** — `anthill spawn <handles…>`; `anthill status` confirms who's on + the columns.
+- ◻ **Every seat accounted for on `comms`** — `status` does **not** cover this wire (comms has no
+  presence). Count the "in, grounded" messages you actually received and name anyone missing.
 
 ## Output
 

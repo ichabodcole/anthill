@@ -98,6 +98,15 @@ prints the migration plan **without touching anything**.
 > 2026-08-01) arrives this way. So the reconcile has two halves: **diff the docs you already have,
 > and check whether the templates gained one you don't.**
 
+> **⚠ A release can add a new COORDINATION WIRE, and no amount of doc reconciling puts you on it.**
+> This is a third case and it is the one that looks handled when it isn't: reconciling the SOP so it
+> _describes_ a new wire changes what your team reads, not what your team is connected to. **Seats get
+> on a wire at `anthill:join`, from the manifest the CLI emits** — so after an upgrade that adds one,
+> the team is wired only from its **next join**, and anyone still in a running session is not.
+> **Tell the human that explicitly.** A team whose SOP now documents a wire nobody is listening on has
+> the worst version of this: the doc reads correct, the channel reads quiet, and those are
+> indistinguishable from working.
+
 - **Behind** → it prints plain-language **notes** summarizing each move (config relocate, docs
   relocate, gitignore swap, version stamp); the structured op list comes back in the same envelope
   everything else does.
@@ -148,7 +157,14 @@ diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" .anthill/README.md
 ```
 
 Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
-`retro.md`.
+`principles.md`.
+
+**Do NOT diff `retro.md` — there is no template for it and there never will be.** It is written by
+the team at finalize, not rendered by `init`, so the left-hand side of that diff does not exist and
+the command errors. **This is the failure mode step 0 spends five lines warning about, arriving from
+the other direction:** there, an empty diff falsely reported "nothing to reconcile"; here, a missing
+template makes a `diff` fail inside a step whose whole thesis is that a quiet result is a lie. The
+general rule worth carrying: **before you trust a diff, confirm both sides exist.**
 
 Then **classify each hunk** — never sync wholesale:
 
@@ -183,6 +199,23 @@ overwriting. The per-migration guide flags when a step needs this.
   (`.anthill/`, or the `paths` override). This is the twin of the bootstrap pointer step — bootstrap
   _drops_ it, upgrade keeps it _true_. Idempotent: no pointer, or one that doesn't name the team dir →
   nothing to do.
+
+#### 4d. Backfill config FIELDS a later release added — 4a cannot reach these
+
+**4a diffs living docs. `.anthill/config.json` is not a living doc and has no template**, so a field
+introduced after this team bootstrapped is simply absent, and nothing above will surface it. The
+config is where a silent gap survives an upgrade that reports success.
+
+- **`gate` — the project's pre-commit verification command.** Added 2026-08-03; **every footprint
+  bootstrapped before then has it unset.** `anthill join` composes it into the land command in front
+  of the commit, so while it is blank **the team's lands run no verification at all.** The emitted
+  command announces that — but it announces it to a seat mid-land, which is late and is not the
+  person who can fix it.
+  **Ask the human for it here**, proposing the command this repo actually uses (a `check`/`verify`/`ci`
+  script in the manifest, a `Makefile` target, whatever its contributor docs name) and letting them
+  ratify or correct it. **There is no default and you must not invent one** — a guessed gate is worse
+  than a blank one, because a blank one tells the truth. **"We don't have one" is a valid answer:**
+  leave it unset.
 
 ### 5. Verify, then land
 

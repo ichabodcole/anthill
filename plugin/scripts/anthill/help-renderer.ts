@@ -129,6 +129,15 @@ export function renderCommandUsage(cmd: CommandDef, parent?: CommandDef): string
   const usageTokens: string[] = [];
 
   for (const [name, arg] of argEntries) {
+    // A REFUSED arg is registered with the parser so a user who passes it gets
+    // "refused, and here's why" instead of "unknown flag" — but it is never
+    // valid to pass, so help must not advertise it. `define.ts` already omits
+    // refused names from the valid set it prints on an unknown flag; this is the
+    // same rule on the other surface. Listing `--as` under `comms read` OPTIONS,
+    // on the exact verb that rejects it, taught precisely the mistake `refused`
+    // exists to correct — and with an empty description, so it read as a real
+    // option someone forgot to document.
+    if ((arg as { refused?: string }).refused !== undefined) continue;
     const withName = { ...arg, name } as ArgDef & { name: string };
     if (arg.type === "positional") {
       const required = arg.required !== false && arg.default === undefined;

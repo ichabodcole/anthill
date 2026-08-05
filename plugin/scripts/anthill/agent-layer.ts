@@ -23,11 +23,11 @@ export interface OutputMeta {
   command: string;
   durationMs?: number;
   /**
-   * Stack trace for an UNEXPECTED (non-usage) failure. Lives on `meta` — not as
-   * a new top-level field — because the envelope's top-level keys are TOTAL
-   * (same shape on every path) and `meta` is the variable bag. Text mode still
-   * prints the stack verbatim; this is how the JSON path preserves it instead of
-   * flattening it away.
+   * The stack of an UNEXPECTED throw (a bug), preserved so an agent-mode failure
+   * is still debuggable. Deliberately on `meta`, not a top-level envelope field:
+   * top-level fields are TOTAL (same shape on every path), so an absent one would
+   * carry meaning with nothing to read that meaning by. `meta` already varies
+   * (`durationMs` comes and goes), which is what makes a sometimes-key correct here.
    */
   stack?: string;
 }
@@ -44,46 +44,30 @@ export interface ErrorEnvelope {
   meta?: OutputMeta;
 }
 
-/** Priority: explicit --format wins, else TTY → text, pipe → json. */
-export function resolveFormat(flagFormat?: string): OutputFormat {
-  if (flagFormat === "json" || flagFormat === "text") return flagFormat;
-  return process.stdout.isTTY ? "text" : "json";
-}
-
 /**
- * Recover the `--format` VALUE straight from argv, for the one caller that
- * cannot get it from `ctx.args`: the top-level catch, which handles errors the
- * PARSER raised — i.e. before any `ctx` exists.
+ * Priority: explicit --format wins, else TTY → text, pipe → json.
  *
- * Returns the raw value (or undefined) so the caller feeds it through
- * `resolveFormat` itself. Deliberately NOT a `=== "json"` test: matching the
- * literal string would repair only the explicit-flag rows and leave
- * no-flag-piped broken — and that row matters most, because `resolveFormat`
- * already defaults piped → json and anthill's own emitted incantations pass no
- * `--format` at all. The invariant is that the format decision must not depend
- * on WHERE the error was raised, which means reusing the same resolver, TTY
- * heuristic included.
+ * **The RULE is unchanged** — this is `seams.md` Contract 5(c)'s subject and
+ * that clause stays true word for word: the envelope is conditional on **not
+ * being a TTY**, never on `--format`, and our emitted invocations pass no
+ * `--format`. Only the SOURCE of the TTY value became injectable.
  *
- * Accepts both spellings: `--format json` and `--format=json`.
+ * Why it had to: this function took the **flag** as a parameter and reached for
+ * the **TTY** as a global, so half the dual-audience matrix was permanently
+ * untestable — `Bun.spawnSync` always yields a pipe, so no test in the suite
+ * could ever exercise the TTY branch. *"A human at a terminal still gets usage"*
+ * was a shipped guarantee with no automated guard, verified once by hand with
+ * `script -q /dev/null` and never again. A refactor could have broken it with
+ * every test green.
+ *
+ * `isTTY` is OPTIONAL rather than threaded through all 21 call sites: on a
+ * shared tree, correctness at every call site is not worth a 21-file diff
+ * mid-session, and the default keeps production behaviour byte-identical while
+ * making the branch reachable from a test.
  */
-export function sniffFormatFlag(rawArgs: string[]): string | undefined {
-  // LAST match wins, not the first. `util.parseArgs` resolves a repeated
-  // non-`multiple` string option to its final occurrence, so returning the first
-  // makes this sniff DISAGREE with the parse it is standing in for — and the
-  // whole point of sniffing is that the format verdict must not depend on where
-  // the error was raised. Measured before fixing:
-  //   status --nope --format text --format json  -> usage block  (first: "text")
-  //   status       --format text --format json  -> json envelope (parser: "json")
-  // Same argv, two different verdicts, decided by which code path saw it.
-  let found: string | undefined;
-  for (let i = 0; i < rawArgs.length; i++) {
-    const arg = rawArgs[i];
-    if (arg === undefined) continue;
-    if (arg === "--") break;
-    if (arg.startsWith("--format=")) found = arg.slice("--format=".length);
-    else if (arg === "--format") found = rawArgs[i + 1];
-  }
-  return found;
+export function resolveFormat(flagFormat?: string, isTTY?: boolean): OutputFormat {
+  if (flagFormat === "json" || flagFormat === "text") return flagFormat;
+  return (isTTY ?? process.stdout.isTTY === true) ? "text" : "json";
 }
 
 export function emit<T>(options: {
@@ -115,7 +99,7 @@ export function emitError(options: {
   format: OutputFormat;
   command: string;
   error: string;
-  /** Only for unexpected failures — see `OutputMeta.stack`. */
+  /** Only for an unexpected throw — see {@link OutputMeta.stack}. */
   stack?: string;
 }): void {
   if (options.format === "text") {

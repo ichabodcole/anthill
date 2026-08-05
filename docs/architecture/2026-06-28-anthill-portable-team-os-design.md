@@ -185,8 +185,18 @@ marker** (walk up from cwd for `.anthill/config.json`) — this removes flute's 
     "seams": ".anthill/dev/seams.md",
   },
   "launch": "claude \"/anthill:join {handle}\"", // per-pane spawn command template
+  "gate": "bun run check", // the PROJECT's pre-commit verification — NO DEFAULT (see below)
 }
 ```
+
+**`gate` (added 2026-08-03) is the project's own verification command, and it deliberately has no
+default.** `anthill join` composes it into the land command it emits, in front of the commit and in
+one string with no pipe. Hard-coding a default here would be the convention-baked-into-a-default
+anti-pattern: **a seat running someone else's gate command gets a green that means nothing.** When
+the field is unset the emitted land command **announces the absence** rather than silently committing
+unverified — an announced absence over a silent one. Nothing backfills it automatically, so
+`anthill:bootstrap` asks for it at ratify and `anthill:convene` asks once when an older footprint
+lacks it.
 
 **Plugin defaults** (a minimal config is just `channel` + `seats`): `grounding` defaults to
 `["AGENTS.md", "README.md"]`; `paths` to the `.anthill/` triple above; `launch` to the

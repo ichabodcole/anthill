@@ -125,6 +125,56 @@ agents learn to ignore.
 3. At that session's finalize, triage the harvested entries here (re-open this investigation with
    the evidence) and conclude B (build a surface) vs C (tooling was enough).
 
+---
+
+## ⚠ Status check — 2026-08-04: step 2 NEVER RAN, and the question came back from outside
+
+**Five instrumented sessions have happened since this was filed** (sessions 3–7, two of them with a
+dedicated observer seat). **The signal-hunger capture was never added to any of them.** No entries
+were harvested, so step 3 never triggered, and B-vs-C is exactly as open as it was on 2026-07-08.
+
+**The question returned on 2026-08-04 — raised by the human, from a mechanism seen in another
+agent-coding tool**, and framed almost identically: the substrate, not an agent, telling a seat that
+the world has moved. **Re-derived from outside rather than read from here.**
+
+**This is H12 at the project's own scale** — _a team's recurring failure is missing NAMES for
+capability it already holds_ — and it is the same shape as session 6's central scar: _"we spent a
+session building toward a criterion a technique already in our hands satisfied."_ **Here we spent a
+month not answering a question we had already framed well.**
+
+**The mechanism, and it is worth more than the finding:** this investigation's step 2 was a
+**convention** — _"remember to capture X during the next session"_ — with **no trigger and no owner**.
+Nothing in `convene` or `finalize-session` asks for it, so it could only fire if a lead happened to
+re-read this file at the right moment. **Five leads did not.** It is a prose guard, filed in an
+investigation, about the need for mechanical signals. _(H1: prose guards lose to mechanical ones —
+here, against the document arguing for mechanism.)_
+
+### What the intervening evidence supplies for free
+
+Step 2 wanted seats to log _"I wish I'd known X."_ **Sessions 5–7 produced that data anyway, without
+anyone asking**, and it points at one pull-shaped signal far more than any other: **a read that went
+stale.** `--as-of` failing the lead twice; the watermark convention invented independently by two
+teams; three logged incidents of correct actions taken on stale reads; proofs citing deleted
+artifacts; line numbers that moved inside the session that cited them; a finalize step (2.5) that
+exists purely to catch this **by hand**, which found drift in every seat's docs the one time it was
+measured.
+
+**That is the strongest answer this investigation could have hoped for, and it arrived unprompted.**
+
+### Revised recommendation
+
+- **C is confirmed for the pull case, and it is not "tooling was enough" — it is "the tooling was
+  never built."** Filed concretely:
+  [the substrate cannot tell a seat its read went stale](../backlog/2026-08-04-the-substrate-cannot-tell-a-seat-its-read-went-stale.md).
+- **B remains genuinely open**, and the open question below — _does a real surface earn its keep, or
+  is a reserved channel enough?_ — is now partly answered by
+  [slice three](../projects/team-comms-spike/slice-three-proposal.md): a substrate message needs **a
+  sender that is not a participant**, which the current identity model forbids. **That is a
+  capability-model change, not a new surface.**
+- **Do not re-file step 2 as another convention.** If signal-hunger capture is wanted, it belongs in
+  `finalize-session` as a step with an owner — otherwise this note will read the same way in another
+  month.
+
 ## Open Questions
 
 - Is there a class of push-signal the **lead** wants that grapevine can't already carry by

@@ -1,7 +1,21 @@
 # A parser error ignores `--format json` and prints usage text
 
-**Added:** 2026-07-31 · **Status:** ready to build (the fix is small; the test matrix is the work)
+**Added:** 2026-07-31 · **Status:** ✅ **SHIPPED** (`e03ec52`) · **Closed:** 2026-08-03, session 7
 · **Seat:** forager (CLI / agent layer) · **Found:** while grounding the `comms` skill on this branch
+
+> **✅ CLOSED — verified by running, and the verification is worth more than the closure.**
+> `anthill comms read --bogus` returns `{"ok":false,"error":"Unknown option '--bogus'. Valid flags:
+--channel, --format, --id, --last, --since","meta":{"command":"comms read"}}` **and exits 1.**
+>
+> **This card was carried into session 7's payload as still-open**, on a brief that claimed every item
+> had been _"verified open by RUNNING them, not reading status."_ It had not been run. Caught by a
+> blank-context review of that brief.
+>
+> **And the re-verification itself failed the first time, in this repo's most-documented way:** the
+> lead's first measurement piped the command through `head` and read **the pipeline's** exit code as
+> **the command's**, reporting exit 0 and nearly filing the card as still-open. `principles.md`
+> documents that exact instrument failure by name — _"a pipeline's exit code read as a command's."_
+> **Measured again without the pipe: exit 1.** The tool was never wrong; the instrument was.
 
 `anthill <anything> --format json` promises an agent a parseable `{ok,…}` envelope on every outcome.
 **It holds for errors raised inside a command and breaks for errors raised by the parser** — the

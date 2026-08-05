@@ -1,12 +1,20 @@
 import { emit, resolveFormat } from "../agent-layer.ts";
-import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
-import { type BoardCounts, readBoardCounts, requireConfig } from "./team-support.ts";
+import {
+  type BoardCounts,
+  readBoardCounts,
+  requireConfig,
+  type SeatPresence,
+  seatPresence,
+} from "./team-support.ts";
 
 interface StatusData {
   channel: string;
   present: string[];
+  /** Which of the three presence states the channel actually reported. `present`
+   * is empty for BOTH `none` and `unknown` — read this to tell them apart. */
+  presence: SeatPresence["state"];
   humans: string[];
   board: BoardCounts | null;
   /** Title of the board the counts came from — labels an ambient/stranger board
@@ -39,30 +47,24 @@ export const teamStatusCommand = defineAnthillCommand({
     const channel = (ctx.args.channel as string | undefined) || config.channel;
     const warnings: string[] = [];
 
-    let present: string[] = [];
-    let humans: string[] = [];
-    try {
-      const grapevineCli = resolveCoordCli("grapevine");
-      const who = await execCoord(grapevineCli, ["who", channel]);
-      const parsed = parseJsonLine<{
-        daemon?: boolean;
-        subscribers?: string[];
-        humans?: string[];
-      }>(who.stdout);
-      if (!who.ok || !parsed) {
-        warnings.push(
-          `grapevine 'who' unavailable: ${firstErrorLine(who.stderr, "could not read channel")}`,
-        );
-      } else if (parsed.daemon === false) {
-        warnings.push("grapevine daemon not running — no presence available");
-      } else {
-        // Dedupe by handle — a seat with >1 live connection (vine tail + board
-        // tail) otherwise shows up twice. Presence is "who's here", not sockets.
-        present = [...new Set(parsed.subscribers ?? [])].sort();
-        humans = [...new Set(parsed.humans ?? [])].sort();
-      }
-    } catch (err) {
-      warnings.push(`grapevine CLI unresolved: ${(err as Error).message}`);
+    // Presence comes from `seatPresence`, NOT from an inline grapevine read.
+    //
+    // This command had its own SECOND copy of the presence logic, so the fix
+    // that made `down` span both wires left `status` still single-wire: it
+    // reported `presence: "none"` with two seats demonstrably on comms. Nothing
+    // is destroyed by a wrong `status` — but the convene checklist and the
+    // session brief both name it as how a lead checks the team, so the failure
+    // is a lead reading "nobody is here" and concluding teardown is safe, which
+    // is precisely the conclusion `down` now refuses.
+    //
+    // Two copies of one verdict is the defect; patching the second copy would
+    // have left the defect and removed its symptom. Found by the lead against a
+    // running session, one command outside the card that fixed the first copy.
+    const { presence: classified, humans } = await seatPresence(channel, config);
+    const presence: SeatPresence["state"] = classified.state;
+    const present = classified.state === "present" ? classified.seats : [];
+    if (classified.state === "unknown") {
+      warnings.push(`presence unavailable: ${classified.reason}`);
     }
 
     const { board, title: boardTitle, warning: boardWarning } = await readBoardCounts();
@@ -71,6 +73,7 @@ export const teamStatusCommand = defineAnthillCommand({
     const data: StatusData = {
       channel,
       present,
+      presence,
       humans,
       board,
       ...(boardTitle && { boardTitle }),
@@ -84,8 +87,15 @@ export const teamStatusCommand = defineAnthillCommand({
       startedAt: started,
       renderText: (d) => {
         const lines: string[] = [`Channel: ${d.channel}`];
+        // "(nobody)" is a claim. Only make it when the channel actually said so
+        // — otherwise say we could not tell. A reader who sees "(nobody)" after
+        // a dead daemon concludes the team stood down.
         lines.push(
-          d.present.length > 0 ? `On the vine: ${d.present.join(", ")}` : "On the vine: (nobody)",
+          d.presence === "present"
+            ? `On the vine: ${d.present.join(", ")}`
+            : d.presence === "none"
+              ? "On the vine: (nobody)"
+              : "On the vine: (unknown — could not read presence)",
         );
         if (d.humans.length > 0) lines.push(`Humans: ${d.humans.join(", ")}`);
         if (d.board) {

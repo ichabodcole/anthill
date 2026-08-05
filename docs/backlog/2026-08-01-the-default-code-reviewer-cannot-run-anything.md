@@ -1,7 +1,19 @@
 # `finalize-branch`'s default reviewer has no shell, so "code review" degrades to "code reading"
 
-**Added:** 2026-08-01 · **Status:** ready to fix (a sentence in a skill; the finding is the value)
+**Added:** 2026-08-01 · **Status:** ⬆️ **UPSTREAM — not fixable in this repo** · **Triaged:** 2026-08-03, session 7
 · **Found:** twice in one day, both times only when the report arrived
+
+> **⬆️ CLOSED HERE, NOT FIXED.** The skill is **`project-docs:finalize-branch`**, not anthill — this
+> file says so itself under _"Feed it upstream."_ Nothing in this repo can change it, so it does not
+> belong in an anthill payload and no anthill seat should pick it up.
+>
+> **It was carried into session 7's payload as a buildable item** (_"a sentence in a skill"_), on a
+> brief that claimed each item had been verified by running. **The status line said "ready to fix" and
+> the body said "upstream" — the file disagreed with itself, and the header is the half that gets
+> read.** That is this repo's own single-source rule failing inside one file.
+>
+> **The finding remains valuable and is unaffected by the triage** — it is the reason to send it
+> upstream, not a reason to keep it open here.
 
 ## What happens
 

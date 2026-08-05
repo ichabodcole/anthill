@@ -355,6 +355,57 @@ mechanisms, and the two most severe by consequence (M3 wrong verdicts, M8 lane r
 addressed by _different_ fixes than the most frequent (M1/M2). A single structural change chosen now
 would be optimizing for the loudest mechanism rather than the costliest.
 
+## ⚠ Ordering decision — 2026-08-03 (human): run a session on WORKTREE ISOLATION first
+
+**This inverts recommendation 2 and the first Next Step below, and both are left standing rather than
+edited**, so a reader can see what was recommended and what was chosen.
+
+**The doc says:** evaluate the **staged-snapshot gate** before isolation — same target mechanism, a
+fraction of the cost.
+**The decision:** **run one real session in per-seat worktrees first**, then revisit.
+
+### The reasoning the ordering rests on, which this investigation had not weighed
+
+**The two options' failure modes are not comparable, and cost was the only axis compared.**
+
+| option                   | fails by                                             | recoverable? |
+| ------------------------ | ---------------------------------------------------- | ------------ |
+| **staged-snapshot gate** | **losing a peer's uncommitted work** (stash nesting) | **no**       |
+| **worktree isolation**   | provisioning time and discipline under load          | yes          |
+
+This doc already states the hazard — _"a gate that can lose a peer's uncommitted work is worse than
+the jam it fixes"_ — and then ranks the gate first on cost anyway. **Cheaper-but-can-lose-work versus
+dearer-but-cannot is not a cost comparison**, and the gate's two safety preconditions remain unproven.
+
+**Session 5 raised the stakes on that specific hazard.** Seats held substantial uncommitted work for
+long stretches — one seat's only copy of its lane lived in a scratch patch — while four land refusals
+accumulated. That is precisely the population a stash-nesting bug destroys.
+
+### What the isolation session is expected to produce
+
+**Not a verdict on isolation — a measurement this investigation is explicitly missing.** Two of its
+open questions are marked answerable only by measurement or only by `sol`, who prioritised the
+finalize ask and never reached them:
+
+- **provisioning cost** in a multi-surface repo, first-hand rather than estimated;
+- **whether non-verify seats keep worktree discipline under load** — the question no amount of
+  argument settles.
+
+**Running it here answers both from our own tree**, which is cheaper than continuing to wait on
+another team's capacity.
+
+### Consequences to carry
+
+- **The staged-snapshot gate is deferred, NOT rejected.** Its preconditions still need proving before
+  it is evaluated, and this decision does not touch that.
+- **`T1` from the session-5 scout report** (_scope the pre-commit gate to staged paths_) is deferred
+  behind this session. It is plausibly **a patch on a model we are testing the replacement for**, and
+  it was also mis-specified: `tsc` is project-wide by nature and scoping `bun test` to staged paths
+  removes the one thing a suite is for. **If isolation lands, T1 largely dissolves; if it does not,
+  T1 should be re-specified as tree-vs-index rather than as scope.**
+- **Third session running** that the whole-tree gate blocked seats whose files the gate does not read.
+  The instance is now measured at the gate rather than reported at the seat.
+
 ## Next Steps
 
 > **✅ operator-mono's finalize landed 2026-07-28** (grapevine `anthill-research` #6) and is folded

@@ -171,12 +171,26 @@ once the human has steered you to one seating, treat it as the ratified roster a
   other than `.anthill/` (e.g. a repo that prefers `docs/team/`). And if you _do_ set `paths`, make it
   that deliberate location — **never write a `paths` override that just repeats the `.anthill/` default**
   (a redundant override is noise, and it's exactly what trips `anthill migrate` on a future upgrade).
+- **`gate`: ask what this project runs before a commit — and ASK, never assume.** Every seat's land
+  runs the gate in front of the commit, so this is the one config field whose wrongness is silent:
+  a seat that runs someone else's gate command gets a **green that means nothing**. There is
+  deliberately **no default** — anthill supplies the trigger to decide, the project supplies the
+  content.
+  - **Propose a candidate rather than asking cold** (same ratify-not-reconstruct habit as the roster):
+    look where this repo would keep it — a `check`/`verify`/`ci` script in the manifest, a `Makefile`
+    target, the command its own agent-grounding docs tell contributors to run — and put the best one
+    in front of the human with one clause of why. Name the runner the project actually uses.
+  - **The human's answer is the content, including "we don't have one."** Leave `gate` unset if
+    nothing exists; the absence is announced loudly at land rather than silently skipped, which is
+    the intended behaviour and not a gap to paper over. **Do not invent a plausible command to fill
+    the field** — an unset gate tells the truth, a guessed one lies at exactly the moment a seat is
+    trusting it.
 
 ### 4. Write the config + render the scaffold
 
 - **Write `.anthill/config.json`** — you are the compositor: take the ratified roster and emit the
-  finalized config (the §5 schema — `channel`, `lead`, `seats[]`, and any non-default
-  `grounding`/`paths`/`launch`). **Stamp `"version": 2`** — the current footprint version; an
+  finalized config (the §5 schema — `channel`, `lead`, `seats[]`, the ratified `gate`, and any
+  non-default `grounding`/`paths`/`launch`). **Stamp `"version": 2`** — the current footprint version; an
   unstamped config reads as the legacy v1 (`.team/` + `docs/team/`) layout. Write it to
   `<repo-root>/.anthill/config.json`.
 - **Render:** run **`anthill init`**. It reads the config and deterministically renders `.anthill/`
@@ -226,15 +240,17 @@ once the human has steered you to one seating, treat it as the ratified roster a
 ### 5. Report
 
 Tell the human the team is ready: the roster (handles + roles), where the docs landed (`.anthill/`),
-and the next step — **"run `anthill:convene` to start a working session."** Optionally suggest they
+and the next step — **"run `anthill:convene` to start a working session."** Optionally **suggest they
+commit `.anthill/config.json` + `.anthill/`** (the scaffold is durable; `.anthill/scratch/` stays
+gitignored) — **suggest it; do not do it.** It is their repo and this skill has just asked consent
+for a smaller change than its first commit.
+
 **Before you hand over, show them the field notes once.** Run **`anthill field-notes`** and point at
 what's in it. `principles.md` ships **empty on purpose** — a team's principles are the ones it earns,
 and seeding them with ours hands over conclusions whose scars belong to somebody else. The field
 notes are the other half of that: _here is what other teams found, with the evidence; take what
 fits._ **Say plainly that it is not a list they are expected to adopt** — and that if one of them
 turns out to be wrong for them, `anthill feedback` is how we find out.
-
-commit `.anthill/config.json` + `.anthill/` (the scaffold is durable; `.anthill/scratch/` stays gitignored).
 
 ## Output
 

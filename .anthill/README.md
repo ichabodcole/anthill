@@ -30,9 +30,12 @@ the next instance follows**.
 
 ## Three homes — where knowledge lives
 
-- **Taste → the seat doc** (`dev/<handle>.md`) — each seat's own face: scope + boundaries,
-  relationships, reflexes, anti-patterns, hard-won lessons. Opinionated. **Capture judgments, not
-  file maps** — the reasoning and the generalizable lesson, never a lesson-less event.
+- **Taste → the seat doc** (`dev/<handle>.md`) — each seat's own face: **its epitaph**, scope +
+  boundaries, relationships, reflexes, anti-patterns, hard-won lessons. Opinionated. **Capture
+  judgments, not file maps** — the reasoning and the generalizable lesson, never a lesson-less event.
+  **The epitaph is written last and read first:** one sentence, chosen at finalize out of everything
+  the seat knows, addressed to the next instance. It is the one line that must survive if nothing
+  else does.
 - **Truth → `dev/seams.md`** — the contracts _between_ seats, stated **once**, owned by the
   authoritative seat. Seat docs **point** at it, never restate it.
 - **Proof → the tests** — executable where it exists. A lesson pinned to a green test can't rot.
@@ -84,8 +87,14 @@ direct.
 - **Bounty board** — task state (`todo → doing → review → done`). The **doer owns its card's
   lifecycle**; the lead creates + assigns (leaves in `todo`) and hands off on the vine; the reviewer
   closes. The board is _state_. **It's key-bound:** `convene` owns the board-open (keyed to the team
-  channel, pinned via `.bounty-session`), so every seat + the lead target this board **ambiently** —
-  no one ever threads `--session`. The mechanism lives once in the **board-binding contract** in
+  channel, pinned via `.bounty-session`), so **in one shared working tree** every seat + the lead
+  target this board **ambiently** — no one threads `--session`.
+  **Per-seat git worktrees void that**, and the failure is silent: the board id is derived from the
+  repo path, so a worktree resolves a different one and the pinned file is gitignored and never
+  crosses. **A miss reports "no running bounty session", which reads as "the board isn't up."**
+  Session 6 hit this on all five seats — resolve the id once and pass it explicitly, and know that the
+  ambient guarantee is the thing you traded.
+  The mechanism lives once in the **board-binding contract** in
   [`dev/seams.md`](./dev/seams.md); this points at it, never restates it.
 - **Grapevine (`anthill-dev`)** — the back-channel. Seats discuss, coordinate, reconcile. The vine is
   _substance_. Decisions route to the human **through maestro**, not direct.
@@ -121,11 +130,40 @@ Seats share **one working tree + one git index**. A bare `git commit` (after `gi
 whole index → it **sweeps a peer's staged file** into your commit; concurrent commits also race git's
 index. So:
 
-**Use `anthill commit --as <your-handle> -m "<msg>" <path>…`** for every land. It (1) commits the **named paths only**
-(refuses to run with no paths — no accidental sweep) and (2) holds a **serialize lock** so concurrent
-seats queue instead of racing. The same command **is** the atomic cross-seat land: the lead collects
-every seat's paths and passes them in one call → one commit across the seats. (The raw discipline
-holds if you commit by hand: `git commit -m "<msg>" -- <explicit paths>`, never `git add -A`.)
+**Land with the command `anthill join <your-handle>` printed for you — verbatim, and don't rebuild it.**
+It arrives fully resolved: this project's **gate and the commit in one string with no pipe in it**,
+your handle substituted, and the message read from a **file** (`-F`) rather than an argument.
+The land it performs (1) commits the **named paths only** (refuses to run with no paths — no
+accidental sweep) and (2) holds a **serialize lock** so concurrent seats queue instead of racing. It
+**is** also the atomic cross-seat land: the lead collects every seat's paths and passes them in one
+call → one commit across the seats.
+
+**Two shell hazards it exists to remove, both of which beat agents who had just read the warning:**
+**never pipe the gate** (`gate | tail && commit` tests `tail`'s exit status, always 0, so the commit
+runs on a **red gate** — redirect to a file and read that), and **never pass a backtick-bearing body
+with `-m`** (the shell substitutes it before the tool sees it; that is upstream of any defence the
+tool could mount). **n=3 in one session, two agents** — one of them the seat who built `-F`.
+(The raw discipline if you must land by hand: `( <gate> ) && git commit -F <msgfile> -- <explicit paths>`
+with an `Anthill-Seat:` line in the body — never `git add -A`.)
+
+**The gate is THIS project's, from `gate` in `.anthill/config.json` — no default, on purpose.** Ours is
+`bun run check`. Unset, the emitted command announces that it is running no verification rather than
+quietly committing unchecked; if you ever see that announcement, tell the lead rather than working
+around it.
+
+**⚠ In PER-SEAT WORKTREES the hand form stops being an equivalent fallback — use the tool.**
+Worktrees give each seat its own index, so the sweep hazard above genuinely goes away and the
+obvious inference is that a bare commit is now safe.
+It isn't, and the reason is not visible from the index: **git shares `refs/stash` across every
+worktree of a repo** while `HEAD` and the index are per-worktree, and a pre-commit hook that stashes
+(lint-staged does, on every commit) writes to exactly that shared ref.
+**So the one thing seats still share is the ref holding uncommitted work, and `anthill commit`'s lock
+is the only mutex over it.**
+Isolation moved the race from the index to the stash; it did not remove it.
+_(Session 6. Proven: `git rev-parse --git-path refs/stash` resolves to the common dir from a
+worktree while `HEAD` resolves per-worktree — the second half is the control that makes the first
+mean something. What is **not** proven is that a collision has actually eaten anyone's work; the
+guidance is correct without that, and saying so is the honest form.)_
 
 **`--as` is not optional in practice.** Git records the **human** as the author of every seat's commit
 — all of them, identically — so without the seat stamp _"who landed this?"_ is unanswerable after the
@@ -144,6 +182,22 @@ cannot see it** — _"my paths are clean"_ is true and blind.
 `seams.md` is where this recurs by design, since ownership there is per-contract inside one file. So
 for a **shared** file: say on the vine that you're taking it, and land your edit promptly rather than
 holding it while others write. A short hold is the only real protection the tooling gives you here.
+
+**Read the envelope your land returns — it already answers two questions we kept reconstructing by
+hand.** Both are on `anthill commit`'s own output, on every land:
+
+- **`waitedMs`** — how long you queued on the serialize lock. Non-zero means a peer was landing at the
+  same moment, so this **is** the concurrency window, measured rather than estimated.
+- **`uncheckedAgainst`** — dirty paths **outside** your commit at the instant it landed. The gate runs
+  over the **whole tree**; your commit contains only your paths. **Non-empty means your green was
+  measured against work your commit does not include, so the commit was never checked in isolation.**
+  That is the false-green, reported at the moment it happens rather than discovered later.
+
+_Scar (session 5): three seats reconstructed the residual land-race window by three separate methods —
+while the CLI printed it on every one of their commits. The lead relayed an `uncheckedAgainst` list to
+a peer and never asked what it was worth. **The affordance was not missing; it was unnamed.** That was
+the session's characteristic failure, and this paragraph is the fix. **Check `uncheckedAgainst` before
+you treat a green as a verdict on your commit.**_
 
 ## Shared practices (true for every seat)
 
@@ -233,6 +287,12 @@ rather than shape, and two rules are what make it more than a mood:
   agents who shared one session and one frame will converge, and that convergence is the expected
   output of shared priors rather than evidence. **A unanimous "what went well" is a smell.**
   **The lead is in scope** — a retro where the lead comes out clean is a retro that did not run.
+  **And the lead should not open by listing his own errors.** It reads as the opposite of
+  defensiveness and it is not: **a well-executed self-list pre-empts the audit**, leaving a seat
+  nothing to do but concur, so the document becomes indistinguishable from one where the audit found
+  nothing. _Scar (session 5): the lead volunteered six of his own failures in the finalize brief to
+  make the audit easy, and scout then checked and found **no seat produced a criticism of the lead he
+  had not already volunteered.**_ Say you are in scope; then say nothing until the seats have written.
 
 ## Onboarding a fresh agent
 
