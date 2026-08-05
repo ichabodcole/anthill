@@ -584,12 +584,21 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
       });
       const stdout = proc.stdout.toString();
       const lines = stdout.trim().split("\n").filter(Boolean);
+      // The SAME fixture rendered as text, so a text assertion cannot drift
+      // onto a different world than the JSON one it sits beside. The partial
+      // world was covered in JSON and never in text, and that is exactly where
+      // the renderer bug lived.
+      const textProc = Bun.spawnSync(["bun", CLI, "join", "forager", "--format", "text"], {
+        cwd: dir,
+        env: { ...cleanGitEnv(), HOME: home },
+      });
       return {
         code: proc.exitCode,
         stdout,
         stderr: proc.stderr.toString(),
         lineCount: lines.length,
         envelope: lines.length === 1 ? JSON.parse(lines[0] as string) : undefined,
+        textOut: textProc.stdout.toString(),
       };
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -765,6 +774,41 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
   // literal "null", which reads as a command to run. The pure functions and the
   // JSON payload were both already correct — found by RUNNING the binary, which
   // is the only reason it was found at all.
+  /**
+   * THE PARTIAL WORLD IN TEXT — the gap the JSON tests above did not reach.
+   *
+   * The summary line was a CONJUNCTION (`tail !== null && board !== null`), so
+   * one wire down printed BOTH as UNAVAILABLE: the seat was told the grapevine
+   * was gone while the checklist eight lines lower handed them the working
+   * grapevine tail, and "see the warning below" pointed at a warning that does
+   * not exist. Third instance of one collapse in one diff — comms-vs-spellbook,
+   * then grapevine-vs-bounty in JSON, then here.
+   *
+   * The test gap had the same shape as the bug: the partial world WAS covered
+   * in JSON and never in text, because the only text test used an empty HOME
+   * where both wires are down. A guard that exists and does not reach the path
+   * the bug is on.
+   */
+  test("TEXT mode reports each wire separately — one down must not black out both", () => {
+    const r = joinWith(fakeHome(["grapevine"])); // grapevine up, bounty missing
+    const out = r.textOut as string;
+    const summary = out.slice(out.indexOf("Then wire"), out.indexOf("Checklist"));
+    // The working wire is offered, in the SUMMARY, not only in the checklist.
+    expect(summary).toMatch(/grapevine:\s+bun .*grapevine.*tail/);
+    // ...and only the genuinely missing one is called unavailable.
+    expect(summary).toMatch(/board:\s+UNAVAILABLE/);
+    expect(summary).not.toMatch(/grapevine:\s+UNAVAILABLE/);
+  });
+
+  test("TEXT mode — the mirror, so this cannot pass by hardcoding one wire", () => {
+    const r = joinWith(fakeHome(["bounty"])); // bounty up, grapevine missing
+    const out = r.textOut as string;
+    const summary = out.slice(out.indexOf("Then wire"), out.indexOf("Checklist"));
+    expect(summary).toMatch(/board:\s+bun .*bounty.*tail --mine/);
+    expect(summary).toMatch(/grapevine:\s+UNAVAILABLE/);
+    expect(summary).not.toMatch(/board:\s+UNAVAILABLE/);
+  });
+
   test("text mode never renders a null as if it were a command", () => {
     const dir = mkdtempSync(join(tmpdir(), "anthill-s8-1-text-"));
     const emptyHome = mkdtempSync(join(tmpdir(), "anthill-s8-1-texthome-"));

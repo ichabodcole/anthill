@@ -592,18 +592,35 @@ export const teamJoinCommand = defineAnthillCommand({
         // needs a sentence. Caught by RUNNING the command: the pure functions
         // and the JSON payload were both already correct, which is this seat's
         // standing pattern — every assertion lands on the half that never broke.
-        const wired = d.tailCommand !== null && d.boardTailCommand !== null;
+        // PER WIRE. This line was `tailCommand !== null && boardTailCommand
+        // !== null` — a CONJUNCTION — so one wire down printed BOTH as
+        // UNAVAILABLE. With grapevine up and bounty missing, the summary told
+        // the seat the grapevine was gone while the checklist eight lines below
+        // handed them the working grapevine tail, and "see the warning below"
+        // pointed at a warning that does not exist because grapevine did not
+        // fail.
+        //
+        // THIRD INSTANCE OF ONE DEFECT, IN ONE DIFF: comms-vs-spellbook, then
+        // grapevine-vs-bounty in the JSON payload, then grapevine-vs-bounty
+        // here. I wrote the comment above `CoordWires` describing instance two
+        // — "left the identical bug one level in" — while introducing this one.
+        // The collapse is not a slip you catch by care; it is what happens
+        // whenever two independent things are summarised by one boolean.
+        //
+        // The test gap had the matching shape: the partial world was covered in
+        // JSON and never in text, because the only text test used an empty HOME
+        // where BOTH wires are down — a guard that exists and does not reach the
+        // path the bug is on.
+        const wireLine = (label: string, cmd: string | null) =>
+          `  ${label}${cmd ?? "UNAVAILABLE — see the warning below"}`;
+        const wiredCount = [d.tailCommand, d.boardTailCommand].filter((c) => c !== null).length;
         lines.push(
           "",
-          wired
+          wiredCount === 2
             ? "Then wire BOTH watches (wrap each with Monitor — do not block):"
-            : "Then wire your watch (wrap it with Monitor — do not block):",
-          ...(wired
-            ? [`  grapevine:  ${d.tailCommand}`, `  board:      ${d.boardTailCommand}`]
-            : [
-                "  grapevine:  UNAVAILABLE — see the warning below",
-                "  board:      UNAVAILABLE — see the warning below",
-              ]),
+            : "Then wire your watches (wrap each with Monitor — do not block):",
+          wireLine("grapevine:  ", d.tailCommand),
+          wireLine("board:      ", d.boardTailCommand),
           `  comms:      ${d.comms.incantation}`,
           "",
           "Checklist — your action items as this seat:",
