@@ -18,7 +18,7 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 **Ratified by Cole, 2026-08-05.** _Everything needed before anthill can recommend comms as the default
 wire to consuming projects._ **✅ STEPS 4+5 SHIPPED — released as `anthill-v2.0.0` (2026-08-05, `a130be3`), a MAJOR bump for the breaking change.** `develop` == `main`.
-**✅ 7 of 8 criteria met (1, 2, 3, 4, 4b, 5, 6) — THE RELEASE BAR IS COMPLETE. Remaining: 7, the re-triage, which Cole ruled NOT release-blocking.**
+**✅ 7 of 8 criteria met (1, 2, 3, 4, 4b, 5, 6). THE RELEASE BAR — which is 6 of them (1, 2, 3, 4, 4b, 6) — IS COMPLETE; criterion 5 landed although it was outside that bar. Remaining: 7, the re-triage, which Cole ruled NOT release-blocking.**
 
 > _This line said **"3 of 8"** at session 12's convene and **"5 of 8"** four hours later, and **both were stale when read.** It is corrected here by the lead's own beat-2.5 pass — **re-read every doc you own as its authority and assume it has drifted** — which caught it inside the same session that had already corrected it once. **A router goes stale at the speed the work moves, not at the speed anyone remembers to look.**_
 
