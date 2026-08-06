@@ -106,8 +106,20 @@ export function boardShadowWarning(
 // and emit the lead's own comms wire. Channel + lead come from config. Does NOT
 // do human Q&A — that's the skill's job.
 //
-// Note: bounty's `open` is NOT idempotent (always spawns a fresh daemon), so
-// convene only REPORTS the board state rather than force-opening one.
+// ⚠ CORRECTED (2026-08-06): this said bounty's `open` is NOT idempotent and
+// "always spawns a fresh daemon", so convene only REPORTS board state. **That has
+// been stale since spellbook #69 made KEYED open idempotent** — and convene has
+// opened the board itself since board-session-binding landed, which the code
+// below does. The comment was describing a world two features ago.
+//
+// Flagged by the spellbook maintainer on spellbook#80, who noted the stale
+// assumption is plausibly part of why the `--restore` attach path surprised us:
+// if you believe `open` always spawns fresh, an idempotent ATTACH is not a branch
+// you are looking for.
+//
+// What is true now: `open --session-key <key>` **attaches** to a live board for
+// that key and respawns a dead one. Convene relies on exactly that idempotence —
+// re-convening re-attaches rather than spawning a stranger.
 //
 // STEP 4 (phase 3): convene OPENS NOTHING on the discussion wire. It used to
 // invoke `grapevine open` (and `grapevine topic`), which is what made
