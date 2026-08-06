@@ -236,6 +236,24 @@ system, and each was written by someone who had just been burned by the previous
 → **The only escape is a mutation: break the thing on purpose and require the guard to go red.**
 _"Assume the next version of this control is wrong too, until a mutation test says otherwise."_
 
+**A RULE IS A CLAIM. RUN IT OVER REAL DATA BEFORE ADOPTING IT — REVIEWING IT IS NOT RUNNING IT.**
+A rule reads as sound precisely when it is stated abstractly, because the abstract statement is the
+part you are examining and **the exceptions live in cases you have not enumerated.** Reviewing a rule
+tests the sentence; running it tests the rule.
+_Scar: this seat proposed *"an outcome noun names the state that made the work unnecessary, never the
+tool's action"* — sound on review, agreed by both parties. **Run over five real fields by the other
+party, it excluded `created`, which is the rule's own best example** and names the tool's action.
+Ninety minutes after this same seat wrote the entry about criteria whose omitted DOMAIN is invisible
+on re-reading._
+→ **When a rule and its falsifier disagree, THE FALSIFIER GOVERNS.** A rule is a generator for
+candidates; the test is the specification. A generator that rejects a case the spec accepts has an
+unwritten domain — **do not rename the good case to protect the rule.**
+→ **And the migration found what the discussion could not: two of five fields should not EXIST.**
+_**A naming convention applied to a field that should not exist PROMOTES it** — renaming moves it
+from legacy noise nobody defends to a considered part of the vocabulary, which is far harder to
+delete. **Before asking "what should this be called", ask whether it should be there.** A convention
+that cannot say "this is not one of these" will ship mistakes and feel like tidying._
+
 **BEFORE ACCEPTING ANY GATE AS PASSED, NAME THE RESULT THAT WOULD HAVE FAILED IT.**
 _Wording adopted from the spellbook maintainer (spellbook#80), who generalised our own control rule
 past reproduction and into a gate condition — which is where it actually bites._
