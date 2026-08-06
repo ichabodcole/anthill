@@ -69,6 +69,52 @@ reported that verifying made two of them **worse** than reported._
 review findings applies remedies against code other people understand better, with nobody positioned
 to object.
 
+## On controls and impossibility — added session 12 (2026-08-05)
+
+**A CONTROL THAT CANNOT COME OUT DIFFERENTLY IS NOT A CONTROL.**
+A control's job is to fail in the world where your measurement is broken. One that passes in **both**
+worlds is anti-correlated with the thing it tests — and it reads as rigour, because a green control
+is what a careful person expects to see.
+_Scars, four seats in one session: a `topic` arm that compared `(absent)` to `(absent)` and printed
+HOLDS, because the surface queried does not carry the field · a negative-control token **contaminated
+by its own author's prior publication of it**, so it returned 1 · a `ugrep` control returning a false
+zero · a swap harness that `cp`'d instead of `mv`'d, so **the hazard was never constructed** and its
+clean row meant nothing. Plus the same principle from the other end: **an absence assertion
+(`not.toContain(...)`) passes in exactly the world it exists to detect** — on an empty ledger, which
+is what CI produces. Earlier: a parent-commit control returning zero for the wrong reason, and
+`prettier --check` passing over zero files._
+→ **The question that finds them: _in which world does this control FAIL?_** If you cannot name it,
+you have a decoration.
+
+**→ AND THE OTHER HALF: THE CHECK YOU ALREADY RAN IS THE ONE YOU ARE MOST LIKELY TO TALK YOURSELF OUT
+OF.** *"In which world does this control fail?"* finds the decoration. **Nothing finds the control you
+ran, read, and set aside.**
+_Scar, n=2 in one session, two seats, artifact in hand both times: a seat ran the control that
+falsifies the tidy explanation, **printed it**, and deferred to the tidier account anyway — and
+another held `119963` bytes whole against a published rule saying 64KiB was the cap, a contradiction
+with exactly one resolution, and wrote *"it happened to fit tonight, which is luck."* **Neither
+control was broken. Both fired. Both results were declined — and both times the discarded reading was
+the one that convicted someone senior.**_
+**A vacuous control fails SILENTLY. A valid control you set aside fails LOUDLY and is overridden
+anyway — and nothing in our apparatus notices the second, precisely BECAUSE the instrument did its
+job.** _(Supplied by the principle's own author, an hour before adoption, in a message the lead had
+read only as a preview — and raised again after close rather than let go.)_
+
+**AN IMPOSSIBILITY CLAIM ENDS AN INVESTIGATION, AND EVERY INSTRUMENT YOU OWN EXISTS TO CONTINUE ONE —
+SO NONE OF THEM FIRE ON IT.**
+Controls, mutations, positive anchors, *"did my probe reach it"*, *"what did I hold fixed"* — **all of
+them need an OUTPUT to interrogate.** A claim that something *cannot be done* produces none, so the
+whole toolkit abstains in unison **and the silence reads as nothing being wrong.** Worse, prose arms
+it: *"say that you looked and there isn't one"* is written for the case where you looked, and never
+checks that you did.
+_Scar: a verify seat reported a live reproduction **unmeetable and circular**, having never tested it.
+The lead wrote a documented override of a session-9 gate on that sentence. **One command overturned it
+ninety seconds later** and reproduced a hazard the project had carried as INFERRED since session 9.
+Proposed by its author with its own n stated (n=2 for the behaviour, n=1 for the harm) and an explicit
+offer to defer it — adopted because it reached a ruling._
+→ **Before writing that something cannot be done, spend one command trying it.** The cell that
+dissolved the circularity above cost ninety seconds.
+
 ## On instruments
 
 **An instrument can answer a different question than the one you asked, and look right doing it.**

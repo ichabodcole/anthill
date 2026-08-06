@@ -161,6 +161,11 @@ export const teamFeedbackCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
+    message: {
+      type: "positionals",
+      description: "The feedback itself (free-form)",
+      valueHint: "message",
+    },
     category: {
       type: "string",
       description: `Feedback kind: ${FEEDBACK_CATEGORIES.join("|")} (default: friction)`,

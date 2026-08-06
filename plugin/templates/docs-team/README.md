@@ -190,6 +190,19 @@ hand.** Both are on `anthill commit`'s own output, on every land:
   over the **whole tree**; your commit contains only your paths. **Non-empty means your green was
   measured against work your commit does not include, so the commit was never checked in isolation.**
   That is the false-green, reported at the moment it happens rather than discovered later.
+- **⚠ THE TWO FIELDS INTERACT, AND AN EMPTY `uncheckedAgainst` IS NOT AN ALL-CLEAR — it is weakest
+  exactly where it reads strongest.** The dirty-path read happens **after** your lock wait, so a peer
+  who was dirty during your gate and **landed while you queued** is clean by the time the field is
+  computed, and never appears in it. **So the field is LEAST trustworthy precisely when `waitedMs` is
+  LARGE** — and *"I waited 11 seconds and came back clean"* is the single most reassuring pair the
+  envelope can print. **Read them together: a long wait with an empty list means peers landed inside
+  your window, not that nobody did.**
+  _Measured: `waitedMs 11053.9` with `uncheckedAgainst []`, with **two commits landing inside that
+  window**. Mechanism found by the seat who owns the emitter; the ordering re-checked against the
+  source by the seat who owns this prose._
+  **This is the anti-correlated shape this team keeps meeting — a check that cannot fail in the failing
+  case — and we already have that sentence in another file, about backfill completeness. Neither knew
+  about the other.**
 
 _Scar: a team measured `bun run check` green, landed, and reconstructed its own race window three
 separate ways across three seats — while the CLI printed the number on every one of their commits.
@@ -270,6 +283,42 @@ to the **retro** (team-level, where the next convene reads it back) or to your *
 re-read at join), and to exactly one of them. State it once: a prediction copied into two homes
 drifts, and a **stale prediction is worse than a stale lesson** because it commissions work against a
 world that has already moved.
+
+**Then sweep the DOCS OF RECORD — the ones that claim something true of the tree, and that nobody
+owns. THE LEAD runs this beat and names who checks each doc** — unlike the synthesis above, it is
+not a per-seat act, and the docs it covers are in no seat's scope by definition.
+Every seat re-reads the docs it owns at finalize; a plan of record, a roadmap, a proposal, a
+principles file is in **no seat's scope**, so that sweep passes cleanly over a doc that has been wrong
+for sessions. **The predicate was right and its domain was seats.**
+
+**The project names which docs are in the set, not anthill** — ask _which docs here claim something
+that must stay true of the tree?_ and take the answer from this project's own config or grounding docs.
+**Anything deliberately kept as a record of what USED to be true — archives, scars, superseded
+decisions — is out of scope**; rewriting those destroys the record. The test is whether a reader would
+ACT on the sentence today.
+
+**Write a dated reconciliation line INTO each doc, claim by claim, stamped with the sha you checked at:
+`HELD` / `FALSIFIED <what> → <where it moved>` / `UNCHECKED`.** The line is the deliverable and its
+absence for a session is the signal — a doc carrying lines for two sessions and none for the third says
+so on its face. **`UNCHECKED` is a real verdict and must be written**: a claim you silently skipped is
+indistinguishable from one you confirmed.
+_"Re-read the plan" is the shape that goes 0-for-4 — a situational warning fails at the recognition
+step, so the beat has to name what was checked or it has not fired._
+**And the case that bites hardest is the claim that is still TRUE while its REASON has died:** ask what
+each sentence's justification RESTED on, not what it is about. A reason resting on a property this
+world no longer has does not go stale, it **inverts**, and the sentence still reads fine.
+
+**⚠ SWEEP THE PROSE, NOT JUST THE TABLES — a document's NARRATIVE goes stale too, and it is the half
+a structured reader skips.** Status tables and criteria rows are the easy targets because they look
+like claims; the assertions buried in headers, blockquotes and scar boxes read as commentary and get
+no second look.
+_Measured on this beat's own first run: **4 stale claims found across 10 table rows, and a 5th MISSED
+among 91 assertion-bearing prose lines** — the miss sitting inside the very box warning that this
+document goes stale, and caught by a reader rather than by the sweep._
+
+_Scar: a session spent its night hunting predicates whose domain had gone unwritten, while its own
+plan of record carried **four stale claims** — one falsified by a test that landed the same session.
+The ritual caught none. **All four surfaced because the human asked whether the runway was clean.**_
 
 Then the **structure reflection** — the team turns the lens on itself:
 

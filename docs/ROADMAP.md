@@ -18,7 +18,28 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 **Ratified by Cole, 2026-08-05.** _Everything needed before anthill can recommend comms as the default
 wire to consuming projects._ **✅ STEPS 4+5 SHIPPED — released as `anthill-v2.0.0` (2026-08-05, `a130be3`), a MAJOR bump for the breaking change.** `develop` == `main`.
-**3 of 8 criteria met (4, 4b, 6). Remaining: 1 rotation · 2 the swap run · 3 the positional guard · 5 the sweep touchpoint · 7 the re-triage.**
+**✅ 7 of 8 criteria met (1, 2, 3, 4, 4b, 5, 6) — THE RELEASE BAR IS COMPLETE. Remaining: 7, the re-triage, which Cole ruled NOT release-blocking.**
+
+> _This line said **"3 of 8"** at session 12's convene and **"5 of 8"** four hours later, and **both were stale when read.** It is corrected here by the lead's own beat-2.5 pass — **re-read every doc you own as its authority and assume it has drifted** — which caught it inside the same session that had already corrected it once. **A router goes stale at the speed the work moves, not at the speed anyone remembers to look.**_
+
+> ### ✅ COLE RULED THE RELEASE BAR AT **6 OF 8**, 2026-08-05 — with a condition
+>
+> Verbatim, because the condition is the operative half and a paraphrase would lose it:
+> _"Ok, yes, 6-of-8 is good with me, **so long as we capture the remaining work in a way that makes
+> the continuation easy for a fresh agent.**"_ · _"I think the end of session sweep will of course be
+> part of that process."_
+>
+> **So criteria 1, 2, 3, 4, 4b and 6 close the RELEASE.** Criterion **7** (the re-triage) is real work
+> and is **not release-blocking** — it is session 13's. Criterion **5 was not in the release bar and
+> landed anyway** (`32d087a`).
+> **The condition is a DELIVERABLE, not a courtesy:** the continuation capture is judged on whether a
+> fresh agent can pick this up, and the session-12 lead owns it.
+>
+> **⚠ This block was 3-of-8-stale within four hours of being written, and the SWEEP BEAT caught it —
+> not a person.** weaver ran the touchpoint he had just landed against this file as its own falsifier,
+> and **criterion 5's own row was one of the four stale claims.** _The document that commissioned the
+> sweep was falsified by the sweep's first run. That is the strongest available evidence that
+> "remember to update the plan" was never going to reach this._
 
 > ⚠ **CONSUMING TEAMS ON v1.x MUST RUN `anthill:upgrade`.** `convene` no longer accepts `--fresh` or
 > `--topic`, and the `join` manifest no longer carries `tailCommand` — **a team that upgrades without
@@ -34,23 +55,30 @@ wire to consuming projects._ **✅ STEPS 4+5 SHIPPED — released as `anthill-v2
 > scope of work"** at the **archived** team-comms spike. **Sessions 9, 10 and 11 each ran a full
 > convene→finalize cycle without reading or updating it**, while this file's own header names both
 > moments. _A roadmap nothing re-reads is a wish list — its words, and it was one._
-> **The repair is a ritual beat, not resolve: card `S12-1`, weaver's lane.**
+> **The repair SHIPPED — the docs-of-record sweep, `32d087a` + `ec58802`, card `t-2a48f297`** (a ritual
+> beat, not resolve). _This line previously said "card `S12-1`, weaver's lane", which was stale twice
+> over: the repair was already landed, and `S12-1` resolves to a different seat's card (the R7 S-number
+> collision — **cite card ids, never S-numbers**)._
+> **It was found by the LEAD, not by the sweep's own first run**, and that is a recorded bound on the
+> beat rather than a footnote: **the sweep read this file's TABLE and skipped its PROSE** — 10 rows
+> checked against 91 assertion-bearing prose lines. **A sweep that reads tables and passes a document
+> whose narrative is wrong is the failure this box is about, arriving inside the box.**
 
 ### The exit criteria — all seven, every one mechanically checkable
 
 **The scope is met when a stranger can run these and get these answers. Not before, and no criterion
 is discharged by argument.**
 
-| #         | criterion                                                                                                                                                         | how it is checked                                                                                                                                                                                                                             |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1**     | **Rotation landed**, with `seams.md` 6(g) amended                                                                                                                 | one commit names both paths (write-trigger)                                                                                                                                                                                                   |
-| **2**     | **The swap run passes exit criterion v3 — BOTH halves**                                                                                                           | absence of USE is runnable as-is. **Absence of OPENING now needs a POSITIVE artifact** — `channelOpened` was deleted with step 4, and an absent field is not an observation (Contract 6(c)). **Name the artifact before the run, not after.** |
-| **3**     | **`comms read` positional guard**, at parser altitude                                                                                                             | 3 controls green: `commit -- <paths>` · `comms send <body>` · `join <handle>`                                                                                                                                                                 |
-| **4** ✅  | ~~🔴~~ **MET `cbafb2b`** — **WHAT WE SHIP POINTS AT NO GRAPEVINE** _(Cole's ruling, 2026-08-05 — scoped to the RELEASE, not the repo)_                            | `grep -rni grapevine plugin/skills plugin/templates plugin/.claude-plugin` returns **only** recorded history and the `upgrade` migration note — **no line telling an agent to USE it.** Baseline: **8 hits, 6 live-wrong** (see below)        |
-| **4b** ✅ | **MET `cbafb2b`** — **`anthill:upgrade` documents the migration**                                                                                                 | `skills/upgrade/SKILL.md` states grapevine→comms for an **existing** team, and what to do with that team's own in-repo references                                                                                                             |
-| **5**     | **The sweep-the-plan touchpoint** shipped                                                                                                                         | in `skills/finalize-session/`, `templates/docs-team/` **and** `.anthill/README.md` — the team's own copy, per its own scar                                                                                                                    |
-| **6** ✅  | **MET — released as `anthill-v2.0.0`** (2026-08-05, `a130be3`). A **MAJOR** bump: release-please read the `BREAKING CHANGE` footers. `develop` == `main`, 0 ahead | `develop` → `main`, release cut                                                                                                                                                                                                               |
-| **7**     | **This section points at live work**                                                                                                                              | every dir in `docs/projects/` except `_archive`/`TEMPLATES` has a `**Status:**` at the **start of a line**, plus a named next action or an explicit `parked`/`superseded` marker                                                              |
+| #         | criterion                                                                                                                                                         | how it is checked                                                                                                                                                                                                                                 |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1** ✅  | **MET `81d3991` + `1b905c4`** — **Rotation landed (INERT)**; 6(g)'s amendment ruled NOT YET DUE by its owner, trigger recorded instead                            | one commit names both paths (write-trigger)                                                                                                                                                                                                       |
+| **2** ✅  | **MET `89dea31`** — **the swap run, BOTH halves.** 102 messages · 25 commits · six seats · **grapevine delta ZERO**                                               | absence of USE is runnable as-is. **Absence of OPENING now needs a POSITIVE artifact** — `channelOpened` was deleted with step 4, and an absent field is not an observation (Contract 6(c)). **Name the artifact before the run, not after.**     |
+| **3** ✅  | **MET `4c339fa`** — **`comms read` positional guard**, at parser altitude                                                                                         | **3 controls green, plus 4 more.** `commit -- <paths>` · `comms send <body>` · `join <handle>` — **verified by a NON-AUTHOR: steward ran 7 cells (forager's 4 controls, steward's own PRE-REGISTERED pair, and the defect itself), RUN not read** |
+| **4** ✅  | ~~🔴~~ **MET `cbafb2b`** — **WHAT WE SHIP POINTS AT NO GRAPEVINE** _(Cole's ruling, 2026-08-05 — scoped to the RELEASE, not the repo)_                            | `grep -rni grapevine plugin/skills plugin/templates plugin/.claude-plugin` returns **only** recorded history and the `upgrade` migration note — **no line telling an agent to USE it.** Baseline: **8 hits, 6 live-wrong** (see below)            |
+| **4b** ✅ | **MET `cbafb2b`** — **`anthill:upgrade` documents the migration**                                                                                                 | `skills/upgrade/SKILL.md` states grapevine→comms for an **existing** team, and what to do with that team's own in-repo references                                                                                                                 |
+| **5** ✅  | **MET `32d087a`** (+ `ec58802` naming the ACTOR) — **the sweep-the-plan touchpoint**, and it was **outside the ratified release bar; it landed anyway**           | **all three homes: `skills/finalize-session/`, `templates/docs-team/` AND `.anthill/README.md`** — the team's own copy, per its own scar. **Its own first run falsified THIS FILE in four places** (see the ruling box above)                     |
+| **6** ✅  | **MET — released as `anthill-v2.0.0`** (2026-08-05, `a130be3`). A **MAJOR** bump: release-please read the `BREAKING CHANGE` footers. `develop` == `main`, 0 ahead | `develop` → `main`, release cut                                                                                                                                                                                                                   |
+| **7**     | **This section points at live work**                                                                                                                              | every dir in `docs/projects/` except `_archive`/`TEMPLATES` has a `**Status:**` at the **start of a line**, plus a named next action or an explicit `parked`/`superseded` marker                                                                  |
 
 > ### 🔴 Criterion 4 — what it is and is NOT, because the first version of it was unrunnable
 >
@@ -89,6 +117,51 @@ is discharged by argument.**
 > is a _dependency_ question, not a guidance one — it belongs to the
 > [coordination-layer investigation](investigations/2026-07-31-team-native-coordination-layer.md) and the
 > carried debt, and conflating them is what made version one unrunnable.
+
+---
+
+# ▶ NEXT UP: **SESSION 13 — THE STORES STOP LYING**
+
+**Proposed by the session-12 lead, 2026-08-05, from that session's own outputs. Awaiting Cole's ratification.**
+
+> **Why this scope and not a list of fixes:** session 12 found **three stores that disagreed with the tree inside ninety minutes** — the roadmap (4 stale claims, one of them its own row), the board (**13 of 27 `review` cards mis-stating the tree, ~48%**), and a carried card whose work was already landed. `principles.md` says **no store without a named re-read moment**; the board has a write trigger and **no read-back across sessions**, and it is the surface Cole's continuation condition is judged on.
+
+## S13 · what gets delivered
+
+| #         | item                                                                      | why it is not an experiment                                                                                                                                                                                                                                                  | source                  |
+| --------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **S13-A** | **`comms stand-down`'s `created` flag is session-scoped**                 | `team-comms.ts:924` is `!existsSync(path)` — **bare file existence, which is D3's exact defect one field over.** `comms.ts:694` already has the repaired predicate (`record.at >= sessionOpenedAt`). **n=4 seats misread it in one session.** One predicate, already written | session 12 wire, n=4    |
+| **S13-B** | **`uncheckedAgainst` stops reporting a false empty**                      | the porcelain read is at `team-commit.ts:526`, **after** `acquireLock` at `:346` — so a peer committing during your queue vanishes from the list. **Reproduced with timestamps** (15.6s queue, empty list, a peer's commit inside the window)                                | card `t-42dd65bf`, n=2  |
+| **S13-C** | **Test output that mimics a production envelope carries a marker**        | a seat nearly read a test's `convene` envelope in the gate's stdout as **our board dying**, in a session that had opened with a real board-loss scare                                                                                                                        | scout §8.3              |
+| **S13-D** | **`anthill commit` requires or resolves `--as`**                          | 9 of session 11's first 11 commits carried no seat trailer. Carried from session 11, unbuilt                                                                                                                                                                                 | S11 debt                |
+| **S13-E** | 🎯 **CRITERION 7 + THE BOARD READ-BACK, AS ONE PIECE**                    | **triaging without fixing the read-back just re-does the triage next session.** Needs the `MOOT` class steward found (_the subject was deleted_) — _"we fixed it"_ and _"the thing it was about is gone"_ send a fresh agent to different places, and one word covers both   | criterion 7 + `c2a4114` |
+| **S13-F** | **Close the discharged cards** — `t-ac09ffa9`, `t-07a131f5`, `t-e25cd535` | all three verified dischargeable in session 12; `--fresh` is moot since step 4 deleted it. **Minutes, and they are three of the 13 lying cards**                                                                                                                             | continuation doc        |
+
+| **S13-G** | **Persist `asOf` on the message record and show it on read** | 🔴 **NOT scout's proposal, and the inversion is the point.** He proposed _refusing a body whose watermark disagrees with `--as-of`_ (n=4). **But the stored record is `{channel, emittedThrough, from, id, role, text, ts}` — `--as-of` gates the send and is then DISCARDED.** The prose watermark exists _because the tool throws the value away_: there are not two copies that drift, **the tool manufactures the second copy.** Persisting needs no parsing, no refusal, no coupling to wording — and it lands in Contract 6(a)'s own idiom, which already persists the **artifact** tier (`emittedThrough`) while dropping the **testimony** tier (`read`) the tool already collects. Additive; older records simply lack the field | scout §7, re-scoped against the code |
+| **S13-H** | **The finalize confirmation stops asking for a sha that is stale by construction** | 4 of 5 seats filed a ledger amendment after confirming, because the finalize conversation itself produced further lessons. **Ask after stand-down, or do not ask — `git log --grep "Anthill-Seat: <handle>"` is already the mechanical source** | session 12, n=4 |
+| **S13-I** | **`anthill feedback` detects that the current repo IS the feedback target** | 🔴 **We are `ichabodcole/anthill` and `FEEDBACK_REPO` is `ichabodcole/anthill`.** A seat here that hits anthill friction reaches for `anthill feedback` **because the SOP tells it to**, and opens an issue against itself, parallel to this very backlog. **A few lines comparing the remote to `FEEDBACK_REPO`; never fires for a consuming project.** _Mechanical rather than a note, because a situational warning fails at the recognition step_ | Cole, session 12 close |
+
+> **⚠ THE `comms send` ITEM NO LONGER NEEDS A RULING, AND THE REASON IS WORTH KEEPING.** It was flagged _"needs a design call — it couples the tool to a prose convention"_ **only while the proposed fix was parsing the body.** Reading the storage layer showed the duplication is the tool's own doing — and **a shape filter over prose is the exact discriminator this team killed in the same session** (an all-digit sha defeats a digits-only exclusion). **The design call dissolved when someone read the record instead of arguing about the parser.**
+
+## S14 · defined now so it is not re-derived from a report
+
+| #         | item                                                                        | why it is S14 and not S13                                                                                                                                                                                                                                                                                            |
+| --------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **S14-A** | **ONE EXECUTED ROTATION**, deliberately, on a channel nobody is standing on | discharges **6(e)'s live half** (decisive cell already written: _rotate, then `comms positions` WITHOUT restarting a follower_), clears **6(g)'s amendment trigger** (`1b905c4`), and answers whether `previousPosition` survives. **Rotation landed INERT in S12 — running it is a separate act with its own risk** |
+| **S14-B** | **Remove the vine leg** (`commands/team-support.ts:469`)                    | 🔴 **it is a LOAD-BEARING MASK, measured:** an unresolvable vine makes `down` **always-block**, so removing it leaves `commsPresence` as the sole input. A presence-semantics change **with a ratify gate**                                                                                                          |
+| **S14-C** | **`t-c012c84c` — `openedAt` has two answers 246s apart** (convene vs spawn) | it is the field implementing D3's safety property, and **S14-A may move or resolve it.** Sequencing it after the executed rotation is deliberate                                                                                                                                                                     |
+
+## Backlog — real, placed, NOT scoped to a session
+
+- **`down`'s envelope carries no `because` field** — verified at source; **gate 2c's _"state AND because"_ is unsatisfiable at the command boundary by anyone.** Not a defect, a stated limit. → `docs/backlog/`
+- **`bun run check` reads ZERO markdown** — **fourth session running.** The prose lane has no automated verification at all, and _"gate green" on a markdown land means the tree compiles._
+- **The whole-tree gate serialises a lane that cannot cause a red** — weaver blocked **3× in one session** on a markdown lane. → **[`shared-tree-gate-tension`](projects/shared-tree-gate-tension/proposal.md) move C**, now with first-person field evidence **and** a reproduced false-`uncheckedAgainst` beside it. **Decide at a convene; it is a tree-model question, not a fix.**
+
+## Upstream to spellbook — deduped, drafted, NOT yet sent
+
+**Cole approves the drafts before they go.** `bounty open --restore <id>` **silently no-ops** when a live board already holds the key (it attaches and ignores the flag — this is how session 12's board recovery nearly failed) · **`bounty state` truncates to a PIPE** (~64KB, whole to a file), and `--owner <name>` does not filter while `--mine` does.
+
+---
 
 **Why 4/4b and 7 are in the set rather than assumed:**
 

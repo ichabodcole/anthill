@@ -22,6 +22,14 @@ When something's no longer true, fix it.
 
 _(Rule for whoever comes next: if you supersede this epitaph, do **not** delete it — move it to `## Epitaphs — the lineage` at the bottom of this doc, dated. Deciding to supersede a predecessor is itself a judgment and it should be visible.)_
 
+> **Session 12: I KEPT session 11's epitaph, and the reason is that it FIRED TWICE TONIGHT AND I FAILED IT BOTH TIMES.**
+> **Not "still true in principle" — still true against my two worst moments, and it would have caught both had I applied it.**
+> **(1) The near-miss that matters.** I drafted a message naming a colleague and an artifact: *"sentinel, your untracked file is the red."* **The file was forager's.** The sentence has two nouns — *the red* and *whose file* — **I measured the first and never the second.** That is the epitaph's exact shape, and applying it (*did I measure THIS sentence's noun?*) answers it in one question: **no, I measured the adjacent one.**
+> **(2) The remedy that was wrong.** I proposed *"exclude digits-only tokens"* from a sha audit, having measured **my own** tokens and generalised to the token space. sentinel produced `1235955` — a real all-digit sha — and killed it. **Again the adjacent measurement standing in for the one the sentence needed.**
+> **Why I am not superseding it for the thing that bit me harder.** The header/`--as-of` mismatch happened **four times** and is genuinely new — but it is a **two-copies-of-one-value defect with a mechanical fix**, not a disposition, and it belongs in code rather than in this slot. _(The fix works: substituting the id at send time succeeded on first use after four failures by care.)_
+> **The honest state of the incumbent: it is not exhausted, it is UNDER-APPLIED.** It went unfired at both moments, and neither was caught by me — one by luck, one by a peer. **A guard that is still aimed at the right target and still being missed is the last thing you retire.**
+> **The one sharpening I would offer, and it is the session's own lesson rather than a new epitaph:** *an unrelated correct check leaves you certain you checked.* The wrong-owner draft died on a **staleness** re-measurement, so the attribution was never examined — **and I will remember that as having checked.** The incumbent's question is still the fix; **ask it once per noun, not once per message.**
+
 > **Why I superseded session 10's epitaph, stated because the rule says the judgment must be visible.**
 > Its claim — *ask what the instrument could express, when it was read, and which tree it ran against* — is **true, unfalsified, and it went 4-for-4 today.** It killed *"`comms read` returns the WRONG MESSAGE"* before I sent it; it killed my attribution of a red tree to a named peer's file (`git diff --stat` said that file was identical to HEAD); it made me frame a peer's wrong clause as **instrument, not author**; and it stopped me naming any cause at all for a red I could not explain. **Every one of those was an allegation about a colleague that did not leave my pane.** It is preserved in the lineage below and it is still the thing that protects other people from me.
 > **I replaced it because it is a guard that is RUNNING, and the slot belongs to the class that has none.** My four misses tonight were all one shape and **not one was caught by me**: I claimed *"the prettier half is not load-bearing"* having measured only what the gate invokes; I claimed *"nobody has published an enumerating command"* having measured my own rule's fit rather than what a peer had done two messages earlier; I asserted a read-watermark I had **computed** rather than read; and I measured that the tree was clean at join while never measuring the gate, then would have quoted a delta.
@@ -178,7 +186,8 @@ Nothing in my message marked which half was measured and which was invented, and
 So the instruction is never *"give it the artifact"* — it is *"give it the artifact AND name the tools it must not touch"*, because the tools are helpful by default and **helpfulness is the failure mode**.
 **And the only real protection is a corpus, not a context: `git clone` is a protection, a new pane is a promise.**
 Gitignore governs **tracking, not readability** — the wire is a world-readable 456KB file in this tree, and `cat` reads it.
-_My doc had the true version (`from a clone`) while `join/SKILL.md:245` shipped the false one (`a fresh agent`); three seats restated the shipped version independently in one hour._
+_My doc had the true version (`from a clone`) while `join/SKILL.md` shipped the false one (`a fresh agent`); three seats restated the shipped version independently in one hour._
+_✅ **FIXED UPSTREAM — checked at session 12's beat 2.5.** The skill now carries the corrected form (*"nothing makes a reader cold BY CONSTRUCTION unless you built the surface it sees"*, plus the build-an-allow-list remedy). **The lesson stands; the live defect it names does not.** Cited by claim rather than by line, because the line ref I had written **had already rotted** — it pointed at the ratify-gate paragraph, an unrelated subject._
 **When your protection is a sentence rather than a mechanism, prefer the mechanism — especially when you are the one who just asserted the sentence.**
 
 **The DENOMINATOR decides the story, and the reassuring denominator is usually the one nobody chose.**
@@ -340,11 +349,47 @@ _Caught only because I went to test a characterisation OF a peer rather than acc
 **A STORE'S FIDELITY IS NOT THE VARIABLE. WHETHER THE READER IS HOLDING THE SITUATION THE CLAUSE DESCRIBES AT THE MOMENT OF READING IS.**
 Five shapes in one session, and the two that matter are mirrors of each other:
 **forager** — his own docstring named the exact class, in his own hand, and did not fire on him **while he was writing the sibling verb**.
-**me** — `seams.md:333` states the `--as-of` hazard verbatim, I read it at join, and I defeated the guard **forty minutes later** by computing the head inside the send.
+**me** — `seams.md` Contract 6(a) states the `--as-of` hazard verbatim (*"it does arithmetic on that testimony; it does not verify it … the number the sender TYPED, never the sender's actual state"*), I read it at join, and I defeated the guard **forty minutes later** by computing the head inside the send.
+_Cited by contract clause after a line ref rotted here: I had written `seams.md:333`, and at session 12's HEAD that line is Contract 6's ratified-at scope list — a different subject entirely. **The clause moved 13 lines and the pointer said nothing.**_
 **Both stores transmitted at full fidelity to a reader who was not, at that instant, doing the thing the sentence is about.**
 **And grounding is precisely the moment a reader holds NONE of the situations their doc describes** — you read the whole trail before any of it applies, which is the one ordering the ritual guarantees.
 **That is an argument about WHEN a doc is re-read, not about what it contains** — and it is the first thing this seat has found that would change a ritual rather than a document.
-_Related but distinct, and do not merge them: `plan.md:52` transmitted perfectly and its CONTENT had expired (a superlative with a shelf life). **Perfect transmission, three different failures: wrong moment, wrong altitude, expired content.** A trail that is accurate, read, and useless is not the failure mode stigmergy was designed against._
+_Related but distinct, and do not merge them: the comms-as-default plan transmitted perfectly and its CONTENT had expired (a superlative with a shelf life). **Perfect transmission, three different failures: wrong moment, wrong altitude, expired content.** A trail that is accurate, read, and useless is not the failure mode stigmergy was designed against._
+_Cited by project rather than as bare `plan.md:52`: **eight files named `plan.md` exist in this repo**, so the bare name was ambiguous the day I wrote it and the line number is long gone. **A filename that is not unique is not a pointer.**_
+
+**A TREE-GROUNDED CLAIM DECAYS AT THE GRANULARITY OF THE THING IT ASSERTS, NOT THE THING YOU MEASURED.**
+H(scout-10a) predicted that tree claims die because the wire has `--as-of` and the tree has nothing; its own falsifier fired on me and **falsified the proposed remedy in the same instance.**
+I drafted *"one command unblocks weaver"* off `tsc exit 2`, re-measured ~2 minutes later: `tsc exit 0`, with **HEAD, `git status --porcelain` and the untracked file all byte-identical across both readings.**
+So the predecessor's cheap fix — *stamp when you ran `git status`* — **would not have saved it**: a peer edited a line in place and the tree's identity never moved.
+**My claim was about the GATE, so `git status` was never the right surface.** Re-measure the thing your sentence asserts, not the thing that is convenient to re-run.
+
+**I KILLED A MESSAGE FOR THE WRONG REASON AND WILL REMEMBER IT AS DILIGENCE.**
+That same unsent draft **named the wrong owner** — it told sentinel to move a file that was forager's — and **I did not catch that.** The message died on the staleness check above; **the attribution was never checked and would have shipped had the tree still been red.**
+This doc already records the neighbouring case (*what stopped his false accusation was SURPRISE, not diligence*); **mine is worse, because an unrelated correct check leaves you certain you checked.**
+**The guard: for any sentence naming a PERSON and an ARTIFACT, verify the artifact's OWNER, not just its state.** `git blame` cannot reach an untracked file — the only instrument is asking, and I addressed the person instead of asking them.
+_Bound, against the exculpatory reading: weaver made the same misattribution publicly and sentinel corrected us both. **That the error was easy says nothing about whether I checked.** The first clause does not travel without the second._
+
+**MY COMPOSITION TIME EXCEEDS THIS WIRE'S DECISION RATE, AND THE LOSS IS INVISIBLE.**
+Two drafts were ~80–100% subsumed by a ruling **before I could send them** (one by ~2 minutes, one by ~4). Both times the finding reached the team **from the affected seat**, faster and cheaper than from me.
+**A refused send is visible; an OVERTAKEN send is not** — you simply do not send it, and nothing records that the finding existed.
+**This is structural rather than slowness:** a finding from this seat must carry its command, its control, its sha and its caveat or it is testimony — **and that length is exactly what makes it late.**
+**The good reading is the true one: the team got there without you.** Score that as the wire working, never as being robbed.
+
+**A COUNT MEASURES THE RITUAL UNLESS YOU SAY WHAT ONE UNIT IS — and I nearly published the exact ratio `principles.md` already carries a scar for.**
+The available framing was *"16 commits landed and the release-blocking criterion has zero lines."* Classified by **what each commit SERVES**, **14 of 16 served a named criterion or the human's stated condition** — so the *"they audited their own instruments all night"* story is **false**, and a commit count would have produced it.
+What survived the honest cut is narrower and better: **the one release-blocking criterion got zero lines while every gate-checkable thing around it was finished well.**
+**Publish the classified LIST a peer can strike rows from; never the ratio.**
+
+**A COINCIDENCE OF NUMBERS WILL STAND IN FOR A CHECK ON THE INSTRUMENT'S DOMAIN — and it arrives feeling like arithmetic, not like a story.**
+_Landed after the session-12 report, because I produced this **four minutes after landing the report whose central finding it is.** That timing is the lesson._
+Two shas reported biome counts of **80** and **82**; the diff between them contained **exactly two files**. **Three twos.** I published *"my own commit added the report file"* — and **both files were markdown, which is not in biome's domain at all.** A peer's control killed it: `biome check <a markdown-only dir>` prints **no count line whatsoever**, while a TypeScript directory prints one.
+**The observation (80→82) was correct. The arithmetic was correct. The link was invented**, and the invention was licensed entirely by the numbers agreeing.
+**What I skipped is one question and it is not "did I check?" — it is *is the thing I am counting the KIND of thing this instrument counts?*** My doc already carried *a count is not a reading* and *check what the DENOMINATOR is made of*; **neither fires here, because the denominator was never the problem — the instrument's DOMAIN was.**
+**And the tell was available for free: a matching number is evidence of nothing when you have not established that the two quantities are commensurable.** Three seats reconciled that gap with the same tidy story; **the one who ran a positive control killed it.**
+
+**PRE-REGISTER, THEN LET THE SUBJECT SCOOP YOU — that is the good outcome and it will not feel like one.**
+Three times this seat's assigned observations were reached first by their own subject, including the lead measuring the rotation gap against himself before I did.
+**A seat whose deliverable is a claim about the team will be beaten to its own findings by a team that is working well.** Record the ordering; do not compress the finding into something novel to stay ahead of it.
 
 ## Anti-patterns
 
@@ -386,6 +431,12 @@ I grepped the wire for land refusals and got 21; the real number is nothing like
 **This is the session-6 commit-monitor failure rebuilt in a different tool on a different subject, by the author of the warning about it.**
 `principles.md`: *the tool is not lying; it is answering a coarser question than the one you asked* — **and a count of messages-mentioning-X looks exactly like a count of X.**
 
+**⚠ Reaching for the id on screen when stamping `--as-of`.**
+I stamped `--as-of 703` having read only the **preview**. The proof is intrinsic: my message engaged with neither of that message's two retractions.
+**The preview id is the ONLY id available at composition time and it is always the head**, so the wrong stamp is free **and flatters you** — a higher watermark reads as better caught-up — while the right one costs a deliberate second act.
+**Remedy adopted from maestro, not invented: state the GRAIN — _bodies of X, previews of Y_.** A shape requirement has a visible blank when you skip it; a fidelity requirement does not.
+_Contract 6(a) already covers this and does not need amending: it says `--as-of` does arithmetic on your testimony and never verifies it. What is new is a specific mechanical reason the typed number runs one tier high, always in the same direction._
+
 ## Candidates
 
 **H(scout-10a) — the wire has a staleness guard and the tree has none, and that asymmetry is where tree-grounded claims die.**
@@ -420,10 +471,30 @@ That is `principles.md`'s *there is no message budget — compression is where f
 **The practice that replaces the hypothesis, and it costs one flag: stamp the id you ACTUALLY READ and pass `--anyway`, rather than computing the head.**
 The envelope then shows `staleness{asOf, crossed}` — **a visible, honest crossing instead of a clean-looking lie** — and it is what steward did at #580 and I did at #578 after being caught by the alternative.
 
-**H(scout-9b) — `uncheckedAgainst` is UNDER-SPECIFIED, not noisy.** _(revised mid-session; the first version said "too noisy" and was half wrong)_
-It answers two questions and the SOP documents only the cheap one — *was my green a verdict on my commit?* — while the valuable one is *is a peer mid-edit in a file I am about to name?*
-**It reports paths OUTSIDE your commit, so it is visible to whoever lands NEXT TO an edit and never to whoever lands ON it** — the seat who can actually cause a sweep is precisely the seat it cannot warn.
-*Falsifier: any seat citing it as evidence about a peer's in-flight work rather than about their own green.* **n=1 against so far, and it is me** — I held that exact signal 18 seconds before a sweep and priced it as gate-noise.
+**~~H(scout-9b) — `uncheckedAgainst` is UNDER-SPECIFIED~~ SUBSUMED, session 12, by forager's sharper mechanism. Credited to him, not falsified.**
+
+> _Superseded block, quoted whole per the rule rather than edited in place:_
+> **H(scout-9b) — `uncheckedAgainst` is UNDER-SPECIFIED, not noisy.** _(revised mid-session; the first version said "too noisy" and was half wrong)_
+> It answers two questions and the SOP documents only the cheap one — *was my green a verdict on my commit?* — while the valuable one is *is a peer mid-edit in a file I am about to name?*
+> **It reports paths OUTSIDE your commit, so it is visible to whoever lands NEXT TO an edit and never to whoever lands ON it** — the seat who can actually cause a sweep is precisely the seat it cannot warn.
+> *Falsifier: any seat citing it as evidence about a peer's in-flight work rather than about their own green.* **n=1 against so far, and it is me.**
+
+**forager's is the same blind spot stated better: the porcelain read happens AFTER the unbounded lock wait, so a peer who landed WHILE YOU QUEUED is clean by the time the field is computed and never appears.**
+Mine is about *which paths*; his is about *when the read happens* — pinned to two line numbers and a reproduced envelope (`waitedMs 11053.9` with `uncheckedAgainst []`, and **two peer commits inside that window**). **Mine had n=1 and no mechanism.**
+**So the field is LEAST trustworthy exactly when `waitedMs` is LARGEST**, and our SOP taught the two as a pair to read together without saying they interact — the anti-correlated shape this team keeps meeting. **Fixed in both copies at `51ec81e`.**
+_The falsifier I set is still unfired: three seats read the field this session (weaver, sentinel, maestro), every one about their OWN green. Nobody has yet cited it about a peer's in-flight work — that question was answered with `git status`, by a different seat, which is what the hypothesis predicted._
+_Subsumed rather than falsified is the cheaper outcome and the one to prefer. **Say whose it is.**_
+
+**H(scout-12a) — PRE-REGISTRATION became this team's default mode in a session's second half.**
+Late in session 12, three seats registered predictions against code that did not yet exist (a contract-clause hazard, a prose consumer half, the builder's own scope bound), each prefixed *not a block, read after you land*. **Two were falsified BY THE DESIGN before any test ran**, which is the cheapest possible resolution.
+*Falsifier: count registrations per half of the log. Falsified if the rate is flat.* **NOT RUN — I noticed it from three adjacent messages, which is the sample size this doc says to widen rather than publish.**
+
+**H(scout-12b) — a card is a claim about the tree, and NOTHING re-reads it.**
+Measured independently: of 27 cards in `review`, **13 were SHIPPED — landed, never closed** (~48%), plus a **MOOT** row nobody predicted (*the subject was deleted*). Two seats had already been bitten within twenty minutes, one of them ten minutes from rebuilding a test that existed.
+**The board is a store with a WRITE trigger and no read-back across sessions** — `principles.md`'s *no store without a named re-read moment*, pointed at the one surface the human's continuation condition is judged on.
+**"We fixed it" and "the thing it was about is gone" send a fresh agent to different places, and one word covers both** — Contract 6(c)'s `null`-vs-`0` distinction arriving on a third surface.
+*Falsifier: a later inventory finds the SHIPPED bucket materially smaller with no close-back mechanism having been built.*
+_The two self-reports were candour, not rate. **The rate came from a non-owner who enumerated the column against the tree and recused from his own three cards** — that is the shape that makes a population trustworthy, and it is the fix this doc already prescribes for donated populations._
 
 **The seconds-vs-minutes gap, and it is the session's widest claim.**
 Failures here run in **seconds**; verification runs in **minutes** — and **the care IS the latency**, so being more rigorous makes it monotonically worse.
