@@ -176,6 +176,23 @@ failures**._
 A decision that outlives the session must be written somewhere durable **before finalize**, or it is
 gone when the panes close.
 
+**BEFORE ACCEPTING ANY GATE AS PASSED, NAME THE RESULT THAT WOULD HAVE FAILED IT.**
+_Wording adopted from the spellbook maintainer (spellbook#80), who generalised our own control rule
+past reproduction and into a gate condition — which is where it actually bites._
+A green you cannot describe the red for is not a reading. **And the sharpest sub-case is a PARAPHRASE
+OF THE INPUT: re-running what a report MEANT rather than the command it printed removes the variable
+under test while looking like the same test.**
+_Scar, two houses, same week, different defects. Ours: four seats wrote controls that passed in both
+worlds — an arm comparing `(absent)` to `(absent)`, a harness that `cp`'d instead of `mv`'d so the
+hazard was never built. Theirs: a triage that could not reproduce a reported `--owner` bug because
+every check used the space-separated form, a reasonable paraphrase of the reported command; the
+defect was in `--owner=value` and the paraphrase deleted it. **Found only when the reporter ran a
+NONEXISTENT owner — a control whose two outcomes differ (0 tasks vs the whole board).**_
+→ **Corollary earned the same week: a measurement can be GOOD and answer the wrong question.** Asked
+whether anthill *called* the spells with `=`, this team proved anthill *parsed* `=` — a sound
+measurement of a different thing, which would have shipped as a false all-clear had the other side
+accepted it.
+
 **A DEFERRAL IS NOT A DECISION UNTIL IT NAMES A HORIZON AND A HOME.**
 *"We'll defer that"* feels like a decision and is usually an absence wearing one. It has no owner, no
 re-read moment, and nothing that will ever surface it again — so the item does not get postponed, it
