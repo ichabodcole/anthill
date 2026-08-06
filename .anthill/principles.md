@@ -176,6 +176,24 @@ failures**._
 A decision that outlives the session must be written somewhere durable **before finalize**, or it is
 gone when the panes close.
 
+**A DEFERRAL IS NOT A DECISION UNTIL IT NAMES A HORIZON AND A HOME.**
+*"We'll defer that"* feels like a decision and is usually an absence wearing one. It has no owner, no
+re-read moment, and nothing that will ever surface it again — so the item does not get postponed, it
+gets **lost**, and the loss is invisible because a deferral and a decision sound identical in the
+room where both are made.
+**The repair is mechanical and cheap: every deferred item leaves with a HORIZON (which session, or
+explicitly "not scheduled") and a HOME (a file that something re-reads).** An item that cannot be
+given both is not deferred — it is being dropped, and saying so out loud is the honest version.
+_Scar: **13 of 27 `review` cards mis-stated the tree — work landed, card never closed (~48%)**. Two
+seats were bitten; one was ten minutes from rebuilding a test that already existed; a lead carried a
+finished card into the next session's handoff. And in the same session a report's entire
+recommendations section — three BUILD items with measured instances — **would have stayed in the
+report**, because nothing in any ritual pulls from a report. The human asked. That is not a
+mechanism._
+→ **This is `no store without a named re-read moment` pointed at WORK rather than at knowledge.** A
+recommendation with no horizon is a write-only leak, and reports are where the leak is largest
+because they are read once, at the moment they are written.
+
 **No store without a named re-read moment.**
 Every place knowledge is written must have a moment it is read back. A store nothing re-reads is a
 write-only leak — don't create one.

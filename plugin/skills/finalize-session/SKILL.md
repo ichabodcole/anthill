@@ -360,6 +360,31 @@ experience is what makes it hold when following it costs something.
 Keep it small. Three questions and these two rules are the whole ritual — **if it needs a taxonomy,
 it has gone wrong.**
 
+4.75. **PLACE EVERY DEFERRED ITEM — a horizon and a home each, or say out loud that it is being
+dropped.** The seats NAME what they are deferring; **the LEAD places it**, exactly as the retro works
+(seats answer, the lead writes the file).
+
+**Why this is a beat and not a habit:** _"we'll defer that"_ has no owner, no re-read moment, and
+nothing that will ever surface it again — so it does not postpone an item, it **loses** one, and the
+loss is invisible because a deferral and a decision sound identical when they are said.
+
+- **HORIZON** — the next session, a named later session, or explicitly **"not scheduled"**. _"Later"_
+  is not a horizon.
+- **HOME** — a file something re-reads: the roadmap, a backlog item, a project's plan. **Not a
+  report, and not this retro.**
+- **An item that can be given neither is being DROPPED.** Say that. It is a real answer and it is
+  the honest one — what it must not do is leave the room sounding deferred.
+
+**⚠ THE LARGEST LEAK IS A REPORT'S RECOMMENDATIONS SECTION, AND NOTHING IN ANY RITUAL PULLS FROM
+ONE.** A report is read once — at the moment it is written — by people who already know what it
+says. **Sweep the session's reports and investigations HERE**, not just the board and the wire.
+_Measured: a session's observer produced three build recommendations, each with an instance behind
+it, and every one would have stayed in the report. The human asked for them. **That is not a
+mechanism**, and this beat is the mechanism._
+
+**If the next session is now defined enough to name, name it** — a horizon that points at a session
+nobody has scoped is a horizon in name only.
+
 5. **Aggregate the team's anthill-upstream feedback.** Beside the seams pass, do the same single-source
    move for the feedback candidates the team surfaced this session about **anthill itself** (not this
    project). Read the **same intake** you already swept — comms, the seats' scratch, their finalize
@@ -450,6 +475,9 @@ it has gone wrong.**
        _(Know the red slice's exact paths? Skip the stash-all pivot and park just those:
        `git stash push -u -- <red-paths…>` before step 3, `git stash pop` after — same result, as long
        as `<red-paths…>` is disjoint from the doc paths so a doc edit isn't stashed away with it.)_
+   - ◻ **Every deferred item PLACED** (step 4.75) — a horizon and a home each, or named out loud as
+     dropped. **Include the session's REPORTS and INVESTIGATIONS**, which no other beat reads and
+     which are the largest source of work that quietly never happens.
    - ◻ **Board settled — best-effort, never a gate** (cards → review/done). If the board idle-died or is
      unreachable, **don't block finalize on it**: the **git history and the comms log ARE the session's
      durable record**. Attempt a settle once; if the board's gone, say so on comms and move on.
