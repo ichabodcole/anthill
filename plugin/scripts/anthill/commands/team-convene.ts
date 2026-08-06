@@ -86,6 +86,35 @@ export function snapshotTaskCount(rows: BountySessionRow[], channel: string): nu
  * more tasks than the board we now see, say so before any work — and before a
  * close destroys it.
  */
+/**
+ * ⚠ KNOWN LIMITATION, and it is the reason this function should eventually be
+ * DELETED rather than improved.
+ *
+ * This reconstructs, from two reads and a subtraction, a fact `bounty open` knows
+ * at the instant it happens and does not state. That distance costs two things:
+ *
+ * **1. A reconstructed warning is one a caller argues with; a first-party one is
+ * not.** Session 12's lead nearly dismissed a CORRECT firing of this warning,
+ * because `.bounty-session` pointed at the session holding all 97 tasks and that
+ * looked like proof the warning was spurious. He checked anyway and it was real.
+ *
+ * **2. IT CANNOT DISTINGUISH THE TWO WORLDS IT FIRES IN, AND THEY NEED OPPOSITE
+ * ACTIONS.** A live board smaller than its snapshot means either:
+ *   - **recoverable** — a dead daemon was respawned empty over an intact snapshot
+ *     (spellbook#64). The cards are on disk. Do NOT close the board; restore.
+ *   - **unrecoverable** — `close` already clobbered the snapshot with in-memory
+ *     state (spellbook#73). Nothing is on disk. Stop.
+ *
+ * From outside, both are "snapshot > live". **`open` knows which; we cannot.**
+ * Session 12's incident is the recoverable case: snapshot 97, live 0, snapshot
+ * intact, all 97 recovered — which is also what confirmed to spellbook that the
+ * two are separate bugs failing in opposite directions rather than one bug.
+ *
+ * → **If spellbook's D1.3 lands (hydrate-by-default announcing which world you are
+ * in), DELETE this rather than maintain it.** Carried as `S13-N`. And if it turns
+ * out it CANNOT be deleted, that is the signal their envelope did not say enough —
+ * report it rather than quietly keeping this.
+ */
 export function boardShadowWarning(
   snapshotTasks: number | null,
   live: BoardCounts | null,
