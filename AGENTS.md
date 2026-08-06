@@ -44,7 +44,12 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
   **Docs-only commits and very small fixes may commit directly to `develop`** — a single doc or
   one-line fix doesn't warrant a branch. The judgment is _scope_: if it's a body of work, branch it;
   if it's a paper-cut, land it. `main` is branch-protected (PR + green CI required, admins included) —
-  never push to it directly; release-please cuts the release on merge to `main`.
+  never push to it directly; release-please cuts the release on merge to `main` — **but only when
+  there are RELEASABLE commits.** With `release-type: node` and no `changelog-sections` override,
+  `feat` bumps minor and `fix` bumps patch; **`docs`, `test` and `chore` are hidden types and trigger
+  NO release at all.** So a merge of docs-only work brings `main` current and produces no version and
+  no release PR — which is correct, not a broken workflow. _(Cost a moment's confusion after session
+  12: 11 commits, 9 `docs` + 1 `test`, and the expected release never appeared.)_
   _(`anthill:convene`'s pre-spawn branch beat is the touchpoint to make this call before seats commit.)_
 - **Runtime is Bun** (not Node): use `bun` / `bunx`, and prefer Bun built-ins over npm
   equivalents.
