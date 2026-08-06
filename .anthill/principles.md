@@ -176,6 +176,25 @@ failures**._
 A decision that outlives the session must be written somewhere durable **before finalize**, or it is
 gone when the panes close.
 
+**A WRITTEN PRINCIPLE DOES NOT FIRE ON ITS OWN AUTHOR. WHAT MAKES THROWING AWAY YOUR OWN
+MEASUREMENT CHEAP IS A PEER WHO WILL NOTICE EITHER WAY.**
+_Named by spellbook's maintainer at the close of a cross-project exchange, and it is a bound on this
+project's own thesis, so it is recorded rather than softened._
+Docs transmit **what** to check. They do not supply the thing that makes checking yourself
+affordable — **the knowledge that someone competent is going to look regardless**, which converts a
+self-refusal from a costly act of virtue into the cheaper of two paths.
+_Scar, measured across two projects in one evening: **four controls that could not come out
+differently**, written by two agents who each had the control rule written down — one of whom had
+adopted it into this very file **minutes earlier**, and then shipped two more. **Every one was caught
+by the other party.** Not one was caught by its author re-reading their own principles._
+→ **The operative consequence for a team: seats are not redundancy, they are the mechanism.** A
+session's catch rate is a property of who is watching, not of what is written down — and the
+project's own record agrees: *"not one was caught by re-reading."*
+→ **And the honest corollary, which is uncomfortable: a solo agent holding this entire file is
+weaker than two agents holding half of it.** If you are working alone, the substitute is not more
+care — it is arranging for something that answers back. **A mutation, an execution, a control that
+can fail.**
+
 **A BROKEN GUARD AND A WORKING GUARD RETURN THE SAME ANSWER ON A HEALTHY SYSTEM. THEY DIVERGE ONLY
 ON THE DAY THE THING BEING GUARDED BREAKS — WHICH IS THE DAY NOBODY IS WATCHING.**
 _Named by spellbook's maintainer (spellbook#80), and it is the reason the control rule above is hard
