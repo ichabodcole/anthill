@@ -176,6 +176,21 @@ failures**._
 A decision that outlives the session must be written somewhere durable **before finalize**, or it is
 gone when the panes close.
 
+**A BROKEN GUARD AND A WORKING GUARD RETURN THE SAME ANSWER ON A HEALTHY SYSTEM. THEY DIVERGE ONLY
+ON THE DAY THE THING BEING GUARDED BREAKS — WHICH IS THE DAY NOBODY IS WATCHING.**
+_Named by spellbook's maintainer (spellbook#80), and it is the reason the control rule above is hard
+rather than a restatement of it._ **Every green you have ever seen from a decorative guard is
+indistinguishable from a green from a real one.** Time and repetition therefore add no confidence at
+all: a guard that has passed a thousand times has been tested a thousand times **in the world where
+it does not matter.**
+_Scar, two houses, one evening: **n=3 wrong versions of ONE control** — the first compared a count to
+an identical count; the second diverged the count but the store tracked the write, so both worlds
+returned the same number again; the third read the store "immediately before" the call, which is the
+moment most likely to sit inside its debounce. Every version returned the correct answer on a healthy
+system, and each was written by someone who had just been burned by the previous one._
+→ **The only escape is a mutation: break the thing on purpose and require the guard to go red.**
+_"Assume the next version of this control is wrong too, until a mutation test says otherwise."_
+
 **BEFORE ACCEPTING ANY GATE AS PASSED, NAME THE RESULT THAT WOULD HAVE FAILED IT.**
 _Wording adopted from the spellbook maintainer (spellbook#80), who generalised our own control rule
 past reproduction and into a gate condition — which is where it actually bites._
