@@ -86,6 +86,35 @@ export function snapshotTaskCount(rows: BountySessionRow[], channel: string): nu
  * more tasks than the board we now see, say so before any work — and before a
  * close destroys it.
  */
+/**
+ * ⚠ KNOWN LIMITATION, and it is the reason this function should eventually be
+ * DELETED rather than improved.
+ *
+ * This reconstructs, from two reads and a subtraction, a fact `bounty open` knows
+ * at the instant it happens and does not state. That distance costs two things:
+ *
+ * **1. A reconstructed warning is one a caller argues with; a first-party one is
+ * not.** Session 12's lead nearly dismissed a CORRECT firing of this warning,
+ * because `.bounty-session` pointed at the session holding all 97 tasks and that
+ * looked like proof the warning was spurious. He checked anyway and it was real.
+ *
+ * **2. IT CANNOT DISTINGUISH THE TWO WORLDS IT FIRES IN, AND THEY NEED OPPOSITE
+ * ACTIONS.** A live board smaller than its snapshot means either:
+ *   - **recoverable** — a dead daemon was respawned empty over an intact snapshot
+ *     (spellbook#64). The cards are on disk. Do NOT close the board; restore.
+ *   - **unrecoverable** — `close` already clobbered the snapshot with in-memory
+ *     state (spellbook#73). Nothing is on disk. Stop.
+ *
+ * From outside, both are "snapshot > live". **`open` knows which; we cannot.**
+ * Session 12's incident is the recoverable case: snapshot 97, live 0, snapshot
+ * intact, all 97 recovered — which is also what confirmed to spellbook that the
+ * two are separate bugs failing in opposite directions rather than one bug.
+ *
+ * → **If spellbook's D1.3 lands (hydrate-by-default announcing which world you are
+ * in), DELETE this rather than maintain it.** Carried as `S13-N`. And if it turns
+ * out it CANNOT be deleted, that is the signal their envelope did not say enough —
+ * report it rather than quietly keeping this.
+ */
 export function boardShadowWarning(
   snapshotTasks: number | null,
   live: BoardCounts | null,
@@ -106,8 +135,20 @@ export function boardShadowWarning(
 // and emit the lead's own comms wire. Channel + lead come from config. Does NOT
 // do human Q&A — that's the skill's job.
 //
-// Note: bounty's `open` is NOT idempotent (always spawns a fresh daemon), so
-// convene only REPORTS the board state rather than force-opening one.
+// ⚠ CORRECTED (2026-08-06): this said bounty's `open` is NOT idempotent and
+// "always spawns a fresh daemon", so convene only REPORTS board state. **That has
+// been stale since spellbook #69 made KEYED open idempotent** — and convene has
+// opened the board itself since board-session-binding landed, which the code
+// below does. The comment was describing a world two features ago.
+//
+// Flagged by the spellbook maintainer on spellbook#80, who noted the stale
+// assumption is plausibly part of why the `--restore` attach path surprised us:
+// if you believe `open` always spawns fresh, an idempotent ATTACH is not a branch
+// you are looking for.
+//
+// What is true now: `open --session-key <key>` **attaches** to a live board for
+// that key and respawns a dead one. Convene relies on exactly that idempotence —
+// re-convening re-attaches rather than spawning a stranger.
 //
 // STEP 4 (phase 3): convene OPENS NOTHING on the discussion wire. It used to
 // invoke `grapevine open` (and `grapevine topic`), which is what made

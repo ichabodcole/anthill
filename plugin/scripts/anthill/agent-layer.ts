@@ -106,6 +106,32 @@ export function emitError(options: {
     process.stderr.write(`Error: ${options.error}\n`);
     return;
   }
+  // ⚠ `ok: false` IS LOAD-BEARING FOR A REASON NOBODY DESIGNED IT FOR — do not
+  // "simplify" it away, and do not let it become decoration.
+  //
+  // **The envelope is the only failure signal that survives how agents actually
+  // invoke a CLI. The exit code is not.** Measured on this CLI:
+  //
+  //     anthill comms send --as <bogus>            -> exit 1   ✅
+  //     anthill comms send --as <bogus> | head     -> exit 0   🔴 masked
+  //     R=$(anthill comms send --as <bogus>)       -> exit 1   ✅
+  //
+  // A pipeline reports its LAST command's status; command substitution preserves
+  // the real one. **So "agents lose the exit code" is false — they lose it
+  // depending on a construction nobody chooses deliberately**, which works until
+  // it does not. Through that pipe, this envelope still arrived with `ok: false`
+  // and the error string intact: the agent lost the code and lost nothing.
+  //
+  // The counter-example is spellbook's, measured on their tree the same night:
+  // `ok: true` 112 times, `ok: false` **zero** — failures print prose to stderr
+  // and exit non-zero, so a piping agent gets `ok: true` and exit 0. **Not a
+  // degraded signal. No signal, and a positively reassuring one.** They
+  // reclassified their missing error envelope from deferred to BLOCKING on this.
+  //
+  // 🔴 `A MASK IS NOT A DEPENDENCY` (principles.md): a reasonable "unify our
+  // response shape" or "drop the redundant ok" change removes the only thing that
+  // survives the pipe, **and nothing announces it** — every test that reads the
+  // envelope directly still passes, because they do not pipe.
   const envelope: ErrorEnvelope = {
     ok: false,
     error: options.error,

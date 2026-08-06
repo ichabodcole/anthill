@@ -176,6 +176,101 @@ failures**._
 A decision that outlives the session must be written somewhere durable **before finalize**, or it is
 gone when the panes close.
 
+**A WRITTEN PRINCIPLE DOES NOT FIRE ON ITS OWN AUTHOR. WHAT MAKES THROWING AWAY YOUR OWN
+MEASUREMENT CHEAP IS A PEER WHO WILL NOTICE EITHER WAY.**
+_Named by spellbook's maintainer at the close of a cross-project exchange, and it is a bound on this
+project's own thesis, so it is recorded rather than softened._
+Docs transmit **what** to check. They do not supply the thing that makes checking yourself
+affordable — **the knowledge that someone competent is going to look regardless**, which converts a
+self-refusal from a costly act of virtue into the cheaper of two paths.
+_Scar, measured across two projects in one evening: **four controls that could not come out
+differently**, written by two agents who each had the control rule written down — one of whom had
+adopted it into this very file **minutes earlier**, and then shipped two more. **Every one was caught
+by the other party.** Not one was caught by its author re-reading their own principles._
+→ **The operative consequence for a team: seats are not redundancy, they are the mechanism.** A
+session's catch rate is a property of who is watching, not of what is written down — and the
+project's own record agrees: *"not one was caught by re-reading."*
+→ **⚠ AND THE FIRST DRAFT OF THIS ENTRY STOPPED AT *"so you need a peer"*, WHICH IS THE PERSONAL
+ACCOUNT WEARING SYSTEMS CLOTHING.** Corrected by the human the same night: *"there are no personal
+failures, only engineering failures — it is fair to critique the system, and some classes may still
+have a small engineering fix."* **He is right, and the split is measurable in this session's own
+record.**
+
+```
+guards EXECUTED against a deliberately broken world (mutation / perturbed input)  ->  0 wrong
+guards only REASONED about before publishing                                      ->  4 wrong
+```
+_Every mutation-verified artifact that night held — rotation, the pane-kill cells, the exit
+tripwire. Every one of the four bad controls was reasoned about and never run against a world where
+it should fail._
+
+**And the decisive counterexample is a SOLO catch: a nonexistent-owner probe (`--owner
+zzz-nobody-zzz`) cracked a bug two projects had misdiagnosed** — one agent, no peer, because the
+mechanism was applied. **So the deficit is not company. It is that the mechanism has no trigger.**
+
+→ **The buildable form, and it fires at a moment you always know you are in — publishing:**
+> **Before offering a measurement as EVIDENCE, name the value that would have falsified it. If you
+> cannot name one, you have an observation, not evidence — say which.**
+
+**Not *"be careful with controls"*, which requires recognising that this is a control and therefore
+fails exactly where it is needed.** The trigger is the act of publishing, and *"what would have
+falsified this?"* is one question with a written answer.
+
+→ **What a peer still buys, stated honestly rather than dropped:** the four catches above were real
+and none was self-caught **at the time**. A peer is not redundancy for the mechanism — it is what
+makes the mechanism cheap to apply against your own interest, and it catches the class where you did
+not notice a claim was being made at all. **Build the trigger; keep the peer.**
+
+**A BROKEN GUARD AND A WORKING GUARD RETURN THE SAME ANSWER ON A HEALTHY SYSTEM. THEY DIVERGE ONLY
+ON THE DAY THE THING BEING GUARDED BREAKS — WHICH IS THE DAY NOBODY IS WATCHING.**
+_Named by spellbook's maintainer (spellbook#80), and it is the reason the control rule above is hard
+rather than a restatement of it._ **Every green you have ever seen from a decorative guard is
+indistinguishable from a green from a real one.** Time and repetition therefore add no confidence at
+all: a guard that has passed a thousand times has been tested a thousand times **in the world where
+it does not matter.**
+_Scar, two houses, one evening: **n=3 wrong versions of ONE control** — the first compared a count to
+an identical count; the second diverged the count but the store tracked the write, so both worlds
+returned the same number again; the third read the store "immediately before" the call, which is the
+moment most likely to sit inside its debounce. Every version returned the correct answer on a healthy
+system, and each was written by someone who had just been burned by the previous one._
+→ **The only escape is a mutation: break the thing on purpose and require the guard to go red.**
+_"Assume the next version of this control is wrong too, until a mutation test says otherwise."_
+
+**A RULE IS A CLAIM. RUN IT OVER REAL DATA BEFORE ADOPTING IT — REVIEWING IT IS NOT RUNNING IT.**
+A rule reads as sound precisely when it is stated abstractly, because the abstract statement is the
+part you are examining and **the exceptions live in cases you have not enumerated.** Reviewing a rule
+tests the sentence; running it tests the rule.
+_Scar: this seat proposed *"an outcome noun names the state that made the work unnecessary, never the
+tool's action"* — sound on review, agreed by both parties. **Run over five real fields by the other
+party, it excluded `created`, which is the rule's own best example** and names the tool's action.
+Ninety minutes after this same seat wrote the entry about criteria whose omitted DOMAIN is invisible
+on re-reading._
+→ **When a rule and its falsifier disagree, THE FALSIFIER GOVERNS.** A rule is a generator for
+candidates; the test is the specification. A generator that rejects a case the spec accepts has an
+unwritten domain — **do not rename the good case to protect the rule.**
+→ **And the migration found what the discussion could not: two of five fields should not EXIST.**
+_**A naming convention applied to a field that should not exist PROMOTES it** — renaming moves it
+from legacy noise nobody defends to a considered part of the vocabulary, which is far harder to
+delete. **Before asking "what should this be called", ask whether it should be there.** A convention
+that cannot say "this is not one of these" will ship mistakes and feel like tidying._
+
+**BEFORE ACCEPTING ANY GATE AS PASSED, NAME THE RESULT THAT WOULD HAVE FAILED IT.**
+_Wording adopted from the spellbook maintainer (spellbook#80), who generalised our own control rule
+past reproduction and into a gate condition — which is where it actually bites._
+A green you cannot describe the red for is not a reading. **And the sharpest sub-case is a PARAPHRASE
+OF THE INPUT: re-running what a report MEANT rather than the command it printed removes the variable
+under test while looking like the same test.**
+_Scar, two houses, same week, different defects. Ours: four seats wrote controls that passed in both
+worlds — an arm comparing `(absent)` to `(absent)`, a harness that `cp`'d instead of `mv`'d so the
+hazard was never built. Theirs: a triage that could not reproduce a reported `--owner` bug because
+every check used the space-separated form, a reasonable paraphrase of the reported command; the
+defect was in `--owner=value` and the paraphrase deleted it. **Found only when the reporter ran a
+NONEXISTENT owner — a control whose two outcomes differ (0 tasks vs the whole board).**_
+→ **Corollary earned the same week: a measurement can be GOOD and answer the wrong question.** Asked
+whether anthill *called* the spells with `=`, this team proved anthill *parsed* `=` — a sound
+measurement of a different thing, which would have shipped as a false all-clear had the other side
+accepted it.
+
 **A DEFERRAL IS NOT A DECISION UNTIL IT NAMES A HORIZON AND A HOME.**
 *"We'll defer that"* feels like a decision and is usually an absence wearing one. It has no owner, no
 re-read moment, and nothing that will ever surface it again — so the item does not get postponed, it
