@@ -69,18 +69,25 @@ const calls: string[] = [];
  * WITHOUT depending on that mechanism**, and the diagnostic in `conveneLedger`
  * exists so a recurrence names what it got instead of dying on a TypeError.
  *
- * Why capturing here works regardless: this runs at **module load**, and
- * team-down installs its stub **inside a helper at test-run time**. Load
- * precedes any test body, so `realTeamSupport` is the genuine module whatever
- * order the runner picks. Re-installing it in `beforeAll` makes this file
- * independent of what ran before it.
+ * ⚠ A FIRST ATTEMPT CAPTURED THE MODULE AT LOAD TIME AND FAILED IN CI — recorded
+ * because the reasoning is the trap. It assumed bun loads every test file, then
+ * runs them, so a load-time `import * as realTeamSupport` would predate any
+ * stub. **Bun loads and runs PER FILE**, so team-down's file has already run —
+ * and installed its mock — before this file is loaded. The capture captured the
+ * stub. CI said so verbatim:
+ *
+ *     Received: "STUBBED team-support: {"channel":"test-channel",...}"
+ *
+ * The working repair does not capture anything: it rebuilds a real
+ * `requireConfig` from `../config.ts`, which no test mocks, so it cannot inherit
+ * a stub no matter what ran first.
  *
  * ⚠ AND IT MUST BE THE REAL MODULE, NOT A STUB OF OUR OWN. `convene` reaches
  * `readBoardCounts` → `bounty state`, which is the THIRD ledger entry the
  * equality below pins. A hand-written stub here would silently drop it and the
  * assertion would be pinning two calls while claiming to pin the set.
  */
-import * as realTeamSupport from "./team-support.ts";
+import { loadConfig } from "../config.ts";
 
 // `mock.module` replaces the module WHOLESALE — every export that `convene`
 // (and `team-support.ts`, which resolves the same specifier) imports must be
@@ -139,7 +146,8 @@ async function conveneLedger(): Promise<{ ledger: string[]; emitted: string }> {
   // with `undefined is not an object (evaluating 'config.paths.seatDir')` —
   // a TypeError that names neither the cause nor the culprit, which cost a
   // full CI investigation once. Fail here instead, naming what we got.
-  const probeConfig = realTeamSupport.requireConfig("json", "convene");
+  const { requireConfig } = await import("./team-support.ts");
+  const probeConfig = requireConfig("json", "convene");
   expect(
     typeof probeConfig.paths?.seatDir === "string"
       ? "real-config"
@@ -165,7 +173,13 @@ describe("convene's coordination spawn set — criterion 2, absence of OPENING",
   // `realTeamSupport` was captured at load time (see the note at the top), so
   // this restores the genuine module rather than re-mocking it with our own.
   beforeAll(() => {
-    mock.module("./team-support.ts", () => realTeamSupport);
+    // Restore a REAL `requireConfig`, rebuilt from the config layer (which no
+    // test mocks). `mock.module` MERGES rather than replacing wholesale — proven
+    // by the CI failure itself, which reached team-convene.ts:181, i.e. PAST the
+    // `readBoardCounts()` call at :173 that team-down's stub does not define. So
+    // naming only `requireConfig` here leaves `readBoardCounts` real, which the
+    // three-entry ledger assertion depends on.
+    mock.module("./team-support.ts", () => ({ requireConfig: () => loadConfig() }));
   });
 
   test("invokes EXACTLY the bounty verbs — the SET, not the absence of a member", async () => {
