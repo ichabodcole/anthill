@@ -61,6 +61,23 @@ Route it by **where it lives**:
   `anthill feedback --help` for what it's for and how to invoke it — the command is the single source
   for that; this doc doesn't restate it).
 
+> ### ⚠ IN **THIS** REPO THERE IS NO UPSTREAM — WE ARE IT.
+>
+> **`anthill feedback` files to `ichabodcole/anthill`, and `origin` here IS `ichabodcole/anthill`.**
+> The command exists so **consuming** projects can send findings home. Used from this repo it opens an
+> issue **against ourselves**, running parallel to the backlog + session process in `docs/ROADMAP.md`
+> — and then someone has to triage it back out of GitHub into the very docs it came from.
+>
+> **So: anthill friction found HERE is ordinary session work.** It goes to `docs/backlog/` or into a
+> session's scope in the roadmap, **not through `anthill feedback`.** Nothing stops you filing a
+> GitHub issue if that is genuinely the right home — the point is that the *feedback command* is the
+> middleman, and here there is nothing on the other side of it.
+>
+> _Found at session 12's close, by the human, after the lead had drafted a feedback issue about our
+> own finalize ritual and called it "ready to send". **The mechanical guard is carded (`S13-I`):
+> `anthill feedback` should notice that the current repo is its own target and say so** — because this
+> paragraph is a situational warning, and `principles.md` says those fail at the recognition step._
+
 **On a team, the lead owns the outward send.** A seat that hits anthill friction **surfaces** the
 candidate to the lead (on comms, or as a `--submit`-ready draft) — it does **not** `anthill feedback
 --submit` itself. The lead **dedupes** (N seats hitting one bug shouldn't file N issues) and submits the
