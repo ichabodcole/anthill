@@ -5,7 +5,7 @@
 
 > ⚠ **TWO TRUE NUMBERS, AND A STRANGER READING ONE DOCUMENT GETS THE OTHER.** This file said _"6 of 6"_ (the RELEASE bar Cole ratified) while `ROADMAP.md` said _"7 of 8"_ (all criteria). Both were internally consistent and neither was wrong — **they count different denominators, and neither said which.** _Caught by a fresh agent reading with no context, which is the reader this section is written for; and it is the drift the sweep beat exists to catch, occurring **between the two documents the sweep is pointed at**. Both now state the denominator._
 
-** Step 3 (rotation, `81d3991`, landed INERT) and step 6 (the swap run, `89dea31`) are DONE, plus the positional guard (`4c339fa`) and the sweep touchpoint (`32d087a`).**
+**What closed it: step 3 (rotation, `81d3991`, landed INERT) and step 6 (the swap run, `89dea31`) are DONE, plus the positional guard (`4c339fa`) and the sweep touchpoint (`32d087a`).**
 **⏭ REMAINING: criterion 7 (the projects re-triage) and the carried debt. See [NEXT PHASE](#-next-phase--what-session-13-picks-up) at the foot of this file — read that before anything else.**
 
 > _This header claimed rotation and the swap run were still remaining until 2026-08-05. **It was corrected by the same pass that wrote the block below** — which is the sweep beat (`32d087a`) doing its job on the second document it was ever pointed at. The first was `ROADMAP.md`, which it falsified in four places within minutes of landing._
