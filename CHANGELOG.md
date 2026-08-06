@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.1.0](https://github.com/ichabodcole/anthill/compare/anthill-v2.0.0...anthill-v2.1.0) (2026-08-06)
+
+
+### Features
+
+* **comms:** session rotation -- mint a successor, destroy nothing ([81d3991](https://github.com/ichabodcole/anthill/commit/81d3991a84787aaae74eb5a2322562b852351da6))
+* **finalize-session:** place every deferred item -- a horizon and a home, or say it is dropped ([55fee23](https://github.com/ichabodcole/anthill/commit/55fee2311f21182cb59b119d49585eaf5b61d314))
+* **finalize-session:** sweep the docs of record, in all three homes ([32d087a](https://github.com/ichabodcole/anthill/commit/32d087a148ded76fe611355483285cc5be34d7f2))
+
+
+### Bug Fixes
+
+* **cli:** refuse an unrecognised POSITIONAL instead of swallowing it ([4c339fa](https://github.com/ichabodcole/anthill/commit/4c339faae5e1632a8d16c31d9955c88d98611747))
+* **comms:** the staleRecord tell fires on ONE swap shape, not both ([fdfb997](https://github.com/ichabodcole/anthill/commit/fdfb99777cd692e796473faef7dd8c51faf4cb5a))
+* **finalize-session:** name the ACTOR for the docs-of-record sweep in the SOP ([ec58802](https://github.com/ichabodcole/anthill/commit/ec5880201e1ec5c80162d577547d3e58298e8f2c))
+* **finalize-session:** sweep the PROSE, not just the tables -- the beat's own bound ([4bb4967](https://github.com/ichabodcole/anthill/commit/4bb4967af969f572696d836ec5cb18efe461d3fa))
+* **join:** the anchor your own follow hands you is not the session's anchor ([90a67ae](https://github.com/ichabodcole/anthill/commit/90a67ae7225b5cd97f4db05e74077ecd97f6b7b2))
+* **sop:** waitedMs and uncheckedAgainst INTERACT -- an empty list is not an all-clear ([51ec81e](https://github.com/ichabodcole/anthill/commit/51ec81ea2676df5b334b0f5a55e29b0086814416))
+* **test:** make the criterion-2 spawn-set pin independent of test file order ([484f9da](https://github.com/ichabodcole/anthill/commit/484f9da2fce24c59f93d6ad518e1f575b0ba9061))
+* **test:** make the criterion-2 spawn-set pin independent of test file order ([92f7709](https://github.com/ichabodcole/anthill/commit/92f7709933df013de3b3446298b4e052349498d3))
+* **test:** rebuild requireConfig from the config layer, not from a captured module ([54c0479](https://github.com/ichabodcole/anthill/commit/54c0479433d2ba30554c8cbba11806a6cfd82c79))
+
 ## [2.0.0](https://github.com/ichabodcole/anthill/compare/anthill-v1.10.0...anthill-v2.0.0) (2026-08-05)
 
 
