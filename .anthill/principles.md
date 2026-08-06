@@ -69,6 +69,52 @@ reported that verifying made two of them **worse** than reported._
 review findings applies remedies against code other people understand better, with nobody positioned
 to object.
 
+## On controls and impossibility — added session 12 (2026-08-05)
+
+**A CONTROL THAT CANNOT COME OUT DIFFERENTLY IS NOT A CONTROL.**
+A control's job is to fail in the world where your measurement is broken. One that passes in **both**
+worlds is anti-correlated with the thing it tests — and it reads as rigour, because a green control
+is what a careful person expects to see.
+_Scars, four seats in one session: a `topic` arm that compared `(absent)` to `(absent)` and printed
+HOLDS, because the surface queried does not carry the field · a negative-control token **contaminated
+by its own author's prior publication of it**, so it returned 1 · a `ugrep` control returning a false
+zero · a swap harness that `cp`'d instead of `mv`'d, so **the hazard was never constructed** and its
+clean row meant nothing. Plus the same principle from the other end: **an absence assertion
+(`not.toContain(...)`) passes in exactly the world it exists to detect** — on an empty ledger, which
+is what CI produces. Earlier: a parent-commit control returning zero for the wrong reason, and
+`prettier --check` passing over zero files._
+→ **The question that finds them: _in which world does this control FAIL?_** If you cannot name it,
+you have a decoration.
+
+**→ AND THE OTHER HALF: THE CHECK YOU ALREADY RAN IS THE ONE YOU ARE MOST LIKELY TO TALK YOURSELF OUT
+OF.** *"In which world does this control fail?"* finds the decoration. **Nothing finds the control you
+ran, read, and set aside.**
+_Scar, n=2 in one session, two seats, artifact in hand both times: a seat ran the control that
+falsifies the tidy explanation, **printed it**, and deferred to the tidier account anyway — and
+another held `119963` bytes whole against a published rule saying 64KiB was the cap, a contradiction
+with exactly one resolution, and wrote *"it happened to fit tonight, which is luck."* **Neither
+control was broken. Both fired. Both results were declined — and both times the discarded reading was
+the one that convicted someone senior.**_
+**A vacuous control fails SILENTLY. A valid control you set aside fails LOUDLY and is overridden
+anyway — and nothing in our apparatus notices the second, precisely BECAUSE the instrument did its
+job.** _(Supplied by the principle's own author, an hour before adoption, in a message the lead had
+read only as a preview — and raised again after close rather than let go.)_
+
+**AN IMPOSSIBILITY CLAIM ENDS AN INVESTIGATION, AND EVERY INSTRUMENT YOU OWN EXISTS TO CONTINUE ONE —
+SO NONE OF THEM FIRE ON IT.**
+Controls, mutations, positive anchors, *"did my probe reach it"*, *"what did I hold fixed"* — **all of
+them need an OUTPUT to interrogate.** A claim that something *cannot be done* produces none, so the
+whole toolkit abstains in unison **and the silence reads as nothing being wrong.** Worse, prose arms
+it: *"say that you looked and there isn't one"* is written for the case where you looked, and never
+checks that you did.
+_Scar: a verify seat reported a live reproduction **unmeetable and circular**, having never tested it.
+The lead wrote a documented override of a session-9 gate on that sentence. **One command overturned it
+ninety seconds later** and reproduced a hazard the project had carried as INFERRED since session 9.
+Proposed by its author with its own n stated (n=2 for the behaviour, n=1 for the harm) and an explicit
+offer to defer it — adopted because it reached a ruling._
+→ **Before writing that something cannot be done, spend one command trying it.** The cell that
+dissolved the circularity above cost ninety seconds.
+
 ## On instruments
 
 **An instrument can answer a different question than the one you asked, and look right doing it.**
@@ -129,6 +175,24 @@ failures**._
 **The channel evaporates — land decisions in an artifact.**
 A decision that outlives the session must be written somewhere durable **before finalize**, or it is
 gone when the panes close.
+
+**A DEFERRAL IS NOT A DECISION UNTIL IT NAMES A HORIZON AND A HOME.**
+*"We'll defer that"* feels like a decision and is usually an absence wearing one. It has no owner, no
+re-read moment, and nothing that will ever surface it again — so the item does not get postponed, it
+gets **lost**, and the loss is invisible because a deferral and a decision sound identical in the
+room where both are made.
+**The repair is mechanical and cheap: every deferred item leaves with a HORIZON (which session, or
+explicitly "not scheduled") and a HOME (a file that something re-reads).** An item that cannot be
+given both is not deferred — it is being dropped, and saying so out loud is the honest version.
+_Scar: **13 of 27 `review` cards mis-stated the tree — work landed, card never closed (~48%)**. Two
+seats were bitten; one was ten minutes from rebuilding a test that already existed; a lead carried a
+finished card into the next session's handoff. And in the same session a report's entire
+recommendations section — three BUILD items with measured instances — **would have stayed in the
+report**, because nothing in any ritual pulls from a report. The human asked. That is not a
+mechanism._
+→ **This is `no store without a named re-read moment` pointed at WORK rather than at knowledge.** A
+recommendation with no horizon is a write-only leak, and reports are where the leak is largest
+because they are read once, at the moment they are written.
 
 **No store without a named re-read moment.**
 Every place knowledge is written must have a moment it is read back. A store nothing re-reads is a

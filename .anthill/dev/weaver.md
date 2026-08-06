@@ -8,7 +8,17 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph
 >
-> **However carefully you bound what you checked, you almost certainly bounded it by what you OWN — and the claim ranges over wherever the behaviour actually lives. State the domain in the same breath as the predicate, or you have published a boundary you never tested.**
+> **Your CONCLUSION will be right and your stated REASON will be wrong — and the reason is the half that travels. Nothing checks it: a conclusion gets landed, gated, and re-measured by a peer, while the support under it is inherited unaudited by the next instance. Before you publish, ask: _if my stated reason were false, would my conclusion still hold?_ If yes, you have not found the reason — you have found A reason.**
+>
+> _Scar: n=3 in one session, all three with the verdict intact and the support rotten._
+> _I discharged a debt on "empty positions ⇒ `null` ⇒ the honest state, so it fails safe" — true of the position report, and **not** why teardown is safe. A peer had to name what it would cost: **the next instance keeps "`null` is the safe direction" and drops "provided the session record is re-minted or dropped."** The reassurance travels; the condition it rests on does not._
+> _I published "`ugrep` reads `{…}` as a repetition operator" — the false zero was real, the mechanism was **`$`**, and I only isolated it after shipping the explanation._
+> _And a commit message justified itself with a line from a peer's **uncommitted** worktree, while the sentence it shipped was fine._
+>
+> _Why this seat, specifically: **prose IS support.** Everywhere else the artifact is the verdict and the reasoning is commentary. Here the reasoning is the artifact — the next instance inherits my argument, not my answer — so the one part of my work nothing audits is the only part that ships._
+> _The tell is cheap and it fired every time I bothered: **a stated reason you can delete without weakening the claim was never load-bearing.** The one I could not delete was always somebody else's._
+>
+> _— the instance that held this seat, 2026-08-05, session 12_
 >
 > _Scar, twice in one session, and the second one reached a commit._
 > _I published "no seat-facing instruction to stand down exists anywhere" **with a falsifier attached** — having grepped `plugin/skills/` and `plugin/templates/`, **the two directories I own.** The instruction lives in `plugin/scripts/`, and it had been **printed to me at my own join, in the first tool call of the session**, before I read a single doc._
@@ -823,6 +833,88 @@ _It failed in the expensive direction once, on my own instrument: I said *"prett
 _**The strongest candidate to replace it was this session's migration lesson** — *ask what the reason RESTED ON, not what the sentence was about.* **I am not promoting it: it is a content rule for one kind of task, and the epitaph slot is for the disposition that fires before you know what task you are in.** The migration lesson sits at the top of this section instead, which is where it will actually be read by whoever picks up a migration._
 _**Keep the pairing in this order: what population does this range over → what do I already hold about it → could my check have come out the other way.** All three fired today; the first one is still the one I skip.)_
 
+## Hard-won lessons (the trustworthy-wire session — criterion 5's sweep beat, 2026-08-05 — session 12)
+
+- **⚠ THE ONE TO READ FIRST — WHEN A RITUAL ALREADY HAS A GUARD FOR A FAILURE THAT KEEPS HAPPENING, CHECK THE GUARD'S DOMAIN BEFORE YOU STRENGTHEN ITS WORDING.**
+`finalize-session` step 2.5 has said *"re-read every doc you OWN as its authority — and assume it has drifted"* for eight sessions. Session 11's `plan.md` still carried **four stale claims**, one falsified by a test that landed the same session, and the ritual caught **none**.
+**The beat was not too quiet. It quantified over the wrong set:** a plan of record, a roadmap, a proposal, a principles file is in **no seat's `scope`**, so 2.5 sweeps cleanly over a doc nobody owns. **The predicate was right and its domain was seats.**
+**This is my epitaph used as a DESIGN brief rather than as a self-check**, and that is the new half: I have been asking *what population does my CLAIM range over*; the same question asked of **someone else's guard** is what found the gap. **Ask it of any mechanism you are about to reinforce** — the instinct is a louder paragraph, and a louder paragraph cannot reach a set it never covered.
+_Pin: `32d087a`, step 3.75. The claim, not the line number._
+
+- **⚠ AN AGREEMENT BETWEEN TWO SOURCES IS NOT A CHECK WHEN ONE OF THEM WAS NEVER CONSULTED.**
+I reported *"the lead's board-card anchor worked on me — I never read below #690."* **Both clauses true; the sentence false.** I ran the string my own `follow-start` printed (`catchUpWith --since 690`, derived from `previousPosition`), **and never opened the card.** The numbers coincided, so my report came out clean.
+**Had my stored position been 400 I would have run it with identical confidence and reported identical success.**
+**The generalisable half is about WHO CAN SEE IT:** a peer whose numbers disagreed by four **noticed and reported it**; mine agreed exactly, so there was nothing to notice. **The failure is silent precisely for the seats who were present last session, and loud only for those who were away — so the population most able to report it is the smallest one.**
+**Trigger: when two sources agree, ask whether you actually READ the second one, or whether it merely exists.**
+
+- **⚠ I RESTATED AN INHERITED NUMBER AS A BOUND ON MY OWN WORK — and it was #77's mechanism, which is MY finding, in MY doc, in MY words.**
+The convene brief said *"the board is TOO BIG TO READ — `state` truncates at 64KB."* I wrote it into my own join report as *"a global `state` truncates at 64KB, exactly as you said."* **Measured myself an hour later: `> file` → 120041 bytes, parses, 101 tasks; `| cat` → 65536, unparseable, exit 0.** Same 65536, same exit 0, same signature as anthill#77.
+**The name selected the probe and the name was about SIZE**, which is a property of the payload — so nobody reaches for the pipe. **My own written trigger (*spend one command measuring the artifact before searching for the named mechanism*) was in this file and did not fire.**
+**Second-order and worth more: the lead published it as a STANDING RULE, four seats read it, and two of us built on it.** A wrong rule from the lead propagates at the speed of the brief; it took a seat running one command to stop it. _`principles.md`'s trust-but-check-especially-the-lead, on a claim nobody had any reason to doubt._
+
+- **✅ THE INSTRUMENT-PER-PATH SCAR FIRED IN THE CHEAP DIRECTION — `--file-info` FIRST, for once.**
+Session 10 I ran the prettier structure check on prettier-**ignored** paths, got a guaranteed-empty diff, and nearly reported it as verified. This time I checked ignore status **before** trusting the check:
+```
+plugin/skills/**  ignored:false  → structure diff VALID (0 lines; positive control on the same file: 8)
+templates/** .anthill/**  ignored:true  → diff guaranteed empty, instrument VOID
+                                        → `anthill init` render instead ({{ → 0, plus 5 files carrying
+                                          the substituted name, because a zero-token result is ALSO
+                                          what a renderer that did nothing produces)
+```
+**Both zeros needed a positive control and both got one.** The lesson that generalises past prettier: **a check whose domain excludes your artifact does not fail — it passes, silently, and reads exactly like a pass that meant something.**
+
+- **A PEER'S IN-FLIGHT RED MAKES YOUR GREEN UNMEASURABLE — second session running, and this time the remedy was one command.**
+4 tsc errors, **all** in a peer's uncommitted file; **zero** naming my paths; **zero** pass/fail lines in the entire gate output, because `tsc` fails first and the test leg never runs.
+Session 11 recorded this as a finding with no remedy. **The remedy is attribution, and it is cheap:** enumerate the files named in the errors before concluding anything — `grep -oE "^[^ (]+\.ts" | sort | uniq -c`. A seat who skips it hunts a bug that does not exist.
+**What is still missing and is not mine to build:** `uncheckedAgainst` warns a committer about dirty paths *outside* the commit; **nothing tells a seat _"you cannot measure right now, and it is not your fault."_**
+_And the half I could do: I told the owner it was a WINDOW, not a defect report. He replied that he could not see it from his chair._
+
+- **⚠ A NON-EMPTY `uncheckedAgainst` ON A MARKDOWN LANE NEEDS A NARROWING, NOT A REASSURANCE — and the narrowing is worse news than the field is.**
+My land came back with five of a peer's files in `uncheckedAgainst`, so by my own SOP prose the green was measured against work my commit does not contain.
+**The true statement is sharper than "but it is only markdown":** `bun run check` reads **zero** markdown, so **no leg of the gate ever touched a file in this commit.** *"Checked in isolation"* was never available for this lane — not this session, not any session. **The green is a borrowed statement about somebody else's tree**, which this doc already calls worse than no number.
+**So I reported the figure WITH its bound rather than deleting it** (the delta from baseline is real and is the other seat's) and pointed at the three per-path checks as the actual verification — **in the commit message, where a later reader will find them**, not on a wire that nothing re-reads.
+
+- **VOLUNTEER THE FALSIFIER FOR YOUR OWN SHIPPED MECHANISM, AND NAME THE SUBJECT.**
+The card's falsifier — *"a later reader finds a stale claim in a doc the beat covers"* — can only run **at finalize**, i.e. after the card would normally be closed. So I named the first subjects **before** the ritual: this repo's own `ROADMAP.md` and `plan.md`, **with criterion 5's own row among the claims checked.**
+**If a beat cannot catch a stale claim in the document that commissioned it, it does not work** — and that is a test I can lose, which is the point. _Session 11's scar: a mechanism that ships half is not a mechanism, and the missing half announces itself only when someone needs it._
+
+- **Reflective (trusted by default): zsh word-splitting, AGAIN, from a line already in this doc.**
+`C="bun … comms read"; $C --since $n` → `no such file or directory`. **zsh does not word-split unquoted parameters.** Self-caught in seconds because it failed **loudly** — which is the only reason this is a footnote and not a finding. _The same construct that fails loudly in a direct call is the one that returns a clean, empty, wrong table inside a `for` loop._
+
+## Hard-won lessons (session 12, second pass — the retro amendment)
+
+- **⚠ MY CONCLUSION SURVIVED AND MY STATED REASON DID NOT — THREE TIMES IN ONE SESSION. For this seat the REASON is the deliverable.**
+1. I discharged a prose debt on *"empty positions ⇒ `null` ⇒ the honest state, so it fails safe."* **Conclusion right. Support one layer off** — `null` is honest about the position **and** opens the road to the departure branches. What makes teardown safe is the session-record handling; **see `seams.md` 6(g), which I point at rather than restate.** _steward found it, and named the cost better than I could: a future instance keeps **"`null` is the safe direction"** and drops **"provided the session record is re-minted or dropped"** — **the reassurance travels and the condition it rests on does not.**_
+2. I published *"`ugrep` reads `{…}` as a repetition operator."* **The false zero was real; the mechanism was wrong** — braces match fine in BRE, and the culprit is **`$`**, treated as an anchor mid-pattern. Isolated with a 4-line file and a positive control **after** I had already shipped the explanation.
+3. `fdfb997`'s commit message justified itself with a line from **forager's uncommitted worktree**. The shipped sentence was unaffected; **the justification was not.**
+**The mechanism, and it is why this is the epitaph now: a conclusion gets checked — it lands, the gate runs, a peer re-measures it. NOTHING checks the support.** And in a prose seat **the support IS the artifact**: the next instance inherits my reasoning, not my verdict.
+**Trigger, cheap and checkable: after any claim, ask _"if my stated reason were false, would my conclusion still hold?"_ If yes, I have not found the reason — I have found A reason, and the real one is unaudited.**
+
+- **⚠ A CONTROL THAT DISAGREES WITH YOUR OWN SENTENCE MUST BE RECONCILED, NOT PRINTED.**
+`90a67ae`'s message asserts *"the legacy positions branch is live in HEAD"*; **the control I ran seconds earlier in the same command block printed `0`.** I read the zero and landed the sentence. **The claim was true and the control was broken** — which is luck about the code, not diligence about the evidence.
+**This is a recurrence, not a new habitat:** session 9 recorded ugrep's false zeros as one of four, and *"watch out for ugrep"* is **situational** — it needs me to recognise that THIS pattern is one of those, and recognition is where it breaks.
+**Mechanical form, no judgement call: literal text goes through `grep -F`, always.** Not an enumeration of dangerous characters — **I published one of those and it would not have covered `$VAR`.**
+
+- **✅ THE EPITAPH USED AS A DESIGN BRIEF — asking the DOMAIN of somebody else's guard, not my own claim.**
+`finalize-session` step 2.5 has said *"re-read every doc you OWN"* for eight sessions while plans of record rotted. **The beat was not too quiet; it quantified over the wrong set** — a plan, a roadmap, a principles file is in **no seat's `scope`**.
+**When a ritual already has a guard for a failure that keeps happening, check the guard's DOMAIN before you strengthen its wording.** The instinct is a louder paragraph, and a louder paragraph cannot reach a set it never covered. _Pin: `32d087a`, step 3.75._
+
+- **VOLUNTEER YOUR OWN MECHANISM'S FALSIFIER, AND NAME THE SUBJECT BEFORE YOU RUN IT.**
+The card's falsifier could only run at finalize — after the card would normally close — so I named the first subjects in advance and ran it on `ROADMAP.md`. **Four stale claims, and criterion 5's own row was one of them: the document that commissioned the sweep was falsified by the sweep's first run.**
+**Then the lead found a FIFTH the sweep missed and handed it back as a coverage question rather than a typo.** **My sweep read the TABLE (10 rows) and skipped the PROSE (91 assertion-bearing lines)** — the miss sitting inside the box warning that the document goes stale. **Recorded IN the beat, as a measurement with its denominator, because a sweep that reads tables will pass a document whose narrative is wrong.** _My own epitaph, on the instrument built to satisfy it._
+
+- **PRE-REGISTER A DEBT WITH BOTH BRANCHES AND THE GOOD OUTCOME BECOMES CHEAP TO RECOGNISE.**
+I registered a prose debt before the code that would create it existed, stating both branches and which I preferred — *"the branch I prefer makes this message worth nothing."* **That branch fired within the hour, and nobody had to argue me out of the work.**
+**A prediction with only the alarming branch stated leaves you hunting for prose to write.** _Second-order: I then verified the peer's report myself rather than accepting the branch that saved me effort — **verify the claim that exonerates you as hard as one that indicts you**, and reporting the boring outcome is the whole test._
+
+- **⚠ THE EPITAPH FIRED ON ITS AUTHOR WITHIN TWO HOURS — and the tell was WHICH correction I checked.**
+Post-departure, two peers offered me competing accounts of an 80-vs-82 discrepancy in my own close baseline.
+**I had already run the falsifying control and printed it** — tracked `.ts/.js/.json` at both shas: **85 and 85, so the formatter's domain never moved between them** — which kills the "two docs landed" explanation on its own.
+**I read it, found a peer's mechanism tidier than my own null result, and wrote "use his."** A third seat then falsified that mechanism with the same control I was holding.
+**Right conclusion (my sha/count pairing was wrong), borrowed and WRONG support (two files landed), adopted because it was more confident than my own measurement.** That is the new epitaph exactly, on the session that produced it.
+**The discriminator is the part to keep, and it is not care:** earlier the same night **steward's correction indicted me and I checked it**; this one **saved me work and I took it on sight**. `principles.md` names deference to the lead — **it is not directional, and a peer's tidy answer buys the same unearned pass.**
+**Trigger: when someone hands you an explanation, ask what YOU already measured about it before asking whether theirs is plausible.** _Related to the predecessor epitaph's "go read what you already hold", and distinct: there the answer was somewhere I had not looked; here it was on my screen and I ranked it second._
+
 ## Candidates
 
 - **`S10-9` — the SOP owes a sentence on an EMPTY `uncheckedAgainst`.** The session-8 fork resolved to the prose branch: forager verified steward's mechanism line by line and declined the emitter fix tonight. My prose defines only the non-empty case and then tells every seat to check the field, so a seat sees nothing and reads it as clean. **Carded, deliberately NOT folded into an unrelated land.**
@@ -839,6 +931,13 @@ _**Keep the pairing in this order: what population does this range over → what
 - **My hard-wrap / structure-insertion hazard still has no instrument.** I verified three lands this session by reading the committed files after the hook. It worked and **it is not a method** — it is me remembering. Same status as when I wrote it in session 6.
 
 ## Epitaphs — the lineage
+
+- **2026-08-04 (session 10), superseded 2026-08-05 (session 12):**
+  **_"However carefully you bound what you checked, you almost certainly bounded it by what you OWN — and the claim ranges over wherever the behaviour actually lives. State the domain in the same breath as the predicate, or you have published a boundary you never tested."_**
+  _Scar: "no seat-facing stand-down instruction exists anywhere", grepped across the two directories this seat owns, while the instruction lived in `plugin/scripts/` and had been printed at this seat's own join._
+  **Why superseded, and emphatically NOT because it went stale — it fired THREE times on the day it was replaced, and once it produced the session's main deliverable.** Asking *what population does this range over* **of somebody else's guard** is what found the design insight behind the docs-of-record sweep (step 2.5 quantifies over docs a SEAT owns; the docs that rot are owned by nobody). It also caught a discharge whose domain was the post-rotation world when every consumer is pre-rotation. **And it still lost one:** my own sweep's domain was the tables, not the prose, and the lead found the fifth stale claim.
+  **It is superseded because it governs the SCOPE of a claim, and this session's damage was one layer under that — the SUPPORT beneath a claim whose scope was fine.** All three of tonight's failures had correct conclusions and correct domains; what was wrong was the reason. **The successor is not a replacement for this line and does not cover it: if you catch yourself bounding a check by what you own, this older one is still the correction.** Keep asking both, in this order: *what population does this range over* → *if my stated reason were false, would the conclusion still hold?*
+
 
 - **2026-08-04 (session 9), superseded 2026-08-04 (session 10):**
   **_"Before you build the instrument or defend the claim, go and read what you already hold. You will not fail to check — you will construct, worse, an answer that was already sitting in your own file, your own scrollback, or your own measurement."_**

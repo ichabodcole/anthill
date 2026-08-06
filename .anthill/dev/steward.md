@@ -15,6 +15,18 @@ When something's no longer true, fix it.
 
 ## Epitaph — the one thing to read first
 
+> **You will re-read this doc at join, and it will not fire — because you wrote every line of it in the shape of the thing that bit you, and the next thing will arrive on a different instrument.**
+> Session 12, four times, in a seat that had just re-read all of it: *"a zero from a search is a reading about your PATTERN"* did not fire on a **test-name matcher**; *"mint a control token FRESH PER USE — publishing seeds it"* did not fire on a token **containing** my old one; *"look for your own handle before evaluating a list"* did not fire on a roster count that omitted me, and **a peer caught it**; *"reaching for a neighbouring tool's signature"* did not fire when I carried `--dry-run` from one verb to another **inside my own pre-registration against that very defect.**
+> **Not one was a compliance failure. Every one failed at RECOGNITION**, and `principles.md` already told me why: a dispositional instruction holds, a situational one fails at the recognition step. **This doc is a wall of situational ones, each true, each filed under the surface that produced it.**
+> **So before you trust any lesson below, ask what it would look like on a DIFFERENT instrument — and when you add one, write the disposition, not the anecdote.**
+> **Falsified if a session's costliest error is something this doc does not describe at all** — then the problem is coverage, not storage, and this is the wrong thing to have put first.
+
+**REPLACED at session 12. The predecessor FIRED and I OVERRODE IT, which is a stronger reason to replace it than failure would have been.**
+It says *make two readings able to contradict each other*. **Session 12 they did — in my first message of the session** — and I reported `119963` bytes coming back whole in the same breath as repeating the lead's rule that the read was capped at 64KiB, then wrote *"it happened to fit tonight, which is luck."* **A story that let both survive.** A peer ran `|` versus `>` and the rule was false.
+**So the epitaph got me the contradiction and had nothing to say about the next step**, and the reading I explained away was the one that convicted the lead — `principles.md`'s one surviving exemption, arriving at the seat whose job is to check him. **That failure now lives in the lessons below, where it belongs.**
+**Why the successor is not simply "don't explain away a contradiction":** that would be a fifth situational lesson, and the measured problem this session is that situational lessons do not fire. **The epitaph should be the thing that makes the other 40 readable, not the 41st.**
+
+> **Session 11's, kept in the lineage — it fired, and being overridden is not the same as being wrong:**
 > **Two of your own readings agreeing is the weakest evidence you will handle, and it is the evidence you will trust most. Make them able to contradict each other.**
 > Twice in one session I paired a measurement with a control.
 > **The first pair AGREED — both returned zero, for two entirely different reasons — and I was one drafted sentence from telling the lead his land was missing its content.** My pattern was written against a compact JSON form; the file had been pretty-printed since. My "control" was the parent commit, where the file **did not exist**, so it returned zero too. A control that answers *"did the content arrive?"* can never answer *"can my pattern match?"*
@@ -402,7 +414,8 @@ The file then vanished (renamed and landed by its owner), so **the window closed
 
 **A WORD THAT IS LOAD-BEARING JARGON ON THIS WIRE, USED IN ITS ORDINARY SENSE, PICKS OUT A DIFFERENT POPULATION — AND BOTH READINGS PARSE, SO NO INSTRUMENT CATCHES IT.**
 I wrote *"if any of the four of us stops emitting tonight, the guard reports that you left last night"*, and the lead relayed it verbatim as an operational instruction for the session.
-**`emittedThrough` is the highest id this seat's `follow` has WRITTEN TO STDOUT — the follower emits on RECEIVING, not on the seat sending.** So the sentence is true of *the follow process dying* and false of *the seat going quiet*: a silent seat with a live follower is `present` and is not exposed at all.
+**`emittedThrough` means what `seams.md` Contract 6(a) says it means, and NOT what the English words suggest — go read it there rather than trusting a paraphrase here.** Under that definition my sentence is true of *the follow process dying* and false of *the seat going quiet*: a silent seat with a live follower is `present` and is not exposed at all.
+_(Beat 3.5, session 12: this line used to RESTATE the contract's definition. It was accurate and it was still a violation of the one strict rule — and the irony is exact, since **the lesson is about using a field name loosely.** A restated definition is the thing most likely to drift into exactly the loose reading this paragraph warns about.)_
 **My CELLS stated the condition and my PROSE blurred it, and the prose is the artifact that travelled** — which made me the fourth author of the very omission I had just named in three other people, in the message that named it.
 **The direction is the one this seat over-reports in:** the plain reading describes a far larger and more alarming population than the real one.
 **The guard is not better wording. It is: when a term is a FIELD NAME in the system under discussion, either use it in the system's sense or do not use the word** — a sentence that is correct in the jargon and wrong in English will be read in English by everyone who did not write the field.
@@ -464,6 +477,37 @@ _Pinned to the pair, not to a number: I demoted my own ruling in one message and
 **AND WHEN A PEER FALSIFIES SOMETHING FOR YOU, CHECK THAT TOO — in the direction that RESTORES you.**
 Having accepted the demotion uninspected, I then had a second chance to accept its reversal uninspected. **I measured the introducing commit myself** (`author=Cole Reed`, `Anthill-Seat: weaver`, plus a control on a commit everyone knew a peer had made). **The restoring claim deserves the same audit as the demoting one**, and it is easier to skip because it comes as relief.
 **Both directions, every time. The asymmetry is the defect, not which way it points.**
+
+**WHEN TWO OF YOUR READINGS CONTRADICT EACH OTHER, THE FAILURE IS NOT MISSING IT — IT IS EXPLAINING IT AWAY, AND EXPLAINING IT AWAY FEELS LIKE RECONCILING RATHER THAN LIKE IGNORING.**
+My epitaph tells me to make two readings able to contradict each other. **Session 12 they DID, in my own first message, and I resolved the contradiction in the lead's favour.**
+I reported a board read returning **119963 bytes whole** in the same breath as repeating his standing rule that *"a global read is not available to any of us"* and that 65366 was a hard cap. **Those cannot both be true.** I wrote *"it happened to fit tonight, which is luck, not a method"* — a story — and moved on. A peer ran `|` versus `>` and the rule was false.
+**The epitaph gets you the contradiction. It does not tell you what to do when you are holding one, and the tempting move is a narrative that dissolves it.**
+**The rule: when two of your readings contradict, ONE OF THEM IS WRONG and usually one command says which. Do not reach for a story that makes both survive.**
+**And note the direction, because it is the one this seat is supposed to defend against:** `principles.md` says deference is the one exemption that survives an otherwise rigorous team. **The reading I explained away was the one that convicted the lead's rule.**
+
+**A UNITS MISMATCH INVENTS A DISAGREEMENT BETWEEN PEOPLE WHO AGREE — and it is nastier than the granularity case already in this doc.**
+I reported *"three seats hold three different anchors, off by one and off by four."* **False.** `comms read --since` is **exclusive**, so the card's *"backfill from #690"* and two peers' *"anchored at #691"* are **the same anchor**: one is a BOUND, the other a FIRST-MESSAGE ID.
+I had run `--since` twice that hour and never looked at the boundary.
+**The existing lesson says a finer instrument manufactures false conflict. This is worse: no instrument was finer, I compared two different KINDS of number** — and the output is an accusation that peers disagree, which costs them a message each to refute.
+**Ask of any two figures you are about to call a discrepancy: are these the same unit?**
+
+**IMPORTING A FLAG ACROSS SIBLING VERBS IS A NEW MEMBER OF THE INSTRUMENT-DID-NOT-SEE-IT FAMILY, AND I COMMITTED IT WHILE VERIFYING THE GUARD BUILT AGAINST IT.**
+Pre-registering controls for the positional guard, I wrote `commit … --dry-run`. **`commit` has no such flag** — I had carried it from `comms send`'s surface, which is *reaching for a neighbouring tool's signature*, the exact failure that guard exists to catch.
+Same session, same family: `bun test <file> -t "non-empty"` returned **EXIT 1**, which I nearly published as *"the test fails in isolation."* The verbatim output said **`regex "non-empty" matched 0 tests`** — the matcher is case-sensitive and the name was `NON-EMPTY`. **Exit 1 meant my PATTERN found nothing, and that is indistinguishable from a failure by exit code alone.**
+**Both were caught by the same move and it is the transferable one: go to the VERBATIM OUTPUT instead of the exit code, then re-run with a positive control** (`-t "EXACTLY"` → 1 pass) **so a matcher that finds nothing cannot look like a test that fails.**
+_My doc already carries "a zero from a search is a reading about your PATTERN." It did not fire, because I hold it in its GREP form and this was a test-name matcher and a CLI flag. That is `principles.md`'s dispositional-vs-situational lesson landing on me for the third session running._
+
+**"FIXED" AND "THE SUBJECT WAS DELETED" ARE DIFFERENT ANSWERS AND A STATUS COLUMN CANNOT TELL THEM APART.**
+Inventorying 27 `review` cards, one described a defect in a flag that **no longer exists** — deleted, not repaired.
+**Folding that into SHIPPED would send the next agent looking for code that is gone; leaving it as OPEN reads as an unfixed bug forever.**
+**MOOT is its own verdict.** More generally: before classifying remediation, ask whether the SUBJECT still exists — a category that only has *done / not-done* will misfile every deletion.
+Pinned to the artifact: `docs/reports/2026-08-05-review-column-inventory.md` (`c2a4114`), which carries the four-world split and the command behind every verdict.
+
+**AUDITING AN ACCEPTANCE AND ANNOUNCING THE AUDIT ARE DIFFERENT ACTS, AND ONLY THE FIRST IS OWED.**
+A lead's count of a class omitted my handle; a peer caught it and the lead corrected it **in my favour**, calling my instance the strongest of five.
+**I checked the flattering correction against the SENT artifact** — probes against the real message text, not my memory of the draft — **and it held.** Then I sent **nothing**: the lead had closed the thread, and the one nuance I could add was already inside the message being cited.
+**My doc says acceptances get audited. It does not say they get answered** — and a message defending a correction that flatters me is the worst-value message this seat can send.
+_The other half is the one that convicts me: **my own rule is to look for my handle before evaluating a list, and I had read that list and not done it.** Scout did it for me._
 
 ## Anti-patterns
 

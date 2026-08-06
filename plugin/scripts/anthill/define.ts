@@ -29,7 +29,7 @@ import { parseArgs as nodeParseArgs } from "node:util";
 // bodies type-check unchanged).
 // ---------------------------------------------------------------------------
 
-export type ArgType = "boolean" | "string" | "positional" | undefined;
+export type ArgType = "boolean" | "string" | "positional" | "positionals" | undefined;
 
 interface BaseArgDef<T extends ArgType, VT extends boolean | string> {
   type?: T;
@@ -56,7 +56,20 @@ interface BaseArgDef<T extends ArgType, VT extends boolean | string> {
 export type BooleanArgDef = Omit<BaseArgDef<"boolean", boolean>, never>;
 export type StringArgDef = BaseArgDef<"string", string>;
 export type PositionalArgDef = Omit<BaseArgDef<"positional", string>, "alias">;
-export type ArgDef = BooleanArgDef | StringArgDef | PositionalArgDef;
+/**
+ * A command that takes an OPEN-ENDED list of positionals (`commit -- <paths…>`,
+ * `spawn <handles…>`, `feedback <message…>`) declares it with this.
+ *
+ * It exists because the guard's criterion has two conjuncts — *declares no
+ * positional* AND *never consumes `ctx.args._`* — and only the first is visible
+ * at parser altitude: `parseArgs` sees the arg spec, never the function body.
+ * Implementing conjunct one alone caught `commit`, `spawn` and `feedback`, i.e.
+ * broke the land path for every seat. So the exceptions DECLARE themselves here
+ * rather than being inferred, and `--help` gains somewhere to say a command
+ * takes free-form arguments instead of silently eating them.
+ */
+export type PositionalsArgDef = Omit<BaseArgDef<"positionals", string>, "alias">;
+export type ArgDef = BooleanArgDef | StringArgDef | PositionalArgDef | PositionalsArgDef;
 export type ArgsDef = Record<string, ArgDef>;
 
 type ResolveParsedArgType<T extends ArgDef, VT> = T extends {
@@ -80,13 +93,15 @@ type ParsedBooleanArg<T extends ArgDef> = T extends { type: "boolean" }
   ? ResolveParsedArgType<T, boolean>
   : never;
 
-type ParsedArg<T extends ArgDef> = T["type"] extends "positional"
-  ? ParsedPositionalArg<T>
-  : T["type"] extends "boolean"
-    ? ParsedBooleanArg<T>
-    : T["type"] extends "string"
-      ? ParsedStringArg<T>
-      : never;
+type ParsedArg<T extends ArgDef> = T["type"] extends "positionals"
+  ? string[]
+  : T["type"] extends "positional"
+    ? ParsedPositionalArg<T>
+    : T["type"] extends "boolean"
+      ? ParsedBooleanArg<T>
+      : T["type"] extends "string"
+        ? ParsedStringArg<T>
+        : never;
 
 export type ParsedArgs<T extends ArgsDef = ArgsDef> = { _: string[] } & {
   [K in keyof T]: ParsedArg<T[K]>;
@@ -191,11 +206,16 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
   const booleans = new Set<string>();
   const strings = new Set<string>();
   const positionals: Array<{ name: string; def: PositionalArgDef }> = [];
+  const freeForm: string[] = [];
   const refused = new Set<string>();
 
   for (const [name, def] of Object.entries(argsDef)) {
     if (def.type === "positional") {
       positionals.push({ name, def });
+      continue;
+    }
+    if (def.type === "positionals") {
+      freeForm.push(name);
       continue;
     }
     if ((def as StringArgDef | BooleanArgDef).refused !== undefined) {
@@ -328,7 +348,33 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
   }
   for (const name of negated) out[name] = false;
 
+  // An unknown FLAG is refused by name; an unknown POSITIONAL used to be
+  // swallowed in silence, and that is the direction that costs a session:
+  // `comms read <channel> 690` returned exit 0, ok:true, and THE ENTIRE LOG.
+  // It does not fail — it succeeds, plausibly, with the wrong answer, and the
+  // size of the result is the only tell. Refuse it here, where the same strict
+  // rule already judges flags, so one token class is not held to a laxer
+  // standard than its neighbour.
+  //
+  // Only commands declaring NEITHER a named positional NOR free-form
+  // `type: "positionals"` are covered — the exceptions declare themselves,
+  // because the other half of the criterion (does the body read `ctx.args._`?)
+  // is invisible from here.
+  if (positionals.length === 0 && freeForm.length === 0 && parsed.positionals.length > 0) {
+    const valid = Object.keys(options)
+      .filter((n) => !refused.has(n))
+      .sort()
+      .map((n) => `--${n}`);
+    const got = parsed.positionals.map((p) => `"${p}"`).join(", ");
+    throw new CLIError(
+      `this command takes no positional arguments, but got ${got}` +
+        (valid.length > 0 ? `. Valid flags: ${valid.join(", ")}` : "") +
+        `. If you meant a VALUE, it belongs to one of those flags`,
+    );
+  }
+
   out._ = [...parsed.positionals];
+  for (const name of freeForm) out[name] = [...parsed.positionals];
 
   const pending = [...parsed.positionals];
   for (const { name, def } of positionals) {

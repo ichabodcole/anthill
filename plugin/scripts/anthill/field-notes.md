@@ -61,6 +61,21 @@ compliance. **Situational warnings need a mechanical guard, not better wording.*
 _Scar: prose guards went 0-for-4 in one session; a warning failed to stop the agent who had just read
 the file documenting it._
 
+**A deferral is not a decision until it names a HORIZON and a HOME.**
+_"We'll defer that"_ feels like a decision and is usually an absence wearing one — no owner, no
+re-read moment, nothing that will surface it again. The item is not postponed, it is **lost**, and
+the loss is invisible because a deferral and a decision sound identical in the room where both are
+made. **Every deferred item leaves with a horizon (which session, or explicitly "not scheduled") and
+a home (a file something re-reads).** An item that can be given neither is being dropped, and saying
+so is the honest version.
+_Scar: **13 of 27 `review` cards mis-stated the tree — work landed, card never closed (~48%)**. Two
+seats bitten; one ten minutes from rebuilding a test that already existed; the lead carried a
+finished card into the next session's handoff. In the same session, a report's whole recommendations
+section — three build items, each with a measured instance — **would have stayed in the report**,
+because no ritual pulls from a report. A human asked. That is not a mechanism._
+→ **This is `no store without a named re-read moment` pointed at WORK rather than at knowledge.**
+Reports are where the leak is largest, because they are read once — at the moment they are written.
+
 **No store without a named re-read moment.**
 A store nothing re-reads is a write-only leak.
 _Scar: a retro store was designed with a read-back and no named writer, minutes from having zero

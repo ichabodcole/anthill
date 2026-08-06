@@ -130,6 +130,11 @@ export const teamSpawnCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
+    handles: {
+      type: "positionals",
+      description: "Seat handle(s) to spawn (default: every seat in the roster)",
+      valueHint: "handle…",
+    },
     session: {
       type: "string",
       description: "tmux session name (default: config.channel)",

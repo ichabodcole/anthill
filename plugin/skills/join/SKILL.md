@@ -118,6 +118,18 @@ status`** shows who's on + the board.
        through the thing it forbids — **measured: two seats over-read it in one session, and both had
        to break it to learn it.** If that is where your anchor came from, **you have not been given
        one; you have been given evidence that this failed.** Say so rather than reporting a clean join.
+     - **⚠ AND THE ANCHOR YOUR OWN `follow` HANDS YOU IS NOT THE SESSION'S ANCHOR.** The start notice
+       prints a **runnable** catch-up command, and the id in it is **where THIS SEAT's follow last
+       stopped — which may be a previous session entirely.** It agrees with the session's anchor only
+       when you happened to be followed to the end of last session, **so it is silent exactly for the
+       seats who were here before and loud only for those who were away** — the population most likely
+       to report it is the smallest one. **The lead's anchor outranks it; if they disagree you have not
+       found a bug, you have found out which one knows what a session is.**
+       _Measured: two seats hit this in one session — one saw the two numbers differ and noticed, the
+       other saw them agree exactly and reported a clean join, which is the case nothing surfaces._
+       **A rotated session mints fresh positions and removes this**, but rotation destroys nothing and
+       reaches a team only once one actually runs for it — **so until then this is live, and "the tool
+       will handle it" is a claim about a world your team may not be in yet.**
      - **⚠ AN UNKNOWN FLAG IS REFUSED BY NAME. AN UNKNOWN POSITIONAL IS SWALLOWED IN SILENCE — and
        that is the direction that will cost you a session.** Measured on this wire, one command apart:
        ```

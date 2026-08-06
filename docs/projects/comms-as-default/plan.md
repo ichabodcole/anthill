@@ -1,12 +1,15 @@
 # Comms as the default team wire — plan
 
 **Status:** **STEPS 4 AND 5 SHIPPED (session 11). Grapevine no longer participates in CONVENE or JOIN** — it is still consulted at **teardown** (`team-support.ts:469`, `grapevine who`, fired by `status` and `down`), which is why the sentence is scoped rather than absolute. `convene` opens nothing, `join` composes no vine tail, and the whole C4 prose surface is migrated. **Gate item 3 — the pane-kill — is DISCHARGED**: INFERRED since session 9, reproduced and instrumented at `c9a33e7`.
-**⏭ REMAINING: step 3 (rotation) and step 6 (the swap run). See [NEXT PHASE](#-next-phase--what-session-12-picks-up) at the foot of this file — read that before anything else.**
-**Created:** 2026-08-04 (session 9) · **Author:** maestro (lead) · **Last revised:** 2026-08-05 (session 11), against what shipped rather than what was intended.
-**Follows:** [proposal.md](./proposal.md) · [capability-state](../capability-state/proposal.md) _(moved out of this folder — it is slice three, not this project)_
-**Sessions:** [session 9 — phase 1](./sessions/2026-08-04-session-9-phase-1.md) · session 10 — phase 2 · [session 11 — phase 3](./sessions/2026-08-05-session-11-phase-3.md) + [the step-6 evidence](./sessions/2026-08-05-session-11-step6-evidence.md)
-**Branch:** ✅ `feat/comms-as-default-phase-3` **MERGED to `develop` at `cdf907a`**, 2026-08-05, release PR [#82](https://github.com/ichabodcole/anthill/pull/82). **⚠ That branch is closed — rotation and the swap run branch FRESH off `develop`.** · **Gate:** `bun run check`
-**Baseline — ⚠ THIS IS SESSION 10'S, NOT CURRENT.** (weaver, comms #501): **512 pass @ `27da450`** → **529 pass + 1 todo @ `13a4ae7`** = **+17 pass**. **Session 11 ended at 524 pass / 1 todo / 0 fail** — the suite went DOWN deliberately (−12 deleted `interpretFresh`/mirror cells, +7 rotation instrument). **Measure at your own sha; do not quote either number.** Every other reading taken this session was over a dirty tree; those two were not.
+**✅ SESSION 12 CLOSED THE RELEASE BAR — 6 of 6. Step 3 (rotation, `81d3991`, landed INERT) and step 6 (the swap run, `89dea31`) are DONE, plus the positional guard (`4c339fa`) and the sweep touchpoint (`32d087a`).**
+**⏭ REMAINING: criterion 7 (the projects re-triage) and the carried debt. See [NEXT PHASE](#-next-phase--what-session-13-picks-up) at the foot of this file — read that before anything else.**
+
+> _This header claimed rotation and the swap run were still remaining until 2026-08-05. **It was corrected by the same pass that wrote the block below** — which is the sweep beat (`32d087a`) doing its job on the second document it was ever pointed at. The first was `ROADMAP.md`, which it falsified in four places within minutes of landing._
+> **Created:** 2026-08-04 (session 9) · **Author:** maestro (lead) · **Last revised:** 2026-08-05 (session 11), against what shipped rather than what was intended.
+> **Follows:** [proposal.md](./proposal.md) · [capability-state](../capability-state/proposal.md) _(moved out of this folder — it is slice three, not this project)_
+> **Sessions:** [session 9 — phase 1](./sessions/2026-08-04-session-9-phase-1.md) · session 10 — phase 2 · [session 11 — phase 3](./sessions/2026-08-05-session-11-phase-3.md) + [the step-6 evidence](./sessions/2026-08-05-session-11-step6-evidence.md)
+> **Branch:** ✅ `feat/comms-as-default-phase-3` **MERGED to `develop` at `cdf907a`**, 2026-08-05, release PR [#82](https://github.com/ichabodcole/anthill/pull/82). **⚠ That branch is closed — rotation and the swap run branch FRESH off `develop`.** · **Gate:** `bun run check`
+> **Baseline — ⚠ THIS IS SESSION 10'S, NOT CURRENT.** (weaver, comms #501): **512 pass @ `27da450`** → **529 pass + 1 todo @ `13a4ae7`** = **+17 pass**. **Session 11 ended at 524 pass / 1 todo / 0 fail** — the suite went DOWN deliberately (−12 deleted `interpretFresh`/mirror cells, +7 rotation instrument). **Measure at your own sha; do not quote either number.** Every other reading taken this session was over a dirty tree; those two were not.
 
 > **This file was authored as a SKELETON and is no longer one.** That banner has been discharged: every
 > seam below was ratified or falsified on the wire before it was built, and four of the lead's five
@@ -452,58 +455,174 @@ STEP E   READING 2 — `anthill down` MUST AUTHORISE. `none` / `all-spawned-depa
 
 **Neither commit was amended.** Three seats were verifying lands **by content against a named sha** at the time; an amend invalidates a verification practice this team had just built, for a garbled sentence and a wrong number. **Recorded here instead — which is the whole reason this section exists.**
 
-## ⏭ NEXT PHASE — what session 12 picks up
+## ⏭ NEXT PHASE — what session 13 picks up
 
-**Two steps remain and they must run in this order: (3) rotation, then (6) the swap run.**
+### Where the project actually is, in one paragraph a stranger can act on
 
-### The goal, in one sentence
+**`anthill-v2.0.0` shipped the one-wire team. Session 12 closed the release bar: 6 of 6 MET.**
+The `comms read` positional guard (`4c339fa`), session rotation (`81d3991`, landed **INERT**), and
+the swap run (`89dea31`) — a full six-seat session, **102 messages, 25 commits, zero grapevine
+traffic.** Criterion **5** landed too (`32d087a`) despite being outside the bar.
 
-**Land session rotation safely, then convene a session that never opens a grapevine and prove it — which is this project's exit criterion and the last thing between it and a merge.**
+**Cole ratified 6-of-8 as the RELEASE bar on 2026-08-05**, conditional on this document existing.
+**Session 13 is criterion 7 (the projects re-triage) plus the carried debt below.**
 
-### Step 3 — session rotation · card `t-ce6f0c2e` (forager)
+> **⚠ ONE OVERRIDE IS RECORDED IN THAT VERDICT AND IT IS NOT A CLEAN PASS.** Criterion 1's check
+> read _"one commit names both paths (write-trigger)"_. There are **two** commits and **no
+> amendment** — because the owner ruled, from a measurement on the live channel, that **6(g)'s
+> lead-veto is STILL TRUE at HEAD and the amendment is NOT YET DUE** (rotation landed inert, so no
+> rotation has occurred). He landed the **trigger** instead (`1b905c4`): _the first executed
+> rotation on a channel falsifies property 1 for that channel, and whoever runs it owes the
+> amendment in the same change._ **The lead called the letter unsatisfied and ruled the criterion
+> met on the purpose. Read it as an override, not as a pass.**
 
-**⚠ You are NOT starting from a blank page. The safe design set is already landed as tests at `c9a33e7`. Do not re-derive it.**
+### What session 13 delivers
 
-| what rotation does to the session-open record      | verdict                                                             | safe?                                     |
-| -------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------- |
-| **PRESERVES** it (same `openedAt`, same `spawned`) | `none` / `all-spawned-departed` once any in-window tombstone exists | 🔴 **NO**                                 |
-| **RE-MINTS** it (new `openedAt`)                   | `unknown` / `outstanding-departures`                                | ✅ **yes — and it is the natural design** |
-| **DROPS** it                                       | `unknown` / `no-open-record`                                        | ✅ yes                                    |
+| #     | criterion                         | what a consumer gets                                                                                                                                                                                                                                                                 | depends on                                                    |
+| ----- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| ~~5~~ | ~~the sweep-the-plan touchpoint~~ | ✅ **DONE — landed session 12, `32d087a`** (weaver): all three homes — `skills/finalize-session/`, `templates/docs-team/`, **and `.anthill/README.md`**, the team's own copy that this team's scar says gets dropped. **Not session 13's work. Verify it fires; do not rebuild it.** |
+| **7** | the projects re-triage            | every dir in `docs/projects/` carries a `**Status:**` and a named next action, or an explicit `parked`/`superseded`                                                                                                                                                                  | nothing. It is the judgement-heavy one and it wants a convene |
 
-**⚠ The trap is the design that looks tidiest: rotate the LOG and leave the session record alone.** It touches less, reads as minimal, **and it is the only one that kills panes.** Re-minting needs no new guard — `writeSessionOpen` already stamps `openedAt`, `stand-down` already stamps `at`, and D3's `at >= openedAt` then does the work for free.
+**Criterion 7 carries one unresolved collision that is genuinely undecided:** the
+coordination-hardening arc's phase 3 overlaps
+[`session-branch-strategy`](../session-branch-strategy/proposal.md), which is a separate Draft.
+**Resolve it AT the re-triage, not before.** Cole has said explicitly he is not the user of this
+tooling and pushes agent-experience calls back to the team — **so this is the team's to decide and
+his to review, not the reverse.**
 
-**Two things ride with the land, not after it:**
+### ✅ What session 12 actually landed — with shas, so a stranger can check rather than believe
 
-- **The `seams.md` Contract 6(g) amendment** — the lead's-veto clause is false post-rotation (above). The write-trigger binds: _whoever moves a boundary updates this file **and** its proof, in the same change._
-- **Sequencing: rotation must be LANDED before the first `comms stand-down` of the session.** That is the three-term conjunction's middle term. If rotation is not ready before finalize begins, **it does not land — and that is an acceptable outcome, not a failure.**
+| what                                                              | sha       | verified by                                                                                                                            |
+| ----------------------------------------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Criterion 5** — the sweep-the-plan touchpoint, all three homes  | `32d087a` | weaver built; sentinel found 2 defects in review, both fixed                                                                           |
+| **Criterion 3** — `comms read` refuses an unrecognised positional | `4c339fa` | **steward, non-author: 7 cells green** — forager's 4 controls, steward's pre-registered pair, and the defect itself. **Run, not read** |
+| weaver's seat-doc lesson                                          | `2a3dfa4` | —                                                                                                                                      |
 
-### Step 6 — the swap run · card `t-4116eb8f` (lead)
+**🟢 THE PANE-KILL IS NO LONGER INFERRED.** It had said _"stays INFERRED until someone stands up a
+session and runs `down` against it"_ since **session 9**. sentinel ran it: **7 cells, real tmux, live
+`anthill down`.** The load-bearing three:
 
-**Exit criterion v3, and its two halves are separable only by us, not by the guard** — `classifyPresence` never reads `topic`, so it cannot distinguish _"never opened"_ from _"open and quiet"_ (`c9a33e7`).
+- **Cell 5** — the guard **PERMITS** on its own authority after a real `stand-down`. _The positive
+  anchor the matrix never had; without it an always-block guard passes everything._
+- **Cell 6** — at HEAD, a stale tombstone + a working seat → **REFUSED, session survived.** The D3
+  repair holding.
+- **Cell 7** — the **same world** with D3 reverted → **`{"tornDown":true,"presence":"none"}`, session
+  killed with a seat still working.** **That is the hazard itself, executed.**
 
-| half                                        | check                                                                                           |
-| ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| **absence of OPENING** ← _the real subject_ | `convene` never invokes `grapevine open`. **Cite convene's own envelope**, not a live `who`.    |
-| **absence of USE**                          | `grapevine who` → `subscribers []` · no tail process · `message_count` unchanged across the run |
+**Found because steward moved the variable sentinel had frozen** — the matrix was complete over
+`{unknown, present}` and `none` is the only state that kills without `--force`. **The lead ruled on a
+premise that was wrong; the audit and the rebuild came from two other seats.**
 
-🔴 **CITE THE CONVENE ENVELOPE, NEVER A LIVE `grapevine who`.** Session 11 failed this criterion permanently and **a live `who` reads GREEN anyway** — the remedy that emptied the subscriber list blinded the instrument that reports the failure. The full reasoning and the preserved envelopes are in [the step-6 evidence file](./sessions/2026-08-05-session-11-step6-evidence.md). **`anthill down` consults `grapevine who` automatically at teardown, so the false green is scheduled, not hypothetical.**
+### 🔴 What a fresh agent must NOT re-derive — the expensive things, already paid for
 
-**There is a PRE-REGISTERED PREDICTION against this run** (`docs/reports/2026-08-05-scout-prereg-swap-run.md`, `606650c`, scout's — **not the lead's, and it is the one to score against**): with the anchor delivered **out of band** and **no mechanical guard** behind it, ≥1 fresh seat over-reads. Session 11 had three of five seats violate the anchor, one of them twice.
+1. **Rotation's safe design set is TESTS, not prose** (`c9a33e7`): _re-mint or drop the session-open
+   record; **PRESERVING** it is the one unsafe design_ — and preserving is the tidiest-looking
+   option. **Do not re-derive this.**
 
-### Carried debt — none of it blocks steps 3 or 6
+1b. 🔴 **ROTATION IS THE LOG-SWAP THAT `seams.md` 6(e) DESCRIBES, AND 6(e) IS MARKED NOT FIXED.**
+_Pre-registered by steward at session 12's close, deliberately BEFORE any rotation code existed,
+so it cannot be retrofitted to whatever gets built._
 
-| card                                  | what                                                                                                                                                                                                                                                                                  |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `t-e25cd535`                          | `convene --fresh` never reached comms _(now moot: `--fresh` was deleted with step 4 — **verify and close**)_                                                                                                                                                                          |
-| **the `comms read` positional guard** | **LIVE at HEAD.** 13 leaf commands swallow unknown positionals silently. **Parser altitude** (`define.ts`), and it **MUST** carry a control proving `commit -- <paths>`, `comms send <body>` and `join <handle>` still work — the reverted version broke **7 `anthill commit` tests** |
-| `t-c012c84c`                          | `openedAt` has two answers 246s apart (convene vs spawn) and nothing names which — **the field that implements D3's safety property**                                                                                                                                                 |
-| —                                     | `grapevine who` (`team-support.ts:469`) — the last vine call site. A **read**, so out of step 4's scope by design; removing it is a presence-semantics change with a ratify gate                                                                                                      |
-| `t-02235085`                          | 13 `review` cards nobody verified, named so the audit's silence cannot read as coverage                                                                                                                                                                                               |
-| —                                     | `anthill commit` should **require or resolve `--as`** — 9 of session 11's first 11 commits carried no `Anthill-Seat` trailer                                                                                                                                                          |
+6(e), verbatim and unedited in the tree: _"when the log a live `follow` is watching is **swapped
+underneath it** … the follower carries its `emittedThrough` across and reports **`current`,
+gap 0**, having emitted none of the messages in the new log."_
 
-### The merge decision, which is the human's
+**Rotation IS a log swap — that is what it is for.** So the carried 6(e) repair and the rotation
+feature are **the same event**, and the hazard fires **on every live follower simultaneously**
+rather than one at a time.
 
-**`feat/comms-as-default-phase-3` is unmerged, 30 commits, gate green.** Steps 4+5 are a coherent release on their own. **Ask Cole whether session 12 merges first and branches fresh for rotation, or continues on this branch** — his session-11 framing was _"one feature, one release."_ **Do not assume; it changes what `git log` means for everything after.**
+**The mechanism is D3's shape exactly, one file over.** A position record is
+`{handle, channel, emittedThrough, at, pid}` — **0 of 6 carry a session id or origin; nothing to
+scope by.** `seams.md` 6(g) says of the DEPARTURE record: _"carried nothing to scope by, so the
+omission was absent rather than wrong."_ **D3 fixed the tombstone. Nobody fixed its sibling.**
+
+**PREDICTION (H):** rotation re-mints the session-open record and leaves position records
+untouched → immediately after rotation, `comms positions` reports **every seat `current` / gap 0
+against a log they have emitted none of** — the most reassuring state, on the wire whose entire
+purpose is to stop silence being mistaken for safety.
+**FALSIFIED IF** rotation invalidates or re-scopes position records (session id, inode/generation
+stamp, or a clear) · or rotation does not change the log's identity · or ≥1 live follower reports
+`behind`/`never-followed` after it.
+**THE DECISIVE CELL, and it needs no new instrument: rotate, then run `comms positions` WITHOUT
+restarting any follower.**
+
+> **✅ OUTCOME AT SESSION 12'S CLOSE: H WAS FALSIFIED BY THE DESIGN, BEFORE ANY TEST RAN — and
+> that is the outcome its author named as the best one.**
+> forager's design uses a **per-session positions directory**, which satisfies falsifier arm 1
+> (_"rotation invalidates or re-scopes position records"_) by construction. **The prediction was
+> published before the code existed and the code answered it.**
+>
+> 🔴 **BUT IT IS NOT DISCHARGED, and a session-13 reader must not treat it as closed.** Rotation
+> landed **INERT** — the live channel was never rotated — and **a fixture cannot answer the live
+> half**: whether five `follow` processes that resolved the log path once at attach survive a real
+> rotation, or die silently while their positions still read healthy.
+> **The decisive cell above is still owed, and it is still the cheapest instrument for it.**
+
+**⚠ Two seats derived this hazard INDEPENDENTLY and from opposite ends** — steward from the
+contract (6(e)), forager from the call site (`team-comms.ts:706`) — **neither having seen the
+other's.** Treat it as real.
+
+**✅ R4's carried question is ANSWERED, and the answer is CONDITIONAL** _(steward, stamped against
+`81d3991`)_: **`previousPosition` does NOT survive a ROTATION, and DOES survive a SESSION BOUNDARY
+WITHOUT ONE — which is exactly the state `anthill-dev` is in right now.**
+
+That is why steward and weaver were each handed a `catchUpWith` anchored to **session 11's**
+stopping point at join: sessions 11→12 was a boundary with **no rotation between them**. Rotation
+shipped tonight but was **not run**, so the condition still holds on this channel.
+**→ The out-of-band board anchor stays necessary until a rotation is actually executed. Do not
+drop it on the strength of rotation having landed.** 2. **Criterion 2's absence-of-OPENING half has NO runtime artifact, and this was measured.** On an
+already-existing, **non-archived** channel, `last_activity`, `loaded`, `topic` and
+`message_count` are **all inert on re-open** — every one moves only on CREATE. Falsified by
+maestro pre-convene, **independently reproduced by steward on his own throwaway channel with live
+positive controls**. Full record:
+`.anthill/scratch/maestro/2026-08-05-session-12-t0-baseline.md` → **must be promoted to
+`docs/projects/comms-as-default/sessions/` before teardown; scratch is gitignored and dies.**
+**The domain matters:** on an **archived** channel `open` auto-unarchives and IS observable. Our
+channel is not archived, so the branch is unreachable — but the unbounded version of that
+sentence is false and was corrected once already. 3. **The artifact is the WHOLE SPAWN SET, never the absence of `grapevine`.** sentinel certified this
+and mutation-proved it: **`not.toContain("grapevine")` passes VACUOUSLY in CI** — a green that can
+never fail, inside the assertion built to catch false greens. 4. **The pane-kill guard is verified at the COMMAND boundary and not in a live session** — L1
+mutation-proven (12/0 → 10/2, the two failures being exactly the two REFUSES cases). **L2 is
+circular by construction** and was ruled a non-blocker (R11), not met. Card `t-ac09ffa9` stays
+open with its wording intact. 5. **Cite CARD IDs, never S-numbers.** S-numbers collided across two authors within one hour
+(session 12, R7). The ids are unique and already quoted in landed docs.
+
+### Carried debt — recheck before assuming any of it still stands
+
+| card                        | what                                              | status entering session 13                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `t-e25cd535`                | `convene --fresh` never reached comms             | **moot — `--fresh` was deleted with step 4. Verify and CLOSE**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `t-c012c84c`                | `openedAt` has two answers 246s apart             | the field implementing D3's safety property. **Recheck against rotation** — rotation re-mints the record and may resolve or move it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `t-02235085`                | 13 `review` cards nobody verified                 | named so the audit's silence cannot read as coverage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `t-ac09ffa9` · `t-07a131f5` | the pane-kill gate                                | ✅ **DISCHARGEABLE — do not re-open these.** L2 is 7 live cells (session 12); the mutation pair exists at BOTH the unit and command boundaries; **and the red-before/green-after regression test WAS ALREADY LANDED in a prior session.** sentinel was ten minutes from rewriting a test that exists                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| —                           | `grapevine who` at `commands/team-support.ts:469` | 🔴 **THE LAST VINE CALL SITE, AND IT IS A LOAD-BEARING MASK — read this before removing it.** Measured session 12, one variable (`HOME`), live tmux both times: **vine resolves → `down` authorises and kills; vine UNRESOLVABLE → `down` BLOCKS, always.** `combinePresence` needs BOTH legs `none` before anything authorises, so **an unresolvable vine leg makes `down` always-block on any machine without spellbook.** Removing it means `commsPresence` becomes the **sole** input and every fail-safe property rests on it alone. **Not an argument to keep it** — telling a comms-only team _"grapevine CLI unresolved"_ is its own defect — **but it must be a decision, not a side effect.** _A mask is not a dependency; you cannot find these by tracing what depends on what._ Removal is a presence-semantics change with a ratify gate, and belongs to the [coordination-layer investigation](../../investigations/2026-07-31-team-native-coordination-layer.md) |
+
+> **⚠ THE SCOPE OF THE 7 PANE-KILL CELLS, bounded by sentinel AGAINST HIMSELF before anyone quoted
+> them wider: they are seven cells ON A MACHINE WHERE SPELLBOOK RESOLVES.**
+> Cells 5 and 7 — the two that **authorise** — reached `none` only because the **vine leg also
+> returned `none`**. On a machine without spellbook they do not reproduce; they block.
+> _"A proof is only as durable as the absence it rests on"_ — and this one rests on a wire being
+> **present-and-quiet**, which is worse than absent because it looks like nothing at all.
+> **This does not weaken the cells. It names the world they were taken in**, which is the difference
+> between a result and a claim.
+> | — | `anthill commit` should require or resolve `--as` | 9 of session 11's first 11 commits carried no seat trailer |
+> | — | **spellbook `bounty` truncates to a PIPE** (~64KB) | **not ours.** Read the board with `> file`. `--owner <name>` does not filter; `--mine` does but hides cards you do not own. Already filed upstream (spellbook #74) |
+
+### The board itself — read this before trusting it
+
+**The team's bounty board silently emptied between sessions 11 and 12** (anthill#43): the saved
+snapshot held 97 tasks and the live board held 0. Convene warned; the warning was **real, not
+spurious**. Recovered by reseeding from `~/.bounty/snapshots/`. **`bounty open --restore <id>`
+silently no-ops when a live board already holds the key** — it attaches to the empty board and
+ignores the flag. **Check `bounty sessions` against the live count at every convene.**
+
+### What is deliberately NOT in session 13
+
+- **The coordination-hardening arc phases 2–6** — months rather than sessions.
+- **Per-seat worktree isolation** — measured and held pending a merge-result gate that is one
+  command and still unbuilt.
+- **The two cheap experiments** (mixed-model team; heads-down mute) — neither is a build, both gate
+  the team-native coordination question.
 
 ## Open questions — to settle at ratify or during build
 

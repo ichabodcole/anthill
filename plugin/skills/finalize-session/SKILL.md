@@ -187,6 +187,77 @@ rule in the very commit that creates the truth being restated.
   three found violations — including the two seats who had personally authored the contracts they were
   restating.
 
+3.75. **The docs-of-record sweep — reconcile what the project CLAIMS against what actually shipped.**
+The lead runs it and names who checks each doc; it happens **before** the retro, because a falsified
+claim found here is usually a Q3 hypothesis.
+
+**Step 2.5 already asks every seat to re-read the docs it OWNS. This beat exists because the docs that
+go stale are the ones NOBODY owns.** A plan of record, a roadmap, a proposal, a principles file — each
+makes claims about the tree, and none of them appears in any seat's scope, so 2.5's sweep passes
+cleanly over a doc that has been wrong for three sessions. **The predicate was right and its domain was
+seats.**
+
+- **The evidence, and it is the reason this is a step rather than advice.** One session spent its night
+  hunting predicates whose domain had gone unwritten — and its own `plan.md` carried **four stale
+  claims** pointing at itself, one of them **falsified by a test that landed in the same session**.
+  The finalize ritual caught none of them. **All four surfaced because the human asked whether the
+  runway was clean.**
+- **Three sibling shapes, so scope this as a CLASS and not as a file:** a **plan/proposal of record**
+  that outlived the decisions it describes; a **principles file** the retro fed and nobody promoted
+  into (a store with a named writer that the writer did not use); a **roadmap** whose own header names
+  a read-trigger and a write-trigger that three consecutive sessions ran neither of.
+
+**The project names the set; anthill only supplies the trigger.** Ask once: _which docs here claim
+something that must stay true of the tree?_ Take the answer from the project's config or its grounding
+docs. **Never hard-code a list** — a doc set baked into this skill is exactly the convention-in-a-default
+anti-pattern, and it would be wrong in the first repo that filed its plans somewhere else.
+
+**A doc that claims nothing about the tree is OUT of scope.** Archives, history, scars, superseded
+records and anything deliberately kept as a record of what used to be true are not drift — rewriting
+them **destroys** the record. The test is whether a reader would ACT on the sentence today.
+
+### How to run it so it is a write-trigger and not a reminder
+
+**For each doc in the set, write a dated reconciliation line INTO the doc**, naming the sha it was
+checked at:
+
+```
+_Reconciled 2026-08-05 @ <sha> — "rotation opens the pane-kill window": FALSIFIED by <test>, claim removed.
+ "6-of-8 is the release bar": HELD. "the archive link in Now": UNCHECKED, nobody owned it._
+```
+
+**The line is the deliverable. Its absence for this session is the signal.** A doc carrying lines for
+sessions 9 and 11 and none for 10 says so on its face — which is the entire mechanism, and it is the
+same move as indexing a ruling by the message ids it answers: **a visible blank cell beats an absence,
+because an absence is not readable.**
+
+- **State the CLAIM and then the verdict — never "reviewed".** _"Re-read the plan"_ is the shape that
+  went **0-for-4**: a situational warning fails at the recognition step, so the beat has to name what
+  was checked or it has not fired. **`UNCHECKED` is a legitimate verdict and must be WRITTEN** — an
+  unchecked claim you silently skip is indistinguishable from one you confirmed.
+- **A tree-grounded claim travels with its sha or it does not travel.** A count measured at one commit
+  and quoted at another is stale in a way nothing in the sentence shows, and re-stamping an inherited
+  number with your own newer sha is worse than leaving it unstamped.
+- **⚠ The dangerous case is the claim that is still TRUE while its REASON has died.** Ask what each
+  sentence's justification **rested on**, not what the sentence is about. A reason resting on a
+  property the world no longer has does not go stale — it **inverts**, and the sentence still reads
+  fine. _"Capture it now, the wire evaporates"_ survives the wire becoming durable as a sentence and
+  loses the argument for the step it justifies.
+- **⚠ Sweep the PROSE, not just the tables.** A document's narrative goes stale too, and it is the
+  half a structured reader skips: status tables and criteria rows look like claims, while the
+  assertions in headers, blockquotes and scar boxes read as commentary and get no second look.
+  **Measured on this beat's own first run — 4 stale claims found across 10 table rows, and a 5th
+  MISSED among 91 assertion-bearing prose lines**, the miss sitting inside the box warning that the
+  document goes stale. **It was caught by a reader, not by the sweep**, which is the bound this
+  bullet exists to state rather than to imply.
+- **The set is self-seeding.** Next session's sweep finds its own scope by looking for the docs
+  carrying a reconciliation line, so the first run is the only one that has to enumerate.
+
+**This is also the handoff.** A fresh agent picking the work up later reads these lines to learn what
+is still true, so an unmet item's line says **what remains**, not merely that it was checked. That is
+what makes the sweep load-bearing for whoever continues the work rather than a tidiness pass for the
+team that ran it.
+
 4. **Structure reflection** — turn the lens on the team itself (the anthill adapts to the work):
    - **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)
    - **What were the natural seams?** (the contracts that actually emerged vs. the ones we guessed.)
@@ -289,6 +360,31 @@ experience is what makes it hold when following it costs something.
 Keep it small. Three questions and these two rules are the whole ritual — **if it needs a taxonomy,
 it has gone wrong.**
 
+4.75. **PLACE EVERY DEFERRED ITEM — a horizon and a home each, or say out loud that it is being
+dropped.** The seats NAME what they are deferring; **the LEAD places it**, exactly as the retro works
+(seats answer, the lead writes the file).
+
+**Why this is a beat and not a habit:** _"we'll defer that"_ has no owner, no re-read moment, and
+nothing that will ever surface it again — so it does not postpone an item, it **loses** one, and the
+loss is invisible because a deferral and a decision sound identical when they are said.
+
+- **HORIZON** — the next session, a named later session, or explicitly **"not scheduled"**. _"Later"_
+  is not a horizon.
+- **HOME** — a file something re-reads: the roadmap, a backlog item, a project's plan. **Not a
+  report, and not this retro.**
+- **An item that can be given neither is being DROPPED.** Say that. It is a real answer and it is
+  the honest one — what it must not do is leave the room sounding deferred.
+
+**⚠ THE LARGEST LEAK IS A REPORT'S RECOMMENDATIONS SECTION, AND NOTHING IN ANY RITUAL PULLS FROM
+ONE.** A report is read once — at the moment it is written — by people who already know what it
+says. **Sweep the session's reports and investigations HERE**, not just the board and the wire.
+_Measured: a session's observer produced three build recommendations, each with an instance behind
+it, and every one would have stayed in the report. The human asked for them. **That is not a
+mechanism**, and this beat is the mechanism._
+
+**If the next session is now defined enough to name, name it** — a horizon that points at a session
+nobody has scoped is a horizon in name only.
+
 5. **Aggregate the team's anthill-upstream feedback.** Beside the seams pass, do the same single-source
    move for the feedback candidates the team surfaced this session about **anthill itself** (not this
    project). Read the **same intake** you already swept — comms, the seats' scratch, their finalize
@@ -311,6 +407,12 @@ it has gone wrong.**
    - ◻ **Every seat reconciled its doc against contracts that CHANGED this session** (step 3.5) —
      restatement replaced with a pointer. The ordering makes this violation the default, not the
      exception: a four-seat team hit it in all five docs at once.
+   - ◻ **The docs of record were swept and each one carries a dated reconciliation line** (step 3.75)
+     — claim by claim, `HELD` / `FALSIFIED` / `UNCHECKED`, stamped with the sha it was checked at.
+     **The docs nobody owns are the ones this catches**, because step 2.5 ranges over the docs a SEAT
+     owns and a plan of record is in no seat's scope. A doc with no line for this session is the
+     signal; **do not settle for "we looked at it"** — an unwritten verdict and a skipped check are
+     the same artifact.
    - ◻ **Principle question asked** (Q4) — did this session produce one? **Usually no.** If yes it
      goes to `.anthill/principles.md` **with its scar**; if it has no scar it is a Q3 hypothesis, and
      if it only holds for this tool it is an SOP practice.
@@ -373,6 +475,9 @@ it has gone wrong.**
        _(Know the red slice's exact paths? Skip the stash-all pivot and park just those:
        `git stash push -u -- <red-paths…>` before step 3, `git stash pop` after — same result, as long
        as `<red-paths…>` is disjoint from the doc paths so a doc edit isn't stashed away with it.)_
+   - ◻ **Every deferred item PLACED** (step 4.75) — a horizon and a home each, or named out loud as
+     dropped. **Include the session's REPORTS and INVESTIGATIONS**, which no other beat reads and
+     which are the largest source of work that quietly never happens.
    - ◻ **Board settled — best-effort, never a gate** (cards → review/done). If the board idle-died or is
      unreachable, **don't block finalize on it**: the **git history and the comms log ARE the session's
      durable record**. Attempt a settle once; if the board's gone, say so on comms and move on.
