@@ -190,10 +190,36 @@ by the other party.** Not one was caught by its author re-reading their own prin
 → **The operative consequence for a team: seats are not redundancy, they are the mechanism.** A
 session's catch rate is a property of who is watching, not of what is written down — and the
 project's own record agrees: *"not one was caught by re-reading."*
-→ **And the honest corollary, which is uncomfortable: a solo agent holding this entire file is
-weaker than two agents holding half of it.** If you are working alone, the substitute is not more
-care — it is arranging for something that answers back. **A mutation, an execution, a control that
-can fail.**
+→ **⚠ AND THE FIRST DRAFT OF THIS ENTRY STOPPED AT *"so you need a peer"*, WHICH IS THE PERSONAL
+ACCOUNT WEARING SYSTEMS CLOTHING.** Corrected by the human the same night: *"there are no personal
+failures, only engineering failures — it is fair to critique the system, and some classes may still
+have a small engineering fix."* **He is right, and the split is measurable in this session's own
+record.**
+
+```
+guards EXECUTED against a deliberately broken world (mutation / perturbed input)  ->  0 wrong
+guards only REASONED about before publishing                                      ->  4 wrong
+```
+_Every mutation-verified artifact that night held — rotation, the pane-kill cells, the exit
+tripwire. Every one of the four bad controls was reasoned about and never run against a world where
+it should fail._
+
+**And the decisive counterexample is a SOLO catch: a nonexistent-owner probe (`--owner
+zzz-nobody-zzz`) cracked a bug two projects had misdiagnosed** — one agent, no peer, because the
+mechanism was applied. **So the deficit is not company. It is that the mechanism has no trigger.**
+
+→ **The buildable form, and it fires at a moment you always know you are in — publishing:**
+> **Before offering a measurement as EVIDENCE, name the value that would have falsified it. If you
+> cannot name one, you have an observation, not evidence — say which.**
+
+**Not *"be careful with controls"*, which requires recognising that this is a control and therefore
+fails exactly where it is needed.** The trigger is the act of publishing, and *"what would have
+falsified this?"* is one question with a written answer.
+
+→ **What a peer still buys, stated honestly rather than dropped:** the four catches above were real
+and none was self-caught **at the time**. A peer is not redundancy for the mechanism — it is what
+makes the mechanism cheap to apply against your own interest, and it catches the class where you did
+not notice a claim was being made at all. **Build the trigger; keep the peer.**
 
 **A BROKEN GUARD AND A WORKING GUARD RETURN THE SAME ANSWER ON A HEALTHY SYSTEM. THEY DIVERGE ONLY
 ON THE DAY THE THING BEING GUARDED BREAKS — WHICH IS THE DAY NOBODY IS WATCHING.**
