@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-05 (scope ratified — see Now)
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-07 (Cole ordered the triage first — see S13)
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -123,6 +123,34 @@ is discharged by argument.**
 # ▶ NEXT UP: **SESSION 13 — THE STORES STOP LYING**
 
 **Proposed by the session-12 lead, 2026-08-05, from that session's own outputs. Awaiting Cole's ratification.**
+
+> ### 🥇 COLE'S ORDERING CALL, 2026-08-07 — **THE TRIAGE GOES FIRST**
+>
+> Verbatim: _"triaging is probably what we should add as number one, just because it's pretty
+> straightforward, we can figure out what we're going to do with those issues."_
+>
+> **`S13-E` runs first. IDs are unchanged** — `plan.md` and this file both cite them, and renumbering
+> a table to express an ordering breaks every cross-reference to say nothing new. **The run order is
+> stated here; the IDs stay where they are.**
+>
+> **Partially discharged the same day.** Issues #88–#93 were triaged 2026-08-06 into
+> `docs/backlog/2026-08-06-*` (five items, each verified at source first). The three multi-item
+> aggregates — **#70, #73, #94** — were triaged 2026-08-07 into
+> [`reports/2026-08-07-feedback-triage-70-73-94.md`](reports/2026-08-07-feedback-triage-70-73-94.md):
+> **17 items, dispositions assigned, 3 of them needing a design call rather than a fix.**
+>
+> **⚠ What the triage did NOT do, and it is the half S13-E exists for: the board read-back is still
+> unfixed.** The triage above is the GitHub queue. The bounty board's 13 mis-stating `review` cards
+> and the `MOOT` class are the other half, and **triaging without fixing the read-back just re-does
+> the triage next session** — which is the original argument for pairing them and is unchanged.
+>
+> **Three items came out of the triage needing a convene decision, and two of them collide:**
+> **70·2** (finalize has no code-review beat) routes findings _"to the owning seat via the roster"_ —
+> but **73·2** establishes that a seat's `scope` is a free-text string nothing parses, and that
+> `seams.md` cannot represent an unowned seam at all. **So roster-routing mis-routes exactly the
+> findings that fall between seats.** Decide them in the same room. **94·main** (a `procedures.land`
+> config slot) is the third and is the strongest proposal in the queue — its argument holds, but
+> `gate`'s precedent resolves at **join**, and finalize has no resolver to hang it on.
 
 > **Why this scope and not a list of fixes:** session 12 found **three stores that disagreed with the tree inside ninety minutes** — the roadmap (4 stale claims, one of them its own row), the board (**13 of 27 `review` cards mis-stating the tree, ~48%**), and a carried card whose work was already landed. `principles.md` says **no store without a named re-read moment**; the board has a write trigger and **no read-back across sessions**, and it is the surface Cole's continuation condition is judged on.
 
