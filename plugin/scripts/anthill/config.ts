@@ -52,6 +52,14 @@ export interface TeamPaths {
   seams: string;
 }
 
+/** A single named procedure slot — a lifecycle hook the team defines. */
+export interface LandProcedure {
+  /** An executable command: anthill runs it and reads the exit code. */
+  check?: string;
+  /** A prose pointer (e.g. `AGENTS.md#landing-work`): anthill prints the section inline. */
+  doc?: string;
+}
+
 /** The on-disk shape, as parsed before defaults/validation (everything optional). */
 export interface RawTeamConfig {
   version?: number;
@@ -62,6 +70,9 @@ export interface RawTeamConfig {
   paths?: Partial<TeamPaths>;
   launch?: string;
   gate?: string;
+  procedures?: {
+    land?: Partial<LandProcedure>;
+  };
 }
 
 /** A fully-resolved config: defaults applied, helpers + path resolvers attached. */
@@ -85,6 +96,16 @@ export interface ResolvedConfig {
    * composition to the agent is what this exists to stop.
    */
   gate: string | undefined;
+  /**
+   * Lifecycle procedures the team defines and anthill resolves at the right
+   * moment. Each slot is a named hook with no default: anthill owns WHEN the
+   * moment happens; the team owns WHAT happens at it. An absent slot is
+   * ANNOUNCED, not silently skipped — exactly as `gate` does.
+   */
+  procedures: {
+    /** The landing policy: what to do when work is done and must LAND. */
+    land: LandProcedure | undefined;
+  };
   /** Directory containing `.anthill/` — the resolved project root. */
   projectRoot: string;
   /** Absolute path to the config file (when loaded from disk; "" for pure resolves). */
@@ -176,6 +197,29 @@ export function resolveConfig(
   if (raw.gate !== undefined && typeof raw.gate !== "string") {
     throw new ConfigError("config.gate must be a string");
   }
+  // Validate procedures — must be an object, `land` must be an object if present.
+  if (raw.procedures !== undefined) {
+    if (!isObject(raw.procedures)) {
+      throw new ConfigError("config.procedures must be an object");
+    }
+    if (raw.procedures.land !== undefined) {
+      if (!isObject(raw.procedures.land)) {
+        throw new ConfigError("config.procedures.land must be an object");
+      }
+      if (
+        raw.procedures.land.check !== undefined &&
+        typeof raw.procedures.land.check !== "string"
+      ) {
+        throw new ConfigError("config.procedures.land.check must be a string");
+      }
+      if (
+        raw.procedures.land.doc !== undefined &&
+        typeof raw.procedures.land.doc !== "string"
+      ) {
+        throw new ConfigError("config.procedures.land.doc must be a string");
+      }
+    }
+  }
 
   const seats = raw.seats.map((s, i) => validateSeat(s, i));
 
@@ -210,6 +254,26 @@ export function resolveConfig(
     // No default: a wrong gate is worse than a named absence, because an agent
     // that runs someone else's gate command gets a green that means nothing.
     gate: typeof raw.gate === "string" && raw.gate.trim() !== "" ? raw.gate : undefined,
+    // Resolve procedures — exactly the same pattern as gate: no default, blank
+    // strings become undefined, an absent slot is announced. prefer `check` over
+    // `doc`. both may be defined; the skill surfaces whichever is present.
+    procedures: {
+      land: (() => {
+        const rawProc = isObject(raw.procedures) ? raw.procedures : {};
+        const landRaw: unknown = isObject(rawProc.land) ? rawProc.land : undefined;
+        if (!isObject(landRaw)) return undefined;
+        const check =
+          typeof landRaw.check === "string" && landRaw.check.trim() !== ""
+            ? landRaw.check
+            : undefined;
+        const doc =
+          typeof landRaw.doc === "string" && landRaw.doc.trim() !== ""
+            ? landRaw.doc
+            : undefined;
+        if (!check && !doc) return undefined;
+        return { check, doc };
+      })(),
+    },
     projectRoot,
     configPath: ctx.configPath ?? "",
 

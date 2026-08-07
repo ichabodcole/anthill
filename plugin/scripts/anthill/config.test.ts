@@ -104,6 +104,11 @@ describe("resolveConfig — minimal fixture applies defaults", () => {
     expect(cfg.version).toBe(1);
   });
 
+  test("gate + procedures are undefined by default", () => {
+    expect(cfg.gate).toBeUndefined();
+    expect(cfg.procedures.land).toBeUndefined();
+  });
+
   test("lead derived from the role:lead seat when no explicit lead", () => {
     expect(cfg.lead).toBe("lead-ant");
   });
@@ -156,6 +161,133 @@ describe("resolveConfig — validation errors", () => {
         { projectRoot: ROOT },
       ),
     ).toThrow(/duplicate seat handle/);
+  });
+});
+
+describe("resolveConfig — procedures.land", () => {
+  test("procedures with land.check resolves", () => {
+    const cfg = resolveConfig(
+      {
+        ...MINIMAL_CONFIG,
+        procedures: { land: { check: "bun run land-check" } },
+      },
+      { projectRoot: ROOT },
+    );
+    expect(cfg.procedures.land).not.toBeUndefined();
+    expect(cfg.procedures.land!.check).toBe("bun run land-check");
+    expect(cfg.procedures.land!.doc).toBeUndefined();
+  });
+
+  test("procedures with land.doc resolves", () => {
+    const cfg = resolveConfig(
+      {
+        ...MINIMAL_CONFIG,
+        procedures: { land: { doc: "AGENTS.md#landing-work" } },
+      },
+      { projectRoot: ROOT },
+    );
+    expect(cfg.procedures.land).not.toBeUndefined();
+    expect(cfg.procedures.land!.doc).toBe("AGENTS.md#landing-work");
+    expect(cfg.procedures.land!.check).toBeUndefined();
+  });
+
+  test("procedures with both land.check and land.doc resolves", () => {
+    const cfg = resolveConfig(
+      {
+        ...MINIMAL_CONFIG,
+        procedures: { land: { check: "bun run land-check", doc: "AGENTS.md#landing-work" } },
+      },
+      { projectRoot: ROOT },
+    );
+    expect(cfg.procedures.land).not.toBeUndefined();
+    expect(cfg.procedures.land!.check).toBe("bun run land-check");
+    expect(cfg.procedures.land!.doc).toBe("AGENTS.md#landing-work");
+  });
+
+  test("procedures with blank land.check resolves to undefined", () => {
+    const cfg = resolveConfig(
+      {
+        ...MINIMAL_CONFIG,
+        procedures: { land: { check: "   " } },
+      },
+      { projectRoot: ROOT },
+    );
+    expect(cfg.procedures.land).toBeUndefined();
+  });
+
+  test("procedures with blank land.doc resolves to undefined", () => {
+    const cfg = resolveConfig(
+      {
+        ...MINIMAL_CONFIG,
+        procedures: { land: { doc: "" } },
+      },
+      { projectRoot: ROOT },
+    );
+    expect(cfg.procedures.land).toBeUndefined();
+  });
+
+  test("procedures with empty land object resolves to undefined", () => {
+    const cfg = resolveConfig(
+      {
+        ...MINIMAL_CONFIG,
+        procedures: { land: {} },
+      },
+      { projectRoot: ROOT },
+    );
+    expect(cfg.procedures.land).toBeUndefined();
+  });
+
+  test("procedures absent resolves land as undefined", () => {
+    const cfg = resolveConfig(MINIMAL_CONFIG, { projectRoot: ROOT });
+    expect(cfg.procedures.land).toBeUndefined();
+    expect(cfg.procedures).not.toBeUndefined();
+  });
+
+  test("procedures with empty procedures object resolves land as undefined", () => {
+    const cfg = resolveConfig(
+      {
+        ...MINIMAL_CONFIG,
+        procedures: {},
+      },
+      { projectRoot: ROOT },
+    );
+    expect(cfg.procedures.land).toBeUndefined();
+  });
+
+  test("procedures must be an object", () => {
+    expect(() =>
+      resolveConfig(
+        { ...MINIMAL_CONFIG, procedures: "nope" },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/procedures must be an object/);
+  });
+
+  test("procedures.land must be an object", () => {
+    expect(() =>
+      resolveConfig(
+        { ...MINIMAL_CONFIG, procedures: { land: "nope" } },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/procedures\.land must be an object/);
+  });
+
+  test("procedures.land.check must be a string", () => {
+    expect(() =>
+      resolveConfig(
+        { ...MINIMAL_CONFIG, procedures: { land: { check: 42 } } },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/procedures\.land\.check must be a string/);
+  });
+
+  test("procedures.land.doc must be a string", () => {
+    expect(() =>
+      resolveConfig(
+        { ...MINIMAL_CONFIG, procedures: { land: { doc: true } } },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/procedures\.land\.doc must be a string/);
   });
 });
 
