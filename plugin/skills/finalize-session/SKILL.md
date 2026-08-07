@@ -487,11 +487,21 @@ nobody has scoped is a horizon in name only.
        no command, no next convene, and it is gitignored, so it does not survive a clone either.
        Per the standing principle, **a decision that must outlive the session belongs in an artifact**
        — and the wire's durability is precisely what makes that easy to forget.
-   - ◻ **Human sign-off before the code branch merges to `develop`.** Green tests and a checked-off
-     board are the team's _own_ signals — but the human's look (UI bugs, the feel, feedback) is a gate
-     the team **cannot run itself**. Get an explicit "yes, merge it" before you land the feature branch
-     to `develop`; the knowledge ritual above is separate from and precedes this code merge. Don't let
-     momentum merge it unseen.
+    - ◻ **Landing procedure resolved and shown.** Read `config.procedures.land` from
+      `.anthill/config.json`. If absent: announce _"This project defines no landing procedure; anthill
+      will not choose one."_ and note this in the handoff. If present with a `check` command: run it,
+      print its full output, and report the exit code to the human. If present with a `doc` pointer
+      (e.g. `AGENTS.md#landing-work`): resolve the pointer — find and quote that section's content
+      inline — so the human does not need a second lookup. **Prefer `check` over `doc`**: an
+      executable check either runs or errors, while a doc anchor rots silently when the heading is
+      renamed. An absent value is ANNOUNCED, not silently skipped — exactly as `gate` does. This slot
+      is the moment where anthill owns _when_ and the team owns _what_: the tool surfaces the check
+      and the prose at the right beat; it never chooses a default landing action.
+    - ◻ **Human sign-off before the code branch merges to `develop`.** Green tests and a checked-off
+      board are the team's _own_ signals — but the human's look (UI bugs, the feel, feedback) is a gate
+      the team **cannot run itself**. Get an explicit "yes, merge it" before you land the feature branch
+      to `develop`; the knowledge ritual above is separate from and precedes this code merge. Don't let
+      momentum merge it unseen.
    - ◻ **Tear down:** **`anthill down`** — the session is named after the **channel**
      (`config.channel`) by default, so it resolves with no arguments. It **refuses to kill while seats
      are still present on the channel** (pass `--force` to override) — that presence guard is your
