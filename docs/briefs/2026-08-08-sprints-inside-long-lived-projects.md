@@ -102,6 +102,65 @@ natural move is:
 
 That gets the structure without a migration, and it tests it on an arc whose shape we already know.
 
+## Where this actually sits: we are at the edge of `project-docs`, not working around it
+
+**Cole's framing, and it is the right one:** the pain is not that we are doing something wrong. It is
+that **we have reached the limit of what `project-docs` was designed for**, and the honest response is
+to author the content ourselves and feed the gap back — not to contort the work to fit.
+
+### The gap, stated precisely
+
+`project-docs@3.2.0`'s unit hierarchy is **project → `proposal.md` → `plan.md` → `sessions/`.**
+`/usr/bin/grep -rn "sprint" skills/create-project/SKILL.md` returns **nothing**; the word does not
+appear.
+
+**`sessions/` is a LOG, not a unit of work.** It records what happened; it does not scope what will
+happen. So **`plan.md` is the only mutable doc that spans sessions** — which means every "what's next"
+pressure in a multi-session arc lands on it, and it gets rewritten. **That is the whole mechanism, and
+it is structural rather than a discipline failure.**
+
+> **The missing unit is a scope for a GROUP of sessions** — ratified up front, closed once, never
+> re-opened. Between `plan.md` and `sessions/` there is nothing.
+
+### 🎯 The pattern to follow already exists in that plugin, and it works
+
+**`finalize-branch@3.2.0` does exactly the thing we want, for landing:** it looks for a
+`## Branch Landing Policy` heading in `AGENTS.md`/`CLAUDE.md` and **defers to whatever the project
+says** — squash, consolidate, or leave history untouched. 3.0.0 hard-coded a squash; 3.2.0 asks.
+
+**That is a touch point with project-supplied content, shipped, and we are already using it** —
+`AGENTS.md:57` is the answer it reads. **So the ask for sprints is not novel; it is the same move one
+concept over**, and there is a working precedent in the same plugin to point at.
+
+### So the split for us
+
+| layer                                                                                           | who supplies it                                                      |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **The touch point** — _"this arc is at a boundary; does the next chunk need its own plan?"_     | `project-docs` (eventually), `anthill:finalize-session` (for a team) |
+| **The content** — sprint folders, the status vocabulary, `CARRY-FORWARD`, the immutability rule | **us, in `AGENTS.md` or a `docs/` convention doc**                   |
+
+**We author it locally now, deliberately, and that is not a stopgap** — it is the same doctrine anthill
+already lives by, applied one level up. **What we learn becomes the feedback**, and `project-docs` ships
+a [`provide-feedback`](https://github.com/) skill for exactly that.
+
+### What to send back, once we have run it once
+
+Not _"add sprints"_ — that would dictate a shape, which is the mistake we are trying to avoid. Send:
+
+1. **The gap as a mechanism**, not a feature request: _`plan.md` is the only mutable doc spanning
+   sessions, so all forward pressure lands there and it gets rewritten._
+2. **The evidence** — our `S13-A…N` (sprint numbering with no sprint, plus a recorded ID collision) and
+   `comms-as-default/plan.md`'s mutable `NEXT PHASE` section.
+3. **The precedent** — the landing-policy touch point in `finalize-branch@3.2.0`, and the suggestion
+   that a plan-boundary touch point take the same shape.
+4. ⚠ **What we did NOT solve**, honestly: their sprint 03 shipped without an `outcome.md` and their
+   README claimed "awaiting ratify" a day later. **A touch point that asks the question does not close
+   the sprint.** Whoever designs this needs the close beat, and we will not know if ours works until we
+   have run at least two.
+
+**Hold the feedback until we have run it.** A convention proposed from one reading is a rule that has
+not met real data — `principles.md`: _a rule is a claim; run it over real data before adopting it._
+
 ## Open questions for Cole
 
 - ◻ **Which projects get sprints?** All of `docs/projects/`, or only arcs that outlive a session? A
