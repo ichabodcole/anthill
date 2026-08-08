@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-07 (Cole ordered the triage first — see S13; upstream-to-spellbook section reconciled against the installed 2.0.0)
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-08 (spellbook 2.1.0 landed D1.3 — **S13-N's trigger has fired**; and **7 new feedback issues, #96–#102, are UNTRIAGED**)
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -152,6 +152,12 @@ is discharged by argument.**
 > read-back is now an ordinary build rather than a build on a substrate that could lie about what it
 > handed back.
 >
+> **🆕 AND THE QUEUE REFILLED. Seven new feedback issues — `#96`–`#102`, all filed 2026-08-08 by the
+> Spellbook team — are UNTRIAGED.** _The 2026-08-07 triage discharged the GitHub half of S13-E and the
+> queue was empty of rulings for **one day.** That is the measurement this criterion was always about:
+> **triage is a recurring beat, not a task that completes** — which is exactly why S13-E pairs it with
+> a read-back instead of treating "the queue is clear" as a finish line._
+>
 > **Three items came out of the triage needing a convene decision, and two of them collide:**
 > **70·2** (finalize has no code-review beat) routes findings _"to the owning seat via the roster"_ —
 > but **73·2** establishes that a seat's `scope` is a free-text string nothing parses, and that
@@ -179,13 +185,13 @@ is discharged by argument.**
 
 ### 🔴 Added after session 12 closed — a CI-only red on `develop`, found by Cole, fixed at `484f9da`
 
-| #         | item                                                                                       | why                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| --------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **S13-J** | **`team-down.command-path.test.ts` must not leave a global `team-support` stub installed** | The criterion-2 spawn-set pin went red **in CI only** because that file installs `mock.module("./team-support.ts")` with a `requireConfig` stub lacking `paths`/`lead`, and it survives into later files. **`484f9da` immunised ONE consumer; the trap is still armed for every other file that imports `requireConfig`** — and it presents as an unrelated CI-only failure. _Two facts established the hard way and worth not re-deriving: **bun loads and runs test files PER FILE**, so a load-time capture does not predate a stub installed by an earlier file's test body; and **`mock.module` MERGES rather than replacing wholesale** — proven by the failure reaching `team-convene.ts:181`, past a `readBoardCounts()` the stub never defined. The file's own comment claiming "replaces the module WHOLESALE" is **wrong and should be corrected.**_ |
-| **S13-L** | **Reconcile the 5 unowned cards whose titles name a seat**                                 | spellbook#81 root-caused a parser bug where `add --owner=<name>` **stores no owner and returns `ok:true`**. Our board: **19 title-names-a-seat cards have an owner, 5 do not, 0 mismatch.** _The mechanism is UNPROVEN — those `add` calls ran in agent panes, and `grep -rn -- "--owner="` over the tree returns nothing but a doc string. Reconcile the 5 from their titles; **do not record it as confirmation of spellbook's bug**, because we cannot show it was the cause._                                                                                                                                                                                                                                                                                                                                                                               |
-| **S13-M** | **anthill is CLEAN on spellbook#81's class — keep it that way with a test**                | Verified live: `--as=zzz-not-a-seat` is **refused naming the bogus value** (so the `=` form genuinely parses), and an unknown flag is refused at parser altitude across 21 commands. **Nothing pins the `=` form specifically.** A single cell (`--flag=value` reaches the validator) costs nothing and stops a future `define.ts` change from re-opening a defect we have only ever verified by hand                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| **S13-N** | **Delete `boardShadowWarning` if spellbook's D1.3 lands — do not improve it**              | It reconstructs from two reads and a subtraction a fact `bounty open` knows first-hand, **and it cannot distinguish the two worlds it fires in**: respawn-empty over an intact snapshot (recover, do not close) vs `close` already clobbered it (stop). Opposite actions, identical signal from outside. **Horizon: contingent on spellbook#64/#73's D1.3.** If it turns out it CANNOT be deleted, that is evidence their envelope says too little — report it rather than quietly keeping ours                                                                                                                                                                                                                                                                                                                                                                 |
-| **S13-K** | **Decide, deliberately, that a feature branch gets NO CI until a PR exists**               | `.github/workflows/ci.yml` fires `push` on `[main, develop]` only. **Session 12 ran 45 commits with zero CI signal**, and _"the branch was green all session"_ was never a claim anyone could have made. The merge-result gate does not cover it either — **the merge result is green on darwin too.** Not obviously a defect (it is a real cost saving); it is a **gap in how this project verifies work**, and it should be chosen rather than rediscovered.                                                                                                                                                                                                                                                                                                                                                                                                  |
+| #         | item                                                                                                                                                                                                                                                                                                                                                   | why                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **S13-J** | **`team-down.command-path.test.ts` must not leave a global `team-support` stub installed**                                                                                                                                                                                                                                                             | The criterion-2 spawn-set pin went red **in CI only** because that file installs `mock.module("./team-support.ts")` with a `requireConfig` stub lacking `paths`/`lead`, and it survives into later files. **`484f9da` immunised ONE consumer; the trap is still armed for every other file that imports `requireConfig`** — and it presents as an unrelated CI-only failure. _Two facts established the hard way and worth not re-deriving: **bun loads and runs test files PER FILE**, so a load-time capture does not predate a stub installed by an earlier file's test body; and **`mock.module` MERGES rather than replacing wholesale** — proven by the failure reaching `team-convene.ts:181`, past a `readBoardCounts()` the stub never defined. The file's own comment claiming "replaces the module WHOLESALE" is **wrong and should be corrected.**_ |
+| **S13-L** | **Reconcile the 5 unowned cards whose titles name a seat**                                                                                                                                                                                                                                                                                             | spellbook#81 root-caused a parser bug where `add --owner=<name>` **stores no owner and returns `ok:true`**. Our board: **19 title-names-a-seat cards have an owner, 5 do not, 0 mismatch.** _The mechanism is UNPROVEN — those `add` calls ran in agent panes, and `grep -rn -- "--owner="` over the tree returns nothing but a doc string. Reconcile the 5 from their titles; **do not record it as confirmation of spellbook's bug**, because we cannot show it was the cause._                                                                                                                                                                                                                                                                                                                                                                               |
+| **S13-M** | **anthill is CLEAN on spellbook#81's class — keep it that way with a test**                                                                                                                                                                                                                                                                            | Verified live: `--as=zzz-not-a-seat` is **refused naming the bogus value** (so the `=` form genuinely parses), and an unknown flag is refused at parser altitude across 21 commands. **Nothing pins the `=` form specifically.** A single cell (`--flag=value` reaches the validator) costs nothing and stops a future `define.ts` change from re-opening a defect we have only ever verified by hand                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **S13-N** | **🚨 TRIGGER FIRED 2026-08-08 — D1.3 landed in `spellbook-v2.1.0`. Now a DECISION (Cole's), and the live proposal is RE-SCOPE rather than delete — merge with `70·1 / 73·4`. See the upstream section below for the three facts that changed.** _Original text follows._ **Delete `boardShadowWarning` if spellbook's D1.3 lands — do not improve it** | It reconstructs from two reads and a subtraction a fact `bounty open` knows first-hand, **and it cannot distinguish the two worlds it fires in**: respawn-empty over an intact snapshot (recover, do not close) vs `close` already clobbered it (stop). Opposite actions, identical signal from outside. **Horizon: contingent on spellbook#64/#73's D1.3.** If it turns out it CANNOT be deleted, that is evidence their envelope says too little — report it rather than quietly keeping ours                                                                                                                                                                                                                                                                                                                                                                 |
+| **S13-K** | **Decide, deliberately, that a feature branch gets NO CI until a PR exists**                                                                                                                                                                                                                                                                           | `.github/workflows/ci.yml` fires `push` on `[main, develop]` only. **Session 12 ran 45 commits with zero CI signal**, and _"the branch was green all session"_ was never a claim anyone could have made. The merge-result gate does not cover it either — **the merge result is green on darwin too.** Not obviously a defect (it is a real cost saving); it is a **gap in how this project verifies work**, and it should be chosen rather than rediscovered.                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 > **⚠ THE LOCAL GATE IS NOT A PROXY FOR CI, AND THIS IS THE MEASUREMENT: `bun run check` was green on darwin across the whole of session 12, through a 45-commit branch, a merge, and TWO failing CI runs.** It went green again after the first repair, **which CI then rejected.** _A green whose failing case lives on another OS is a green that cannot come out differently — `principles.md`'s control rule, arriving on the gate itself._
 > **⚠ THE `comms send` ITEM NO LONGER NEEDS A RULING, AND THE REASON IS WORTH KEEPING.** It was flagged _"needs a design call — it couples the tool to a prose convention"_ **only while the proposed fix was parsing the body.** Reading the storage layer showed the duplication is the tool's own doing — and **a shape filter over prose is the exact discriminator this team killed in the same session** (an all-digit sha defeats a digits-only exclusion). **The design call dissolved when someone read the record instead of arguing about the parser.**
@@ -204,7 +210,7 @@ is discharged by argument.**
 - **`bun run check` reads ZERO markdown** — **fourth session running.** The prose lane has no automated verification at all, and _"gate green" on a markdown land means the tree compiles._
 - **The whole-tree gate serialises a lane that cannot cause a red** — weaver blocked **3× in one session** on a markdown lane. → **[`shared-tree-gate-tension`](projects/shared-tree-gate-tension/proposal.md) move C**, now with first-person field evidence **and** a reproduced false-`uncheckedAgainst` beside it. **Decide at a convene; it is a tree-model question, not a fix.**
 
-## Upstream to spellbook — ✅ ALL THREE WERE SENT, AND ALL THREE ARE FIXED IN SPELLBOOK 2.0.0
+## Upstream to spellbook — ✅ ALL THREE WERE SENT AND FIXED (2.0.0), AND 🚨 **D1.3 LANDED IN 2.1.0**
 
 > This section read **"deduped, drafted, NOT yet sent"** until 2026-08-07, and every item in it had
 > already been filed AND closed. **It is corrected rather than deleted** — a router that describes
@@ -222,23 +228,66 @@ is discharged by argument.**
   through `node:util` strict against a **22-flag recognized set**, so unknown flags are refused at
   parser altitude
 
-### ⚠ What 2.0.0 did NOT bring, and two compatibility facts that were verified rather than assumed
+### 🚨 D1.3 LANDED THE NEXT DAY — `spellbook-v2.1.0`, 2026-08-08. **S13-N's trigger has FIRED.**
 
-**`D1.3` did NOT land, so `S13-N` still holds — do not delete `boardShadowWarning`.** Established two
-independent ways: [spellbook#64](https://github.com/ichabodcole/spellbook/issues/64),
-[#73](https://github.com/ichabodcole/spellbook/issues/73) and
-[#74](https://github.com/ichabodcole/spellbook/issues/74) are **still open**, **and** the diff of
-`bounty/scripts/server.ts` between 1.16.0 and 2.0.0 is **35 lines touching only `task.add`'s error
-text** — nothing anywhere in the snapshot / restore / close path.
+> _This block said **"`D1.3` did NOT land"** for **one day.** It was true when written and checked two
+> independent ways. **A dependency's state is not a fact you can cache** — and this is the shortest
+> staleness interval this file has ever recorded, which is the argument for the as-of, not against it._
 
-- **The bounty event vocabulary is UNCHANGED** — still dotted (`task.add`, `task.move`, …), still no
-  bare `task`. So the fix in
+[spellbook#73](https://github.com/ichabodcole/spellbook/issues/73) and
+[#74](https://github.com/ichabodcole/spellbook/issues/74) are **closed and fixed** (`88a298f`).
+`saveSnapshot()` now rotates the on-disk file aside — to `<id>.pre-<ts>.bak.json` — before the **first
+shrinking write of each daemon's life**, and `GET /state` returns
+`snapshotBackedUp: { path, taskCount, reason } | null`, **present-and-null, never absent**.
+
+**⚠ `S13-N` IS NOW A DECISION, NOT A DEPENDENCY — and it is Cole's, not the lead's.** Their close
+comment hands it back explicitly: _"the two worlds it could not distinguish no longer require opposite
+actions… Whether that is sufficient to retire the guard is anthill's call, not ours."_ **S13-N's stated
+rationale for deletion has dissolved; the guard's independent justification has not.** Three facts
+have to be weighed together and none of them was in evidence when S13-N was written:
+
+1. **Rotation is write-side and after the fact — our guard is read-side and before it.** _The empty
+   write still happens; the data is recoverable, not preserved._ `boardShadowWarning` fires at attach,
+   ahead of the destructive action.
+2. **Their own #74 comment argues our guard has value they lack** — _"anthill implements exactly this
+   warning in `convene`, and it works; **it protected nobody here because the call went to `bounty`
+   directly.** A guard reachable only through one caller protects only that caller."_
+3. **Recovery is now possible and NON-OBVIOUS, which changes the guard's JOB rather than removing it.**
+   Backups are deliberately unbounded, so _**recover from the backup with the highest `taskCount`, not
+   the newest timestamp**_ — a second boot-empty-then-close cycle writes a newer, empty `.bak.json`
+   beside the good one. **Any runbook saying "restore the latest backup" is now a trap.**
+
+**So the live proposal is RE-SCOPE, not delete** — re-site the guard's input onto `/state`'s
+`snapshotBackedUp` (which is the first-hand fact S13-N complained we were reconstructing from two reads
+and a subtraction) and make its message name the recovery. **That merges S13-N with `70·1 / 73·4`,**
+whose whole point was that the guard names a hazard and not its recovery procedure. _Decide it in one
+room; do not delete on the trigger alone._
+
+### What 2.1.0 did NOT bring, and what it changes for work already queued
+
+- **[spellbook#64](https://github.com/ichabodcole/spellbook/issues/64) STAYS OPEN, deliberately.**
+  `idleTimeout: 255` ships as a **probable root cause, explicitly not claimed as a fix** — Bun's default
+  10s request idleTimeout severs the SSE connection five seconds before the 15s heartbeat is due, so
+  `subscriberCount` falls to 0 and the board idle-closes _because_ its keep-alive died. **They asked us
+  for the measurement by name:** run a real multi-hour session with a keep-alive tail on 2.1.0 and
+  report whether the daemon survives. **A convened session IS that workload — we get this evidence for
+  free at the next convene, and we should claim the beat before the session, not after.**
+- 🔴 **THE BOARD-TAIL FIX NEEDS AN AMENDMENT.** 2.1.0 adds a **new event type — `snapshotBackedUp` —
+  and it is BARE-TYPED, not dotted.** The pattern queued in
   [`backlog/2026-08-06-board-tail-filter-matches-no-task-event.md`](backlog/2026-08-06-board-tail-filter-matches-no-task-event.md)
-  is unaffected by the upgrade and remains the one queued item buildable end-to-end.
-- **#81's stricter parser does not break us.** Every bounty flag anthill passes — `--as`, `--mine`,
-  `--pin`, `--session`, `--status` — is in the new recognized set. _This was worth checking because
-  the fix converts a silent accept into a refusal: had we been passing a flag they dropped, the
-  board integration would now fail loudly rather than quietly._
+  is `'"type":"(task\.[a-z]+|unblocked|closed)"'`, which **does not match it** — and it is arguably the
+  single most important frame a lead could receive. _The item was written against a vocabulary that has
+  since grown, which is the general case: **an alternation over someone else's enum is a claim with an
+  as-of.**_
+- **`anthill#43`'s destroy half is now fixed upstream** — re-triage our half (convene's idempotent
+  board re-open) rather than carrying it as blocked.
+- **Doc lag they filed against themselves:** `bounty/SKILL.md` still documents `/state` as
+  `{ state, cursor }` in three places and never mentions `snapshotBackedUp`. **The field ships; the
+  agent-facing reference does not describe it.** Anything we build against it is building ahead of
+  their docs, on purpose.
+- **#81's stricter parser still does not break us.** Every bounty flag anthill passes — `--as`,
+  `--mine`, `--pin`, `--session`, `--status` — is in the recognized set. _Worth having checked: the fix
+  converts a silent accept into a refusal, so a flag they dropped would now fail loudly._
 
 ---
 
