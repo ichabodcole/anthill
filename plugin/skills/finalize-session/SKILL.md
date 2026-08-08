@@ -492,6 +492,29 @@ nobody has scoped is a horizon in name only.
      the team **cannot run itself**. Get an explicit "yes, merge it" before you land the feature branch
      to `develop`; the knowledge ritual above is separate from and precedes this code merge. Don't let
      momentum merge it unseen.
+   - ◻ **🔴 THE CODE MERGE IS A SEPARATE RITUAL, AND THIS ONE DOES NOT PERFORM IT — run the project's
+     own branch-completion procedure.** Everything above is the **knowledge** ritual. **Code review,
+     the quality gate, session docs and the merge strategy are a different job with a different
+     checklist**, and this skill covers none of them.
+     - **The project names that procedure, not anthill** — take it from the grounding docs
+       (`AGENTS.md` and friends) or the project's own skills. **Do not hard-code one here:** a landing
+       procedure is a host convention, and a consuming repo may not have the plugin yours does. _The
+       skill supplies the trigger; the project supplies the content._
+     - **⚠ IF THE PROJECT HAS A BRANCH LANDING POLICY, IT IS A CLAIM THAT SOMETHING RUNS IT.** A policy
+       that lives only as a sentence is a **situational prose guard**, and this ritual's own record has
+       those going **0-for-4** — it holds exactly as long as whoever merges happens to have read it.
+       **Ask what would go red if someone merged the other way. If the answer is "nothing", say so to
+       the human rather than trusting the sentence.**
+     - **Two traps that have produced real damage, neither of which any gate catches:**
+       **`git merge -m "<subject>" -F <body>` concatenates with NO blank line**, so the whole first
+       paragraph becomes the subject (measured: a 251-character subject that broke `git log --merges`).
+       Use **one file** — subject, blank line, body — and read it back with
+       `git log -1 --format='%s' | wc -c`.
+       And **run the gate UNPIPED**: `bun test | tail` reports **`tail`'s** exit status, which is
+       always `0`. Redirect to a file and read `$?`.
+     - **This beat exists because a session ran the whole knowledge ritual, tore down cleanly, and then
+       merged by hand with no procedure at all — and nothing anywhere prompted otherwise.** The gap was
+       not that anyone forgot; **it was that the ritual ended and nothing named what came next.**
    - ◻ **Tear down:** **`anthill down`** — the session is named after the **channel**
      (`config.channel`) by default, so it resolves with no arguments. It **refuses to kill while seats
      are still present on the channel** (pass `--force` to override) — that presence guard is your
