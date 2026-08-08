@@ -16,7 +16,7 @@ Criterion 7 was **half discharged** at session start: the GitHub half was done t
 **board read-back was untouched.** The handoff described the untouched half as _"the 13 mis-stating
 `review` cards and the missing `MOOT` class."_
 
-### Half A — the mechanism (forager) ✅ LANDED, ⬜ VERIFICATION PENDING
+### Half A — the mechanism (forager) ✅ LANDED · ✅ VERIFIED
 
 **`f8a7bd8` — every seat re-reads its own `review` cards at join.**
 
@@ -28,9 +28,11 @@ because the notes describe the world when the card was filed._
 - **`+9 measured, 9 enumerated, no residue`**, run in an isolated `git archive` copy rather than the
   working tree (an earlier `+7` off the dirty tree included two peers' uncommitted files and was
   withdrawn before publication).
-- **⬜ sentinel's verification is the open item**, pulled in at the verification point rather than at
-  teardown. The question that matters: **is the read-back capable of failing?** A read-back that
-  emits a list on a healthy board is indistinguishable from one that emits unconditionally.
+- **✅ sentinel verified it by EXECUTION on both paths** — verdict _"ready to land"_ — and
+  independently reconciled the `+9 / 9` in its own isolated copies. **Its bound is kept rather than
+  dropped:** two isolated copies of the same two commits is _the same method run twice by different
+  people_, which rules out one person's error and not the method's. **That is a stronger sentence
+  than "confirmed" and it is the one on the record.**
 
 ### Half B — the triage (steward) ✅ DONE
 
@@ -112,10 +114,22 @@ indistinguishable from one that was met.**
 
 ## What this session did NOT do, stated so absence is readable
 
-- ⬜ **sentinel's verification of the read-back** — open at the time of writing.
-- ⬜ **The read-back's own prose understates the defect 2×** (`team-join.ts:287`, `:391` still cite
-  _"13 of 27 (~48%)"_). **Ruled: the stale figure does not ship.** The form is forager's — a fresh
-  count rots identically, so an assertion that survives both measurements is preferred.
+> **⚠ THIS SECTION WENT STALE WITHIN THE HOUR, IN THE DOCUMENT ABOUT STORES THAT GO STALE.** Both
+> items below were open when written and closed before the next land. **Struck rather than deleted**,
+> because a list that quietly loses its rows is indistinguishable from one that never had them — which
+> is the defect the whole document is about, arriving in the document itself.
+
+- ~~⬜ sentinel's verification of the read-back~~ → ✅ **DONE**, by execution on both paths.
+- ~~⬜ the read-back's prose still cites the rotted rate~~ → ✅ **FIXED at `85988b1`, and better than
+  ruled.** I offered three forms and argued for an assertion **on staleness grounds**; forager took it
+  on a stronger one — **this prose ships to every consuming project, and our audit rate is a fact about
+  THIS team's board.** Asserting it at another team's seats is Contract 5(b)'s local-truth-as-general
+  on the largest surface we ship. **That argument survives the number being right; mine only worked
+  while it was wrong.** He also found a **third** site neither I nor sentinel had listed, by grepping
+  the scope instead of fixing the two he was handed — and **kept** the `_Scar:` line in
+  `field-notes.md`, correctly, since a scar is a record of what used to be true.
+  **sentinel verified it with the control that matters: the MEASUREMENT is gone and the CLAIM is
+  kept** — a fix that deleted the sentence along with the number would have grepped identically clean.
 - ⬜ **The convene pure builder** is still owed. sentinel's K1 guard reads `team-convene.ts` as
   **source text** and its own header says it _"must never be recorded as 'leadStandDown is
   covered.'"_ It is a stopgap and is labelled as one.
