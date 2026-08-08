@@ -27,22 +27,45 @@ independent findings in one day all turned on exactly that.
 | 3   | **The lead's `comms stand-down`** ([#96](https://github.com/ichabodcole/anthill/issues/96))                 | `join` **emits** the departure verb into a manifest the seat keeps; `convene` states it in a skill. Our own count: _"join's emitted manifest has worked in every session while prose guards went **0-for-4**."_                                                         |
 | 4   | **`uncheckedAgainst` vs the red-side diagnostic** ([#97](https://github.com/ichabodcole/anthill/issues/97)) | Same information, same helper, opposite sign — but the green side is a **total typed field** and the red side is **prose interpolated into an error string** (`team-commit.ts:474-487`, because `emitError` has no `data` slot). **Only one of them survives a pipe.**  |
 
-### The fifth instance arrived in the substrate we were discussing it over
+### 🔴 RETRACTED — I filed a "fifth instance" without checking whether the absence was ambiguous
 
-`spellwright`, warning us that Cole was about to roll the grapevine daemon out from under our tail:
+**The claim I made:** that `spellwright`'s parting line — _"a dropped tail and a quiet channel look
+identical from your side"_ — was a fifth instance, that _"the substrate has no frame for it,"_ and
+that the heads-up was _"the resolution… an out-of-band human-mediated message."_
 
-> **_"A dropped tail and a quiet channel look identical from your side."_**
+**Checked after Cole asked me to justify it. It is wrong, and the check was one command.**
 
-**This is the cleanest instance in the set, because nothing is broken.** The channel behaves
-correctly, the daemon behaves correctly, and the consumer still cannot distinguish _"nobody is
-talking"_ from _"I am no longer connected."_ There is no documentation gap and no missing feature —
-**the absence is simply ambiguous, and the surface that would disambiguate it is `tail`'s
-`: grapevine-keepalive` tick, which rides stderr.** Terminal-only, by design, for a signal whose
-absence is not transient at all.
+- **The tail auto-reconnects across a daemon roll.** `grapevine/scripts/cli.ts:648-700`, `:791-792`:
+  exponential backoff from 250ms, **resume from `highestSeen` so no messages are lost across
+  reconnects**, and `roll`/`restart` both say so in their own refusal text (`:1126`, `:1302`).
+- **There IS a frame** — `# stream dropped: <reason>, reconnecting…` (`:695`), plus
+  `# stream closed, reconnecting…` (`:700`).
+- **And it demonstrably worked.** After the roll, the daemon is `2.1.0` on a new pid, and
+  `who anthill-spellbook-r2` still lists `anthill-mercer`. **Nothing dropped, nothing was lost, and
+  the substrate handled it.**
 
-**And the resolution was an out-of-band human-mediated message.** They sent prose because the
-substrate has no frame for it — which is [`#99`'s session anchor](https://github.com/ichabodcole/anthill/issues/99)
-one layer down: _a correct prohibition with no supported affirmative._
+**So the heads-up was a courtesy, not a resolution** — there was nothing to resolve. It was insurance
+against a failure that did not occur, which is a generous thing to send and not evidence of a gap.
+
+**And the `#99` analogy was decorative and false.** _"A correct prohibition with no supported
+affirmative"_ requires a prohibition. There is none anywhere in this situation. I reached for a shape
+because it sounded like one.
+
+**What actually survives is much smaller, and it is about MY consumer configuration, not the
+substrate:** the reconnect notice rides **stderr**, and the Monitor pattern the skill recommends —
+and that I used — filters **stdout** for `"from"`. So a reconnect is invisible _to a consumer wired
+the documented way_. That is a real but minor observation about the recommended pattern. It is not an
+ambiguous-absence instance, because the absence resolves itself in 250ms and loses nothing.
+
+> **⛔ Keep this retraction. It is the sharpest self-inflicted example in the whole set:** I took a
+> collaborator's vivid one-liner as data and built a principle instance on it — **inside a document
+> arguing that claims must be run rather than read**, on the same afternoon two of us shipped broken
+> instruments for the same reason. **The rate does not spare the person writing about the rate.**
+> Caught by Cole asking _"is that a conclusion that got jumped to?"_ — which is
+> [the no-stake reader](2026-08-08-the-no-stake-reader.md) arriving as a human, and the cheapest
+> instance of it yet.
+
+_The four instances below are unaffected — each was verified against code or a measured artifact._
 
 ## Why it is a principle and not a habit
 
