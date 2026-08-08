@@ -22,7 +22,7 @@ the report before building any of these.
 | item                 | what to do                                                                                                                                                                                                                                                                                 | the sharp bit                                                                                                                                                                                                                                                                                            |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **#100**             | Fix **three** files — `lock.test.ts:20` (+5/run), `comms.test.ts:498/:541/:548` (+8), `comms.rotation.test.ts:37` (+7). Move the end-of-body `rmSync` sites in `team-comms.test.ts` to `try/finally`. Add a gate cell asserting no `anthill-*` survives                                    | **A green suite leaks exactly +20.** ⚠ **`team-commit.test.ts` is CLEAN — do not "fix" it**; the report names it wrongly. The correct pattern already exists at `team-commit.test.ts` (`try/finally`) and `team-migrate.test.ts` (`afterEach`). The existing ~9,046 dirs are a **separate manual sweep** |
-| **#102**             | Treat a leading-dash positional as message text in `feedback` **and `comms send`**; make `feedback` refuse surplus positionals the way `team-comms.ts:222-232` already does; **add `--stdin` to `feedback`**; relax the `--` hint at `define.ts:326-333` so it reaches `--`-leading values | 🔴 **`submitCmd` is poisoned** — it re-quotes the contaminated body **and hardcodes `--category friction`**, so the documented next step files the misfiled issue. ⚠ `feedback` declares `positionals` (plural) and joins them deliberately — the naive fix **drops the bare-words form**                |
+| **#102**             | Treat a leading-dash positional as message text in `feedback` **and `comms send`**; make `feedback` refuse surplus positionals the way `team-comms.ts:222-232` already does; **add `--stdin` to `feedback`**; relax the `--` hint at `define.ts:326-333` so it reaches `--`-leading values | 🔴 **`submitCmd` is poisoned** — it re-quotes the contaminated body **and hardcodes `--category friction`**, so the documented next step files the misfiled issue. ~~⚠ the naive fix drops the bare-words form~~ **FALSIFIED 2026-08-08 — there is no tradeoff here; see the note below**                |
 | **#96** (docs half)  | Correct `finalize-session/SKILL.md:504-507` — the `all-spawned-departed` predicate is stated as **sufficient** and is not. Add a `comms stand-down` beat to the teardown checklist, **for the lead, last**                                                                                 | The sentence is **false**, so this is a correction and not an addition. The checklist currently has no stand-down beat **for anyone**                                                                                                                                                                    |
 | **#101** (docs half) | Document `--as-of` in the `comms` SOP that already teaches the prose watermark                                                                                                                                                                                                             | **`--as-of` appears in ZERO skills or templates** — a load-bearing coordination mechanism discoverable only from `--help`                                                                                                                                                                                |
 | **#97** (cheap half) | Promote the red-side foreign population from an error **string** to a **structured field**. Needs `emitError` to grow a `data` slot (`agent-layer.ts:98-104`)                                                                                                                              | Contract 5(a) was applied to the green side (`uncheckedAgainst`) and never to the red. Unambiguously correct, and a fraction of the cost of anything either report proposed                                                                                                                              |
@@ -34,6 +34,37 @@ the report before building any of these.
 | **#96** (mechanical half)     | Prose in a skill, or **`convene` emitting the lead's stand-down line** the way `join` emits every seat's? This repo's own count favours emission — _"join's emitted manifest has worked in every session while prose guards went 0-for-4"_. **⛔ Whatever ships must not exempt the lead from the presence count**                                                                                                                                                                                                                                    |
 | **#98**                       | Which route for a tool-authored `Gate:` trailer. **Cheap:** the hook's stdout is **already captured and discarded** at `team-commit.ts:457-459` — zero land-string surgery, but covers only hook-gated projects. **General:** `(<gate>) > <log> 2>&1 && … --gate-log <log>` in `buildLandCommand` — parens **mandatory**, kills live output on a 2-minute gate, and `buildLandCommand` has the worst breakage history in the repo. ⚠ **Either way it cannot assert a pass count** — anthill has no default gate, so it cannot parse an unknown runner |
 | **#99** → folds into **94·1** | 94·1's decision now has a resolved answer: the start-notice may be the anchor **only if it reports the session origin.** ⛔ `previousPosition` must never be blessed as the anchor — it is what over-read a seat by 13 messages into the previous sprint. ⚠ And `openedAt` is the **wrong number**: stamped at spawn, _after_ the brief the SOP orders first, so it would cut off the brief                                                                                                                                                           |
+
+## ⚠ Correction to this file, 2026-08-08 — **a warning I wrote here was about a choice that does not exist**
+
+This index originally warned that #102's fix forces a decision: _"`feedback` declares `positionals`
+(plural) and joins them deliberately — the naive fix **drops the bare-words form.** Decide it; do not
+discover it."_
+
+**`spellwright` disproved it with a two-line probe, on the wire, inside a turn.** `bounty` does both,
+in the same binary:
+
+```
+$ bounty add "--not a flag, a title"     → exit 2, refused by name, both escapes named
+$ bounty add bare words joined title     → {"ok":true} · title: "bare words joined title"
+```
+
+> _"The rule constrains the **first character of a token**; bare-words support constrains **how many
+> tokens you accept.** They were only entangled because `strict: true` decides both at once."_
+
+**So there is no tradeoff. Implement rule 1 and keep bare words.** I inherited the entanglement from
+the parser and reported it as a property of the problem.
+
+**Recorded rather than deleted, because it is the same shape as the card this very file tells you to
+repair first** — an actionable note carrying a constraint the tree does not impose. That one survived
+seven days. This one survived eight hours, because someone with no stake ran it.
+
+**Note for the implementer:** we can take the _shape_ but not bounty's code. Their parser is not
+`node:util`, which is why `strict: true` never got the chance to promote a positional. **We cannot
+drop strict** — it is what gives us `=`-support and unknown-flag rejection across 21 commands, i.e.
+the fix for spellbook#81. **So rule 1 must intercept before `parseArgs` sees the token.** Worth
+stealing verbatim: their refusal **enumerates the flags it knows and names both escapes.** Ours names
+the valid flags and no escape at all.
 
 ## Newly surfaced, unfiled anywhere — worth a line each
 
