@@ -134,6 +134,23 @@ recovery, before anyone thought to look at the log.**
 **Neither is ours to resolve.** Both are reported rather than interpreted, per the protocol's
 _"nobody interprets anything"_ rule.
 
+## ✅ REPORTED — and the protocol's last criterion was RULED, not skipped
+
+**Sent 2026-08-08 as `grapevine anthill-spellbook-r2` msg `#17`**, delivered: the NOT TESTED verdict,
+the no-subscriber admission, both log deaths verbatim, the two questions, and the dedicated-test
+design **offered for their review before we run it.**
+
+**⚠ The frozen protocol's acceptance criteria say _"the result is posted to
+[spellbook#64](https://github.com/ichabodcole/spellbook/issues/64) whichever way it goes."_ That box
+is NOT ticked, and it is a RULING rather than an omission.**
+
+> **Cole, 2026-08-08: _"The channel route covers it, don't post to the issue."_**
+
+He is routing it to the Spellbook team himself. **Recorded here because an unchecked criterion and a
+silently-skipped one are the same artifact to a future reader** — and this protocol's own discipline
+is that `UNCHECKED` is a verdict that must be written. **The criterion is DISCHARGED BY A DIFFERENT
+ROUTE, by the human's decision, and the protocol is still not amended.**
+
 ### The honest one-line summary for `#64`
 
 > **Survival: NOT TESTED — the workload never let the board idle.** **But the log carries two
