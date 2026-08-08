@@ -54,6 +54,17 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
 - **Runtime is Bun** (not Node): use `bun` / `bunx`, and prefer Bun built-ins over npm
   equivalents.
 
+## Branch Landing Policy
+
+**Never squash.** Most commits carry an `Anthill-Seat:` trailer naming which of the six seats
+authored them, and tracked docs cite commits by short sha throughout — squashing collapses
+multi-seat attribution into a single author and orphans every citation that falls inside the
+rewritten range. Merge feature branches as-is.
+
+If a branch's history is genuinely unreadable, use the `project-docs:consolidate-long-branch`
+skill to collapse it into chapter commits — but preserve one seat trailer per chapter, and
+re-check every doc that cites a rewritten sha before landing.
+
 ## Commands
 
 - `bun run check` — the full gate (typecheck + biome + tests); the husky pre-commit runs it.
