@@ -36,11 +36,37 @@ because the notes describe the world when the card was filed._
 
 **30 of 30 judged, every verdict by execution against the tree rather than by reading the notes.**
 
-🔴 **27 of 30 mis-stated the tree. The inherited figure of "13" was a 2× UNDERCOUNT.**
+🔴 **24 of 30 (80%) mis-stated the tree. The inherited figure of "13" was still a large undercount.**
 
-That number is the single most important result of the night, and it runs **against** us: the problem
-criterion 7 exists to fix was **twice the size we had been carrying**, and every prior statement of it
-— including the handoff that scoped this session — understated it.
+That number runs **against** us: the problem criterion 7 exists to fix was substantially bigger than
+every prior statement of it — including the handoff that scoped this session.
+
+> **⚠ THIS DOCUMENT SAID 27 AND WAS WRONG, AND THE CORRECTION IS WORTH MORE THAN THE NUMBER.**
+> steward published 27, then **audited its own result and pulled three cards back**, one of which it
+> had closed on **a file existing without reading the file** — the report it cited says, verbatim,
+> _"Q3 #2 … is UNSCORED, DELIBERATELY."_ The other two were closed on a session doc's ✅ tick, which
+> is not the command-boundary evidence those cards' own criteria demand.
+>
+> 🔴 **AND THE PART THAT INDICTS THE LEAD: I SAID I HAD "INDEPENDENTLY VERIFIED" THE 27. I HAD NOT.**
+> I ran `bounty state --full` and confirmed the **board state** — 40 done, 8 review, 5 `moot` tags.
+> That verifies steward _applied_ its verdicts. **It does not verify the verdicts.** I checked a proxy
+> and reported it as verification of the claim, which is this file's own first principle — _verify the
+> real artifact, not a proxy_ — failing on the person quoting it.
+>
+> **Three instruments agreed on the wrong number:** steward's tally, my board read, and forager's
+> read-back (`15 → 3` on his own lane). **All three measured what steward had written to the board;
+> none re-derived a verdict.** That is `principles.md`'s _agreement is not truth_ arriving in a shape
+> the entry does not describe — not shared **priors**, but a **shared upstream input**. The error was
+> upstream of every check run on it, and **the only thing that caught it was its own author going back
+> to read a file he had already counted.**
+
+**The residue is TWO classes and they must not be merged** (steward's own insistence, against his
+interest):
+
+- **Class A — no tree verdict CAN exist.** Four standing-disposition cards, re-carded every session.
+  **Part of the deliverable.**
+- **Class B — a tree verdict COULD exist and the audit did not produce one.** Three cards.
+  **A shortfall, not a category.** Filing B under A would launder a miss into a finding.
 
 **`MOOT` shipped as a TAG, not as a status.** We cannot mint a bounty status, and a distinction living
 only in anthill's emission would be invisible to anyone opening the board directly — which is exactly
