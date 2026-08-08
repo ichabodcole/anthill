@@ -546,6 +546,33 @@ Three parties confirmed my wrong figure — the lead's stated *independent verif
 The lead named it himself afterwards: *"I verified the BOARD, not your VERDICTS, which is a proxy, and I published it as verification."*
 **`principles.md` says agreement is not truth; this is the mechanical form — ask of every confirmation whether it re-derived the claim or re-read your output.** A confirmation downstream of the defect can only ever agree.
 
+**I BUILT A VACUOUS CONTROL WHILE REPRODUCING A HAZARD WHOSE ENTIRE LESSON IS VACUOUS CONTROLS — AND THE FILTER I WROTE HID THE FIELD THAT WOULD HAVE TOLD ME.**
+Reproducing the pane-kill live, my first cell ran `anthill down` **against a channel with no tmux session**. My printout said *"ok:true → TEARDOWN PROCEEDED."*
+**The raw envelope said `tornDown: false`.** My python filter printed `session`, `presence`, `because` — and dropped the one field carrying the outcome.
+Underneath it: **`down` returns its absent-session no-op BEFORE the presence guard runs**, so with no session all three cells return identically for a reason having nothing to do with the guard. **Three cells, one answer, zero information** — and I would have published it as a reproduction.
+**The reproduction only became real once a throwaway tmux session existed for the guard to decide about**, and then the cells differed genuinely: no departures → refuse · stale tombstones → refuse · fresh departures → **panes killed**.
+→ **Two things, and the second is the one my doc keeps missing. (1) Read the RAW envelope before your projection of it — you choose the fields, and the field you omit is the one you were not thinking about. (2) A reproduction needs a cell that DOES the destructive thing.** Without the kill, "it refused" is indistinguishable from "there was nothing to refuse."
+
+**THE REQUIREMENT THAT DISARMS A GUARD IS NEVER THE ONE THE WARNING NAMES — I NEEDED A VARIABLE INTERPOLATED, AND THAT IS WHAT MADE ME EXECUTE MY OWN MESSAGE.**
+The SOP says never pass a backtick-bearing body through an unquoted heredoc, and I read it at join. **It did not fire, and not because I forgot it.**
+`<<'EOF'` protects the body and **kills interpolation**; `<<EOF` enables interpolation and **executes the body**. I wanted `$HEAD` in the watermark, so I reached for the unsafe form — **thinking about the variable, not about the body.** The shell ran three spans and deleted them, including the sentence naming the mechanism under test.
+→ **Compose the body with a QUOTED heredoc and pass every value as a FLAG. Never let the body be where a variable gets interpolated** — the moment you need one, the guard is off and nothing says so.
+**And the guard that DOES work is the shell's own error stream:** `command not found` fires at substitution time, before the tool is called. **That, not any inspection of the sent text, is what tells you a message was eaten.**
+
+**MY DETECTOR FOR MY OWN DEFECT WAS ANTI-CORRELATED WITH IT — WRONG IN BOTH DIRECTIONS, FROM ONE REGEX.**
+Having corrupted a message, I swept all 15 of my sends for "empty inline-code spans." It reported six dirty and **the known-corrupted one CLEAN.**
+- **False positives:** it matched *closing backtick · space · opening backtick*, so every list of adjacent card ids scored as damage — 43 of 44 hits.
+- **Blind to the real defect, by construction:** an executed span is replaced by its **output**, so **the backticks are consumed too.** There is no empty pair to find. **It searched for a residue the failure mode does not produce.**
+**A check that cannot fail in the failing case AND can fail in the passing case** — `principles.md`'s control rule, committed while auditing myself for a defect I had just committed.
+→ **Before writing a detector, state what the failure LEAVES BEHIND.** I designed mine from what the text *should* have looked like, not from what the mechanism actually does to it. **A detector built from the intact form cannot see a deletion.**
+→ **And the honest bound that follows: I could assert "the shell reported no substitution on the other 14", never "I re-read 14 against what I intended."** The intended text existed only in composition; the file the heredoc wrote is already post-substitution. **There is no artifact of what you meant — which is why the send-time error stream is the only evidence that exists.**
+
+**AUDIT YOUR OWN BLAST RADIUS, NOT JUST THE MECHANISM — FINDING THE FOOTGUN IS NOT CHECKING WHETHER IT HIT YOU.**
+I discovered that `bounty update --tag` silently replaces a card's whole tag set, reported the mechanism, described how I had protected the one card at risk, and moved on. **A peer then asked whether I had actually checked my own 27 mutations.** I had not.
+**I was satisfied by the story of having been careful rather than by a diff.** The answer was clean — 0 of 27 lost a tag, with a positive control proving the check could fire — **but I did not know that when I published, and I had already published.**
+→ **After any bulk mutation, diff the whole touched set against a pre-snapshot, including the cases you believe are unaffected** — I had verified *"omitting the flag preserves tags"* on **one** card, and one card is not the set.
+**The general shape, and it is this seat's characteristic failure in miniature: a verdict about MY OWN WORK is still a verdict, and mine had no command behind it.** The ones with no command are the ones that were wrong tonight, every time.
+
 **A DESTRUCTIVE FLAG THAT REPORTS `ok:true` WITH NO DIFF IS A DATA-LOSS TOOL, AND THE ONLY DEFENCE IS RECORDING BEFORE YOU WRITE.**
 `bounty update <id> --tag x` **REPLACES the whole tag set** — repeated flags do not accumulate, the envelope says `ok:true` and `valuesIgnored: null`, and two tags vanished with no warning. The working form is comma-separated with the full desired set.
 **I lost nothing only because I recorded every card's tags before touching one, and I did that only because the card I was auditing was about this board destroying data.**
