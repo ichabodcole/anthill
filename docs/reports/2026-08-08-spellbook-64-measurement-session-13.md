@@ -1,0 +1,72 @@
+# spellbook#64 — idle-death measurement, session 13 (LIVE RUN)
+
+**Protocol:** [`backlog/2026-08-08-spellbook-64-idle-death-measurement-protocol.md`](../backlog/2026-08-08-spellbook-64-idle-death-measurement-protocol.md)
+— **frozen, not amended during this run.**
+**Daemon:** spellbook `2.1.0` (`idleTimeout: 255`), board `k-anthill-dev-adad92ec`
+**Recorded by:** maestro (lead), session 13
+
+---
+
+## ⚠ READ FIRST — there were TWO daemons, and the first death was MINE, not an idle death
+
+Scoring the pid change at 19:02:43Z as a `#64` failure would be **wrong**, and it is the single
+most likely misreading of this record. It is stated here rather than in a footnote because the
+protocol says _"a changed pid is a respawn and therefore a failure"_ — that rule is correct and
+this transition is outside it.
+
+| daemon    | born      | died      | cause                                                  |
+| --------- | --------- | --------- | ------------------------------------------------------ |
+| pid 71107 | 18:54:10Z | 19:02:43Z | **SIGKILL by the lead, deliberately** — board recovery |
+| pid 74370 | 19:02:43Z | —         | **the measurement subject** — window opens here        |
+
+**Why 71107 was killed.** `anthill convene` spawned it fresh against an **empty** board while a
+**102-task snapshot** sat on disk (`boardShadowWarning` fired and was correct). Recovery required
+terminating it, and `close` / `--fresh` / **SIGTERM** all run the teardown, which **writes the live
+board to the snapshot** — flushing empty over 102 tasks. `SIGKILL` is untrappable, so it skips the
+teardown and leaves the snapshot alone. Verified before and after: mtime `2026-08-06T17:15:36Z`,
+118736 bytes, 102 tasks — **byte-identical across the kill.**
+
+**So 71107's death carries no information about `#64`.** The measurement subject is **74370**.
+
+## t=0 — the baseline
+
+- **pid: `74370`** · born **2026-08-08T19:02:43Z** · restored board, **102 tasks** live
+- **Captured with `lsof -nP -iTCP:<port> -t`, not `bounty info`** — the discovery file
+  (`$TMPDIR/bounty-k-anthill-dev-adad92ec.json`) carries the **port** but no pid, and `lsof` turns
+  the port into a pid while touching the daemon **not at all**.
+  → **The protocol's one permitted `cli.ts` call is therefore UNSPENT.** That is a margin the
+  protocol did not assume, and it is worth keeping: the permitted call exists because the author
+  believed a pid could only be had by asking the daemon for it. It can't be had that way for free,
+  and it doesn't need to be.
+
+## Sampling — the three non-touching probes only
+
+1. `ps -p 74370` — liveness
+2. `stat` on `~/.bounty/snapshots/k-anthill-dev-adad92ec.json` — mtime moves only on real mutation
+3. the append-only daemon log
+
+**No `cli.ts` verb is used to sample.** Seats using the board for real work is the **workload under
+test**, not a protocol violation — the protocol's own NULL RESULT clause anticipates exactly that.
+
+| sample @  | pid alive | snapshot mtime       | note                                  |
+| --------- | --------- | -------------------- | ------------------------------------- |
+| 19:02:58Z | ✅ yes    | 2026-08-06T17:15:36Z | t=0, board restored, no mutations yet |
+
+## Outcome — NOT YET DETERMINED
+
+Per the protocol's pre-committed outcomes:
+
+- **survives the session** → `spellwright` closes `#64` on this report
+- **pid gone at any sample** → death; read `closed.reason` as a **field** (`timeout` vs
+  `user`/`close`/`signal`), exit `124` is the process-side twin
+- **🔴 board busy throughout** → **NOT TESTED**, never "survival". Six seats on a live board makes
+  this the most likely outcome, and it is the one most easily misread as success.
+
+## An unplanned first-hand finding, logged because it is `S13-N`'s subject
+
+**`boardShadowWarning` fired at convene and was RIGHT** — it named a 102-task snapshot behind a
+0-task live board and told the reader not to close. Acting on it is what saved the cards.
+
+`S13-N` proposes re-scoping that warning onto `/state.snapshotBackedUp`. **That field is real and
+live in 2.1.0** (`server.ts:758`, spread at the `/state` handler `:1203-1209`), so the re-scope is
+buildable — confirmed by reading the source, not by report. **The ruling remains Cole's.**
