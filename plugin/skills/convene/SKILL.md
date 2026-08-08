@@ -132,10 +132,18 @@ stay solo.
        because convene did not emit this and nothing said it was needed. The seats were fine. The lead
        was the one not on the wire, and no check it ran could have told it so.)_
    - **`anthill status`** confirms the result (who is present on the channel + the board column
-     counts). **Presence spans every wire, not the vine alone** — `status` and `down` both read it
-     from one source, so a seat present on `comms` counts as present. **What it does NOT tell you is how
+     counts). **Presence is a FOLD over every source that reports it** — `status` and `down` both read
+     the same folded answer, so a seat present on `comms` counts as present. **What it does NOT tell you is how
      far behind a seat is** — `anthill comms positions` is the verb for that, and a `never-followed`
      seat there means _no record at all_, never a rounded-down zero.
+     **⚠ THE FOLD IS PERMISSIVE ABOUT PRESENCE AND UNANIMOUS ABOUT ABSENCE, AND ONLY THE SECOND HALF
+     WILL EVER COST YOU A TEARDOWN.** Any one source reporting a seat **present** makes the answer
+     present; but **every** source must report **none** before anything authorises, and a source that
+     merely _cannot answer_ contributes `unknown`, which blocks. **So a source that is quiet, empty,
+     or unresolvable does not abstain — it vetoes**, and it does so without appearing in the verdict
+     as a reason anyone would look at. _(Phrased over "sources" rather than a count on purpose: this
+     stays true whether presence folds one input or five, so adding or retiring one does not falsify
+     this paragraph.)_
      _(This bullet used to be followed by a ⚠ saying `status` reports only the other wire and cannot
      see comms. **That was false from the moment presence became multi-source, and it contradicted the
      sentence directly above it** — two adjacent bullets, one right and one wrong, and only a reader
