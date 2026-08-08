@@ -991,6 +991,26 @@ POSITIVE CONTROL: t-ac2930d7 carries [phase3,hygiene,moot] — multi-tag is full
 ```
 **So the natural invocation loses data and the field built to report that (`valuesIgnored`) returned `null`.** Fourth tool this session to answer a coarser question than the one asked and exit 0. **Measured on my own card so nobody else paid**, and routed to the seat who had just tagged 30 cards — **as a question about his triage, not a claim about it.**
 
+- **⚠ PRINT THE ARTIFACT, NOT THE VERDICT ABOUT IT. Three for three tonight, and it is the only method that reached the quiet tail.**
+Every one of tonight's fabricated findings died the same way, and never to a better check — only to looking at the thing itself:
+```
+working-tree read   -> printed `git show HEAD:` beside it     -> the ruling I was "correcting" was right
+case-sensitive probe -> printed `-B 12` around a neighbour hit -> the clause was intact all along
+"YES, covered"       -> printed the checklist ITEM, not the boolean -> it had matched an unrelated item
+```
+**The third is the one that matters most, because it came from the QUIET tail** — it said *covered, nothing to do*, the work-avoiding answer my epitaph says I never learn has fired. **It is reachable only by refusing to read verdicts.** That does not make the tail observable; it makes it *penetrable*, and the method is the whole of it.
+
+- **⚠ WRITE THE SENTENCE SO THE WORLD CAN MOVE UNDER IT — the durable fix for an inverting claim is to drop the quantity it depends on.**
+`convene` said *"presence spans every wire, **not the vine alone**"*. Its rhetorical job is to correct a reader who thinks presence is single-source — **so removing a leg would INVERT it, not merely stale it**, and I had pre-registered it as the one site of thirteen that would go false.
+**The repair was not to fix it after the removal. It was to phrase it over SOURCES rather than over a count** — *"presence is a FOLD over every source that reports it"* — which is true whether the fold has one input or five. **The pending removal became a no-op for my prose instead of a silent falsification, and the promise I had made to fix it later was discharged in advance.**
+_Generalises past this sentence: when a claim is pre-registered as "will go false when X lands", ask whether it can be rewritten to not depend on X at all. That is cheaper than the follow-up edit and it cannot be forgotten._
+**And the same edit exposed a real gap I had not been looking for:** the bullet taught only the **permissive** half of the fold (any source saying `present` wins) and was silent on the half that costs a lead a teardown — **every** source must say `none`, and one that merely *cannot answer* **vetoes**. _Verified against `combinePresence` at HEAD; a peer built the live cell 30 minutes later and it matched. **Prose analysis predicted it correctly and did not verify it** — my session-7 line, holding._
+
+- **⚠ VERIFY WHICH WAY A FINDING FALLS BEFORE PUBLISHING IT — that is the difference between a finding and an accusation.**
+Sweeping the plan of record, my first reading was that **the session had closed criterion 7 against a definition its own plan does not state** — which indicts the lead and the session. **The ROADMAP resolved it the other way: the session used the current definition and the PLAN is the stale copy.**
+**Same evidence, two available conclusions, and the alarming one was reachable first.** _The new epitaph doing its job on the night it was written._
+**The surviving finding is still worth having:** the plan's criterion is **narrower** than the authoritative one, so a reader acting on it alone would think the work nearly done and miss the half that was actually open.
+
 - **Reflective (trusted by default): I trusted a schema guess and got a false zero that my own doc already catalogues.**
 `bounty state --mine` parsed as `data.state.tasks` → `n=0`, indistinguishable from *"no cards assigned to me"*. The real shape is `{state:{tasks}}`. **It did not fire from memory; it fired because I printed the container's keys instead of trusting the tally.** _Print the container, not the count._
 
