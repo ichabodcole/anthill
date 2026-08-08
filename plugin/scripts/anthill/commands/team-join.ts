@@ -401,7 +401,7 @@ export function buildChecklist(i: ChecklistInput): string[] {
             `BOARD READ-BACK: you own NO \`review\` cards — measured this join, not assumed. Nothing to re-verify.`,
           ]
         : [
-            `BOARD READ-BACK — ${i.reviewCards.length} card(s) of yours sit in \`review\`, which asserts "fixed, awaiting verification". **A card is a PREDICTION about the tree, and nothing re-checks it across sessions — so it is only as true as the day it was written. A stale one commissions real work: one sent a seat to rebuild a test that already existed.** Give each a verdict AGAINST THE TREE — run a command, do not read the notes (the notes describe the world when it was FILED):\n${i.reviewCards
+            `BOARD READ-BACK — ${i.reviewCards.length} card(s) of yours sit in \`review\`, which asserts "fixed, awaiting verification". **A card is a PREDICTION about the tree, and nothing re-checks it across sessions — so it is only as true as the day it was written. A stale one commissions real work: one sent a seat to rebuild a test that already existed.** Give each a verdict AGAINST THE TREE. **The notes are the CLAIM, never the evidence** — read them to learn what the card asserted, then establish whether it is STILL TRUE by running a command. A card's notes describe the world when it was filed, so reading them as current state inverts the meaning of the column it sits in:\n${i.reviewCards
               .map(
                 (c) =>
                   `    ${c.id}  ${oneLineTitle(c.title)}${c.tags.length > 0 ? `  [${c.tags.join(",")}]` : ""}`,
