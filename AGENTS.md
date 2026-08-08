@@ -56,14 +56,18 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
 
 ## Branch Landing Policy
 
-**Never squash.** Most commits carry an `Anthill-Seat:` trailer naming which of the six seats
-authored them, and tracked docs cite commits by short sha throughout — squashing collapses
-multi-seat attribution into a single author and orphans every citation that falls inside the
-rewritten range. Merge feature branches as-is.
+**Merge; do not squash or rewrite.** Verified practice as of 2026-08-07: feature branches land on
+`develop` as ordinary merges and `develop → main` by PR merge commit, so every commit keeps the
+`Anthill-Seat:` trailer naming which of the six seats wrote it, and the short-sha citations
+throughout `docs/` and `.anthill/` keep resolving.
 
-If a branch's history is genuinely unreadable, use the `project-docs:consolidate-long-branch`
-skill to collapse it into chapter commits — but preserve one seat trailer per chapter, and
-re-check every doc that cites a rewritten sha before landing.
+⚠ **The strategy itself is an OPEN design question — do not settle it in passing.**
+[`session-branch-strategy`](docs/projects/session-branch-strategy/proposal.md) settled on
+**squash-merge** at finalize (2026-07-27, ready for a plan, **unbuilt** — there is no `branch{}`
+config); the 2026-08-07 triage of spellbook#94 then measured what that costs a 4-seat project whose
+docs pin claims to shas, which is anthill's own shape. That proposal also **rejects
+`project-docs:consolidate-long-branch` by name** — it needs _contiguous_ chapters, and a convened
+session interleaves seats by construction.
 
 ## Commands
 
