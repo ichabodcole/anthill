@@ -960,3 +960,42 @@ describe("oneLineTitle — the human projection of a card title", () => {
     expect(rows.every((r) => r.length < 140)).toBe(true);
   });
 });
+
+// (b) OF THE ANCHOR FIX — and it is keyed on the ROUTE, not on a token.
+// weaver's own check for this said "covered" because it matched the BOARD
+// READ-BACK line, which contains "anchor" and "card" for unrelated reasons: a
+// check over prose cannot tell a rule from a discussion of one. So this asserts
+// against the CATCH-UP line specifically, and on the two things that make it
+// reachable — the board, and a command that can actually show a card the seat
+// does not own.
+describe("the catch-up line routes a compliant seat to the BOARD, not to the wire", () => {
+  const catchUp = () => {
+    const l = buildChecklist(base).find((s) => s.startsWith("Catching up after joining"));
+    if (l === undefined) throw new Error("no catch-up line");
+    return l;
+  };
+
+  test("it names the BOARD as the anchor's home", () => {
+    expect(catchUp()).toMatch(/board/i);
+  });
+
+  test("it PRESCRIBES --full and says --mine CANNOT reach the card", () => {
+    // steward measured this: t-110abd42 in `state --mine` -> false, in
+    // `state --full` -> true. Telling a seat to "look on the board" while
+    // handing it the one command that cannot show the card is the defect.
+    //
+    // ⚠ KEYED ON THE CLAIM, NOT THE TOKEN, and the first version of this test
+    // was the anti-pattern: `not.toMatch(/state --mine/)` FAILED against
+    // correct prose, because the line names `--mine` in order to say it does
+    // not work. BANNING A WORD IS NOT BANNING A CLAIM — this seat's own
+    // recorded anti-pattern, and the vocabulary you want to forbid always
+    // appears in the explanation of why it is wrong.
+    const l = catchUp();
+    expect(l).toContain("state --full");
+    expect(l).toMatch(/`state --mine` cannot show it/);
+  });
+
+  test("it tells a seat to ASK when there is no card — the route must terminate", () => {
+    expect(catchUp()).toMatch(/ASK your lead/);
+  });
+});
