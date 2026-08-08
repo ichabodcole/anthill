@@ -15,6 +15,31 @@
  * write tonight, and strictly stronger than the nothing that covers it now.
  * **It must never be recorded as "leadStandDown is covered."**
  *
+ * ⚠⚠ SCOPE — READ THIS BEFORE TREATING A GREEN HERE AS COVERAGE.
+ * **This file guards the LEAD's composition and NOTHING ELSE.** It opens
+ * exactly one path: `team-convene.ts`. There is a SECOND construction site for
+ * the same command and this guard does not read it:
+ *
+ *   team-convene.ts:262   the LEAD's       <- guarded here
+ *   team-join.ts:485      EVERY SEAT's     <- NOT guarded, by anything
+ *
+ * The second is the higher-traffic one — it is what every seat meets at join,
+ * and it is where the session-9 ordering scar actually lives. **It is not
+ * known to be wrong; it is known to be unchecked.**
+ *
+ * **The file's NAME is the hazard: `leadstanddown.guard` sitting green reads as
+ * "the stand-down command is pinned", and what is pinned is the lead's.** The
+ * author enumerated `team-convene.ts` because that was the file under review —
+ * **the guard inherited the scope of the REVIEW rather than the scope of the
+ * CLASS**, which is the same defect, third instance, recorded in
+ * `.anthill/dev/sentinel.md` the same session.
+ *
+ * The repair is NOT a second copy of this file: enumerate every construction
+ * site fail-closed (the `#100` gate cell's allow-list shape), so a THIRD site
+ * added later is RED rather than silently uncovered. Once a pure composer
+ * exists (`t-f72057f2`), both sites call it and all of this collapses into one
+ * direct assertion — see the deletion note below.
+ *
  * ⚠ AND WHY IT IS NOT `toContain("stand-down")` — weaver's K5, and he is
  * right: a bare mention passes on prose that says the OPPOSITE. Every
  * assertion below pins a DISTINCTION (the verb AND the resolution together, as
