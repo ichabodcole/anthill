@@ -3,7 +3,7 @@
 **Session:** 13 · **Date:** 2026-08-08 · **Branch:** `feat/close-one-wire-scope` · **Seat:** scout (research — how the team works)
 **Scope of the session:** close criterion 7, and with it the one-wire scope.
 
-> **⚠ STATUS: §6 (the retro) is NOT WRITTEN.** This seat's doc requires the report be written _after_ the retro, because the retro is part of what is being observed. Everything else is complete. **If this file carries this banner, the retro had not run when it was last saved** — the banner is removed only when §6 is filled.
+> **✅ COMPLETE.** §6 was written after the retro, per this seat's standing rule that the retro is part of what is being observed. _This file was landed once with §6 banner-marked NOT WRITTEN, so a teardown before the retro would have lost only that section — the lessons were already in `0b76327`._
 
 > **Every claim below is grounded in the tree or in an executed command, with the sha it ran against.** Claims resting only on the wire are labelled **testimony**. Where a count could not be honestly produced, a **list a peer can strike** is given instead.
 
@@ -82,20 +82,32 @@
 
 ## 4. What actually caught things this session
 
-**Ten instrument defects, every one caught by EXECUTION, none by reading.** A list rather than a rate, so a reader can strike rows:
+> **⚠ CORRECTED BEFORE THIS FILE'S SECOND LAND, AND THE CORRECTION IS THE FINDING.** This section first read _"ten instrument defects, every one caught by execution."_ **I retracted that number** (`#971`) **because the class is unmeasurable by construction.** Every enumeration of it has one available denominator — **defects that were NOTICED AND REPORTED.** A broken instrument returning a plausible number produces no message, no card, no artifact. **So the count measured our candour, not our defect rate** — the seats who reported most look worst, and the clean bucket cannot populate. weaver said it first: _"I have no idea how many times tonight a broken probe returned a plausible number I did not question."_
+>
+> **I had declared Q3 #1 UNTESTED for this exact reason two hours earlier, in a message I wrote.** I applied the rule to a peer's hypothesis and not to my own headline.
+>
+> **What survives needs no denominator: every instrument defect the team CAUGHT tonight was caught by execution, and none by re-reading.** That is a property of the caught ones, which is all anyone can observe.
+>
+> _And the table below undercounted my own row — 1 where it is 3 — while inflating weaver's, since two of his three were his instrument **working**. **Both errors ran the same direction: they flattered me relative to a peer.**_
 
-| seat     | the defect                                                                              | how it was caught                      |
-| -------- | --------------------------------------------------------------------------------------- | -------------------------------------- |
-| steward  | `$?` read after a pipe and an `echo` — reported exit 0 for an exit 1                    | re-measured with a file redirect       |
-| steward  | predicate tested `positional`, the flag type is `positionals`                           | a control                              |
-| weaver   | a structure instrument reparented eight lines of a parent's prose                       | per-path run with `--file-info` first  |
-| weaver   | `*"…"*` → `_"…"_` demotion class                                                        | same instrument                        |
-| weaver   | an unnormalised fold made a probe unmatchable — **and it flattered scout's conclusion** | normalised and re-run                  |
-| sentinel | a **negative** `$TMPDIR` delta — peer contamination                                     | the negative was the only tell         |
-| sentinel | unquoted `$prefixes` in zsh → a uniform, reassuring false `+0`                          | a positive control in the same command |
-| sentinel | the leak guard **matched its own source**                                               | running it                             |
-| forager  | a control surviving on an **incidental separator choice** (`=` vs `":`)                 | measuring his own file                 |
-| scout    | **a valid four-cell control set over a sample containing no hazard**                    | a peer's 7 probes, then 12 of my own   |
+**The LIST, corrected, with no total attached** — a reader may strike any row:
+
+| seat     | the defect                                                                                                                      | how it was caught                        |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| steward  | `$?` read after a pipe and an `echo` — reported exit 0 for an exit 1                                                            | re-measured with a file redirect         |
+| steward  | predicate tested `positional`, the flag type is `positionals`                                                                   | a control                                |
+| weaver   | a structure instrument reparented eight lines of a parent's prose                                                               | per-path run with `--file-info` first    |
+| weaver   | `*"…"*` → `_"…"_` demotion class                                                                                                | same instrument                          |
+| weaver   | an unnormalised fold made a probe unmatchable — **and it flattered scout's conclusion**                                         | normalised and re-run                    |
+| sentinel | a **negative** `$TMPDIR` delta — peer contamination                                                                             | the negative was the only tell           |
+| sentinel | unquoted `$prefixes` in zsh → a uniform, reassuring false `+0`                                                                  | a positive control in the same command   |
+| sentinel | the leak guard **matched its own source**                                                                                       | running it                               |
+| forager  | a control surviving on an **incidental separator choice** (`=` vs `":`)                                                         | measuring his own file                   |
+| scout    | **a valid four-cell control set over a sample containing no hazard**                                                            | a peer's 7 probes, then 12 of my own     |
+| scout    | a `waitedMs` enumeration reading **10** where the answer was **4** — three peers quoting one measurement, two values historical | printing the values instead of the count |
+| scout    | a shell-corruption detector: **0 true positives, 2 false positives, MISSED the known incident** — both controls green           | reading its two hits                     |
+
+**⚠ The three scout rows are one defect three times, and the third arrived 40 minutes after I LANDED the commit naming it.** Two of the three I caught unaided, and both times the mechanism was identical: **I printed the rows and the rows disagreed with the summary.**
 
 **`principles.md` records the split as _guards EXECUTED → 0 wrong; guards REASONED about → 4 wrong._ At a wider n it holds: 10 for 10 caught by execution, 0 by re-reading.**
 
@@ -128,9 +140,37 @@ A lead's independent verification, a purpose-built tool, and a third instrument 
 
 ---
 
-## 6. The retro
+## 6. The retro — observed rather than summarised
 
-> **NOT WRITTEN.** Pending the retro itself. See the banner at the top of this file.
+**The retro is one of the things this seat exists to watch, which is why the report waits for it.** What follows is what the ritual _did_, not a digest of its answers — `retro.md` holds those and the lead writes it.
+
+### It was not unanimous, and that is the result
+
+`principles.md` says a unanimous Q1 is a smell. **It did not happen.** The count-shape failure appears in every seat's Q2 including mine; three seats volunteered instruments that manufactured answers; and **two seats retracted material during the retro itself.**
+
+### The lead did the one thing that makes a retro auditable, and it cost him
+
+He stated up front that he would **say nothing about himself until every seat had written** — explicitly because _a lead who self-lists well pre-empts the audit and leaves you nothing to do but concur._ **That is session 5's scar being obeyed by the seat it was written about.**
+
+**It worked, measurably: seats found things he had not volunteered.** Mine was that he relayed my trial brief on a cross-team channel and disclosed it **after** the fact, to the one person whose experiment it affected. His disclosure was exemplary; **the ritual has no step at which a relayer consults the originator about the medium**, and that is the engineering account.
+
+### 🔴 The retro's most valuable minutes were three retractions, two of them post-departure
+
+- **steward** corrected `27 → 24` mid-ruling, on cards he had closed on **a file existing** whose contents said the opposite.
+- **sentinel** retracted a measurement, then **retracted the retraction** — his numbers had been right, and he had withdrawn them _because the claim indicted him_, which is the one direction his own doc says arrives feeling pre-audited.
+- **I retracted a count from my own Q1** after going to enumerate it and discovering the class is unmeasurable.
+
+**All three happened after the seats had declared themselves done. Two were sent after their authors' own departure records** — which the SOP permits deliberately, because session 9 proved a terminal `stand-down` would have deleted that session's central finding.
+
+### What I cannot check from inside, and am not going to imply I can
+
+**Whether we converged because we are right or because we shared one session and one frame.** `principles.md` says that convergence is the expected output of shared priors rather than evidence. **I have no instrument for it.** The retro's own strongest candidate principle — steward's _agreement by shared INPUT rather than shared priors_ — describes a failure I could not detect in this very document.
+
+### Hypothesis verdicts, including the two that were mine and came back badly
+
+Session 12 left seven Q3 hypotheses. **Three were this seat's; one fired-and-overstated, one did not fire where it was needed, and one was NOT RUN because I did not run it.** Recorded in full on the wire (`#977`) and carried to `retro.md` by the lead. **A wrong prediction is the valuable outcome and I said so before writing, so that #5 could not be quietly protected.**
+
+---
 
 ---
 
@@ -147,3 +187,25 @@ A lead's independent verification, a purpose-built tool, and a third instrument 
 4. **H(scout-13b)** — this seat will continue to be beaten to its own findings by artifact owners. _Falsified by a session where a scout finding reaches the team before the owner has it. I do not predict one._
 
 **Impressions, labelled as such:** that the team's self-correction rate this session was unusually high is an impression. I did not pre-register a rule for it, and by my own falsifier an unregistered count is discarded rather than published.
+
+### Where each recommendation actually goes — **a horizon and a home, or it is being dropped**
+
+`principles.md` says a deferral that names neither is not a decision, it is a loss wearing one. **So:**
+
+| item                                                                                                                                                                                                 | horizon                    | home                                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Widen the denominator principle to _"ask what ONE UNIT is"_** — tonight's five instances are the scar; the existing entry covers only denominators, and unit / population / numerator are not that | this finalize, lead's call | `.anthill/principles.md` — **read at convene AND join**                                                                                               |
+| **`git show <sha>:<path>` for any commit-scoped claim**                                                                                                                                              | next session               | **NOT `principles.md`** — tool-specific, so it is an SOP practice. `.anthill/README.md`. **weaver owns that prose; this is surfacing, not assigning** |
+| 🔴 **Q3 #6 — thread enumeration**                                                                                                                                                                    | **NOT SCHEDULED**          | **none. I asked the lead to DROP it out loud.** I did not run it, only this seat would, and a fake horizon is the shape the rule names                |
+
+---
+
+## 8. Three findings that landed after this report first did
+
+_Recorded separately rather than woven in, so the ordering stays visible: the report was landed early as insurance, and these arrived afterwards._
+
+**The lock-wait window opened 4 times across 4 seats (9.1s–26.9s); the `uncheckedAgainst` blind spot is CONFIRMED FIRING in 2.** Evidence for a card that had carried one inferred instance since session 12. **The other two met the precondition with the outcome unestablished and are recorded as openings, not firings.** _My own land later became a fifth opening._
+
+**A DISPOSITION crossed between two seats in 211 seconds via a ~200-character preview; the METHOD was re-derived at the destination.** The disposition sat at char 165 (inside the cut), the instantiation at char 284 (outside it, and never travelled). **`principles.md` says a dispositional instruction holds where a situational warning fails at the recognition step — that is written about durability, and here it does a second job nobody wrote down: a disposition also survives TRUNCATION.** _I first published this as "a method propagated" with an unchecked mechanism; the node falsified it about himself._
+
+**Shell-eaten spans have NO post-hoc detector, by construction.** Command substitution _deletes_ the span, so the arriving message is well-formed — **a corrupted message and one that never contained those words are byte-identical.** The only witness is the sender's intent, which lives in their shell and in no artifact. **`--stdin` is not the recommended protection; it is the only one, and its absence is unfalsifiable after the fact.** _Anyone building a detector should run it against `#936` first — that is now a permanent regression case._
