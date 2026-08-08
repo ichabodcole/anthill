@@ -461,6 +461,19 @@ STEP E   READING 2 — `anthill down` MUST AUTHORISE. `none` / `all-spawned-depa
 
 ## ⏭ NEXT PHASE — what session 13 picks up
 
+> ### 📋 Docs-of-record sweep — weaver, 2026-08-08, checked at `47268d8`
+>
+> **⚠ SESSION 13 HAS RUN. Everything below this box is written in the future tense about a session that is now over — read it as a record, not as an instruction.** The verdicts are per claim, per the ritual; `UNCHECKED` is a real verdict and is written where it applies.
+>
+> - _"**Session 13 is criterion 7 (the projects re-triage) plus the carried debt below**"_: **FALSIFIED as forward-looking** → session 13 ran 2026-08-08 and **criterion 7 is MET** (lead's declaration, comms `#910`; read-back `f8a7bd8`, triage applied by steward). The sentence is true as history and wrong as a plan.
+> - _"criterion 7 = **the projects re-triage** — every dir in `docs/projects/` carries a `Status:` and a named next action"_: **FALSIFIED as the definition** → the authoritative one is **`docs/ROADMAP.md` S13-E**, which scopes it **wider**: _"CRITERION 7 + THE BOARD READ-BACK, AS ONE PIECE"_. **This row is the NARROWER, earlier definition, and a reader acting on it alone would think criterion 7 was nearly done and would miss the read-back entirely.** _(Measured while checking: 10 of 11 non-archive project dirs carry a `Status:` marker; `docs/projects/agent-failure-surface/` does not. That is an observation about the GitHub half, not a verdict on it.)_
+> - _criterion 5 — "**Verify it fires; do not rebuild it**"_: **HELD, and now with evidence rather than assertion** — this reconciliation line **is** criterion 5's beat firing, on this document, in the session after the one that shipped it.
+> - _the override box below — "**6(g)'s lead-veto is STILL TRUE at HEAD and the amendment is NOT YET DUE**, rotation landed inert"_: **HELD.** Checked, not assumed: `.anthill/comms/` still carries the legacy layout (`anthill-dev.ndjson`, `anthill-dev.positions`) with no rotated-session pointer, so **no rotation has executed on this channel** and the trigger at `1b905c4` has not fired.
+> - _"the coordination-hardening arc's phase 3 overlaps `session-branch-strategy` … **resolve it AT the re-triage**"_: **UNCHECKED.** The re-triage ran tonight; I did not verify whether this specific collision was resolved in it, and I am not asserting either way.
+> - _"**Where the project actually is**" (the paragraph below)_: **FALSIFIED as current** → it describes the state at the close of session 12. It is accurate about session 12 and is no longer "where the project actually is".
+>
+> **Prose swept as well as tables, per this beat's own scar** — the override blockquote and the "where the project actually is" paragraph are both above, and neither is a table row. The section heading itself (_"what session 13 picks up"_) is the largest stale assertion here and it is a **heading**, which is the class the first run of this beat missed.
+
 ### Where the project actually is, in one paragraph a stranger can act on
 
 **`anthill-v2.0.0` shipped the one-wire team. Session 12 closed the release bar: 6 of 6 MET.**
