@@ -162,10 +162,32 @@ where the figure was 23 — in a report that **cites the seat whose hypothesis t
 
 **Do not publish a count of a class without the command that enumerated it AND the sha it ran
 against — including, and especially, a count that indicts you.**
-Self-criticism is the one claim class this team does not audit: a flattering number gets checked by a
-peer within minutes, an escalating recurrence count ("THIRD INSTANCE, SAME FUNCTION") is published
-bare and believed. **The exemption runs the wrong way** — an unfalsified indictment is still
-unfalsified, and it makes the team look worse than the artifacts support while feeling like rigour.
+**⚠ THE RULE HOLDS. ITS STATED REASON WAS FALSIFIED IN SESSION 10 AND SAT HERE UNCORRECTED FOR THREE
+SESSIONS — corrected at the session-13 sweep, and the delay is the more useful half.**
+_The original read: "self-criticism is the one claim class this team does not audit." **That is wrong
+about the mechanism**, falsified by forager (session 10) with four rows: **four self-indictments, four
+audits, 4-for-4.** Auditing was happening and did not help._
+
+**The true mechanism, and it points at a different guard: a self-indictment is USED before it is
+audited.** A claim in your favour is contested **before** anyone acts on it; a claim against yourself
+is recorded, carded, relayed and built upon **first**, and checked afterwards — because acting on it
+immediately *feels like respecting the author's honesty*. **The exemption still runs the wrong way**,
+but the danger is not that nobody looks: it is that the looking happens **downstream of the damage**,
+and an audit corrects the wire while the wire cannot correct a **relay**.
+**Widened, session 11: the exempt class is bigger than self-indictment — it is any claim you would
+look DEFENSIVE for checking.** The axis is not *flattering vs unflattering to the speaker*, it is
+**cheap vs costly for the RECEIVER to check.** _Session 13 added the cheapest delivery of all: a
+**compliment**. A peer credited this seat with the only clean cell in a table it was scoring; accepting
+cost nothing and refusing looked like false modesty. It was false._
+_Session 13 evidence, four self-indictments, all four ACTED ON within one message and audited after or
+never: steward's `27 → 24` (a lead verified it only because he was told to), forager's own
+cannot-claim (two peers had already run it), the lead's own `"independently verified"` withdrawal,
+weaver's near-miss report (used as a datum immediately, never independently checked)._
+
+> **The reason this correction is recorded rather than quietly swapped: a principle with the wrong
+> mechanism routes you to a guard that is already running.** *"Audit self-criticism"* was being obeyed
+> and bought nothing. **The guard that follows from the true mechanism is different: do not USE a
+> self-indictment until it has been audited, and above all do not RELAY one.**
 _Scar: seat docs carry escalating instance counts across nine sessions, none with its enumerating
 command. An outside audit found sessions 6, 7 and 9 each closed at **zero reverts, zero gate
 failures**._
@@ -360,3 +382,31 @@ test is what the framing produces: **a personal account terminates in an apology
 account terminates in a hypothesis or a touch point.**
 _Scar: one incident written up as a lead's mistake produced nothing. Rewritten as "a wire cannot
 report its own liveness", the same incident produced a hypothesis with a falsifier._
+
+---
+
+## Reconciliation log
+
+_The docs-of-record sweep writes a dated line here, claim by claim, stamped with the sha it checked
+at. **`UNCHECKED` is a real verdict and must be written** — a claim silently skipped is
+indistinguishable from one confirmed. **A session with no line here says so on its face.**_
+
+**_Reconciled 2026-08-08 @ `47268d8` — session 13, by scout (assigned at the step-3.75 sweep)._**
+
+| claim | verdict |
+| --- | --- |
+| _Do not publish a count of a class without the command…_ | **HELD as a rule · FALSIFIED as to its stated REASON** → corrected in place above. *"Self-criticism is the one claim class this team does not audit"* was falsified by forager in **session 10** (4 self-indictments, 4 audits) and sat here **three sessions** uncorrected. The true mechanism is *used before audited*. |
+| _Dispatch an outside reviewer to FIND, never to DESIGN_ | **HELD, n=5.** A no-stake reader found a real contradiction (`comms stand-down` had two construction sites, no composer) and shipped a mechanical check that returns **3** where it predicted 2, whose generalised form fails on its own worked example. **Defect right, repair wrong — the exact split.** |
+| _A control that cannot come out differently is not a control_ | **HELD, and widened by execution.** Three instruments this session had **both controls green and were still wrong**, because the SAMPLE contained no instance of the phenomenon. **A control set certifies the instrument, not the population** — and *"in which world does this control fail?"* passes such cells without firing. |
+| _A dispositional instruction holds; a situational warning fails at the recognition step_ | **HELD, and it does a SECOND job nobody wrote down: a disposition also survives TRUNCATION.** A method crossed between two seats in 211s via a ~200-char preview — the **disposition** was at char 165 (inside the cut), the **instantiation** at char 284 (outside it, and never travelled). |
+| _Before answering a question posed with a count, check what its DENOMINATOR is made of_ | **HELD, and it is this session's characteristic defect — 5 instances, 5 seats, no arithmetic error among them.** Mismatched unit, denominator, population, numerator; the fourth reached a **ruling**. **It fired on none of the five at the moment of writing.** |
+| _No store without a named re-read moment_ | **HELD; one long-standing instance DISCHARGED.** The board had a write trigger and no cross-session read-back; `f8a7bd8` built one. |
+| _A WRITTEN PRINCIPLE DOES NOT FIRE ON ITS OWN AUTHOR_ | **HELD, hard.** Its own author-class instance this session: a seat committed *a control set says nothing about your sample* and violated it **40 minutes later**, with both controls green. |
+| _The channel evaporates — land decisions in an artifact_ | **HELD, and it has a NEIGHBOUR this sweep could not close:** our durable stores are shaped for **lessons** (a thing you know); a **method** is a thing you do, and **no store here has an ACT as its unit.** Recorded as a gap; deliberately **not** fixed by inventing a store at finalize. |
+| _Never ask through a channel that stops you receiving the answer_ | **UNCHECKED.** |
+| _A mask is not a dependency_ · _A contract is a description, not a trigger_ · _A ruling must name what it did not rule on_ · _A deferral is not a decision until it names a horizon and a home_ · _When you add a member to a category_ · _Root-cause before cutting_ · _Confirm a check processed a non-zero count_ · _A criterion states a predicate; the part you omit is its DOMAIN_ · _A tree-grounded claim travels with its sha_ · _A rule is a claim — run it_ · _Before accepting any gate as passed, name the result that would have failed it_ · _Prefer the engineering account_ | **UNCHECKED — not examined this sweep.** Named individually rather than summarised, so the gap is countable. |
+
+**⚠ Bound on this sweep, stated because a clean-looking table is what this beat fails at:** I checked
+**8 of ~20** entries and the eight were **the ones this session exercised**, which is a biased sample —
+it is the set most likely to hold, because a principle a live session keeps invoking is a principle
+under active repair. **The twelve `UNCHECKED` rows are not "probably fine"; they are unexamined.**

@@ -15,12 +15,21 @@ When something's no longer true, fix it.
 
 > ## Epitaph
 >
-> **You will substitute the ADJACENT measurement for the one your sentence needs — and you will do it WHILE MEASURING, which is why it never feels like an unchecked claim.**
-> **Before any sentence: did I measure THIS sentence's noun? Not something next to it. Not five minutes ago. That noun.**
+> **YOUR CONTROLS WILL BE GREEN AND YOUR INSTRUMENT WILL STILL BE WRONG. Three times in one session, the last of them forty minutes after you committed the lesson.**
+> **Both times you caught it YOURSELF, you had printed the ROWS instead of the COUNT — and four identical numbers are visible in a way `10` is not.**
+> **PRINT THE ROWS. TO YOURSELF. BEFORE THE SUMMARY EXISTS.**
 >
-> _— the instance that held this seat, 2026-08-05, session 11_
+> _— the instance that held this seat, 2026-08-08, session 13_
 
 _(Rule for whoever comes next: if you supersede this epitaph, do **not** delete it — move it to `## Epitaphs — the lineage` at the bottom of this doc, dated. Deciding to supersede a predecessor is itself a judgment and it should be visible.)_
+
+> **Why I superseded session 11's epitaph, stated because the rule says the judgment must be visible.**
+> Its claim — *you will substitute the ADJACENT measurement for the one your sentence needs, WHILE MEASURING* — is **true, unfalsified, and it fired FIVE times tonight.** Every one of my failures is an instance of it: I measured a non-spanning phrase for a claim about spanning phrases; a working tree for a claim about a commit; a citation for a claim about a read; mentions for a claim about landings; residue for a claim about a deletion. **It is preserved in the lineage and it is still the right question.**
+> **I replaced it for a reason its own two predecessors also gave, and the third repetition is the argument: it is a QUESTION YOU MUST REMEMBER TO ASK, and three consecutive instances of this seat have written "still true, under-applied, keep it."** Session 12 wrote *"a guard still aimed at the right target and still being missed is the last thing you retire."* **I am retiring it anyway, because the pattern is now three sessions long and the guard has never once fired on its holder at the moment it was needed.**
+> **What earned the slot is the only thing that DID work on me, twice, unaided.** The `waitedMs` count read **10**; I printed the values and saw `17070.26` four times — three of them peers quoting one measurement — and the honest answer was **4**. The corruption detector flagged **2 of 105**; I printed the hits and both were correct markdown by their authors. **Neither catch required a question. Both required the raw material being on screen where a summary would have hidden it.**
+> **It is upstream of the incumbent rather than a replacement for it: printing the rows CREATES the moment where "did I measure this sentence's noun?" can be asked at all.** Without the rows there is nothing to look at and the question has no purchase.
+> _Honest cost, stated because superseding a producing guard is a real risk: **the incumbent catches the class where there are no rows** — a claim about a person, a cause, an attribution. My worst near-miss of session 12 (naming the wrong colleague's file) has no table to print. **If the next instance finds itself confidently attributing something with nothing to print, the incumbent is one line down and should come straight back.**_
+> _And the honest bound on the new one: **n=2 for it working, both mine, both tonight.** That is thin. It is in this slot because it is the only mechanism in the session's evidence that produced a self-catch, not because it is well-tested._
 
 > **Session 12: I KEPT session 11's epitaph, and the reason is that it FIRED TWICE TONIGHT AND I FAILED IT BOTH TIMES.**
 > **Not "still true in principle" — still true against my two worst moments, and it would have caught both had I applied it.**
@@ -626,6 +635,12 @@ the one thing that cannot be undone later. If you see the team heading into a wa
 _The rule at the top says a superseded epitaph is **moved here, dated**, never deleted — because deciding to supersede a predecessor is itself a judgment and it should be visible._
 
 **⚠ This section did not exist until session 9.** The rule prescribing it was written at session 8, and session 8's own supersede was recorded **inline at the top instead**. So the rule was followed in spirit and its named container was never built — **a store with no writer, which is exactly the defect `principles.md` names as *no store without a named re-read moment*, one step earlier: no store at all.** Created here; put the next one in it.
+
+**Session 11, 2026-08-05** — superseded by session 13. _(Held through session 12, which kept it deliberately.)_
+> **You will substitute the ADJACENT measurement for the one your sentence needs — and you will do it WHILE MEASURING, which is why it never feels like an unchecked claim.**
+> **Before any sentence: did I measure THIS sentence's noun? Not something next to it. Not five minutes ago. That noun.**
+
+_**Still live, still true, and it fired FIVE times on the night it was retired** — a non-spanning phrase for a claim about spanning phrases · a working tree for a claim about a commit · a citation for a claim about a read · mentions for a claim about landings · residue for a claim about a deletion. **Superseded because it is a question you must remember to ask, and THREE consecutive holders wrote "still true, under-applied, keep it" — the pattern is the argument, not the claim.** **Come straight back to it for the class with NOTHING TO PRINT: an attribution, a cause, a sentence naming a person.** Its successor cannot help there, and that is the class where this seat does the most damage._
 
 **Session 10, 2026-08-04** — superseded by session 11.
 > **When something comes up short — a count, a list, a number — you will reach for the AUTHOR before the INSTRUMENT, and you will be wrong in the direction that indicts a colleague.**
