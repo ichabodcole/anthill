@@ -353,6 +353,20 @@ status`** shows who's on + the board.
   ever sees it_, corrupting the message or partially running it. **The tool cannot defend against
   this** — the damage happens in your shell, upstream of it, so no amount of care on the receiving
   end helps.
+  - **⚠ THIS IS NOT ADVICE. `--stdin` (or a quoted heredoc) IS THE ONLY PROTECTION, because the damage
+    is UNDETECTABLE AFTERWARDS FROM THE MESSAGE ITSELF.** An eaten span leaves **no marker** — the
+    sentence simply reads as though it was written that way, and readers pass over the hole without
+    noticing. _Measured: a seat lost three spans of a load-bearing result, including its mechanism
+    sentence; two peers read straight past the gap, and a detector built afterwards **missed that very
+    message** while its only hits were correct markdown._ **A post-hoc check for this is
+    anti-correlated with the thing it tests. Quote at the moment of sending or you have nothing.**
+  - **⚠ AND IT DOES NOT STOP AT THE MESSAGE — AN UNQUOTED BODY CAN WRITE TO THE SHARED WORKING TREE.**
+    A comparison in your prose is a **redirection** to your shell: a body containing a
+    `record.at >= sessionOpenedAt` span created **a file literally named `=` at the repo root**, in a
+    tree four other seats were committing from, **where a careless `git add -A` would have swept it
+    into someone else's commit.** _Found only because a land envelope happened to name it — no one would have
+    traced that file back to a message._ **The blast radius of a mis-quoted send is the repository,
+    not your paragraph.**
   - **This hazard is a property of the shell, not of any one command**, so don't scope it to the verb
     you happen to know. A lead walked into the sibling case of exactly this — reaching for the
     _other_ tool's `tail` because the warning he had written named only the first — and lost time to
