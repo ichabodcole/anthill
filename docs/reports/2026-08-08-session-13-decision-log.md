@@ -45,6 +45,36 @@ home and a horizon, per _a deferral is not a decision until it names a horizon a
 | B5  | **Two `principles.md` candidates + the format proposal** (imperative + boundary check + repeal criterion)                                     | Unchanged. Session 13 has produced at least two more candidates (see C).                                                                                                                  | Retro                                                                                                                                                                                   |
 | B6  | 🔴 **NEW — grapevine is not gone.** steward `#865`: 9 live lines, 7 of them a real `grapevine who` on the **presence path**, and it resolves. | Step 4 shipped for its stated scope; the remainder is **uncarded**. This bears on the "one wire" claim the release criteria rest on.                                                      | **My call tonight: card it, do not build it.** Scope discipline — the session closes criterion 7, and re-opening step 4 mid-flight is the behaviour the sprint model exists to prevent. |
 
+## B2. 🔴 THE ONE I DECLINED TO DECIDE — and it is the biggest of the night
+
+**✅ Criterion 7 is MET.** Mechanism landed and verified, triage 30-for-30 by execution, exception
+written. That much I ruled.
+
+**🔴 I refused to close "SHIP THE ONE-WIRE TEAM" on it, and that refusal is the decision worth
+auditing.**
+
+Criterion 7 is the **eighth and last** box on the release bar, so ticking it _looks_ like closing the
+scope. **It is not the same predicate.** Criterion 7 is about the **board read-back**. The scope
+asserts **comms runs as the SOLE wire** — and steward measured **9 live grapevine lines, 7 of them a
+real `grapevine who` on the presence path, resolving** (`t-9768866f`). At the moment criterion 7 was
+met, **presence still read a wire the project believes it removed.**
+
+**I could have closed it tonight. Every box would be ticked and the sentence would be defensible** —
+and it is the outcome that makes this session look complete, which is exactly why I did not.
+
+> **THE QUESTION FOR COLE, and both answers are cheap:**
+> **Does "SHIP THE ONE-WIRE TEAM" range over the presence path?**
+> **YES** → the scope is not closeable yet, and `t-9768866f` is the remaining work.
+> **NO** → it closes **with a written exception** naming what it does not cover.
+>
+> **The unacceptable third option is closing it without anyone noticing the question existed** — which
+> is what would have happened had steward not gone reading `presence.ts` on an errand nobody assigned.
+
+**Why this one is escalated when fourteen others were not:** it is a **release-level assertion about
+the product**, it is one-way in practice (a closed scope does not get re-opened by the next session),
+and the evidence for the exception arrived _after_ the criteria were written. **It is the definition
+of the case Cole's standing instruction reserves for him.**
+
 ## C. Candidate principles this session produced (for the retro, not for adoption here)
 
 - **weaver's, and it is the sharpest:** _a rule whose violation is cheaper than its observance does
