@@ -14,6 +14,19 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Now
 
+> # 🎯 NEXT SESSION IS CONVENED AND PRE-SCOPED — **[read the handoff FIRST](reports/2026-08-08-convene-handoff-session-13.md)**
+>
+> **Session 13 closes criterion 7, and with it this whole scope.** Cole ratified the lanes on
+> 2026-08-08; the handoff is the `anthill:convene` "gather the work" step **pre-answered** — confirm,
+> do not re-litigate. It carries the branch decision, the six lanes, session 12's seven Q3 hypotheses,
+> the frozen `spellbook#64` protocol, the five rulings pending with Cole, and **six things not to do,
+> each of which is a plausible wrong move.**
+>
+> **⚠ Two actions have exact moments and both are easy to miss:** capture the bounty daemon **pid at
+> attach** (the one permitted `cli.ts` call — every later verb resets the idle timer and would
+> manufacture a survival), and **the lead stands ITSELF down last**, because `anthill down` will refuse
+> and name you.
+
 # ▶ THE SCOPE OF WORK: **SHIP THE ONE-WIRE TEAM**
 
 **Ratified by Cole, 2026-08-05.** _Everything needed before anthill can recommend comms as the default
