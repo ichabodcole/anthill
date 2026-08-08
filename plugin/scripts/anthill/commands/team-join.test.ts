@@ -9,6 +9,9 @@ import {
   buildMissingWarnings,
   type CoordWires,
   decideGate,
+  oneLineTitle,
+  parseReviewCards,
+  type ReviewCard,
   toManifestEntry,
 } from "./team-join.ts";
 import { cleanGitEnv } from "./test-support.ts";
@@ -158,6 +161,11 @@ const base = {
   gate: "bun run check" as string | undefined,
   msgFileRel: ".anthill/scratch/forager/commit-msg.txt",
   cliPath: "/plugin/scripts/anthill/cli.ts",
+  // The DEFAULT fixture reads "we looked and you owe nothing", so every
+  // pre-existing assertion below runs against the read-back's quiet state and
+  // the loud states are exercised deliberately. A `null` default would have made
+  // every legacy test silently assert the not-performed branch.
+  reviewCards: [] as ReviewCard[] | null,
 };
 
 /** Find the one checklist line starting with `prefix`, failing loudly if absent. */
@@ -837,5 +845,117 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
       rmSync(dir, { recursive: true, force: true });
       rmSync(emptyHome, { recursive: true, force: true });
     }
+  });
+});
+
+// THE BOARD READ-BACK (criterion 7). `principles.md`: no store without a named
+// re-read moment. The board has a write trigger and none of these, so a `review`
+// card decays into an unchecked claim about the tree — 13 of 27 (~48%) of them
+// mis-stated it in session 12, and one sent a seat to write a test that already
+// existed. These assertions are DISCRIMINATORS: each is built so a hardcoded
+// return value fails the SET even where it would satisfy any single row.
+describe("parseReviewCards — the board read-back's detector", () => {
+  const board = (tasks: unknown[]) => JSON.stringify({ state: { tasks } });
+  const card = (over: Record<string, unknown> = {}) => ({
+    id: "t-aaa",
+    title: "a card",
+    status: "review",
+    owner: "forager",
+    tags: [],
+    ...over,
+  });
+
+  test("unreadable / read-and-empty / read-with-cards are THREE distinct answers", () => {
+    const unreadable = parseReviewCards("{ not json", "forager");
+    const empty = parseReviewCards(board([card({ status: "done" })]), "forager");
+    const owed = parseReviewCards(board([card()]), "forager");
+    // Asserted as a SET. Any ONE of these rows is satisfied by a hardcoded
+    // value; all three together are not.
+    expect([unreadable, empty?.length, owed?.length]).toEqual([null, 0, 1]);
+  });
+
+  test("a TRUNCATED payload is null, NEVER [] — the difference is a claim we are not entitled to", () => {
+    // Cut mid-value, which is the shape a severed pipe actually produces.
+    const truncated = board([card()]).slice(0, 40);
+    expect(parseReviewCards(truncated, "forager")).toBeNull();
+  });
+
+  test("BOTH conjuncts filter — status AND owner — and either one alone lets a stranger through", () => {
+    const tasks = [
+      card({ id: "t-mine-review", status: "review", owner: "forager" }),
+      card({ id: "t-mine-todo", status: "todo", owner: "forager" }),
+      card({ id: "t-peer-review", status: "review", owner: "weaver" }),
+    ];
+    // Dropping EITHER conjunct yields 2 rows, so this fails against a
+    // one-conjunct implementation — the exact defect this seat shipped in
+    // session 11, where a published two-conjunct criterion became its first
+    // conjunct alone at the fix site and broke `anthill commit`.
+    expect(parseReviewCards(board(tasks), "forager")?.map((c) => c.id)).toEqual(["t-mine-review"]);
+  });
+
+  test("tags is TOTAL — a card carrying none reports [], never an absent key", () => {
+    const noTags = parseReviewCards(
+      board([{ id: "t-a", title: "t", status: "review", owner: "forager" }]),
+      "forager",
+    );
+    // A value comparison cannot tell an absent key from an empty one, so the
+    // key-set is asserted separately — Contract 4(b)'s `tailCommand` lesson.
+    expect(Object.keys(noTags?.[0] ?? {}).sort()).toEqual(["id", "tags", "title"]);
+    expect(noTags?.[0]?.tags).toEqual([]);
+  });
+
+  test("a `moot` tag reaches the reader — the verdict the status column cannot carry", () => {
+    // Statuses are a CLOSED union of four in spellbook (cli.ts:64, server.ts:329),
+    // so MOOT cannot be a status. Tags are free-form AND a filter dimension
+    // (server.ts:203), which is why the ruling rests on them.
+    const r = parseReviewCards(board([card({ tags: ["moot", "session13"] })]), "forager");
+    expect(r?.[0]?.tags).toEqual(["moot", "session13"]);
+  });
+});
+
+// 🔴 FOUND BY RUNNING `anthill join forager`, NOT BY THE SUITE — and the suite
+// could not have found it, because every fixture title above is a tidy
+// one-liner. A REAL card on this board (`t-d1c17fc6`) has a ~1000-character
+// title with EMBEDDED NEWLINES: someone used the title field as a notes field.
+// Rendered verbatim, one card detonated the read-back across a dozen lines of
+// unrelated prose and a seat could not tell where the card list ended.
+//
+// This is this seat's session-8 scar exactly — the JSON payload was CORRECT and
+// the human render was not — so the assertion is keyed on the CAUSE (a title
+// containing newlines) rather than on the one card that exposed it.
+describe("oneLineTitle — the human projection of a card title", () => {
+  test("a title with EMBEDDED NEWLINES renders as exactly one line", () => {
+    expect(oneLineTitle("first\nsecond\n\nthird")).toBe("first second third");
+  });
+
+  test("a long title is bounded and marked, not silently cut", () => {
+    const out = oneLineTitle("x".repeat(500));
+    expect(out.length).toBe(96);
+    expect(out.endsWith("…")).toBe(true);
+  });
+
+  test("a short one-line title is untouched — the positive anchor", () => {
+    // Without this, a function that returned "" for everything passes the two
+    // assertions above.
+    expect(oneLineTitle("resolveFormat reads isTTY ambiently")).toBe(
+      "resolveFormat reads isTTY ambiently",
+    );
+  });
+
+  test("the read-back emits ONE LINE PER CARD however ugly the titles are", () => {
+    const entry = buildChecklist({
+      ...base,
+      reviewCards: [
+        { id: "t-a", title: "a tidy one", tags: [] },
+        { id: "t-b", title: "an essay\nwith newlines\nand more\n\nparagraphs", tags: ["moot"] },
+        { id: "t-c", title: "y".repeat(900), tags: [] },
+      ],
+    }).find((l) => l.startsWith("BOARD READ-BACK —"));
+    if (entry === undefined) throw new Error("no read-back line");
+    // Exactly three indented card rows — one per card, regardless of the shape
+    // of what the board handed us.
+    const rows = entry.split("\n").filter((l) => /^ {4}t-/.test(l));
+    expect(rows.length).toBe(3);
+    expect(rows.every((r) => r.length < 140)).toBe(true);
   });
 });

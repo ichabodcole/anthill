@@ -3,7 +3,7 @@ import { isAbsolute, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { buildCommsIncantation } from "../comms.ts";
-import { resolveCoordCli } from "../coord.ts";
+import { execCoord, firstErrorLine, resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { detectPlaceholder } from "../placeholder.ts";
 import { nowMillis } from "../runtime.ts";
@@ -52,6 +52,19 @@ interface JoinData {
    * manifest at all (unknown seat, no config) are the error surface, not this
    * one. */
   comms: { channel: string; incantation: string };
+  /** THE BOARD READ-BACK (criterion 7) — the `review` cards THIS seat owes a
+   * verdict on, read at the one moment every seat is grounding and has touched
+   * nothing.
+   *
+   * TOTAL, and the three states are the point:
+   *   `null` — we could not read the board. Reason in `warnings`.
+   *   `[]`   — we read it and this seat owes nothing.
+   *   `[…]`  — these cards claim the tree is a way nobody has re-checked.
+   *
+   * `null` is NOT a rounded-down empty (Contract 6(c), one surface over):
+   * reporting `[]` for an unreachable board asserts *"you owe no verdicts"*,
+   * which is the single claim this field is not entitled to make. */
+  reviewCards: ReviewCard[] | null;
   checklist: string[];
   /** Surfaced when a configured grounding path doesn't exist — a dangling
    * `config.grounding` ref (e.g. a default `AGENTS.md` the repo doesn't have)
@@ -128,6 +141,12 @@ export interface ChecklistInput {
   /** Absolute path to the emitting cli.ts, so the LAND string resolves to the
    * binary that composed it rather than through PATH. */
   cliPath: string;
+  /** THE BOARD READ-BACK's payload. REQUIRED, not optional, and the three states
+   * carry different instructions — `null` (we could not look) must not silently
+   * render as `[]` (you owe nothing). Made required rather than defaulted so a
+   * new call site has to decide, which is the totality discipline Contract 5(a)
+   * applies to envelope fields, applied here to an input. */
+  reviewCards: ReviewCard[] | null;
 }
 
 /**
@@ -244,6 +263,93 @@ export function buildLandCommand(i: {
 }
 
 /**
+ * ONE `review` card this seat owes a verdict on, as the read-back presents it.
+ *
+ * `tags` is TOTAL — `[]` when the card carries none, never absent. A reader must
+ * be able to tell *"this card has no tags"* from *"we did not look at its tags"*,
+ * which is Contract 5(a)'s rule and Contract 6(c)'s `null`-is-not-a-rounded-down-
+ * zero, arriving on a third surface.
+ */
+export interface ReviewCard {
+  id: string;
+  title: string;
+  tags: string[];
+}
+
+/**
+ * PURE: given `bounty state --mine` stdout and a handle, which cards does this
+ * seat owe a verdict on?
+ *
+ * WHY THIS EXISTS — criterion 7, and it is the board half of `principles.md`'s
+ * **no store without a named re-read moment**. The board has a write trigger
+ * (seats move their own cards) and NO read-back across sessions, so a `review`
+ * card — *fixed, awaiting verification* — decays into a claim about the tree that
+ * nobody re-checks. Session 12 measured **13 of 27 (~48%)** of them mis-stating
+ * the tree: work landed, card never closed. A stale card is a stale PREDICTION
+ * and it commissions real effort — that session sent a seat to write a test that
+ * already existed.
+ *
+ * `join` is the named moment because it is the one command every seat runs before
+ * it has touched anything, and because it already tells a seat to READ the board
+ * while never telling it the board may be LYING.
+ *
+ * **Returns `null` when the payload cannot be read, `[]` when it was read and the
+ * seat owes nothing.** Those are the same fact about the WORLD and different
+ * facts about our KNOWLEDGE, and collapsing them would assert *"you owe no
+ * verdicts"* to a seat whose board we never reached — the one claim this function
+ * is not entitled to make.
+ */
+export function parseReviewCards(stdout: string, handle: string): ReviewCard[] | null {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(stdout);
+  } catch {
+    // A truncated or non-JSON payload is NOT an empty board. Say "no idea".
+    return null;
+  }
+  const tasks = (parsed as { state?: { tasks?: unknown } })?.state?.tasks;
+  if (!Array.isArray(tasks)) return null;
+  const out: ReviewCard[] = [];
+  for (const raw of tasks) {
+    const t = raw as {
+      id?: unknown;
+      title?: unknown;
+      status?: unknown;
+      owner?: unknown;
+      tags?: unknown;
+    };
+    if (t.status !== "review" || t.owner !== handle) continue;
+    if (typeof t.id !== "string" || typeof t.title !== "string") continue;
+    out.push({
+      id: t.id,
+      title: t.title,
+      tags: Array.isArray(t.tags) ? t.tags.filter((g): g is string => typeof g === "string") : [],
+    });
+  }
+  return out;
+}
+
+/**
+ * One card title, safe to render inside a checklist line.
+ *
+ * 🔴 FOUND BY RUNNING THE COMMAND, NOT BY THE SUITE — and the suite could not
+ * have found it, because every fixture title I wrote was a tidy one-liner.
+ * A real card on this board (`t-d1c17fc6`) carries a ~1000-character title with
+ * EMBEDDED NEWLINES — someone used the title field as a notes field. Rendered
+ * verbatim it broke the read-back across a dozen lines of unrelated prose, so a
+ * seat could not tell where the card list ended and the next instruction began.
+ *
+ * The PAYLOAD keeps the full title (a consumer is entitled to the truth); only
+ * this human projection is bounded. Same split as `emit()`'s two audiences —
+ * and this seat's session-8 scar is exactly the case where the JSON was right
+ * and `renderText` was not.
+ */
+export function oneLineTitle(title: string, max = 96): string {
+  const flat = title.replace(/\s+/g, " ").trim();
+  return flat.length <= max ? flat : `${flat.slice(0, max - 1)}…`;
+}
+
+/**
  * The joining seat's action checklist. PURE (no config, no filesystem, no
  * coord resolution) so the exact emitted strings can be asserted in CI, where
  * no spellbook plugin cache exists to resolve real CLI paths.
@@ -265,6 +371,32 @@ export function buildLandCommand(i: {
  */
 export function buildChecklist(i: ChecklistInput): string[] {
   return [
+    // THE BOARD READ-BACK (criterion 7) — FIRST, because it is a claim about the
+    // tree that the seat is about to build on, and because a store's re-read
+    // moment that sits below the fold is not a re-read moment.
+    //
+    // Three states, three DIFFERENT instructions. Collapsing them is the defect:
+    // `null` says nobody looked, `[]` says we looked and you owe nothing, and a
+    // list says these cards assert something about the tree that no one has
+    // re-checked since it was written.
+    ...(i.reviewCards === null
+      ? [
+          `BOARD READ-BACK: NOT PERFORMED — your \`review\` cards could not be read this join. **That is "nobody looked", NOT "you owe nothing".** Read them yourself before you trust any card: \`bun ${i.coord.bounty.available ? i.coord.bounty.cli : "<bounty cli>"} state --mine --as ${i.handle}\`.`,
+        ]
+      : i.reviewCards.length === 0
+        ? [
+            `BOARD READ-BACK: you own NO \`review\` cards — measured this join, not assumed. Nothing to re-verify.`,
+          ]
+        : [
+            `BOARD READ-BACK — ${i.reviewCards.length} card(s) of yours sit in \`review\`, which asserts "fixed, awaiting verification". **A card is a PREDICTION about the tree and nothing re-checks it across sessions: 13 of 27 (~48%) mis-stated it last audit, and one sent a seat to rebuild a test that already existed.** Give each a verdict AGAINST THE TREE — run a command, do not read the notes (the notes describe the world when it was FILED):\n${i.reviewCards
+              .map(
+                (c) =>
+                  `    ${c.id}  ${oneLineTitle(c.title)}${c.tags.length > 0 ? `  [${c.tags.join(",")}]` : ""}`,
+              )
+              .join(
+                "\n",
+              )}\n  SHIPPED (the work is in the tree) → \`bun ${i.coord.bounty.available ? i.coord.bounty.cli : "<bounty cli>"} update <id> --status done\`\n  OPEN (still a live defect) → leave it; it is a prediction that is still true\n  MOOT (the SUBJECT is gone — deleted, not fixed) → \`update <id> --status done --tag moot\`. **This is not the same verdict as SHIPPED and the difference is where it sends the next agent: "we fixed it" sends them to the fix, "the subject was deleted" sends them nowhere.** A status column cannot say the second; the tag can, and tags are queryable.`,
+          ]),
     // ORDER IS LOAD-BEARING, and it is the reason comms leads. Under Contract
     // 4(d) this emitted text IS a consuming team's onboarding — so whatever is
     // item 1 is the wire that team learns to reach for first. Listing the
@@ -554,6 +686,21 @@ export const teamJoinCommand = defineAnthillCommand({
       );
     }
 
+    // THE BOARD READ-BACK. `execCoord` never throws, so a dead daemon degrades
+    // to `null` rather than sinking the manifest — Contract 4(b)'s S8-1 lesson,
+    // where a spellbook absence suppressed a comms block that needed no
+    // spellbook. Grounding and the wire must survive a board that is not there.
+    let reviewCards: ReviewCard[] | null = null;
+    if (coord.bounty.available) {
+      const state = await execCoord(coord.bounty.cli, ["state", "--mine", "--as", handle]);
+      reviewCards = state.ok ? parseReviewCards(state.stdout, handle) : null;
+      if (reviewCards === null) {
+        warnings.push(
+          `BOARD READ-BACK UNAVAILABLE: could not read your \`review\` cards (${firstErrorLine(state.stderr, `exit ${state.exitCode}`)}). This is NOT "you owe no verdicts" — it is "nobody looked". Run \`bun ${coord.bounty.cli} state --mine --as ${handle}\` yourself before you trust the board.`,
+        );
+      }
+    }
+
     const seatDocRel = relative(root, config.seatDocPath(handle));
 
     const cliPath = fileURLToPath(new URL("../cli.ts", import.meta.url));
@@ -575,6 +722,7 @@ export const teamJoinCommand = defineAnthillCommand({
       // Beside the seat's scratch, which `init` already gitignores — so a
       // commit-message file never becomes a stray artifact on the gate surface.
       msgFileRel: join(relative(root, config.teamDirPath()), "scratch", handle, "commit-msg.txt"),
+      reviewCards,
     });
 
     const data: JoinData = {
@@ -589,6 +737,7 @@ export const teamJoinCommand = defineAnthillCommand({
         ? `bun ${coord.bounty.cli} tail --mine --as ${handle}`
         : null,
       comms: { channel, incantation: commsIncantation },
+      reviewCards,
       checklist,
       ...(warnings.length > 0 && { warnings }),
     };
