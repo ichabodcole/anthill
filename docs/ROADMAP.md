@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-07 (Cole ordered the triage first — see S13)
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-07 (Cole ordered the triage first — see S13; upstream-to-spellbook section reconciled against the installed 2.0.0)
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -144,6 +144,14 @@ is discharged by argument.**
 > and the `MOOT` class are the other half, and **triaging without fixing the read-back just re-does
 > the triage next session** — which is the original argument for pairing them and is unchanged.
 >
+> **✅ One blocker on that half cleared on 2026-08-07, with the spellbook 2.0.0 upgrade.** Reading the
+> board back through a pipe was previously unsafe in **both** directions — `bounty state --full`
+> truncated at ~64KB and exited 0 ([spellbook#78](https://github.com/ichabodcole/spellbook/issues/78)),
+> and a skipped `--restore` returned something shaped like success
+> ([#80](https://github.com/ichabodcole/spellbook/issues/80)). **Both are closed and fixed.** The
+> read-back is now an ordinary build rather than a build on a substrate that could lie about what it
+> handed back.
+>
 > **Three items came out of the triage needing a convene decision, and two of them collide:**
 > **70·2** (finalize has no code-review beat) routes findings _"to the owning seat via the roster"_ —
 > but **73·2** establishes that a seat's `scope` is a free-text string nothing parses, and that
@@ -156,14 +164,14 @@ is discharged by argument.**
 
 ## S13 · what gets delivered
 
-| #         | item                                                                      | why it is not an experiment                                                                                                                                                                                                                                                  | source                  |
-| --------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| **S13-A** | **`comms stand-down`'s `created` flag is session-scoped**                 | `team-comms.ts:924` is `!existsSync(path)` — **bare file existence, which is D3's exact defect one field over.** `comms.ts:694` already has the repaired predicate (`record.at >= sessionOpenedAt`). **n=4 seats misread it in one session.** One predicate, already written | session 12 wire, n=4    |
-| **S13-B** | **`uncheckedAgainst` stops reporting a false empty**                      | the porcelain read is at `team-commit.ts:526`, **after** `acquireLock` at `:346` — so a peer committing during your queue vanishes from the list. **Reproduced with timestamps** (15.6s queue, empty list, a peer's commit inside the window)                                | card `t-42dd65bf`, n=2  |
-| **S13-C** | **Test output that mimics a production envelope carries a marker**        | a seat nearly read a test's `convene` envelope in the gate's stdout as **our board dying**, in a session that had opened with a real board-loss scare                                                                                                                        | scout §8.3              |
-| **S13-D** | **`anthill commit` requires or resolves `--as`**                          | 9 of session 11's first 11 commits carried no seat trailer. Carried from session 11, unbuilt                                                                                                                                                                                 | S11 debt                |
-| **S13-E** | 🎯 **CRITERION 7 + THE BOARD READ-BACK, AS ONE PIECE**                    | **triaging without fixing the read-back just re-does the triage next session.** Needs the `MOOT` class steward found (_the subject was deleted_) — _"we fixed it"_ and _"the thing it was about is gone"_ send a fresh agent to different places, and one word covers both   | criterion 7 + `c2a4114` |
-| **S13-F** | **Close the discharged cards** — `t-ac09ffa9`, `t-07a131f5`, `t-e25cd535` | all three verified dischargeable in session 12; `--fresh` is moot since step 4 deleted it. **Minutes, and they are three of the 13 lying cards**                                                                                                                             | continuation doc        |
+| #         | item                                                                      | why it is not an experiment                                                                                                                                                                                                                                                                                                                                                                                               | source                  |
+| --------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **S13-A** | **`comms stand-down`'s `created` flag is session-scoped**                 | `team-comms.ts:924` is `!existsSync(path)` — **bare file existence, which is D3's exact defect one field over.** `comms.ts:694` already has the repaired predicate (`record.at >= sessionOpenedAt`). **n=4 seats misread it in one session.** One predicate, already written                                                                                                                                              | session 12 wire, n=4    |
+| **S13-B** | **`uncheckedAgainst` stops reporting a false empty**                      | the porcelain read is at `team-commit.ts:526`, **after** `acquireLock` at `:346` — so a peer committing during your queue vanishes from the list. **Reproduced with timestamps** (15.6s queue, empty list, a peer's commit inside the window)                                                                                                                                                                             | card `t-42dd65bf`, n=2  |
+| **S13-C** | **Test output that mimics a production envelope carries a marker**        | a seat nearly read a test's `convene` envelope in the gate's stdout as **our board dying**, in a session that had opened with a real board-loss scare                                                                                                                                                                                                                                                                     | scout §8.3              |
+| **S13-D** | **`anthill commit` requires or resolves `--as`**                          | 9 of session 11's first 11 commits carried no seat trailer. Carried from session 11, unbuilt                                                                                                                                                                                                                                                                                                                              | S11 debt                |
+| **S13-E** | 🎯 **CRITERION 7 + THE BOARD READ-BACK, AS ONE PIECE**                    | **triaging without fixing the read-back just re-does the triage next session.** Needs the `MOOT` class steward found (_the subject was deleted_) — _"we fixed it"_ and _"the thing it was about is gone"_ send a fresh agent to different places, and one word covers both. **GitHub half DONE 2026-08-07; the read-back half is open — and its pipe-truncation blocker cleared in spellbook 2.0.0 (see the box above).** | criterion 7 + `c2a4114` |
+| **S13-F** | **Close the discharged cards** — `t-ac09ffa9`, `t-07a131f5`, `t-e25cd535` | all three verified dischargeable in session 12; `--fresh` is moot since step 4 deleted it. **Minutes, and they are three of the 13 lying cards**                                                                                                                                                                                                                                                                          | continuation doc        |
 
 | **S13-G** | **Persist `asOf` on the message record and show it on read** | 🔴 **NOT scout's proposal, and the inversion is the point.** He proposed _refusing a body whose watermark disagrees with `--as-of`_ (n=4). **But the stored record is `{channel, emittedThrough, from, id, role, text, ts}` — `--as-of` gates the send and is then DISCARDED.** The prose watermark exists _because the tool throws the value away_: there are not two copies that drift, **the tool manufactures the second copy.** Persisting needs no parsing, no refusal, no coupling to wording — and it lands in Contract 6(a)'s own idiom, which already persists the **artifact** tier (`emittedThrough`) while dropping the **testimony** tier (`read`) the tool already collects. Additive; older records simply lack the field | scout §7, re-scoped against the code |
 | **S13-H** | **The finalize confirmation stops asking for a sha that is stale by construction** | 4 of 5 seats filed a ledger amendment after confirming, because the finalize conversation itself produced further lessons. **Ask after stand-down, or do not ask — `git log --grep "Anthill-Seat: <handle>"` is already the mechanical source** | session 12, n=4 |
@@ -196,9 +204,41 @@ is discharged by argument.**
 - **`bun run check` reads ZERO markdown** — **fourth session running.** The prose lane has no automated verification at all, and _"gate green" on a markdown land means the tree compiles._
 - **The whole-tree gate serialises a lane that cannot cause a red** — weaver blocked **3× in one session** on a markdown lane. → **[`shared-tree-gate-tension`](projects/shared-tree-gate-tension/proposal.md) move C**, now with first-person field evidence **and** a reproduced false-`uncheckedAgainst` beside it. **Decide at a convene; it is a tree-model question, not a fix.**
 
-## Upstream to spellbook — deduped, drafted, NOT yet sent
+## Upstream to spellbook — ✅ ALL THREE WERE SENT, AND ALL THREE ARE FIXED IN SPELLBOOK 2.0.0
 
-**Cole approves the drafts before they go.** `bounty open --restore <id>` **silently no-ops** when a live board already holds the key (it attaches and ignores the flag — this is how session 12's board recovery nearly failed) · **`bounty state` truncates to a PIPE** (~64KB, whole to a file), and `--owner <name>` does not filter while `--mine` does.
+> This section read **"deduped, drafted, NOT yet sent"** until 2026-08-07, and every item in it had
+> already been filed AND closed. **It is corrected rather than deleted** — a router that describes
+> work as pending when it shipped is the same failure this file has scarred on twice, and the
+> correction is the artifact.
+
+**Checked 2026-08-07 against the installed `spellbook/2.0.0`:**
+
+- `bounty open --restore <id>` **silently no-ops** when a live board already holds the key — how
+  session 12's board recovery nearly failed → [spellbook#80](https://github.com/ichabodcole/spellbook/issues/80), **closed**
+- **`bounty state` truncates to a PIPE** (~64KB, whole to a file) → [spellbook#78](https://github.com/ichabodcole/spellbook/issues/78), **closed**
+  (grapevine shares the shape → [#77](https://github.com/ichabodcole/spellbook/issues/77), closed)
+- **`--owner <name>` does not filter while `--mine` does** → the `=`-form half of
+  [spellbook#81](https://github.com/ichabodcole/spellbook/issues/81), **closed.** `cli.ts` now parses
+  through `node:util` strict against a **22-flag recognized set**, so unknown flags are refused at
+  parser altitude
+
+### ⚠ What 2.0.0 did NOT bring, and two compatibility facts that were verified rather than assumed
+
+**`D1.3` did NOT land, so `S13-N` still holds — do not delete `boardShadowWarning`.** Established two
+independent ways: [spellbook#64](https://github.com/ichabodcole/spellbook/issues/64),
+[#73](https://github.com/ichabodcole/spellbook/issues/73) and
+[#74](https://github.com/ichabodcole/spellbook/issues/74) are **still open**, **and** the diff of
+`bounty/scripts/server.ts` between 1.16.0 and 2.0.0 is **35 lines touching only `task.add`'s error
+text** — nothing anywhere in the snapshot / restore / close path.
+
+- **The bounty event vocabulary is UNCHANGED** — still dotted (`task.add`, `task.move`, …), still no
+  bare `task`. So the fix in
+  [`backlog/2026-08-06-board-tail-filter-matches-no-task-event.md`](backlog/2026-08-06-board-tail-filter-matches-no-task-event.md)
+  is unaffected by the upgrade and remains the one queued item buildable end-to-end.
+- **#81's stricter parser does not break us.** Every bounty flag anthill passes — `--as`, `--mine`,
+  `--pin`, `--session`, `--status` — is in the new recognized set. _This was worth checking because
+  the fix converts a silent accept into a refusal: had we been passing a flag they dropped, the
+  board integration would now fail loudly rather than quietly._
 
 ---
 
