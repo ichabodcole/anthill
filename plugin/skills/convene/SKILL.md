@@ -75,8 +75,25 @@ stay solo.
        beginning replays all of them. **That is the durability the wire is for, and the cost is that
        catch-up needs an ANCHOR rather than a starting point.**
      - **So the lead owes every seat a session anchor**, out of band from the wire itself — a message
-       id, in the brief or the card. **Do not publish the anchor as a message on the channel it
-       bounds:** the only way to learn the rule is then to break it, which is not a rule.
+       id, and **its home is a read-first CARD ON THE BOARD.** **Do not publish the anchor as a
+       message on the channel it bounds:** the only way to learn the rule is then to break it, which
+       is not a rule.
+       - **⚠ "In the brief" is NOT a second home, and this instruction used to offer it as one.** On
+         the default path your brief **is** a message on the channel (you post the framing opener
+         there, a few beats below) — so an anchor "in the brief" is the exact thing this rule
+         forbids, one paragraph apart. It is out of band **only** when you are dispatching seats as
+         subagents, where the brief is a payload handed to the seat. **The card is the only home that
+         is out of band on both paths.**
+       - **The opener MAY POINT at the card. Pointing is not publishing, and it is also not
+         delivery.** A seat that correctly refuses to read the wire until it has an anchor **cannot
+         receive a pointer that lives on the wire** — it has ruled out the only surface carrying it.
+         **That is a reachability problem, not a findability one, and the two have opposite fixes:**
+         findability says make the pointer louder; reachability says put it where a compliant seat is
+         already looking. Only the second works.
+         _Measured: a seat did exactly this and had to ask for an anchor that was already carded — while
+         another got the anchor by reading the channel the rule forbids, and paid nothing because its
+         gap happened to be 1. **The tooling rewarded the wrong method and taxed the right one**, which
+         no gate and no prose can see._
    - **Board:** convene now **opens/attaches the team board itself** — keyed to the channel and pinned
      (writes `.bounty-session` at the repo root), so every seat's + the lead's bounty verbs bind **this**
      board by construction. **In a single working tree the binding is ambient — nobody passes
@@ -214,8 +231,10 @@ The stand-up beats that get skipped when you're eager to spawn. Run them as a li
   blank, and every land the team makes until it is set runs **no verification at all** (the land
   command says so, loudly — but it says it to a seat, not to you).
 - ◻ **Session stood up** — `anthill convene`. **There is no wire to open**; what you owe the seats
-  instead is a **session anchor**, delivered out of band (the brief, the card), never as a message on
-  the channel it bounds.
+  instead is a **session anchor on a read-first CARD**, never as a message on the channel it bounds.
+  **Not "in the brief"** — on the default path the brief is itself a message on that channel, so it is
+  the same violation wearing a different noun. The opener may point at the card; a seat that is
+  correctly refusing to read the wire cannot receive a pointer that lives on it.
 - ◻ **Board open + seeded** — one `todo` card per planned lane, in owner lanes; **size** them where the
   work is known enough to size.
 - ◻ **Seats briefed** on comms (what we're building, the lanes, where the plan lives).
