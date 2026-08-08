@@ -470,6 +470,13 @@ I grepped the wire for land refusals and got 21; the real number is nothing like
 **This is the session-6 commit-monitor failure rebuilt in a different tool on a different subject, by the author of the warning about it.**
 `principles.md`: *the tool is not lying; it is answering a coarser question than the one you asked* — **and a count of messages-mentioning-X looks exactly like a count of X.**
 
+**⚠ WIDENED, session 13 — `grep` FAILS IN BOTH DIRECTIONS ON THIS CORPUS AT THE SAME TIME, AND TWO SEATS EACH FOUND ONE HALF WITHOUT REACHING THE OTHER.**
+**INFLATES** — the entry above: a self-documenting corpus matches prose *discussing* the string. Measured again this session on someone else's instrument: a leak guard **matched its own source**, and a proposed gate cell returned **3** where its author predicted 2 because the third hit was a **docblock**.
+**DEFLATES** — `grep` is **line-scoped** and our prose wraps, so a phrase spanning a line break returns a **false zero**. 19-for-19 across two seats' probes; a phrase folded onto one line is found, the same phrase across a wrap is not.
+> **So a count here is a FLOOR and a CEILING at once, and nothing in the output tells you which one you are holding.**
+**The cheap remedy is one flag and it kills the deflating half everywhere: fold newlines before you grep, and keep a D control so the fold cannot invent matches.** The inflating half has no flag — **only reading each hit**, which is why the honest output is a LIST a peer can strike rather than a number.
+_Do NOT sort the corpus into safe and unsafe files. I tried that, published it, and it was falsified within the hour: one-sentence-per-line changes how many wraps exist to span — the EXPOSURE — never the outcome once a phrase spans one._
+
 **⚠ Reaching for the id on screen when stamping `--as-of`.**
 I stamped `--as-of 703` having read only the **preview**. The proof is intrinsic: my message engaged with neither of that message's two retractions.
 **The preview id is the ONLY id available at composition time and it is always the head**, so the wrong stamp is free **and flatters you** — a higher watermark reads as better caught-up — while the right one costs a deliberate second act.
