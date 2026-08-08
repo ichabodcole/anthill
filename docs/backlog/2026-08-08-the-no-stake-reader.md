@@ -26,9 +26,28 @@ else), twice on ours.
 with a suspiciously high hit rate, and it is the one thing on that wire either team could adopt
 tomorrow.
 
-**It has already caught its author on this wire twice inside a day:** the `bounty info` sampling that
-would have [faked the `#64` green](2026-08-08-spellbook-64-idle-death-measurement-protocol.md), and a
-⚠ in [the BUILD index](2026-08-08-triage-build-batch.md) warning about a tradeoff that does not exist.
+## 🔴 The strongest datum is not the rates — it is one experiment with two broken instruments
+
+The counts above are about **documents**. This is about **two experts designing the same measurement
+inside two hours, each writing an instrument that would have manufactured a pass, and neither catching
+their own:**
+
+| whose      | the instrument                                      | how it faked the green                                                                                                                                  |
+| ---------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ours**   | sample the daemon with `bounty info` on an interval | **idle-touch — every `cli.ts` verb resets the idle timer, so the poll IS the keep-alive.** It would have held the board open for the whole session      |
+| **theirs** | survival = unchanged `session_id` at session end    | **`deriveSessionId` is pure** — slug of the key plus a hash of the scope root. A respawned daemon returns byte-identical, so **a respawn is invisible** |
+
+**Neither of us was missing information.** We had read the idle-touch documentation; they had derived
+that id by hand the day before and had **already been bitten once** by treating it as opaque.
+**Knowing the mechanism did not prevent writing the claim** — which is `principles.md:320-325`
+arriving on a measurement design rather than on prose.
+
+**Each defect was found by the other party, within minutes, on first read.** That is the case for the
+intervention, and it is stronger than any rate: _we were each missing a reader, not a fact._
+
+It also caught two smaller things on the same day — a ⚠ in
+[the BUILD index](2026-08-08-triage-build-batch.md) warning about a tradeoff that does not exist, and
+the [stale down-presence card](2026-08-01-down-presence-guard-cannot-pass-for-a-correctly-wired-lead.md).
 
 ## The brief, which is the whole mechanism
 

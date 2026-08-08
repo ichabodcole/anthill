@@ -41,6 +41,43 @@ keep-alive produces output identical to a real survival, which is
 a reader with no stake read the named instrument, and it was wrong. Had we said _"we'll sort the
 logging out when we run it,"_ this ships as evidence.
 
+## 🔴 AMENDED IN THE FREEZE WINDOW — the survival criterion was blind to the event it existed to detect
+
+**The original criterion was _"same `session_id` at session end."_ `session_id` CANNOT DETECT A
+RESPAWN.** Raised by `spellwright` before the run and **verified here against
+`spellbook/2.1.0/skills/bounty/scripts/cli.ts:132-146`** rather than taken on report:
+
+```ts
+export function deriveSessionId(key: string, scopeRoot: string): string {
+  const slug = slugifyKey(key);
+  const scopeHash = createHash("sha256")
+    .update(scopeRoot)
+    .digest("hex")
+    .slice(0, 8);
+  return slug ? `k-${slug}-${scopeHash}` : `k-${scopeHash}`;
+}
+```
+
+**Pure. No clock, no pid, no randomness.** A keyed board that idle-dies and is respawned under the
+same key **comes back byte-identical by construction** — that is the point of keyed idempotent attach
+(spellbook#69) and it is correct behaviour.
+
+**And it fails toward a green.** Daemon idle-dies at hour two → any verb or a seat's re-attach
+respawns it → session ends → `session_id` matches → **reported as survival.** That is `#64` closed on
+the exact failure it was measuring.
+
+**This is the SECOND time this protocol's instrument would have manufactured a pass, and the two came
+from opposite sides** — our `bounty info` poll, and their `session_id` criterion. **Both were caught
+by the other party, neither by its author.** The author of this one had derived that id by hand the
+day before and had already been bitten by treating it as opaque, and _still_ wrote a criterion
+assuming it carried process identity. **Knowing the mechanism did not prevent the claim** — which is
+`principles.md:320-325` in a fourth costume, and the first where the rotten reason was under two hours
+old.
+
+**The freeze window is what made this catchable.** A protocol renegotiated _during_ a run is worth
+less than a flawed one held steady — so the window exists precisely so the amendment happens before
+t=0 or not at all. **It paid for itself on its first use.**
+
 ## The protocol
 
 ### Sample WITHOUT touching — no `cli.ts` verb, at any interval, for any reason
@@ -53,8 +90,14 @@ logging out when we run it,"_ this ships as evidence.
 
 ### Named artifacts, committed in advance
 
-- **SURVIVAL** = at session end the daemon holds the **same `session_id`** it started with **and was
-  never respawned.** ⚠ **A respawn that "worked" is a FAILURE, not a pass.**
+- **SURVIVAL = THE DAEMON PROCESS IS THE SAME ONE.** ⚠ **A respawn that "worked" is a FAILURE, not a
+  pass** — and see the amendment below for why `session_id` **cannot** detect one.
+  1. **At attach, capture the daemon's pid** — `bounty info`, or the discovery file at
+     `<tmpdir>/bounty-<session_id>.json`. **This is the ONE moment a `cli.ts` verb is permitted**,
+     because it precedes the measurement window and idle-touch at t=0 is harmless.
+  2. **Sample `ps -p <that pid>` for the rest of the session.** Alive throughout = survival.
+  3. **Gone at any sample = death**, regardless of what `session_id` says afterwards. **A changed pid
+     is a respawn and therefore a failure**, even if the board looks healthy.
 - **CAUSE OF DEATH is a field, not a judgement.** The `closed` frame carries `reason`, and `timeout`
   is a distinct value from `user` / `close` / `signal`. Exit **124** is the process-side twin.
   **Pre-committing to read that field IS the protocol** — nobody interprets anything.
@@ -84,7 +127,9 @@ shape across two repos in one week.**
 
 ## Acceptance Criteria
 
-- [ ] The run uses **only** the three non-touching probes. No `cli.ts` verb is used to sample.
+- [ ] Survival is judged on the **pid**, never on `session_id`.
+- [ ] The pid is captured **at attach**, before the window opens — the only permitted `cli.ts` call.
+- [ ] The run uses **only** the three non-touching probes to sample. No `cli.ts` verb inside the window.
 - [ ] `closed.reason` is read as a field; no one argues about what killed it.
 - [ ] A busy-throughout session is reported as **NOT TESTED**.
 - [ ] The result is posted to
