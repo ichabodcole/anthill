@@ -59,6 +59,42 @@ re-derive a ruling from `git log` the way this one did.
 294 citations against `git log --first-parent`, it is the only genuinely unknown input, and it
 converts a design argument into an arithmetic one. Do that before convening on it.
 
+## ✅ RUN 2026-08-08 (session 13, maestro) — and the answer is not close
+
+**Measured at `03c4547`, on `develop`'s history.**
+
+| cited sha lands…                     | count | share   |
+| ------------------------------------ | ----- | ------- |
+| **inside a merged feature branch**   | 242   | **92%** |
+| on `develop`'s first-parent mainline | 17    | 6%      |
+| not reachable from `develop`         | 5     | 2%      |
+| **total real commit shas cited**     | 264   |         |
+
+Context for the ratio: `develop` reaches **709** commits, of which only **98** are on the
+first-parent mainline. Citations concentrate in branch commits because that is where the work is —
+so the exposure is not an accident of citation style, it is structural.
+
+**Method, stated so it can be re-run or refused:** all `[0-9a-f]{7,40}` tokens in `docs/**/*.md` and
+`.anthill/**/*.md`, filtered to real objects with `git cat-file -e <h>^{commit}` (403 candidates →
+264 commits), then classified by membership in `git rev-list --first-parent develop`, with
+`merge-base --is-ancestor` separating unreachable from in-branch.
+
+**⚠ My total is 264, not the 294 this card asserts.** I have **not** falsified the 294 — I measured a
+narrower domain (`.md` only, two directories) and the earlier figure's method is unstated. **Read
+the SHARE, not the total**: the ratio is what the decision turns on, and it is robust to the
+denominator.
+
+**What would have falsified this:** an in-branch share low enough to make squashing cheap — say under
+a third — which would have left `session-branch-strategy`'s squash-merge decision standing. It could
+have come out that way; the repo could have cited mostly mainline and merge commits. **The control
+fires in both directions: 17 shas DID classify as mainline, so a broken matcher would have reported
+0 there rather than 242.**
+
+**What this does NOT settle, and it is the lead's to say so:** whether the citations that break are
+ones anyone will ever follow. 92% is the exposure, not the harm — a sha nobody re-reads costs nothing
+when it rots. That distinction is a ruling for Cole, not an arithmetic result, and this measurement
+deliberately stops short of it.
+
 ---
 
 _Related: [`session-branch-strategy`](../projects/session-branch-strategy/proposal.md) ·
