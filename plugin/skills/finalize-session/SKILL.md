@@ -503,8 +503,23 @@ nobody has scoped is a horizon in name only.
        exists to prevent, and _"I could not tell"_ is not _"nobody is there."_
      - **`--force` at the end of a clean session is NOT expected, and if you need it, something did
        not stand down.** Departure is a **positive observation**: `anthill comms stand-down --as <seat>`
-       records it, and the guard authorises teardown once **every spawned seat** has one. So a session
-       that ended properly tears down with no override at all.
+       records it — and **every spawned seat having one is NECESSARY WITHOUT BEING SUFFICIENT. The
+       missing half is YOU, and it is the DEFAULT ending rather than an edge case.**
+     - **⚠ THE GUARD WILL REFUSE YOU, BY NAME, AFTER EVERY SEAT HAS CORRECTLY STOOD DOWN — so stand
+       yourself down BEFORE you run `anthill down`.** The presence rows are built from
+       **`config.seats`, which contains the lead**, while the departure check ranges over the seats
+       this session **spawned**, which does not — and the live-follower branch is consulted **first**.
+       Your own `comms follow` is therefore what blocks the teardown, and `convene` told you to wire
+       it before you briefed anyone, so you will meet this every time.
+       - **The discriminator is your DEPARTURE RECORD, not your pid** — once you have stood down the
+         guard authorises teardown **with your follow still alive**, so there is nothing to kill first
+         and nothing to wait for.
+       - **The order is: seats stand down → YOU stand down → `anthill down` → panes die.** _"I stand
+         down last, after `anthill down`"_ is not a stricter version of this — it is impossible, and
+         the guard proves it by refusing.
+       - **Do NOT repair this by exempting the lead from the presence count.** A lead who is still
+         working is exactly as unsafe to yank as a seat who is; the refusal is the guard doing its
+         job, and the lead is the one seat with no peer to notice his absence.
      - **Which makes `--force` a signal rather than a formality.** Reach for it and you are asserting
        that a seat which never said it left is safe to kill — **the one session where that is wrong is
        the one where a seat really is still working, and it looks identical from here.** Read who it

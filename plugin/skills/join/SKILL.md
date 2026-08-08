@@ -111,8 +111,19 @@ status`** shows who's on + the board.
      - **⚠ NOTHING CLEARS THE COMMS LOG — ever, by any lead.** There is no `--fresh`, and convene
        opens nothing. **So a bare read replays every session the team has ever had**, and "start at
        the beginning" is not a catch-up, it is an archive dump. **Anchor to the session's starting id**
-       — which the lead owes you out of band, in the brief or on your card. **If you were not given
-       one, ask.** Do not reconstruct it by reading backwards until the messages look unfamiliar.
+       — which the lead owes you out of band. **LOOK ON THE BOARD FIRST: the anchor's home is a
+       read-first CARD, and it is very likely already sitting there.** Then ask, if it is not. Do not
+       reconstruct it by reading backwards until the messages look unfamiliar.
+       - **Why the board and not the wire, and it is the whole reason this bullet exists:** the lead's
+         opener may well name the card — **but that pointer is ON the channel you are refusing to read
+         until you have an anchor.** If you obey the rule, the pointer is unreachable to you; if you go
+         read it, you broke the rule to find out you did not have to. **Neither branch is your mistake.**
+         The board is the surface a correctly-behaving seat can reach without reading anything it is
+         not yet entitled to read, which is why the card is the home and the message never is.
+       - **⚠ ASKING IS NOT A FAILURE AND DO NOT LET THE TIMING FOOL YOU.** A seat who asks pays a
+         round trip; a seat who just reads the channel usually pays nothing, because its own follow
+         position often happens to be near the session start. **The cheap-feeling route is the wrong
+         one and it is cheap by accident** — measured, in one session, both branches at once.
      - **⚠ AND THE ANCHOR CANNOT BE PUBLISHED ON THE CHANNEL IT BOUNDS.** A lead who posts
        _"do not read below #560"_ as message #560 has written a rule whose only route to the reader is
        through the thing it forbids — **measured: two seats over-read it in one session, and both had
@@ -293,9 +304,12 @@ status`** shows who's on + the board.
 - ◻ **Caught up** if you joined mid-session — the **finite read** verb, anchored with `--since <id>`,
   never the live follow. A live stream piped into `grep` returns nothing and then times out, which
   reads as "empty channel". For **one specific message**, `--id <id>`.
-  **⚠ And you need an anchor from the lead**, because nothing clears this log and a bare read replays
-  every session the team has ever had. **An anchor published as a message on the channel it bounds is
-  not an anchor** — the only way to learn it is to break it, measured at n=2 in one session.
+  **⚠ And you need an anchor from the lead — LOOK ON THE BOARD FOR IT BEFORE YOU ASK**, because
+  nothing clears this log and a bare read replays every session the team has ever had. Its home is a
+  read-first **card**. **An anchor published as a message on the channel it bounds is not an anchor**
+  — the only way to learn it is to break it, measured at n=2 in one session. **And a POINTER to the
+  card, published on that same channel, is not delivery either:** a seat obeying the rule cannot reach
+  it, which is why the board is where you look first.
 - ◻ **Used the FLAGS, not a positional.** Measured, one command apart: an unknown **flag** is refused
   by name, exit 1; an unknown **positional** is **swallowed — exit 0, `ok:true`, and the entire log
   comes back.** The silent one is what you produce by reaching for a neighbouring tool's signature,
@@ -339,6 +353,20 @@ status`** shows who's on + the board.
   ever sees it_, corrupting the message or partially running it. **The tool cannot defend against
   this** — the damage happens in your shell, upstream of it, so no amount of care on the receiving
   end helps.
+  - **⚠ THIS IS NOT ADVICE. `--stdin` (or a quoted heredoc) IS THE ONLY PROTECTION, because the damage
+    is UNDETECTABLE AFTERWARDS FROM THE MESSAGE ITSELF.** An eaten span leaves **no marker** — the
+    sentence simply reads as though it was written that way, and readers pass over the hole without
+    noticing. _Measured: a seat lost three spans of a load-bearing result, including its mechanism
+    sentence; two peers read straight past the gap, and a detector built afterwards **missed that very
+    message** while its only hits were correct markdown._ **A post-hoc check for this is
+    anti-correlated with the thing it tests. Quote at the moment of sending or you have nothing.**
+  - **⚠ AND IT DOES NOT STOP AT THE MESSAGE — AN UNQUOTED BODY CAN WRITE TO THE SHARED WORKING TREE.**
+    A comparison in your prose is a **redirection** to your shell: a body containing a
+    `record.at >= sessionOpenedAt` span created **a file literally named `=` at the repo root**, in a
+    tree four other seats were committing from, **where a careless `git add -A` would have swept it
+    into someone else's commit.** _Found only because a land envelope happened to name it — no one would have
+    traced that file back to a message._ **The blast radius of a mis-quoted send is the repository,
+    not your paragraph.**
   - **This hazard is a property of the shell, not of any one command**, so don't scope it to the verb
     you happen to know. A lead walked into the sibling case of exactly this — reaching for the
     _other_ tool's `tail` because the warning he had written named only the first — and lost time to

@@ -23,6 +23,30 @@ interface ConveneData {
    * lead actually runs.
    */
   commsIncantation: string | null;
+  /**
+   * The LEAD's own departure command, fully resolved — the release for the
+   * blocker this very command creates.
+   *
+   * `convene` hands the lead a live `comms follow`, and `commsPresenceFor`
+   * builds its rows from `config.seats` (which contains the lead) while the
+   * departure check ranges over the seats this session SPAWNED (which does
+   * not). The live-follower branch is consulted first, so the lead's own
+   * follower refuses his `anthill down` — by name, after every seat has
+   * correctly stood down. That is the DEFAULT ending, not an edge case.
+   *
+   * `join` has emitted every seat its stand-down since the guard shipped; the
+   * lead was the one seat whose blocker was created by the ritual and whose
+   * release appeared in no emitted output. The prose said a clean session tore
+   * down with no override, which is why the gap survived: nothing emitted
+   * contradicted it.
+   *
+   * `null` on the same condition as `commsIncantation` and for the same reason
+   * — no resolvable lead means no handle to bind, never "this team does not
+   * stand down". Emitted as a SIBLING of the follow wire deliberately: a lead
+   * who is given the thing that blocks teardown is given its release in the
+   * same breath.
+   */
+  leadStandDown: string | null;
   warnings?: string[];
 }
 
@@ -231,6 +255,12 @@ export const teamConveneCommand = defineAnthillCommand({
           handle: config.lead,
         })
       : null;
+    // Composed from the same cliPath as the wire above, so the release and the
+    // blocker cannot resolve to different binaries (Contract 7(d): a
+    // load-bearing emitted command resolves to the EMITTING cli, never PATH).
+    const leadStandDown = config.lead
+      ? `bun ${fileURLToPath(new URL("../cli.ts", import.meta.url))} comms stand-down --as ${config.lead}`
+      : null;
     if (!config.lead) {
       warnings.push(
         "no lead resolvable from config, so no comms incantation was emitted — the lead will be UNWIRED unless it runs `anthill join <handle>` itself",
@@ -243,6 +273,7 @@ export const teamConveneCommand = defineAnthillCommand({
       board,
       leadDoc,
       commsIncantation,
+      leadStandDown,
       ...(warnings.length > 0 && { warnings }),
     };
 
@@ -269,6 +300,11 @@ export const teamConveneCommand = defineAnthillCommand({
         if (d.commsIncantation) {
           lines.push(
             `Monitor the team comms — wrap with Monitor, verbatim, NO filter (comms follow emits no keepalives, so there is nothing to strip; adding a grep here can only lose messages): ${d.commsIncantation}`,
+          );
+        }
+        if (d.leadStandDown) {
+          lines.push(
+            `Your LAST act, and run it BEFORE \`anthill down\` — the teardown guard counts you as a seat, so your own follow above is what refuses it, by name, after every seat has correctly stood down: ${d.leadStandDown}`,
           );
         }
         if (d.warnings?.length) {

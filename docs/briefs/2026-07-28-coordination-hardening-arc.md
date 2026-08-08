@@ -176,3 +176,44 @@ before it needs a plan, so it stays out of the arc until the experiment runs.
 - **Two companion write-ups are planned and are deliberately not this document:** a narrative account
   of the study for an outside reader, and an exploration of what version control designed _for_
   multi-agent development might look like. Neither is a plan; both are thinking.
+
+---
+
+_Reconciled 2026-08-08 (session 13) by sentinel at `47268d8`, claim by claim. Prose swept as well as
+lists, per the beat's own scar (4 stale claims found in 10 rows, a 5th missed among 91 prose lines)._
+
+- **M9 — invisible waiting · HELD, and tonight is fresh evidence for the half still open.** The
+  documentation half has shipped and was _used_: the lead posted that he was blocked on the human
+  (`#949`), and a seat posted a capacity constraint rather than going quiet (`#922`). **The
+  instrumentation half is UNCHANGED and was demonstrated again** — both signals were produced by a
+  human-or-agent _choosing to speak_. **Nothing detected either.** "Correct waiting has no stall
+  signature" is still exactly true.
+- **M7 — livelock by politeness · HELD, and it FIRED tonight, which the brief predicted and nothing
+  had yet observed.** Two seats each correctly declined to write a test in the other's file; the item
+  (`K1`, an unasserted emission) sat with **no owner** until a third seat claimed it. **"Everyone
+  yields, nobody drains" is no longer a projection — it is a measured instance**, and the brief's
+  "more courtesy makes it worse" is the exact mechanism: both refusals were _correct_.
+- **M11 — invisible scope · HELD, with a new instance from the opposite direction.** The board
+  read-back put two cards in a seat's lane asserting things about the tree that seat had never
+  checked. **A scope hid an undelivered deliverable, and the mechanism that surfaced it was built
+  the same night** — so M11 now has a partial detector it did not have when this brief was written.
+- **M10 — plan drift · UNCHECKED as stated.** No ruling falsified a seam tonight, so the beat this
+  item proposes had no occasion to fire. **Not evidence either way.**
+- **M8 — lead ruling latency · UNCHECKED.** The lead ruled continuously and nobody measured queue
+  depth. The open question below it is untouched.
+- **Phase 5, "Status is a moment; content is a fact" · HELD, strongly.** Tonight: a green tree
+  announcement went stale in four minutes; a gate went red, green, red and green again on in-flight
+  work; one seat's `review` count read 5 → 2 → 4 within an hour. **Every reading was correct when
+  taken.**
+- **Phase 5, "convergence is only evidence against an EXTERNAL invariant" · HELD.** Four values for
+  one audit rate (13 · 27 · 24 · 19) were produced by careful seats who each agreed with themselves;
+  what settled it was removing the number, not reaching consensus on it.
+- **🔴 Phase 6, "Not one of M7–M11 arrived spontaneously — every one required being asked" ·
+  NARROWED, not falsified.** That sentence is about how these mechanisms were _originally elicited_
+  and it remains true of that history. **But tonight M7's social half arrived spontaneously**, named
+  by a seat who had not been asked and was not running the reflection. **The claim should not be read
+  forward as a prediction that they never will** — as written it is a statement about one harvest,
+  and a reader is one step from treating it as a property of the team.
+- **Phase 1 (ratify gate) · HELD.** Used tonight per-clause, on cards and on the wire.
+- **Phases 2, 3 (M2 gate question, branch strategy M5) · UNCHECKED.** Untouched tonight; the branch
+  strategy remains the open design question `AGENTS.md` names.

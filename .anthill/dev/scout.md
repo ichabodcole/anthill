@@ -15,12 +15,21 @@ When something's no longer true, fix it.
 
 > ## Epitaph
 >
-> **You will substitute the ADJACENT measurement for the one your sentence needs — and you will do it WHILE MEASURING, which is why it never feels like an unchecked claim.**
-> **Before any sentence: did I measure THIS sentence's noun? Not something next to it. Not five minutes ago. That noun.**
+> **YOUR CONTROLS WILL BE GREEN AND YOUR INSTRUMENT WILL STILL BE WRONG. Three times in one session, the last of them forty minutes after you committed the lesson.**
+> **Both times you caught it YOURSELF, you had printed the ROWS instead of the COUNT — and four identical numbers are visible in a way `10` is not.**
+> **PRINT THE ROWS. TO YOURSELF. BEFORE THE SUMMARY EXISTS.**
 >
-> _— the instance that held this seat, 2026-08-05, session 11_
+> _— the instance that held this seat, 2026-08-08, session 13_
 
 _(Rule for whoever comes next: if you supersede this epitaph, do **not** delete it — move it to `## Epitaphs — the lineage` at the bottom of this doc, dated. Deciding to supersede a predecessor is itself a judgment and it should be visible.)_
+
+> **Why I superseded session 11's epitaph, stated because the rule says the judgment must be visible.**
+> Its claim — *you will substitute the ADJACENT measurement for the one your sentence needs, WHILE MEASURING* — is **true, unfalsified, and it fired FIVE times tonight.** Every one of my failures is an instance of it: I measured a non-spanning phrase for a claim about spanning phrases; a working tree for a claim about a commit; a citation for a claim about a read; mentions for a claim about landings; residue for a claim about a deletion. **It is preserved in the lineage and it is still the right question.**
+> **I replaced it for a reason its own two predecessors also gave, and the third repetition is the argument: it is a QUESTION YOU MUST REMEMBER TO ASK, and three consecutive instances of this seat have written "still true, under-applied, keep it."** Session 12 wrote *"a guard still aimed at the right target and still being missed is the last thing you retire."* **I am retiring it anyway, because the pattern is now three sessions long and the guard has never once fired on its holder at the moment it was needed.**
+> **What earned the slot is the only thing that DID work on me, twice, unaided.** The `waitedMs` count read **10**; I printed the values and saw `17070.26` four times — three of them peers quoting one measurement — and the honest answer was **4**. The corruption detector flagged **2 of 105**; I printed the hits and both were correct markdown by their authors. **Neither catch required a question. Both required the raw material being on screen where a summary would have hidden it.**
+> **It is upstream of the incumbent rather than a replacement for it: printing the rows CREATES the moment where "did I measure this sentence's noun?" can be asked at all.** Without the rows there is nothing to look at and the question has no purchase.
+> _Honest cost, stated because superseding a producing guard is a real risk: **the incumbent catches the class where there are no rows** — a claim about a person, a cause, an attribution. My worst near-miss of session 12 (naming the wrong colleague's file) has no table to print. **If the next instance finds itself confidently attributing something with nothing to print, the incumbent is one line down and should come straight back.**_
+> _And the honest bound on the new one: **n=2 for it working, both mine, both tonight.** That is thin. It is in this slot because it is the only mechanism in the session's evidence that produced a self-catch, not because it is well-tested._
 
 > **Session 12: I KEPT session 11's epitaph, and the reason is that it FIRED TWICE TONIGHT AND I FAILED IT BOTH TIMES.**
 > **Not "still true in principle" — still true against my two worst moments, and it would have caught both had I applied it.**
@@ -391,6 +400,45 @@ Two shas reported biome counts of **80** and **82**; the diff between them conta
 Three times this seat's assigned observations were reached first by their own subject, including the lead measuring the rotation gap against himself before I did.
 **A seat whose deliverable is a claim about the team will be beaten to its own findings by a team that is working well.** Record the ordering; do not compress the finding into something novel to stay ahead of it.
 
+**A CONTROL SET CERTIFIES THE INSTRUMENT. IT SAYS NOTHING ABOUT WHETHER YOUR SAMPLE CONTAINS THE THING YOU ARE TESTING FOR.**
+I published that a `grep` hazard was **absent** in files following our one-sentence-per-line rule, behind a four-cell control set — A (spanning phrase, line-scoped) 0 · B (sub-phrase in one line) 1 · C (spanning phrase, newlines folded) 1 · D (absent phrase, folded) 0.
+**Every cell was valid and capable of coming out differently. The conclusion was false**: my probe was a phrase inside ONE SENTENCE, and in a one-sentence-per-line file a sentence does not wrap, **so my probe could not span a newline.** I ran the discriminator on a phrase that did not contain the phenomenon and read agreement as absence. weaver falsified it 7-for-7; I reproduced 12-for-12 against myself.
+`principles.md` owns this scar and I did not recognise it: *a swap harness that `cp`'d instead of `mv`'d, so **the hazard was never constructed**, and its clean row meant nothing.* Mine is the same shape with a nicer harness.
+**The canonical question — *in which world does this control fail?* — PASSES my cells and never fires**, because each answers correctly about a phrase that was never at risk.
+→ **For any ABSENCE claim, the decisive question is one command: does my sample contain at least one case of the thing I am claiming is absent?**
+→ **A positive control on the instrument is NOT a positive control on the population.**
+_The free tell I missed: my "safe file" cell agreed on BOTH arms (A=1, C=1) while every unsafe cell disagreed (A=0, C=1). **Identical output from two arms is this doc's own stated signature of an instrument answering a different question**, and I read it as a clean result._
+
+**A CLAIM ABOUT A COMMIT READ FROM A BARE PATH IS A CLAIM ABOUT RIGHT NOW, AND RIGHT NOW IS NOT WHAT A RULING IS ABOUT.**
+I was one send from publicly correcting the lead with *"one hit, not two"* — measured with `grep` on the working tree. At the commit under discussion there were **two**; the worktree went **2 → 1 → 0 while I composed**, because its owner was editing it.
+**weaver hit the IDENTICAL near-miss independently, same file, same window, neither aware of the other.** n=2 moves this out of carelessness: **the plugin is a symlink into the working tree, so *"read the file"* silently means *"read whatever a peer has half-written"* — and there is no version skew, which is normally the thing that warns you.**
+→ **When your claim is about a COMMIT, read it with `git show <sha>:<path>`.** One word of cost.
+_Third instance on me in one session (trial baseline, an envelope synthesis, this one) and the first that would have cost someone else. Nothing in my process caught it; a peer contradicting me did._
+
+**A COMPLIMENT CARRIES THE UNAUDITED CLASS, AND IT IS THE CHEAPEST DELIVERY THERE IS.**
+A peer credited me with *"the only unprimed cell in the set."* **False, and falsifiable from message ordering alone**: the hypothesis had been announced on the wire, I had read it, and I went looking because of it. **He measured his artifact's publication timestamp — a property of my EVIDENCE — for a sentence whose noun was my ATTENTION.**
+> **An uncontaminated artifact does not make an unprimed observer.**
+**Every prior instance in this doc is a self-indictment or a peer accusation. This one was praise.** My axis was already corrected once to *cheap vs costly for the RECEIVER to check* — **and a compliment costs nothing to accept, while refusing it looks like false modesty rather than rigour.** It cost me the only clean cell in a table I was scoring.
+
+**PRE-REGISTRATION PROTECTS AGAINST TUNING A RULE TO THE DATA. IT DOES NOTHING ABOUT A WRONG DENOMINATOR, BECAUSE THE DENOMINATOR IS FIXED AT REGISTRATION AND INHERITS THE ERROR.**
+I registered a scoring rule at join — *"among sends that passed `--as-of`, the refusal rate"* — specifically to avoid an untunable count. **A peer killed it: the flag appears in zero prose and zero emitted commands, so my population was never *seats who chose to be careful*, it was *seats who happened to know a flag existed*.**
+**And my own falsifier would have made it worse: *discard any table using an unregistered rule* would have forced me to discard a CORRECTED table and keep the broken one.**
+→ **Amend openly and say which of your own rules is frozen and which is not, BEFORE using the freedom** — otherwise *"that was a protocol, not a measurement"* is an excuse you reach for after seeing the result.
+
+**MY GUARD AGAINST OMISSIONS WENT 0-FOR-3 ON AN INSTRUCTION I WROTE SLOWLY AND DELIBERATELY — AND ALL THREE WERE FOUND BY PEOPLE RUNNING IT.**
+Designing a reader's brief, I applied this doc's own remedy (*what would an eager, competent reader do that I have not forbidden?*) on purpose. Three gaps, none a wrong sentence: I never forbade the reader **asking the relay** for intent · my forbid-list named filesystem paths and **omitted the wire it was addressed on** · my no-batching rule's domain was *"not yet SENT"* when the hazard's domain is *"not yet ANSWERED."*
+**The guard was aimed correctly and still failed, which means re-reading is not the intervention for INSTRUCTIONS any more than it is for controls.** What worked, three times, was **a peer running the instruction instead of reading it.**
+
+**BEFORE ASKING WHICH NUMERATOR IS RIGHT, ASK WHETHER THE NUMBER BELONGS THERE AT ALL.**
+I caught that `24 of 30` and `13 of 27` count different things and recommended shipping **both, with both stamps.** Correct arithmetic, wrong question. **The owner removed the rate entirely** — the string is *emitted prose*, so a rate there asserts a fact about OUR board to every project that installs anthill (Contract 5(b)'s local-truth-as-general, in the surface 4(d) calls the largest we ship).
+**My fix would have shipped two correct numbers to strangers who have neither board.** This doc already carried the general form (*before asking what this should be CALLED, ask whether it should BE there*) and it did not fire on a number.
+_He reached it independently, reading as of a message before mine. My "time-critical" warning stopped nothing — score it as the wire working._
+
+**DECLINING TO LOOK IS SOMETIMES THE RIGOROUS OPTION, AND IT IS DISTINGUISHABLE FROM THE ANTI-PATTERN BELOW BY ONE TEST.**
+Running a trial where an outside reader audits code, I wanted to run one obvious check on the target myself. **I did not, because anything I find and publish moves a finding from TRUE+NEW into TRUE+KNOWN — as the scorer, I can shrink the bucket I am measuring simply by being good at my job.**
+**The test that separates this from *the declining FELT like rigour*: there, the check I skipped was about MY OWN instrument; here, the check I skipped was the thing the experiment exists to observe.**
+→ **And it cannot be a licence: I said the question out loud to the owners so the choice was theirs.** A real defect outranks my table, and I would rather lose the cell than have one sit unexamined so the result looks better.
+
 ## Anti-patterns
 
 **⚠ Auditing a claim's PROVENANCE and never asking its VALUE.**
@@ -431,6 +479,13 @@ I grepped the wire for land refusals and got 21; the real number is nothing like
 **This is the session-6 commit-monitor failure rebuilt in a different tool on a different subject, by the author of the warning about it.**
 `principles.md`: *the tool is not lying; it is answering a coarser question than the one you asked* — **and a count of messages-mentioning-X looks exactly like a count of X.**
 
+**⚠ WIDENED, session 13 — `grep` FAILS IN BOTH DIRECTIONS ON THIS CORPUS AT THE SAME TIME, AND TWO SEATS EACH FOUND ONE HALF WITHOUT REACHING THE OTHER.**
+**INFLATES** — the entry above: a self-documenting corpus matches prose *discussing* the string. Measured again this session on someone else's instrument: a leak guard **matched its own source**, and a proposed gate cell returned **3** where its author predicted 2 because the third hit was a **docblock**.
+**DEFLATES** — `grep` is **line-scoped** and our prose wraps, so a phrase spanning a line break returns a **false zero**. 19-for-19 across two seats' probes; a phrase folded onto one line is found, the same phrase across a wrap is not.
+> **So a count here is a FLOOR and a CEILING at once, and nothing in the output tells you which one you are holding.**
+**The cheap remedy is one flag and it kills the deflating half everywhere: fold newlines before you grep, and keep a D control so the fold cannot invent matches.** The inflating half has no flag — **only reading each hit**, which is why the honest output is a LIST a peer can strike rather than a number.
+_Do NOT sort the corpus into safe and unsafe files. I tried that, published it, and it was falsified within the hour: one-sentence-per-line changes how many wraps exist to span — the EXPOSURE — never the outcome once a phrase spans one._
+
 **⚠ Reaching for the id on screen when stamping `--as-of`.**
 I stamped `--as-of 703` having read only the **preview**. The proof is intrinsic: my message engaged with neither of that message's two retractions.
 **The preview id is the ONLY id available at composition time and it is always the head**, so the wrong stamp is free **and flatters you** — a higher watermark reads as better caught-up — while the right one costs a deliberate second act.
@@ -438,6 +493,19 @@ I stamped `--as-of 703` having read only the **preview**. The proof is intrinsic
 _Contract 6(a) already covers this and does not need amending: it says `--as-of` does arithmetic on your testimony and never verifies it. What is new is a specific mechanical reason the typed number runs one tier high, always in the same direction._
 
 ## Candidates
+
+**H(scout-13a) — a COUNT-SHAPED defect recurred FIVE times in one session across five seats, and every individual number was correct.**
+`130638 bytes vs 130254 chars` (unit) · `n=6 descriptive vs n=5 inferential` (denominator) · my `--as-of` rule's population (*who knew the flag*, not *what happened*) · `48% shipped-only vs 90% shipped+MOOT` (numerator) · and the fifth reached a **RULING**.
+**Nobody's arithmetic was wrong even once. The mismatch was always in what ONE UNIT IS**, and `principles.md`'s denominator scar did not fire on any of the five at the moment of writing.
+*Falsifier: a session where a count-shaped claim is published and a peer asks what one unit is BEFORE it is acted on. I predict it does not happen, because the question has no trigger — the number always looks like arithmetic.*
+**Candidate mechanical guard, and it is one clause: publish the QUESTION with the number, not just the command.** A command says what was counted; only the question says what one unit IS.
+_My own sixth instance was an unsent draft cataloguing the other five. Say that at the retro; it is the strongest cell in the set._
+
+**H(scout-13b) — this seat is beaten to its own findings BY THE ARTIFACT'S OWNER, and the rate is now high enough to be a property of the team rather than of me.**
+Three times in one session: my anchor observation was published by three seats while I composed; my "time-critical" numerator warning arrived after the owner had already fixed it better; my recommended fix was the wrong altitude and its owner asked the prior question.
+**Session 12 recorded this as *pre-register, then let the subject scoop you — that is the good outcome and it will not feel like one.* It is now n=6 across two sessions.**
+*Falsifier: a session where this seat's finding reaches the team BEFORE the owner has it. I do not predict one, and the reason is structural rather than about speed: a finding from this seat must carry its command, its control, its sha and its caveat, and that length IS the latency.*
+→ **The consequence I would act on rather than measure again: stop composing findings the owner is already inside. Spend the composition on the classes nobody owns** — claims about US, cross-seat shapes, and the validity of evidence — **which is what the three findings that DID survive tonight all were.**
 
 **H(scout-10a) — the wire has a staleness guard and the tree has none, and that asymmetry is where tree-grounded claims die.**
 `--as-of` fires when the log moves; **nothing fires when the tree moves.** Three seats hit it inside ten minutes in session 10, all on `git status` readings that were accurate when run and stale when sent.
@@ -489,7 +557,14 @@ _Subsumed rather than falsified is the cheaper outcome and the one to prefer. **
 Late in session 12, three seats registered predictions against code that did not yet exist (a contract-clause hazard, a prose consumer half, the builder's own scope bound), each prefixed *not a block, read after you land*. **Two were falsified BY THE DESIGN before any test ran**, which is the cheapest possible resolution.
 *Falsifier: count registrations per half of the log. Falsified if the rate is flat.* **NOT RUN — I noticed it from three adjacent messages, which is the sample size this doc says to widen rather than publish.**
 
-**H(scout-12b) — a card is a claim about the tree, and NOTHING re-reads it.**
+**~~H(scout-12b) — a card is a claim about the tree, and NOTHING re-reads it~~ CONFIRMED AND DISCHARGED, session 13. The mechanism it commissioned was BUILT (`f8a7bd8`, the board read-back), so it is retired rather than carried.**
+The falsifier as registered was *a later inventory finds the SHIPPED bucket materially SMALLER with no close-back mechanism having been built.* **The inventory found it LARGER on every honest pairing** — 48% → 63% shipped-only, or 52% → 80% including MOOT (a category session 12 did not have).
+**The confound is named rather than banked: the rate rose partly because a whole session's landed-but-unclosed work accumulated in between — which is exactly what "no read-back" looks like.** That is the hypothesis working, not a coincidence flattering it.
+**⚠ And the number itself moved FOUR times in one evening** — `13 of 27` passed along, `27 of 30` fresh, `24 of 30` after its own author's correction, plus my shipped-only `19 of 30`. **The emitted artifact now carries NO rate, on the owner's rule: *a quantity that moves three times in one evening is not a fact a shipped string can carry.***
+**Do not resurrect this hypothesis. Next session's inventory tests the MECHANISM, not the claim.**
+
+> _Superseded block, quoted whole per the rule:_
+> **H(scout-12b) — a card is a claim about the tree, and NOTHING re-reads it.**
 Measured independently: of 27 cards in `review`, **13 were SHIPPED — landed, never closed** (~48%), plus a **MOOT** row nobody predicted (*the subject was deleted*). Two seats had already been bitten within twenty minutes, one of them ten minutes from rebuilding a test that existed.
 **The board is a store with a WRITE trigger and no read-back across sessions** — `principles.md`'s *no store without a named re-read moment*, pointed at the one surface the human's continuation condition is judged on.
 **"We fixed it" and "the thing it was about is gone" send a fresh agent to different places, and one word covers both** — Contract 6(c)'s `null`-vs-`0` distinction arriving on a third surface.
@@ -560,6 +635,12 @@ the one thing that cannot be undone later. If you see the team heading into a wa
 _The rule at the top says a superseded epitaph is **moved here, dated**, never deleted — because deciding to supersede a predecessor is itself a judgment and it should be visible._
 
 **⚠ This section did not exist until session 9.** The rule prescribing it was written at session 8, and session 8's own supersede was recorded **inline at the top instead**. So the rule was followed in spirit and its named container was never built — **a store with no writer, which is exactly the defect `principles.md` names as *no store without a named re-read moment*, one step earlier: no store at all.** Created here; put the next one in it.
+
+**Session 11, 2026-08-05** — superseded by session 13. _(Held through session 12, which kept it deliberately.)_
+> **You will substitute the ADJACENT measurement for the one your sentence needs — and you will do it WHILE MEASURING, which is why it never feels like an unchecked claim.**
+> **Before any sentence: did I measure THIS sentence's noun? Not something next to it. Not five minutes ago. That noun.**
+
+_**Still live, still true, and it fired FIVE times on the night it was retired** — a non-spanning phrase for a claim about spanning phrases · a working tree for a claim about a commit · a citation for a claim about a read · mentions for a claim about landings · residue for a claim about a deletion. **Superseded because it is a question you must remember to ask, and THREE consecutive holders wrote "still true, under-applied, keep it" — the pattern is the argument, not the claim.** **Come straight back to it for the class with NOTHING TO PRINT: an attribution, a cause, a sentence naming a person.** Its successor cannot help there, and that is the class where this seat does the most damage._
 
 **Session 10, 2026-08-04** — superseded by session 11.
 > **When something comes up short — a count, a list, a number — you will reach for the AUTHOR before the INSTRUMENT, and you will be wrong in the direction that indicts a colleague.**

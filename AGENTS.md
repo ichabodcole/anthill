@@ -59,7 +59,7 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
 **Merge; do not squash or rewrite.** Verified practice as of 2026-08-07: feature branches land on
 `develop` as ordinary merges and `develop → main` by PR merge commit, so every commit keeps the
 `Anthill-Seat:` trailer naming which of the six seats wrote it, and the short-sha citations
-throughout `docs/` and `.anthill/` keep resolving.
+throughout `docs/` and `.anthill/` keep resolving (measured at the foot of this file).
 
 ⚠ **The strategy itself is an OPEN design question — do not settle it in passing.**
 [`session-branch-strategy`](docs/projects/session-branch-strategy/proposal.md) settled on
@@ -87,3 +87,40 @@ versions; release-please owns those.
 
 _(That skill lives in `.claude/skills/`, not `plugin/skills/` — the latter is discovered by directory
 and ships to every consuming project, so internal tooling must never go there.)_
+
+## Reconciliation — 2026-08-08 (session 13), by forager @ `47268d8`
+
+Claim by claim, checked by running a command rather than by re-reading. `UNCHECKED` is a real
+verdict here and is written where it applies — a claim silently skipped is indistinguishable from
+one confirmed.
+
+- _"`bun run check` — the full gate (typecheck + biome + tests)"_: **HELD.** `package.json` →
+  `tsc --noEmit -p tsconfig.json && biome check --error-on-warnings . && bun test`.
+- _"the husky pre-commit runs it"_: **HELD.** `.husky/pre-commit` runs `bunx lint-staged` then
+  `bun run check`.
+- _"`main` is branch-protected (PR + green CI required, admins included)"_: **HELD**, from the API:
+  `enforce_admins: true`, `required_pr: true`, required check `check (typecheck + biome + tests)`.
+- _"`release-type: node`"_: **HELD** (`release-please-config.json`). The `docs`/`test`/`chore`-are-
+  hidden claim is **UNCHECKED** — it follows from release-please's defaults rather than from
+  anything in this repo, and I did not exercise a release to confirm it.
+- **Branch Landing Policy — _"merge; do not squash or rewrite"_: HELD, and its REASON is now
+  measured rather than asserted.** On `feat/close-one-wire-scope`, **35 of 35 commits carry an
+  `Anthill-Seat:` trailer**, across six seats (maestro 10 · forager 7 · weaver 6 · sentinel 6 ·
+  steward 3 · scout 3). Session 11 had 9 of its first 11 carrying none, so this is a change in
+  practice and not a restatement.
+- _"~294 short-sha citations … keep resolving"_: **the PREDICATE HELD; the COUNT is FALSIFIED and
+  is being removed rather than re-numbered.** Measured: **344** unique 7-hex tokens in `docs/` +
+  `.anthill/` (excluding scratch), of which **335 resolve** as git objects. Controls both fired —
+  a known-good sha resolved, and `forager.md`'s deliberately-invented `d3ac6dd` correctly did not.
+  **Per `seams.md` Contract 4's authoring note (cite ASSERTIONS, never COUNTS), the number is
+  dropped from the sentence above: a count is a measurement with a shelf life no gate checks.**
+- 🔴 **NEW — that claim has an UNWRITTEN DOMAIN, and it is why two of the nine non-resolvers look
+  like rot and are not.** _"Citations keep resolving"_ ranges over **anthill's own shas**. Four of
+  the nine are documented invented-sha scars (correctly unresolvable), one is the number `3600000`
+  matched as hex, two live under `_archive/` (out of scope), and **two are SPELLBOOK commits
+  (`88a298f`, `cc35636`) cited in our docs — which can never resolve in this repo by construction.**
+  A cross-repo citation is visually identical to a dead local one. **State the repo when citing a
+  foreign sha, or the next sweep re-derives this.**
+- _"`cascade-check` lives in `.claude/skills/`, not `plugin/skills/`"_: **HELD.** Present in the
+  first, absent from the second.
+- _"Runtime is Bun"_: **HELD** (the gate, the CLI and every script above run under `bun`).

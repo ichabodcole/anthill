@@ -1,5 +1,5 @@
-import { describe, expect, test } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { afterAll, describe, expect, test } from "bun:test";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import {
@@ -33,9 +33,23 @@ import {
  * None of these results is evidence about a live channel, and they must not be
  * quoted as if they were.
  */
+/**
+ * Every fixture tree is REGISTERED so cleanup cannot depend on a test
+ * remembering. Measured before the fix: +7 leaked dirs per run of this file
+ * (#100), prefix-attributed via `anthill-rot-`.
+ */
+const MADE: string[] = [];
+
 function fixture(): string {
-  return mkdtempSync(join(tmpdir(), "anthill-rot-"));
+  const dir = mkdtempSync(join(tmpdir(), "anthill-rot-"));
+  MADE.push(dir);
+  return dir;
 }
+
+afterAll(() => {
+  for (const dir of MADE) rmSync(dir, { recursive: true, force: true });
+  MADE.length = 0;
+});
 
 describe("rotation — the CURRENT pointer and the legacy layout", () => {
   test("LEGACY IS THE STARTING STATE and stays readable — null is a positive answer", () => {

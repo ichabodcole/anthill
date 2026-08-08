@@ -1,5 +1,5 @@
-import { describe, expect, test } from "bun:test";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { afterAll, describe, expect, test } from "bun:test";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import {
@@ -16,6 +16,25 @@ import {
   resolveSeatIdentity,
   type SeatPosition,
 } from "./comms.ts";
+
+/**
+ * Every temp tree this file mints is REGISTERED, so cleanup does not depend on
+ * any individual test remembering. Measured before the fix: +8 leaked dirs per
+ * run of this file (#100). A per-test `rmSync` is one added test away from
+ * being forgotten; the registry is what makes forgetting impossible here.
+ */
+const MADE: string[] = [];
+
+function tmpTree(prefix: string): string {
+  const dir = mkdtempSync(join(tmpdir(), prefix));
+  MADE.push(dir);
+  return dir;
+}
+
+afterAll(() => {
+  for (const dir of MADE) rmSync(dir, { recursive: true, force: true });
+  MADE.length = 0;
+});
 
 /**
  * These assertions ARE `seams.md` Contract 4's proof. They are numbered to match
@@ -495,7 +514,7 @@ describe("hasDeparted — a PAST session's tombstone is not this session's depar
   const STALE = 1_785_900_211_050; // the real session-9 forager tombstone, 3.04h earlier
 
   const tree = (at: number | null) => {
-    const dir = mkdtempSync(join(tmpdir(), "anthill-d3-"));
+    const dir = tmpTree("anthill-d3-");
     if (at !== null) {
       const path = commsDeparturePath(dir, "ch", "seat");
       mkdirSync(dirname(path), { recursive: true });
@@ -538,14 +557,14 @@ describe("hasDeparted — a PAST session's tombstone is not this session's depar
     const withRecord = tree(OPENED_AT + 60_000);
     expect(hasDeparted(withRecord, "ch", "seat", null)).toBe(false);
 
-    const damaged = mkdtempSync(join(tmpdir(), "anthill-d3-bad-"));
+    const damaged = tmpTree("anthill-d3-bad-");
     const path = commsDeparturePath(damaged, "ch", "seat");
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, "{not json");
     expect(hasDeparted(damaged, "ch", "seat", OPENED_AT)).toBe(false);
 
     // A record with no `at` at all — the pre-D3 tombstone shape.
-    const noAt = mkdtempSync(join(tmpdir(), "anthill-d3-noat-"));
+    const noAt = tmpTree("anthill-d3-noat-");
     const p2 = commsDeparturePath(noAt, "ch", "seat");
     mkdirSync(dirname(p2), { recursive: true });
     writeFileSync(p2, `${JSON.stringify({ handle: "seat", channel: "ch" })}\n`);

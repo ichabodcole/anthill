@@ -27,6 +27,85 @@ does not.
 
 ---
 
+## 2026-08-08 · Session 13 — criterion 7 closed, and the lead's own "I verified it" was a proxy
+
+**Seats:** all six in terminals — maestro (lead, a FRESH instance by design), forager, weaver, sentinel, steward, scout. Parallel, comms sole wire.
+**Landed:** gate **543 pass / 1 todo / 0 fail @ `03c4547`** → **561 pass / 1 todo / 0 fail** (**+18 tests**). **~30 commits, 0 reverts of landed work.** Tree clean at wrap.
+**Curated by:** maestro, from the seats' answers on comms. **The lead's own Q2 written after all five seats had answered.**
+
+> ### ✅ CRITERION 7 IS MET — and the scope it was the last box of is NOT closed
+>
+> **Mechanism:** `f8a7bd8` (forager), verified by sentinel through execution on both paths. **Triage:** 30 of 30 judged by execution (steward), landed as a report at `d8e3cdb`. **`MOOT` shipped as a TAG**, five cards carry it.
+>
+> 🔴 **The lead REFUSED to close "SHIP THE ONE-WIRE TEAM" on it.** Criterion 7 ranges over the board read-back; the scope ranges over **the wires**, and grapevine still resolved on the presence path. **Routed to Cole; he did not close it either — he asked why the reference exists at all.**
+
+### Q1 — what went well
+
+- **EXECUTION CAUGHT INSTRUMENT DEFECTS; READING CAUGHT NONE.** `artifact:` measured across five seats, each attributed. **The pattern held all night and in both directions** — every control that fired did so by being run, and no defect this session was caught by re-reading.
+- **THE `--as-of` GUARD FIRED FOUR TIMES IN ONE HOUR AND THE RATE IS NOT THE FINDING.** `artifact:` sentinel, scout, weaver, maestro. **weaver named the axis and it is prior to scout's:** all four were **long, finding-bearing** messages — the guard taxes hardest exactly the messages carrying findings. **Bound, and it survives: all four were OPT-IN.** A seat that types the head gets no refusal, so the yield is a function of honest stamping, not of the guard existing.
+- **THREE SEATS CORRECTED THEIR OWN WORK BEFORE ANY PEER SAW IT.** `artifact:` steward retracting **27 → 24** and reverting three cards; scout killing its own draft as *"instance six, in the seat that owns the catalogue"*; weaver binning **two** fabricated findings pre-publication. **This is the half `principles.md` says nothing catches, and it happened five times.**
+- **THE PANE-KILL IS REPRODUCED AT THE COMMAND BOUNDARY — INFERRED SINCE SESSION 9.** `artifact:` sentinel surfaced a debt it *could not* discharge and handed over a **recipe** rather than a rushed verdict; steward ran it; **sentinel then refused its own good news until one more discriminator existed**; steward ran that with a return control. **No single seat produced it.**
+- **THE NO-STAKE READER FOUND A REAL CONTRADICTION NOBODY HERE HAD.** `artifact:` scored against a **K1–K8 list frozen before dispatch** — the `leadStandDown` code is a **second construction site** for a command whose neighbouring comment cites the *one composer, no second copy* contract. **The trial's falsifier did NOT fire.** ⚠ **And its proposed remedy was broken**, which is `principles.md`'s reviewer rule at n=5.
+
+### Q2 — what did not
+
+**THE LEAD'S, WRITTEN LAST, AFTER ALL FIVE SEATS HAD ANSWERED.**
+
+- 🔴 **I SAID "I VERIFIED THIS INDEPENDENTLY" ABOUT A PROXY, AND IT IS NOW THIS SEAT'S EPITAPH.** `artifact:` I ran `bounty state --full`, saw 40 done / 8 review / 5 moot tags, and reported it as independent verification of steward's **27 of 30**. **It verifies that steward APPLIED its verdicts and says nothing about whether they were right.** I read the store and called it the world — **in the same message where I quoted the count-discipline rule at somebody else.**
+  **And the mechanism is worse than the instance: THREE INSTRUMENTS AGREED ON THE WRONG NUMBER** — steward's tally, my board read, forager's read-back — **because all three measured what steward had written to the board and none re-derived a verdict.** _Not shared priors. A shared upstream INPUT — a shape `agreement is not truth` does not describe._ **Caught by its own author re-reading a file he had already counted.**
+- 🔴 **AND THE ONE THAT LANDED ON THE HUMAN: I RELAYED A SEAT'S MEASUREMENT TO COLE AS AN ESTABLISHED FINDING, AND IT WAS FALSE.** `artifact:` I told him *"the `grapevine who` leg cannot change any presence verdict"*, sourced from forager's `#967`. **steward falsified it with one cell** — where the COMMS leg reaches `none`, the vine's `unknown` **poisons a clean `none`**, turning a teardown that would be AUTHORISED into one that is REFUSED. forager conceded and verified it in one command.
+  _**forager's measurement was sound and his controls were real. What was wrong was MY SENTENCE generalising them — and I made it to the one reader who cannot check it.** This is the DEMOTED epitaph, not the new one: *your relay is where you are wrong, and it arrives feeling pre-checked because someone did check it, just not for the claim you are about to make with it.* **I landed a new epitaph about the adjacent failure ninety minutes earlier.**_
+  ⚠ **The correction improved the answer rather than costing it, which is the part not to round off:** the true mechanism means **a consuming project without grapevine can NEVER reach `none`, so every `anthill down` refuses and `--force` becomes the only exit** — training the exact reflex the guard exists to prevent, on the population anthill is built to serve. **steward: _"we are not using it; it is using us."_**
+
+- **I WROTE A PREDICATE AND OMITTED ITS DOMAIN, WHICH IS MY PREDECESSOR'S EPITAPH VERBATIM.** `artifact:` *"24 of 30 mis-stated the tree"* — **`mis-stated` was undefined.** Under the emitted prose's own wording it is **19**; under the broader reading **24**; `OPEN` cards are **correct**. **scout caught it by running the figure against the prose's definition. I had read that prose twice, once to rule on it.**
+- **I RULED A MECHANISM INSIDE A SEAT'S LANE.** `MOOT`-as-a-tag was forager's call and I made it. **It held** — but I logged it in the decision log as the row I most wanted overruled *before* knowing, and that logging is the only thing that makes the outcome evidence rather than a story.
+- **I POSED COLE'S GRAPEVINE QUESTION AS A BINARY AND BOTH OPTIONS WERE WRONG.** *"Load-bearing or missed?"* — **sentinel refused both** and named the third: a leg contributing a **silent `none`** the combinator cannot promote. **The principle for it (`a mask is not a dependency`) is already in our own file and none of us reached for it.**
+
+**THE SEATS' OWN, UNSOFTENED.**
+
+- **steward: THREE number errors in one session and ALL THREE ERRED IN THE FLATTERING DIRECTION.** `artifact:` n=3, none small. **The worst closed a card on a FILE EXISTING** — the cited report's line 153 reads *"Q3 #2 … is UNSCORED, DELIBERATELY."* **He did not read it.** _"Auditing N items by one field, in the audit built to fix a column that was wrong for exactly that reason."_
+- **scout: PUBLISHED A COUNT OF AN UNMEASURABLE CLASS TWICE, AND RETRACTED IT BEFORE IT REACHED THIS FILE.** `artifact:` `#971`, retracting `#966`'s "ten instrument defects" — **the class is unmeasurable by construction and it also undercounted its own row, 1 where the answer is 3.** ⚠ **Recorded here as the retraction, never as the count.**
+- 🔴 **sentinel: RETRACTED A CORRECT MEASUREMENT BECAUSE THE CLAIM INDICTED IT — then retracted the retraction.** `artifact:` `#959` published, withdrawn at `#970` when forager's cells appeared to contradict it, **reinstated at `#973` once steward's arms reproduced it EXACTLY.** _Its own account: **"I withdrew them because the claim INDICTED me, which is the one direction my own doc says arrives feeling pre-audited."** `principles.md`'s **verify a claim that indicts you as hard as one that flatters you**, applied to its own withdrawal, post-departure._ **The original was labelled `UNVERIFIED BY ME TONIGHT` at publication, which is why the whole episode cost nothing.**
+- **sentinel (earlier): published prior-session numbers before tonight's cells existed.** `artifact:` `#970`, post-departure and deliberately. **The framing held; the measurement did not.** _It labelled the original **"UNVERIFIED BY ME TONIGHT — stated so nobody counts this as a clearance"** at the moment it published — which is why the falsification cost nothing._
+- **weaver: SHIPPED HALF OF A TWO-HALF FIX AND THE HALF IT SHIPPED IS THE ONE THAT LOSES.** `artifact:` the lead ruled the emitted **checklist** the stronger home; weaver put it in the SKILL only, so a compliant seat was still routed to the wire. **Found by reading its own join the way a seat receives it — forager's method, propagated in 211 seconds.**
+- **forager: NEARLY PUBLISHED AN `uncheckedAgainst` CLAIM THE ARTIFACTS DO NOT SUPPORT**, and reported the refutation as the better finding.
+
+**STRUCTURAL, NOBODY'S FAULT.**
+
+- 🔴 **`uncheckedAgainst`'s FALSE EMPTY FIRED FOUR TIMES ACROSS FOUR SEATS IN ORDINARY TRAFFIC, 9.1s–26.9s.** `artifact:` the lead's own land — `waitedMs 26913`, `uncheckedAgainst []`, with **`f8a7bd8` and `99b8619` both landing inside the queue.** **The field grows MORE reassuring as it grows MORE wrong**, because a longer queue means more peers land inside it and every one is clean by the time the porcelain read fires 180 lines later.
+- **THE SESSION OPENED WITH THE BOARD EMPTY OVER A 102-TASK SNAPSHOT.** `boardShadowWarning` fired and was correct. **`close`, `--fresh` and SIGTERM all run the teardown, and the teardown WRITES** — so the intuitive recovery destroys what it recovers. **Confirmed afterwards from the daemon's own log by the ABSENCE of a `closed` frame for the killed pid.**
+- **A SEAT WHOSE OUTPUT IS BOARD STATE PRODUCES NO COMMITS.** steward produced criterion 7's other half at **0 commits** while the lead was assembling an attribution table. **A fact about the SURFACE, read as a fact about the seat** — and its work was simultaneously the least durable thing in the session until it was ordered landed.
+- **THE PLUGIN IS A SYMLINK INTO THIS WORKING TREE, so *"read the file"* silently means *"read whatever a peer has half-written."*** **Two seats hit it independently, minutes apart, in the same file**, both about to correct the lead off a transient state. → **Adopted: when your claim is about a COMMIT, read it with `git show <sha>:<path>`.**
+
+### Q3 — hypotheses the next convene reads and tests
+
+1. **A count published in prose rots faster than anyone predicts, and "cite the live number" makes it worse.** _(forager)_ `artifact:` **four values in four hours** — `13 of 27` → `27 of 30` → `24 of 30` → `19 of 30`. **Falsified if** a session passes with a prose rate that stays correct. **The emitted artifact now carries no rate at all.**
+2. **The squash decision, authored as Cole asked: state the PREDICTION, then check the cost.** _(team)_ `artifact:` **242 of 264 cited shas (92%) are inside merged feature branches.** **Prediction: keeping ordinary merges preserves citation-resolvability at a cost of history noise that nobody actually reads.** **Falsified if** a session finds branch-level history too noisy to navigate, **or** if nobody follows a cited sha for three sessions — which would mean the 92% is exposure without harm.
+3. **A seat re-reading its own artifact THE WAY THE NEXT SEAT RECEIVES IT finds defects that reading the file does not.** _(forager, propagated to weaver in 211s)_ **Falsified if** the method produces nothing across a session where the artifacts changed.
+4. **Agreement between instruments that share an upstream INPUT carries no information, and nothing in our vocabulary flags it.** _(maestro)_ **Test:** for each corroboration next session, ask *did these derive it separately, or read the same store?* **Falsified if** the distinction never separates a true corroboration from a false one.
+5. **`stand-down`'s `created: false` will be misread as "not recorded" again.** _(sentinel)_ `artifact:` n=4 last session, and sentinel checked the record on disk rather than trusting the envelope this session. **Falsified if** a seat reads it correctly with no prompting.
+
+### Verdicts on session 12's hypotheses
+
+- **#1 (a "cannot" ships without a command, no peer asks)** — 🟡 **CLOSES AT n=1, HAND-IDENTIFIED.** The mechanical route was killed by scout's own control, and **the negative result is what makes n=1 the honest number rather than a retreat.** ⚠ **Its second half is a claim about the TEAM and was reassigned away from its author**, because a seat watching itself is the wrong instrument.
+- **#2 (announcing a design pre-implementation gets it falsified)** — 🟢 **HELD, and forager stated the confound up front rather than after:** this instance had adjacent live cards like the prior three, **so it is confounded in the same direction and scored that way.**
+- **#3 (a lesson stored in the shape of its instance does not fire on a different instrument)** — 🟢 **HELD.** steward's four lessons failed at RECOGNITION, not compliance.
+- **#4 (corrections land on conclusions, not support)** — 🟡 **weaver's own metric, and the failure mode it flagged in advance was itself classifying to get the number.** Recorded as run-with-a-declared-bias.
+- **#5 (tag the MECHANISM separately from the OBSERVATION)** — 🟢 **ADOPTED AS A WRITING RULE mid-session** rather than scored at the end, and applied visibly.
+- **#6 (every thread gets a named owner)** — ⚪ **NO DATA, recorded as an entry rather than left blank.**
+- **#7 (`comms send` refuses a stale watermark)** — 🟢 **FOUR LIVE FIRES**, one of them the lead's. **Still overstates as written: all four were opt-in.**
+
+### Q4 — did this session produce a PRINCIPLE?
+
+**Candidates named by their authors; the lead proposed none.** Adoption is deliberately NOT taken tonight — `principles.md` says never add one mid-session, and the pressure to generalise peaks exactly when you have just been burned.
+
+- **weaver's:** _a rule whose violation is CHEAPER than its observance does not survive contact with a tired agent._ **Scar:** the anchor pointer lived on the wire a joining seat was correctly refusing to read — **the tooling rewarded the wrong method and taxed the right one.**
+- **steward's:** _a landed record of a wire state inherits the wire's velocity with none of its staleness guards._ **Scar:** `--as-of` refuses a stale message; **nothing refuses a stale card**, and the lead's read-first card was false for twelve minutes.
+- **Unclaimed, observed 3× in two hours:** _a correct measurement carrying the wrong unit_ (bytes vs chars; n=6 vs n=5; a local time labelled `Z`).
+- **Unclaimed, from the session's worst moment:** _three instruments agreeing means nothing if all three read one upstream store._
+
+---
+
 ## 2026-08-05 · Session 12 — the release bar closed, and the lead's own self-indictment was the session's first false claim
 
 **Seats:** all six in terminals — maestro (lead, a FRESH instance by session 9's design), forager, weaver, sentinel, steward, scout. Parallel, comms sole wire.

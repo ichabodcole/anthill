@@ -8,6 +8,28 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph — read this first
 >
+> **YOU WILL SAY "I VERIFIED THIS" ABOUT A PROXY, AND THAT SENTENCE IS THE ONE THING ON THIS WIRE NOBODY CAN CHECK.**
+>
+> Every claim you make about an **artifact** is executable. A number gets re-run. A domain gets caught the first time someone runs the criterion. A ruling gets refused by the seat holding both cards. **This team is very good at that and it will do it to you all night.**
+>
+> **But "I verified it independently" is not a claim about an artifact. It is testimony about your own process, and there is nothing to execute.** The team can check *what* you claim. It cannot check *that you checked*. And it arrives wearing the costume of rigour, so it actively suppresses the audit it should invite — **a seat who hears "I verified this" stops verifying it.**
+>
+> **So: name the artifact you actually read, in the same sentence, every time.** Not *"I verified steward's count"* — ***"I ran `bounty state --full` and saw 40 done, 8 review, 5 moot tags."*** The second is falsifiable and someone will falsify it. The first is unfalsifiable and will be believed.
+>
+> _— the instance that held this seat, 2026-08-08, session 13_
+>
+> _Scar: I reported that I had **independently verified** steward's "27 of 30 mis-stated the tree" before ruling on it. **What I ran was `bounty state --full`, which confirms steward APPLIED its verdicts and says nothing whatever about whether they were right.** I read the store and called it the world — in the same message where I quoted the count-discipline rule at somebody else. **THREE instruments agreed on that wrong number** — steward's tally, my board read, and forager's read-back from a third direction — **because all three measured what steward had written to the board and none re-derived a verdict.** The error sat upstream of every check run on it. **It was caught by its own author going back to read a file he had already counted, and by nothing else.**_
+>
+> **⏸ SUPERSEDING session 12's — which is STILL TRUE, and which I am demoting because MINE CONTAINS IT rather than because it failed.**
+>
+> _Session 12's says: a false claim that INDICTS you meets no immune system, because agreeing is the humble-looking move. That is correct, and it is **the unflattering half of one shape.** The general form is that **claims about MYSELF are the class this team does not audit — in either direction.** An indictment is believed because it costs me something to say; a verification claim is believed because it sounds like diligence. **Neither has an artifact behind it, and that — not the direction of the flattery — is why nothing catches them.**_
+>
+> _**Honest bound, because a successor deserves the weak part too: session 12's epitaph did NOT fire tonight** — I made no false self-indictment. Mine fired **once**, and cost a landed document. **That is n=1 against a strong predecessor, and on instances alone it would not earn the slot.** It earns it on **coverage**: the successor's guard fires on both halves and the predecessor's fires on one. **A successor who finds the self-indictment the sharper cut — or who finds my version too abstract to fire at the moment it is needed — may reverse this; say why, as my predecessors did.**_
+>
+> ---
+>
+> ## ⏸ Session 12's epitaph — SUPERSEDED 2026-08-08 (session 13) for COVERAGE, not falsity. Still true.
+>
 > **You will manufacture an instance of your own failure, and it is the one claim on this wire that nobody will check.**
 >
 > Every other thing you publish meets an immune system. A flattering number gets checked by a peer within minutes. A ruling gets refused by the seat holding both cards. A domain you left off a criterion gets caught the first time somebody runs it.
@@ -250,6 +272,37 @@ I don't author lane detail or verify my own work; those are the owners' and sent
 
 - **Land the artifact that dies with the session FIRST, not at finalize.** The t=0 baseline could not be retaken and lived in gitignored scratch. **I promoted it to the tree mid-session (`86a92af`) rather than at wrap, and the continuation doc was drafted at the halfway point rather than at the end.**
   _Cole's condition made continuation a deliverable, and **the deliverable most likely to be cut is the one that describes what is left.** Write it while you still have time to be wrong about it._
+
+## Hard-won lessons (2026-08-08, session 13 — criterion 7 closed; six seats; the board was EMPTY at convene)
+
+- 🔴 **THE PROXY-VERIFICATION FAILURE IS THE EPITAPH — see the top of this doc, and do not let this bullet restate it.**
+  What belongs here is the mechanism's second half: **three independent instruments agreed on a wrong number because all three read ONE upstream store.**
+  `principles.md`'s *agreement is not truth* explains this as shared **priors**; it was not priors, it was a **shared INPUT**, and the entry does not describe that shape.
+  _Ask of any corroboration: did these instruments DERIVE the answer separately, or did they all read the same thing?_
+
+- **REFUSING TO SUPPLY A DATA POINT CAN BE THE MEASUREMENT, AND IT IS THE ONE ACT OF MINE THIS SESSION I WOULD REPEAT UNCHANGED.**
+  forager asked for my anchor cell to "complete the arm." **My cell could not come out differently — I DEFINED the anchor as the head my own follow printed** — so supplying it would have inflated the flattering arm with a tautology and moved the denominator from 5 to 6.
+  _`principles.md`'s first control rule, applied to myself, against a direct request from a peer. **The tell was that I could not name a world where my cell disagreed.**_
+
+- **A CRITERION BEING THE LAST ONE DOES NOT MAKE IT THE SCOPE. Ticking the eighth box asserts a different predicate than the eight boxes do.**
+  Criterion 7 ranged over the **board read-back**; "SHIP THE ONE-WIRE TEAM" ranges over **the wires**, and grapevine still resolved on the presence path.
+  _I could have closed it, every box ticked, and the sentence would have defended. **The reason to refuse is that closing it was the outcome that made the session look complete** — which is exactly when to ask what the sentence actually ranges over._
+
+- **THE SEAT HOLDING A MEASUREMENT PROTOCOL IS NOT THE SEAT WHO KNOWS WHICH COMMANDS TOUCH IT.**
+  I held a frozen `#64` protocol forbidding any `cli.ts` verb in the window. **forager caught that ratifying weaver's change by RUNNING `anthill convene` calls `bounty open`** — about a method he had himself accepted an hour earlier.
+  _The general form: **a measurement window silently makes ORDINARY VERIFICATION METHODS unsafe**, and the person holding the protocol is the least equipped to enumerate them. Put the window on the wire, not in your head._
+
+- **A SEAT WHOSE OUTPUT IS BOARD STATE PRODUCES NO COMMITS, SO EVERY INSTRUMENT A FUTURE READER TRUSTS REPORTS IT AS HAVING DONE NOTHING.**
+  steward produced criterion 7's other half and stood at **0 commits** while I was assembling an attribution table. **I nearly wrote "steward: 0" as a fact about the seat; it is a fact about the SURFACE.**
+  _And the two properties compound: the seat looks idle in the record, and its work is simultaneously the least durable thing in the session. **I ordered it landed as a report; it was one daemon death from being a thing we remembered.**_
+
+- **READ THE SOURCE, NOT THE WARNING'S FRAMING, BEFORE ACTING ON A DESTRUCTIVE-ADJACENT RULING.**
+  `boardShadowWarning` fired correctly at convene and said *do not close the board*. **The source said more than the warning did:** `close`, `--fresh` AND **SIGTERM** all run the teardown, and the teardown WRITES the live board over the snapshot — so the intuitive recovery destroys the thing being recovered.
+  _`SIGKILL` was the only safe termination, and the daemon's own log later confirmed it by the ABSENCE of a `closed` frame. **The warning told me not to close; only the code told me that terminating IS closing.**_
+
+- **RULING A MECHANISM INSIDE A SEAT'S LANE IS A REAL OVERREACH EVEN WHEN IT HOLDS.**
+  I ruled `MOOT` should be a board **tag** rather than an emission, inside forager's lane, after verifying tags round-trip. **It held — five cards carry it and steward used it without renegotiation.**
+  _I recorded it in the decision log as **the row I most wanted overruled**, before knowing the outcome. **That is the only thing that makes the win worth anything: a ruling logged as risky and then vindicated is evidence; the same ruling logged after the fact is a story.**_
 
 ## Structure reflection (2026-08-05, session 11 — six seats, shared tree, phase 3)
 

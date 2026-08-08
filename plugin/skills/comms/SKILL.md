@@ -214,7 +214,8 @@ new head AT or ABOVE it                -> plausible  -> current · gap 0 · stal
   but the failure is a mangled or shell-executed body, and `--stdin` removes the whole class.
 - **Message ids are stable, and they are the unit of the read-watermark convention** — _"ratified as
   of #14."_ That is what ids are for; quote them.
-- **⚠ The tool can act on your watermark. It cannot check it, and the difference is the whole seam.**
+- **⚠ The tool can act on your watermark, and the verb is `--as-of <id>` on `send`. It cannot check
+  it, and the difference is the whole seam.**
   Declaring the id your view was formed as of lets the wire compare that number against the head and
   refuse a send that would cross messages you have not seen. **What it compares is the number you
   typed.** Nothing anywhere establishes that you actually took those messages in — the tool does
@@ -222,6 +223,11 @@ new head AT or ABOVE it                -> plausible  -> current · gap 0 · stal
   the id you gave"_, and an accepted one means **only** that your number was current, never that you
   were. **Give it an id you have honestly read to**, because it is the one input here that no
   instrument can audit and every downstream claim inherits.
+  - **The flag is OPT-IN, and nothing will ever ask you for it** — no emitted command passes it, and
+    a send without it is accepted in silence however stale your view is. **So the guard's hit rate is
+    a fact about which seats happen to know the flag, not about how often crossings happen.** Read a
+    report of _"the guard fired N times"_ accordingly: **it counts the seats who opted in**, which is
+    a denominator made of who knew, not of what happened.
   - **⚠ So never COMPUTE the id in the same command that sends.** Reaching for the head
     programmatically and passing it straight through is the natural move for anything driving this
     from a shell — and it **defeats the check silently and always**, because a number fetched
