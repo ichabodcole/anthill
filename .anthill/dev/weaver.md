@@ -971,6 +971,26 @@ _The SOP teaches `waitedMs` and `uncheckedAgainst`, both about what YOUR land me
 - **INSTRUMENT PER PATH, AND VERIFY THE ARTIFACT YOU SHIP RATHER THAN THE FILE YOU EDITED.**
 `--file-info` FIRST, every time: `plugin/skills/**` is `ignored:false` (structure diff VALID — **it fired on both skills I touched, once catching the session-6 reparenting hazard where my nested bullet swallowed eight lines of the parent's argument**), while `templates/**` and `.anthill/**` are `ignored:true` (**diff guaranteed empty; the instrument is VOID**). For those I used the render probe — `anthill init` into a throwaway tree, `{{` → 0 **plus a positive control that substitution actually ran** — and then confirmed my new sentence was present **in the RENDERED SOP**, not merely in the file I edited.
 
+- **⚠ THE OUTSIDE READER FOUND A REAL DEFECT IN MY CODE, AND THE ANSWER WAS SIX LINES ABOVE THE LINE I WROTE.**
+I added an inline literal for `comms stand-down --as` in `team-convene.ts`, **citing Contract 7(d)** (resolve to the emitting cli) — while **the comment six lines up cites 4(d)**: *one composer and no second copy to drift.* **It is a second construction site**, and the verb has no composer while `comms follow` has one and is protected by construction.
+**I read that comment.** I matched it on `cliPath` and diverged from it on the property it exists for. **My predecessor epitaph, not my new one: I asked which BINARY this resolves to and never asked what the neighbouring rule RANGES OVER.**
+**Three chairs saw three different halves and none of us saw the whole:** the reader saw the contradiction, I saw that the proposed **gate cell would go red on a docstring** (`team-comms.ts:863` — a check over prose cannot tell a rule from a discussion of one), and sentinel saw that **his guard covers one site while its NAME implies it covers the class.**
+_Reproduced at a sha with a positive control before agreeing — `principles.md`'s reviewer rule held again: right about the defect, wrong about the repair._
+
+- **⚠ TWO SEATS CARDED ONE DEFECT FOUR MINUTES APART, AND THE SOP'S DEDUPE RULE DOES NOT COVER THE BOARD.**
+The reader's finding reached forager and me simultaneously; we each filed. **The SOP says the lead dedupes so N seats hitting one bug do not file N issues — that is written for `anthill feedback` going UPSTREAM and has no counterpart for the board.**
+**Closing it taught the sharper half: I tagged mine MOOT rather than DONE, because no work happened** and marking a duplicate `done` would plant a card that mis-states the tree **in the session that measured 24 of 30 review cards doing exactly that.** _Tidying up after a defect is a way to commit it._
+**And I verified his card was a superset of mine before closing — five distinct elements, each checked — rather than assuming.**
+
+- **⚠ `--tag X --tag Y` SILENTLY KEEPS ONLY THE LAST, AND `--tag` REPLACES RATHER THAN APPENDS. `ok:true`, `valuesIgnored: null`.**
+```
+--tag moot --tag duplicate  -> tags: ["duplicate"]           <- "moot" gone, no warning
+--tag moot                  -> tags: ["moot"]                <- replaced, not added
+--tag "moot,duplicate"      -> tags: ["moot","duplicate"]    <- the working form
+POSITIVE CONTROL: t-ac2930d7 carries [phase3,hygiene,moot] — multi-tag is fully representable.
+```
+**So the natural invocation loses data and the field built to report that (`valuesIgnored`) returned `null`.** Fourth tool this session to answer a coarser question than the one asked and exit 0. **Measured on my own card so nobody else paid**, and routed to the seat who had just tagged 30 cards — **as a question about his triage, not a claim about it.**
+
 - **Reflective (trusted by default): I trusted a schema guess and got a false zero that my own doc already catalogues.**
 `bounty state --mine` parsed as `data.state.tasks` → `n=0`, indistinguishable from *"no cards assigned to me"*. The real shape is `{state:{tasks}}`. **It did not fire from memory; it fired because I printed the container's keys instead of trusting the tally.** _Print the container, not the count._
 
