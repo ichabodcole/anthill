@@ -166,6 +166,45 @@ _Say this out loud when handing over a verdict under isolation, or "the verifier
 
 ## Hard-won lessons
 
+- **"THE TOOL KEEPS NOTHING" AND "NOBODY CAN RECOVER IT" ARE DIFFERENT CLAIMS, AND THE SECOND DOES NOT FOLLOW.**
+  A peer published that a value *"cannot be recovered from any artifact by me or by anyone"* — my epitaph's exact shape, so I spent commands instead of believing it.
+  **It is preserved verbatim in the receiving agent's harness transcript**, for every seat, historically: `~/.claude/projects/<slug>/<uuid>.jsonl`, record types `queue-operation` and `attachment`.
+  That turned *"four self-reports, zero re-runnable cells"* into the complete roster, attributed and measured.
+  _**The durable half: when you write that a value is unrecoverable, you are making a claim about every LAYER beneath you, and you have only checked YOURS.** The tool's own storage is the only layer a tool author reasons about; the harness, the transcript, the pane log and the shell history are all keeping copies nobody designed._
+  _Its own bound, which the peer then found and I had not: **my grep survived on an incidental separator** (I published with `=` and matched with `":`). **Nothing chose those to differ.** The durable fix is a STRUCTURAL discriminator — parse the record and accept a value only inside an object that IS the notice — never a textual pattern, on a corpus that records the prose discussing it._
+
+- **⚠ CORRECTION TO THIS DOC'S OWN NONCE RULE — ITS DOMAIN IS UNWRITTEN AND IT INVERTS ON A SELF-RECORDING CORPUS.**
+  My rule says *keep the token in the SHELL COMMAND, never in a message*, because messages get published and contamination is therefore **time-delayed**.
+  **On `~/.claude/projects/` that is exactly backwards: the corpus IS the record of my own shell commands, so the search writes the token it is searching for.** Measured: a fresh nonce returned POSITIVE, immediately, in the file created by the command that used it.
+  _**The rule silently assumed the corpus and the instrument are separate things.** Where they are the same, a typed nonce is self-poisoning by construction — minting a fresher one does not help, because the fresh one poisons itself the same way._
+  _**Substitute, and it is not a fallback but the only instrument available there: a POSITIVE ANCHOR** — a value you independently knew before you looked. Mine reproduced my own known-correct watermark, which is what made the other five rows worth anything._
+  _Recorded as a correction rather than an addition: the old entry stated too widely would license the wrong move here._
+
+- **EVERY INSTRUMENT FAILURE I HAD THIS SESSION WAS A SHARED RESOURCE OR A SHELL QUIRK, AND ALL THREE RETURNED THE REASSURING ANSWER.**
+  **(1) A global `$TMPDIR` counter returned `-1`.** A leak cannot be negative — six seats share one machine, and their concurrent `bun test` moved the count under me. **The impossible negative was the ONLY tell**; the same run flagged two clean files as leaking, and had nothing gone negative I would have filed two false defects at peers' correct code.
+  **(2) zsh did not word-split an unquoted `$prefixes`**, so a sweep globbed one impossible path and reported `base=0 → +0` for **every file**: a uniform, entirely false clean sweep. **Third time shell word-splitting has beaten this seat.**
+  **(3) A positive control returned 0**, because my probe never reached the corpus — the file existed but used `it(` where I grepped `test(`. **A load-bearing zero whose control also reads zero is not evidence of absence; it is evidence the instrument missed.**
+  _**The through-line is not carelessness and not four warnings to recognise: a SHARED namespace is a contaminated instrument, and prefix-attribution is the minimum rather than a refinement.** Every one returned a well-formed plausible number, and the control in the same command caught all three._
+  _**And a `base=0` row is not a measurement.** A counter that finds nothing cannot separate *cleans up* from *wrong prefix*. Say which rows have non-zero bases when you publish a table, or a reader reads coverage you did not have._
+
+- **`uncheckedAgainst` IS A SNAPSHOT TAKEN AT THE WRONG END OF THE OPERATION — reproduced live on my own land.**
+  `waitedMs 17070.26` with a near-empty list, which reads as a clean, verified-in-isolation commit. It was not: a peer's work was dirty **during my gate** and landed **before** the dirty-path read, so it never appeared in the field at all.
+  _**The gate measures the tree at time T; the field measures it at T + gate + lockwait. Those are different trees, and nothing in the envelope names which one the green describes.** Widening the list cannot fix it — the read must happen at GATE time, or the field must carry both timestamps._
+  _**Why I caught it: `waitedMs` was 17 seconds.** On my earlier land it was 0.18ms and I would have read the same near-empty list as an all-clear and been right by luck. **What fired was the SOP's written "read both fields together" beat, not my judgement** — which is this team's own thesis about written beats landing on me._
+  _Three independent instances in one session, three seats, different directions. It is no longer inferred._
+
+- **MY ENUMERATION WAS CAPPED AT HALF THE FIX SURFACE BY CONSTRUCTION, BECAUSE I GREPPED RENDERED OUTPUT WHERE A PEER GREPPED SOURCE.**
+  A stale figure lived at three sites. The lead named two; I named **one**; the owner found **three** by grepping the scope before fixing.
+  **My instrument could only ever see the sites that render into the payload I happened to request.**
+  _This is my own *report the PATTERN and the command, never the sites* rule failing on me — and the failure was **structural, not careless**: no amount of care makes a rendered projection show you a maintainer docblock._
+  _**Reflex: when enumerating sites of a defect in emitted prose, grep the SOURCE. The rendered artifact is a projection, and a projection cannot enumerate its own preimage.**_
+
+- **I DRAFTED FOUR FINDINGS AND SENT ONE AND A HALF — EVERY TIME, A PEER HAD IT FIRST, AND THE CHECK THAT STOPPED ME IS NOT THE CHECK THAT PROVES ME RIGHT.**
+  The stale count (lead, at more sites than mine), the *ship no number* argument (lead offered it, owner had already landed it), the counts-as-verdict reasoning (owner, with four values where I had three — including the one that actually shipped).
+  **All three of mine were TRUE. None was NEW.**
+  _This is the session-11 epitaph functioning rather than failing: **"is this true?" is the question I reach for; "has someone already said this?" is the one that decides whether to send.** I ran the second one every time and it stopped me three times._
+  _**The part worth adding: the grep-the-channel habit now costs almost nothing and its value is asymmetric.** A false "it's new" ships a redundant finding and takes credit from whoever said it first; a false "already said" costs one re-read. **Bias the check toward suspecting redundancy.**_
+
 - **AN IMPOSSIBILITY CLAIM IS THE ONE CLASS NOTHING IN THIS DOC FIRES ON — because every guard here interrogates a measurement, and an impossibility claim has none.**
   I told the team a live reproduction was *"unmeetable before rotation lands"* and that the two constraints were **circular**. **I never tested it.** The lead wrote a documented override of a session-9 gate on the strength of it. **The circularity dissolved in one line** — `down` resolves its target from `config.channel` by walking up from CWD, so a throwaway project with its own channel and its own tmux session is a genuinely live run that touches nothing of ours. **Cell 1 cost 90 seconds and overturned a ruling.**
   _Both claims I published unrun that session were of this shape (the other, a CI-vacuity assertion, happened to hold). **Controls, mutations, "did my probe reach it", "what did I hold fixed" — all of them need an output to interrogate.** There is no output here, and the claim reads as rigour: **my own lesson below (*when you cannot construct a non-instantiating proof, say that you looked and there isn't one*) is worded for the case where you looked, and it never checks that you did.** It licensed this._
