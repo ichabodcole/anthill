@@ -75,6 +75,63 @@ the product**, it is one-way in practice (a closed scope does not get re-opened 
 and the evidence for the exception arrived _after_ the criteria were written. **It is the definition
 of the case Cole's standing instruction reserves for him.**
 
+## B3. ✅ COLE'S RULINGS — received 2026-08-08 20:14Z, quoted rather than summarised
+
+**On the scope / grapevine — MY `#868` RULING IS OVERTAKEN.**
+
+> _"Is there a reason that we aren't just removing the grapevine reference as part of this work? …
+> I'd say ideally if we're just saying it's just not going to be in the scope of work, let's just make
+> it a **fast follow-on** — so complete the scope of work and then do that removal — again that's
+> assuming that we're not actually using it for something at this point and it's just… it was missed."_
+
+**He did not close the scope over it and he did not defer it either.** He asked a question neither I
+nor the card had answered: **is the `grapevine who` on the presence path LOAD-BEARING, or was it
+missed?** His whole answer is conditional on that, and it is a `git`-and-a-test question routed to the
+two seats who can run it. **Fast follow-on, not a next-session card.**
+
+**On squash — HANDED TO THE TEAM, with a method rather than an answer.**
+
+> _"I would leave this to the actual anthill team… it's the anthill team that is affected by this."_
+> _"Part of this might also be creating some sort of documentation that says: let's look at what we
+> **predict** this will provide us versus what's actually happening… the prediction is the reason
+> we're going with it is X — and over the next however many sessions, let's see if that is holding
+> true… and is there a cost."_
+
+**That is a Q3 hypothesis with a horizon, and he is asking us to author it.** My 92%/242-of-264
+measurement is the **input**, not the answer. It goes to the retro as a team decision **carrying its
+prediction and its falsifier**.
+
+**On escalation calibration — I have been right on VOLUME and possibly wrong on KIND.**
+
+> _"I'm honestly not super concerned about individual technical decisions as long as they're grounded
+> in the bigger decisions… I'm more interested in answering questions about our overall product
+> strategy, who we're targeting, when we need to make big changes that might be more foundational."_
+> _"**The audience for this is agents / agent teams, which means that is the audience we are trying to
+> enable with this project.**"_
+
+## 🔴 B4. THE GAP HIS ANSWER EXPOSED, WHICH NOBODY ASKED ABOUT
+
+He offered: _"the question might be… is there enough guidance on what anthill is as a product, where
+it should be going?"_
+
+**There is not, and there is a measurement rather than an opinion behind that.**
+
+**The sentence _"the intended user is the agent team"_ has now been supplied by Cole TWICE, unprompted,
+two sessions apart** — session 9 (declining a design question: _"I'm not the intended user. The
+intended user is the agent team."_) and tonight. **A fact a human has to re-supply is a fact that is
+not in the docs.**
+
+And session 9's maestro recorded the cost in its own seat doc: _"escalating felt like diligence and was
+the cheaper move for me — it spent the human's attention instead of my standing."_ **Two escalations
+across two sessions would have been answered by one sentence in a grounding doc.**
+
+**Neither `AGENTS.md` nor `.anthill/README.md` states who anthill's user is.** `PROJECT_MANIFESTO.md`
+carries vision and boundaries; the lead is not pointed at it at convene, and `anthill:convene`'s
+grounding list does not include it.
+
+**Carded, not built** — this is a product-strategy artifact and it is exactly the class Cole says he
+wants to be asked about, so proposing its CONTENT here would be the error it describes.
+
 ## C. Candidate principles this session produced (for the retro, not for adoption here)
 
 - **weaver's, and it is the sharpest:** _a rule whose violation is cheaper than its observance does
