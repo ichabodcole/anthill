@@ -19,6 +19,32 @@
  * right: a bare mention passes on prose that says the OPPOSITE. Every
  * assertion below pins a DISTINCTION (the verb AND the resolution together, as
  * one object), so a half-correct composition cannot pass.
+ *
+ * ═══════════════════════════════════════════════════════════════════════════
+ * 🔴 IF THIS FILE IS RED BECAUSE SOMEONE EXTRACTED A PURE BUILDER: THAT IS THE
+ * SUCCESS CONDITION. DELETE THIS FILE. DO NOT WEAKEN IT.
+ *
+ * This guard reads `team-convene.ts` as SOURCE TEXT, because when it was
+ * written the composition was inline in `run()` and there was nothing
+ * importable to assert against. Extract it — `t-f72057f2` proposes exactly
+ * that — and the extractor below returns "", the positive control fires FIRST,
+ * and this file goes red.
+ *
+ * **That red means "I can no longer SEE the thing", never "the thing is
+ * BROKEN."** A future seat meeting it will read it the second way, weaken the
+ * regex to make it pass, and be left with a guard that asserts nothing.
+ *
+ * The correct response is to replace this file with the real assertion: a pure
+ * builder is importable, so test its RETURN VALUE directly — which is strictly
+ * stronger than anything achievable against source text. This file exists ONLY
+ * because that surface did not.
+ *
+ * Recorded here rather than only on the wire and the card, because both of
+ * those evaporate and the person who meets the red will be looking at THIS.
+ * Written by the author of the guard, who created the coupling: a guard whose
+ * subject is the ABSENCE of a refactor penalises the refactor, and that is a
+ * defect in the guard rather than a reason to leave the refactor unbuilt.
+ * ═══════════════════════════════════════════════════════════════════════════
  */
 
 import { describe, expect, it } from "bun:test";
