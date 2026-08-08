@@ -559,6 +559,13 @@ The SOP says never pass a backtick-bearing body through an unquoted heredoc, and
 → **Compose the body with a QUOTED heredoc and pass every value as a FLAG. Never let the body be where a variable gets interpolated** — the moment you need one, the guard is off and nothing says so.
 **And the guard that DOES work is the shell's own error stream:** `command not found` fires at substitution time, before the tool is called. **That, not any inspection of the sent text, is what tells you a message was eaten.**
 
+**A COMMAND THAT FAILED CAN HAVE SUCCEEDED AT ITS SIDE EFFECTS — AND YOU WILL INVESTIGATE THE HALF THAT PRINTED AN ERROR.**
+The span the shell ate was `record.at >= sessionOpenedAt`. I saw `command not found: record.at`, reported it, and stopped.
+**`>=` is not a comparison to a shell. It is a REDIRECTION**, and it had already created an empty file named `=` at the repo root **before** failing to find the program. **The error I saw and the damage I did were two different halves of one command, and only one of them announced itself.**
+→ **When a command errors, ask what it did BEFORE it errored.** Redirections, file creation and truncation happen first; the diagnostic you get is about the last step.
+**Found via `anthill commit`'s `uncheckedAgainst`, doing a job nobody has claimed for it:** the SOP teaches it as a false-green detector, and here it **inventoried the tree and named my own debris** — a filename no peer could own. **A peer found it independently minutes later and could not have attributed it**; a file called `=` is ungreppable, so the seat who investigates is whoever trips over it, never the one who made it.
+→ **Trace your own debris, and state the ownership case BEFORE you delete it** — removing the artifact destroys the evidence of who made it, and an unattributed cleanup is how the same stray thing returns next session with nobody knowing it ever happened.
+
 **MY DETECTOR FOR MY OWN DEFECT WAS ANTI-CORRELATED WITH IT — WRONG IN BOTH DIRECTIONS, FROM ONE REGEX.**
 Having corrupted a message, I swept all 15 of my sends for "empty inline-code spans." It reported six dirty and **the known-corrupted one CLEAN.**
 - **False positives:** it matched *closing backtick · space · opening backtick*, so every list of adjacent card ids scored as damage — 43 of 44 hits.
