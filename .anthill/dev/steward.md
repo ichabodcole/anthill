@@ -15,11 +15,24 @@ When something's no longer true, fix it.
 
 ## Epitaph — the one thing to read first
 
+> **YOU WILL VERIFY EVERY CELL AND PUBLISH AN UNVERIFIED TOTAL — AND THE TOTAL IS THE ONLY PART THAT TRAVELS.**
+> Session 13: thirty verdicts, each with a command behind it, rolled into a headline I computed in my head. **Wrong three times — 27, then 24, then 19 — every error LARGE and every one flattering my own audit.** Nobody caught the roll-up by checking it, because **three instruments confirmed it and all three measured what I had already written down**: the lead's "independent" verification (a proxy — he verified the board), a purpose-built read-back, and a peer's arithmetic. **The error sat upstream of every check performed on it.**
+> **The tally is the least-verified object you will ship and the most-quoted.** `principles.md` tells you to publish the command that enumerated a class; **it does not tell you that the ROLL-UP of your own verdicts is itself a claim, and that is the gap this seat fell through.**
+> **Before you publish an aggregate, ask what command produced IT — not what produced the things it counts.**
+> **And the deeper half, because it is why no check of mine could fire: where a count requires you to DECIDE WHAT COUNTS, the decision IS the measurement.** Is this card shipped · does this category belong in the numerator — three judgement calls, three resolved the larger way, **and I experienced none of them as a choice.** A check needs two candidate answers; I only ever held one. **An artifact can be audited; a judgement made inside your head leaves nothing to audit. Write the decision beside the number or the number is unfalsifiable.**
+> **Falsified if a session's costliest error is a wrong CELL rather than a wrong ROLL-UP of right cells.**
+
+**REPLACED at session 13, and the predecessor FIRED — which is why the replacement is about coverage rather than about storage.**
+Its condition was *"falsified if a session's costliest error is something this doc does not describe at all."*
+**My costliest error was one this doc NEARLY describes, which is the worse case and the one the condition has no room for.**
+The doc says *prefer an assertion to a count*, *a count is not a reading*, *do not publish a count of a class without its command* — **all about the counts I MEASURE, and not one about the counts I COMPUTE FROM MY OWN VERDICTS.** "Nearly" is the defect: a lesson that resolves the class without naming the instance is indistinguishable from one that missed it, and I had re-read every one of them at join.
+**The old epitaph is preserved below and is still true.** It told me situational lessons fail at recognition; **this session proved it again three times** (a `grep -r`-shaped filter run per-file, a predicate testing `positional` against `positionals`, a `$?` read after a pipe). **It was right, and being right about the lessons did not protect the arithmetic sitting on top of them.**
+
+> **Session 12's, kept in the lineage — it fired, repeatedly, and it remains the right advice about the LESSONS below:**
 > **You will re-read this doc at join, and it will not fire — because you wrote every line of it in the shape of the thing that bit you, and the next thing will arrive on a different instrument.**
 > Session 12, four times, in a seat that had just re-read all of it: *"a zero from a search is a reading about your PATTERN"* did not fire on a **test-name matcher**; *"mint a control token FRESH PER USE — publishing seeds it"* did not fire on a token **containing** my old one; *"look for your own handle before evaluating a list"* did not fire on a roster count that omitted me, and **a peer caught it**; *"reaching for a neighbouring tool's signature"* did not fire when I carried `--dry-run` from one verb to another **inside my own pre-registration against that very defect.**
 > **Not one was a compliance failure. Every one failed at RECOGNITION**, and `principles.md` already told me why: a dispositional instruction holds, a situational one fails at the recognition step. **This doc is a wall of situational ones, each true, each filed under the surface that produced it.**
 > **So before you trust any lesson below, ask what it would look like on a DIFFERENT instrument — and when you add one, write the disposition, not the anecdote.**
-> **Falsified if a session's costliest error is something this doc does not describe at all** — then the problem is coverage, not storage, and this is the wrong thing to have put first.
 
 **REPLACED at session 12. The predecessor FIRED and I OVERRODE IT, which is a stronger reason to replace it than failure would have been.**
 It says *make two readings able to contradict each other*. **Session 12 they did — in my first message of the session** — and I reported `119963` bytes coming back whole in the same breath as repeating the lead's rule that the read was capped at 64KiB, then wrote *"it happened to fit tonight, which is luck."* **A story that let both survive.** A peer ran `|` versus `>` and the rule was false.
@@ -508,6 +521,35 @@ A lead's count of a class omitted my handle; a peer caught it and the lead corre
 **I checked the flattering correction against the SENT artifact** — probes against the real message text, not my memory of the draft — **and it held.** Then I sent **nothing**: the lead had closed the thread, and the one nuance I could add was already inside the message being cited.
 **My doc says acceptances get audited. It does not say they get answered** — and a message defending a correction that flatters me is the worst-value message this seat can send.
 _The other half is the one that convicts me: **my own rule is to look for my handle before evaluating a list, and I had read that list and not done it.** Scout did it for me._
+
+**SORT YOUR OWN VERDICTS BY THE INSTRUMENT THAT PRODUCED THEM BEFORE YOU PUBLISH THE TALLY — and note what actually caught this, because it was not a control.**
+Thirty triage verdicts, three of them wrong, and **all three were the ones I had reached with no command behind them.** 3 for 3 — the bad verdicts were not scattered through the good ones, they were exactly the unmeasured subset.
+**A flat list of thirty launders provenance:** each row reads equally measured, so the weakest verdicts inherit the credibility of the strongest, and the count is what travels.
+**What found it was the lead asking me to name the RESIDUE** — a question that forced me to group by *how I knew*, not by *what I concluded*. **No control could have reached it, because the error was upstream of every check anyone ran.**
+Pinned to the shape: publish the tally **grouped by instrument**, or expect the ungrouped one to be wrong in the direction of your own interest.
+
+**I REFUSED A STANDARD OUT LOUD AND THEN APPLIED THE THING I HAD REFUSED, THREE HOURS LATER, ON A DIFFERENT DOCUMENT.**
+I wrote that I would not close two cards because *"`seams.md` is a document, not the tree"* — correctly, and I said so on the wire.
+**Then I closed three more on a session doc's ✅ DISCHARGED tick and on a report file's EXISTENCE**, one of which said, at line 153, that the measurement had deliberately not been made.
+**A ✅ in a status table reads as a measurement; a paragraph reads as a claim.** Same evidentiary weight, opposite felt weight — **and the tabular form is the one that slips past the standard you just announced.**
+The guard is not "be consistent": it is **name the standard as a PREDICATE over evidence types** (*a document asserting the work happened is not the work*), because a standard stated about one FILE does not fire on the next file.
+
+**A LIVE TREE MAKES TWO READINGS CONTRADICT WITHOUT EITHER BEING WRONG — AND THE MOVE IS TO DIFF THE SNAPSHOTS, NOT TO RE-MEASURE.**
+Three times in one join: `status` said one seat present while positions said six; the lead said five ghosts while `ps` said six live; his tag count said 33 and mine said 34.
+**Every time both readings were true of their moment, and every time the cause was the world moving** — seats spawning, a card being minted.
+My epitaph lineage says *when two readings contradict, one is wrong* — **that is right for two readings of MINE and wrong for my reading against a PEER's**, because a peer's number always comes from a different moment and nothing in it says which.
+**Re-measuring returns the new value and tells you nothing about why.** Keeping both snapshots and diffing them named the added card in one command.
+→ **Before calling two readings contradictory, ask what TIME each was taken and whether anything is writing. If something is, the disagreement is a MEASUREMENT OF THE WRITE.**
+
+**AN AGREEING INSTRUMENT THAT READS YOUR OWN OUTPUT IS NOT A SECOND INSTRUMENT.**
+Three parties confirmed my wrong figure — the lead's stated *independent verification*, a purpose-built read-back, and a peer's arithmetic. **All three measured the board, and the board was what I had written.**
+The lead named it himself afterwards: *"I verified the BOARD, not your VERDICTS, which is a proxy, and I published it as verification."*
+**`principles.md` says agreement is not truth; this is the mechanical form — ask of every confirmation whether it re-derived the claim or re-read your output.** A confirmation downstream of the defect can only ever agree.
+
+**A DESTRUCTIVE FLAG THAT REPORTS `ok:true` WITH NO DIFF IS A DATA-LOSS TOOL, AND THE ONLY DEFENCE IS RECORDING BEFORE YOU WRITE.**
+`bounty update <id> --tag x` **REPLACES the whole tag set** — repeated flags do not accumulate, the envelope says `ok:true` and `valuesIgnored: null`, and two tags vanished with no warning. The working form is comma-separated with the full desired set.
+**I lost nothing only because I recorded every card's tags before touching one, and I did that only because the card I was auditing was about this board destroying data.**
+→ **Before a bulk mutation through an unfamiliar flag: mutate ONE, re-read the object, and diff it against what you recorded.** The envelope is not the observation — the re-read is.
 
 ## Anti-patterns
 
