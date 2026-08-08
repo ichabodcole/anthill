@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-08 (spellbook 2.1.0 landed D1.3 — **S13-N's trigger has fired**; and **7 new feedback issues, #96–#102, are UNTRIAGED**)
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-08 (spellbook 2.1.0 landed D1.3 — **S13-N's trigger has fired**; **#96–#102 triaged**, and the batch amended a stale "ready to build" card whose fix was wrong)
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -152,11 +152,29 @@ is discharged by argument.**
 > read-back is now an ordinary build rather than a build on a substrate that could lie about what it
 > handed back.
 >
-> **🆕 AND THE QUEUE REFILLED. Seven new feedback issues — `#96`–`#102`, all filed 2026-08-08 by the
-> Spellbook team — are UNTRIAGED.** _The 2026-08-07 triage discharged the GitHub half of S13-E and the
-> queue was empty of rulings for **one day.** That is the measurement this criterion was always about:
-> **triage is a recurring beat, not a task that completes** — which is exactly why S13-E pairs it with
-> a read-back instead of treating "the queue is clear" as a finish line._
+> **🆕 THE QUEUE REFILLED AND WAS RE-CLEARED THE SAME DAY. `#96`–`#102` are TRIAGED** →
+> [`reports/2026-08-08-feedback-triage-96-102.md`](reports/2026-08-08-feedback-triage-96-102.md) ·
+> [`backlog/2026-08-08-triage-build-batch.md`](backlog/2026-08-08-triage-build-batch.md). _The queue
+> was empty of rulings for **one day.** **Triage is a recurring beat, not a task that completes** —
+> which is exactly why S13-E pairs it with a read-back instead of treating "the queue is clear" as a
+> finish line._
+>
+> **⚠ FIVE OF SEVEN REPORTS WERE WEAKER THAN FILED IN A WAY THAT CHANGED THE FIX** — one headline
+> **refuted** (#97's red-side instrument already exists and predates `uncheckedAgainst`), one proposed
+> fix **actively unsafe** (`<gate> || …` exits with the right-hand status), one fixture attribution
+> wrong **in both directions** (#100), one mechanism claim false (#101's "unskippable"), and one fix
+> aimed at a value that does not exist (#99's `openedAt`). **The verify-first rule has now paid for
+> itself twice running, at 3-of-6 and 5-of-7.**
+>
+> 🔴 **AND THE BATCH'S BEST FINDING WAS ABOUT US.**
+> [`2026-08-01-down-presence-guard…`](backlog/2026-08-01-down-presence-guard-cannot-pass-for-a-correctly-wired-lead.md)
+> sat marked **"ready to build"** for seven days with a premise the tree had falsified and a top-ranked
+> fix that #96 **explicitly forbids**. Amended `439f4fe`. **A card that converts a fresh agent's
+> diligence into a defect is the worst shape in this backlog**, and nothing but an unrelated triage
+> would have found it — _which is an argument for the re-triage beat, not a footnote to it._
+>
+> **Two decisions moved:** `94·1` is now constrained (**`previousPosition` must never be the session
+> anchor**), and **`S13-N`'s trigger fired** — see the upstream section below.
 >
 > **Three items came out of the triage needing a convene decision, and two of them collide:**
 > **70·2** (finalize has no code-review beat) routes findings _"to the owning seat via the roster"_ —
