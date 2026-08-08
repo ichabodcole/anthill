@@ -84,15 +84,61 @@ the verdict moves. Recorded rather than silently fixed because it is the same de
 ruled on twice within the hour — a correct measurement carrying the wrong unit (bytes vs chars at
 R3, `n=6` vs `n=5` at scout's `#854`). **Third instance, same shape, and this one is the lead's.**
 
-## Outcome — NOT YET DETERMINED
+## 🔴 OUTCOME — **NOT TESTED.** The pre-registered null result is the one that occurred.
 
-Per the protocol's pre-committed outcomes:
+**pid 74370 was alive at every sample and at session close — 1h23m23s — and that is NOT a survival
+result.** The protocol named this outcome in advance precisely so it could not be claimed as one:
 
-- **survives the session** → `spellwright` closes `#64` on this report
-- **pid gone at any sample** → death; read `closed.reason` as a **field** (`timeout` vs
-  `user`/`close`/`signal`), exit `124` is the process-side twin
-- **🔴 board busy throughout** → **NOT TESTED**, never "survival". Six seats on a live board makes
-  this the most likely outcome, and it is the one most easily misread as success.
+> _"If six seats keep the board busy throughout, the run never exercises the condition and reads as
+> **NOT TESTED — not as survival.** This is the outcome most likely to be quietly read as success,
+> which is exactly why it is written down before the run."_
+
+**Six seats worked the board continuously for the whole window.** Every board verb resets the idle
+timer, so `idleMs` never accumulated. **The daemon did not survive an idle period; it never had one.**
+**Reporting this as a survival would be the manufactured green this protocol was rewritten twice to
+avoid** — and it would be the third such instrument in `#64`'s history.
+
+## ✅ BUT THE RUN PRODUCED SOMETHING BETTER: TWO REAL IDLE-DEATHS, WITH THE FIELD
+
+**The append-only daemon log carries `#64`'s failure mode on this exact board, twice, in the
+pre-committed form — `reason` read as a field, nobody interpreting anything:**
+
+```
+2026-08-05T20:23:46.963Z  k-anthill-dev-adad92ec  pid 15132  reason:"timeout"  subscribers:0  idleMs:7200140.41
+2026-08-05T20:40:32.369Z  k-anthill-dev-adad92ec  pid 93692  reason:"ready"    port 56437
+2026-08-07T00:15:36.402Z  k-anthill-dev-adad92ec  pid 93692  reason:"timeout"  subscribers:0  idleMs:7200209.98
+2026-08-08T18:54:10.455Z  k-anthill-dev-adad92ec  pid 71107  reason:"ready"    port 50058     <- my convene
+2026-08-08T19:02:43.684Z  k-anthill-dev-adad92ec  pid 74370  reason:"ready"    port 50155     <- subject, alive at close
+```
+
+**Both deaths: `reason: "timeout"`, `subscribers: 0`, `idleMs ≈ 7200000` (two hours).** That is the
+`#64` mechanism with its cause as a **field** rather than a judgement, which is what the protocol
+asked for.
+
+**⚠ AND IT ALSO EXPLAINS THE THING THAT STARTED OUR SESSION.** The `2026-08-07T00:15:36Z` timeout is
+**why the board was empty at convene** — that daemon idle-died between session 12 and session 13, and
+`boardShadowWarning` fired against the snapshot it left behind. **`#64` was not an abstraction we were
+measuring for someone else tonight; it had already cost us 102 cards' worth of scare and an hour of
+recovery, before anyone thought to look at the log.**
+
+### 🔴 THE QUESTIONS THIS RECORD CANNOT ANSWER, AND spellwright CAN
+
+1. **Were pids 15132 and 93692 running `2.1.0`, or an earlier build?** They died on 08-05 and 08-07.
+   **We cannot date the binary from the log, and the whole value of these rows turns on it.** If they
+   predate `2.1.0`, they are the "before" arm `#64` has been missing. If they are `2.1.0`, the fix did
+   not hold.
+2. **`idleMs ≈ 7200000` against a stated `idleTimeout: 255`.** The observed threshold is **two hours**,
+   not 255 of anything. **We are not asserting a contradiction — we do not know the unit or which
+   timer the log stamps.** Stated as an observation for its owner.
+
+**Neither is ours to resolve.** Both are reported rather than interpreted, per the protocol's
+_"nobody interprets anything"_ rule.
+
+### The honest one-line summary for `#64`
+
+> **Survival: NOT TESTED — the workload never let the board idle.** **But the log carries two
+> `reason:"timeout"` deaths on this board at ~2h idle with 0 subscribers, and one of them is what
+> emptied our board between sessions.** **The protocol's one permitted `cli.ts` call went unspent.**
 
 ## An unplanned first-hand finding, logged because it is `S13-N`'s subject
 
