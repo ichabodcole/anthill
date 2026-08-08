@@ -36,10 +36,22 @@ because the notes describe the world when the card was filed._
 
 **30 of 30 judged, every verdict by execution against the tree rather than by reading the notes.**
 
-🔴 **24 of 30 (80%) mis-stated the tree. The inherited figure of "13" was still a large undercount.**
+🔴 **TWO NUMBERS, TWO PREDICATES, AND WRITING EITHER ONE ALONE IS THE DEFECT THIS SEAT'S EPITAPH
+NAMES.** Caught by scout before it was committed:
 
-That number runs **against** us: the problem criterion 7 exists to fix was substantially bigger than
-every prior statement of it — including the handoff that scoped this session.
+| predicate                                                                                   | count        | what it means                                                    |
+| ------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------------------------- |
+| **"work landed, card never closed"** — session 12's wording, the one the emitted prose used | **19 of 30** | the card claims _awaiting verification_; the work is in the tree |
+| **"the card no longer describes the tree"** — the broader reading, adds `MOOT`              | **24 of 30** | as above, **plus 5** whose _subject was deleted_                 |
+
+**Both are true; they are answers to different questions.** `OPEN` (3) is a card that is still
+**correct**, and the residue (3) has no verdict. **A single "N of 30 mis-stated the tree" hides which
+predicate it ran on** — a criterion stating a predicate while omitting its domain, which is exactly
+what this seat's epitaph says it will do and exactly where re-reading does not catch it. **It was
+caught by someone running it against the prose's own definition.**
+
+Under **either** reading the inherited figure of **13** was a large undercount, so the direction of
+every ruling made tonight survives — **and no ruling should have rested on the bare number.**
 
 > **⚠ THIS DOCUMENT SAID 27 AND WAS WRONG, AND THE CORRECTION IS WORTH MORE THAN THE NUMBER.**
 > steward published 27, then **audited its own result and pulled three cards back**, one of which it
