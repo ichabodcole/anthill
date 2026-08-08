@@ -48,9 +48,18 @@ teardown and leaves the snapshot alone. Verified before and after: mtime `2026-0
 **No `cli.ts` verb is used to sample.** Seats using the board for real work is the **workload under
 test**, not a protocol violation — the protocol's own NULL RESULT clause anticipates exactly that.
 
-| sample @  | pid alive | snapshot mtime       | note                                  |
-| --------- | --------- | -------------------- | ------------------------------------- |
-| 19:02:58Z | ✅ yes    | 2026-08-06T17:15:36Z | t=0, board restored, no mutations yet |
+| sample @  | pid alive      | snapshot mtime (LOCAL) | note                                         |
+| --------- | -------------- | ---------------------- | -------------------------------------------- |
+| 19:02:58Z | ✅ yes         | 2026-08-06 17:15:36    | t=0, board restored, no mutations yet        |
+| 19:30:47Z | ✅ yes, 28m04s | 2026-08-08 12:28:57    | 6 seats live, board mutating — real workload |
+
+**⚠ UNIT CORRECTION, MINE, AGAINST MY OWN EARLIER ROWS.** `stat -f %Sm -t '…Z'` prints **local
+time** and the `Z` is a suffix I supplied, not an observation — so the snapshot mtimes above are
+**local, not UTC**, and the first row's original `2026-08-06T17:15:36Z` was mislabelled by me. **The
+pid timestamps are genuine UTC** (`date -u`), and **survival is judged on the pid**, so nothing in
+the verdict moves. Recorded rather than silently fixed because it is the same defect this session
+ruled on twice within the hour — a correct measurement carrying the wrong unit (bytes vs chars at
+R3, `n=6` vs `n=5` at scout's `#854`). **Third instance, same shape, and this one is the lead's.**
 
 ## Outcome — NOT YET DETERMINED
 
