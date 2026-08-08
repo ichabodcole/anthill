@@ -850,9 +850,10 @@ describe("join — a missing spellbook must not sink the manifest (S8-1)", () =>
 
 // THE BOARD READ-BACK (criterion 7). `principles.md`: no store without a named
 // re-read moment. The board has a write trigger and none of these, so a `review`
-// card decays into an unchecked claim about the tree — 13 of 27 (~48%) of them
-// mis-stated it in session 12, and one sent a seat to write a test that already
-// existed. These assertions are DISCRIMINATORS: each is built so a hardcoded
+// card decays into an unchecked claim about the tree — every audit that has
+// looked found MOST of the review column mis-stating it, and one sent a seat to
+// write a test that already existed. No rate is quoted anywhere: the figure was
+// revised twice inside the session that built this. These assertions are DISCRIMINATORS: each is built so a hardcoded
 // return value fails the SET even where it would satisfy any single row.
 describe("parseReviewCards — the board read-back's detector", () => {
   const board = (tasks: unknown[]) => JSON.stringify({ state: { tasks } });

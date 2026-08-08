@@ -284,10 +284,23 @@ export interface ReviewCard {
  * **no store without a named re-read moment**. The board has a write trigger
  * (seats move their own cards) and NO read-back across sessions, so a `review`
  * card — *fixed, awaiting verification* — decays into a claim about the tree that
- * nobody re-checks. Session 12 measured **13 of 27 (~48%)** of them mis-stating
- * the tree: work landed, card never closed. A stale card is a stale PREDICTION
- * and it commissions real effort — that session sent a seat to write a test that
- * already existed.
+ * nobody re-checks. Every audit that has looked found MOST of the review column
+ * mis-stating the tree — work landed, card never closed.
+ *
+ * **NO RATE IS QUOTED, and the reason is stronger than staleness: the figure was
+ * revised TWICE inside the single session that built this** — a passed-along
+ * number, a fresh audit that roughly doubled it, then the auditor's own
+ * correction downward hours later. A quantity that moves three times in one
+ * evening is not a fact a shipped string can carry.
+ *
+ * A stale card is a stale PREDICTION and it commissions real effort: one sent a
+ * seat to write a test that already existed.
+ *
+ * _(A rate WAS quoted here and in the emission until `f8a7bd8`'s follow-up. It
+ * was already falsified when it shipped, and it was a fact about THIS team's
+ * board being asserted to every consuming project — Contract 5(b)'s local-truth-
+ * as-general, in the surface Contract 4(d) calls the largest we ship. The dated
+ * numbers survive where they belong, as scars, in `field-notes.md`.)_
  *
  * `join` is the named moment because it is the one command every seat runs before
  * it has touched anything, and because it already tells a seat to READ the board
@@ -388,7 +401,7 @@ export function buildChecklist(i: ChecklistInput): string[] {
             `BOARD READ-BACK: you own NO \`review\` cards — measured this join, not assumed. Nothing to re-verify.`,
           ]
         : [
-            `BOARD READ-BACK — ${i.reviewCards.length} card(s) of yours sit in \`review\`, which asserts "fixed, awaiting verification". **A card is a PREDICTION about the tree and nothing re-checks it across sessions: 13 of 27 (~48%) mis-stated it last audit, and one sent a seat to rebuild a test that already existed.** Give each a verdict AGAINST THE TREE — run a command, do not read the notes (the notes describe the world when it was FILED):\n${i.reviewCards
+            `BOARD READ-BACK — ${i.reviewCards.length} card(s) of yours sit in \`review\`, which asserts "fixed, awaiting verification". **A card is a PREDICTION about the tree, and nothing re-checks it across sessions — so it is only as true as the day it was written. A stale one commissions real work: one sent a seat to rebuild a test that already existed.** Give each a verdict AGAINST THE TREE — run a command, do not read the notes (the notes describe the world when it was FILED):\n${i.reviewCards
               .map(
                 (c) =>
                   `    ${c.id}  ${oneLineTitle(c.title)}${c.tags.length > 0 ? `  [${c.tags.join(",")}]` : ""}`,
