@@ -50,6 +50,27 @@ claim, one level up: not _which field_ carries the signal, but _which surface_.
 > Prefer, in order: a **field on the envelope**, a **footer on the artifact**, an **emitted manifest
 > the reader keeps**. And prefer **present-and-null over absent**, so _"nothing happened"_ stays
 > distinguishable from _"this build does not report it."_
+>
+> **Boundary — terminal-only is legitimate exactly when the signal is self-evidently transient**, i.e.
+> when its absence means _"nothing is happening"_ and a reader who missed it has lost nothing. **The
+> test is not importance, it is whether ABSENCE IS AMBIGUOUS.** If a consumer cannot distinguish
+> _"this did not happen"_ from _"this build does not report it,"_ the terminal is the wrong channel no
+> matter how loud the line is. A progress line or a spinner is correctly terminal-only.
+>
+> **Repeal criterion:** if a guard is found whose absence is genuinely ambiguous **and** whose
+> terminal-only emission still reached every consumer that needed it, this rule is too strong.
+
+### ⚠ The boundary is not decoration — the first draft overreached, and `spellwright` attacked it
+
+The version above without its boundary would have condemned progress lines and spinners, and **a rule
+applied where it does not fit gets obeyed selectively and then not at all.** Their house style
+requires an imperative **plus a boundary check plus a repeal criterion** for exactly that reason, and
+we should steal the discipline along with the content.
+
+**The reframe is the real gain.** It moves the rule from _where the output goes_ to **what a reader
+can conclude from not seeing it** — which is why present-and-null keeps falling out of it as the
+remedy rather than being a separate idea. `snapshotBackedUp`, the skew footer and `uncheckedAgainst`'s
+missing red twin are **all ambiguous-absence.** A spinner is not.
 
 ## Two notes for whoever ratifies it
 

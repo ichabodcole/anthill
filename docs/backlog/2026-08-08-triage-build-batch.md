@@ -75,6 +75,17 @@ the valid flags and no escape at all.
 - **`rotateSession` (`comms.ts:289-331`) has NO CLI caller**, yet `join/SKILL.md:130` points at
   rotation as an available remedy and `comms.ts:445-451` claims positions are per-session. **Both
   describe something no deployed team can reach**, and the second is the root cause of #99.
+  ⚠ **`spellwright` rates this worse than their own equivalent, and the reason is right:** their stale
+  reason justifies a ruling that is _still correct on other grounds_; **ours routes a reader to a
+  remedy that cannot be invoked**, so a seat following it gets nothing **and no error.**
+- 🔴 **REASON-ROT IS A CLASS, AND NOTHING CHECKS IT** — now four instances across two repos in one
+  week: their `--fresh --restore` comment (ruling stands, recorded reason falsified by rotation), our
+  `join/SKILL.md:130`, our `comms.ts:445-451`, and
+  [the down-presence card](2026-08-01-down-presence-guard-cannot-pass-for-a-correctly-wired-lead.md).
+  `spellwright`'s formulation, and it is the nameable part: **_"decisions are re-derived when
+  challenged; reasons are only read when someone is already suspicious."_ Neither team's gate has ever
+  checked a reason.** Candidate for `principles.md` alongside
+  [the terminal-guard item](2026-08-08-a-guard-that-emits-to-the-terminal-is-a-prose-guard.md).
 - **The red-side gate diagnostic can never fire for the LAND gate** — `&&` short-circuits, so `commit`
   never exists to compute it. Append to
   [`the-word-gate-names-two-different-things`](2026-08-06-the-word-gate-names-two-different-things.md),
