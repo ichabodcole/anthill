@@ -59,8 +59,23 @@ interface ConveneData {
  * when ready). Keyed open is idempotent: re-convening re-attaches, never hijacks.
  * See seams.md — the board-binding contract (owner: forager).
  */
-export function bountyOpenArgs(channel: string): string[] {
-  return ["open", "--session-key", channel, "--pin", "--no-open"];
+export function bountyOpenArgs(channel: string, restoreId?: string | null): string[] {
+  const args = ["open", "--session-key", channel, "--pin", "--no-open"];
+  // `--restore` is passed UNCONDITIONALLY when we know the id, and that is safe
+  // in both directions — measured, not reasoned:
+  //
+  //   dead board  → respawns WITH the snapshot instead of empty.
+  //   live board  → `open` attaches and reports
+  //                 `restoreSkipped: {requested:["restore"], reason:"a live board
+  //                 already exists for this key … the running board was left
+  //                 unchanged"}`, with the live cards verified intact.
+  //
+  // So there is no "should we restore?" decision to get wrong, which is the only
+  // reason this can be a default rather than a flag. A conditional restore would
+  // have to answer that question from outside, and `boardShadowWarning`'s own
+  // docs explain at length why we cannot.
+  if (restoreId) args.push("--restore", restoreId);
+  return args;
 }
 
 export interface BountySessionRow {
@@ -90,10 +105,20 @@ export function parseBountySessions(stdout: string): BountySessionRow[] {
  * key to the repo root, and contains no dashes, which is what lets us match a
  * channel name that itself contains dashes.
  */
-export function snapshotTaskCount(rows: BountySessionRow[], channel: string): number | null {
+export function snapshotRowFor(rows: BountySessionRow[], channel: string): BountySessionRow | null {
   const re = new RegExp(`^k-${channel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}-[0-9a-f]+$`);
-  const hit = rows.find((r) => re.test(r.key));
-  return hit ? hit.tasks : null;
+  return rows.find((r) => re.test(r.key)) ?? null;
+}
+
+/**
+ * The row's `key` IS the session id `--restore` takes, which is the whole reason
+ * this split exists. `snapshotTaskCount` had the id in hand and discarded it one
+ * line before returning, while `boardShadowWarning` above declared restoring
+ * impossible from here — _"that is spellbook's side of the seam"_. **It was not
+ * impossible; the id was already computed by the regex that found the count.**
+ */
+export function snapshotTaskCount(rows: BountySessionRow[], channel: string): number | null {
+  return snapshotRowFor(rows, channel)?.tasks ?? null;
 }
 
 /**
@@ -105,10 +130,19 @@ export function snapshotTaskCount(rows: BountySessionRow[], channel: string): nu
  * 9-task board mid-session and recovered only because every card change happened
  * to have been narrated on the vine — i.e. recovery was luck, not a guarantee.
  *
- * We cannot restore the snapshot from here (that is spellbook's side of the
- * seam), but we CAN refuse to let it happen silently: if the key's snapshot held
- * more tasks than the board we now see, say so before any work — and before a
- * close destroys it.
+ * ⚠ **"We cannot restore the snapshot from here (that is spellbook's side of the
+ * seam)" — FALSIFIED 2026-08-09, and it had been false the whole time.**
+ * `open --session-key K --restore <id>` restores a respawned board, and `<id>` is
+ * the `key` field of the very row `snapshotTaskCount` reads the count from. The
+ * seam was never in the way; the id was one field away from the code that said
+ * it was out of reach. `convene` now passes it, so the empty respawn this
+ * function warns about should no longer HAPPEN.
+ *
+ * **So this warning changed job without changing code: it was an alarm, and it is
+ * now a VERIFICATION.** If it still fires after a restoring open, that is a real
+ * anomaly — the restore did not take — rather than the expected bad day it used
+ * to describe. Kept for exactly that reason, and because it is the only thing
+ * that would notice.
  */
 /**
  * ⚠ KNOWN LIMITATION, and it is the reason this function should eventually be
@@ -219,13 +253,19 @@ export const teamConveneCommand = defineAnthillCommand({
     // empty board is indistinguishable from a genuinely empty one. See
     // `boardShadowWarning` (anthill#43).
     let snapshotTasks: number | null = null;
+    // The snapshot's own key, which is the id `--restore` takes. Read from the
+    // SAME row as the count, so the thing we restore and the thing we compare
+    // against can never be two different boards.
+    let restoreId: string | null = null;
     try {
       const bountyCli = resolveCoordCli("bounty");
       const sessions = await execCoord(bountyCli, ["sessions"]);
       if (sessions.ok) {
-        snapshotTasks = snapshotTaskCount(parseBountySessions(sessions.stdout), channel);
+        const row = snapshotRowFor(parseBountySessions(sessions.stdout), channel);
+        snapshotTasks = row?.tasks ?? null;
+        restoreId = row?.key ?? null;
       }
-      const openBoard = await execCoord(bountyCli, bountyOpenArgs(channel));
+      const openBoard = await execCoord(bountyCli, bountyOpenArgs(channel, restoreId));
       if (openBoard.ok) {
         boardOpened = true;
       } else {

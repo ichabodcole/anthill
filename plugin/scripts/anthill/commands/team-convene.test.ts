@@ -4,6 +4,7 @@ import {
   boardShadowWarning,
   bountyOpenArgs,
   parseBountySessions,
+  snapshotRowFor,
   snapshotTaskCount,
 } from "./team-convene.ts";
 
@@ -27,12 +28,41 @@ describe("bountyOpenArgs", () => {
       "--no-open",
     ]);
   });
+
+  // THE anthill#43 FIX. A keyed re-open over a dead daemon used to respawn EMPTY
+  // over an intact snapshot; `--restore` makes it come back with its cards.
+  // Measured before it was written: on a live board `open` attaches and reports
+  // `restoreSkipped` with the running board verified unchanged, which is what
+  // makes an unconditional flag safe rather than a decision we could get wrong.
+  it("restores the keyed snapshot when the id is known", () => {
+    expect(bountyOpenArgs("anthill-dev", "k-anthill-dev-adad92ec")).toEqual([
+      "open",
+      "--session-key",
+      "anthill-dev",
+      "--pin",
+      "--no-open",
+      "--restore",
+      "k-anthill-dev-adad92ec",
+    ]);
+  });
+
+  // A first convene has no snapshot and therefore no id. `--restore ""` would be
+  // a malformed argv, so the absence has to produce a SHORTER command, not an
+  // empty flag value.
+  it("omits --restore entirely when there is no snapshot to restore", () => {
+    for (const id of [null, undefined, ""]) {
+      expect(bountyOpenArgs("anthill-dev", id)).not.toContain("--restore");
+      expect(bountyOpenArgs("anthill-dev", id)).toHaveLength(5);
+    }
+  });
 });
 
 // anthill#43 — the data-loss bug. A keyed re-open over a dead daemon starts an
 // EMPTY board under the live key; closing it then overwrites the real snapshot.
-// We cannot restore from here (spellbook's side of the seam), but we must never
-// let it happen silently.
+// These rows are what convene reads to learn BOTH how many tasks the snapshot
+// holds and — since 2026-08-09 — the id to restore it by. (This comment used to
+// end "we cannot restore from here (spellbook's side of the seam)". We can, and
+// the id was always in the `key` field parsed two tests above.)
 describe("parseBountySessions", () => {
   it("parses key + task count from real `bounty sessions` output", () => {
     const out = [
@@ -71,6 +101,21 @@ describe("snapshotTaskCount", () => {
 
   it("returns null when the channel has no snapshot", () => {
     expect(snapshotTaskCount(rows, "nope")).toBeNull();
+  });
+
+  // THE COUPLING THAT MATTERS, asserted rather than trusted: the count convene
+  // compares against and the id convene restores must come from ONE row. Two
+  // lookups could drift and we would restore one board while judging another —
+  // and `boardShadowWarning` would then be checking the wrong thing while
+  // looking perfectly healthy.
+  it("the restore id and the task count come from the same row", () => {
+    const row = snapshotRowFor(rows, "anthill-dev");
+    expect(row).toEqual({ key: "k-anthill-dev-adad92ec", tasks: 9 });
+    expect(row?.tasks).toBe(snapshotTaskCount(rows, "anthill-dev") as number);
+  });
+
+  it("has no row, and therefore no id, for a channel with no snapshot", () => {
+    expect(snapshotRowFor(rows, "nope")).toBeNull();
   });
 });
 

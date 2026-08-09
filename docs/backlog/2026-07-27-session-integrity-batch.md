@@ -79,7 +79,17 @@ less.
 - [ ] A `convene` against a session key whose snapshot holds more tasks than the live board does
       not silently proceed — it warns, naming both counts.
 - [ ] A dead coordination daemon is surfaced to the lead rather than papered over by a fresh open.
-- [ ] The anthill-side vs. spellbook-side split for snapshot restore is decided and recorded.
+- [x] The anthill-side vs. spellbook-side split for snapshot restore is decided and recorded.
+      **DECIDED 2026-08-09: anthill owns fix (1) too, and the premise that it could not was wrong.**
+      `bounty open --session-key K --restore <id>` restores a respawned board, and `<id>` is the
+      `key` field of the row convene **already reads** to get the task count — `snapshotTaskCount`
+      had it in hand and discarded it one line before returning. Item 1's note above says
+      _"Restoring a clobbered snapshot is spellbook's side of the seam"_, and `boardShadowWarning`'s
+      docstring said the same in stronger words. **Both were an assumption nobody tested; the flag
+      had shipped and been documented in `bounty open --help` the whole time.**
+      **Fix (1) still stands as a spellbook ASK** — a keyed respawn should restore _by default_, so
+      that every consumer gets this and not just the ones who thought to pass a flag. anthill no
+      longer waits on it.
 - [ ] `anthill attach` reveals every tmux session bound to the project/channel; `--session` selects.
 - [ ] `status` / `down` behavior under multiple sessions is decided (fixed, or explicitly deferred).
 
