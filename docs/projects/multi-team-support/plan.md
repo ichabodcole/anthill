@@ -494,6 +494,42 @@ justified it.**
 _(v2's task 3.4 — `{team}` in the launch template — is **deleted**; the env prefix in 2.2 replaces it.
 See DP2.)_
 
+### 3.5 — The skills a seat actually reads learn that teams exist
+
+**Type:** `docs:` · **Files:** `plugin/skills/convene/SKILL.md`, `plugin/skills/comms/SKILL.md`,
+`plugin/skills/join/SKILL.md`, `AGENTS.md` (`:29`) · **no test — run `cascade-check`.**
+**Added 2026-08-09 from the Phase 2 review.**
+
+**Every prose task in this plan is about CREATING or MIGRATING a team** — Phase 4 rewrites
+`bootstrap/SKILL.md`, Phase 5 rewrites `upgrade/SKILL.md`, 0.4 de-literalized doc paths across eight
+files. **Nothing teaches the ladder to the skills an agent reads while OPERATING one.** Verified: no
+file under `plugin/skills/` mentions `anthill team show`, `ANTHILL_TEAM`, or `.anthill/current-team`.
+
+**Why that undercuts the feature rather than merely under-documenting it.** Ambient resolution is
+correct precisely when nobody thinks about it, so **its whole failure mode is silence** — 2.5's own
+header says a wrong binding is otherwise "consistent, wrong results with no thread to pull."
+`anthill team show` is the thread. **A diagnostic nothing points at is not a diagnostic**, and the
+agent who needs it is by construction the one who does not yet know the ladder exists.
+
+**Contract — four claims, one per file. Do not add a ladder tutorial to each; state the operating
+fact and point at `team show`.**
+
+- **`convene/SKILL.md`** — the lead convenes ONE team, and 3.3 refuses a second while one is up.
+  Give the remedy in the same breath (`anthill down`, then `anthill team use <name>`), because the
+  guard's message is where a lead meets this and a guard without a route reads as a wall.
+- **`comms/SKILL.md`** — a seat **never names a team**; its pane carries the binding. **If messages
+  look like another team's, that is `anthill team show`**, not a `--channel` guess — the cross-team
+  `--channel` guard (2.4) exists because guessing is the reflex it interrupts.
+- **`join/SKILL.md`** — the seat doc a seat grounds in belongs to the resolved team, so a wrong
+  binding looks exactly like an amnesiac seat.
+- **`AGENTS.md:29`** — reads _"the anthill team lives in `.anthill/`"_. True for one team and for the
+  incumbent under a `teams` map; **false for every other team**, which lives at
+  `.anthill/teams/<name>/`. One clause, not a rewrite.
+
+**⚠ Prose, not tooling — and it is a `docs:` commit, so release-please hides it.** That is correct
+(nothing user-facing changes) and it is also why this task is easy to skip. It is scheduled here,
+before Phase 4, so the concept lands before `bootstrap` starts routing people to it.
+
 ---
 
 ## Phase 4 — bootstrap `--add-team`
