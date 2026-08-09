@@ -11,10 +11,16 @@
  */
 
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
-import { ConfigError } from "../config.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
-import { PIN_REL_PATH, readPin, resolveTeam, type TeamRung, writePin } from "../team-resolve.ts";
+import {
+  AmbiguousTeamError,
+  PIN_REL_PATH,
+  readPin,
+  resolveTeam,
+  type TeamRung,
+  writePin,
+} from "../team-resolve.ts";
 import { describeLiveTeam, liveTeams, requireProject, requireTeam } from "./team-support.ts";
 
 /** How each rung reads to a human, in the words that let them change it. */
@@ -162,8 +168,11 @@ const lsCommand = defineAnthillCommand({
       via = resolution.via;
     } catch (err) {
       // A BAD name is still an error — `--team nope` or a stale pin is a typo to
-      // report, not an absence to render. Only genuine ambiguity is tolerated.
-      if (!(err instanceof ConfigError) || !/nothing selected one/.test(err.message)) {
+      // report, not an absence to render. Only genuine ambiguity is tolerated,
+      // and it is told apart BY TYPE: this branch used to regex the error's
+      // message, so rewording that sentence silently broke `ls` with the whole
+      // suite green.
+      if (!(err instanceof AmbiguousTeamError)) {
         emitError({ format, command: "team ls", error: (err as Error).message });
         process.exit(1);
       }

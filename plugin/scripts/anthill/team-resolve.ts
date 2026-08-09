@@ -65,6 +65,25 @@ export interface TeamSelector {
   pin?: string | undefined;
 }
 
+/**
+ * Rung 5: the project configures several teams and NOTHING selected one.
+ *
+ * A TYPE, not a message, because a caller has to tell this apart from every other
+ * `ConfigError` the ladder throws — `anthill team ls` renders the team list on
+ * this case and exits on a bad `--team` or a stale pin. That branch was written
+ * as `/nothing selected one/.test(err.message)`, and the coupling was measured:
+ * rewording the sentence below left the whole suite at 0 fail while `team ls`
+ * started refusing to list. **A user-facing sentence is the most likely thing in
+ * this file to be polished, and a prose edit must not be able to change control
+ * flow three files away.**
+ *
+ * This codebase does not infer verdicts from strings — the same rule
+ * `team-support.ts` and `agent-layer.ts` state about fields.
+ */
+export class AmbiguousTeamError extends ConfigError {
+  override name = "AmbiguousTeamError";
+}
+
 /** A team name that resolves to nothing, phrased as the ladder's failure. */
 function unknownTeam(source: string, name: string, project: ResolvedProject): ConfigError {
   return new ConfigError(
@@ -124,8 +143,8 @@ export function resolveTeam(project: ResolvedProject, sel: TeamSelector): TeamRe
   }
 
   // 5. Ambiguous. Never a guess, never an empty team.
-  throw new ConfigError(
-    `this project configures ${project.teams.length} teams and nothing selected one: ` +
+  throw new AmbiguousTeamError(
+    `this project configures ${project.teams.length} teams and none was selected: ` +
       `${project.teams.map((t) => t.name).join(", ")}. ` +
       "Pick one for this repo with `anthill team use <name>` (it persists), or pass `--team <name>` " +
       "for a single command.",

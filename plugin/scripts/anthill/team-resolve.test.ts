@@ -3,7 +3,13 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { ConfigError, type ResolvedProject, resolveProject } from "./config.ts";
-import { PIN_REL_PATH, readPin, resolveTeam, writePin } from "./team-resolve.ts";
+import {
+  AmbiguousTeamError,
+  PIN_REL_PATH,
+  readPin,
+  resolveTeam,
+  writePin,
+} from "./team-resolve.ts";
 
 const ROOT = "/proj";
 const SEATS = [
@@ -189,5 +195,36 @@ describe("the pin file", () => {
     writePin(root, "dev");
     writePin(root, "lean");
     expect(readFileSync(join(root, PIN_REL_PATH), "utf8")).toBe("lean\n");
+  });
+});
+
+describe("ambiguity is a TYPE, not a message", () => {
+  // `anthill team ls` renders the team list on rung 5 and exits on every other
+  // failure. That branch was written as `/nothing selected one/.test(message)`,
+  // and the coupling was MEASURED: rewording the sentence left the whole suite at
+  // 0 fail while `team ls` started refusing to list a two-team repo. These
+  // assertions are what makes the sentence free to change again.
+
+  test("rung 5 throws AmbiguousTeamError", () => {
+    expect(() => resolveTeam(twoTeams(), {})).toThrow(AmbiguousTeamError);
+  });
+
+  test("a BAD name at any rung is NOT ambiguity — it is a typo to report", () => {
+    // The distinction the branch depends on. If these ever became
+    // `AmbiguousTeamError`, `ls` would silently render a list instead of naming
+    // the bad flag, which is the same class of wrong answer in the other
+    // direction.
+    for (const sel of [
+      { team: "nope" },
+      { env: { ANTHILL_TEAM: "ghost" } },
+      { pin: "deleted-team" },
+    ]) {
+      expect(() => resolveTeam(twoTeams(), sel)).toThrow(ConfigError);
+      expect(() => resolveTeam(twoTeams(), sel)).not.toThrow(AmbiguousTeamError);
+    }
+  });
+
+  test("it is still a ConfigError, so every existing catch keeps working", () => {
+    expect(() => resolveTeam(twoTeams(), {})).toThrow(ConfigError);
   });
 });
