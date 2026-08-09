@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.2.0](https://github.com/ichabodcole/anthill/compare/anthill-v2.1.0...anthill-v2.2.0) (2026-08-09)
+
+
+### Features
+
+* **join:** the board read-back — every seat re-reads its own review cards at join ([f8a7bd8](https://github.com/ichabodcole/anthill/commit/f8a7bd846f050ed61c912c2c1e8665f42b390450))
+
+
+### Bug Fixes
+
+* **convene:** emit the lead's stand-down, and correct finalize's false teardown claim ([9a4c666](https://github.com/ichabodcole/anthill/commit/9a4c666a4dc32ae0ccb1e2584c015e6d71552c7e))
+* **finalize:** name the code merge as a SEPARATE ritual and route to the project's own procedure ([6e98e3f](https://github.com/ichabodcole/anthill/commit/6e98e3f9a38f580f57a195a691d7573b0173ceaa))
+* **join:** the emitted checklist routes a joining seat to the BOARD, not to the wire ([a1b6017](https://github.com/ichabodcole/anthill/commit/a1b6017cf27cda0e5e43dc632190d257f9b46c17))
+* **join:** the read-back cites the ARGUMENT, not an audit rate that rots ([85988b1](https://github.com/ichabodcole/anthill/commit/85988b1f01caa9ff80fd69bb92a6d6d784ae32bc))
+* **join:** the read-back's notes instruction was too strong to obey ([91c5006](https://github.com/ichabodcole/anthill/commit/91c500692b4569ddf458a6f40240f51991440687))
+* **skills:** the anchor's home is a CARD, and a joining seat is told to look there ([f326afe](https://github.com/ichabodcole/anthill/commit/f326afe51de306774f395a3c213ec851b8842488))
+* **sop:** for the lead, "stand down last" means last BEFORE `anthill down` ([3b8887b](https://github.com/ichabodcole/anthill/commit/3b8887b998252ce3671395f53df9d70e6e80ef51))
+
 ## [2.1.0](https://github.com/ichabodcole/anthill/compare/anthill-v2.0.0...anthill-v2.1.0) (2026-08-06)
 
 
