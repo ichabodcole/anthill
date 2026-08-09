@@ -10,15 +10,30 @@
  * abandoned lock ages into stealability.
  */
 
-import { describe, expect, test } from "bun:test";
+import { afterAll, describe, expect, test } from "bun:test";
 import { existsSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { acquireLock } from "./lock.ts";
 
+/**
+ * Every temp tree this file mints is REGISTERED, so cleanup does not depend on
+ * any individual test remembering. Measured before the fix: +5 leaked dirs per
+ * run of this file (#100). The registry is the point — a `rmSync` at the end of
+ * each test is one edit away from being forgotten by the next test added.
+ */
+const MADE: string[] = [];
+
 function tmpLock(): string {
-  return join(mkdtempSync(join(tmpdir(), "anthill-lock-")), "x.lock");
+  const dir = mkdtempSync(join(tmpdir(), "anthill-lock-"));
+  MADE.push(dir);
+  return join(dir, "x.lock");
 }
+
+afterAll(() => {
+  for (const dir of MADE) rmSync(dir, { recursive: true, force: true });
+  MADE.length = 0;
+});
 
 describe("acquireLock — a crashed holder must not wedge the team", () => {
   test("a lock already older than staleMs is stolen on the FIRST attempt", () => {

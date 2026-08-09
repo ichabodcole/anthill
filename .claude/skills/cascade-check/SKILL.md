@@ -198,6 +198,35 @@ Not a cascade so much as a lens, but it belongs here because release time is whe
 > that wrote new template guidance). The reporting team's own prescription is the whole rule:
 > **a promise without a stated granularity is a promise at the coarsest reading.**
 
+### You **stated a rule in a grounding doc** — `AGENTS.md`, `README.md`, `.anthill/README.md`
+
+The other rows key off a thing you changed inside the system. This one keys off **a question the repo
+already opened and you did not know was open.** Grounding docs are where a rule is cheapest to write
+and most expensive to be wrong in — every agent reads them first, and nothing downstream disagrees
+loudly enough to notice.
+
+- ◻ **Does an active proposal or investigation already own this question?** Grep
+  `docs/projects/*/proposal.md` and `docs/investigations/` for the **concept**, not your wording. A
+  settled-but-unbuilt design decision is invisible to `git log` and to the working tree alike — the
+  two places you naturally check.
+- ◻ **Is it settled, unbuilt, or contested?** All three read identically from the code. Say which, with
+  an as-of, or the next reader inherits your guess as fact.
+- ◻ **Did you measure current practice and then state it as policy?** Those are different claims.
+  Describing what the repo does is safe; ruling what it must do closes a question you may not own.
+- ◻ **Does the proposal reject a tool or route you are about to recommend?** Rejections live in the
+  proposal's decision table and nowhere else — they are not greppable from the thing you changed.
+
+> **Scar (2026-08-07).** A `## Branch Landing Policy` section was added to `AGENTS.md` from a clean
+> measurement of `git log` — 367 seat trailers, 294 sha citations, merges never squashed. Both halves
+> were wrong anyway. It recommended `consolidate-long-branch`, which
+> `session-branch-strategy/proposal.md:29` **rejects by name** because that ritual needs _contiguous_
+> chapters and a convened session interleaves seats by construction — a fresh agent was pointed at a
+> ritual that cannot work here. And its "Never squash" **closed a live design question**: the
+> 2026-07-27 decision settled on squash-merge as a _merge strategy, explicitly not history rewriting_,
+> and the attribution argument was aimed at a distinction it had flattened. **The measurement was
+> real, the reasoning followed from it, and the conclusion contradicted a ratified decision — because
+> `git log` cannot show you a decision that has not shipped yet.**
+
 ### You **archived or moved a doc**
 
 - ◻ **Inbound links.** A previous archiving pass left ~40 broken relative links, because a doc's depth

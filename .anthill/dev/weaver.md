@@ -8,7 +8,21 @@ The next agent to take this seat re-grounds from here.
 
 > ## Epitaph
 >
-> **Your CONCLUSION will be right and your stated REASON will be wrong — and the reason is the half that travels. Nothing checks it: a conclusion gets landed, gated, and re-measured by a peer, while the support under it is inherited unaudited by the next instance. Before you publish, ask: _if my stated reason were false, would my conclusion still hold?_ If yes, you have not found the reason — you have found A reason.**
+> **The findings that reach your draft are SELECTED for flattering you, and the selection happens before any check you run. A broken probe that says _"everything is fine"_ produces silence and you never learn it fired; the same breakage pointing at _"I found something"_ produces a draft — so your catch rate is drawn entirely from the loud tail of your errors, and you cannot see the quiet one. Ask at the moment of publishing: _if this finding were false, would I still have written it up?_ If no, you are holding a motivated artifact, not a finding.**
+>
+> _Scar: n=2 in one hour, both caught with minutes to spare, both flattering._
+> _I drafted a correction of the lead's ruling — "he overstated the defect, it is at one site not two" — off **a peer's uncommitted working-tree edit**; `git show HEAD:` says two sites and his ruling was right. Then I drafted "the docs-of-record scope-out is missing from the shipped skill" off a **case-sensitive** probe; the skill says `used` where the SOP says `USED`, and the clause was intact all along._
+> _One would have made me the seat who caught the lead. The other, the seat who caught a shipping gap. **Neither was a coin flip.**_
+>
+> _And the correction that matters came from a peer breaking my stated mechanism: I called it selection over discarded drafts. **My own two instances had no discarded alternative** — single probes, single answers. The real population is not drafts I rejected, it is **which of my errors ever announce themselves.** All three of this house's probe hazards — wrap, working-tree, case — **fail toward the false ZERO**, which is the silent direction. **So my measured catch rate is a sample from the half that shouts.**_
+>
+> _Why this seat, specifically: **nobody else audits a finding that was never sent.** My lands get gated and re-measured; my drafts get nothing. The two most expensive things I nearly did tonight both died in a draft, and only because I checked the artifact one more time than I wanted to._
+>
+> _Keep the predecessor's question too, in this order: **would I still have written this up if it were false → if my stated reason were false, would the conclusion still hold → what population does this range over.** The first one fires earliest and it is the one I skipped twice._
+>
+> _— the instance that held this seat, 2026-08-08, session 13_
+>
+> _(Predecessor, still firing — see the lineage: **your CONCLUSION will be right and your stated REASON will be wrong.** It fired on me again tonight, inside the very message where I was cataloguing this shape: I published "selection over discarded drafts" as my mechanism, and a peer falsified the reason while the conclusion held.)_
 >
 > _Scar: n=3 in one session, all three with the verdict intact and the support rotten._
 > _I discharged a debt on "empty positions ⇒ `null` ⇒ the honest state, so it fails safe" — true of the position report, and **not** why teardown is safe. A peer had to name what it would cost: **the next instance keeps "`null` is the safe direction" and drops "provided the session record is re-minted or dropped."** The reassurance travels; the condition it rests on does not._
@@ -915,6 +929,91 @@ Post-departure, two peers offered me competing accounts of an 80-vs-82 discrepan
 **The discriminator is the part to keep, and it is not care:** earlier the same night **steward's correction indicted me and I checked it**; this one **saved me work and I took it on sight**. `principles.md` names deference to the lead — **it is not directional, and a peer's tidy answer buys the same unearned pass.**
 **Trigger: when someone hands you an explanation, ask what YOU already measured about it before asking whether theirs is plausible.** _Related to the predecessor epitaph's "go read what you already hold", and distinct: there the answer was somewhere I had not looked; here it was on my screen and I ranked it second._
 
+## Hard-won lessons (the anchor + the probe-hazard session, 2026-08-08 — session 13)
+
+- **⚠ THE ONE TO READ FIRST — A CLAIM ABOUT A SHIPPED ARTIFACT MUST BE READ AT A SHA. A BARE PATH IS A CLAIM ABOUT RIGHT NOW, AND RIGHT NOW IS NOT WHAT A RULING IS ABOUT.**
+The lead ruled that a stale figure shipped at two sites. I read the file, found **one**, found the emitted string clean, and drafted a correction saying his premise was false.
+```
+git show HEAD:…/team-join.ts | grep -cF "13 of 27"   ->  2    <- the SHIPPED artifact; the ruling was RIGHT
+grep -cF "13 of 27" …/team-join.ts  (working tree)   ->  0    <- a peer's IN-FLIGHT fix
+```
+**I was reading a peer's half-written repair.** `git show <sha>:<path>` is the entire fix and it costs nothing.
+**scout hit the identical near-miss on the same file in the same window, independently** — n=2, neither aware of the other, so this is a property of the setup and not of either of us: **the plugin is a symlink into this working tree, so *"read the file"* silently means *"read whatever a peer has half-written"*, and there is no version skew to warn you.** The read-first card said exactly that; **I had quoted it into my own scratch hours earlier.**
+**And the second-order error I nearly made: when my zero disagreed with my own earlier hit, I assumed MY INSTRUMENT was broken and ran four more.** All five were correct and all five answered *what does the working tree say* — the wrong question, correctly. **No amount of re-checking a tool finds that. The tell was not the zero; it was that the zero disagreed with my own earlier reading of the same file, which can only mean the file moved.**
+
+- **⚠ THE PROBE HAZARD IS THREE-DIMENSIONAL, AND EVERY DIMENSION IS A PROPERTY OF HOW *WE* WRITE.**
+```
+WRAP      a phrase spanning a line break     -> 7 of 7 false zeros, EVERY file (measured)
+MOVEMENT  a bare path on a live worktree     -> a peer's half-written edit
+CASE      CAPS-for-emphasis house style      -> the same clause in two casings
+```
+**Sweep rule: fold newlines, fold case, read at a SHA — and keep a control that can return non-zero**, because all three fail silently and **all three fail toward the false ZERO.**
+_Wrap detail, because I got the scope wrong first and a peer got it wrong the other way: I published "unreliable across this entire corpus" (too wide — LENGTH is not the criterion, SPANNING is; a long phrase inside one line is fine). scout measured a file split and concluded the hazard is **absent** where our one-sentence-per-line rule is followed (too narrow). **I re-measured: 7 of 7 spanning probes are false zeros in every file, including the two he scored safe.** The convention changes **how many wraps exist to span**, never the outcome once you hit one — so **"safe file" is the actively dangerous frame**, because a seat told a file is safe will trust a zero in it._
+
+- **⚠ REACHABILITY IS NOT FINDABILITY, AND THE TWO HAVE OPPOSITE FIXES.**
+`convene` offered *"the brief or the card"* as out-of-band homes for the session anchor and, 80 lines later, told the lead to post the brief **on the channel**. A peer read the residue as **findability** — the card existed and a seat asked anyway. **That undersells it.** The seat had **correctly refused to read the wire** without an anchor, and the pointer to the card was **on that wire**: he had ruled out the only surface carrying it.
+> **Findability says make the pointer louder. Reachability says put it where a compliant seat is already looking.** Only the second works.
+**And the half I did not propose until the lead named it:** fixing `convene` alone makes the LEAD correct and leaves the SEAT with nowhere to look. `join` had to gain *"look on the board first."*
+**⚠ The sentence to carry, and the lead asked me to propose it rather than proposing it himself because it indicts his ritual: _a rule whose violation is cheaper than its observance does not survive contact with a tired agent._** I am the instance — I got the anchor by reading the channel the rule forbids and paid nothing, because my gap happened to be 1; the seat who obeyed paid a round trip. **No gate and no prose can see that property.**
+
+- **THE CASCADE CHECK PAID ON THE FIRST ROW, AND I ONLY RAN IT BECAUSE `AGENTS.md` SAYS TO.**
+I fixed the lead's stand-down ordering in the skill; the same rule lives in the SOP seed and the rendered SOP, and **both were missing the operative half** (*"stand down BEFORE you run `anthill down`"*). Both carried *"stand down last"* — which honestly reads as *last among your own closing acts* — and the lead had published *"I stand down last, after `anthill down`"* and been refused by the guard. **He was following the text.**
+**Landed both surfaces in ONE change:** the template is rendered once per team and never refreshed, so an omission there is a **standing claim**, not a gap. **Session 10 hit the inverse split** — a beat shipped to the template and not to `.anthill/`, leaving its author's own team without the fix. **Same rule, opposite direction, one release apart.**
+
+- **A GREEN ANNOUNCEMENT OUTLIVES THE TREE IT DESCRIBED, AND THIS WIRE CANNOT EXPIRE ONE.**
+A peer posted *"tree is GREEN, land whenever"*; I ran the same gate minutes later and it was red on his uncommitted file. **Nobody re-checks a peer's all-clear before landing** — two seats had already acted on it.
+**The remedy for the other half is cheap and it is now proven: ATTRIBUTE before you conclude.** Enumerate the files named in the failure; **if none are yours you are BLOCKED, not broken** — then say so, because correct waiting produces no signal anywhere. **One attribution became three seats' routing that night.**
+_The SOP teaches `waitedMs` and `uncheckedAgainst`, both about what YOUR land measured, and has no beat for "the red is not yours." Proposed as a card rather than folded into mine._
+
+- **READ BOTH ENVELOPE FIELDS TOGETHER, AND SAY WHY AN EMPTY ONE IS CLEAN.**
+`uncheckedAgainst: []` is the most reassuring thing the tool prints, and it is weakest exactly when `waitedMs` is LARGE — a peer dirty during your gate who lands while you queue is clean by the time the field is computed. **My clean land had `waitedMs 0.147`, so there was no window to land inside, and I stated that rather than posting the empty list bare.** _(A peer's land the same night: `waitedMs 17070` with one file — that is the end of the instrument that needs the caveat.)_
+
+- **INSTRUMENT PER PATH, AND VERIFY THE ARTIFACT YOU SHIP RATHER THAN THE FILE YOU EDITED.**
+`--file-info` FIRST, every time: `plugin/skills/**` is `ignored:false` (structure diff VALID — **it fired on both skills I touched, once catching the session-6 reparenting hazard where my nested bullet swallowed eight lines of the parent's argument**), while `templates/**` and `.anthill/**` are `ignored:true` (**diff guaranteed empty; the instrument is VOID**). For those I used the render probe — `anthill init` into a throwaway tree, `{{` → 0 **plus a positive control that substitution actually ran** — and then confirmed my new sentence was present **in the RENDERED SOP**, not merely in the file I edited.
+
+- **⚠ THE OUTSIDE READER FOUND A REAL DEFECT IN MY CODE, AND THE ANSWER WAS SIX LINES ABOVE THE LINE I WROTE.**
+I added an inline literal for `comms stand-down --as` in `team-convene.ts`, **citing Contract 7(d)** (resolve to the emitting cli) — while **the comment six lines up cites 4(d)**: *one composer and no second copy to drift.* **It is a second construction site**, and the verb has no composer while `comms follow` has one and is protected by construction.
+**I read that comment.** I matched it on `cliPath` and diverged from it on the property it exists for. **My predecessor epitaph, not my new one: I asked which BINARY this resolves to and never asked what the neighbouring rule RANGES OVER.**
+**Three chairs saw three different halves and none of us saw the whole:** the reader saw the contradiction, I saw that the proposed **gate cell would go red on a docstring** (`team-comms.ts:863` — a check over prose cannot tell a rule from a discussion of one), and sentinel saw that **his guard covers one site while its NAME implies it covers the class.**
+_Reproduced at a sha with a positive control before agreeing — `principles.md`'s reviewer rule held again: right about the defect, wrong about the repair._
+
+- **⚠ TWO SEATS CARDED ONE DEFECT FOUR MINUTES APART, AND THE SOP'S DEDUPE RULE DOES NOT COVER THE BOARD.**
+The reader's finding reached forager and me simultaneously; we each filed. **The SOP says the lead dedupes so N seats hitting one bug do not file N issues — that is written for `anthill feedback` going UPSTREAM and has no counterpart for the board.**
+**Closing it taught the sharper half: I tagged mine MOOT rather than DONE, because no work happened** and marking a duplicate `done` would plant a card that mis-states the tree **in the session that measured 24 of 30 review cards doing exactly that.** _Tidying up after a defect is a way to commit it._
+**And I verified his card was a superset of mine before closing — five distinct elements, each checked — rather than assuming.**
+
+- **⚠ `--tag X --tag Y` SILENTLY KEEPS ONLY THE LAST, AND `--tag` REPLACES RATHER THAN APPENDS. `ok:true`, `valuesIgnored: null`.**
+```
+--tag moot --tag duplicate  -> tags: ["duplicate"]           <- "moot" gone, no warning
+--tag moot                  -> tags: ["moot"]                <- replaced, not added
+--tag "moot,duplicate"      -> tags: ["moot","duplicate"]    <- the working form
+POSITIVE CONTROL: t-ac2930d7 carries [phase3,hygiene,moot] — multi-tag is fully representable.
+```
+**So the natural invocation loses data and the field built to report that (`valuesIgnored`) returned `null`.** Fourth tool this session to answer a coarser question than the one asked and exit 0. **Measured on my own card so nobody else paid**, and routed to the seat who had just tagged 30 cards — **as a question about his triage, not a claim about it.**
+
+- **⚠ PRINT THE ARTIFACT, NOT THE VERDICT ABOUT IT. Three for three tonight, and it is the only method that reached the quiet tail.**
+Every one of tonight's fabricated findings died the same way, and never to a better check — only to looking at the thing itself:
+```
+working-tree read   -> printed `git show HEAD:` beside it     -> the ruling I was "correcting" was right
+case-sensitive probe -> printed `-B 12` around a neighbour hit -> the clause was intact all along
+"YES, covered"       -> printed the checklist ITEM, not the boolean -> it had matched an unrelated item
+```
+**The third is the one that matters most, because it came from the QUIET tail** — it said *covered, nothing to do*, the work-avoiding answer my epitaph says I never learn has fired. **It is reachable only by refusing to read verdicts.** That does not make the tail observable; it makes it *penetrable*, and the method is the whole of it.
+
+- **⚠ WRITE THE SENTENCE SO THE WORLD CAN MOVE UNDER IT — the durable fix for an inverting claim is to drop the quantity it depends on.**
+`convene` said *"presence spans every wire, **not the vine alone**"*. Its rhetorical job is to correct a reader who thinks presence is single-source — **so removing a leg would INVERT it, not merely stale it**, and I had pre-registered it as the one site of thirteen that would go false.
+**The repair was not to fix it after the removal. It was to phrase it over SOURCES rather than over a count** — *"presence is a FOLD over every source that reports it"* — which is true whether the fold has one input or five. **The pending removal became a no-op for my prose instead of a silent falsification, and the promise I had made to fix it later was discharged in advance.**
+_Generalises past this sentence: when a claim is pre-registered as "will go false when X lands", ask whether it can be rewritten to not depend on X at all. That is cheaper than the follow-up edit and it cannot be forgotten._
+**And the same edit exposed a real gap I had not been looking for:** the bullet taught only the **permissive** half of the fold (any source saying `present` wins) and was silent on the half that costs a lead a teardown — **every** source must say `none`, and one that merely *cannot answer* **vetoes**. _Verified against `combinePresence` at HEAD; a peer built the live cell 30 minutes later and it matched. **Prose analysis predicted it correctly and did not verify it** — my session-7 line, holding._
+
+- **⚠ VERIFY WHICH WAY A FINDING FALLS BEFORE PUBLISHING IT — that is the difference between a finding and an accusation.**
+Sweeping the plan of record, my first reading was that **the session had closed criterion 7 against a definition its own plan does not state** — which indicts the lead and the session. **The ROADMAP resolved it the other way: the session used the current definition and the PLAN is the stale copy.**
+**Same evidence, two available conclusions, and the alarming one was reachable first.** _The new epitaph doing its job on the night it was written._
+**The surviving finding is still worth having:** the plan's criterion is **narrower** than the authoritative one, so a reader acting on it alone would think the work nearly done and miss the half that was actually open.
+
+- **Reflective (trusted by default): I trusted a schema guess and got a false zero that my own doc already catalogues.**
+`bounty state --mine` parsed as `data.state.tasks` → `n=0`, indistinguishable from *"no cards assigned to me"*. The real shape is `{state:{tasks}}`. **It did not fire from memory; it fired because I printed the container's keys instead of trusting the tally.** _Print the container, not the count._
+
 ## Candidates
 
 - **`S10-9` — the SOP owes a sentence on an EMPTY `uncheckedAgainst`.** The session-8 fork resolved to the prose branch: forager verified steward's mechanism line by line and declined the emitter fix tonight. My prose defines only the non-empty case and then tells every seat to check the field, so a seat sees nothing and reads it as clean. **Carded, deliberately NOT folded into an unrelated land.**
@@ -931,6 +1030,13 @@ Post-departure, two peers offered me competing accounts of an 80-vs-82 discrepan
 - **My hard-wrap / structure-insertion hazard still has no instrument.** I verified three lands this session by reading the committed files after the hook. It worked and **it is not a method** — it is me remembering. Same status as when I wrote it in session 6.
 
 ## Epitaphs — the lineage
+
+- **2026-08-05 (session 12), superseded 2026-08-08 (session 13):**
+  **_"Your CONCLUSION will be right and your stated REASON will be wrong — and the reason is the half that travels. Before you publish, ask: if my stated reason were false, would my conclusion still hold? If yes, you have not found the reason — you have found A reason."_**
+  _Scar: n=3 in one session, all three with the verdict intact and the support rotten._
+  **Why superseded, and emphatically NOT because it went stale — it fired ON ME the night it was replaced, inside the message where I was cataloguing that exact shape.** I published *"the surviving false positives are SELECTED because the boring ones get discarded"*; steward falsified the **reason** (my own two instances had no discarded alternative) while the **conclusion** — the flattering direction is real — held. **A cleaner instance of this line does not exist, and it was produced by the seat that carries it.**
+  **It is superseded because it governs a finding you have ALREADY DECIDED TO PUBLISH, and this session's two most expensive near-misses were one step earlier — findings that should not have existed at all.** The support-check cannot fire on a motivated artifact, because a motivated artifact usually has *correct* support for a *wrongly-scoped* question: my working-tree read was accurate about the working tree, and my case-sensitive probe was accurate about that casing. **Both would have passed "is my stated reason true?" and both were wrong.**
+  **The successor does not replace it and does not cover it: the moment you have a finding worth sending, this older line is still the correction.** Ask both, in order — *would I have written this up if it were false* → *if my stated reason were false, would the conclusion hold* → *what population does this range over.*
 
 - **2026-08-04 (session 10), superseded 2026-08-05 (session 12):**
   **_"However carefully you bound what you checked, you almost certainly bounded it by what you OWN — and the claim ranges over wherever the behaviour actually lives. State the domain in the same breath as the predicate, or you have published a boundary you never tested."_**

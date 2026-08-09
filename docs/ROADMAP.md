@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-05 (scope ratified — see Now)
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-08 (spellbook 2.1.0 landed D1.3 — **S13-N's trigger has fired**; **#96–#102 triaged**, and the batch amended a stale "ready to build" card whose fix was wrong)
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -14,11 +14,38 @@ truth. Horizons, not dates: **Now** (in flight) · **Next** (queued, order matte
 
 ## Now
 
+> # 🎯 NEXT SESSION IS CONVENED AND PRE-SCOPED — **[read the handoff FIRST](reports/2026-08-08-convene-handoff-session-13.md)**
+>
+> **Session 13 closes criterion 7, and with it this whole scope.** Cole ratified the lanes on
+> 2026-08-08; the handoff is the `anthill:convene` "gather the work" step **pre-answered** — confirm,
+> do not re-litigate. It carries the branch decision, the six lanes, session 12's seven Q3 hypotheses,
+> the frozen `spellbook#64` protocol, the five rulings pending with Cole, and **six things not to do,
+> each of which is a plausible wrong move.**
+>
+> **⚠ Two actions have exact moments and both are easy to miss:** capture the bounty daemon **pid at
+> attach** (the one permitted `cli.ts` call — every later verb resets the idle timer and would
+> manufacture a survival), and **the lead stands ITSELF down last**, because `anthill down` will refuse
+> and name you.
+
 # ▶ THE SCOPE OF WORK: **SHIP THE ONE-WIRE TEAM**
 
 **Ratified by Cole, 2026-08-05.** _Everything needed before anthill can recommend comms as the default
-wire to consuming projects._ **✅ STEPS 4+5 SHIPPED — released as `anthill-v2.0.0` (2026-08-05, `a130be3`), a MAJOR bump for the breaking change.** `develop` == `main`.
-**✅ 7 of 8 criteria met (1, 2, 3, 4, 4b, 5, 6) — THE RELEASE BAR IS COMPLETE. Remaining: 7, the re-triage, which Cole ruled NOT release-blocking.**
+wire to consuming projects._ **✅ STEPS 4+5 SHIPPED — released as `anthill-v2.0.0` (2026-08-05, `a130be3`), a MAJOR bump for the breaking change.**
+**✅ 8 of 8 criteria met (1, 2, 3, 4, 4b, 5, 6, 7). THE RELEASE BAR — 6 of them (1, 2, 3, 4, 4b, 6) — IS COMPLETE.**
+**🔴 THE SCOPE IS STILL NOT CLOSED, AND THAT IS A RULING RATHER THAN AN OVERSIGHT: every criterion is met and grapevine still resolves on the presence path.** Criterion 7 does not range over it, so the criterion closes honestly and the SCOPE does not — the lead refused to let the two collapse into one claim. **With Cole.** See the named exception in [criterion 7's close](reports/2026-08-08-criterion-7-close.md).
+
+_Reconciled 2026-08-08 (session 13) by **steward** at `47268d8`, claim by claim, per the docs-of-record sweep:_
+
+| claim as written                                                               | verdict                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _"7 of 8 criteria met … Remaining: 7"_                                         | **FALSIFIED → 8 of 8.** Criterion 7 met tonight: read-back landed (`f8a7bd8`, verified by sentinel), triage 30-for-30 and landed as a report, exception documented.                                                                                                                                                                                                                                                                                                                                                                    |
+| _"Session 13 closes criterion 7, **and with it this whole scope**"_ (line ~19) | **HALF FALSIFIED.** The criterion closed; **the scope did not.** Corrected in the header above rather than in the pre-session handoff quote, which is a record of what was planned.                                                                                                                                                                                                                                                                                                                                                    |
+| _"`develop` == `main`"_                                                        | **FALSIFIED AS WRITTEN — 31 commits apart — and its REASON HOLDS, which is why the line is removed rather than re-stated.** Measured: `main..develop` is **29 `docs` + 1 `test` + 1 merge, zero `feat`/`fix`, zero breaking markers**. Under `release-type: node` those are hidden types, so **there is nothing unreleased that would produce a version** — the thing the line existed to say. Positive control: the same extractor finds 6 `fix` + 1 `feat` on the working branch, so the zero is a reading and not a broken pattern. |
+| **S13-E** — criterion 7 + the board read-back as one piece                     | **HELD, and DISCHARGED.** Both halves shipped; the pairing argument was correct — the triage alone would have been re-done next session.                                                                                                                                                                                                                                                                                                                                                                                               |
+| **S13-F** — close `t-ac09ffa9`, `t-07a131f5`, `t-e25cd535`                     | **PARTIAL.** First two `done` tonight (pane-kill reproduced at the command boundary). **`t-e25cd535` is still `todo` and was NOT looked at** — deferred, named here so its absence is readable.                                                                                                                                                                                                                                                                                                                                        |
+| **S13-A · S13-B · S13-C · S13-D · S13-G–S13-N**                                | **UNCHECKED.** Not examined in this sweep. `S13-D` was spot-checked only far enough to see `--as` is still optional on `anthill commit`; the card's full claim was not tested.                                                                                                                                                                                                                                                                                                                                                         |
+
+_The sweep covered this doc's **prose and its tables**. The scar blockquote below is a record of what used to be true and is deliberately untouched._
 
 > _This line said **"3 of 8"** at session 12's convene and **"5 of 8"** four hours later, and **both were stale when read.** It is corrected here by the lead's own beat-2.5 pass — **re-read every doc you own as its authority and assume it has drifted** — which caught it inside the same session that had already corrected it once. **A router goes stale at the speed the work moves, not at the speed anyone remembers to look.**_
 
@@ -124,18 +151,78 @@ is discharged by argument.**
 
 **Proposed by the session-12 lead, 2026-08-05, from that session's own outputs. Awaiting Cole's ratification.**
 
+> ### 🥇 COLE'S ORDERING CALL, 2026-08-07 — **THE TRIAGE GOES FIRST**
+>
+> Verbatim: _"triaging is probably what we should add as number one, just because it's pretty
+> straightforward, we can figure out what we're going to do with those issues."_
+>
+> **`S13-E` runs first. IDs are unchanged** — `plan.md` and this file both cite them, and renumbering
+> a table to express an ordering breaks every cross-reference to say nothing new. **The run order is
+> stated here; the IDs stay where they are.**
+>
+> **Partially discharged the same day.** Issues #88–#93 were triaged 2026-08-06 into
+> `docs/backlog/2026-08-06-*` (five items, each verified at source first). The three multi-item
+> aggregates — **#70, #73, #94** — were triaged 2026-08-07 into
+> [`reports/2026-08-07-feedback-triage-70-73-94.md`](reports/2026-08-07-feedback-triage-70-73-94.md):
+> **17 items, dispositions assigned, 3 of them needing a design call rather than a fix.**
+>
+> **⚠ What the triage did NOT do, and it is the half S13-E exists for: the board read-back is still
+> unfixed.** The triage above is the GitHub queue. The bounty board's 13 mis-stating `review` cards
+> and the `MOOT` class are the other half, and **triaging without fixing the read-back just re-does
+> the triage next session** — which is the original argument for pairing them and is unchanged.
+>
+> **✅ One blocker on that half cleared on 2026-08-07, with the spellbook 2.0.0 upgrade.** Reading the
+> board back through a pipe was previously unsafe in **both** directions — `bounty state --full`
+> truncated at ~64KB and exited 0 ([spellbook#78](https://github.com/ichabodcole/spellbook/issues/78)),
+> and a skipped `--restore` returned something shaped like success
+> ([#80](https://github.com/ichabodcole/spellbook/issues/80)). **Both are closed and fixed.** The
+> read-back is now an ordinary build rather than a build on a substrate that could lie about what it
+> handed back.
+>
+> **🆕 THE QUEUE REFILLED AND WAS RE-CLEARED THE SAME DAY. `#96`–`#102` are TRIAGED** →
+> [`reports/2026-08-08-feedback-triage-96-102.md`](reports/2026-08-08-feedback-triage-96-102.md) ·
+> [`backlog/2026-08-08-triage-build-batch.md`](backlog/2026-08-08-triage-build-batch.md). _The queue
+> was empty of rulings for **one day.** **Triage is a recurring beat, not a task that completes** —
+> which is exactly why S13-E pairs it with a read-back instead of treating "the queue is clear" as a
+> finish line._
+>
+> **⚠ FIVE OF SEVEN REPORTS WERE WEAKER THAN FILED IN A WAY THAT CHANGED THE FIX** — one headline
+> **refuted** (#97's red-side instrument already exists and predates `uncheckedAgainst`), one proposed
+> fix **actively unsafe** (`<gate> || …` exits with the right-hand status), one fixture attribution
+> wrong **in both directions** (#100), one mechanism claim false (#101's "unskippable"), and one fix
+> aimed at a value that does not exist (#99's `openedAt`). **The verify-first rule has now paid for
+> itself twice running, at 3-of-6 and 5-of-7.**
+>
+> 🔴 **AND THE BATCH'S BEST FINDING WAS ABOUT US.**
+> [`2026-08-01-down-presence-guard…`](backlog/2026-08-01-down-presence-guard-cannot-pass-for-a-correctly-wired-lead.md)
+> sat marked **"ready to build"** for seven days with a premise the tree had falsified and a top-ranked
+> fix that #96 **explicitly forbids**. Amended `439f4fe`. **A card that converts a fresh agent's
+> diligence into a defect is the worst shape in this backlog**, and nothing but an unrelated triage
+> would have found it — _which is an argument for the re-triage beat, not a footnote to it._
+>
+> **Two decisions moved:** `94·1` is now constrained (**`previousPosition` must never be the session
+> anchor**), and **`S13-N`'s trigger fired** — see the upstream section below.
+>
+> **Three items came out of the triage needing a convene decision, and two of them collide:**
+> **70·2** (finalize has no code-review beat) routes findings _"to the owning seat via the roster"_ —
+> but **73·2** establishes that a seat's `scope` is a free-text string nothing parses, and that
+> `seams.md` cannot represent an unowned seam at all. **So roster-routing mis-routes exactly the
+> findings that fall between seats.** Decide them in the same room. **94·main** (a `procedures.land`
+> config slot) is the third and is the strongest proposal in the queue — its argument holds, but
+> `gate`'s precedent resolves at **join**, and finalize has no resolver to hang it on.
+
 > **Why this scope and not a list of fixes:** session 12 found **three stores that disagreed with the tree inside ninety minutes** — the roadmap (4 stale claims, one of them its own row), the board (**13 of 27 `review` cards mis-stating the tree, ~48%**), and a carried card whose work was already landed. `principles.md` says **no store without a named re-read moment**; the board has a write trigger and **no read-back across sessions**, and it is the surface Cole's continuation condition is judged on.
 
 ## S13 · what gets delivered
 
-| #         | item                                                                      | why it is not an experiment                                                                                                                                                                                                                                                  | source                  |
-| --------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| **S13-A** | **`comms stand-down`'s `created` flag is session-scoped**                 | `team-comms.ts:924` is `!existsSync(path)` — **bare file existence, which is D3's exact defect one field over.** `comms.ts:694` already has the repaired predicate (`record.at >= sessionOpenedAt`). **n=4 seats misread it in one session.** One predicate, already written | session 12 wire, n=4    |
-| **S13-B** | **`uncheckedAgainst` stops reporting a false empty**                      | the porcelain read is at `team-commit.ts:526`, **after** `acquireLock` at `:346` — so a peer committing during your queue vanishes from the list. **Reproduced with timestamps** (15.6s queue, empty list, a peer's commit inside the window)                                | card `t-42dd65bf`, n=2  |
-| **S13-C** | **Test output that mimics a production envelope carries a marker**        | a seat nearly read a test's `convene` envelope in the gate's stdout as **our board dying**, in a session that had opened with a real board-loss scare                                                                                                                        | scout §8.3              |
-| **S13-D** | **`anthill commit` requires or resolves `--as`**                          | 9 of session 11's first 11 commits carried no seat trailer. Carried from session 11, unbuilt                                                                                                                                                                                 | S11 debt                |
-| **S13-E** | 🎯 **CRITERION 7 + THE BOARD READ-BACK, AS ONE PIECE**                    | **triaging without fixing the read-back just re-does the triage next session.** Needs the `MOOT` class steward found (_the subject was deleted_) — _"we fixed it"_ and _"the thing it was about is gone"_ send a fresh agent to different places, and one word covers both   | criterion 7 + `c2a4114` |
-| **S13-F** | **Close the discharged cards** — `t-ac09ffa9`, `t-07a131f5`, `t-e25cd535` | all three verified dischargeable in session 12; `--fresh` is moot since step 4 deleted it. **Minutes, and they are three of the 13 lying cards**                                                                                                                             | continuation doc        |
+| #         | item                                                                      | why it is not an experiment                                                                                                                                                                                                                                                                                                                                                                                               | source                  |
+| --------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **S13-A** | **`comms stand-down`'s `created` flag is session-scoped**                 | `team-comms.ts:924` is `!existsSync(path)` — **bare file existence, which is D3's exact defect one field over.** `comms.ts:694` already has the repaired predicate (`record.at >= sessionOpenedAt`). **n=4 seats misread it in one session.** One predicate, already written                                                                                                                                              | session 12 wire, n=4    |
+| **S13-B** | **`uncheckedAgainst` stops reporting a false empty**                      | the porcelain read is at `team-commit.ts:526`, **after** `acquireLock` at `:346` — so a peer committing during your queue vanishes from the list. **Reproduced with timestamps** (15.6s queue, empty list, a peer's commit inside the window)                                                                                                                                                                             | card `t-42dd65bf`, n=2  |
+| **S13-C** | **Test output that mimics a production envelope carries a marker**        | a seat nearly read a test's `convene` envelope in the gate's stdout as **our board dying**, in a session that had opened with a real board-loss scare                                                                                                                                                                                                                                                                     | scout §8.3              |
+| **S13-D** | **`anthill commit` requires or resolves `--as`**                          | 9 of session 11's first 11 commits carried no seat trailer. Carried from session 11, unbuilt                                                                                                                                                                                                                                                                                                                              | S11 debt                |
+| **S13-E** | 🎯 **CRITERION 7 + THE BOARD READ-BACK, AS ONE PIECE**                    | **triaging without fixing the read-back just re-does the triage next session.** Needs the `MOOT` class steward found (_the subject was deleted_) — _"we fixed it"_ and _"the thing it was about is gone"_ send a fresh agent to different places, and one word covers both. **GitHub half DONE 2026-08-07; the read-back half is open — and its pipe-truncation blocker cleared in spellbook 2.0.0 (see the box above).** | criterion 7 + `c2a4114` |
+| **S13-F** | **Close the discharged cards** — `t-ac09ffa9`, `t-07a131f5`, `t-e25cd535` | all three verified dischargeable in session 12; `--fresh` is moot since step 4 deleted it. **Minutes, and they are three of the 13 lying cards**                                                                                                                                                                                                                                                                          | continuation doc        |
 
 | **S13-G** | **Persist `asOf` on the message record and show it on read** | 🔴 **NOT scout's proposal, and the inversion is the point.** He proposed _refusing a body whose watermark disagrees with `--as-of`_ (n=4). **But the stored record is `{channel, emittedThrough, from, id, role, text, ts}` — `--as-of` gates the send and is then DISCARDED.** The prose watermark exists _because the tool throws the value away_: there are not two copies that drift, **the tool manufactures the second copy.** Persisting needs no parsing, no refusal, no coupling to wording — and it lands in Contract 6(a)'s own idiom, which already persists the **artifact** tier (`emittedThrough`) while dropping the **testimony** tier (`read`) the tool already collects. Additive; older records simply lack the field | scout §7, re-scoped against the code |
 | **S13-H** | **The finalize confirmation stops asking for a sha that is stale by construction** | 4 of 5 seats filed a ledger amendment after confirming, because the finalize conversation itself produced further lessons. **Ask after stand-down, or do not ask — `git log --grep "Anthill-Seat: <handle>"` is already the mechanical source** | session 12, n=4 |
@@ -143,13 +230,13 @@ is discharged by argument.**
 
 ### 🔴 Added after session 12 closed — a CI-only red on `develop`, found by Cole, fixed at `484f9da`
 
-| #         | item                                                                                       | why                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| --------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **S13-J** | **`team-down.command-path.test.ts` must not leave a global `team-support` stub installed** | The criterion-2 spawn-set pin went red **in CI only** because that file installs `mock.module("./team-support.ts")` with a `requireConfig` stub lacking `paths`/`lead`, and it survives into later files. **`484f9da` immunised ONE consumer; the trap is still armed for every other file that imports `requireConfig`** — and it presents as an unrelated CI-only failure. _Two facts established the hard way and worth not re-deriving: **bun loads and runs test files PER FILE**, so a load-time capture does not predate a stub installed by an earlier file's test body; and **`mock.module` MERGES rather than replacing wholesale** — proven by the failure reaching `team-convene.ts:181`, past a `readBoardCounts()` the stub never defined. The file's own comment claiming "replaces the module WHOLESALE" is **wrong and should be corrected.**_ |
-| **S13-L** | **Reconcile the 5 unowned cards whose titles name a seat**                                 | spellbook#81 root-caused a parser bug where `add --owner=<name>` **stores no owner and returns `ok:true`**. Our board: **19 title-names-a-seat cards have an owner, 5 do not, 0 mismatch.** _The mechanism is UNPROVEN — those `add` calls ran in agent panes, and `grep -rn -- "--owner="` over the tree returns nothing but a doc string. Reconcile the 5 from their titles; **do not record it as confirmation of spellbook's bug**, because we cannot show it was the cause._                                                                                                                                                                                                                                                                                                                                                                               |
-| **S13-M** | **anthill is CLEAN on spellbook#81's class — keep it that way with a test**                | Verified live: `--as=zzz-not-a-seat` is **refused naming the bogus value** (so the `=` form genuinely parses), and an unknown flag is refused at parser altitude across 21 commands. **Nothing pins the `=` form specifically.** A single cell (`--flag=value` reaches the validator) costs nothing and stops a future `define.ts` change from re-opening a defect we have only ever verified by hand                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| **S13-N** | **Delete `boardShadowWarning` if spellbook's D1.3 lands — do not improve it**              | It reconstructs from two reads and a subtraction a fact `bounty open` knows first-hand, **and it cannot distinguish the two worlds it fires in**: respawn-empty over an intact snapshot (recover, do not close) vs `close` already clobbered it (stop). Opposite actions, identical signal from outside. **Horizon: contingent on spellbook#64/#73's D1.3.** If it turns out it CANNOT be deleted, that is evidence their envelope says too little — report it rather than quietly keeping ours                                                                                                                                                                                                                                                                                                                                                                 |
-| **S13-K** | **Decide, deliberately, that a feature branch gets NO CI until a PR exists**               | `.github/workflows/ci.yml` fires `push` on `[main, develop]` only. **Session 12 ran 45 commits with zero CI signal**, and _"the branch was green all session"_ was never a claim anyone could have made. The merge-result gate does not cover it either — **the merge result is green on darwin too.** Not obviously a defect (it is a real cost saving); it is a **gap in how this project verifies work**, and it should be chosen rather than rediscovered.                                                                                                                                                                                                                                                                                                                                                                                                  |
+| #         | item                                                                                                                                                                                                                                                                                                                                                   | why                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **S13-J** | **`team-down.command-path.test.ts` must not leave a global `team-support` stub installed**                                                                                                                                                                                                                                                             | The criterion-2 spawn-set pin went red **in CI only** because that file installs `mock.module("./team-support.ts")` with a `requireConfig` stub lacking `paths`/`lead`, and it survives into later files. **`484f9da` immunised ONE consumer; the trap is still armed for every other file that imports `requireConfig`** — and it presents as an unrelated CI-only failure. _Two facts established the hard way and worth not re-deriving: **bun loads and runs test files PER FILE**, so a load-time capture does not predate a stub installed by an earlier file's test body; and **`mock.module` MERGES rather than replacing wholesale** — proven by the failure reaching `team-convene.ts:181`, past a `readBoardCounts()` the stub never defined. The file's own comment claiming "replaces the module WHOLESALE" is **wrong and should be corrected.**_ |
+| **S13-L** | **Reconcile the 5 unowned cards whose titles name a seat**                                                                                                                                                                                                                                                                                             | spellbook#81 root-caused a parser bug where `add --owner=<name>` **stores no owner and returns `ok:true`**. Our board: **19 title-names-a-seat cards have an owner, 5 do not, 0 mismatch.** _The mechanism is UNPROVEN — those `add` calls ran in agent panes, and `grep -rn -- "--owner="` over the tree returns nothing but a doc string. Reconcile the 5 from their titles; **do not record it as confirmation of spellbook's bug**, because we cannot show it was the cause._                                                                                                                                                                                                                                                                                                                                                                               |
+| **S13-M** | **anthill is CLEAN on spellbook#81's class — keep it that way with a test**                                                                                                                                                                                                                                                                            | Verified live: `--as=zzz-not-a-seat` is **refused naming the bogus value** (so the `=` form genuinely parses), and an unknown flag is refused at parser altitude across 21 commands. **Nothing pins the `=` form specifically.** A single cell (`--flag=value` reaches the validator) costs nothing and stops a future `define.ts` change from re-opening a defect we have only ever verified by hand                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **S13-N** | **🚨 TRIGGER FIRED 2026-08-08 — D1.3 landed in `spellbook-v2.1.0`. Now a DECISION (Cole's), and the live proposal is RE-SCOPE rather than delete — merge with `70·1 / 73·4`. See the upstream section below for the three facts that changed.** _Original text follows._ **Delete `boardShadowWarning` if spellbook's D1.3 lands — do not improve it** | It reconstructs from two reads and a subtraction a fact `bounty open` knows first-hand, **and it cannot distinguish the two worlds it fires in**: respawn-empty over an intact snapshot (recover, do not close) vs `close` already clobbered it (stop). Opposite actions, identical signal from outside. **Horizon: contingent on spellbook#64/#73's D1.3.** If it turns out it CANNOT be deleted, that is evidence their envelope says too little — report it rather than quietly keeping ours                                                                                                                                                                                                                                                                                                                                                                 |
+| **S13-K** | **Decide, deliberately, that a feature branch gets NO CI until a PR exists**                                                                                                                                                                                                                                                                           | `.github/workflows/ci.yml` fires `push` on `[main, develop]` only. **Session 12 ran 45 commits with zero CI signal**, and _"the branch was green all session"_ was never a claim anyone could have made. The merge-result gate does not cover it either — **the merge result is green on darwin too.** Not obviously a defect (it is a real cost saving); it is a **gap in how this project verifies work**, and it should be chosen rather than rediscovered.                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 > **⚠ THE LOCAL GATE IS NOT A PROXY FOR CI, AND THIS IS THE MEASUREMENT: `bun run check` was green on darwin across the whole of session 12, through a 45-commit branch, a merge, and TWO failing CI runs.** It went green again after the first repair, **which CI then rejected.** _A green whose failing case lives on another OS is a green that cannot come out differently — `principles.md`'s control rule, arriving on the gate itself._
 > **⚠ THE `comms send` ITEM NO LONGER NEEDS A RULING, AND THE REASON IS WORTH KEEPING.** It was flagged _"needs a design call — it couples the tool to a prose convention"_ **only while the proposed fix was parsing the body.** Reading the storage layer showed the duplication is the tool's own doing — and **a shape filter over prose is the exact discriminator this team killed in the same session** (an all-digit sha defeats a digits-only exclusion). **The design call dissolved when someone read the record instead of arguing about the parser.**
@@ -168,9 +255,84 @@ is discharged by argument.**
 - **`bun run check` reads ZERO markdown** — **fourth session running.** The prose lane has no automated verification at all, and _"gate green" on a markdown land means the tree compiles._
 - **The whole-tree gate serialises a lane that cannot cause a red** — weaver blocked **3× in one session** on a markdown lane. → **[`shared-tree-gate-tension`](projects/shared-tree-gate-tension/proposal.md) move C**, now with first-person field evidence **and** a reproduced false-`uncheckedAgainst` beside it. **Decide at a convene; it is a tree-model question, not a fix.**
 
-## Upstream to spellbook — deduped, drafted, NOT yet sent
+## Upstream to spellbook — ✅ ALL THREE WERE SENT AND FIXED (2.0.0), AND 🚨 **D1.3 LANDED IN 2.1.0**
 
-**Cole approves the drafts before they go.** `bounty open --restore <id>` **silently no-ops** when a live board already holds the key (it attaches and ignores the flag — this is how session 12's board recovery nearly failed) · **`bounty state` truncates to a PIPE** (~64KB, whole to a file), and `--owner <name>` does not filter while `--mine` does.
+> This section read **"deduped, drafted, NOT yet sent"** until 2026-08-07, and every item in it had
+> already been filed AND closed. **It is corrected rather than deleted** — a router that describes
+> work as pending when it shipped is the same failure this file has scarred on twice, and the
+> correction is the artifact.
+
+**Checked 2026-08-07 against the installed `spellbook/2.0.0`:**
+
+- `bounty open --restore <id>` **silently no-ops** when a live board already holds the key — how
+  session 12's board recovery nearly failed → [spellbook#80](https://github.com/ichabodcole/spellbook/issues/80), **closed**
+- **`bounty state` truncates to a PIPE** (~64KB, whole to a file) → [spellbook#78](https://github.com/ichabodcole/spellbook/issues/78), **closed**
+  (grapevine shares the shape → [#77](https://github.com/ichabodcole/spellbook/issues/77), closed)
+- **`--owner <name>` does not filter while `--mine` does** → the `=`-form half of
+  [spellbook#81](https://github.com/ichabodcole/spellbook/issues/81), **closed.** `cli.ts` now parses
+  through `node:util` strict against a **22-flag recognized set**, so unknown flags are refused at
+  parser altitude
+
+### 🚨 D1.3 LANDED THE NEXT DAY — `spellbook-v2.1.0`, 2026-08-08. **S13-N's trigger has FIRED.**
+
+> _This block said **"`D1.3` did NOT land"** for **one day.** It was true when written and checked two
+> independent ways. **A dependency's state is not a fact you can cache** — and this is the shortest
+> staleness interval this file has ever recorded, which is the argument for the as-of, not against it._
+
+[spellbook#73](https://github.com/ichabodcole/spellbook/issues/73) and
+[#74](https://github.com/ichabodcole/spellbook/issues/74) are **closed and fixed** (`88a298f`).
+`saveSnapshot()` now rotates the on-disk file aside — to `<id>.pre-<ts>.bak.json` — before the **first
+shrinking write of each daemon's life**, and `GET /state` returns
+`snapshotBackedUp: { path, taskCount, reason } | null`, **present-and-null, never absent**.
+
+**⚠ `S13-N` IS NOW A DECISION, NOT A DEPENDENCY — and it is Cole's, not the lead's.** Their close
+comment hands it back explicitly: _"the two worlds it could not distinguish no longer require opposite
+actions… Whether that is sufficient to retire the guard is anthill's call, not ours."_ **S13-N's stated
+rationale for deletion has dissolved; the guard's independent justification has not.** Three facts
+have to be weighed together and none of them was in evidence when S13-N was written:
+
+1. **Rotation is write-side and after the fact — our guard is read-side and before it.** _The empty
+   write still happens; the data is recoverable, not preserved._ `boardShadowWarning` fires at attach,
+   ahead of the destructive action.
+2. **Their own #74 comment argues our guard has value they lack** — _"anthill implements exactly this
+   warning in `convene`, and it works; **it protected nobody here because the call went to `bounty`
+   directly.** A guard reachable only through one caller protects only that caller."_
+3. **Recovery is now possible and NON-OBVIOUS, which changes the guard's JOB rather than removing it.**
+   Backups are deliberately unbounded, so _**recover from the backup with the highest `taskCount`, not
+   the newest timestamp**_ — a second boot-empty-then-close cycle writes a newer, empty `.bak.json`
+   beside the good one. **Any runbook saying "restore the latest backup" is now a trap.**
+
+**So the live proposal is RE-SCOPE, not delete** — re-site the guard's input onto `/state`'s
+`snapshotBackedUp` (which is the first-hand fact S13-N complained we were reconstructing from two reads
+and a subtraction) and make its message name the recovery. **That merges S13-N with `70·1 / 73·4`,**
+whose whole point was that the guard names a hazard and not its recovery procedure. _Decide it in one
+room; do not delete on the trigger alone._
+
+### What 2.1.0 did NOT bring, and what it changes for work already queued
+
+- **[spellbook#64](https://github.com/ichabodcole/spellbook/issues/64) STAYS OPEN, deliberately.**
+  `idleTimeout: 255` ships as a **probable root cause, explicitly not claimed as a fix** — Bun's default
+  10s request idleTimeout severs the SSE connection five seconds before the 15s heartbeat is due, so
+  `subscriberCount` falls to 0 and the board idle-closes _because_ its keep-alive died. **They asked us
+  for the measurement by name:** run a real multi-hour session with a keep-alive tail on 2.1.0 and
+  report whether the daemon survives. **A convened session IS that workload — we get this evidence for
+  free at the next convene, and we should claim the beat before the session, not after.**
+- 🔴 **THE BOARD-TAIL FIX NEEDS AN AMENDMENT.** 2.1.0 adds a **new event type — `snapshotBackedUp` —
+  and it is BARE-TYPED, not dotted.** The pattern queued in
+  [`backlog/2026-08-06-board-tail-filter-matches-no-task-event.md`](backlog/2026-08-06-board-tail-filter-matches-no-task-event.md)
+  is `'"type":"(task\.[a-z]+|unblocked|closed)"'`, which **does not match it** — and it is arguably the
+  single most important frame a lead could receive. _The item was written against a vocabulary that has
+  since grown, which is the general case: **an alternation over someone else's enum is a claim with an
+  as-of.**_
+- **`anthill#43`'s destroy half is now fixed upstream** — re-triage our half (convene's idempotent
+  board re-open) rather than carrying it as blocked.
+- **Doc lag they filed against themselves:** `bounty/SKILL.md` still documents `/state` as
+  `{ state, cursor }` in three places and never mentions `snapshotBackedUp`. **The field ships; the
+  agent-facing reference does not describe it.** Anything we build against it is building ahead of
+  their docs, on purpose.
+- **#81's stricter parser still does not break us.** Every bounty flag anthill passes — `--as`,
+  `--mine`, `--pin`, `--session`, `--status` — is in the recognized set. _Worth having checked: the fix
+  converts a silent accept into a refusal, so a flag they dropped would now fail loudly._
 
 ---
 

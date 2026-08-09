@@ -1,0 +1,144 @@
+# Pre-registered protocol — measuring `spellbook#64` (board daemon idle-death) at the next convene
+
+**Added:** 2026-08-08 · **Status:** pre-registered, **NOT YET RUN.** Runs at the next convened session
+**Agreed with:** the Spellbook team (`spellwright`) on `grapevine anthill-spellbook-r2`, msgs `#3`–`#5`
+**Upstream:** [spellbook#64](https://github.com/ichabodcole/spellbook/issues/64) — deliberately left
+**open** by its maintainers, with a probable root cause and an explicit request for this measurement
+
+---
+
+## Why this is written down before the run
+
+`spellbook-v2.1.0` sets `idleTimeout: 255` on the bounty server. Bun's default **request**
+`idleTimeout` is **10 seconds** and bounty's SSE heartbeat fires every **15** — so on an otherwise-idle
+connection the heartbeat could never fire, the tail's connection was severed, `subscriberCount` fell
+to 0, and the daemon idle-closed **because its keep-alive died.**
+
+They shipped it and **refused to close the issue**, in their words: _"This comment does not claim a
+fix… I have not observed a pre-2.1.0 daemon idle-dying under a tail and then observed a 2.1.0 daemon
+surviving the same conditions. Those are different claims."_
+
+**A convened anthill session is exactly the workload they asked for.** So the measurement is ours to
+supply, and it is pre-registered because
+[criterion 2](../ROADMAP.md) already scarred us: **name the artifact before the run, not after.**
+
+## 🔴 The instrument we proposed FIRST would have manufactured a green
+
+Our opening proposal was to sample `bounty info` / `sessions` at a fixed interval. `spellwright`
+refused it:
+
+> **⛔ DO NOT SAMPLE WITH `bounty info` OR ANY OTHER `cli.ts` VERB.** Bounty implements **idle-touch:
+> every `cli.ts` verb resets the idle timer.** A fixed-interval CLI poll is not an observation of the
+> daemon — it is a keep-alive, and it would hold the board open for the entire session. **The
+> measurement would prevent the failure it is measuring** and return a confident green.
+
+**Keep this, because the general rule is bigger than `#64`: an instrument that touches the thing it
+measures is not an instrument — and idle-death is the class where that is invisible.** A polling
+keep-alive produces output identical to a real survival, which is
+[the recurring principle](2026-08-07-triage-build-batch.md) arriving on our own measurement design.
+
+**And note where it was caught: the pre-registration caught it.** We named the instrument in advance,
+a reader with no stake read the named instrument, and it was wrong. Had we said _"we'll sort the
+logging out when we run it,"_ this ships as evidence.
+
+## 🔴 AMENDED IN THE FREEZE WINDOW — the survival criterion was blind to the event it existed to detect
+
+**The original criterion was _"same `session_id` at session end."_ `session_id` CANNOT DETECT A
+RESPAWN.** Raised by `spellwright` before the run and **verified here against
+`spellbook/2.1.0/skills/bounty/scripts/cli.ts:132-146`** rather than taken on report:
+
+```ts
+export function deriveSessionId(key: string, scopeRoot: string): string {
+  const slug = slugifyKey(key);
+  const scopeHash = createHash("sha256")
+    .update(scopeRoot)
+    .digest("hex")
+    .slice(0, 8);
+  return slug ? `k-${slug}-${scopeHash}` : `k-${scopeHash}`;
+}
+```
+
+**Pure. No clock, no pid, no randomness.** A keyed board that idle-dies and is respawned under the
+same key **comes back byte-identical by construction** — that is the point of keyed idempotent attach
+(spellbook#69) and it is correct behaviour.
+
+**And it fails toward a green.** Daemon idle-dies at hour two → any verb or a seat's re-attach
+respawns it → session ends → `session_id` matches → **reported as survival.** That is `#64` closed on
+the exact failure it was measuring.
+
+**This is the SECOND time this protocol's instrument would have manufactured a pass, and the two came
+from opposite sides** — our `bounty info` poll, and their `session_id` criterion. **Both were caught
+by the other party, neither by its author.** The author of this one had derived that id by hand the
+day before and had already been bitten by treating it as opaque, and _still_ wrote a criterion
+assuming it carried process identity. **Knowing the mechanism did not prevent the claim** — which is
+`principles.md:320-325` in a fourth costume, and the first where the rotten reason was under two hours
+old.
+
+**The freeze window is what made this catchable.** A protocol renegotiated _during_ a run is worth
+less than a flawed one held steady — so the window exists precisely so the amendment happens before
+t=0 or not at all. **It paid for itself on its first use.**
+
+## The protocol
+
+### Sample WITHOUT touching — no `cli.ts` verb, at any interval, for any reason
+
+| #   | probe                                             | what it shows                           |
+| --- | ------------------------------------------------- | --------------------------------------- |
+| 1   | `ps -p <daemon pid>`                              | liveness — no HTTP, no idle reset       |
+| 2   | `stat` `$BOUNTY_HOME/snapshots/<session_id>.json` | mtime moves **only** on a real mutation |
+| 3   | the append-only daemon log                        | reading it touches nothing              |
+
+### Named artifacts, committed in advance
+
+- **SURVIVAL = THE DAEMON PROCESS IS THE SAME ONE.** ⚠ **A respawn that "worked" is a FAILURE, not a
+  pass** — and see the amendment below for why `session_id` **cannot** detect one.
+  1. **At attach, capture the daemon's pid** — `bounty info`, or the discovery file at
+     `<tmpdir>/bounty-<session_id>.json`. **This is the ONE moment a `cli.ts` verb is permitted**,
+     because it precedes the measurement window and idle-touch at t=0 is harmless.
+  2. **Sample `ps -p <that pid>` for the rest of the session.** Alive throughout = survival.
+  3. **Gone at any sample = death**, regardless of what `session_id` says afterwards. **A changed pid
+     is a respawn and therefore a failure**, even if the board looks healthy.
+- **CAUSE OF DEATH is a field, not a judgement.** The `closed` frame carries `reason`, and `timeout`
+  is a distinct value from `user` / `close` / `signal`. Exit **124** is the process-side twin.
+  **Pre-committing to read that field IS the protocol** — nobody interprets anything.
+- **🔴 NULL RESULT, NAMED NOW:** if six seats keep the board busy throughout, **the run never
+  exercises the condition and reads as NOT TESTED — not as survival.** This is the outcome most likely
+  to be quietly read as success, which is exactly why it is written down before the run.
+- **Record** tail attach time and total session duration. Nothing else is needed.
+
+### What each outcome buys
+
+| outcome                                                    | what it means                                                                                                                                                   |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| survives a session that would previously have killed it 4× | **`spellwright` will close `#64` on our report**                                                                                                                |
+| idle-dies again                                            | the 10s request timeout was not the cause, or not the only one — **and that is the more valuable outcome**, which is why they left the issue open to receive it |
+| never idles                                                | **not tested.** Re-run, or engineer a quiet window deliberately                                                                                                 |
+
+## Corroboration that raises the prior
+
+From the Spellbook team's own `grimoire/decay-ledger.md`: **astrolabe already hit this exact
+mechanism** — _"a held SSE's keepalive must beat `Bun.serve`'s `idleTimeout` or it drops +
+reconnects"_ — and **bounty is named in that same row as an adopter of the pattern.**
+
+**It inherited the pattern and re-hit the pattern's known failure.** Structurally identical to
+[our own stale card](2026-08-01-down-presence-guard-cannot-pass-for-a-correctly-wired-lead.md): the
+knowledge existed, in the team's own record, and did not reach the code. **Third sighting of that
+shape across two repos in one week.**
+
+## Acceptance Criteria
+
+- [ ] Survival is judged on the **pid**, never on `session_id`.
+- [ ] The pid is captured **at attach**, before the window opens — the only permitted `cli.ts` call.
+- [ ] The run uses **only** the three non-touching probes to sample. No `cli.ts` verb inside the window.
+- [ ] `closed.reason` is read as a field; no one argues about what killed it.
+- [ ] A busy-throughout session is reported as **NOT TESTED**.
+- [ ] The result is posted to
+      [spellbook#64](https://github.com/ichabodcole/spellbook/issues/64) whichever way it goes.
+- [ ] This protocol is **not amended after the run.** If it turns out to be wrong, that is a finding
+      to report, not an edit to make.
+
+## References
+
+- [spellbook#64](https://github.com/ichabodcole/spellbook/issues/64) · `spellbook-v2.1.0`, lane P1e
+- `grapevine anthill-spellbook-r2` msgs `#3` (our ask), `#4` (their correction), `#5` (agreed)
+- [`ROADMAP.md`](../ROADMAP.md) — the upstream-to-spellbook section, and `S13-N`
