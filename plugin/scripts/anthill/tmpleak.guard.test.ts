@@ -50,6 +50,8 @@ const ALLOWED: Record<string, string> = {
   "commands/team-init.test.ts": "one module-level mint + afterAll(rmSync); measured +0 per run",
   "commands/team-join.test.ts": "try/finally; measured +0 per run",
   "commands/team-migrate.test.ts": "try/finally; measured +0 per run",
+  "commands/team-support.liveteams.test.ts":
+    "one module-level mint + afterAll(rmSync); measured +0 per run",
   "config.test.ts":
     "try/finally, plus two module-level mints with afterAll(rmSync); measured +0 per run",
   "scan.test.ts": "try/finally; measured +0 per run",
