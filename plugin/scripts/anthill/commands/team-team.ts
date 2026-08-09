@@ -10,11 +10,12 @@
  * incantations ship it.
  */
 
-import { emit, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { ConfigError } from "../config.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
-import type { TeamRung } from "../team-resolve.ts";
-import { requireTeam } from "./team-support.ts";
+import { PIN_REL_PATH, readPin, resolveTeam, type TeamRung, writePin } from "../team-resolve.ts";
+import { describeLiveTeam, liveTeams, requireProject, requireTeam } from "./team-support.ts";
 
 /** How each rung reads to a human, in the words that let them change it. */
 const RUNG_PROSE: Record<TeamRung, string> = {
@@ -103,13 +104,195 @@ const showCommand = defineAnthillCommand({
   },
 });
 
+// --- ls --------------------------------------------------------------------
+
+interface TeamRow {
+  name: string;
+  channel: string;
+  /** The team this invocation resolves to — exactly one row carries it. */
+  current: boolean;
+  teamDir: string;
+  seats: number;
+  lead: string | undefined;
+  forkedFrom: string | undefined;
+  forkedAt: string | undefined;
+}
+
+interface LsData {
+  teams: TeamRow[];
+  /** Which rung decided `current` — `null` when NOTHING resolves, which is a
+   * legitimate state here and not an error. */
+  via: TeamRung | null;
+}
+
+const lsCommand = defineAnthillCommand({
+  meta: {
+    name: "ls",
+    description: "Every configured team, in config order, marking the resolved one",
+    scope: "workspace",
+  },
+  args: {
+    team: {
+      type: "string",
+      description: "Which team to mark as current (default: the resolved one)",
+      valueHint: "name",
+    },
+    format: { type: "string", description: "Output format", valueHint: "text|json" },
+  },
+  async run(ctx) {
+    const started = nowMillis();
+    const format = resolveFormat(ctx.args.format);
+    const project = requireProject(format, "team ls");
+
+    // ⚠ AN AMBIGUOUS PROJECT IS NOT AN ERROR HERE, and this is the whole reason
+    // `ls` does not go through `requireTeam`. "Two teams and nothing selected
+    // one" is precisely the state you run `ls` to inspect — refusing to list them
+    // would answer the question "which teams exist?" with "pick one of the teams
+    // I will not name". Measured: it did exactly that before this branch existed.
+    // Nothing resolving marks no row, which is the honest rendering.
+    let current: string | null = null;
+    let via: TeamRung | null = null;
+    try {
+      const resolution = resolveTeam(project, {
+        team: ctx.args.team as string | undefined,
+        env: process.env,
+        pin: readPin(project.projectRoot),
+      });
+      current = resolution.team.name;
+      via = resolution.via;
+    } catch (err) {
+      // A BAD name is still an error — `--team nope` or a stale pin is a typo to
+      // report, not an absence to render. Only genuine ambiguity is tolerated.
+      if (!(err instanceof ConfigError) || !/nothing selected one/.test(err.message)) {
+        emitError({ format, command: "team ls", error: (err as Error).message });
+        process.exit(1);
+      }
+    }
+
+    const data: LsData = {
+      via,
+      teams: project.teams.map((t) => ({
+        name: t.name,
+        channel: t.channel,
+        current: t.name === current,
+        teamDir: t.paths.teamDir,
+        seats: t.roster().length,
+        lead: t.lead,
+        forkedFrom: t.forkedFrom,
+        forkedAt: t.forkedAt,
+      })),
+    };
+
+    emit({
+      format,
+      command: "team ls",
+      data,
+      startedAt: started,
+      renderText: (d) => {
+        const rows = d.teams.map((row) => {
+          const mark = row.current ? "*" : " ";
+          const lineage = row.forkedFrom ? `  ← forked from ${row.forkedFrom}` : "";
+          const seats = `${row.seats} seat${row.seats === 1 ? "" : "s"}`;
+          return `${mark} ${row.name}  (channel ${row.channel}, ${seats}, ${row.teamDir}/)${lineage}`;
+        });
+        if (d.via === null && d.teams.length > 1) {
+          rows.push("", "No team is selected — `anthill team use <name>` pins one for this repo.");
+        }
+        return rows.join("\n");
+      },
+    });
+  },
+});
+
+// --- use -------------------------------------------------------------------
+
+interface UseData {
+  team: string;
+  previous: string | undefined;
+  pin: string;
+}
+
+const useCommand = defineAnthillCommand({
+  meta: {
+    name: "use",
+    description: "Pin this repo to a team, for every later command (writes .anthill/current-team)",
+    scope: "workspace",
+  },
+  args: {
+    name: { type: "positional", description: "The team to pin", required: true },
+    force: {
+      type: "boolean",
+      description: "Switch even though a configured team looks live",
+    },
+    format: { type: "string", description: "Output format", valueHint: "text|json" },
+  },
+  async run(ctx) {
+    const started = nowMillis();
+    const format = resolveFormat(ctx.args.format);
+    const project = requireProject(format, "team use");
+    const name = String(ctx.args.name);
+
+    // ⚠ VALIDATED AT WRITE TIME, not only on read. `kubectl config use-context
+    // bogus` fails immediately, and the whole point of a config that enumerates
+    // every legal team is that we can do the same. A pin accepted here and
+    // rejected on every later command would turn one typo into a repo that
+    // refuses every command until someone finds the file.
+    if (!project.team(name)) {
+      emitError({
+        format,
+        command: "team use",
+        error: `no team named "${name}". Configured teams: ${project.teams
+          .map((t) => t.name)
+          .join(", ")}.`,
+      });
+      process.exit(1);
+    }
+
+    // ⚠ REFUSES IF **ANY** CONFIGURED TEAM LOOKS LIVE — not merely the resolved
+    // one. The existing presence guard is scoped to one team, so switching away
+    // from a live team would leave its seats working while every command the lead
+    // runs resolves somewhere else. They are not torn down; they are ORPHANED,
+    // which is worse, because nothing reports it.
+    if (!ctx.args.force) {
+      const live = liveTeams(project);
+      if (live.length > 0) {
+        emitError({
+          format,
+          command: "team use",
+          error:
+            `${live.map(describeLiveTeam).join(" and ")} still looks live, so switching now would ` +
+            "leave those seats working while every command you run resolves elsewhere. " +
+            "Stand the team down first (`anthill down`), or pass `--force` if you know it is idle.",
+        });
+        process.exit(1);
+      }
+    }
+
+    const previous = readPin(project.projectRoot);
+    writePin(project.projectRoot, name);
+
+    emit({
+      format,
+      command: "team use",
+      data: { team: name, previous, pin: PIN_REL_PATH } satisfies UseData,
+      startedAt: started,
+      renderText: (d) =>
+        d.previous && d.previous !== d.team
+          ? `Now on team "${d.team}" (was "${d.previous}"). Pinned in ${d.pin}.`
+          : `Now on team "${d.team}". Pinned in ${d.pin}.`,
+    });
+  },
+});
+
 export const teamTeamCommand = defineAnthillCommand({
   meta: {
     name: "team",
-    description: "Which team this repo is on (show)",
+    description: "Which team this repo is on (ls / use / show)",
     scope: "workspace",
   },
   subCommands: {
+    ls: lsCommand,
+    use: useCommand,
     show: showCommand,
   },
 });

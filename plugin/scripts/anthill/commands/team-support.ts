@@ -35,6 +35,27 @@ export function requireConfig(
 }
 
 /**
+ * The project, WITHOUT resolving a team — and the distinction is load-bearing.
+ *
+ * `anthill team use <name>` is the command you run precisely BECAUSE the project
+ * is ambiguous. Routing it through `requireTeam` would make it throw "two teams
+ * and nothing selected one" and name `anthill team use` as the remedy — for the
+ * command you are already running. A project with no pin and two teams must be
+ * able to gain a pin.
+ */
+export function requireProject(format: OutputFormat, command: string): ResolvedProject {
+  try {
+    return loadProject();
+  } catch (err) {
+    if (err instanceof ConfigError) {
+      emitError({ format, command, error: err.message });
+      process.exit(1);
+    }
+    throw err;
+  }
+}
+
+/**
  * The same resolution, with the PROJECT and the RUNG kept.
  *
  * Most commands want only their team and say so by calling `requireConfig`. Three
@@ -96,6 +117,59 @@ export function rejectOtherTeam(
       );
     }
   }
+}
+
+/**
+ * Which configured teams look LIVE right now — every team, not just the resolved
+ * one.
+ *
+ * ⚠ THE SCOPE IS THE WHOLE POINT. The existing presence guard
+ * (`seatPresence(config.channel, config)` in `down`) is scoped to ONE team, so a
+ * stale resolution lets you switch away from a live team and strand its seats:
+ * they keep working while every command the lead runs resolves somewhere else.
+ * Both callers — `team use` and the `convene` guard — must ask about all of them.
+ *
+ * `unknown` COUNTS AS LIVE, matching `shouldBlockTeardown`'s direction and for the
+ * same asymmetry: a false "live" costs one `--force`, a false "idle" strands a
+ * working seat. An advisory signal may push toward the recoverable failure and
+ * must never push toward the other.
+ */
+export function liveTeams(project: ResolvedProject): Array<{
+  name: string;
+  channel: string;
+  presence: SeatPresence;
+}> {
+  const live: Array<{ name: string; channel: string; presence: SeatPresence }> = [];
+  for (const team of project.teams) {
+    // ⚠ NEVER CONVENED IS A POSITIVE OBSERVATION, and it must be made BEFORE
+    // asking about presence. `seatPresence` answers `unknown` for a team with no
+    // session-open record — correctly, since it cannot scope departures without
+    // one — and `unknown` counts as live below. Applied to a team that has simply
+    // never been convened, that reads every fresh project as fully live and
+    // refuses `anthill team use` on the exact repo it exists to serve. Measured:
+    // a brand-new two-team config refused BOTH teams.
+    //
+    // `down` does not hit this because it runs only after confirming the tmux
+    // session exists; there is no such precondition here, so the precondition has
+    // to be stated. The absence of the record is not an absence we failed to
+    // observe — it is the file the open would have written, and it is not there.
+    if (!readSessionOpen(team.teamDirPath(), team.channel)) continue;
+
+    const presence = seatPresence(team.channel, team);
+    if (presence.state !== "none") {
+      live.push({ name: team.name, channel: team.channel, presence });
+    }
+  }
+  return live;
+}
+
+/** PURE: how a live team reads in a refusal — who is on it, or why we cannot tell. */
+export function describeLiveTeam(live: { name: string; presence: SeatPresence }): string {
+  if (live.presence.state === "present") {
+    return `"${live.name}" (seats present: ${live.presence.seats.join(", ")})`;
+  }
+  const reason = live.presence.state === "unknown" ? live.presence.reason : "state not observed";
+  return `"${live.name}" (could not confirm it is idle: ${reason})`;
 }
 
 export interface BoardCounts {

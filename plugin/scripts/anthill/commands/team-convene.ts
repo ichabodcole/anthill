@@ -1,10 +1,16 @@
 import { fileURLToPath } from "node:url";
-import { emit, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { buildCommsIncantation } from "../comms.ts";
 import { execCoord, firstErrorLine, resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
-import { type BoardCounts, readBoardCounts, requireConfig } from "./team-support.ts";
+import {
+  type BoardCounts,
+  describeLiveTeam,
+  liveTeams,
+  readBoardCounts,
+  requireTeam,
+} from "./team-support.ts";
 
 interface ConveneData {
   channel: string;
@@ -240,15 +246,46 @@ export const teamConveneCommand = defineAnthillCommand({
       description: "Which configured team (default: resolved from the pin / sole team)",
       valueHint: "name",
     },
+    force: {
+      type: "boolean",
+      description: "Convene even though another configured team looks live",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "convene", {
+    const { project, team: config } = requireTeam(format, "convene", {
       team: ctx.args.team as string | undefined,
       channel: ctx.args.channel as string | undefined,
     });
+
+    // ⚠ ONE CONVENED TEAM AT A TIME, and THE BOARD IS THE REASON — not tmux, not
+    // the wire, not tidiness. `.bounty-session` is ONE repo-root file, written
+    // unconditionally by the keyed open below, and `readBoardCounts` resolves the
+    // board AMBIENTLY with no `--session`. So a second convened team does not get
+    // its own board; it silently REBINDS the first team's, and both teams' seats
+    // then read and write one board while believing it is theirs.
+    //
+    // Stating the real reason is the whole point. Cole intends to extend bounty
+    // or absorb a first-party board, at which point this constraint disappears
+    // and this guard should be DELETED — and a guard whose stated reason is wrong
+    // outlives the constraint that justified it, because nobody can tell when it
+    // stopped applying.
+    const alreadyUp = liveTeams(project).filter((t) => t.name !== config.name);
+    if (alreadyUp.length > 0 && !ctx.args.force) {
+      emitError({
+        format,
+        command: "convene",
+        error:
+          `${alreadyUp.map(describeLiveTeam).join(" and ")} is already convened, and only one team ` +
+          "can hold the board: `.bounty-session` is a single repo-root file, so convening now would " +
+          "rebind that team's board underneath its seats. Stand it down first (`anthill down`), or " +
+          "pass `--force` if you know it is idle.",
+      });
+      process.exit(1);
+    }
+
     const channel = (ctx.args.channel as string | undefined) || config.channel;
     const warnings: string[] = [];
 

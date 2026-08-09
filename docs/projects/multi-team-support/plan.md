@@ -730,6 +730,34 @@ the rule.
 **2.5 — ⚖ `team show` reports `configured[]` as well as the resolved team.** One extra field, and it
 makes _"did it pick the right one"_ answerable from the same output as _"which one did it pick"_.
 
+### Phase 3
+
+**3.1/3.2 — 🕳 both verbs were unusable on the exact repo they exist for, and only an end-to-end run
+showed it.** Unit tests were green. Two separate defects, both of the same shape — _a command that
+helps you resolve ambiguity must not require ambiguity to be already resolved_:
+
+- **`team ls` refused to list.** It went through `requireTeam`, so on a two-team repo with no pin it
+  answered _"which teams exist?"_ with _"pick one of the teams I will not name."_ It now takes the
+  project, resolves **softly**, and marks no row when nothing resolves — while still erroring on a
+  bad `--team` or a stale pin, which is a typo to report rather than an absence to render.
+- **`team use` refused on every fresh project.** `seatPresence` answers `unknown` for a team with no
+  session-open record — correct, since it cannot scope departures without one — and `liveTeams`
+  counts `unknown` as live. Applied to a team that has simply **never been convened**, that read a
+  brand-new two-team config as _both teams live_ and refused the pin. `down` never hit this because
+  it runs only after confirming the tmux session exists; there is no such precondition here, so
+  `liveTeams` now states it: **no session-open record is a positive observation of "never convened"**,
+  checked before presence is consulted. The `unknown`-is-live asymmetry is kept for teams that HAVE
+  been convened, where it is the right direction.
+
+**3.2/3.3 — 🔧 `liveTeams` + `describeLiveTeam` are shared by both guards.** The plan specifies the
+across-teams presence check twice, once per task. One implementation, and `describeLiveTeam` keeps
+"seats present: forager" distinguishable from "could not confirm it is idle" — a reader who cannot
+tell those apart cannot tell whether `--force` is safe.
+
+**3.3 — ⚖ `convene` gained `--force`.** The guard needs an override for the same reason `down` has
+one: `unknown` blocks, and a stale record must not be able to lock a repo out of convening. The
+refusal names it.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows
