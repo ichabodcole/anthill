@@ -298,6 +298,47 @@ both, config order preserved; `channel` omitted → defaults to name; `team("nop
 
 **Tasks:** three failing tests, **each asserting a thrown `ConfigError` naming the offending team**.
 
+### 1.3 — Two teams may not resolve to the same living-docs directory
+
+**Type:** `fix:` · **Files:** `config.ts` (`validateAcrossTeams`, `SAFE_TEAM_NAME`) · test
+`config.test.ts` · **Added 2026-08-09 from the Phase 1 review.**
+
+**1.2 protects the CHANNEL and leaves the DIRECTORY open — and the directory is where the durable
+knowledge lives.** `teamDir` defaults to `.anthill/teams/<name>`, which is distinct by construction,
+so the default path is safe. **But the design requires the incumbent team to carry an _explicit_
+`paths.teamDir: ".anthill"`** (§5a) — so the one team that must escape the derived default is the one
+nothing checks. Verified against the shipped code; both of these resolve without error today:
+
+```jsonc
+// A — two explicit teamDirs, identical. Both teams' seats, seams and comms land on one another.
+{"teams": {"dev":  {"seats": […], "paths": {"teamDir": ".anthill"}},
+           "lean": {"seats": […], "paths": {"teamDir": ".anthill"}}}}
+// → both resolve seams to `.anthill/dev/seams.md`
+
+// B — `/^[a-zA-Z0-9._-]+$/` matches `..`, and the name is a DIRECTORY SEGMENT.
+{"teams": {"..": {"seats": […]}, "dev": {"seats": […]}}}
+// → `..` resolves seatDir to `.anthill/teams/../dev` = `.anthill/dev` — the INCUMBENT's seat dir
+```
+
+**B is why the inherited regex is not enough.** It came from `SAFE_SESSION_KEY` (`team-spawn.ts`),
+which guards a tmux session key; `.` and `..` are unremarkable there and load-bearing in a path. The
+shipped comment already names both jobs — the regex only ever did the first.
+
+**Contract — two guards, in `resolveProject`:**
+
+1. **Reject the names `.` and `..`** beside the `SAFE_TEAM_NAME` test, message naming the segment
+   role. Dots _inside_ a name (`v1.2`) stay legal.
+2. **In `validateAcrossTeams`, reject two teams whose resolved `paths.teamDir`, `paths.seatDir` or
+   `paths.seams` are EQUAL.** Compare the resolved values, not the raw ones — A above is only
+   visible after defaults apply.
+
+**⚠ Equality, NOT prefix-free — the opposite of the channel rule.** Teams nest by design: the
+incumbent sits at `.anthill` and every other team at `.anthill/teams/<name>`, so `.anthill` is a
+prefix of all of them. Reusing 1.2's prefix check here would reject the intended layout.
+
+**Tasks:** two failing tests (case A, case B) → implement → assert every 1.1/1.2 case still passes →
+`bun run check` → commit `fix(config): two teams may not share a living-docs directory`.
+
 ---
 
 ## Phase 2 — The resolution ladder
