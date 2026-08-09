@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
-import { commsPresence, seatPresence, summarizeBoard } from "./team-support.ts";
+import { commsPresence, type SeatPresence, summarizeBoard } from "./team-support.ts";
 
 /**
  * Presence was SINGLE-WIRE on a multi-wire team, and `anthill down` kills panes.
@@ -176,17 +176,47 @@ describe("commsPresence — a live follower is presence; an unchecked one is not
 // smaller lattice — it is the one property the lattice existed to protect,
 // asserted on the single wire that remains.
 describe("seatPresence — an unreachable wire is UNKNOWN, never an absence", () => {
+  // ⚠ RUN IN A SUBPROCESS, DELIBERATELY, AND THE FIRST VERSION OF THIS SUITE DID
+  // NOT — it imported `seatPresence` from the module above, went green locally,
+  // and FAILED IN CI. `team-convene.spawnset.test.ts` and
+  // `team-down.command-path.test.ts` both `mock.module("./team-support.ts", …)`,
+  // and bun loads-and-runs PER FILE, so whether this file sees the real module or
+  // a stub depends on runner file order. Forcing the bad order locally reproduces
+  // it as `Export named 'commsPresence' not found`.
+  //
+  // This is the scar already written down in `team-convene.spawnset.test.ts`:
+  // "the suite's own file order comes from the runner, so `bun run check` being
+  // green locally was LUCK, NOT EVIDENCE." That block predicted this exact
+  // failure and I stepped on it anyway, because the tests I added were the first
+  // in this file to depend on a *mocked export's* real behaviour — the
+  // pre-existing ones use `commsPresence`/`summarizeBoard`, which the stubs
+  // happen not to shadow in the orders CI has been running.
+  //
+  // A fresh process has no mock registry, so it cannot inherit a stub no matter
+  // what ran first — the same principle as that file's repair (rebuild from a
+  // module nobody mocks), reached by a different route because `seatPresence`
+  // has no unmocked source to rebuild from.
+  const realSeatPresence = (): SeatPresence => {
+    const r = Bun.spawnSync([
+      "bun",
+      "-e",
+      `import {seatPresence} from ${JSON.stringify(new URL("./team-support.ts", import.meta.url).pathname)};` +
+        `console.log(JSON.stringify(seatPresence("anthill-dev")))`,
+    ]);
+    return JSON.parse(r.stdout.toString().trim());
+  };
+
   // The `down` guard permits teardown on exactly one state, so this is the whole
   // safety surface of the removal: with no config there is no comms wire to
   // read, and the answer must be the state that BLOCKS.
   test("no config → unknown, and it is not `none`", () => {
-    const p = seatPresence("anthill-dev");
+    const p = realSeatPresence();
     expect(p.state).toBe("unknown");
     expect(p.state).not.toBe("none");
   });
 
   test("unknown carries a REASON, so a caller can say WHY it could not tell", () => {
-    const p = seatPresence("anthill-dev");
+    const p = realSeatPresence();
     expect(p.state === "unknown" && p.reason).toContain("no config");
   });
 
