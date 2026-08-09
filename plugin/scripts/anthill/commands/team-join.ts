@@ -591,7 +591,7 @@ export const teamJoinCommand = defineAnthillCommand({
     },
     channel: {
       type: "string",
-      description: "Grapevine channel (default: config.channel)",
+      description: "Comms channel (default: config.channel)",
       valueHint: "name",
     },
     format: { type: "string", description: "Output format", valueHint: "text|json" },

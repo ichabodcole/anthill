@@ -114,9 +114,9 @@ with what makes sense."_
   app code, CI, or framework setup.
 - **It does not give AGENTS visibility into the HUMAN.** Ruled 2026-08-08: seats do not need to
   observe what the human is doing. **The arrow points the other way** — the human talks to the lead,
-  and the lead is their liaison. _(This is why removing anthill's only `humans` source, which came
-  from grapevine's presence call, costs nothing: the capability was nominal and pointed the wrong
-  way.)_
+  and the lead is their liaison. _(anthill's only `humans` source came from grapevine's presence call
+  and was **removed 2026-08-09** — the capability was nominal and pointed the wrong way, so it cost
+  nothing.)_
 - **It does not run without its dependencies.** spellbook (grapevine + bounty), Bun, tmux, and
   the `claude` CLI are required; bootstrap preflights them.
 

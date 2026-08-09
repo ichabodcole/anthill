@@ -79,9 +79,13 @@ grounded" and get an explicit acknowledgement **naming your message id** — _"g
 exchange in the first minute is the only cheap moment to discover you are shouting into a
 disconnected wire.
 
-**Leads — `anthill status` DOES cover this wire, and it is not the whole story.** Presence is
-multi-wire: `status` and `down` read one combined source, so a seat present on comms counts as
-present. **What `status` cannot tell you is how far behind a seat is** — for that, and for
+**Leads — `anthill status` DOES cover this wire, and it is not the whole story.** Comms is now the
+**only** wire presence reads, so `status` and `down` answer from it alone and a seat present on comms
+is simply present. _(This used to say "presence is multi-wire", which was true of the era that needed
+it: `status` once had its own single-wire copy and reported "nobody" with seats demonstrably working.
+The fix was one shared source — and that survived grapevine's removal, which is why this sentence
+changed and the guarantee did not.)_ **What `status` cannot tell you is how far behind a seat is** —
+for that, and for
 `never-followed` (which is _no record at all_, not a rounded-down zero), use `anthill comms
 positions`. Count it by hand when you want the receipts:
 

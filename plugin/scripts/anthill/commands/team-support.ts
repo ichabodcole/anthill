@@ -10,7 +10,7 @@
 import { emitError, type OutputFormat } from "../agent-layer.ts";
 import { hasDeparted, readPosition, readSessionOpen } from "../comms.ts";
 import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
-import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
+import { execCoord, parseJsonLine, resolveCoordCli } from "../coord.ts";
 
 /**
  * Load the resolved `.anthill/config.json` for a team command, or emit a clear
@@ -325,35 +325,22 @@ export function commsPresence(
   );
 }
 
-/**
- * PURE: combine presence across the wires into ONE verdict, fail-closed.
+/*
+ * `combinePresence` lived here — a fail-closed lattice over TWO wires, whose one
+ * rule was "`none` requires a positive observation of absence on EVERY wire
+ * consulted."
  *
- * The lattice, and every rule is the same rule: **`none` requires a positive
- * observation of absence on EVERY wire consulted.**
+ * It is gone because there is one wire. The rule it enforced did not go with it:
+ * it now lives where it always actually held, in `commsPresence`'s requirement
+ * that `none` means `spawned ≠ ∅ ∧ every spawned seat has a departure record`.
+ * A lattice over a single input is the identity function, and keeping one would
+ * imply a second wire exists to be combined with.
  *
- *   - either wire `present`  → present (union of seats)
- *   - either wire `unknown`  → unknown
- *   - both `none`            → none
- *
- * A team that runs one wire and not the other is the normal case, not an edge
- * case: this session armed comms alone and deliberately left the vine
- * unsubscribed. So a verdict derived from one wire is a verdict about that wire,
- * and the bug was reporting it as a verdict about the team.
+ * ⚠ Restore it — do not re-derive it — if anthill ever grows a second presence
+ * source. The subtle part was never the union; it was that `unknown` outranks
+ * `none`, and that ordering is the reason a broken wire cannot authorise a
+ * teardown. See `seatPresence` for the case analysis that justified removal.
  */
-export function combinePresence(a: SeatPresence, b: SeatPresence): SeatPresence {
-  const seats = [
-    ...(a.state === "present" ? a.seats : []),
-    ...(b.state === "present" ? b.seats : []),
-  ];
-  if (seats.length > 0) return { state: "present", seats: [...new Set(seats)].sort() };
-  const unknowns = [a, b].filter(
-    (p): p is { state: "unknown"; reason: string } => p.state === "unknown",
-  );
-  if (unknowns.length > 0) {
-    return { state: "unknown", reason: unknowns.map((u) => u.reason).join(" · ") };
-  }
-  return { state: "none" };
-}
 
 /**
  * Advisory pid liveness — `process.kill(pid, 0)`. ESRCH means gone; **EPERM
@@ -410,90 +397,56 @@ function commsPresenceFor(config: ResolvedConfig, channel: string): SeatPresence
 }
 
 /**
- * PURE classifier (the unit-test target) over what grapevine's `who` returned.
- *
- * Every branch that is not a positively-observed subscriber list is `unknown`.
- * The one that reads like an answer and is not: `daemon: false` arrives with
- * `ok: true` and parses cleanly — the call succeeded and told us the wire is
- * down. That is the least information available about who is present, not the
- * most.
- */
-export function classifyPresence(
-  result: { ok: boolean; stderrLine?: string },
-  parsed: { daemon?: boolean; subscribers?: string[] } | null,
-): SeatPresence {
-  if (!result.ok) {
-    return { state: "unknown", reason: result.stderrLine || "grapevine 'who' failed" };
-  }
-  if (!parsed) return { state: "unknown", reason: "grapevine 'who' returned no parseable JSON" };
-  if (parsed.daemon === false) {
-    return { state: "unknown", reason: "grapevine daemon not running — no presence available" };
-  }
-  // Absent is not empty. A payload with no `subscribers` key is a shape we did
-  // not expect, and guessing "empty" is the fail-open direction.
-  if (!parsed.subscribers) {
-    return { state: "unknown", reason: "grapevine 'who' returned no subscribers field" };
-  }
-  // Dedupe by handle — a seat with >1 live connection (vine tail + board tail)
-  // otherwise shows up twice. Presence is "who's here", not sockets.
-  const seats = [...new Set(parsed.subscribers)].sort();
-  return seats.length === 0 ? { state: "none" } : { state: "present", seats };
-}
-
-/**
- * Seat presence on the grapevine channel. NEVER throws — but a failure now
- * reports `unknown` rather than an empty list.
+ * Seat presence. **Comms is the sole wire, so this IS `commsPresenceFor`** — the
+ * grapevine leg is gone, per the human's Q4 ruling that grapevine leaves
+ * anthill's model entirely (`docs/projects/comms-as-default/proposal.md`).
  *
  * The previous contract was "any failure returns `[]` so a broken vine can never
  * wedge a teardown." That traded a wedged teardown for a silent one: the only
  * consumer is `down`'s guard, which read `[]` as "the team has stood down" and
  * killed the panes. `--force` is where "tear down anyway" belongs — a human
- * saying so, not a guard guessing on our behalf.
+ * saying so, not a guard guessing on our behalf. **That contract survives the
+ * removal intact**; it just has one wire to uphold it on instead of two.
+ *
+ * ## What removing the vine leg actually changed, by case analysis
+ *
+ * The verdict was `combinePresence(vine, comms)`: present wins, else any
+ * `unknown` survives, else `none`. Enumerating both legs, **the vine could
+ * change the answer in exactly one cell**:
+ *
+ * | vine      | comms     | was       | now       |
+ * | --------- | --------- | --------- | --------- |
+ * | `none`    | any       | = comms   | = comms   |
+ * | `unknown` | `present` | present   | present   |
+ * | `unknown` | `unknown` | unknown   | unknown   |
+ * | `unknown` | **`none`**| **unknown** (blocks teardown) | **`none`** (permits it) |
+ *
+ * `present` was unreachable for the vine — nothing joins that channel any more —
+ * so the leg was inert everywhere except when grapevine was **unresolvable**.
+ *
+ * **And that one cell was a bug, not a safety margin.** `resolveCoordCli` throws
+ * when spellbook's grapevine is absent, which is the ordinary state of a
+ * consuming project that installed anthill after the swap. For them the verdict
+ * could never be `none`, so **`down` blocked every clean teardown and demanded
+ * `--force`** — the "degrades into always-block" failure this file's own comments
+ * name as the thing that "trains people to pass `--force` reflexively and thereby
+ * removes the guard for real."
+ *
+ * **The safety argument does not rest on the vine.** It rests on `none` requiring
+ * a POSITIVE observation of departure (`spawned ≠ ∅ ∧ every spawned seat has a
+ * departure record`), which is a comms property and is unchanged here.
+ *
+ * ⚠ `humans` is gone with the leg. It was read from grapevine's `who` payload and
+ * was anthill's ONLY source of it. Ruled 2026-08-08: anthill does not give agents
+ * visibility into the human — **the arrow points the other way.** The capability
+ * was nominal and pointed the wrong direction, so removing it costs nothing.
  */
-export interface TeamPresence {
-  presence: SeatPresence;
-  /** Humans watching the VINE. Not part of the presence verdict — they are
-   * observers, not seats — but read from the same payload, which is why this
-   * rides along rather than costing a second call. */
-  humans: string[];
-}
-
-export async function seatPresence(
-  channel: string,
-  config?: ResolvedConfig,
-): Promise<TeamPresence> {
-  let vine: SeatPresence;
-  let humans: string[] = [];
-  try {
-    const grapevineCli = resolveCoordCli("grapevine");
-    const who = await execCoord(grapevineCli, ["who", channel]);
-    const parsed = parseJsonLine<{
-      daemon?: boolean;
-      subscribers?: string[];
-      humans?: string[];
-    }>(who.stdout);
-    vine = classifyPresence(
-      { ok: who.ok, stderrLine: firstErrorLine(who.stderr, "could not read channel") },
-      parsed,
-    );
-    humans = [...new Set(parsed?.humans ?? [])].sort();
-  } catch (err) {
-    vine = { state: "unknown", reason: `grapevine CLI unresolved: ${(err as Error).message}` };
-  }
-  // With no config we cannot reach the comms wire at all — and saying so is the
-  // point. Returning the vine's verdict alone here would be the original bug
-  // with an extra step: a one-wire answer presented as a team-wide one.
+export function seatPresence(channel: string, config?: ResolvedConfig): SeatPresence {
+  // No config means the comms wire cannot be reached AT ALL, and saying so is
+  // the point. There is no second wire to fall back to any more, so the honest
+  // answer is `unknown` — never an absence we did not observe.
   if (!config) {
-    return {
-      presence:
-        vine.state === "none"
-          ? {
-              state: "unknown",
-              reason: "comms wire not consulted (no config) — vine alone reported nobody",
-            }
-          : vine,
-      humans,
-    };
+    return { state: "unknown", reason: "comms wire not consulted — no config" };
   }
-  return { presence: combinePresence(vine, commsPresenceFor(config, channel)), humans };
+  return commsPresenceFor(config, channel);
 }
