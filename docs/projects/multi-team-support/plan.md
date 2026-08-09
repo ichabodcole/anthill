@@ -565,6 +565,43 @@ said "per configured team" while Phase 1 is what creates a second team. Shipped 
 parameter called with `[config.paths.teamDir]`, so Phase 1 changes a call site rather than a
 signature. The comms segment comes from `COMMS_DIR`, the constant `commsLogPath()` builds with.
 
+### Phase 1
+
+**1.1 + 1.2 — ⚖ landed as ONE commit**, on the plan's own merge rationale (0.1): 1.2 is three checks
+_inside_ the function 1.1 adds, so shipping 1.1 alone puts a `resolveProject` on `develop` that
+accepts a two-team config it is about to start rejecting.
+
+**1.1 — ⚖ `ResolvedConfig` gains a `name`, and `resolveConfig` an optional `ctx.name`.** The plan
+specified `team(name)` mirroring `seat(handle)` but never said where the name lives, and
+`ResolvedConfig` had no field for it. The alternative — `teams: Array<{name, config}>` — pushes
+unwrapping onto every consumer, and **Phase 6.1's `Anthill-Team` trailer needs the name from the
+resolved team anyway**. `resolveConfig`'s _signature_ is unchanged as the plan requires (the new ctx
+key is optional, defaulting to `default`). `forkedFrom`/`forkedAt` are carried on the same field for
+3.1.
+
+**1.1 — 🕳 the plan never said which keys are project-level vs team-level.** It listed the entry
+shape (`lead, seats, channel?, paths?, gate?, grounding?, forkedFrom?, forkedAt?`) but not what
+happens to a top-level `version`, `launch`, `grounding` or `gate` beside a `teams` map — and a
+`version` per team is incoherent, since it describes the footprint layout the whole repo shares.
+**Decided: `version`/`launch`/`grounding`/`gate` cascade in as defaults, an entry overrides what it
+names.** `channel`/`seats`/`lead`/`paths` are team-level, and **a `teams` map beside any of them at
+the top level throws**, naming both — that state is a half-finished conversion, and ignoring the
+strays would make the incumbent team silently vanish, which is the one outcome this project forbids.
+
+**1.1 — 🕳 spec §5 is a live contract that code cites by number, and the plan's file lists never
+mention it.** `config.ts`'s header says _"Schema: spec §5"_, and §0 of the design doc says §5–§8 "are
+kept current, because a stale contract misleads more than it records". Added **§5a** documenting the
+`teams` map, the structural detection and no-version-stamp rationale, the cascade rules, and all
+three cross-team constraints. **Every remaining phase that touches the schema has the same
+unlisted dependency.**
+
+**0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
+template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
+by someone else) — so `retro.md` would have been the second omission in the same table. Both rows
+added, plus a correction to its closing line, which still said `init` adds _"the `.anthill/scratch/`
+gitignore line"_ (singular, literal). **A table nothing regenerates goes stale silently, and this one
+had already been stale for eight days before this project touched it.**
+
 ---
 
 ## Filed separately — deliberately NOT in this plan

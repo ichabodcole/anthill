@@ -9,8 +9,12 @@
  * Split for testability:
  * - `resolveConfig(raw, ctx)` — PURE: validate + apply plugin defaults + build
  *   resolvers. No filesystem; feed it a fixture object and a fake projectRoot.
+ *   Resolves ONE team.
+ * - `resolveProject(raw, ctx)` — PURE: detect the shape (flat, or a `teams` map)
+ *   and resolve EVERY team, in config order. Built on `resolveConfig`, not
+ *   instead of it, so the single-team answer is the same function's.
  * - `findConfigFile(startDir)` — walk up for `.anthill/config.json`.
- * - `loadConfig(startDir)` — find + read + parse + resolve (the fs entrypoint).
+ * - `loadConfig(startDir)` / `loadProject(startDir)` — the fs entrypoints.
  *
  * Schema: spec §5 (`docs/architecture/2026-06-28-anthill-portable-team-os-design.md`).
  */
@@ -62,10 +66,68 @@ export interface RawTeamConfig {
   paths?: Partial<TeamPaths>;
   launch?: string;
   gate?: string;
+  /** Lineage, when this team was forked from another. */
+  forkedFrom?: string;
+  forkedAt?: string;
+}
+
+/**
+ * The on-disk shape of a config carrying a `teams` MAP (one project, many teams).
+ * Detected structurally — `"teams" in raw` — and **no new version is stamped**:
+ * `version` means FOOTPRINT LAYOUT (`migrate.ts`), so overloading it with schema
+ * shape would make `team-migrate` report "already at v3" while `CURRENT_VERSION`
+ * is 2, reading as "ahead of the plugin" when nothing moved on disk. AWS has
+ * carried `[default]` beside `[profile foo]` for a decade with no version field.
+ */
+export interface RawProjectConfig {
+  version?: number;
+  launch?: string;
+  grounding?: string[];
+  gate?: string;
+  teams?: Record<string, RawTeamConfig>;
+}
+
+/** The name a v2 flat config's single team resolves under. */
+export const DEFAULT_TEAM_NAME = "default";
+
+/** Keys a team entry inherits from the project level unless it names its own. */
+const PROJECT_LEVEL_KEYS = ["version", "launch", "grounding", "gate"] as const;
+
+/**
+ * Keys that belong to a TEAM and must not appear at the project level beside a
+ * `teams` map. Their presence there means a half-finished conversion, and
+ * silently ignoring them makes the incumbent team vanish.
+ */
+const TEAM_LEVEL_KEYS = ["channel", "seats", "lead", "paths"] as const;
+
+/**
+ * A project: one or more teams, resolved in config order.
+ *
+ * Mirrors the `seats`/`seat()` pattern rather than exposing a Map, and carries
+ * **no `soleTeam` field**. A top-level field is TOTAL, so an absence cannot carry
+ * a verdict — `null` and `0` are different facts and must never be fused
+ * (`team-support.ts`, `agent-layer.ts`, `cli.ts` all say this). Deciding which
+ * team applies is `resolveTeam`'s job, and it computes the single-team case in
+ * one line inside the function whose job that is.
+ */
+export interface ResolvedProject {
+  projectRoot: string;
+  configPath: string;
+  /** Every configured team, in config order. */
+  teams: ResolvedConfig[];
+  /** Look up a team by name — mirrors `seat(handle)`. */
+  team(name: string): ResolvedConfig | undefined;
 }
 
 /** A fully-resolved config: defaults applied, helpers + path resolvers attached. */
 export interface ResolvedConfig {
+  /**
+   * This team's name — the key under `teams` in a v3 config, or `"default"` for a
+   * v2 flat one. NOT derived from `channel`: AWS, Terraform and Docker all
+   * terminate on a *named* default, it gives `anthill team use default` something
+   * to say, and it gives an error message a noun.
+   */
+  name: string;
   version: number;
   channel: string;
   /** The lead handle: explicit `lead`, else the sole `role:"lead"` seat. May be undefined. */
@@ -85,6 +147,9 @@ export interface ResolvedConfig {
    * composition to the agent is what this exists to stop.
    */
   gate: string | undefined;
+  /** The team this one was forked from, and when — lineage, for `anthill team ls`. */
+  forkedFrom: string | undefined;
+  forkedAt: string | undefined;
   /** Directory containing `.anthill/` — the resolved project root. */
   projectRoot: string;
   /** Absolute path to the config file (when loaded from disk; "" for pure resolves). */
@@ -147,7 +212,7 @@ function validateSeat(raw: unknown, index: number): SeatConfig {
  */
 export function resolveConfig(
   raw: unknown,
-  ctx: { projectRoot: string; configPath?: string },
+  ctx: { projectRoot: string; configPath?: string; name?: string },
 ): ResolvedConfig {
   if (!isObject(raw)) {
     throw new ConfigError("config must be a JSON object");
@@ -210,6 +275,7 @@ export function resolveConfig(
 
   const projectRoot = ctx.projectRoot;
   const resolved: ResolvedConfig = {
+    name: ctx.name ?? DEFAULT_TEAM_NAME,
     version: typeof raw.version === "number" ? raw.version : DEFAULT_VERSION,
     channel: raw.channel,
     lead,
@@ -220,6 +286,8 @@ export function resolveConfig(
     // No default: a wrong gate is worse than a named absence, because an agent
     // that runs someone else's gate command gets a green that means nothing.
     gate: typeof raw.gate === "string" && raw.gate.trim() !== "" ? raw.gate : undefined,
+    forkedFrom: typeof raw.forkedFrom === "string" ? raw.forkedFrom : undefined,
+    forkedAt: typeof raw.forkedAt === "string" ? raw.forkedAt : undefined,
     projectRoot,
     configPath: ctx.configPath ?? "",
 
@@ -234,6 +302,149 @@ export function resolveConfig(
     seatDocPath: (handle: string) => resolve(underRoot(projectRoot, paths.seatDir), `${handle}.md`),
   };
   return resolved;
+}
+
+/**
+ * A team name must be usable as a tmux session key and a directory segment.
+ * Mirrors `SAFE_SESSION_KEY` (`team-spawn.ts`) — the name reaches a shell prefix.
+ */
+const SAFE_TEAM_NAME = /^[a-zA-Z0-9._-]+$/;
+
+/**
+ * The checks that only exist once a project has MORE THAN ONE team. Never runs on
+ * the v2 flat path: a lone team cannot collide with itself, and criterion 1 is
+ * that a single-team project sees zero change.
+ */
+function validateAcrossTeams(teams: ResolvedConfig[]): void {
+  // Each unordered pair once; both orderings are checked inside, so the message
+  // can always name the offender rather than whichever came first in the config.
+  for (let i = 0; i < teams.length; i++) {
+    for (let j = i + 1; j < teams.length; j++) {
+      const a = teams[i] as ResolvedConfig;
+      const b = teams[j] as ResolvedConfig;
+
+      if (a.channel === b.channel) {
+        throw new ConfigError(
+          `config.teams.${b.name}: channel "${b.channel}" is already used by team "${a.name}". ` +
+            "A channel is the message log's filename, so two teams sharing one would read and " +
+            "write each other's messages.",
+        );
+      }
+
+      // PREFIX-free, which is stricter than unique: `relatedSessions`
+      // (`team-attach.ts`) treats `<channel>-<suffix>` as the SAME team's sibling
+      // session, so `anthill-dev` + `anthill-dev-lean` would put a fork's panes in
+      // its parent's attach menu — and the human would reach the wrong team.
+      const nested = b.channel.startsWith(`${a.channel}-`)
+        ? { outer: a, inner: b }
+        : a.channel.startsWith(`${b.channel}-`)
+          ? { outer: b, inner: a }
+          : undefined;
+      if (nested) {
+        throw new ConfigError(
+          `config.teams.${nested.inner.name}: channel "${nested.inner.channel}" has team ` +
+            `"${nested.outer.name}"'s channel "${nested.outer.channel}" as a prefix. Channels must ` +
+            "be prefix-free, not merely unique: `anthill attach` folds `<channel>-<suffix>` sessions " +
+            `in as siblings of \`<channel>\`, so "${nested.inner.name}"'s panes would appear in ` +
+            `"${nested.outer.name}"'s menu.`,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Resolve a project — every configured team — from one raw config. PURE.
+ *
+ * **Added BESIDE `resolveConfig` rather than replacing it**, which is this
+ * codebase's idiom for adding a layer (`migrate.ts` adds planners to a registry
+ * rather than generalizing one). `resolveConfig` still resolves ONE team entry
+ * and is unchanged, so the v2 path is *provably* byte-identical: it is literally
+ * the same function on the same object.
+ *
+ * Shape detection is STRUCTURAL — `"teams" in raw` — and nothing stamps a new
+ * version. See `RawProjectConfig` for why.
+ */
+export function resolveProject(
+  raw: unknown,
+  ctx: { projectRoot: string; configPath?: string },
+): ResolvedProject {
+  if (!isObject(raw)) {
+    throw new ConfigError("config must be a JSON object");
+  }
+
+  const teams: ResolvedConfig[] = [];
+
+  if ("teams" in raw) {
+    const rawTeams = raw.teams;
+    if (!isObject(rawTeams)) {
+      throw new ConfigError("config.teams must be a JSON object mapping team name → team config");
+    }
+    const names = Object.keys(rawTeams);
+    if (names.length === 0) {
+      throw new ConfigError("config.teams must configure at least one team");
+    }
+
+    // A half-finished conversion is the hazard: add `teams`, forget to delete the
+    // flat keys, and the incumbent team silently disappears. An empty or missing
+    // team is the one outcome this layer must never produce, so name both sides.
+    const strays = TEAM_LEVEL_KEYS.filter((k) => raw[k] !== undefined);
+    if (strays.length > 0) {
+      throw new ConfigError(
+        `config has both a \`teams\` map and top-level ${strays.map((k) => `\`${k}\``).join(", ")} — ` +
+          "a team's own keys belong inside its entry. Move them under the team they describe, " +
+          "or remove `teams` to keep the single-team shape; leaving both would silently drop the " +
+          "top-level team.",
+      );
+    }
+
+    for (const name of names) {
+      const entry = rawTeams[name];
+      if (!isObject(entry)) {
+        throw new ConfigError(`config.teams.${name} must be a JSON object`);
+      }
+      // Project-level keys cascade in as DEFAULTS; the entry overrides what it
+      // names. `channel` defaults to the team's own name, so `{lead, seats}` is a
+      // complete entry.
+      const merged: Record<string, unknown> = { channel: name, ...entry };
+      for (const key of PROJECT_LEVEL_KEYS) {
+        if (merged[key] === undefined && raw[key] !== undefined) merged[key] = raw[key];
+      }
+      // Every team gets its own container by default, so two teams' living docs
+      // cannot land on top of each other.
+      if (!isObject(merged.paths) || typeof merged.paths.teamDir !== "string") {
+        merged.paths = { teamDir: `${CONFIG_DIR}/teams/${name}`, ...(merged.paths ?? {}) };
+      }
+      // The name reaches a shell prefix — `SAFE_SESSION_KEY` in `team-spawn.ts`
+      // guards the session key built from it. Checked here, at the only place a
+      // name is minted, rather than at each of the places it is used.
+      if (!SAFE_TEAM_NAME.test(name)) {
+        throw new ConfigError(
+          `config.teams: "${name}" is not a usable team name — it becomes a tmux session key and a ` +
+            `directory segment, so it must match ${String(SAFE_TEAM_NAME)}.`,
+        );
+      }
+      try {
+        teams.push(resolveConfig(merged, { ...ctx, name }));
+      } catch (err) {
+        // Name WHICH team failed — with N teams, "seats is required" alone does
+        // not say where to look.
+        throw err instanceof ConfigError
+          ? new ConfigError(`config.teams.${name}: ${err.message}`)
+          : err;
+      }
+    }
+    validateAcrossTeams(teams);
+  } else {
+    teams.push(resolveConfig(raw, { ...ctx, name: DEFAULT_TEAM_NAME }));
+  }
+
+  return {
+    projectRoot: ctx.projectRoot,
+    configPath: ctx.configPath ?? "",
+    teams,
+    team: (name: string) => teams.find((t) => t.name === name),
+  };
 }
 
 /**
@@ -267,6 +478,25 @@ export function findConfigFile(startDir: string = process.cwd()): {
  * Clear `ConfigError`s for a missing file (via `findConfigFile`) or malformed JSON.
  */
 export function loadConfig(startDir: string = process.cwd()): ResolvedConfig {
+  const { raw, projectRoot, configPath } = readConfigFile(startDir);
+  return resolveConfig(raw, { projectRoot, configPath });
+}
+
+/**
+ * The fs entrypoint for the PROJECT — beside `loadConfig`, same discovery.
+ * Resolves every configured team; deciding which one applies is `resolveTeam`'s job.
+ */
+export function loadProject(startDir: string = process.cwd()): ResolvedProject {
+  const { raw, projectRoot, configPath } = readConfigFile(startDir);
+  return resolveProject(raw, { projectRoot, configPath });
+}
+
+/** Find + read + parse — the shared half of `loadConfig` and `loadProject`. */
+function readConfigFile(startDir: string): {
+  raw: unknown;
+  projectRoot: string;
+  configPath: string;
+} {
   const { configPath, projectRoot } = findConfigFile(startDir);
 
   let text: string;
@@ -278,14 +508,11 @@ export function loadConfig(startDir: string = process.cwd()): ResolvedConfig {
     );
   }
 
-  let raw: unknown;
   try {
-    raw = JSON.parse(text);
+    return { raw: JSON.parse(text), projectRoot, configPath };
   } catch (err) {
     throw new ConfigError(
       `invalid JSON in ${configPath}: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
-
-  return resolveConfig(raw, { projectRoot, configPath });
 }

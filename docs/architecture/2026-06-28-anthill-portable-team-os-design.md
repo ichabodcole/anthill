@@ -215,6 +215,65 @@ current footprint version (`2`).
   `channel` + `seats`.
 - `launch` is a template (`{handle}` substituted); defaults to the plugin-namespaced join.
 
+### 5a. Many teams in one project (added 2026-08-09)
+
+> **Current.** Implemented by `resolveProject()` / `loadProject()` in `config.ts`, beside the
+> single-team `resolveConfig()` / `loadConfig()`, which are unchanged.
+
+A project may carry a **`teams` map** instead of a flat team. **The shape is detected structurally —
+`"teams" in raw` — and NO new version is stamped.** `version` means _footprint layout_ (what
+`migrate` relocates); overloading it with schema shape would make `anthill migrate` report
+_"already at v3"_ while `CURRENT_VERSION` is `2`, which reads as "ahead of the plugin" when nothing
+moved on disk. AWS has carried `[default]` beside `[profile foo]` for a decade with no version field
+at all.
+
+```jsonc
+{
+  "version": 2, // still 2 — the footprint layout did not move
+  "gate": "bun run check", // project-level: cascades into every team
+  "grounding": ["AGENTS.md"],
+  "teams": {
+    "dev": {
+      "lead": "maestro",
+      "seats": [/* … */],
+      "paths": { "teamDir": ".anthill" }, // the incumbent keeps its existing docs in place
+    },
+    "dev-lean": {
+      "lead": "boss",
+      "seats": [/* … */],
+      "forkedFrom": "dev",
+      "forkedAt": "2026-08-09",
+    },
+  },
+}
+```
+
+**Field rules, in addition to the flat ones above:**
+
+- **A flat config is one team named `default`.** Not derived from `channel`: AWS, Terraform and
+  Docker all terminate on a _named_ default, it gives `anthill team use default` something to say,
+  and it gives an error message a noun.
+- **`version`, `launch`, `grounding` and `gate` are project-level and cascade in**; an entry
+  overrides what it names and inherits the rest. `channel`, `seats`, `lead` and `paths` belong to a
+  team, and **a `teams` map beside any of them at the top level is an error** — that state is a
+  half-finished conversion, and ignoring the strays would silently drop the incumbent team.
+- **`channel` is optional and defaults to the team's name**, so `{"teams": {"dev": {lead, seats}}}`
+  is complete.
+- **`teamDir` defaults to `.anthill/teams/<name>`** so two teams' living docs cannot land on top of
+  each other. **The incumbent team gets an explicit `paths.teamDir: ".anthill"` written for it** at
+  conversion time — zero file moves, and new teams still get the new default.
+- **Cross-team rules**, all of which only exist above one team: names must match
+  `/^[a-zA-Z0-9._-]+$/` (a name becomes a tmux session key and a directory segment); **channels must
+  be unique**, since a channel is the message log's filename; and channels must be **prefix-free**,
+  which is stricter — `anthill attach` folds `<channel>-<suffix>` sessions in as siblings of
+  `<channel>`, so `anthill-dev` + `anthill-dev-lean` would put a fork's panes in its parent's menu.
+- **`forkedFrom` / `forkedAt`** are lineage, surfaced by `anthill team ls`.
+
+**Which team applies is resolved AMBIENTLY — an agent never names one in a command.** That ladder
+(`--team` → `ANTHILL_TEAM` → the pin → the sole team → throw) is `resolveTeam`'s, and
+**`ResolvedProject` deliberately carries no `soleTeam` field**: a top-level field is total, so an
+absence cannot carry a verdict.
+
 ---
 
 ## 6. `.anthill/` scaffold templates (Piece 3)
@@ -226,18 +285,25 @@ current footprint version (`2`).
 What `anthill init` renders into a target repo. Generalized from dream-flute, with the three
 principles written in and all domain (wall/seam/engine) stripped.
 
-| Template          | Content                                                                                                                                                                                                           | Fill state                            |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| `README.md` (SOP) | Stigmergy framing + the 3 principles; three homes for knowledge; shared practices; workflow (convene→work→finalize); commit discipline; the finalize+reflection ritual (curation-as-pheromone + structure-adapts) | Fully written, project-agnostic       |
-| `dev/seams.md`    | Single-source inter-seat contracts: what belongs here, who owns a contract, the "whoever moves a boundary updates this + its proof" maintenance trigger. Contracts accrete as discovered.                         | Skeleton + guidance, no contracts yet |
-| `dev/<handle>.md` | One per seat. Fields (locked): **Who I am · Scope · Boundaries · Relationships · Taste & reflexes · Hard-won lessons · Anti-patterns · Candidates**. Header pre-filled from config; body scaffolded prompts.      | Header from config; body scaffolded   |
-| `dev/README.md`   | Roster table generated from `config.seats`.                                                                                                                                                                       | Generated                             |
-| `paper-cuts.md`   | Friction log: append-during-session, triage-by-cost, track-disposition (fixed / filed upstream / graduated to a project).                                                                                         | Template + method                     |
+| Template                             | Content                                                                                                                                                                                                           | Fill state                            |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `README.md` (SOP)                    | Stigmergy framing + the 3 principles; three homes for knowledge; shared practices; workflow (convene→work→finalize); commit discipline; the finalize+reflection ritual (curation-as-pheromone + structure-adapts) | Fully written, project-agnostic       |
+| `dev/seams.md`                       | Single-source inter-seat contracts: what belongs here, who owns a contract, the "whoever moves a boundary updates this + its proof" maintenance trigger. Contracts accrete as discovered.                         | Skeleton + guidance, no contracts yet |
+| `dev/<handle>.md`                    | One per seat. Fields (locked): **Who I am · Scope · Boundaries · Relationships · Taste & reflexes · Hard-won lessons · Anti-patterns · Candidates**. Header pre-filled from config; body scaffolded prompts.      | Header from config; body scaffolded   |
+| `dev/README.md`                      | Roster table generated from `config.seats`.                                                                                                                                                                       | Generated                             |
+| `paper-cuts.md`                      | Friction log: append-during-session, triage-by-cost, track-disposition (fixed / filed upstream / graduated to a project).                                                                                         | Template + method                     |
+| `principles.md` _(added 2026-08-01)_ | What this team learned the hard way, each entry carrying the scar that paid for it. What belongs here vs. the SOP; how one gets added at finalize.                                                                | Guidance only — **empty by design**   |
+| `retro.md` _(added 2026-08-09)_      | The three retro questions and the two rules that make them checkable (Q3 answers are falsifiable hypotheses; agreement is not truth). Newest-first entries, written by the lead at finalize.                      | Guidance only — **empty by design**   |
 
-**Running scratch:** per-session, append-only, gitignored — `.anthill/scratch/<handle>/<date>-<slug>.md`.
+**Running scratch:** per-session, append-only, gitignored — `<teamDir>/scratch/<handle>/<date>-<slug>.md`.
 `anthill:join` mints the session file; the seat appends as it works; `anthill:finalize-session`
-curates it into the seat doc. Disposable after synthesis. `anthill init` adds the
-`.anthill/scratch/` gitignore line.
+curates it into the seat doc. Disposable after synthesis.
+
+**Every path above resolves through `paths`** (§5) — `init` renders team-level docs under `teamDir`,
+the seat layer under `seatDir`, and `seams.md` at `seams`; the `dev/` segment in the template tree is
+_layout_, not a path. **`anthill init` ensures the gitignore lines derived from that team's
+`teamDir`** (`<teamDir>/scratch/` and `<teamDir>/comms`, one pair per configured team) plus the
+repo-root `.bounty-session` marker.
 
 ---
 
