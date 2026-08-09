@@ -116,7 +116,10 @@ The three knobs are real (`config.ts:28-32`) and there are exactly four resolver
 - **`anthill init` writes everything relative to `teamDirPath()` and never consults
   `seatDirPath()` or `seamsPath()`** (`team-init.ts:217-233`). The `dev/` segment comes from the
   template tree's layout, hard-coded.
-- **`seatDirPath()` is never called anywhere in non-test source.**
+- **`seatDirPath()` itself is never called in non-test source** — but state it precisely, because the
+  loose reading is wrong: `seatDir` **does** reach source, through `seatDocPath()`
+  (`team-join.ts:653, :717`; `team-convene.ts:285`). So the knob is half-wired — consumed for the seat
+  DOC path, ignored by the renderer — which is exactly why the two disagree.
 - **The break does not self-heal.** init writes `<teamDir>/dev/<handle>.md`; `join` sends the seat to
   `seatDocPath()` = `.anthill/dev/<handle>.md`; the seat reports a missing doc; init re-renders to
   the other location. **The loop never closes.**

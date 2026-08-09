@@ -105,8 +105,12 @@ emission in the codebase), and the board `tail`/`state` reads (`team-join.ts:437
 **1. The join call itself is composed, and nothing precedes it.** `join/SKILL.md:20,44` tells an
 agent to run `anthill join <handle>` — assembled from a human's natural-language utterance. **There
 is no manifest before the manifest**, so the hypothesis is circular: emission only begins _after_ the
-agent has already correctly identified the team. **13 of the 15 CLI commands are only ever reached by
-composition.**
+agent has already correctly identified the team. **Nearly every CLI command is only ever reached by
+composition** — the emitted set covers the wires and the land, and nothing else.
+
+_(This sentence carried a count — "13 of the 15" — which was wrong: the registry at `cli.ts:66-79`
+holds 14 subcommands. Replaced with the assertion rather than a corrected number, per `AGENTS.md`'s
+own rule to cite assertions and never counts: a count goes stale silently, an assertion does not.)_
 
 **2. The `comms` skill is 100% composed — structurally, not sloppily.** Zero emitted strings in the
 whole skill: `read --last <N>`, `read --since <id>`, `read --id <id>`, `send --stdin`,
