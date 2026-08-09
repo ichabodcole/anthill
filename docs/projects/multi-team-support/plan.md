@@ -530,6 +530,55 @@ fact and point at `team show`.**
 (nothing user-facing changes) and it is also why this task is easy to skip. It is scheduled here,
 before Phase 4, so the concept lands before `bootstrap` starts routing people to it.
 
+### 3.6 — Both Phase-3 defects were found by hand and left unguarded
+
+**Type:** `fix:` (guard 1) + `test:` (guard 2) · **Files:** `plugin/scripts/anthill/team-resolve.ts`,
+`commands/team-team.ts` (`ls`'s catch), `commands/team-support.liveteams.test.ts` ·
+**Added 2026-08-09 from the Phase 3 review.**
+
+**The two 🕳 entries above are the same story twice: unit tests were green, an end-to-end run found
+the defect, the fix landed — and nothing now holds either fix in place.** Both were _"a command that
+helps you resolve ambiguity must not require ambiguity to be already resolved"_, and both can
+silently come back.
+
+**Guard 1 — `ls` tells ambiguity from a typo by REGEXING A PROSE MESSAGE.** `team-team.ts`:
+
+```ts
+if (!(err instanceof ConfigError) || !/nothing selected one/.test(err.message)) { …exit(1) }
+```
+
+**Measured, not argued:** reword rung 5's message from `and nothing selected one:` to
+`and none was selected:` and **the whole suite stays green at 0 fail** while `anthill team ls` starts
+erroring on a two-team repo with no pin — the exact regression the record above says was measured and
+fixed. A user-facing sentence is the most likely thing in this file to be polished, and polishing it
+breaks a control-flow branch three files away.
+
+**Fix: make the rung-5 case a TYPE.** Export `AmbiguousTeamError extends ConfigError` from
+`team-resolve.ts`, throw it at rung 5 only, and have `ls` catch `err instanceof AmbiguousTeamError`.
+The message stays free to change; `ConfigError` is already a class, so this is the existing idiom and
+not a new mechanism. **This codebase does not infer verdicts from strings** — `team-support.ts:181-196`
+and `agent-layer.ts:25-33` are the same rule stated about fields.
+
+**Guard 2 — `liveTeams` has NO test, and it is the function the `team use` fix lives in.**
+`team-support.liveteams.test.ts` covers `describeLiveTeam`, the pure formatter — not `liveTeams`,
+where _"no session-open record is a positive observation of never-convened"_ was added. Delete that
+early-`continue` and every fresh two-team project refuses both teams again, with the gate green.
+
+**Fix: two tests in the existing file.** `mkdtempSync(tmpdir())` + `afterAll(rmSync)` per the
+Execution-model conventions, and **register the file in `tmpleak.guard.test.ts`'s `ALLOWED` map** if
+the mint is module-level — it is currently listed nowhere because it touches no filesystem yet.
+
+- **A two-team project with no session-open record → `liveTeams` returns `[]`.** _This is the
+  measured bug; name it in the test title so a future reader knows the empty array is the point._
+- **A team WITH a session-open record and an `unknown` presence → still counted live.** The
+  asymmetry (`unknown` blocks) is deliberate and must not be "simplified" away by someone who reads
+  the first test as "absence means idle".
+
+**Tasks:** guard 1's mutation check first — reword the message, confirm `bun test` still passes _and_
+`team ls` breaks, then implement and confirm the reword no longer breaks it → guard 2's two tests,
+each verified failing against a locally-reverted `liveTeams` → `bun run check` → **two commits**, a
+`fix:` and a `test:`, because release-please shows one and hides the other.
+
 ---
 
 ## Phase 4 — bootstrap `--add-team`
