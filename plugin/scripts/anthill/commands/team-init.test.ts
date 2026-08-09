@@ -1,5 +1,5 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import {
@@ -178,6 +178,45 @@ describe("templateDestination (the template tree's `dev/` is layout, not a path)
     ]) {
       expect(templateDestination(rel, defaults)).toBe(join(defaults.teamDir, rel));
     }
+  });
+});
+
+describe("the bundled template set", () => {
+  const bundled = join(
+    new URL("../../../templates/docs-team", import.meta.url).pathname.replace(/\/$/, ""),
+  );
+
+  it("ships retro.md, the doc finalize-session tells the lead to write", () => {
+    // It had no template, no resolver and no CLI reference — orphaned by
+    // construction, at a path only skill prose named.
+    expect(existsSync(join(bundled, "retro.md"))).toBe(true);
+  });
+
+  it("renders retro.md to teamDir, then skips it once the team has written in it", () => {
+    const paths = {
+      teamDir: "/proj/.anthill",
+      seatDir: "/proj/.anthill/dev",
+      seams: "/proj/.anthill/dev/seams.md",
+    };
+    const templates: TemplateFile[] = [
+      { relPath: "retro.md", content: readFileSync(join(bundled, "retro.md"), "utf8") },
+    ];
+    const fresh = renderTemplates({
+      templates,
+      config: CONFIG,
+      dest: (rel) => templateDestination(rel, paths),
+      exists: () => false,
+    });
+    expect(fresh.writes.map((w) => w.path)).toEqual(["/proj/.anthill/retro.md"]);
+
+    const again = renderTemplates({
+      templates,
+      config: CONFIG,
+      dest: (rel) => templateDestination(rel, paths),
+      exists: (p) => p === "/proj/.anthill/retro.md",
+    });
+    expect(again.writes).toHaveLength(0);
+    expect(again.skipped).toEqual(["/proj/.anthill/retro.md"]);
   });
 });
 

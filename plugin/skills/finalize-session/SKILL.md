@@ -78,7 +78,8 @@ _live_. Don't skip it on a real session.
      (next), not your seat doc.
    - **A HYPOTHESIS is not a lesson — hold it for the retro (step 4.5).** A lesson says what you now
      know; a hypothesis says what you predict and how it could be proven wrong, and the next convene
-     has to read it back. **`.anthill/retro.md` does not exist yet at this step**, which is exactly
+     has to read it back. **This session's retro is not written until step 4.5** — `.anthill/retro.md`
+     holds the ritual's guidance and previous sessions' entries, and nothing of yours — which is exactly
      why this line is here: two seats on the ritual's first run independently wrote their hypotheses
      into their seat docs, from correct reasoning — a hypothesis nobody re-reads is worthless, and at
      step 2 the seat doc is the only home with a re-read moment. **The ordering created the

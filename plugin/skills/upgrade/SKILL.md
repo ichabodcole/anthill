@@ -196,14 +196,18 @@ diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" .anthill/README.md
 ```
 
 Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
-`principles.md`.
+`principles.md`, `retro.md`.
 
-**Do NOT diff `retro.md` — there is no template for it and there never will be.** It is written by
-the team at finalize, not rendered by `init`, so the left-hand side of that diff does not exist and
-the command errors. **This is the failure mode step 0 spends five lines warning about, arriving from
-the other direction:** there, an empty diff falsely reported "nothing to reconcile"; here, a missing
-template makes a `diff` fail inside a step whose whole thesis is that a quiet result is a lie. The
-general rule worth carrying: **before you trust a diff, confirm both sides exist.**
+**On `retro.md`, expect a diff the size of the whole file, and do NOT reconcile it.** It is seeded
+by `init` with the ritual's guidance and then written by the **team** at finalize — so a footprint
+that has run a session diverges by every entry it has accumulated, which is the file working, not
+drift. Mirror down only changes to the guidance above the entries. _(A footprint that predates the
+template has no left-hand side at all; `anthill init` seeds it, skipping every doc that exists.)_
+
+**The general rule worth carrying: before you trust a diff, confirm both sides exist.** This is the
+failure mode step 0 spends five lines warning about, arriving from the other direction — there, an
+empty diff falsely reported "nothing to reconcile"; a missing file makes `diff` fail inside a step
+whose whole thesis is that a quiet result is a lie.
 
 Then **classify each hunk** — never sync wholesale:
 
