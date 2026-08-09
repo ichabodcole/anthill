@@ -1,9 +1,11 @@
 # A DEDICATED test session for `spellbook#64` — because session 13 could not have tested it
 
 **Added:** 2026-08-08, at Cole's direction after session 13 returned **NOT TESTED**
-**Status:** design, not scheduled. **Cole: _"we might just want to do some sort of dedicated test,
-separate from development work… spin up a team, do a test where we're figuring out how to orchestrate
-this."_** Scheduling left to the team.
+**Status:** ▶ **RUNNING since 2026-08-09T00:32Z** — board `k-anthill-64-probe-adad92ec`, daemon
+**pid 9772**, port 51922, one live tail, 4h window. Results land in `~/.bounty/probe64/samples.log`;
+the runner is detached and outlives the session that started it. **Cole: _"we might just want to do
+some sort of dedicated test, separate from development work… spin up a team, do a test where we're
+figuring out how to orchestrate this."_** Scheduling was left to the team.
 
 ---
 
@@ -83,12 +85,31 @@ done
   **SIGTERM** all run the teardown, and the teardown writes. **Any teardown in this test must use
   `-9`** or it destroys its own board.
 
-## Why this must not ride along with development work
+## Why this must not ride along with development work — **AMENDED, the claim was too wide**
 
-**Every board verb resets the idle timer, so the experiment and the work are mutually exclusive by
-construction.** A session that does both produces NOT TESTED — **which is precisely what session 13
-produced, and it was the honest outcome rather than a failure of that session.**
+**As originally written:** _"Every board verb resets the idle timer, so the experiment and the work
+are mutually exclusive by construction."_
 
-**The team is the wrong shape for it too.** Six seats exist to keep a board busy. **This needs one
-agent, one tail, and three hours of nothing** — closer to a cron job than a convene, and worth saying
-out loud so nobody spins up a team out of habit.
+**That is true of ONE BOARD and was written as though true of the machine.** A board key derives its
+own daemon with its own pid, port and idle timer — the daemon log shows **eight** of them running
+concurrently across projects. **So the experiment rides on a scratch board key and anthill
+development proceeds on `anthill-dev`, and neither can touch the other's timer.** The run launched
+2026-08-09 does exactly that.
+
+**What survives the correction, and it is the half that mattered:** the experiment must not share a
+board **with the work**, and **the team is still the wrong shape for it.** Six seats exist to keep a
+board busy. This needs **one agent, one tail, and three hours of nothing** — closer to a cron job
+than a convene, and worth saying out loud so nobody spins up a team out of habit.
+
+> **⚠ Scar, paid at launch — the tail silently attached to NOTHING.** The first launch put the runner
+> in a scratch directory. **The board id is PROJECT-SCOPED by cwd**, so `--session-key` resolved a
+> _different_ id from there: `info` reported **"no running bounty session"** and the tail sat retrying
+> `# no session yet` while the daemon was demonstrably alive on its port. **The experiment would have
+> run its full window with no subscriber and reported a clean survival** — a fourth manufactured
+> instrument, and the most convincing one yet, because every process involved was running.
+>
+> **Two fixes, both applied:** pin the runner's cwd to the repo, **and** target the board by its full
+> id rather than by key. **And the check that catches it: `lsof -nP -iTCP:<port> | grep ESTABLISHED`
+> at t=0 — a connected tail shows 2, an unattached one shows 0.** _`convene` documents this
+> cwd-scoping hazard for git worktrees; it is not a worktree property, it is a **cwd** property, and
+> it reached us through a directory nobody thought of as a worktree at all._
