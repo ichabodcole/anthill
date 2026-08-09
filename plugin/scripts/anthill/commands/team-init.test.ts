@@ -4,13 +4,18 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import {
   BOUNTY_SESSION_GITIGNORE_LINE,
-  COMMS_GITIGNORE_LINE,
+  commsGitignoreLine,
+  gitignoreLines,
   planGitignore,
   renderTemplates,
-  SCRATCH_GITIGNORE_LINE,
+  scratchGitignoreLine,
   type TemplateFile,
   templateDestination,
 } from "./team-init.ts";
+
+/** What the lines resolve to for a default-`teamDir` project — today's literals. */
+const SCRATCH_GITIGNORE_LINE = scratchGitignoreLine(".anthill");
+const COMMS_GITIGNORE_LINE = commsGitignoreLine(".anthill");
 
 const CONFIG = {
   channel: "myproj",
@@ -238,6 +243,58 @@ describe("planGitignore (idempotent ensure-line)", () => {
     expect(planGitignore(existing, LINE)).toEqual({ action: "present", content: existing });
     // trailing whitespace variant still counts as present (no dupe)
     expect(planGitignore(`${LINE}  \n`, LINE).action).toBe("present");
+  });
+});
+
+describe("the ignore lines derive from teamDir (the paths they guard do)", () => {
+  // Asserted on the EMITTED SET, never by grepping the source for `.anthill/`
+  // literals: `migrate.ts` interpolates its dir constant, so a grep goes green
+  // while the bug lives.
+  it("reproduces today's literals for a default-teamDir project", () => {
+    expect(gitignoreLines([".anthill"])).toEqual([
+      ".anthill/scratch/",
+      ".anthill/comms",
+      ".bounty-session",
+    ]);
+  });
+
+  it("moves both lines when teamDir moves — the bug: a tracked comms log", () => {
+    // `commsLogPath()` resolves under teamDir and the seat scratch is
+    // `<teamDir>/scratch/<handle>`, so a fixed literal here leaves every seat's
+    // scratch and the whole message log as TRACKED files.
+    expect(gitignoreLines([".anthill/teams/dev"])).toEqual([
+      ".anthill/teams/dev/scratch/",
+      ".anthill/teams/dev/comms",
+      ".bounty-session",
+    ]);
+  });
+
+  it("emits a pair per configured team — one team's line does not cover another's", () => {
+    expect(gitignoreLines([".anthill/teams/dev", ".anthill/teams/dev-lean"])).toEqual([
+      ".anthill/teams/dev/scratch/",
+      ".anthill/teams/dev/comms",
+      ".anthill/teams/dev-lean/scratch/",
+      ".anthill/teams/dev-lean/comms",
+      ".bounty-session",
+    ]);
+  });
+
+  it("keeps the board marker at the repo root, undivided by team count", () => {
+    // `.bounty-session` is one repo-root file, not a per-team artifact.
+    const lines = gitignoreLines([".anthill/teams/a", ".anthill/teams/b"]);
+    expect(lines.filter((l) => l === BOUNTY_SESSION_GITIGNORE_LINE)).toHaveLength(1);
+  });
+
+  it("tolerates a trailing slash in the authored teamDir", () => {
+    expect(scratchGitignoreLine(".anthill/")).toBe(".anthill/scratch/");
+    expect(commsGitignoreLine(".anthill/")).toBe(".anthill/comms");
+  });
+
+  it("keeps the slash on scratch and withholds it from comms, at any teamDir", () => {
+    // Not cosmetic: the comms dir is a SYMLINK in a worktree-sharing team, and a
+    // slash-suffixed rule matches directories only.
+    expect(scratchGitignoreLine("docs/team").endsWith("/")).toBe(true);
+    expect(commsGitignoreLine("docs/team").endsWith("/")).toBe(false);
   });
 });
 

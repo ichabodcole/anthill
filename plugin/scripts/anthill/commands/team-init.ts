@@ -1,6 +1,9 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+// The same constant `commsLogPath()` builds the log path from — so the ignore
+// line and the thing it guards cannot drift apart.
+import { COMMS_DIR } from "../comms.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import { requireConfig } from "./team-support.ts";
@@ -129,28 +132,42 @@ export function renderTemplates(opts: {
   return { writes, skipped };
 }
 
-/** The gitignore line init ensures in the target repo: the per-session running
- * scratch (spec §6). `.anthill/config.json` + the rendered `.anthill/` docs are
- * committed; the scratch under `.anthill/scratch/` is disposable, so it's ignored. */
-export const SCRATCH_GITIGNORE_LINE = ".anthill/scratch/";
+/**
+ * The gitignore lines init ensures for a team's local state, DERIVED from that
+ * team's `teamDir` — because the paths they guard are derived from it too
+ * (`commsLogPath()` resolves under `teamDir`; the seat scratch is
+ * `<teamDir>/scratch/<handle>`). They were fixed literals, which meant moving
+ * `teamDir` silently made every seat's scratch and the whole comms log TRACKED
+ * files. Under the default `teamDir` these reproduce the old literals exactly.
+ */
+function normalizeTeamDir(teamDir: string): string {
+  return teamDir.replace(/\/+$/, "");
+}
 
-/** The second gitignore line init ensures: the pinned bounty-session marker.
+/** The per-session running scratch (spec §6). `.anthill/config.json` + the
+ * rendered team docs are committed; the scratch is disposable, so it's ignored. */
+export function scratchGitignoreLine(teamDir: string): string {
+  return `${normalizeTeamDir(teamDir)}/scratch/`;
+}
+
+/** The gitignore line init ensures at the REPO ROOT — not derived from any
+ * team's `teamDir`, because the file isn't under one: the pinned bounty-session marker.
  * `anthill convene` writes `.bounty-session` at the repo root (`bounty open --pin`)
  * to bind the team board; it's per-session/local state, so — like the scratch
  * dir — it's ignored, never committed. See seams.md, the board-binding contract. */
 export const BOUNTY_SESSION_GITIGNORE_LINE = ".bounty-session";
 
-/** The third gitignore line init ensures: the team's comms message log.
- * `anthill comms send` appends to `.anthill/comms/<channel>.ndjson` — per-session
- * conversational state, the same genre as scratch, and never a committed artifact.
- * It needs its OWN line: `.anthill/scratch/` does not match `.anthill/comms/`, and
- * assuming "the .anthill local-state line already covers it" is exactly how the log
+/** The team's comms message log. `anthill comms send` appends to
+ * `<teamDir>/comms/<channel>.ndjson` — per-session conversational state, the same
+ * genre as scratch, and never a committed artifact.
+ * It needs its OWN line: `<teamDir>/scratch/` does not match `<teamDir>/comms/`, and
+ * assuming "the local-state line already covers it" is exactly how the log
  * sat committable. Directory-scoped, not per-channel: channels are named per team,
  * so a filename-scoped ignore would leak every other channel's log. */
 /**
  * NO TRAILING SLASH, and that one character is load-bearing.
  *
- * A slash-suffixed rule matches a DIRECTORY only. The moment `.anthill/comms` is
+ * A slash-suffixed rule matches a DIRECTORY only. The moment `<teamDir>/comms` is
  * a SYMLINK — which is how a team sharing one log across per-seat worktrees sets
  * it up — the rule stops matching and the link shows up untracked in every
  * seat's tree.
@@ -164,7 +181,21 @@ export const BOUNTY_SESSION_GITIGNORE_LINE = ".bounty-session";
  *
  * Slashless still matches the directory, so this is strictly wider.
  */
-export const COMMS_GITIGNORE_LINE = ".anthill/comms";
+export function commsGitignoreLine(teamDir: string): string {
+  return `${normalizeTeamDir(teamDir)}/${COMMS_DIR}`;
+}
+
+/**
+ * Every line `init` ensures, for EVERY configured team's `teamDir` (config order),
+ * plus the one repo-root marker. A repo with two teams needs both teams' scratch
+ * and comms ignored — the second team's log is not covered by the first's line.
+ */
+export function gitignoreLines(teamDirs: string[]): string[] {
+  const lines: string[] = [];
+  for (const dir of teamDirs) lines.push(scratchGitignoreLine(dir), commsGitignoreLine(dir));
+  lines.push(BOUNTY_SESSION_GITIGNORE_LINE);
+  return lines;
+}
 
 export interface GitignorePlan {
   action: "added" | "present";
@@ -273,25 +304,25 @@ export const teamInitCommand = defineAnthillCommand({
     }
     const skipped = plan.skipped.map((abs) => relative(config.projectRoot, abs));
 
-    // Ensure the gitignored lines in the target repo (idempotent): the running
-    // scratch dir AND the pinned bounty-session marker. Chain planGitignore over
-    // the resulting content so both land in one write.
+    // Ensure the gitignored lines in the target repo (idempotent): this team's
+    // running scratch and comms log, plus the pinned bounty-session marker.
+    // Chain planGitignore over the resulting content so they land in one write.
     const gitignorePath = join(config.projectRoot, ".gitignore");
     const before = existsSync(gitignorePath) ? readFileSync(gitignorePath, "utf8") : null;
-    const scratchGi = planGitignore(before, SCRATCH_GITIGNORE_LINE);
-    const bountyGi = planGitignore(scratchGi.content, BOUNTY_SESSION_GITIGNORE_LINE);
-    const commsGi = planGitignore(bountyGi.content, COMMS_GITIGNORE_LINE);
-    if (commsGi.content !== (before ?? "")) writeFileSync(gitignorePath, commsGi.content);
+    const ignored: Array<{ line: string; action: "added" | "present" }> = [];
+    let content = before;
+    for (const line of gitignoreLines([config.paths.teamDir])) {
+      const plan = planGitignore(content, line);
+      ignored.push({ line, action: plan.action });
+      content = plan.content;
+    }
+    if (content !== (before ?? "")) writeFileSync(gitignorePath, content ?? "");
 
     const data: InitData = {
       teamDir: relative(config.projectRoot, teamDir),
       written,
       skipped,
-      gitignore: [
-        { line: SCRATCH_GITIGNORE_LINE, action: scratchGi.action },
-        { line: BOUNTY_SESSION_GITIGNORE_LINE, action: bountyGi.action },
-        { line: COMMS_GITIGNORE_LINE, action: commsGi.action },
-      ],
+      gitignore: ignored,
     };
 
     emit({
