@@ -222,7 +222,42 @@ proposes re-scoping `boardShadowWarning` onto exactly this field; **this is the 
 on live traffic, which is stronger than the source read this report already recorded.** The ruling
 is still Cole's.
 
-### ▶ The dedicated test is RUNNING as of 2026-08-09T00:32Z
+### ✅ RESULT 2026-08-09T02:32Z — the board SURVIVED its idle timeout with a tail attached
+
+**Pre-registered outcome, and it went the way the log could not predict.** The daemon crossed
+7200 s at `t+7202s` and was still serving at `t+7803s`. Evidence of continuous attachment is
+**received bytes, not process liveness**: the tail's keepalive stream grew `+304 bytes / 240 s`
+with **no gap for 1h40m** — 16 frames per 4 min, one per 15 s, matching `server.ts:923`.
+A drop-and-reconnect would show as a discontinuity; there is none.
+
+**This is the verification the maintainer said was missing** — `#64`'s own thread records 2.1.0 as
+shipping _"a probable root cause — staying open, because nobody has reproduced the original symptom
+against it."_ Posted as `#64` comment `5229438564`.
+
+**The mechanism is deterministic, and the arithmetic is the whole story:** the SSE keepalive is
+**15 s** and Bun's default request `idleTimeout` is **10 s**, so before 2.1.0 _every keepalive
+arrived 5 s after the connection had already been severed._ `subscriberCount` fell to 0 in every
+gap and `shouldIdleClose` (`server.ts:216` — returns false whenever `subscriberCount > 0`) then
+fired correctly. 2.1.0 sets `idleTimeout: 255` (`server.ts:1183`), ~17× the keepalive.
+
+**The control arm is our own pid 74370**: same machine, same 2.1.0 build, **no subscriber**, dead at
+7200 s to within 0.1 s. So the timeout works as documented and the subscriber is the variable.
+
+**⚠ A hypothesis this report should NOT be read as supporting.** Mid-probe, maestro proposed that
+the dream-flute team's keep-alive tail had been _attached to nothing_ — generalising from our own
+cwd-scoping scar below. **That is downgraded.** The `idleTimeout` mechanism explains their report
+better, it was already written in `#64`'s thread, and their tail was attached — it was being
+severed. **The scar was reached for instead of the document, which is the same failure this report
+already logs twice.** The non-attachment problem is real but separate, and is filed as
+spellbook`#98` on its own evidence: a tail that resolves no board retries forever, exits 0, and
+looks alive in `ps`.
+
+**What it does not establish:** n=1; 1.15.0 was never run side by side, so this shows 2.1.0 holds
+rather than reproducing the old failure; and it does not isolate _which_ property of the connection
+resets the clock (keepalive frames vs. the socket merely being open) — those imply different fixes
+if it ever regresses.
+
+### ▶ The dedicated test was launched 2026-08-09T00:32Z
 
 Board `k-anthill-64-probe-adad92ec`, daemon **pid 9772**, port 51922, **one live tail**, 4h window,
 zero-touch sampling to `~/.bounty/probe64/samples.log`. **It is on its OWN board key, so anthill
@@ -237,6 +272,11 @@ written as though true of the machine.**
 > **Survival: NOT TESTED — the workload never let the board idle.** **But the log carries two
 > `reason:"timeout"` deaths on this board at ~2h idle with 0 subscribers, and one of them is what
 > emptied our board between sessions.** **The protocol's one permitted `cli.ts` call went unspent.**
+
+_Superseded 2026-08-09T02:32Z by the dedicated probe — see the RESULT section above. Survival is now
+**TESTED and POSITIVE** on 2.1.0 with a subscriber attached. The line above remains accurate about
+what the **log** could establish, which was the point it was making; it is the log's limit, not a
+finding, and the probe is what moved past it._
 
 ## An unplanned first-hand finding, logged because it is `S13-N`'s subject
 

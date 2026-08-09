@@ -1,9 +1,20 @@
 # A DEDICATED test session for `spellbook#64` — because session 13 could not have tested it
 
 **Added:** 2026-08-08, at Cole's direction after session 13 returned **NOT TESTED**
-**Status:** ▶ **RUNNING since 2026-08-09T00:32Z** — board `k-anthill-64-probe-adad92ec`, daemon
-**pid 9772**, port 51922, one live tail, 4h window. Results land in `~/.bounty/probe64/samples.log`;
-the runner is detached and outlives the session that started it. **Cole: _"we might just want to do
+**Status:** ✅ **ANSWERED 2026-08-09T02:32Z — the board SURVIVED.** Ran 00:32Z–, board
+`k-anthill-64-probe-adad92ec`, daemon **pid 9772**, port 51922, one live tail, zero-touch, default
+7200 s timeout. It crossed 7200 s at `t+7202s` and kept serving; the tail's keepalive stream grew
+`+304 bytes / 240 s` with **no gap** — the connection was never severed and `subscriberCount` never
+reached 0. Control arm: our pid 74370, same build, **no subscriber**, dead at 7200 s to within
+0.1 s. **Mechanism:** the 15 s SSE keepalive vs Bun's 10 s default request `idleTimeout` meant every
+keepalive pre-2.1.0 arrived 5 s too late — deterministic, not flaky; 2.1.0's `idleTimeout: 255`
+gives ~17× headroom. Full write-up in `docs/reports/2026-08-08-spellbook-64-measurement-session-13.md`;
+posted upstream as `#64` comment `5229438564`. Raw samples in `~/.bounty/probe64/samples.log`.
+
+**So the dedicated multi-seat session this doc designs is NOT needed for the survival question —
+one board, one tail and four hours of doing nothing answered it.** What the design got right is
+_why_ session 13 couldn't: a busy board never idles. What it over-built is the team. **Keep this doc
+for the orchestration lessons; do not schedule the session on `#64`'s account.** **Cole: _"we might just want to do
 some sort of dedicated test, separate from development work… spin up a team, do a test where we're
 figuring out how to orchestrate this."_** Scheduling was left to the team.
 
