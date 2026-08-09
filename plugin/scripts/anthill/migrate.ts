@@ -166,15 +166,27 @@ export function planV1ToV2(scan: RepoScan): MigrationPlan {
   // arrives via `anthill init` or the upgrade skill's reconcile step.
   // Exposure is small (a stray untracked `.anthill/comms/*.ndjson`); the
   // belief that it was already handled was the actual risk. Caught in review.
-  // Spelled as an ensure (`remove` === `add`) rather than a pure add: the
-  // executor filters lines equal to `remove`, so an empty `remove` would match
-  // every BLANK line and silently reflow the consumer's `.gitignore`.
+  // A genuine swap, slashed → SLASHLESS: strip the legacy `…/comms/` line and
+  // write the `…/comms` form `team-init`'s `commsGitignoreLine()` derives. The
+  // trailing slash is not cosmetic — a slash-suffixed rule matches a DIRECTORY
+  // only, so it stops matching the moment `comms` is a symlink (how a team
+  // shares one log across per-seat worktrees) and the link shows up untracked
+  // in every seat's tree. `team-init.ts` carries the twenty-line version.
+  //
+  // ⚠ `remove` MUST stay non-empty. The executor filters lines equal to
+  // `remove`, so an empty `remove` would match every BLANK line and silently
+  // reflow the consumer's `.gitignore`. This op was spelled as an ensure
+  // (`remove` === `add`) for exactly that reason; changing only `add` keeps
+  // `remove` a real string while making the op do real work. Do not reverse
+  // the pair, and do not empty either side.
   ops.push({
     kind: "gitignore",
     remove: `${ANTHILL_DIR}/comms/`,
-    add: `${ANTHILL_DIR}/comms/`,
+    add: `${ANTHILL_DIR}/comms`,
   });
-  notes.push(`gitignore: ensure ${ANTHILL_DIR}/comms/ (team comms log — never committed)`);
+  notes.push(
+    `gitignore: ${ANTHILL_DIR}/comms/ → ${ANTHILL_DIR}/comms (team comms log — never committed; slashless so a symlinked dir stays ignored)`,
+  );
 
   // 4. Remove the vacated config dir (only the disposable, gitignored scratch
   //    remains in it). An active session's scratch is transient by design.

@@ -546,6 +546,20 @@ four legend lines that write `.anthill/dev/` while explicitly labelling it the d
 _Also decided here (⚖): citations use `<teamDir>/…` tokens at the point of use, not a per-file legend
 alone — skill prose is arrived at by grep, mid-file, where a legend 200 lines up is not read._
 
+**0.5 — 🕳 the migration guide never mentioned the comms line at all, and its checklist is where
+this bug was catchable.** The task named `migrate.ts` and `migrate.test.ts`. But
+`skills/upgrade/migrations/v1-to-v2.md` documents what the v1→v2 migration does — a before/after
+table and a verification checklist — and the comms op was **absent from both**, which is a
+pre-existing omission the task inherited. Added: the table row, a checklist item asserting the
+slashless form **and** the absence of the slashed one, and a sharpening of the existing
+_"`anthill init` is a clean no-op"_ item to say **including `.gitignore`** — because a gitignore line
+reported `added` immediately after a migration is exactly the signal that the two emitters disagree.
+_That checklist item, in its old form, was one clause away from catching this._
+**Also measured rather than reasoned:** the two-line end state was reproduced on a real v1 repo at
+the pre-fix sha (`.anthill/comms/` and `.anthill/comms`, both present after `migrate` then `init`)
+and confirmed gone after. **And the gate caught what `bun test` did not** — narrowing `plan.ops.find`
+returns the `MigrationOp` union, so the new assertions passed under `bun test` while `tsc` failed.
+
 **0.2 — ⚖ `gitignoreLines(teamDirs[])` takes the list now, with one team in it.** The task's contract
 said "per configured team" while Phase 1 is what creates a second team. Shipped as an array
 parameter called with `[config.paths.teamDir]`, so Phase 1 changes a call site rather than a
