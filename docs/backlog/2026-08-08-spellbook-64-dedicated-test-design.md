@@ -14,9 +14,13 @@ posted upstream as `#64` comment `5229438564`. Raw samples in `~/.bounty/probe64
 **So the dedicated multi-seat session this doc designs is NOT needed for the survival question —
 one board, one tail and four hours of doing nothing answered it.** What the design got right is
 _why_ session 13 couldn't: a busy board never idles. What it over-built is the team. **Keep this doc
-for the orchestration lessons; do not schedule the session on `#64`'s account.** **Cole: _"we might just want to do
+for the orchestration lessons; do not schedule the session on `#64`'s account.**
+
+**Origin, for the record — this doc exists because Cole asked for it:** _"we might just want to do
 some sort of dedicated test, separate from development work… spin up a team, do a test where we're
-figuring out how to orchestrate this."_** Scheduling was left to the team.
+figuring out how to orchestrate this."_ Scheduling was left to the team. **The de-scheduling above
+is the team's call on the `#64` question only, not a reversal of that ask** — the orchestration
+question he raised is untouched by the probe and is still open.
 
 ---
 
