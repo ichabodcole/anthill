@@ -135,6 +135,57 @@ are testable hypotheses; agreement is not truth), newest-first. **Starts effecti
 **Tasks:** write it → assert it renders and is **skipped** on re-run → fix the skill → `cascade-check`
 → `bun run format:md` → `bun run check` → commit `feat(templates): seed retro.md`.
 
+### 0.5 — Reconcile `migrate`'s comms ignore line with the one 0.2 now emits
+
+> **Added 2026-08-09, after review of the completed Phase 0. It was previously in
+> [Filed separately](#filed-separately--deliberately-not-in-this-plan), and it moved because the
+> premise for filing it changed: it was pre-existing debt this project did not touch, and 0.2 touched
+> it.** Leaving it now means Phase 0 ships a state it made _worse_ than it found. **A finding that
+> arrives after a phase is called done is exactly the one that gets lost** — hence a task, not a note.
+
+**Type:** `fix:` · **Files:** modify `plugin/scripts/anthill/migrate.ts` (the comms ensure op at **`:172-176`** and its note at **`:177`**) · test `plugin/scripts/anthill/migrate.test.ts`
+
+**What 0.2 changed underneath this.** `team-init` now emits the comms line **derived from `teamDir`
+and slashless** (`commsGitignoreLine()`). `migrate.ts:174-175` still emits the fixed literal
+`` `${ANTHILL_DIR}/comms/` `` **with** the trailing slash — the form `team-init.ts:110-132` spends
+twenty lines explaining is actively harmful: a slash-suffixed rule matches a **directory only**, so it
+stops matching the moment `comms` is a **symlink** (how a team shares one log across per-seat
+worktrees), and the link then shows up untracked in every seat's tree.
+
+**The observable consequence:** `planGitignore` matches per line, trimmed, and
+`` `${ANTHILL_DIR}/comms/` !== `${ANTHILL_DIR}/comms` ``. **So a v1 repo that migrates gets the
+slashed line, and the next `anthill init` adds the slashless one — the repo ends up carrying both, one
+of them the harmful form.**
+
+**Contract — change `add` only. Do NOT touch `remove`.**
+
+```ts
+ops.push({
+  kind: "gitignore",
+  remove: `${ANTHILL_DIR}/comms/`, // UNCHANGED — strips the legacy slashed line
+  add: `${ANTHILL_DIR}/comms`, // slashless, matching team-init
+});
+```
+
+**⚠ Why `remove` must keep its trailing slash, and why it must stay non-empty.** The op is spelled as
+an ensure (`remove === add`) **on purpose** — `migrate.ts:169-171` states it: _"the executor filters
+lines equal to `remove`, so an empty `remove` would match every BLANK line and silently reflow the
+consumer's `.gitignore`."_ Changing only `add` converts it from an ensure into a **genuine migration**
+— strip the harmful line, write the correct one — while keeping `remove` a real string. **Reversing
+the pair, or emptying `remove`, corrupts a user's `.gitignore`.**
+
+Update the note at `:177` to match what the op now does.
+
+**Scope, so nobody over-claims it** (`migrate.ts:161-168` already says this): this op lives in the
+v1→v2 plan and `MIGRATIONS` holds only that step, so **only teams still on v1 are covered.** Everyone
+else gets the line from `anthill init` or the upgrade skill's reconcile. Exposure is small; the
+divergence between two files that must agree is the reason to fix it.
+
+**Tasks:** failing test in `migrate.test.ts` — the v1→v2 plan's comms op has `remove` ending in `/`
+and `add` **not** ending in `/`; and a second asserting `remove` is non-empty _(the guard against the
+reflow failure)_ → implement → update the note string → `bun run check` → commit
+`fix(migrate): emit the slashless comms ignore line team-init now derives`.
+
 ### 0.4 — Skill prose stops hard-coding doc paths ⇉ _(8 disjoint files)_
 
 **Type:** `docs:` · **Files:** `plugin/skills/{convene,join,finalize-session,plan,comms,bootstrap,upgrade}/SKILL.md`, `plugin/templates/docs-team/README.md`
@@ -513,7 +564,11 @@ it does not depend on.
 - **Bare `anthill` in emitted strings** (`team-comms.ts:334,739,755`, `team-spawn.ts:290-291`) →
   `bun ${cliPath}`. Wrong today; a 4-site edit. **This is also the only real fix for the
   older-cached-CLI problem** that 1.1's cut rationale mistakenly claimed a version check would solve.
-- **`migrate`'s trailing-slash comms line** (`migrate.ts:174-175`) — one character on `add`.
+- ~~**`migrate`'s trailing-slash comms line**~~ — **MOVED IN as [task 0.5](#05--reconcile-migrates-comms-ignore-line-with-the-one-02-now-emits), 2026-08-09.** It was filed
+  here as pre-existing debt this project did not touch. **0.2 touched it** — `team-init` now emits the
+  slashless derived line while `migrate` still emits the slashed literal, so the two disagree more
+  than they did before Phase 0, and a migrated repo ends up carrying both. **The filing premise died;
+  the filing had to.**
 - **The acceptance experiment** (manager/implementer/reviewer; count the skill instructions those
   seats cannot execute) → **an investigation doc**, not a phase. It has no gate, no commit and no
   test, and last-in-a-plan is where it gets skipped. It still decides whether externalization is a
