@@ -246,7 +246,7 @@ once the human has steered you to one seating, treat it as the ratified roster a
 
 Tell the human the team is ready: the roster (handles + roles), where the docs landed (`.anthill/`),
 and the next step — **"run `anthill:convene` to start a working session."** Optionally **suggest they
-commit `.anthill/config.json` + `.anthill/`** (the scaffold is durable; `.anthill/scratch/` stays
+commit `.anthill/config.json` + `.anthill/`** (the scaffold is durable; the team's `scratch/` stays
 gitignored) — **suggest it; do not do it.** It is their repo and this skill has just asked consent
 for a smaller change than its first commit.
 

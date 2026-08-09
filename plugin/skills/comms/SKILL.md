@@ -46,7 +46,8 @@ id with `read --since <id>`. (A `send` also returns the id it assigned, which an
 moment you first speak.)
 
 Reach past the CLI to the log file only when you want something the verbs do not offer — it is one
-NDJSON file per channel, at `.anthill/comms/<channel>.ndjson`.
+NDJSON file per channel, at `<teamDir>/comms/<channel>.ndjson` (`teamDir` resolves from `paths` in
+`.anthill/config.json`, default `.anthill/`).
 
 - **⚠ An anchor past the end returns EMPTY and exits 0.** `read --since 999` on a 7-message log
   prints nothing and succeeds. That is indistinguishable from "nothing new since I last looked", so

@@ -145,7 +145,7 @@ was no migration at all.**
 **anthill no longer opens or joins a grapevine channel.** `convene` opens no channel and sets no
 topic; `join` composes no vine tail; `convene`'s `--fresh` and `--topic` flags are **gone**, and the
 join manifest no longer carries a `tailCommand`. The team's message wire is **anthill's own `comms`** —
-an append-only log under `.anthill/comms/`, which needs nothing installed.
+an append-only log under `<teamDir>/comms/`, which needs nothing installed.
 
 **spellbook is still required, for `bounty` (the task board).** Only the vine left.
 
@@ -192,7 +192,8 @@ and the docs look fine because they are perfectly valid — just old.
 ```sh
 # `${CLAUDE_PLUGIN_ROOT}` is only safe here because step 0 confirmed it matches
 # the installed version. If you skipped step 0, this diff lies.
-diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" .anthill/README.md
+TEAMDIR=.anthill   # ← `paths.teamDir` in .anthill/config.json, if this repo overrides it
+diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" "$TEAMDIR/README.md"
 ```
 
 Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,

@@ -22,15 +22,17 @@ stay solo.
 
 ## Steps
 
-1. **Ground as the lead.** Read, in the canonical order (paths resolve from `.anthill/config.json` —
-   defaults shown):
+1. **Ground as the lead.** Read, in the canonical order. **`<teamDir>` and `<seatDir>` below are
+   RESOLVED, not literal** — they come from `paths` in `.anthill/config.json` and default to
+   `.anthill/` and `.anthill/dev/`. `anthill join <lead>` prints every one of them already resolved;
+   if you are unsure which layout this repo uses, read them from there rather than guessing:
    - the **`grounding`** docs in `.anthill/config.json` (the _product_ context — e.g. `AGENTS.md`,
      `README.md`) so you can judge what you're building;
-   - `.anthill/README.md` — the **SOP** (how the team works, the principles, the rituals);
-   - `.anthill/principles.md` — **what this team learned the hard way**, each with the scar that
+   - `<teamDir>/README.md` — the **SOP** (how the team works, the principles, the rituals);
+   - `<teamDir>/principles.md` — **what this team learned the hard way**, each with the scar that
      paid for it. Short, and the highest-leverage read here;
-   - `.anthill/dev/seams.md` — the shared inter-seat **contracts**;
-   - your own **lead seat doc** `.anthill/dev/<lead>.md` (your orchestration reflexes + scars).
+   - `<seatDir>/seams.md` — the shared inter-seat **contracts**;
+   - your own **lead seat doc** `<seatDir>/<lead>.md` (your orchestration reflexes + scars).
      You are now the **lead**.
 
 2. **Gather the work from the human** (ask only what you need — one focused round):
@@ -45,7 +47,7 @@ stay solo.
      seat scopes against what this phase actually needs — if a scope has drifted or doesn't fit, **split
      / merge / re-draw it now** (and `anthill init` any new seat doc). This is the forward half of the
      finalize re-scope reflection: last session's captured misfit is this session's signal to act on.
-   - **Read the last retro's Q3 hypotheses (`.anthill/retro.md`, newest first) and say which ones this
+   - **Read the last retro's Q3 hypotheses (`<teamDir>/retro.md`, newest first) and say which ones this
      session will test.** **No entries in it?** That is the normal state before this team's first
      finalize — `init` seeds the file with the ritual's guidance and nothing else; the entries are
      written at finalize. **Say so in the brief and move
@@ -232,7 +234,7 @@ positions`.** This is the named moment to run it; without one it is a verb nobod
 The stand-up beats that get skipped when you're eager to spawn. Run them as a list:
 
 - ◻ **Grounded** as the lead (grounding docs → SOP → **principles** → seams → your seat doc).
-  `.anthill/principles.md` is short and is the highest-leverage read in that list.
+  `<teamDir>/principles.md` is short and is the highest-leverage read in that list.
 - ◻ **Work gathered** from the human; **plan phase** run (`anthill:plan`) if it's a multi-seat feature
   without a ratified plan.
 - ◻ **`gate` set in `.anthill/config.json`** — if it is unset, you asked the human for this project's

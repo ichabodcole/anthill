@@ -106,7 +106,8 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
 
 5. **Rule once on what's contested.** When owners disagree, do a **read-all-owners synthesis pass** —
    read every affected position, then **rule once**. Don't let the channel ping-pong. Then **promote
-   each ratified load-bearing contract into `.anthill/dev/seams.md`** (its durable home), owned by
+   each ratified load-bearing contract into `<seatDir>/seams.md`** (its durable home — `seatDir`
+   resolves from `paths` in `.anthill/config.json`, default `.anthill/dev/`), owned by
    the authoritative seat — asserting the load-bearing ones up front while the long tail accretes.
 
 6. **Owners author lanes; build in lockstep.** Each owner writes its `plan/<seat>.md` against the
