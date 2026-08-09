@@ -670,6 +670,30 @@ half-written file looks like. Neither is a name, and treating them as one would 
 that is otherwise fine. **Not a fallback** — nothing is being second-guessed; the rung simply did not
 fire.
 
+**2.3 — 🕳 `refused` DECLARES a refusal; it does not enforce one.** The task says to "declare it as
+`refused`" on the five commands that must not take `--team`, and `define.ts`'s own docs say why that
+is not sufficient: a refused arg is registered with the parser (so it never reads as _"Unknown
+option"_) and hidden from the advertised set, **but the value still reaches `ctx.args` and the
+command must refuse it through its own envelope** — otherwise `--team` on `migrate` is silently
+ignored and the user believes they scoped something. Added `refuseArg` in `agent-layer.ts` and one
+`REFUSED_TEAM` constant per command, used by **both** the arg def and the refusal, since two copies
+of a reason drift. _(Six commands, not five: `info` is two — `info` and `info env`.)_
+
+**2.3 — 🕳 the env rung needs the team COUNT, which nothing in the plan provides.** `ANTHILL_TEAM`
+must be exported for a multi-team project and **not** for a single-team one — a lone-team repo
+gaining an `ANTHILL_TEAM=` in every pane launch line is a visible change to a repo that configured
+nothing, which is criterion 1. `requireConfig` returns one team by design, so `requireTeam` sits
+beside it returning `{project, team, via}`. Phase 2.5 and 3.1–3.3 need it too.
+
+**2.4 — 🔧 the cross-team `--channel` guard had to reach comms as well.** The task scoped 2.4 to the
+ladder (`loadTeam`, `resolveChannel`, the six `teamDirPath()` reads). But 2.3's guard lives in
+`requireConfig`, which this file bypasses — and `--channel` here is the sharpest form of the hazard,
+since the flag names a wire directly. Reused the exported `rejectOtherTeam` rather than restating
+the rule.
+
+**2.5 — ⚖ `team show` reports `configured[]` as well as the resolved team.** One extra field, and it
+makes _"did it pick the right one"_ answerable from the same output as _"which one did it pick"_.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows

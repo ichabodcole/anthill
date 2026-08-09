@@ -375,7 +375,10 @@ anthill/
 ```
 
 **CLI command set** (Slice 1 shipped `convene`…`init`; `scan`, `feedback`, and `migrate` were
-added in later slices; `field-notes` later still):
+added in later slices; `field-notes` later still; the `team` noun group in 2026-08). Every command
+that acts on a team takes `--team <name>`, declared locally — root args are not inherited into
+subcommands — and the five that are not about a team (`info`, `scan`, `migrate`, `field-notes`,
+`feedback`) **refuse** it by name rather than ignoring it:
 
 - `anthill convene [--topic]` — grapevine open + topic + bounty state
 - `anthill join <handle>` — emit grounding manifest + tail commands
@@ -393,6 +396,10 @@ added in later slices; `field-notes` later still):
 - `anthill feedback` — send a bug or idea upstream to the anthill repo
 - `anthill migrate` — apply a footprint version migration (v1 → v2), planned purely by `migrate.ts`
 - `anthill info` — environment/config introspection
+- `anthill team show` — which team this repo resolves to **and which rung decided** (§5a's ladder:
+  `--team` → `ANTHILL_TEAM` → the pin → the sole team). The only surface that makes a wrong ambient
+  binding self-evident rather than silent — every other command answers correctly and says nothing
+  about how it decided
 
 **Generalizations from flute:** config-driven (no hardcoded channel/seats/paths); self-locating
 (CLI lives in plugin cache, resolves spellbook from _its_ cache via the `resolveCoordCli` pattern).

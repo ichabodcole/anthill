@@ -35,6 +35,7 @@ import { teamMigrateCommand } from "./commands/team-migrate.ts";
 import { teamScanCommand } from "./commands/team-scan.ts";
 import { teamSpawnCommand } from "./commands/team-spawn.ts";
 import { teamStatusCommand } from "./commands/team-status.ts";
+import { teamTeamCommand } from "./commands/team-team.ts";
 import {
   type AnyCommand,
   CLIError,
@@ -71,6 +72,7 @@ export const main: AnyCommand = defineCommand({
     attach: teamAttachCommand,
     down: teamDownCommand,
     status: teamStatusCommand,
+    team: teamTeamCommand,
     scan: teamScanCommand,
     commit: teamCommitCommand,
     feedback: teamFeedbackCommand,
