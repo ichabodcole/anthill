@@ -310,6 +310,16 @@ export function resolveConfig(
  */
 const SAFE_TEAM_NAME = /^[a-zA-Z0-9._-]+$/;
 
+/** Names that pass `SAFE_TEAM_NAME` but traverse when used as a path segment. */
+const TRAVERSAL_NAMES = new Set([".", ".."]);
+
+/** Every path knob two teams must not share, with its resolver. */
+const LIVING_DOC_PATHS = [
+  ["teamDir", (t: ResolvedConfig) => t.teamDirPath()],
+  ["seatDir", (t: ResolvedConfig) => t.seatDirPath()],
+  ["seams", (t: ResolvedConfig) => t.seamsPath()],
+] as const;
+
 /**
  * The checks that only exist once a project has MORE THAN ONE team. Never runs on
  * the v2 flat path: a lone team cannot collide with itself, and criterion 1 is
@@ -329,6 +339,31 @@ function validateAcrossTeams(teams: ResolvedConfig[]): void {
             "A channel is the message log's filename, so two teams sharing one would read and " +
             "write each other's messages.",
         );
+      }
+
+      // The channel checks above protect the WIRE; this protects the DIRECTORY,
+      // which is where the durable knowledge lives. `teamDir` defaults to
+      // `.anthill/teams/<name>` and is distinct by construction — but the design
+      // requires the INCUMBENT team to carry an explicit `.anthill`, so the one
+      // team that escapes the derived default is the one nothing else checks.
+      //
+      // ⚠ EQUALITY, not prefix-free — the opposite of the channel rule. Teams
+      // NEST by design: the incumbent sits at `.anthill` and every other team
+      // under `.anthill/teams/<name>`, so the incumbent's dir is a prefix of all
+      // of them. A prefix check here would reject the intended layout.
+      //
+      // Compared on the RESOLVED absolute paths, not the configured strings: a
+      // collision is only visible after defaults apply, and `resolve()`
+      // normalizes `.anthill/` and `.anthill` to the same answer.
+      for (const [knob, resolvePath] of LIVING_DOC_PATHS) {
+        if (resolvePath(a) === resolvePath(b)) {
+          throw new ConfigError(
+            `config.teams.${b.name}: \`paths.${knob}\` resolves to "${resolvePath(b)}", the same ` +
+              `location as team "${a.name}". Two teams sharing a living-docs directory would write ` +
+              "their seat docs, seams and comms log on top of each other — the knowledge each team " +
+              "accumulates is the thing this whole layer exists to keep separate.",
+          );
+        }
       }
 
       // PREFIX-free, which is stricter than unique: `relatedSessions`
@@ -422,6 +457,19 @@ export function resolveProject(
         throw new ConfigError(
           `config.teams: "${name}" is not a usable team name — it becomes a tmux session key and a ` +
             `directory segment, so it must match ${String(SAFE_TEAM_NAME)}.`,
+        );
+      }
+      // `SAFE_TEAM_NAME` matches `.` and `..`, and it has to: it was inherited
+      // from `SAFE_SESSION_KEY`, which guards a tmux session key, where dots are
+      // unremarkable. As a DIRECTORY SEGMENT they traverse — `..` resolves this
+      // team's seatDir to `.anthill/teams/../dev`, i.e. `.anthill/dev`, the
+      // incumbent's. And it does that WITHOUT colliding with any other configured
+      // team, so the directory-collision check below cannot see it.
+      if (TRAVERSAL_NAMES.has(name)) {
+        throw new ConfigError(
+          `config.teams: "${name}" cannot be a team name — a team name is a directory segment, and ` +
+            `"${name}" would resolve this team's living docs into another team's directory. ` +
+            "A dot inside a name (`v1.2`) is fine; the name may not BE `.` or `..`.",
         );
       }
       try {

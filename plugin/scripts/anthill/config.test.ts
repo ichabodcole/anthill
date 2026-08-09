@@ -522,3 +522,87 @@ describe("resolveProject — cross-team validation (the checks one team cannot n
     expect(() => resolveProject(FULL_CONFIG, { projectRoot: ROOT })).not.toThrow();
   });
 });
+
+describe("resolveProject — two teams may not share a living-docs directory", () => {
+  const seats = MINIMAL_CONFIG.seats;
+
+  test("A: two explicit teamDirs that are identical", () => {
+    // The directory is where the DURABLE knowledge lives, and the default
+    // `.anthill/teams/<name>` is distinct by construction — so the one team that
+    // must escape it, the incumbent carrying an explicit `.anthill`, is the one
+    // nothing checked. Both teams' seat docs, seams and comms land on each other.
+    expect(() =>
+      resolveProject(
+        {
+          teams: {
+            dev: { seats, paths: { teamDir: ".anthill" } },
+            lean: { seats, paths: { teamDir: ".anthill" } },
+          },
+        },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/lean|dev/);
+    expect(() =>
+      resolveProject(
+        {
+          teams: {
+            dev: { seats, paths: { teamDir: ".anthill" } },
+            lean: { seats, paths: { teamDir: ".anthill" } },
+          },
+        },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/director(y|ies)|teamDir/i);
+  });
+
+  test("A': a collision only in seatDir or seams is equally fatal", () => {
+    // Distinct teamDirs are not enough — the seat layer is separately overridable.
+    expect(() =>
+      resolveProject(
+        {
+          teams: {
+            dev: { seats, paths: { teamDir: ".anthill/a", seatDir: ".anthill/shared" } },
+            lean: { seats, paths: { teamDir: ".anthill/b", seatDir: ".anthill/shared" } },
+          },
+        },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/seatDir/i);
+  });
+
+  test("B: `..` is a legal SAFE_TEAM_NAME and a directory traversal", () => {
+    // The regex was inherited from SAFE_SESSION_KEY, which guards a tmux session
+    // key — `.` and `..` are unremarkable there and load-bearing in a path.
+    // `..` resolves seatDir to `.anthill/teams/../dev` = `.anthill/dev`, the
+    // incumbent's seat dir — and it does NOT collide with any OTHER configured
+    // team, so the equality check above cannot catch it.
+    expect(() => resolveProject({ teams: { "..": { seats } } }, { projectRoot: ROOT })).toThrow(
+      /\.\./,
+    );
+    expect(() => resolveProject({ teams: { ".": { seats } } }, { projectRoot: ROOT })).toThrow(
+      ConfigError,
+    );
+  });
+
+  test("a dot INSIDE a name stays legal — only the traversal segments are refused", () => {
+    expect(() =>
+      resolveProject(
+        { teams: { "v1.2": { seats }, "dev.lean": { seats } } },
+        { projectRoot: ROOT },
+      ),
+    ).not.toThrow();
+  });
+
+  test("the INTENDED nesting is not rejected — equality, never prefix-free", () => {
+    // The opposite of the channel rule. Teams nest by design: the incumbent sits
+    // at `.anthill` and every other team at `.anthill/teams/<name>`, so `.anthill`
+    // is a prefix of all of them. Reusing 1.2's prefix check here would reject the
+    // layout the design requires.
+    expect(() =>
+      resolveProject(
+        { teams: { dev: { seats, paths: { teamDir: ".anthill" } }, lean: { seats } } },
+        { projectRoot: ROOT },
+      ),
+    ).not.toThrow();
+  });
+});

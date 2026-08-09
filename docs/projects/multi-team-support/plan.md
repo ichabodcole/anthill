@@ -636,6 +636,15 @@ kept current, because a stale contract misleads more than it records". Added **�
 three cross-team constraints. **Every remaining phase that touches the schema has the same
 unlisted dependency.**
 
+**1.3 — 🔧 the collision check compares RESOLVED absolute paths, and case B is worse than the task
+states.** The task said to compare resolved rather than raw values; implemented via
+`teamDirPath()`/`seatDirPath()`/`seamsPath()`, so `resolve()` also normalizes `.anthill/` and
+`.anthill` to one answer — a third spelling of the same collision, which a string compare of the
+configured values would miss. **And measured on case B before the fix: `..` does not collide with the
+other configured team at all** (`..` → `.anthill/dev/seams.md`, `dev` → `.anthill/teams/dev/dev/seams.md`),
+so it squats the DEFAULT single-team location rather than a peer's. The equality check could never
+have caught it, exactly as the task predicted — the two guards are independent, not belt-and-braces.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows
