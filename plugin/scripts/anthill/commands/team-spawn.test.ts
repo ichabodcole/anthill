@@ -91,3 +91,29 @@ describe("resolveSpawnHandles", () => {
     expect(result).toEqual({ handles: ["a"] });
   });
 });
+
+describe("buildSeatLaunch — the ambient team binding (rung 2)", () => {
+  const LAUNCH = 'claude "/anthill:join {handle}"';
+
+  it("adds nothing for a single-team project — criterion 1, visible in every pane", () => {
+    expect(
+      buildSeatLaunch(LAUNCH, "engine", "anthill", { name: "default", multiTeam: false }),
+    ).toBe(buildSeatLaunch(LAUNCH, "engine", "anthill"));
+  });
+
+  it("exports ANTHILL_TEAM beside BOUNTY_SESSION_KEY when the project has several", () => {
+    // An env PREFIX, not a `{team}` token in `config.launch`: a template is
+    // overridable, so any project that customized `launch` would silently never
+    // receive the token — and a missing team binding is silent where a missing
+    // `{handle}` is loud.
+    expect(buildSeatLaunch(LAUNCH, "engine", "anthill", { name: "lean", multiTeam: true })).toBe(
+      `BOUNTY_SESSION_KEY=anthill ANTHILL_TEAM=lean ${LAUNCH.replace("{handle}", "engine")}`,
+    );
+  });
+
+  it("guards the team name with the same charset as the session key", () => {
+    expect(() =>
+      buildSeatLaunch(LAUNCH, "engine", "anthill", { name: "a; rm -rf /", multiTeam: true }),
+    ).toThrow(/team name/i);
+  });
+});

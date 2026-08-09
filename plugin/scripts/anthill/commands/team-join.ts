@@ -594,12 +594,20 @@ export const teamJoinCommand = defineAnthillCommand({
       description: "Comms channel (default: config.channel)",
       valueHint: "name",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "join");
+    const config = requireConfig(format, "join", {
+      team: ctx.args.team as string | undefined,
+      channel: ctx.args.channel as string | undefined,
+    });
     const handle = String(ctx.args.handle);
     const channel = (ctx.args.channel as string | undefined) || config.channel;
 

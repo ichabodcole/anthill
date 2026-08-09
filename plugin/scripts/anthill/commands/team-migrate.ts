@@ -9,7 +9,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, refuseArg, resolveFormat } from "../agent-layer.ts";
 import { CURRENT_VERSION } from "../config.ts";
 import { defineAnthillCommand } from "../define.ts";
 import {
@@ -152,6 +152,12 @@ interface MigrateData {
   alreadyCurrent: boolean;
 }
 
+/** Why this verb refuses `--team`. ONE string, used by the arg def AND the
+ * refusal in `run` — two copies of a reason drift, and a refusal that argues
+ * with itself teaches worse than the generic "unknown option" it replaced. */
+const REFUSED_TEAM =
+  "`migrate` moves the whole FOOTPRINT, which every team shares — and it refuses a multi-team config outright";
+
 export const teamMigrateCommand = defineAnthillCommand({
   meta: {
     name: "migrate",
@@ -165,9 +171,17 @@ export const teamMigrateCommand = defineAnthillCommand({
       description:
         "Honor a `paths` override even when it just repeats the v1 default (don't consolidate the docs)",
     },
+    team: { type: "string", refused: REFUSED_TEAM },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
+    refuseArg({
+      format: resolveFormat(ctx.args.format as string | undefined),
+      command: "migrate",
+      flag: "--team",
+      value: ctx.args.team,
+      why: REFUSED_TEAM,
+    });
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
     const dryRun = ctx.args["dry-run"] === true;

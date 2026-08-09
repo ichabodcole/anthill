@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { emit, resolveFormat } from "../agent-layer.ts";
+import { emit, refuseArg, resolveFormat } from "../agent-layer.ts";
 import { CLIError, defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 
@@ -24,6 +24,12 @@ import { nowMillis } from "../runtime.ts";
  */
 const DOC_PATH = join(dirname(fileURLToPath(import.meta.url)), "..", "field-notes.md");
 
+/** Why this verb refuses `--team`. ONE string, used by the arg def AND the
+ * refusal in `run` — two copies of a reason drift, and a refusal that argues
+ * with itself teaches worse than the generic "unknown option" it replaced. */
+const REFUSED_TEAM =
+  "field notes are anthill's cross-team observations, shipped in the plugin — they are the same for every team";
+
 export const fieldNotesCommand = defineAnthillCommand({
   meta: {
     name: "field-notes",
@@ -31,9 +37,17 @@ export const fieldNotesCommand = defineAnthillCommand({
     scope: "workspace",
   },
   args: {
+    team: { type: "string", refused: REFUSED_TEAM },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
+    refuseArg({
+      format: resolveFormat(ctx.args.format as string | undefined),
+      command: "field-notes",
+      flag: "--team",
+      value: ctx.args.team,
+      why: REFUSED_TEAM,
+    });
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
     // A missing doc means the plugin was packaged or copied incompletely — not

@@ -69,12 +69,20 @@ export const teamDownCommand = defineAnthillCommand({
       valueHint: "name",
     },
     force: { type: "boolean", description: "Tear down even if seats are still present" },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "down");
+    const config = requireConfig(format, "down", {
+      team: ctx.args.team as string | undefined,
+      session: ctx.args.session as string | undefined,
+    });
 
     // Preflight: no point reading presence if tmux is missing.
     if (!hasTmux()) {

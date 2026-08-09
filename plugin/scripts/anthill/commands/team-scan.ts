@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { emit, resolveFormat } from "../agent-layer.ts";
+import { emit, refuseArg, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import { buildScanReport, resolveScanRoot, type ScanReport } from "../scan.ts";
@@ -8,6 +8,12 @@ import { buildScanReport, resolveScanRoot, type ScanReport } from "../scan.ts";
 // the workspace shape + per-surface units (kind/stack/private/internalDeps) that
 // bootstrap discovery folds into candidate seatings. Runs BEFORE `.anthill/` exists,
 // so `root` resolves via `.git` / topmost package.json / cwd — never the config walk-up.
+/** Why this verb refuses `--team`. ONE string, used by the arg def AND the
+ * refusal in `run` — two copies of a reason drift, and a refusal that argues
+ * with itself teaches worse than the generic "unknown option" it replaced. */
+const REFUSED_TEAM =
+  "`scan` reads the REPO's shape to propose a team — it runs before a team exists";
+
 export const teamScanCommand = defineAnthillCommand({
   meta: {
     name: "scan",
@@ -20,9 +26,17 @@ export const teamScanCommand = defineAnthillCommand({
       description: "Override the resolved repo root (for fixtures / testing)",
       valueHint: "dir",
     },
+    team: { type: "string", refused: REFUSED_TEAM },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
+    refuseArg({
+      format: resolveFormat(ctx.args.format as string | undefined),
+      command: "scan",
+      flag: "--team",
+      value: ctx.args.team,
+      why: REFUSED_TEAM,
+    });
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
 

@@ -235,12 +235,20 @@ export const teamConveneCommand = defineAnthillCommand({
       description: "Team channel (default: config.channel)",
       valueHint: "name",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "convene");
+    const config = requireConfig(format, "convene", {
+      team: ctx.args.team as string | undefined,
+      channel: ctx.args.channel as string | undefined,
+    });
     const channel = (ctx.args.channel as string | undefined) || config.channel;
     const warnings: string[] = [];
 

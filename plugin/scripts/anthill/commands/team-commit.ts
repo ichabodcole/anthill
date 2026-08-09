@@ -207,6 +207,11 @@ export const teamCommitCommand = defineAnthillCommand({
       description: "Seat handle to attribute this commit to (must be in config.seats)",
       valueHint: "handle",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
@@ -292,7 +297,7 @@ export const teamCommitCommand = defineAnthillCommand({
     // the human, so "who landed this?" was unanswerable after the fact.
     const seat = (ctx.args.as as string | undefined)?.trim();
     if (seat !== undefined) {
-      const config = requireConfig(format, "commit");
+      const config = requireConfig(format, "commit", { team: ctx.args.team as string | undefined });
       if (!config.seat(seat)) {
         const seats = config.roster().map((s) => s.handle);
         emitError({

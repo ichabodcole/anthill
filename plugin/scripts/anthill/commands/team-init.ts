@@ -268,12 +268,17 @@ export const teamInitCommand = defineAnthillCommand({
       description: "Templates dir (default: bundled templates/docs-team)",
       valueHint: "path",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "init");
+    const config = requireConfig(format, "init", { team: ctx.args.team as string | undefined });
 
     const templatesDir = (ctx.args.templates as string | undefined) || defaultTemplatesDir();
     if (!existsSync(templatesDir)) {

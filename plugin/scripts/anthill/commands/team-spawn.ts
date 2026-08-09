@@ -3,6 +3,7 @@ import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { writeSessionOpen } from "../comms.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
+import { TEAM_ENV_VAR } from "../team-resolve.ts";
 import {
   createSession,
   hasTmux,
@@ -15,7 +16,7 @@ import {
   splitAndTile,
   tmuxPath,
 } from "../tmux.ts";
-import { requireConfig } from "./team-support.ts";
+import { requireTeam } from "./team-support.ts";
 
 type ResolveResult = { handles: string[] } | { error: string };
 
@@ -38,19 +39,56 @@ const SAFE_SESSION_KEY = /^[a-zA-Z0-9._-]+$/;
 
 /**
  * PURE: the pane launch line for one seat — the `config.launch` template with
- * `{handle}` substituted, prefixed with `BOUNTY_SESSION_KEY=<sessionKey> ` so the
- * spawned seat's improvised bounty verbs bind THIS team's board (the seat's Bash
- * subshells inherit the exported var). The key is charset-guarded (never quoted
- * into the line — a malformed channel is a hard error, not an injection). See
- * seams.md — the board-binding contract (owner: forager).
+ * `{handle}` substituted, behind an env-assignment prefix carrying the two
+ * AMBIENT bindings a spawned seat must inherit:
+ *
+ *   `BOUNTY_SESSION_KEY` — binds the seat's improvised bounty verbs to THIS
+ *     team's board (the seat's Bash subshells inherit the exported var). See
+ *     seams.md, the board-binding contract (owner: forager).
+ *   `ANTHILL_TEAM` — rung 2 of the resolution ladder, so every `anthill` command
+ *     the seat runs resolves to the team it was spawned for, without the seat
+ *     ever naming one. Omitted for a single-team project, where rung 4 already
+ *     answers and an extra env var would be noise in every pane.
+ *
+ * ⚠ WHY THIS IS AN ENV PREFIX AND NOT A `{team}` TOKEN IN `config.launch`.
+ * A launch TEMPLATE is overridable, so any project that has customized `launch`
+ * would silently never receive the token — the same partial-adoption trap
+ * `{handle}` already carries, except that missing `{handle}` is loud and a
+ * missing team binding is silent. The env prefix is applied REGARDLESS of the
+ * template, which is exactly why `BOUNTY_SESSION_KEY` is already spelled this
+ * way. Threading `{team}` would also have put two ambient mechanisms one
+ * character apart in one string, with different scoping rules.
+ *
+ * ⚠ AND WHY THE WORKTREE HAZARD DOES NOT TRANSFER FROM BOUNTY. bounty's env
+ * carries a key DERIVED AGAINST THE REPO PATH, so a worktree derives a different
+ * board and the env shadows the pin that would have rescued it. `ANTHILL_TEAM`
+ * carries a NAME checked against the config's registry, so it resolves correctly
+ * from any directory or fails loudly.
+ *
+ * Both values are charset-guarded and never quoted into the line — a malformed
+ * channel or team name is a hard error, not an injection.
  */
-export function buildSeatLaunch(launch: string, handle: string, sessionKey: string): string {
+export function buildSeatLaunch(
+  launch: string,
+  handle: string,
+  sessionKey: string,
+  team?: { name: string; multiTeam: boolean },
+): string {
   if (!SAFE_SESSION_KEY.test(sessionKey)) {
     throw new Error(
       `unsafe bounty session key "${sessionKey}" — config.channel must match [A-Za-z0-9._-]. Rename the channel in .anthill/config.json.`,
     );
   }
-  return `BOUNTY_SESSION_KEY=${sessionKey} ${launch.replace(/\{handle\}/g, handle)}`;
+  let prefix = `BOUNTY_SESSION_KEY=${sessionKey} `;
+  if (team?.multiTeam) {
+    if (!SAFE_SESSION_KEY.test(team.name)) {
+      throw new Error(
+        `unsafe team name "${team.name}" — it is interpolated into an env prefix and must match [A-Za-z0-9._-].`,
+      );
+    }
+    prefix += `${TEAM_ENV_VAR}=${team.name} `;
+  }
+  return `${prefix}${launch.replace(/\{handle\}/g, handle)}`;
 }
 
 /**
@@ -143,12 +181,23 @@ export const teamSpawnCommand = defineAnthillCommand({
     attach: { type: "boolean", description: "Attach to the session (human TTY outside tmux only)" },
     cwd: { type: "string", description: "Working dir for each pane", valueHint: "path" },
     force: { type: "boolean", description: "Kill and recreate an existing same-named session" },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "spawn");
+    const { project, team: config } = requireTeam(format, "spawn", {
+      team: ctx.args.team as string | undefined,
+      session: ctx.args.session as string | undefined,
+    });
+    // Only a multi-team project needs the ambient team binding in its launch
+    // lines; a single-team project resolves on rung 4 and must see no change.
+    const multiTeam = project.teams.length > 1;
 
     // The runner collects trailing/unmatched positionals into `ctx.args._`.
     const requested = ((ctx.args._ as string[] | undefined) ?? []).map(String);
@@ -251,7 +300,13 @@ export const teamSpawnCommand = defineAnthillCommand({
         // Handle charset is validated in resolveSpawnHandles; buildSeatLaunch
         // guards the session key → safe to interpolate. The env prefix binds the
         // seat's improvised bounty verbs to THIS team's board (seams.md).
-        await launchInPane(paneId, buildSeatLaunch(config.launch, handle, config.channel));
+        await launchInPane(
+          paneId,
+          buildSeatLaunch(config.launch, handle, config.channel, {
+            name: config.name,
+            multiTeam,
+          }),
+        );
       } else {
         warnings.push(`seat "${handle}" got no pane — it was not launched`);
       }

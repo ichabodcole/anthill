@@ -95,6 +95,33 @@ export function emit<T>(options: {
   process.stdout.write(`${JSON.stringify(envelope)}\n`);
 }
 
+/**
+ * Refuse a flag this verb RECOGNISES but does not do — the `refused` half of an
+ * arg def (`define.ts`), enforced.
+ *
+ * The parser registers a refused flag (so it never reads as "unknown") and hides
+ * it from the advertised set, but does NOT reject it: a usage error under
+ * `--format json` must stay a clean `{ok:false}` envelope rather than becoming
+ * usage text. So the command owns the refusal, and this is that refusal, once —
+ * with the SAME reason string the arg def carries, passed in rather than
+ * restated, because a refusal whose two halves disagree teaches the wrong thing.
+ */
+export function refuseArg(opts: {
+  format: OutputFormat;
+  command: string;
+  flag: string;
+  value: unknown;
+  why: string;
+}): void {
+  if (opts.value === undefined) return;
+  emitError({
+    format: opts.format,
+    command: opts.command,
+    error: `\`${opts.flag}\` is not accepted here. ${opts.why}. Drop the flag and the command works unchanged.`,
+  });
+  process.exit(1);
+}
+
 export function emitError(options: {
   format: OutputFormat;
   command: string;

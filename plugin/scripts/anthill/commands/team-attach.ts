@@ -104,6 +104,11 @@ export const teamAttachCommand = defineAnthillCommand({
       description: "tmux session name (default: config.channel)",
       valueHint: "name",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
@@ -145,7 +150,10 @@ export const teamAttachCommand = defineAnthillCommand({
         process.exit(1);
       }
       // Found up-tree → parse it (requireConfig still surfaces a malformed config).
-      const channel = requireConfig(format, "attach").channel;
+      const channel = requireConfig(format, "attach", {
+        team: ctx.args.team as string | undefined,
+        session: ctx.args.session as string | undefined,
+      }).channel;
       sessionName = sanitizeSessionName(channel);
 
       // A team can span several tmux sessions (staged spawns). Attaching to the

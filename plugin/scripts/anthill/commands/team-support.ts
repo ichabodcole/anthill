@@ -9,23 +9,92 @@
 
 import { emitError, type OutputFormat } from "../agent-layer.ts";
 import { hasDeparted, readPosition, readSessionOpen } from "../comms.ts";
-import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
+import { ConfigError, loadProject, type ResolvedConfig, type ResolvedProject } from "../config.ts";
 import { execCoord, parseJsonLine, resolveCoordCli } from "../coord.ts";
+import { readPin, resolveTeam, type TeamRung, type TeamSelector } from "../team-resolve.ts";
 
 /**
- * Load the resolved `.anthill/config.json` for a team command, or emit a clear
- * error and exit(1). Centralizes the "no config yet" failure so every command
- * fails the same way (pointing at `anthill:bootstrap`).
+ * Load the resolved config for a team command — for the ONE TEAM this invocation
+ * is about — or emit a clear error and exit(1). Centralizes both the "no config
+ * yet" failure (pointing at `anthill:bootstrap`) and the "which team?" decision,
+ * so every command answers them the same way.
+ *
+ * ⚠ ONE INSERTION POINT IS NOT ENOUGH, and this doc comment is the reminder.
+ * `--team` must ALSO be declared on each command locally — root `args` are not
+ * inherited into subcommands (`cli.ts`) — and `team-comms.ts` deliberately
+ * bypasses this function with its own loader. Threading the ladder here and
+ * stopping is how the central safety requirement ends up green while
+ * `anthill comms read` still binds to whatever config it finds up-tree.
  */
-export function requireConfig(format: OutputFormat, command: string): ResolvedConfig {
+export function requireConfig(
+  format: OutputFormat,
+  command: string,
+  sel: TeamSelector & { channel?: string | undefined; session?: string | undefined } = {},
+): ResolvedConfig {
+  return requireTeam(format, command, sel).team;
+}
+
+/**
+ * The same resolution, with the PROJECT and the RUNG kept.
+ *
+ * Most commands want only their team and say so by calling `requireConfig`. Three
+ * things need more, and each needs a different part: `anthill team show` prints
+ * the rung, `anthill team ls`/`use` and the convene guard reason about EVERY
+ * configured team, and `spawn` needs to know whether this project has more than
+ * one — a single-team project must not gain an `ANTHILL_TEAM=` in its pane launch
+ * lines, which would be a visible change to a repo that configured nothing.
+ */
+export function requireTeam(
+  format: OutputFormat,
+  command: string,
+  sel: TeamSelector & { channel?: string | undefined; session?: string | undefined } = {},
+): { project: ResolvedProject; team: ResolvedConfig; via: TeamRung } {
   try {
-    return loadConfig();
+    const project = loadProject();
+    const { team, via } = resolveTeam(project, {
+      team: sel.team,
+      env: process.env,
+      pin: readPin(project.projectRoot),
+    });
+    rejectOtherTeam(project, team, sel);
+    return { project, team, via };
   } catch (err) {
     if (err instanceof ConfigError) {
       emitError({ format, command, error: err.message });
       process.exit(1);
     }
     throw err;
+  }
+}
+
+/**
+ * Refuse a `--channel`/`--session` that names a DIFFERENT configured team.
+ *
+ * The hazard is narrow and specific: the team resolved to A, and the value points
+ * at B, so the command would half-address each — B's wire with A's roster, gate
+ * and seat docs. Naming a value that matches NO configured team stays allowed;
+ * that is a legitimate escape hatch (an ad-hoc session, a channel outside the
+ * config) and refusing it would break existing single-team use.
+ */
+export function rejectOtherTeam(
+  project: ResolvedProject,
+  resolved: ResolvedConfig,
+  sel: { channel?: string | undefined; session?: string | undefined },
+): void {
+  for (const [flag, value] of [
+    ["--channel", sel.channel],
+    ["--session", sel.session],
+  ] as const) {
+    if (!value) continue;
+    const owner = project.teams.find((t) => t.channel === value && t.name !== resolved.name);
+    if (owner) {
+      throw new ConfigError(
+        `${flag} "${value}" belongs to team "${owner.name}", but this command resolved to team ` +
+          `"${resolved.name}". Use \`--team ${owner.name}\` to address that team — passing its ` +
+          `channel alone would run "${owner.name}"'s wire against "${resolved.name}"'s roster, ` +
+          "gate and seat docs.",
+      );
+    }
   }
 }
 
