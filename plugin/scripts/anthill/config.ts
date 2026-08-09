@@ -189,10 +189,20 @@ export function resolveConfig(
   }
 
   const rawPaths = isObject(raw.paths) ? raw.paths : {};
+  // The three path knobs CASCADE: `seatDir` derives from `teamDir`, and `seams`
+  // derives from `seatDir` — so overriding one knob moves everything under it and
+  // the config stays coherent. They used to be three independent literal defaults,
+  // which meant `{"paths": {"teamDir": "docs/team"}}` still resolved the seat docs
+  // and seams to `.anthill/dev/…`: a config that reads as one relocation and
+  // resolves as two teams' worth of locations. `seams` follows `seatDir` rather
+  // than `teamDir` because it is a seat-layer artifact — the seam register between
+  // seats — and moving the seats has to move it.
+  const teamDir = typeof rawPaths.teamDir === "string" ? rawPaths.teamDir : DEFAULT_PATHS.teamDir;
+  const seatDir = typeof rawPaths.seatDir === "string" ? rawPaths.seatDir : `${teamDir}/dev`;
   const paths: TeamPaths = {
-    teamDir: typeof rawPaths.teamDir === "string" ? rawPaths.teamDir : DEFAULT_PATHS.teamDir,
-    seatDir: typeof rawPaths.seatDir === "string" ? rawPaths.seatDir : DEFAULT_PATHS.seatDir,
-    seams: typeof rawPaths.seams === "string" ? rawPaths.seams : DEFAULT_PATHS.seams,
+    teamDir,
+    seatDir,
+    seams: typeof rawPaths.seams === "string" ? rawPaths.seams : `${seatDir}/seams.md`,
   };
 
   const lead =

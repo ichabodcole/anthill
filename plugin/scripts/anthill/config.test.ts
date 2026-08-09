@@ -113,6 +113,59 @@ describe("resolveConfig — minimal fixture applies defaults", () => {
   });
 });
 
+describe("resolveConfig — paths cascade from teamDir", () => {
+  // The knobs existed; the derivation did not. Overriding `teamDir` alone left
+  // `seatDir`/`seams` pointing at `.anthill/dev/…` — a config that reads as
+  // coherent and resolves to two different teams' worth of locations.
+  const withPaths = (paths: Record<string, string>) =>
+    resolveConfig({ ...MINIMAL_CONFIG, paths }, { projectRoot: ROOT });
+
+  test("no paths block resolves to the .anthill defaults (the back-compat guard)", () => {
+    const cfg = resolveConfig(MINIMAL_CONFIG, { projectRoot: ROOT });
+    expect(cfg.paths).toEqual({
+      teamDir: ".anthill",
+      seatDir: ".anthill/dev",
+      seams: ".anthill/dev/seams.md",
+    });
+  });
+
+  test("teamDir alone cascades into seatDir and seams", () => {
+    const cfg = withPaths({ teamDir: ".anthill/teams/dev" });
+    expect(cfg.paths).toEqual({
+      teamDir: ".anthill/teams/dev",
+      seatDir: ".anthill/teams/dev/dev",
+      seams: ".anthill/teams/dev/dev/seams.md",
+    });
+  });
+
+  test("an explicit seatDir wins, and seams follows IT — not teamDir", () => {
+    const cfg = withPaths({ teamDir: ".anthill/teams/dev", seatDir: ".anthill/roles" });
+    expect(cfg.paths.seatDir).toBe(".anthill/roles");
+    expect(cfg.paths.seams).toBe(".anthill/roles/seams.md");
+  });
+
+  test("an explicit seams wins over the derivation", () => {
+    const cfg = withPaths({ teamDir: "docs/team", seams: "docs/team/interfaces.md" });
+    expect(cfg.paths.seams).toBe("docs/team/interfaces.md");
+    expect(cfg.paths.seatDir).toBe("docs/team/dev");
+  });
+
+  test("all three explicit are all honoured verbatim", () => {
+    const cfg = resolveConfig(FULL_CONFIG, { projectRoot: ROOT });
+    expect(cfg.paths).toEqual({
+      teamDir: "docs/team",
+      seatDir: "docs/team/dev",
+      seams: "docs/team/dev/seams.md",
+    });
+  });
+
+  test("seatDir moves the seat doc with it", () => {
+    const cfg = withPaths({ seatDir: ".anthill/roles" });
+    expect(cfg.seatDocPath("worker")).toBe(resolve(ROOT, ".anthill/roles/worker.md"));
+    expect(cfg.seamsPath()).toBe(resolve(ROOT, ".anthill/roles/seams.md"));
+  });
+});
+
 describe("resolveConfig — validation errors", () => {
   test("non-object", () => {
     expect(() => resolveConfig(42, { projectRoot: ROOT })).toThrow(ConfigError);

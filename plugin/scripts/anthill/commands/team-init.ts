@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
@@ -39,8 +39,39 @@ export interface RenderConfig {
 }
 
 export interface RenderPlan {
-  writes: Array<{ relPath: string; content: string }>;
+  /** ABSOLUTE destinations — `dest` has already been applied. */
+  writes: Array<{ path: string; content: string }>;
   skipped: string[];
+}
+
+/**
+ * The template tree's `dev/` segment is LAYOUT, not a path: it says "this file
+ * belongs to the seat layer", and where the seat layer lives is `seatDir`'s
+ * answer, not the template folder's. So map every relPath through the config's
+ * resolvers instead of joining it onto `teamDir`:
+ *
+ *   README.md, principles.md, paper-cuts.md, retro.md  ->  <teamDir>/…
+ *   dev/README.md, dev/<handle>.md                     ->  seatDirPath()
+ *   dev/seams.md                                       ->  seamsPath()
+ *
+ * Under the defaults (`seatDir = <teamDir>/dev`) this is byte-identical to the
+ * old `join(teamDir, relPath)`, which is what makes it safe for every existing
+ * project. It is the ONE place a destination is decided — `init` asks its
+ * idempotency predicate and its write about the same string, because remapping
+ * one and not the other clobbers a live seat doc.
+ */
+const SEAT_TEMPLATE_DIR = "dev";
+const SEAMS_TEMPLATE_REL = "dev/seams.md";
+
+export function templateDestination(
+  relPath: string,
+  paths: { teamDir: string; seatDir: string; seams: string },
+): string {
+  const rel = relPath.split(sep).join("/");
+  if (rel === SEAMS_TEMPLATE_REL) return paths.seams;
+  const prefix = `${SEAT_TEMPLATE_DIR}/`;
+  if (rel.startsWith(prefix)) return join(paths.seatDir, rel.slice(prefix.length));
+  return join(paths.teamDir, rel);
 }
 
 function applyTokens(s: string, tokens: Record<string, string>): string {
@@ -57,15 +88,17 @@ function rosterTable(seats: RenderConfig["seats"]): string {
 
 /**
  * PURE render: expand `templates` against `config`, fanning {{handle}} templates
- * out per seat and substituting tokens. `exists(relPath)` decides idempotency —
- * existing targets land in `skipped`, the rest in `writes`. No filesystem.
+ * out per seat and substituting tokens. `dest(relPath)` places each expanded
+ * target; `exists(dest)` decides idempotency — existing targets land in
+ * `skipped`, the rest in `writes`, both as destinations. No filesystem.
  */
 export function renderTemplates(opts: {
   templates: TemplateFile[];
   config: RenderConfig;
-  exists: (relPath: string) => boolean;
+  dest: (relPath: string) => string;
+  exists: (path: string) => boolean;
 }): RenderPlan {
-  const { templates, config, exists } = opts;
+  const { templates, config, dest, exists } = opts;
   const globalTokens: Record<string, string> = {
     channel: config.channel,
     lead: config.lead ?? "",
@@ -84,11 +117,12 @@ export function renderTemplates(opts: {
       : [{ relPath: t.relPath, tokens: globalTokens }];
 
     for (const target of targets) {
-      if (exists(target.relPath)) {
-        skipped.push(target.relPath);
+      const path = dest(target.relPath);
+      if (exists(path)) {
+        skipped.push(path);
         continue;
       }
-      writes.push({ relPath: target.relPath, content: applyTokens(t.content, target.tokens) });
+      writes.push({ path, content: applyTokens(t.content, target.tokens) });
     }
   }
 
@@ -217,20 +251,27 @@ export const teamInitCommand = defineAnthillCommand({
     const templates = readTemplateDir(templatesDir);
     const teamDir = config.teamDirPath();
 
+    // Every destination is decided ONCE, through the config's resolvers — the
+    // idempotency predicate below and the write loop ask the same question.
+    const resolvedPaths = {
+      teamDir,
+      seatDir: config.seatDirPath(),
+      seams: config.seamsPath(),
+    };
     const plan = renderTemplates({
       templates,
       config: { channel: config.channel, lead: config.lead, seats: config.roster() },
-      exists: (relPath) => existsSync(join(teamDir, relPath)),
+      dest: (relPath) => templateDestination(relPath, resolvedPaths),
+      exists: existsSync,
     });
 
     const written: string[] = [];
     for (const w of plan.writes) {
-      const abs = join(teamDir, w.relPath);
-      mkdirSync(dirname(abs), { recursive: true });
-      writeFileSync(abs, w.content);
-      written.push(relative(config.projectRoot, abs));
+      mkdirSync(dirname(w.path), { recursive: true });
+      writeFileSync(w.path, w.content);
+      written.push(relative(config.projectRoot, w.path));
     }
-    const skipped = plan.skipped.map((rel) => relative(config.projectRoot, join(teamDir, rel)));
+    const skipped = plan.skipped.map((abs) => relative(config.projectRoot, abs));
 
     // Ensure the gitignored lines in the target repo (idempotent): the running
     // scratch dir AND the pinned bounty-session marker. Chain planGitignore over
