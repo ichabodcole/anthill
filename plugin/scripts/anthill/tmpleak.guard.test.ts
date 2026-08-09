@@ -53,6 +53,7 @@ const ALLOWED: Record<string, string> = {
   "config.test.ts":
     "try/finally, plus two module-level mints with afterAll(rmSync); measured +0 per run",
   "scan.test.ts": "try/finally; measured +0 per run",
+  "team-resolve.test.ts": "one module-level mint + afterAll(rmSync); measured +0 per run",
   // The three #100 leakers now mint through a registered helper, so their only
   // remaining `mkdtempSync` is INSIDE that helper. They are listed because the
   // helper itself is a raw mint — removing the registry would leave this entry

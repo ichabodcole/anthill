@@ -645,6 +645,31 @@ other configured team at all** (`..` → `.anthill/dev/seams.md`, `dev` → `.an
 so it squats the DEFAULT single-team location rather than a peer's. The equality check could never
 have caught it, exactly as the task predicted — the two guards are independent, not belt-and-braces.
 
+### Phase 2
+
+**2.1 + 2.2 — ⚖ one commit.** 2.1's own text says the pin lives in `team-resolve.ts`, "created in
+2.2", so 2.1 cannot land first. Shipping them together also means `develop` never holds a state where
+the pin file exists and its `.gitignore` line does not.
+
+**2.2 — 🔧 `resolveTeam` returns `{ team, via }`, and stays PURE.** Two departures from the stated
+signature, both for the same reason the plan praises elsewhere:
+
+- **The rung is returned, not attached to the config.** 2.5 needs to print _which rung resolved it_.
+  Fusing a `via` field onto `ResolvedConfig` would put "how this was selected" on the object that
+  answers "what is configured" — and the local idiom is a small result object carrying a fact plus
+  its provenance (`BoardSummary {counts, title}`, `GitignorePlan {action, content}`). Costs one
+  `.team` at the single call site in 2.3.
+- **The pin arrives as `sel.pin`, read by the caller.** The stated signature is
+  `{team?, env?}` with rung 3 reading the file itself — which would make the ladder impure and its
+  rungs untestable in isolation. This is exactly `config.ts`'s split: `resolveTeam` is pure,
+  `readPin`/`writePin` are the filesystem half.
+
+**2.2 — ⚖ an empty `ANTHILL_TEAM` or a blank pin file reads as UNSET, not as a team named `""`.** An
+exported-but-empty env var is the shell's normal way of saying "not set", and a blank pin is what a
+half-written file looks like. Neither is a name, and treating them as one would throw on a project
+that is otherwise fine. **Not a fallback** — nothing is being second-guessed; the rung simply did not
+fire.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows

@@ -6,6 +6,7 @@ import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { COMMS_DIR } from "../comms.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
+import { PIN_REL_PATH } from "../team-resolve.ts";
 import { requireConfig } from "./team-support.ts";
 
 /**
@@ -187,13 +188,18 @@ export function commsGitignoreLine(teamDir: string): string {
 
 /**
  * Every line `init` ensures, for EVERY configured team's `teamDir` (config order),
- * plus the one repo-root marker. A repo with two teams needs both teams' scratch
- * and comms ignored — the second team's log is not covered by the first's line.
+ * plus the two project-level markers. A repo with two teams needs both teams'
+ * scratch and comms ignored — the second team's log is not covered by the first's.
+ *
+ * The two project-level lines are local state, not team state: `.bounty-session`
+ * binds this checkout's board, and `.anthill/current-team` is this checkout's
+ * answer to "which team am I on". Committing either switches somebody else's
+ * session out from under them on their next pull.
  */
 export function gitignoreLines(teamDirs: string[]): string[] {
   const lines: string[] = [];
   for (const dir of teamDirs) lines.push(scratchGitignoreLine(dir), commsGitignoreLine(dir));
-  lines.push(BOUNTY_SESSION_GITIGNORE_LINE);
+  lines.push(BOUNTY_SESSION_GITIGNORE_LINE, PIN_REL_PATH);
   return lines;
 }
 

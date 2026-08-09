@@ -294,6 +294,7 @@ describe("the ignore lines derive from teamDir (the paths they guard do)", () =>
       ".anthill/scratch/",
       ".anthill/comms",
       ".bounty-session",
+      ".anthill/current-team",
     ]);
   });
 
@@ -305,6 +306,7 @@ describe("the ignore lines derive from teamDir (the paths they guard do)", () =>
       ".anthill/teams/dev/scratch/",
       ".anthill/teams/dev/comms",
       ".bounty-session",
+      ".anthill/current-team",
     ]);
   });
 
@@ -315,6 +317,7 @@ describe("the ignore lines derive from teamDir (the paths they guard do)", () =>
       ".anthill/teams/dev-lean/scratch/",
       ".anthill/teams/dev-lean/comms",
       ".bounty-session",
+      ".anthill/current-team",
     ]);
   });
 

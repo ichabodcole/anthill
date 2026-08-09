@@ -35,6 +35,11 @@ describe("planV1ToV2 — default layout (no paths override)", () => {
       { kind: "rm", path: "docs/team" },
       { kind: "gitignore", remove: ".team/scratch/", add: ".anthill/scratch/" },
       { kind: "gitignore", remove: ".anthill/comms/", add: ".anthill/comms" },
+      {
+        kind: "gitignore",
+        remove: ".anthill/current-team",
+        add: ".anthill/current-team",
+      },
       { kind: "rm", path: ".team" },
       { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
     ]);
@@ -92,6 +97,11 @@ describe("planV1ToV2 — bespoke paths override (genuine escape hatch)", () => {
       { kind: "git-mv", from: ".team/config.json", to: ".anthill/config.json" },
       { kind: "gitignore", remove: ".team/scratch/", add: ".anthill/scratch/" },
       { kind: "gitignore", remove: ".anthill/comms/", add: ".anthill/comms" },
+      {
+        kind: "gitignore",
+        remove: ".anthill/current-team",
+        add: ".anthill/current-team",
+      },
       { kind: "rm", path: ".team" },
       { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
     ]);
@@ -121,6 +131,11 @@ describe("planV1ToV2 — redundant-default paths override (the media-buffet trap
       { kind: "config-drop-paths", file: ".anthill/config.json" },
       { kind: "gitignore", remove: ".team/scratch/", add: ".anthill/scratch/" },
       { kind: "gitignore", remove: ".anthill/comms/", add: ".anthill/comms" },
+      {
+        kind: "gitignore",
+        remove: ".anthill/current-team",
+        add: ".anthill/current-team",
+      },
       { kind: "rm", path: ".team" },
       { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
     ]);

@@ -188,6 +188,26 @@ export function planV1ToV2(scan: RepoScan): MigrationPlan {
     `gitignore: ${ANTHILL_DIR}/comms/ → ${ANTHILL_DIR}/comms (team comms log — never committed; slashless so a symlinked dir stays ignored)`,
   );
 
+  // The pin — `.anthill/current-team`, the local "which team am I on" marker.
+  //
+  // ⚠ THIS NEEDS A MIGRATE OP AND NOT ONLY AN `init` ENTRY. A repo that upgrades
+  // and never re-runs `init` would COMMIT the pin, and then one person's team
+  // choice switches everyone else's team on their next pull. This is byte for
+  // byte the scar written up above about the comms line: the ignore line has to
+  // arrive by the same route the thing it guards does.
+  //
+  // Spelled as an ensure (`remove` === `add`) — there is no legacy spelling to
+  // strip, and `remove` must stay non-empty or the executor's line filter would
+  // match every blank line.
+  ops.push({
+    kind: "gitignore",
+    remove: `${ANTHILL_DIR}/current-team`,
+    add: `${ANTHILL_DIR}/current-team`,
+  });
+  notes.push(
+    `gitignore: ensure ${ANTHILL_DIR}/current-team (the local team pin — never committed)`,
+  );
+
   // 4. Remove the vacated config dir (only the disposable, gitignored scratch
   //    remains in it). An active session's scratch is transient by design.
   ops.push({ kind: "rm", path: configDir });
