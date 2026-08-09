@@ -119,22 +119,12 @@ When implementation is complete and all tests pass:
 1. Run `/project-docs:finalize-branch` — code review, session document, branch prep.
 2. Finalize-branch will present merge options; proceed with the appropriate one. Base is `develop`.
 
-## Raised against the plan during implementation
+## Where the build diverges from the plan
 
-The plan asked for a fifth pair of eyes on contact with the code. What Phase 0 found:
-
-1. **0.4's validation criterion was wrong.** _"The grep returns only `config.json` hits"_ was written
-   without counting. **All 15 of `bootstrap`'s hits are the footprint ROOT** — the directory
-   `config.json` lives in, fixed by `CONFIG_DIR`, not derived from any team's `teamDir`. The
-   exclusion list is `config.json` **and** the footprint root. Applying the criterion literally would
-   have rewritten correct prose into a token that resolves to the wrong thing.
-2. **0.1's "all three sites move together" was satisfied structurally instead.** `renderTemplates`
-   now takes a `dest(relPath)` and reports **destinations** in both `writes` and `skipped`, so `init`
-   asks its idempotency predicate and its write the same question by construction. The plan's framing
-   — remap three `join(teamDir, …)` sites in step — leaves the hazard live for the next editor.
-3. **0.3's cascade was four prose claims, not one.** The plan named `upgrade/SKILL.md:202-204`.
-   `convene` ("init does not render one"), `finalize-session` ("`retro.md` does not exist yet at this
-   step") and `bootstrap`'s render enumeration were equally falsified by the template.
+**Record it in [`plan.md` § Implementation record](./plan.md#implementation-record--where-the-build-diverged-from-this-plan),
+not here** — one home, beside the tasks it annotates. Append an entry whenever the shipped work
+differs from what a task specifies, classified 🕳 gap / 🔧 improvement / ⚖ judgement. Step 5 of the
+workflow above ("raise anything the plan gets wrong") is discharged by writing that entry.
 
 ## Notes
 

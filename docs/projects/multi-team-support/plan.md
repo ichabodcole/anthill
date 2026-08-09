@@ -451,6 +451,57 @@ Proposal Open Question 3 is unanswered and this phase does not answer it.
 
 ---
 
+## Implementation record — where the build diverged from this plan
+
+**Append an entry whenever the shipped work differs from what a task specifies** — whether the plan
+had a gap, was wrong, or the code suggested something better on contact. Two reasons this is not
+bookkeeping: a plan that silently absorbs its corrections **reads as though it was right the first
+time**, which is the state that produced v1's 1-PASS/11-FAIL; and a later reader following an
+un-annotated task will re-derive the same divergence, or worse, "restore" the plan's version.
+
+**Each entry names the class** — 🕳 **gap** (the plan omitted or mis-stated something), 🔧
+**improvement** (the plan was executable, the code suggested better), ⚖ **judgement** (a fork the
+plan left open). **A gap is the load-bearing kind**: it says the review passes missed something, and
+that is worth knowing before trusting the tasks that have not been built yet.
+
+### Phase 0
+
+**0.1 — 🔧 the three sites were eliminated, not remapped.** The task named three
+`join(teamDir, relPath)` sites in `team-init.ts` and said all three move together, because remapping
+the write while leaving the `exists` predicate overwrites a live seat doc. **Shipped instead:**
+`renderTemplates` takes a `dest(relPath)` and reports **destinations** in both `writes` and
+`skipped`, so `init` asks its idempotency predicate and its write the same question **by
+construction**. `templateDestination()` is the one pure mapping, unit-tested against the legacy
+`join` for byte-identity under the defaults. _Why: the plan's version leaves the hazard live for the
+next editor of that file, and the whole reason it was called out is that it already bit once._
+Cost: `renderTemplates`' signature and its existing test assertions changed (`relPath` → `path`).
+
+**0.3 — 🕳 the cascade was four prose claims, not one.** The task named
+`upgrade/SKILL.md:202-204` as the sentence the template falsifies. **Three more said the same thing:**
+`convene` (_"`init` does not render one, it is written at finalize"_), `finalize-session`
+(_"`.anthill/retro.md` does not exist yet at this step"_), and `bootstrap`'s enumeration of what
+`init` renders, which listed neither `retro.md` nor `paper-cuts.md`. All four moved in the commit.
+_Found by running `cascade-check`'s "added a new doc to the team footprint" row, not by the grep the
+task specified._
+
+**0.4 — 🕳 the stated validation criterion is wrong, and following it literally causes damage.**
+The task says validation is _"the grep returns only `config.json` hits"_, excluding only the ~45
+`.anthill/config.json` mentions. **Measured: all 15 of `bootstrap`'s hits are the footprint ROOT** —
+the directory `config.json` lives in, fixed by `CONFIG_DIR`, not derived from any team's `teamDir` —
+and `join` carries a measured scar that cites this repo's actual `.anthill/` as evidence. Rewriting
+those to `<teamDir>/…` would point prose at a directory that does not exist.
+**The real exclusion list is `config.json` AND the footprint root.** After the commit the residue is
+four legend lines that write `.anthill/dev/` while explicitly labelling it the default.
+_Also decided here (⚖): citations use `<teamDir>/…` tokens at the point of use, not a per-file legend
+alone — skill prose is arrived at by grep, mid-file, where a legend 200 lines up is not read._
+
+**0.2 — ⚖ `gitignoreLines(teamDirs[])` takes the list now, with one team in it.** The task's contract
+said "per configured team" while Phase 1 is what creates a second team. Shipped as an array
+parameter called with `[config.paths.teamDir]`, so Phase 1 changes a call site rather than a
+signature. The comms segment comes from `COMMS_DIR`, the constant `commsLogPath()` builds with.
+
+---
+
 ## Filed separately — deliberately NOT in this plan
 
 Each is independently landable and inflating this plan with them would put real work behind a queue
