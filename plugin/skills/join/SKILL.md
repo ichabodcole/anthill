@@ -33,6 +33,11 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
      and the highest-leverage read here;
    - `<seatDir>/seams.md` — the shared inter-seat **contracts**. You **defer** to these; you never
      restate them in your own doc;
+   - **⚠ If this project configures several teams, these docs are the RESOLVED team's** — you are
+     not told which one, by design, because a seat should never have to name a team. **A wrong
+     binding looks exactly like amnesia**: your seat doc reads thin, the seams look unfamiliar, the
+     principles are somebody else's. That is `anthill team show`, not a re-read — it names the team
+     and the rung that chose it (this pane's `ANTHILL_TEAM`, the repo's pin, or being the only team).
    - `<seatDir>/<handle>.md` — **your own living doc**: its epitaph, scope, boundaries,
      relationships, reflexes, anti-patterns, hard-won lessons. This is _you_. Internalize it before
      you touch code.
@@ -301,6 +306,8 @@ status`** shows who's on + the board.
 ## Join checklist (the beats that get skipped)
 
 - ◻ **Grounded** in your seat (grounding docs → SOP → **principles** → seams → your seat doc).
+  **Docs feel thin or unfamiliar on a multi-team project? That is `anthill team show`, not a
+  re-read** — a wrong team binding is indistinguishable from an amnesiac seat.
   `<teamDir>/principles.md` is short and is the highest-leverage read in that list. A doc flagged
   **⚠ unfilled template** in your join output is _not_ evidence the project lacks that content —
   it means nobody wrote it yet. Say so to the lead rather than inferring from it.

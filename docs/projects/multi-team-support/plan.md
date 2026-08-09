@@ -758,6 +758,14 @@ tell those apart cannot tell whether `--force` is safe.
 one: `unknown` blocks, and a stale record must not be able to lock a repo out of convening. The
 refusal names it.
 
+**3.5 — 🕳 the four files were four PROSE bodies; the checklists are separate and were missed.** The
+task names `convene`, `comms`, `join` and `AGENTS.md:29`, and the edits went into each file's body.
+`cascade-check`'s "changed a rule in a skill" row has a recorded scar for exactly this — _"prose and
+checklist drift apart, and the checklist is the part that gets read"_ — and it fired: neither
+`convene`'s nor `join`'s checklist mentioned the binding. Both now carry one line. **The task's file
+list was right and its granularity was wrong**, which is the same defect the map recorded in
+triplicate when `principles.md` was added.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows

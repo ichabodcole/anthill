@@ -69,6 +69,14 @@ stay solo.
      absence loudly instead of skipping the gate silently. What you must not do is invent one to
      make the field look filled. Ask **once** at convene; if it is already set, say nothing.
 
+   - **⚠ ONE TEAM AT A TIME, if this project configures several.** `anthill convene` refuses while
+     another configured team is still convened, **because the board is one repo-root file** —
+     convening now would rebind that team's board underneath its seats. The remedy is two commands,
+     and they are the whole of it: **stand the other team down (`anthill down`), then
+     `anthill team use <name>`** to move this repo onto the team you want. `anthill team ls` shows
+     what is configured; `anthill team show` says which one you are on and why. _(A guard without a
+     route reads as a wall, and this is the moment a lead meets it.)_
+
 3. **Stand up coordination.**
    - **Channel:** run **`anthill convene`**. **There is no wire to open** — `anthill comms` is an
      append-only log that exists as soon as the channel is named in config, so convene reports board
@@ -233,6 +241,9 @@ positions`.** This is the named moment to run it; without one it is a verb nobod
 
 The stand-up beats that get skipped when you're eager to spawn. Run them as a list:
 
+- ◻ **On the intended team**, if this project configures more than one — `anthill team show` names it
+  and the rung that chose it. Convene **refuses while another team is still convened** (the board is
+  one repo-root file): `anthill down`, then `anthill team use <name>`.
 - ◻ **Grounded** as the lead (grounding docs → SOP → **principles** → seams → your seat doc).
   `<teamDir>/principles.md` is short and is the highest-leverage read in that list.
 - ◻ **Work gathered** from the human; **plan phase** run (`anthill:plan`) if it's a multi-seat feature

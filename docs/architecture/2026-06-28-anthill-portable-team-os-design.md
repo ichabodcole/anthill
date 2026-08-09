@@ -396,10 +396,14 @@ subcommands — and the five that are not about a team (`info`, `scan`, `migrate
 - `anthill feedback` — send a bug or idea upstream to the anthill repo
 - `anthill migrate` — apply a footprint version migration (v1 → v2), planned purely by `migrate.ts`
 - `anthill info` — environment/config introspection
-- `anthill team show` — which team this repo resolves to **and which rung decided** (§5a's ladder:
-  `--team` → `ANTHILL_TEAM` → the pin → the sole team). The only surface that makes a wrong ambient
-  binding self-evident rather than silent — every other command answers correctly and says nothing
-  about how it decided
+- `anthill team ls|use|show` — the team noun group (§5a). `ls` lists every configured team marking
+  the resolved one; `use <name>` pins this repo to one (`.anthill/current-team`, gitignored),
+  validating the name at write time and refusing while any configured team looks live; `show` names
+  the resolved team **and which rung decided** (the ladder: `--team` → `ANTHILL_TEAM` → the pin → the
+  sole team). `show` is the only surface that makes a wrong ambient binding self-evident rather than
+  silent — every other command answers correctly and says nothing about how it decided.
+  **`convene` refuses while another configured team is convened, because `.bounty-session` is a
+  single repo-root file** — a constraint that retires when the board stops being one
 
 **Generalizations from flute:** config-driven (no hardcoded channel/seats/paths); self-locating
 (CLI lives in plugin cache, resolves spellbook from _its_ cache via the `resolveCoordCli` pattern).

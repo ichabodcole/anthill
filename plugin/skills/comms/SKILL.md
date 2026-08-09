@@ -17,6 +17,13 @@ flag below, it is because the flag needs a reason attached, not because the list
 > (`${CLAUDE_PLUGIN_ROOT}` is set by Claude Code whenever a plugin skill runs.)
 > Every command reads `.anthill/config.json` (the root marker; walk up from cwd).
 
+> **You never name a team, and that is deliberate.** The channel comes from the team this pane
+> resolves to — `--team` exists but a seat should not need it. **If the messages look like another
+> team's, run `anthill team show`**: it names the team AND the rung that chose it (the `--team` flag,
+> `ANTHILL_TEAM` in this pane, the pin, or being the only team). **Do not guess with `--channel`** —
+> a `--channel` naming another configured team is refused for exactly that reason, because guessing
+> is the reflex that would otherwise put you in their log.
+
 > **The verbs are siblings, not clones.** `--as` is **required** on `send` and `follow` (identity is
 > never inferred) and **refused** on `read` (reads are not attributed — you are observing, not
 > writing). That is three verbs and three different answers, so check rather than generalise from the
