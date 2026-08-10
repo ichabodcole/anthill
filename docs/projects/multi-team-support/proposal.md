@@ -1,7 +1,11 @@
 # Multi-team support — switching, forking, and externalizing the methodology
 
-**Status:** Draft v2 — **revised after a cold gap analysis and a path-resolution trace, both of which
-falsified load-bearing claims in v1.** ✅ **All three decision points ratified by Cole 2026-08-09.**
+**Status:** ✅ **Shipped 2026-08-10** — MVP items 0–7 built and merged to `develop`; all six success
+criteria met. **Items 8 and 9 moved out** (see the scope amendment under Scope) — the bootstrap
+fail-open defect to a backlog sweep, the acceptance experiment to its own project. **Open Questions 2
+and 3 remain open and travel with that project.**
+_(Was: Draft v2 — revised after a cold gap analysis and a path-resolution trace, both of which
+falsified load-bearing claims in v1. All three decision points ratified by Cole 2026-08-09.)_
 **Created:** 2026-08-09 · **Author:** Cole + Claude Code (unconvened session — no seat)
 **Branch:** `feature/multi-team-support`
 **Rests on:** [one-project-many-teams](../../investigations/2026-08-09-one-project-many-teams.md) ·
@@ -233,8 +237,35 @@ Same for `spawn --session` / `attach --session`, which name a tmux session, not 
 6. **`upgrade` handles N teams or refuses** — non-negotiable; half-upgrading while reporting green is
    a data-integrity bug.
 7. Attribution floor.
-8. **Fix the bootstrap fail-open defect.**
-9. **The acceptance experiment** — see the scope correction below.
+8. ~~**Fix the bootstrap fail-open defect.**~~ → **MOVED OUT 2026-08-10, see below.**
+9. ~~**The acceptance experiment**~~ → **MOVED OUT 2026-08-10 into its own project, see below.**
+
+> ### ⚠ SCOPE AMENDMENT (2026-08-10, at finalize) — items 8 and 9 were NOT built, and the plan moved
+>
+> them without amending this list
+>
+> **Items 0–7 shipped** on `feature/multi-team-support` (merged to `develop`, gate 675 pass / 0 fail).
+> All six success criteria below are met. **Items 8 and 9 were never built** — `plan.md` filed both
+> under _"Filed separately — deliberately NOT in this plan"_, which was a reasonable plan-level call
+> and **was never reflected back here.** So for the length of the build this document said the MVP
+> included two things nobody was building. Recorded rather than quietly deleted, because a scope that
+> silently shrinks to match what got done reads as though it was right the first time — the same
+> failure `plan.md`'s implementation record exists to prevent, one level up.
+>
+> **Where each went, and why it is not a deferral-in-place:**
+>
+> - **Item 8 (bootstrap fail-open)** → **a defect sweep, no project.** It is **wrong today with one
+>   team** and has nothing to do with team resolution; it was swept in here because it touches
+>   `bootstrap`. Filed with the other loose defects in
+>   [`docs/backlog/2026-08-10-post-multi-team-defect-sweep.md`](../../backlog/2026-08-10-post-multi-team-defect-sweep.md).
+> - **Item 9 (the acceptance experiment)** → **its own project**,
+>   [`methodology-externalization`](../methodology-externalization/proposal.md). It asks a **different
+>   question** from this one — not _"can a project hold many teams"_ but _"do variants actually
+>   differ, and is externalized methodology a precondition for them?"_ — and it **uses what this
+>   project built as its instrument.** Its likely output (externalizing the methodology) is larger
+>   than everything shipped here, so filing it as the last item of a project named "multi-team
+>   support" would misplace it. **The scope correction below says the gap analysis "largely won" that
+>   argument; item 9 is what settles it, and it is still unsettled.**
 
 **Out of Scope (MVP):** fork _inheritance policy_ (lineage recorded, policy deferred — does a fork
 inherit the parent's living docs, contaminating the comparison, or start clean, discarding what made
@@ -333,7 +364,7 @@ and the failure mode is silent-wrong-answer.
    which is exactly the self-invalidation a derived value would have bought — a stale pin (team
    deleted or renamed) and a copied pin (team not in this project) both resolve to "not a configured
    team" and **throw**. No derivation needed; the check is `config.teams[name] ?? throw`.
-2. **Do teams share `principles.md` / `paper-cuts.md`?** Cole's cascade proposal — a **project-level**
+2. **[→ CARRIED to [methodology-externalization](../methodology-externalization/proposal.md), 2026-08-10]** **Do teams share `principles.md` / `paper-cuts.md`?** Cole's cascade proposal — a **project-level**
    set that applies down and a **team-level** set that does not propagate up. Current reading:
    `retro.md` must be team-local (else attribution dies); `principles.md` wants both;
    `paper-cuts.md` is mostly project-global since the friction is in shared tooling. **A team-level
@@ -341,11 +372,11 @@ and the failure mode is silent-wrong-answer.
    overrides must say so and why** — and that disagreement is exactly the signal an A/B exists to
    produce. _(v1 contained a self-contradiction here — §4 said retro was already per-team, OQ3 said
    these files sit above `teamDir`. Both were artifacts of `teamDir` defaulting to `.anthill`.)_
-3. **Can two variants be compared honestly at all?** Different work, different times, different
+3. **[→ CARRIED to [methodology-externalization](../methodology-externalization/proposal.md), 2026-08-10 — still the unclosed one]** **Can two variants be compared honestly at all?** Different work, different times, different
    accumulated context. **Restored — v1 dropped it entirely, and it may be the thing that decides
    whether capability 2 delivers anything.** A commit trailer makes a session _labelled_, not
    _comparable_.
-4. **Is a team the same object as a seat TIER?** [non-dev-seats](../non-dev-seats/proposal.md) gives
+4. **[→ CARRIED to [methodology-externalization](../methodology-externalization/proposal.md), 2026-08-10]** **Is a team the same object as a seat TIER?** [non-dev-seats](../non-dev-seats/proposal.md) gives
    the research tier its own directory and declares it **cross-project** — which a `teamDir` that
    swallows tier dirs would break. **Item 0's derivation defuses the blocker** (tier naming stays
    that proposal's call), but the research tier's cross-project claim still needs reconciling.

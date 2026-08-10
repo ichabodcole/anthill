@@ -523,6 +523,28 @@ state, not a defect queue to drain.
 
 ## Next
 
+1. 🔬 **Methodology externalization — the acceptance experiment.** _NEW 2026-08-10._ Hand-write a
+   3-seat `manager / implementer / reviewer` config, convene it, and **count the skill instructions
+   the seats cannot execute as written.** Non-zero → externalization is a precondition for variants
+   and **the count names the next phase**; zero → the concern was overstated and it closes cheaply.
+   **The first real use of the multi-team instrument**, and the question `multi-team-support`
+   shipped without settling. Carries that project's Open Questions 2, 3 and 4.
+   [proposal](projects/methodology-externalization/proposal.md).
+2. 🔧 **Post-multi-team defect sweep.** _NEW 2026-08-10._ Two are **wrong today with one team** and
+   are the ones to pull forward: **bootstrap fails open** on a non-software repo (hands the project
+   `layered-app` verbatim — produces a team, the team is meaningless, nothing reports it), and
+   **bare `anthill` in emitted strings** (4 sites; resolves through PATH to the highest cached
+   release, so a string a seat runs verbatim can execute on a different binary than composed it).
+   Plus four smaller. [backlog](backlog/2026-08-10-post-multi-team-defect-sweep.md).
+   2b. ✅ **Multi-team support** — **SHIPPED** 2026-08-10 (merged to `develop`, gate 675 pass / 0 fail).
+   One project can hold several teams, resolved ambiently (`--team` → `ANTHILL_TEAM` → the pin → the
+   sole team → **throw**, no fallback at any rung); `anthill team ls|use|show`; a `bootstrap` §0a
+   add-a-team route; `migrate` refuses a multi-team config; `Anthill-Team` attribution on commits and
+   retro entries. **A single-team project sees zero change.** MVP items 8 and 9 were moved out at
+   finalize rather than quietly dropped — see the scope amendment.
+   [proposal](projects/multi-team-support/proposal.md) · [plan + implementation
+   record](projects/multi-team-support/plan.md) ·
+   [session](projects/multi-team-support/sessions/2026-08-10-multi-team-support-implementation.md).
 3. ✅ **Multi-surface archetype + candidate seatings** — **SHIPPED** 2026-07-05 (`de3aa58`, on
    `feat/multi-surface-archetype`; awaiting human sign-off → `develop`). A by-surface archetype +
    `anthill scan` (deterministic workspace detector) + bootstrap candidate seatings as a
