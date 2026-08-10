@@ -815,6 +815,50 @@ checklist drift apart, and the checklist is the part that gets read"_ — and it
 list was right and its granularity was wrong**, which is the same defect the map recorded in
 triplicate when `principles.md` was added.
 
+**3.6 — the mutation check the task specified WORKED, and it is worth stating what it proved.**
+Rewording rung 5's sentence to _"and none was selected:"_ left the suite at **638 tests, 0 fail**
+while `anthill team ls` began refusing to list a two-team repo. So the regression the record above
+calls "measured and fixed" was, at that moment, fixed and completely unguarded. **The reworded
+message is kept in the shipped code** — it is the proof the coupling is gone. Guard 2's three tests
+were each verified RED against a reverted `liveTeams` (3 fail / 2 pass, so the mutation reaches all
+three and the formatter tests correctly do not move).
+
+**3.6 — ⚖ the type distinction is tested in BOTH directions.** `AmbiguousTeamError` alone would let
+someone widen it to every ladder failure and quietly turn `ls` into a command that renders a list
+instead of naming a bad `--team`. The second test asserts a bad flag / env / pin throws `ConfigError`
+and **not** `AmbiguousTeamError`.
+
+### Phase 4
+
+**4.1 — 🕳 "prose policy, not tooling" was wrong, and the route's own verification is what proved
+it.** The task rests on `anthill init` being _"already file-level idempotent"_. It is — and it never
+got the chance: `init` routes through `requireConfig` (wired in 2.3), so on the freshly-converted
+two-team repo §0a produces, with no pin yet, it exits 1:
+
+> _this project configures 2 teams and none was selected: dev, lean._
+
+**The new team's docs could not be rendered by following the route as written.** `init` now resolves
+**softly** — a selector still narrows (`--team lean` renders only lean), and absence of one means
+**ALL configured teams** rather than a refusal. Safe precisely because of the property the task
+leaned on: the renderer never clobbers, so rendering a team that is already there is a no-op, and
+rendering all of them is that no-op N times. A bad `--team` or a stale pin still hard-errors —
+those name a team that does not exist, which is a typo to report, not an absence to fill.
+
+**This is the same defect a THIRD time** (`team ls`, `team use`, now `init`) — _a command that helps
+you resolve ambiguity must not require ambiguity to be already resolved_ — and a third time it was
+invisible to unit tests and visible immediately on an end-to-end run. The pure half
+(`renderTemplates`, `templateDestination`) was green throughout: **the render was never wrong, it
+never happened.** New `team-init.multiteam.test.ts` pins it at the CLI level, which is the only level
+that can see it; verified RED against the pre-fix file (4 fail / 1 pass — the pass is the bad-`--team`
+case, whose behavior is unchanged by design).
+
+**4.1 — 🔧 the gitignore lines now cover EVERY configured team, not the resolved one.**
+`gitignoreLines`' own doc comment already said "for every configured team's `teamDir`" (written in
+0.2) while the call site passed `[config.paths.teamDir]`. Under a pin that means a repo on `dev`
+leaves `lean`'s comms log trackable — the identical committed-log bug those lines exist to prevent,
+one team over. The ignore file is project-level; so is the set it derives from now. Byte-identical on
+a single-team project, where the two are the same list.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows

@@ -274,6 +274,15 @@ at all.
 **`ResolvedProject` deliberately carries no `soleTeam` field**: a top-level field is total, so an
 absence cannot carry a verdict.
 
+**Three commands do not sit on that ladder, and it is the same rule three times: _a command that
+helps you resolve ambiguity must not require ambiguity to be already resolved._** `team ls` lists
+every team (the question it answers is _which teams exist_), `team use` pins one (a repo with no pin
+and two teams must be able to gain one), and `init` renders — every configured team when nothing
+selects one. All three still hard-error on a **named** team that is not configured: a bad `--team` or
+a stale pin is a typo to report, not an absence to fill. Every command that **acts as** a team —
+posts to its wire, reads its board, spawns its seats — refuses, because acting as the wrong team is
+the failure the ladder exists to prevent.
+
 ---
 
 ## 6. `.anthill/` scaffold templates (Piece 3)
@@ -391,7 +400,11 @@ subcommands — and the five that are not about a team (`info`, `scan`, `migrate
 - `anthill commit` — file-scoped, serialized commit (carries the shared-index-race fix)
 - `anthill init` — **deterministic renderer**: given `.anthill/config.json`, render `templates/`
   into the target repo (idempotent; re-runnable when the team reshapes — renders new seat docs
-  without clobbering existing ones)
+  without clobbering existing ones). **The one command that does NOT refuse an unresolved team**
+  (§5a): `--team` narrows, and with nothing selected it renders **every** configured team. It renders
+  rather than acts, and never clobbers, so rendering all of them is the same no-op N times — whereas
+  refusing would make adding a second team impossible, since the new team's docs are rendered before
+  there is anything to pin.
 - `anthill scan` — deterministic workspace/surface detection, feeding bootstrap's candidate seatings
 - `anthill feedback` — send a bug or idea upstream to the anthill repo
 - `anthill migrate` — apply a footprint version migration (v1 → v2), planned purely by `migrate.ts`

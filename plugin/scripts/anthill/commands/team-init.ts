@@ -1,13 +1,14 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, type OutputFormat, resolveFormat } from "../agent-layer.ts";
 // The same constant `commsLogPath()` builds the log path from — so the ignore
 // line and the thing it guards cannot drift apart.
 import { COMMS_DIR } from "../comms.ts";
+import { ConfigError, type ResolvedConfig, type ResolvedProject } from "../config.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
-import { PIN_REL_PATH } from "../team-resolve.ts";
-import { requireConfig } from "./team-support.ts";
+import { AmbiguousTeamError, PIN_REL_PATH, readPin, resolveTeam } from "../team-resolve.ts";
+import { requireProject } from "./team-support.ts";
 
 /**
  * The deterministic template renderer behind `anthill init` (design D5: the skill
@@ -246,11 +247,60 @@ function defaultTemplatesDir(): string {
 }
 
 interface InitData {
+  /** The rendered team's dir. With several rendered, the first in config order. */
   teamDir: string;
+  /** Every team this run rendered, in config order. One entry on a single-team project. */
+  teams: Array<{ name: string; teamDir: string }>;
   written: string[];
   skipped: string[];
   /** Per-line status for each gitignore line init ensures (scratch + bounty-session). */
   gitignore: Array<{ line: string; action: "added" | "present" }>;
+}
+
+/**
+ * WHICH TEAMS DOES `init` RENDER — and why ambiguity is not an error here.
+ *
+ * Every other command routes through `requireConfig`, so an unselected team on a
+ * multi-team project is a hard refusal. That is right for commands that ACT AS a
+ * team (post to its wire, read its board, spawn its seats): acting as the wrong
+ * team is the failure the ladder exists to prevent.
+ *
+ * `init` is not one of those. It is the deterministic, file-level-idempotent
+ * RENDERER — it never clobbers, so rendering a team's scaffold that was already
+ * there is a no-op, and rendering all of them is the same no-op N times.
+ *
+ * The refusal was also self-defeating, and this is how it was found: the
+ * documented route for adding a second team (`bootstrap` §0a) is *edit
+ * `config.json`, then run `anthill init` to render the new team's docs*. On a
+ * freshly-converted two-team repo there is no pin yet, so `init` refused — the
+ * new team's docs could never be rendered by following the route as written.
+ *
+ * Same shape as `team ls` and `team use`: **a command that helps you resolve
+ * ambiguity must not require ambiguity to be already resolved.** A selector still
+ * narrows (`--team lean` renders only lean); absence of one now means ALL rather
+ * than a refusal. Every other ladder failure — a bad `--team`, a stale pin —
+ * still throws, because those name a team that does not exist.
+ */
+function teamsToRender(
+  format: OutputFormat,
+  teamArg: string | undefined,
+): { project: ResolvedProject; targets: ResolvedConfig[] } {
+  const project = requireProject(format, "init");
+  try {
+    const { team } = resolveTeam(project, {
+      team: teamArg,
+      env: process.env,
+      pin: readPin(project.projectRoot),
+    });
+    return { project, targets: [team] };
+  } catch (err) {
+    if (err instanceof AmbiguousTeamError) return { project, targets: project.teams };
+    if (err instanceof ConfigError) {
+      emitError({ format, command: "init", error: err.message });
+      process.exit(1);
+    }
+    throw err;
+  }
 }
 
 // `anthill init` — deterministic, idempotent renderer. Reads .anthill/config.json,
@@ -270,7 +320,8 @@ export const teamInitCommand = defineAnthillCommand({
     },
     team: {
       type: "string",
-      description: "Which configured team (default: resolved from the pin / sole team)",
+      description:
+        "Which configured team (default: the resolved team, or ALL when none is selected)",
       valueHint: "name",
     },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
@@ -278,7 +329,8 @@ export const teamInitCommand = defineAnthillCommand({
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "init", { team: ctx.args.team as string | undefined });
+    const { project, targets } = teamsToRender(format, ctx.args.team as string | undefined);
+    const config = targets[0] as ResolvedConfig;
 
     const templatesDir = (ctx.args.templates as string | undefined) || defaultTemplatesDir();
     if (!existsSync(templatesDir)) {
@@ -291,38 +343,43 @@ export const teamInitCommand = defineAnthillCommand({
     }
 
     const templates = readTemplateDir(templatesDir);
-    const teamDir = config.teamDirPath();
-
-    // Every destination is decided ONCE, through the config's resolvers — the
-    // idempotency predicate below and the write loop ask the same question.
-    const resolvedPaths = {
-      teamDir,
-      seatDir: config.seatDirPath(),
-      seams: config.seamsPath(),
-    };
-    const plan = renderTemplates({
-      templates,
-      config: { channel: config.channel, lead: config.lead, seats: config.roster() },
-      dest: (relPath) => templateDestination(relPath, resolvedPaths),
-      exists: existsSync,
-    });
-
     const written: string[] = [];
-    for (const w of plan.writes) {
-      mkdirSync(dirname(w.path), { recursive: true });
-      writeFileSync(w.path, w.content);
-      written.push(relative(config.projectRoot, w.path));
-    }
-    const skipped = plan.skipped.map((abs) => relative(config.projectRoot, abs));
+    const skipped: string[] = [];
+    const teams: InitData["teams"] = [];
 
-    // Ensure the gitignored lines in the target repo (idempotent): this team's
-    // running scratch and comms log, plus the pinned bounty-session marker.
+    for (const team of targets) {
+      const teamDir = team.teamDirPath();
+      teams.push({ name: team.name, teamDir: relative(team.projectRoot, teamDir) });
+
+      // Every destination is decided ONCE, through the config's resolvers — the
+      // idempotency predicate below and the write loop ask the same question.
+      const resolvedPaths = { teamDir, seatDir: team.seatDirPath(), seams: team.seamsPath() };
+      const plan = renderTemplates({
+        templates,
+        config: { channel: team.channel, lead: team.lead, seats: team.roster() },
+        dest: (relPath) => templateDestination(relPath, resolvedPaths),
+        exists: existsSync,
+      });
+
+      for (const w of plan.writes) {
+        mkdirSync(dirname(w.path), { recursive: true });
+        writeFileSync(w.path, w.content);
+        written.push(relative(team.projectRoot, w.path));
+      }
+      for (const abs of plan.skipped) skipped.push(relative(team.projectRoot, abs));
+    }
+
+    // Ensure the gitignored lines in the target repo (idempotent): EVERY configured
+    // team's running scratch and comms log, plus the two project-level markers.
+    // Every team, not just the rendered ones — the ignore file is project-level, and
+    // a repo pinned to `dev` that leaves `lean`'s comms log trackable is the same
+    // committed-log bug those lines exist to prevent, just one team over.
     // Chain planGitignore over the resulting content so they land in one write.
     const gitignorePath = join(config.projectRoot, ".gitignore");
     const before = existsSync(gitignorePath) ? readFileSync(gitignorePath, "utf8") : null;
     const ignored: Array<{ line: string; action: "added" | "present" }> = [];
     let content = before;
-    for (const line of gitignoreLines([config.paths.teamDir])) {
+    for (const line of gitignoreLines(project.teams.map((t) => t.paths.teamDir))) {
       const plan = planGitignore(content, line);
       ignored.push({ line, action: plan.action });
       content = plan.content;
@@ -330,7 +387,8 @@ export const teamInitCommand = defineAnthillCommand({
     if (content !== (before ?? "")) writeFileSync(gitignorePath, content ?? "");
 
     const data: InitData = {
-      teamDir: relative(config.projectRoot, teamDir),
+      teamDir: teams[0]?.teamDir ?? "",
+      teams,
       written,
       skipped,
       gitignore: ignored,
@@ -342,7 +400,13 @@ export const teamInitCommand = defineAnthillCommand({
       data,
       startedAt: started,
       renderText: (d) => {
-        const lines = [`Rendered team scaffold into ${d.teamDir}/`];
+        const lines =
+          d.teams.length > 1
+            ? [
+                `Rendered ${d.teams.length} team scaffolds:`,
+                ...d.teams.map((t) => `  ${t.name} -> ${t.teamDir}/`),
+              ]
+            : [`Rendered team scaffold into ${d.teamDir}/`];
         if (d.written.length) {
           lines.push(`Wrote ${d.written.length} file(s):`);
           for (const p of d.written) lines.push(`  + ${p}`);

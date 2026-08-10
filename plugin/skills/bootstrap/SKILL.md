@@ -34,8 +34,93 @@ do NOT re-bootstrap (you'd double-write or clobber). Instead:
   tracks _layout_, and a release can change the SOP and team guidance without moving it. Living docs
   are written once at bootstrap and never refreshed automatically, so `migrate`'s _"nothing to
   migrate"_ does not mean the team is current.
+- **on the current version, and the human wants a SECOND team** (a different _kind_ of team, or a
+  variant of this one to compare against) → **do not re-bootstrap. Go to [§0a](#0a-adding-a-team-to-a-project-that-already-has-one).**
+  A project can carry several teams, and adding one is a different act from standing the first up:
+  the repo, the dependencies and the human's conventions are all already settled, so steps 1–3 have
+  mostly been answered. What is left is the composition and one careful config edit.
 
 Only continue below when there's no footprint yet.
+
+### 0a. Adding a team to a project that already has one
+
+**This route exists because "already bootstrapped" is not the same answer as "no".** A project may
+configure several teams — a different shape for a different kind of work, or a deliberate variant so
+two shapes can be compared rather than argued about. What it must never do is overwrite the team that
+is already there.
+
+**Do the composition first, then one edit.** Steps 2–3 below still apply to the NEW team — scan, draft
+a seating from the nearest archetype, ratify it with the human. Skip step 1 (the dependencies are
+already installed) and do not touch the incumbent's roster.
+
+Then convert the config **once**, from the flat shape to a `teams` map (spec §5a):
+
+```jsonc
+// BEFORE — one team, the shape every existing project is in
+{ "version": 2, "channel": "myproject", "lead": "maestro", "seats": [ /* … */ ] }
+
+// AFTER — two teams. NOTHING MOVED ON DISK.
+{
+  "version": 2, // ⚠ STAYS 2 — see below
+  "teams": {
+    "dev": {
+      "lead": "maestro",
+      "seats": [
+        /* the incumbent's, verbatim */
+      ],
+      "channel": "myproject", // keep its EXISTING channel, or its log is orphaned
+      "paths": { "teamDir": ".anthill" }, // ⚠ REQUIRED — see below
+    },
+    "lean": { "lead": "boss", "seats": [ /* the new team's */ ], "forkedFrom": "dev" },
+  },
+}
+```
+
+**Four things this edit must get right. Each of them silently damages the incumbent if missed:**
+
+1. **⚠ The incumbent needs an EXPLICIT `paths.teamDir: ".anthill"`.** Under a `teams` map `teamDir`
+   defaults to `.anthill/teams/<name>`, so without this line the existing team's docs stay at
+   `.anthill/` while every command resolves elsewhere — a team whose seats read empty living docs
+   while their real ones sit untouched one directory up. **With the line: zero file moves, zero
+   migration**, and new teams still get the new default.
+2. **⚠ `version` STAYS `2`.** It describes the footprint LAYOUT, and nothing moved. The shape is
+   detected structurally (the presence of `teams`), so there is no version to bump — and bumping it
+   would make `anthill migrate` report _"already at v3"_ against a plugin whose current version is 2.
+3. **⚠ Keep the incumbent's existing `channel`.** It is the message log's filename
+   (`<teamDir>/comms/<channel>.ndjson`); renaming it orphans every message the team has sent.
+   A new team's `channel` defaults to its own name, which is usually what you want.
+4. **Top-level `channel` / `seats` / `lead` / `paths` must be REMOVED** as part of the same edit —
+   they now live inside the entry. The config layer refuses a config carrying both, by design: a
+   half-finished conversion that silently ignored them would make the incumbent team disappear.
+
+**Then render and verify — both, and in this order:**
+
+```sh
+anthill init                     # renders ONLY the new team's docs; skips every existing file
+anthill team ls                  # both teams, with their resolved directories
+```
+
+**No `--team` here, deliberately.** There is no pin yet — the repo has just become ambiguous, and
+you are running `init` precisely to finish making it usable. So `init` renders **every** configured
+team when nothing selects one, and because it is idempotent at the file level, the incumbent's
+entire footprint comes back as _skipped_ while only the new team's docs are written. It cannot touch
+the incumbent's living docs. (`--team <name>` still narrows if you want only one.)
+
+**Read `team ls`'s output rather than assuming**: if the incumbent's row does not say `.anthill/`,
+item 1 above was missed and its docs are orphaned.
+
+**Constraints the config layer enforces, so you get an error rather than a silent collision:** team
+names match `[A-Za-z0-9._-]` and may not be `.` or `..`; channels must be unique **and prefix-free**
+(`anthill attach` folds `<channel>-<suffix>` in as a sibling session); and no two teams may resolve
+to the same `teamDir`, `seatDir` or `seams`.
+
+**Finally, tell the human the two operating facts** — they are the whole difference between one team
+and several:
+
+- **Only one team can be convened at a time**, because the board is a single repo-root file.
+  `anthill convene` refuses while another is up and names it.
+- **`anthill team use <name>` switches the repo**; `anthill team show` says which team you are on and
+  why. Seats never name a team — their pane carries the binding.
 
 ### 1. Preflight the dependencies
 
