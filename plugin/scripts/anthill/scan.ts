@@ -24,6 +24,33 @@ export interface ScanReport {
   root: string;
   /** `null` ⇒ single-surface. Manager/globs are detection byproducts. */
   workspace: { manager: PackageManager | null; globs: string[] } | null;
+  /**
+   * WHAT THE SCAN HAD TO GO ON — and it is a separate question from `workspace`.
+   *
+   * `"manifest"` ⇒ a readable `package.json` was found at the root.
+   * `"none"` ⇒ there was none, so `units[0]` is **SYNTHESIZED** from the directory
+   * name and its `stack` is empty **by absence, not by observation.**
+   *
+   * ⚠ WHY THIS IS ITS OWN FIELD RATHER THAN A `warnings` STRING A CONSUMER GREPS.
+   * `warnings` already carries `"no package.json at repo root"`, and reading it
+   * would be inferring a verdict from prose — the defect that made
+   * `AmbiguousTeamError` a TYPE, after a measured reword left the whole suite
+   * green while `anthill team ls` broke. In a SKILL that coupling is worse still,
+   * because nothing there can go red.
+   *
+   * ⚠ AND IT DOES NOT MEAN "NOT A SOFTWARE PROJECT." It means *this scanner*
+   * found nothing it can read — a Python or Rust repo is software and answers
+   * `"none"` today. A consumer must phrase its response as "I found no manifest I
+   * can read", never as a claim about what the repo is.
+   *
+   * The fail-open it closes: `workspace: null` was TRUE for both a real
+   * single-surface app and a repo with no manifest at all, and
+   * `skills/bootstrap` picked its archetype from that one boolean by its own
+   * admission. A novel was handed `layered-app` — an engine seat scoped to
+   * "goldens, unit tests" — and a human ratified it, because nothing said the
+   * reading was a fallback.
+   */
+  evidence: "manifest" | "none";
   /** Workspace members; single-surface ⇒ the ONE root package (len 1, path "."). */
   units: ScanUnit[];
   /** Non-fatal notices — house convention: on `data.warnings`, never stderr in JSON mode. */
@@ -293,6 +320,7 @@ export function buildScanReport(rootDir: string): ScanReport {
     return {
       root,
       workspace: null,
+      evidence: rootPkg ? "manifest" : "none",
       units: [unit],
       ...(warnings.length > 0 && { warnings }),
     };
@@ -327,6 +355,9 @@ export function buildScanReport(rootDir: string): ScanReport {
   return {
     root,
     workspace: { manager: detectManager(root), globs },
+    // A workspace was DERIVED from globs, so a manifest (package.json or
+    // pnpm-workspace.yaml) was necessarily readable to produce them.
+    evidence: "manifest",
     units,
     ...(warnings.length > 0 && { warnings }),
   };

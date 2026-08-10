@@ -13,6 +13,9 @@ reads) + a rendered `.anthill/` living-docs scaffold. This is the **one-time set
 seatings**, and let the human ratify. Single-surface repos get **layered-app**; a workspace of several
 apps + shared packages gets **multi-surface** (a seat per surface + the shared-contract seat). The
 archetype is a starting hypothesis, not a gate — the human always ratifies, corrects, or hand-tailors.
+**And when the scan finds no manifest it can read, there is no nearest archetype — you say so and ask
+(§2·0).** Ratification is not a safety net for a shape nobody had grounds for; a human will sign off on
+a plausible-looking roster, which is exactly how the old fail-open shipped teams into novel repos.
 
 > **The anthill CLI** — driven from the plugin (nothing installed in the target repo):
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below
@@ -164,14 +167,50 @@ write a half-working config.
 - **Read the repo's shape deterministically:** run **`anthill scan`** and read the `ScanReport` it emits
   (`{ ok, data }` — the `data` is the report). This is the machine reading you'll ratify with the human,
   replacing eyeballing the layout. What matters:
+  - **`data.evidence`** — **read this FIRST.** `"manifest"` ⇒ a readable `package.json` was found;
+    `"none"` ⇒ there was none, so `data.units[0]` is **synthesized from the directory name** and its
+    `stack` is empty **by absence, not by observation.** → **`"none"` goes to [§2·0](#20-evidence-none--stop-and-ask-do-not-propose-an-archetype), not to 2a/2b.**
   - **`data.workspace`** — `null` ⇒ **single-surface** repo (one app); non-`null` ⇒ a **multi-surface**
-    workspace (several apps + shared packages). This one boolean picks the archetype.
+    workspace (several apps + shared packages). Picks the archetype **once `evidence` is `"manifest"`** —
+    on its own it cannot tell a real single-surface app from a repo the scanner could not read at all.
   - **`data.units[]`** — each workspace member: `name`, `path`, `kind` (`"app"`|`"package"` — a
     best-effort hint you may overrule), `stack` (dep-derived, **dominant-first**, so `stack[0]` is the
     unit's primary framework), `private`, and `internalDeps` (names of other units it depends on — the
     edges).
 
-#### 2a. Single-surface (`data.workspace === null`) — layered-app, unchanged
+#### 2·0. `evidence: "none"` — STOP AND ASK. Do not propose an archetype.
+
+**Nothing below this point has evidence behind it.** `units[0]` was synthesized from the directory
+name; the empty `stack` is the scanner having found no manifest, not a repo having no stack. Every
+archetype in `templates/archetypes/` is a **software** shape, and proposing one here is a guess
+wearing a scan's authority.
+
+**⚠ This was a live defect, and its shape is why the rule is "ask", not "refuse".** 2a used to fire
+on `workspace === null` alone, so a novel repo received `layered-app` — an engine seat scoped to
+_"goldens, unit tests"_ — and **a human ratified it**, because nothing in the reading said it was a
+fallback. The bogus roster was laundered through a human "yes". A wrong answer nobody can see is bad;
+a wrong answer that collects a signature is worse.
+
+**Say what you found, in these terms, and then ask:**
+
+> _"`anthill scan` found no `package.json` I can read at the root, so I have nothing to derive a team
+> shape from — I can't tell whether this is a non-software project or one in a stack I don't scan
+> (Python, Rust, Go and others all read this way). **What kind of work does this repo hold, and who
+> would the seats be?**"_
+
+- **Phrase it as what YOU could not read, never as what the repo IS.** `evidence: "none"` is a fact
+  about the scanner. Telling a Rust team "this isn't a software project" invites an argument;
+  telling them "I can't read Cargo.toml" invites a correction, which is the thing you want.
+- **Then compose from their answer**, not from an archetype — **[step 3](#3-ratify-with-the-human)
+  onward works unchanged**, with the human's description standing in for the scan's reading. **The
+  seats are theirs to name.**
+- **Do NOT fall through to 2a or 2b**, and do not "start from `layered-app` and adjust". A shape the
+  human corrects is anchored on a shape nobody had grounds for.
+- **This is `adapts, not dictates` at its sharpest.** anthill has no opinion about what a
+  non-JavaScript team looks like, and the honest move is to say so and ask rather than to install a
+  guess.
+
+#### 2a. Single-surface (`evidence: "manifest"` and `data.workspace === null`) — layered-app, unchanged
 
 - **Load the draft:** read `${CLAUDE_PLUGIN_ROOT}/templates/archetypes/layered-app.json`. It seeds: a
   lead + engine / spine / surface seats + a verify seat (verifier `spawn:true`), with a `CHANGE-ME`
@@ -182,7 +221,7 @@ write a half-working config.
   human has names in mind — they ratify next.
 - Skip 2b entirely; go to step 3.
 
-#### 2b. Multi-surface (`data.workspace !== null`) — offer candidate seatings
+#### 2b. Multi-surface (`evidence: "manifest"` and `data.workspace !== null`) — offer candidate seatings
 
 A workspace of several apps + shared packages has **vertical** seams (one seat per surface + the shared
 contract), not the horizontal layers `layered-app` assumes. Read the `ScanReport`, derive three facts,

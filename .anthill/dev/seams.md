@@ -39,6 +39,7 @@
 interface ScanReport {
   root: string; // absolute repo root: .git / topmost package.json / cwd — resolved BEFORE .anthill exists
   workspace: { manager: "bun" | "pnpm" | "npm" | "yarn" | null; globs: string[] } | null; // null ⇒ single-surface
+  evidence: "manifest" | "none"; // what the scan had to go on — "none" ⇒ units[0] is SYNTHESIZED, stack empty by ABSENCE
   units: ScanUnit[]; // workspace members; single-surface ⇒ the ONE root package (len 1, path ".")
   warnings?: string[];
 }
@@ -62,6 +63,15 @@ when the path gives no hint. So on a non-conventional monorepo the consumer over
 the exposed raw signals (`private`, `stack`, `internalDeps`) rather than trusting the hint. **v1
 limitation:** pnpm negation globs (`!packages/x`) are parsed-and-dropped, not applied as excludes;
 `workspace.manager` is null when no lockfile is committed (a non-load-bearing byproduct).
+
+**AMENDMENT (2026-08-10) — `evidence` added, and this contract's own escape clause is what asked for it.**
+Ratified at: the field's two values and their meaning. The clause above says _"a consumer needing a field not listed here has hit a new seam"_ — `skills/bootstrap` had, and had been silently coping.
+
+**The fail-open:** `workspace: null` was true of BOTH a real single-surface app and a repo with no readable manifest at all, and bootstrap picked its archetype from that one boolean — in its own words, _"This one boolean picks the archetype."_ So a novel repo was handed `layered-app`, an engine seat scoped to _"goldens, unit tests"_. **Measured:** a git repo of `README.md` + `chapters/01.md` returned `workspace: null`, `stack: []`, `warnings: ["no package.json at repo root"]` — indistinguishable, on the ratified field set, from a React app.
+
+**Why not have the consumer read `warnings`.** The signal was already there in prose, and grepping it is inferring a verdict from a string — the defect that made `AmbiguousTeamError` a TYPE after a measured reword left the suite green while `anthill team ls` broke. In a SKILL that coupling is worse: nothing there can go red.
+
+**⚠ `evidence: "none"` DOES NOT MEAN "not a software project".** It means this scanner found nothing it can read; a Python or Rust repo is software and answers `"none"` today. A consumer must phrase its response as _"I found no manifest I can read"_ and ask — never as a claim about what the repo is. That distinction is the contract, not a nicety: the first wording invites a human to correct it, the second invites them to argue with it.
 
 **Why it bites:** `scan` runs during bootstrap discovery, **before** `.anthill/` is written — so
 `root` must NOT resolve from the config walk-up (it would throw). And without `internalDeps`,

@@ -160,6 +160,88 @@ describe("detectManager", () => {
   });
 });
 
+// ---- `evidence` — the fail-open this field exists to close ------------------
+//
+// `workspace: null` was TRUE for both a real single-surface app and a repo with
+// no manifest at all, and `skills/bootstrap` picked its archetype from that one
+// boolean by its own admission ("This one boolean picks the archetype"). So a
+// novel got `layered-app` — an engine seat scoped to "goldens, unit tests" — and
+// a HUMAN RATIFIED IT, because nothing in the payload said the reading was a
+// fallback. That last part is what makes this worse than a silent wrong answer:
+// the mistake is laundered through a human "yes".
+//
+// These tests pin the DISCRIMINATOR, not the warning text. Reading
+// `warnings[0] === "no package.json at repo root"` would work today and is the
+// thing being rejected — inferring a verdict from prose is what made
+// `AmbiguousTeamError` a type.
+describe("buildScanReport — `evidence` separates 'no manifest' from 'single surface'", () => {
+  it("a repo with NO package.json reports evidence 'none' — the novel case", () => {
+    const root = mkdtempSync(join(tmpdir(), "scan-nomanifest-"));
+    try {
+      mkdirSync(join(root, ".git"));
+      mkdirSync(join(root, "chapters"), { recursive: true });
+      writeFileSync(join(root, "README.md"), "# My Novel\n");
+      writeFileSync(join(root, "chapters", "01.md"), "ch1\n");
+
+      const report = buildScanReport(root);
+      expect(report.evidence).toBe("none");
+      // The unit is SYNTHESIZED from the directory name; its empty stack is an
+      // absence, not an observation. Asserted so the synthesis stays visible.
+      expect(report.units).toHaveLength(1);
+      expect(report.units[0]?.stack).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("a REAL single-surface app is 'manifest' — same `workspace: null`, different evidence", () => {
+    // The control. Without it, "evidence: none" could be true of every
+    // single-surface repo and the field would discriminate nothing.
+    const root = mkdtempSync(join(tmpdir(), "scan-manifest-"));
+    try {
+      mkdirSync(join(root, ".git"));
+      writeFileSync(join(root, "package.json"), JSON.stringify({ name: "solo" }));
+
+      const report = buildScanReport(root);
+      expect({ workspace: report.workspace, evidence: report.evidence }).toEqual({
+        workspace: null,
+        evidence: "manifest",
+      });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("an UNREADABLE package.json is 'none' — a malformed manifest is not evidence", () => {
+    // The interesting boundary: the file exists, so an `existsSync` check would
+    // call this "manifest" and hand the repo an archetype derived from nothing.
+    // `readManifest` returning null is the real signal, and it is what is read.
+    const root = mkdtempSync(join(tmpdir(), "scan-malformed-"));
+    try {
+      mkdirSync(join(root, ".git"));
+      writeFileSync(join(root, "package.json"), "{ this is not json");
+
+      const report = buildScanReport(root);
+      expect(report.evidence).toBe("none");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("a workspace is always 'manifest' — globs cannot exist without one", () => {
+    const root = mkdtempSync(join(tmpdir(), "scan-ws-"));
+    try {
+      mkdirSync(join(root, "apps", "web"), { recursive: true });
+      writeFileSync(join(root, "package.json"), JSON.stringify({ workspaces: ["apps/*"] }));
+      writeFileSync(join(root, "apps", "web", "package.json"), JSON.stringify({ name: "web" }));
+
+      expect(buildScanReport(root).evidence).toBe("manifest");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
 // ---- Golden ScanReport per fixture ----------------------------------------
 
 describe("buildScanReport — golden", () => {
@@ -169,6 +251,7 @@ describe("buildScanReport — golden", () => {
     const expected: ScanReport = {
       root,
       workspace: { manager: "bun", globs: ["apps/*", "packages/*"] },
+      evidence: "manifest",
       units: [
         {
           name: "mobile",
@@ -205,6 +288,7 @@ describe("buildScanReport — golden", () => {
     const expected: ScanReport = {
       root,
       workspace: null,
+      evidence: "manifest",
       units: [
         {
           name: "solo-app",
