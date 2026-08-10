@@ -2,7 +2,7 @@
 
 **Status:** 🟡 **Draft — the experiment is specified, the build it may commission is not.**
 **Created:** 2026-08-10 · **Author:** Cole + Claude Code (unconvened session — no seat)
-**Instrument:** [multi-team-support](../multi-team-support/proposal.md) — **shipped 2026-08-10**, and
+**Instrument:** [multi-team-support](../_archive/multi-team-support/proposal.md) — **shipped 2026-08-10**, and
 this project is its first real use.
 **Inherits:** MVP item 9 of that proposal (the acceptance experiment) and its Open Questions 2, 3
 and 4, all carried verbatim below.
@@ -112,8 +112,8 @@ non-dev archetypes.
 
 ## Related documents
 
-- [multi-team-support](../multi-team-support/proposal.md) — the instrument, and the scope amendment
+- [multi-team-support](../_archive/multi-team-support/proposal.md) — the instrument, and the scope amendment
   that moved this work here
-- [methodology-survey](../multi-team-support/methodology-survey.md) — the 82-instruction COORDINATION
+- [methodology-survey](../_archive/multi-team-support/methodology-survey.md) — the 82-instruction COORDINATION
   bucket, defined as content that _"varies by team shape… what an A/B varies"_
 - [non-dev-seats](../non-dev-seats/proposal.md) — Open Question 4's other half

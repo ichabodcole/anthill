@@ -1,7 +1,7 @@
 # Defect sweep — loose fixes surfacing around the multi-team branch
 
 **Filed:** 2026-08-10 · **Status:** Open · **Shape:** one `fix:` branch, or several small ones
-**Source:** MVP item 8 of [multi-team-support](../projects/multi-team-support/proposal.md) (moved out
+**Source:** MVP item 8 of [multi-team-support](../projects/_archive/multi-team-support/proposal.md) (moved out
 at finalize) + that branch's independent review.
 
 **None of these is multi-team work.** They are grouped only by when they surfaced. Two are wrong

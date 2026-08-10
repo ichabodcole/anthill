@@ -542,9 +542,9 @@ state, not a defect queue to drain.
    add-a-team route; `migrate` refuses a multi-team config; `Anthill-Team` attribution on commits and
    retro entries. **A single-team project sees zero change.** MVP items 8 and 9 were moved out at
    finalize rather than quietly dropped — see the scope amendment.
-   [proposal](projects/multi-team-support/proposal.md) · [plan + implementation
-   record](projects/multi-team-support/plan.md) ·
-   [session](projects/multi-team-support/sessions/2026-08-10-multi-team-support-implementation.md).
+   [proposal](projects/_archive/multi-team-support/proposal.md) · [plan + implementation
+   record](projects/_archive/multi-team-support/plan.md) ·
+   [session](projects/_archive/multi-team-support/sessions/2026-08-10-multi-team-support-implementation.md).
 3. ✅ **Multi-surface archetype + candidate seatings** — **SHIPPED** 2026-07-05 (`de3aa58`, on
    `feat/multi-surface-archetype`; awaiting human sign-off → `develop`). A by-surface archetype +
    `anthill scan` (deterministic workspace detector) + bootstrap candidate seatings as a
