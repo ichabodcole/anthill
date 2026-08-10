@@ -28,7 +28,7 @@ description: >
 > usually asked for one, not both.
 >
 > _Adapted from spellbook's local `land` skill, with what was left behind recorded in
-> [`docs/backlog/2026-08-10-adopt-a-land-skill-for-the-merge-step.md`](../../../docs/backlog/2026-08-10-adopt-a-land-skill-for-the-merge-step.md)._
+> [`docs/backlog/_archive/2026-08-10-adopt-a-land-skill-for-the-merge-step.md`](../../../docs/backlog/_archive/2026-08-10-adopt-a-land-skill-for-the-merge-step.md)._
 
 ---
 

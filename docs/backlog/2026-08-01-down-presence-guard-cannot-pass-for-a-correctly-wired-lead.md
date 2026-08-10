@@ -46,7 +46,7 @@ fully finalized six-seat session
 >   `join`'s emitted manifest (`team-join.ts:340`); **the lead never runs `join`, so it receives the
 >   follow incantation and no departure counterpart.**
 > - **Prefer emission over prose, on this repo's own measurement.**
->   [`convene-never-wires-the-lead.md:67-77`](./2026-08-01-convene-never-wires-the-lead.md):
+>   [`convene-never-wires-the-lead.md:67-77`](./_archive/2026-08-01-convene-never-wires-the-lead.md):
 >   _"join's emitted manifest has worked in every session while prose guards went 0-for-4."_ So the
 >   favoured fix is **`convene` emitting the lead's stand-down line the way `join` emits every
 >   seat's** — which is in nobody's proposal list, including #96's.

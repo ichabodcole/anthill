@@ -409,7 +409,7 @@ state, not a defect queue to drain.
   live board, telling the lead not to close it (#43 — the destroy half is spellbook's, still open);
   `attach` reveals every session bound to the team instead of silently taking the first (#45).
   **The board warning fired on its first live run in this repo** — the condition is present here.
-  [backlog](backlog/2026-07-27-session-integrity-batch.md).
+  [backlog](backlog/_archive/2026-07-27-session-integrity-batch.md).
 - ⏭️ **Deferred: the protected-trunk guard** (plan move 1) — it is the land-time twin of Batch 3's
   layer 1 and should be designed **with** it, not ahead of it.
   [plan](projects/anthill-commit-hardening/plan.md).

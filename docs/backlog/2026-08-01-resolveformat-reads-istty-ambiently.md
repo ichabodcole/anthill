@@ -44,4 +44,4 @@ The root cause predates the parser-envelope work; the fix merely made it visible
 first change that needed the TTY branch to be correct.
 
 **Related:** the parser-envelope item this came out of
-(`2026-07-31-parser-errors-bypass-the-agent-envelope.md`, shipped) and session 4's friction log §B2.
+(`_archive/2026-07-31-parser-errors-bypass-the-agent-envelope.md`, shipped) and session 4's friction log §B2.
