@@ -5,7 +5,7 @@ import { emit, emitError, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { acquireLock, releaseLock } from "../lock.ts";
 import { nowMillis } from "../runtime.ts";
-import { requireConfig } from "./team-support.ts";
+import { requireTeam } from "./team-support.ts";
 
 // How long to wait for the serialize lock before giving up, and when to treat a
 // held lock as stale (a crashed peer) and steal it.
@@ -67,9 +67,64 @@ function repoRoot(cwd: string): string {
  * real seat is a strictly worse failure than repeating one.
  */
 export function stampSeat(body: string, seat: string): string {
-  const trailer = `Anthill-Seat: ${seat}`;
-  const already = body.split("\n").some((line) => line.trim() === trailer);
-  return already ? body : `${body}\n\n${trailer}`;
+  return appendTrailer(body, `Anthill-Seat: ${seat}`);
+}
+
+/**
+ * A `Key: value` line, which is what git means by a trailer. Deliberately narrow
+ * — it decides SEPARATION below, and reading a prose line ending in a colon as a
+ * trailer would glue a stamp onto the end of a paragraph.
+ */
+const TRAILER_LINE = /^[A-Za-z][A-Za-z0-9-]*: .+$/;
+
+/**
+ * Append `trailer` unless the body already carries that exact line, joining the
+ * EXISTING trailer block rather than starting a new paragraph.
+ *
+ * ⚠ THE SEPARATOR IS THE WHOLE FUNCTION, and `\n\n` is wrong the moment a body
+ * carries two stamps. Git's trailer block is the LAST paragraph, so a blank line
+ * between two trailers does not produce two trailers — it produces one, and
+ * silently discards everything above it. Measured:
+ *
+ *     $ printf 'subject\n\nAnthill-Seat: forager\n\nAnthill-Team: dev\n' \
+ *         | git interpret-trailers --parse
+ *     Anthill-Team: dev                      # ← the seat is GONE
+ *
+ *     $ printf 'subject\n\nAnthill-Seat: forager\nAnthill-Team: dev\n' | …
+ *     Anthill-Seat: forager
+ *     Anthill-Team: dev
+ *
+ * `git log --grep` survives either shape (it is a plain regex over the message),
+ * which is exactly why this would have shipped: the one query we document keeps
+ * working while every trailer-AWARE consumer loses the seat. The cross-seat
+ * atomic land — one commit carrying several `Anthill-Seat:` lines — has the same
+ * shape and was already landing this way before a second trailer key existed.
+ */
+function appendTrailer(body: string, trailer: string): string {
+  if (body.split("\n").some((line) => line.trim() === trailer)) return body;
+  const last = body.split("\n").at(-1)?.trim() ?? "";
+  return `${body}${TRAILER_LINE.test(last) ? "\n" : "\n\n"}${trailer}`;
+}
+
+/**
+ * PURE: the team trailer, mirroring `stampSeat` — `git log --grep "Anthill-Team:
+ * <name>"` answers _"which team shape produced this?"_, which is the whole point
+ * of running two shapes side by side.
+ *
+ * ⚠ **Stamped only on a project that configures SEVERAL teams** — see the call
+ * site. On a single-team repo the answer is constant, so the trailer would carry
+ * no information while changing the text of every commit a seat lands. That is
+ * criterion 1, and it is the same call Phase 2.3 made about `ANTHILL_TEAM` in the
+ * spawn launch lines for the same reason.
+ *
+ * **Known limit, because it is not fixable and should not surprise anyone:** a
+ * project that adds its second team on day 200 has 199 days of commits with no
+ * team trailer. `--grep "Anthill-Team: dev"` finds the split-era commits only.
+ * The trailer dates from when the question became askable, not from when the team
+ * started work.
+ */
+export function stampTeam(body: string, team: string): string {
+  return appendTrailer(body, `Anthill-Team: ${team}`);
 }
 
 /** The shared git dir (`--git-common-dir` so a worktree resolves to the real
@@ -296,8 +351,16 @@ export const teamCommitCommand = defineAnthillCommand({
     // seats of a consuming team — every commit on a shared tree is authored by
     // the human, so "who landed this?" was unanswerable after the fact.
     const seat = (ctx.args.as as string | undefined)?.trim();
+    // Which team to stamp beside the seat — `undefined` on a single-team project,
+    // which is the whole of criterion 1 here. See `stampTeam`: on a repo with one
+    // team the answer is constant, so the trailer would carry no information while
+    // rewriting the text of every commit a seat lands. Same call Phase 2.3 made
+    // about `ANTHILL_TEAM` in the spawn launch lines, for the same reason.
+    let teamName: string | undefined;
     if (seat !== undefined) {
-      const config = requireConfig(format, "commit", { team: ctx.args.team as string | undefined });
+      const { project, team: config } = requireTeam(format, "commit", {
+        team: ctx.args.team as string | undefined,
+      });
       if (!config.seat(seat)) {
         const seats = config.roster().map((s) => s.handle);
         emitError({
@@ -307,6 +370,7 @@ export const teamCommitCommand = defineAnthillCommand({
         });
         process.exit(1);
       }
+      if (project.teams.length > 1) teamName = config.name;
     }
     // The trailer is appended, never substituted — git's own `%an` still shows
     // the human, so this ADDS a machine-greppable seat rather than claiming to
@@ -320,7 +384,11 @@ export const teamCommitCommand = defineAnthillCommand({
     // in the same session — which is this repo's own principle that a
     // situational warning fails at the RECOGNITION step, not the compliance one,
     // and therefore needs a mechanical guard rather than better wording.
-    const message = seat && rawMessage ? stampSeat(rawMessage, seat) : rawMessage;
+    // Seat first, then team, so the trailer block reads `Anthill-Seat` above
+    // `Anthill-Team` — the narrower fact above the wider one, and stable so a
+    // reader diffing two commits is not also diffing trailer order.
+    let message = seat && rawMessage ? stampSeat(rawMessage, seat) : rawMessage;
+    if (teamName && message) message = stampTeam(message, teamName);
     const paths = ((ctx.args._ as string[] | undefined) ?? []).filter((p) => p.length > 0);
     const warnings: string[] = [];
 

@@ -1094,6 +1094,78 @@ otherwise empty.** The task says the refusal is the only emitted runtime string 
 test that runs `--format text` and asserts the output carries no `**`, because "I checked once" is
 what the rest of this record keeps finding insufficient.
 
+### Phase 6
+
+**6.1 — 🕳 "mirror `Anthill-Seat` exactly" produces a commit git cannot parse.** `stampSeat` appends
+`\n\n${trailer}`, which is right for the first stamp and wrong for the second: git's trailer block is
+the LAST paragraph, so a blank line between two trailers yields **one** trailer and silently discards
+everything above it. Measured before writing the fix:
+
+```
+$ printf 'subject\n\nAnthill-Seat: forager\n\nAnthill-Team: dev\n' | git interpret-trailers --parse
+Anthill-Team: dev            ← the seat is GONE
+
+$ printf 'subject\n\nAnthill-Seat: forager\nAnthill-Team: dev\n' | git interpret-trailers --parse
+Anthill-Seat: forager
+Anthill-Team: dev
+```
+
+**`git log --grep` survives either shape**, which is exactly why this would have shipped: the one
+query the task names keeps working while every trailer-AWARE consumer loses the seat. Both stamps now
+go through `appendTrailer`, which joins an existing block. **The cross-seat atomic land has the same
+shape and was already landing this way** before a second trailer key existed — so this was a live
+latent defect, not one Phase 6 introduced. Pinned twice: once on the exact string, once by asking
+`git interpret-trailers` itself, because a string assertion encodes what git does and only the second
+one asks it.
+
+**6.1 — ⚖ the trailer is stamped only on a MULTI-team project.** The task says mirror `Anthill-Seat`,
+which is stamped whenever `--as` is given. Applied literally, every single-team repo gains an
+`Anthill-Team: default` line on every commit a seat lands — a visible change to a repo that
+configured nothing, which is criterion 1. It is also information-free there: the trailer answers
+_"which shape produced this?"_ and with one shape the answer is constant. **Same call Phase 2.3 made
+about `ANTHILL_TEAM` in the spawn launch lines, on the same grounds.** Both directions tested at the
+CLI.
+
+**6.1 — ⚖ the stated limit, because it is not fixable.** A project that adds its second team on day
+200 has 199 days of commits with no team trailer, so `--grep "Anthill-Team: dev"` finds the split-era
+commits only. The trailer dates from when the question became askable, not from when the team started
+work. Recorded in the code rather than only here, since the person who hits it is reading `git log`.
+
+**6.2 — ⚖ the fingerprint covers the TEAM-LEVEL KEYS, not the raw entry.** The task says "that team's
+own config entry", which is unambiguous under a `teams` map and undefined for a flat config, where
+the "entry" is the whole file — `version`, `gate`, `grounding` and all. Scoping it to
+`channel`/`lead`/`paths`/`seats` (the existing `TEAM_LEVEL_KEYS`) makes the two shapes mean the same
+thing and buys a property worth having, all four measured:
+
+| change                                 | fingerprint |
+| -------------------------------------- | ----------- |
+| flat config                            | `d7b1001a`  |
+| the same team after the §0a conversion | `d7b1001a`  |
+| project-level `gate` edited            | `d7b1001a`  |
+| a seat added                           | `e55c39f4`  |
+
+**The second row is the one that earns the scoping:** §0a moves nothing, so a project adding its
+second team must not read as having reshaped its first. Under the raw-entry reading it would.
+
+**6.2 — 🔧 the algorithm is stated in prose as well as shipped as a command.** The task says state it
+so a reader can reproduce it; a `bun -e` snippet is a command, not a statement — nobody can check a
+snippet against an intent it does not contain. Both are there: sorted keys, no whitespace, arrays in
+authored order, SHA-256, first 8 hex. The snippet uses **Bun**, which is a hard dependency
+(`bootstrap` §1), rather than `jq`, which is not mentioned anywhere in the plugin.
+
+**6.2 — 🕳 the checklist again, and the map's scar predicted it.** `finalize-session`'s step 4.5 body
+and its landing checklist are separate; the stamp went into both. `cascade-check` records this exact
+drift in triplicate from the `principles.md` pass — "the checklist is the part that gets read" — and
+the retro stamp is a step whose omission is **invisible until the session that needs it**: a
+carried-forward Q3 recorded as held or falsified by a team that reshaped in between, with nothing in
+the file to say so.
+
+**6.2 — ⚖ the "labelled, not comparable" limit is stated THREE times, deliberately.** In the template
+(the file a lead reads while writing), in the skill (the instructions being followed), and in the
+checklist item (the thing read under time pressure). It is the phase's known limit and the single
+most likely claim to grow in the retelling — a fingerprint that distinguishes shapes reads as a
+licence to compare them, and Proposal Open Question 3 is unanswered.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows

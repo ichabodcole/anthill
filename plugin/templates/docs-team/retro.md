@@ -31,12 +31,29 @@ Without them a retro produces a **mood**, and a mood cannot be checked.
 **The next session's job is to come back to the last entry's Q3 and say what happened.** A
 hypothesis nothing ever tests was a preference wearing evidence's clothes.
 
+## The stamp on every entry
+
+Each entry carries **which team wrote it** and **what shape that team was in** — an 8-hex
+fingerprint of this team's own config entry (`anthill:finalize-session` step 4.5 has the command).
+
+**It answers one question and you should not ask it a second one:** _were these two entries written
+by the same team in the same shape?_ A changed fingerprint means the roster, channel or paths moved
+between sessions, so a Q3 hypothesis carried forward is being tested by a **different** team than
+proposed it — which is worth knowing before you record it as held or falsified.
+
+**⚠ This makes an entry LABELLED, not COMPARABLE.** Two entries from two team shapes are still two
+sessions on different work with different people, and the fingerprint does nothing to control for
+that. It tells you the shapes differed; it does not license _"shape A outperformed shape B."_ Nothing
+here makes that inference sound, and the stamp is easy to mistake for something that does.
+
 ---
 
 <!--
 Entries below, NEWEST FIRST. Suggested shape:
 
 ## <date> — session <n>: <label>
+
+**Team:** <name> · **shape:** `<8 hex>`
 
 **Q1 — what went well**
 - <claim> — <artifact / testimony>

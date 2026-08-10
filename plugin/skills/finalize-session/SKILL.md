@@ -305,6 +305,53 @@ happened, this evaluates it.
 2.  **What didn't go well?**
 3.  **What would you change for the next round?**
 
+**Stamp the entry with the team and its shape**, on the line under the heading:
+
+```
+**Team:** dev · **shape:** `d7b1001a`
+```
+
+The shape is an 8-hex fingerprint of **this team's own config entry** — run this from the repo root
+with `TEAM` set to your team's name (`anthill team show` prints it; on a single-team project it is
+`default`, and the `raw.teams` branch simply doesn't fire):
+
+```sh
+TEAM=dev bun -e '
+const KEYS = ["channel", "lead", "paths", "seats"];
+const raw = JSON.parse(await Bun.file(".anthill/config.json").text());
+const entry = raw.teams ? (raw.teams[process.env.TEAM] ?? {}) : raw;
+const shape = Object.fromEntries(KEYS.filter((k) => entry[k] !== undefined).map((k) => [k, entry[k]]));
+const canon = (v) =>
+  Array.isArray(v) ? `[${v.map(canon).join(",")}]`
+  : v && typeof v === "object"
+    ? `{${Object.keys(v).sort().map((k) => `${JSON.stringify(k)}:${canon(v[k])}`).join(",")}}`
+    : JSON.stringify(v);
+console.log(new Bun.CryptoHasher("sha256").update(canon(shape)).digest("hex").slice(0, 8));
+'
+```
+
+**The algorithm, stated so a reader can reproduce it without this snippet:** take the team's
+`channel` / `lead` / `paths` / `seats` (absent keys omitted), serialize as JSON with **object keys
+sorted recursively and no whitespace**, arrays left in their authored order; SHA-256; first 8 hex
+characters.
+
+**Three properties, each deliberate and each measured:**
+
+- **Only the team's OWN keys.** Editing another team's entry must not move this one's fingerprint, or
+  every team's stamp churns whenever any team is touched.
+- **Project-level fields are excluded** (`version`, `gate`, `grounding`, `launch`). Changing the
+  project's `gate` is not a change of team shape, and a fingerprint that moved on it would report a
+  reshape that did not happen.
+- **A flat config and the same team after the `teams`-map conversion hash IDENTICALLY.** That
+  conversion moves nothing (`anthill:bootstrap` §0a), so the fingerprint says nothing moved — a
+  project that adds a second team does not falsely read as having reshaped its first.
+
+**⚠ Say the limit when you report this, and do not let it grow in the retelling: the stamp makes a
+session LABELLED, not COMPARABLE.** It answers _were these two entries written by the same team in
+the same shape?_ — worth knowing before you record a carried-forward Q3 as held or falsified, since a
+different shape means a different team tested it. It does **not** support _"shape A outperformed
+shape B"_: two sessions differ in work, people and luck, and nothing here controls for any of that.
+
 Two rules do all the work here. Without them a retro produces a mood, and a mood cannot be checked.
 
 - **Q3 answers are HYPOTHESES the next session can test, or they are not answers.** _"We should
@@ -418,6 +465,10 @@ nobody has scoped is a horizon in name only.
    - ◻ **Principle question asked** (Q4) — did this session produce one? **Usually no.** If yes it
      goes to `<teamDir>/principles.md` **with its scar**; if it has no scar it is a Q3 hypothesis, and
      if it only holds for this tool it is an SOP practice.
+   - ◻ **The retro entry carries its `**Team:** … · **shape:** …` stamp** (step 4.5) — the team name
+     and the 8-hex fingerprint of its config entry. A missing stamp is invisible until the session
+     that needs it: a carried-forward Q3 read as held or falsified by a team that reshaped in between,
+     with nothing in the file to say so. **Labelled, not comparable** — say that when you report it.
    - ◻ **Retro written to `<teamDir>/retro.md` BY THE LEAD** (step 4.5), newest first — the seats
      answered on the wire; **a wire is not a store — the file is the thing the next convene reads.**
      _(**The comms log survives and nothing ever reads it back** — no ritual, no command, no next
