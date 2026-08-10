@@ -2,7 +2,11 @@
 
 **Created:** 2026-08-09 · **Revised:** v3, 2026-08-09
 **Related Proposal:** [proposal.md](./proposal.md)
-**Status:** ✅ **Ready for dispatch** — all decisions ratified (DP2 re-opened and resolved 2026-08-09)
+**Status:** ✅ **Implemented** — Phases 0–6 landed on `feature/multi-team-support`, 2026-08-10, gate
+675 pass / 0 fail. Includes the seven tasks added mid-flight from review (0.5, 1.3, 3.5, 3.6, 4.2,
+5.1, 6.3) and the six defects the independent review found at finalize. **Read the implementation
+record below before trusting any task above it** — several were amended by contact, and one entry in
+the record was itself corrected at finalize for asserting a false measurement.
 **Gate:** `bun run check` = `tsc --noEmit -p tsconfig.json && biome check --error-on-warnings . && bun test`
 
 > **Revision history, because it is the evidence this plan is trustworthy.**
