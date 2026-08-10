@@ -53,7 +53,7 @@ import { buildManifest, type ManifestCommand, type ScopeLabel } from "./manifest
 export const main: AnyCommand = defineCommand({
   meta: {
     name: "anthill",
-    version: "2.2.0", // x-release-please-version
+    version: "2.3.0", // x-release-please-version
     description: "Project orchestration CLI",
   },
   args: {

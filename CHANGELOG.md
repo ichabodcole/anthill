@@ -1,5 +1,44 @@
 # Changelog
 
+## [2.3.0](https://github.com/ichabodcole/anthill/compare/anthill-v2.2.0...anthill-v2.3.0) (2026-08-10)
+
+
+### Features
+
+* **attribution:** stamp the team on commits and retro entries ([fb4879e](https://github.com/ichabodcole/anthill/commit/fb4879e3daafa62da03d3092c03c0e870ee324b7))
+* **bootstrap:** make "add a second team" a route, and let `init` render it ([0f5bfe8](https://github.com/ichabodcole/anthill/commit/0f5bfe882c0ff0eb31827276c28beebc00df63e8))
+* **cli:** resolve the team in requireConfig, and declare --team on every command ([89119ed](https://github.com/ichabodcole/anthill/commit/89119ed798f5c9ebf9e3b6f90abf5fc0c91f58ee))
+* **comms:** resolve the team in comms too -- it never went through requireConfig ([5c55cc5](https://github.com/ichabodcole/anthill/commit/5c55cc5b40b48143d41fadd16e0b9937d7ad47c9))
+* **config:** add resolveProject beside resolveConfig, with the cross-team checks ([8563ca5](https://github.com/ichabodcole/anthill/commit/8563ca50365fd9c12fa46ecffc7739771c7793ac))
+* **land:** adopt a repo-local merge-step skill, adapted from spellbook ([3d8fba3](https://github.com/ichabodcole/anthill/commit/3d8fba394d233bdf789a5cc2a1bd3a8f5dcb219e))
+* **resolve:** add the team resolution ladder and the pin ([1ea4b31](https://github.com/ichabodcole/anthill/commit/1ea4b3135e852b24e1acf54c81ba7c68a5b99e3b))
+* **team:** add `anthill team show` -- the resolved team and the rung that decided ([244c9ce](https://github.com/ichabodcole/anthill/commit/244c9cecb9dc0e24ec570367cfc9f2a8c17d1f9b))
+* **team:** add `team ls` and `team use`, and refuse a second convened team ([36f65bd](https://github.com/ichabodcole/anthill/commit/36f65bdd50c039bfb3febf28f6f796f75bdfaf69))
+* **templates:** seed retro.md, and fix the four claims that said it had none ([7777a37](https://github.com/ichabodcole/anthill/commit/7777a37b0634b8cdf53bb63fb7deb88416b22ad4))
+
+
+### Bug Fixes
+
+* **commit:** a conventional subject is not a trailer block ([39d22d2](https://github.com/ichabodcole/anthill/commit/39d22d281fdffd99743feada18f0ca5e3a99c21f))
+* **config:** derive seat paths from teamDir and render through the resolvers ([d8597c8](https://github.com/ichabodcole/anthill/commit/d8597c864b051360aaf46254d68509f80dcd2324))
+* **config:** two teams may not share a living-docs directory ([e65c188](https://github.com/ichabodcole/anthill/commit/e65c188c6195e5a6c544eeca433d108cf9a7cd97))
+* **convene:** restore the board on re-open -- the seam was never in the way ([4c412c8](https://github.com/ichabodcole/anthill/commit/4c412c8abb92d9c00b1a4b101363b65d305c0323))
+* **down:** the header claimed presence spans both wires and named a deleted function ([e362077](https://github.com/ichabodcole/anthill/commit/e36207720bfa2be9898efc27e444a518459c0469))
+* **init:** derive the gitignore lines from teamDir, per configured team ([5237dbe](https://github.com/ichabodcole/anthill/commit/5237dbe84b92d414abba3d0c41ad2e68064d8bb6))
+* **init:** render every configured team unless --team narrows it ([9c90367](https://github.com/ichabodcole/anthill/commit/9c9036715f31dbc173e4d606f80b6a6855b5938d))
+* **land:** carry the message BODY into the merge commit, not just the subject ([a9033cd](https://github.com/ichabodcole/anthill/commit/a9033cd8c8d92b5242cef0caffcf5816b343953b))
+* **migrate:** derive the multi-team refusal from what is actually pending ([b4b6e9a](https://github.com/ichabodcole/anthill/commit/b4b6e9aeed02550808fe6ed042621852145f2a72))
+* **migrate:** emit the slashless comms ignore line team-init now derives ([1acfc96](https://github.com/ichabodcole/anthill/commit/1acfc9613a8f06cfa1e799d9b79d8f5c7a8256a6))
+* **migrate:** refuse a multi-team config instead of planning against the wrong dir ([cb345dc](https://github.com/ichabodcole/anthill/commit/cb345dca43d50546be2c0530c780492975d7e3ba))
+* **multi-team:** close the six defects the independent review found ([33eebaa](https://github.com/ichabodcole/anthill/commit/33eebaae4a1a52fff5cd13eeb09d1b214a93690c))
+* **presence:** drop the grapevine leg -- it could only ever block a clean teardown ([4d091dc](https://github.com/ichabodcole/anthill/commit/4d091dc4954ad998c9f9134d9747bfb553c7375f))
+* **resolve:** make ambiguity a TYPE, so rewording a message cannot break `ls` ([2492d34](https://github.com/ichabodcole/anthill/commit/2492d34ba8cad939426c1dcb43e8bfe622a3c741))
+* **roadmap:** revert my renumbering — those numbers are cross-referenced ([2e42c1d](https://github.com/ichabodcole/anthill/commit/2e42c1da420431f7889a476361b3caadae9780cc))
+* **scan:** `"manifest"` means a unit was READ, not that a manifest parsed ([fccd652](https://github.com/ichabodcole/anthill/commit/fccd652ff8bab95c7177f80442be81d25d2344fc))
+* **scan:** report whether the scan had anything to go on, and stop bootstrap guessing ([792ba70](https://github.com/ichabodcole/anthill/commit/792ba7065b29ea8edce57cb5142053811d49f099))
+* **scan:** widen `"manifest"`'s gloss to what the code actually does ([38c6f3f](https://github.com/ichabodcole/anthill/commit/38c6f3f2c9155fdfbe7726541ec90ae3371eff36))
+* **test:** gate the board-binding round trip on spellbook being installed ([5e9bdb7](https://github.com/ichabodcole/anthill/commit/5e9bdb79789538ea5b208ca6dc7488f1ca54d91f))
+
 ## [2.2.0](https://github.com/ichabodcole/anthill/compare/anthill-v2.1.0...anthill-v2.2.0) (2026-08-09)
 
 
