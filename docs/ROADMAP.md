@@ -523,6 +523,12 @@ state, not a defect queue to drain.
 
 ## Next
 
+> **⚠ These numbers are CROSS-REFERENCED — do not renumber.** Entries below and in **Later** share one
+> continuous scheme, and prose throughout this file cites items as `#N` (`"#3 above"`, `"#5, #7"`,
+> `"#1–#3"`, `"(#8–#10)"`). _Renumbering Next alone produced a duplicate `8.` and silently repointed
+> five references at the wrong items — caught in review, 2026-08-10._ A new entry takes a suffixed
+> position (`2b.`) or goes at the end; it does not shift its neighbours.
+
 1. 🔬 **Methodology externalization — the acceptance experiment.** _NEW 2026-08-10._ Hand-write a
    3-seat `manager / implementer / reviewer` config, convene it, and **count the skill instructions
    the seats cannot execute as written.** Non-zero → externalization is a precondition for variants
@@ -536,15 +542,24 @@ state, not a defect queue to drain.
    **bare `anthill` in emitted strings** (4 sites; resolves through PATH to the highest cached
    release, so a string a seat runs verbatim can execute on a different binary than composed it).
    Plus four smaller. [backlog](backlog/2026-08-10-post-multi-team-defect-sweep.md).
-   2b. ✅ **Multi-team support** — **SHIPPED** 2026-08-10 (merged to `develop`, gate 675 pass / 0 fail).
-   One project can hold several teams, resolved ambiently (`--team` → `ANTHILL_TEAM` → the pin → the
-   sole team → **throw**, no fallback at any rung); `anthill team ls|use|show`; a `bootstrap` §0a
-   add-a-team route; `migrate` refuses a multi-team config; `Anthill-Team` attribution on commits and
-   retro entries. **A single-team project sees zero change.** MVP items 8 and 9 were moved out at
-   finalize rather than quietly dropped — see the scope amendment.
-   [proposal](projects/_archive/multi-team-support/proposal.md) · [plan + implementation
-   record](projects/_archive/multi-team-support/plan.md) ·
-   [session](projects/_archive/multi-team-support/sessions/2026-08-10-multi-team-support-implementation.md).
+
+---
+
+**Not numbered on purpose — see the warning above.** This shipped between items 2 and 3 and takes
+no list position, because the numbers are cited as `#N` elsewhere in this file.
+
+✅ **Multi-team support** — **SHIPPED** 2026-08-10 (merged to `develop`, gate green).
+One project can hold several teams, resolved ambiently (`--team` → `ANTHILL_TEAM` → the pin → the
+sole team → **throw**, no fallback at any rung); `anthill team ls|use|show`; a `bootstrap` §0a
+add-a-team route; `migrate` refuses a multi-team config; `Anthill-Team` attribution on commits and
+retro entries. **A single-team project sees zero change.** MVP items 8 and 9 were moved out at
+finalize rather than quietly dropped — see the scope amendment.
+[proposal](projects/_archive/multi-team-support/proposal.md) · [plan + implementation
+record](projects/_archive/multi-team-support/plan.md) ·
+[session](projects/_archive/multi-team-support/sessions/2026-08-10-multi-team-support-implementation.md).
+
+---
+
 3. ✅ **Multi-surface archetype + candidate seatings** — **SHIPPED** 2026-07-05 (`de3aa58`, on
    `feat/multi-surface-archetype`; awaiting human sign-off → `develop`). A by-surface archetype +
    `anthill scan` (deterministic workspace detector) + bootstrap candidate seatings as a

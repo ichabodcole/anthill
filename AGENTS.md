@@ -58,7 +58,12 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
 
 ## Branch Landing Policy
 
-**Merge; do not squash or rewrite.** Verified practice as of 2026-08-07: feature branches land on
+**Merge; do not squash or rewrite.** The procedure this points at is the repo-local **`land`**
+skill (`.claude/skills/land/`) — merge-message shape, the develop→main PR message, and who is
+allowed to merge to `main`. It is the merge step only: `project-docs:finalize-branch` still owns
+review, gates and docs, and **`cascade-check` owns release readiness.**
+
+Verified practice as of 2026-08-07: feature branches land on
 `develop` as ordinary merges and `develop → main` by PR merge commit, so every commit keeps the
 `Anthill-Seat:` trailer naming which of the six seats wrote it, and the short-sha citations
 throughout `docs/` and `.anthill/` keep resolving (measured at the foot of this file).
