@@ -13,9 +13,23 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
 - **What shipped in a release, and why — read it out of git, not out of `CHANGELOG.md`:**
 
   ```bash
-  git log --first-parent main --format='%h %ci %s'    # one line per release
+  # what RELEASES shipped — main's spine, one line each
+  git log --first-parent main --format='%h %ci %s'
   git log --first-parent main -1 --format='%b'        # the full release note for the latest
+
+  # what FEATURES landed — the named merges into develop
+  git log develop --merges --format='%h %ci %s' \
+    | grep -vE "Merge pull request|Merge branch 'main' into"
   ```
+
+  **Two queries, two questions** — a release is a batch; a feature is a branch.
+
+  **Both exclusions are load-bearing.** `Merge pull request` drops GitHub's noise; `Merge branch
+'main' into` drops **back-merges**, which are not features and otherwise appear as three
+  identical phantom entries (measured: 87 merges → 47 after the first filter → 44 after both). _(The pairing is
+  lifted from spellbook's `AGENTS.md`, which had it before we did. Both verified here on
+  2026-08-10; the ⚠ that sits under it in their file is a topology claim that does **not** hold for
+  anthill — see `.claude/skills/land` §6.)_
 
   **The release narrative lives in the `develop → main` MERGE COMMIT BODY.** `CHANGELOG.md` is
   release-please output — conventional-commit subjects and sha links, by construction — so it tells

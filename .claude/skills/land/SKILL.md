@@ -227,6 +227,24 @@ git log develop --merges --format='%h %ci %s' | grep -v "Merge pull request"   #
 
 ## 7 · Feedback
 
+**A skill copied between repos carries THREE kinds of claim, and they need three different
+treatments.** Named by spellbook's side of the crosstalk channel, 2026-08-10, after we had hit all
+three in one day:
+
+| kind          | example from this file                          | what it needs                                     |
+| ------------- | ----------------------------------------------- | ------------------------------------------------- |
+| **mechanism** | `-m` + `-F` concatenates with no blank line     | **ports as-is** — it is git's behaviour           |
+| **topology**  | `--first-parent develop` is useless             | **RE-MEASURE** in the borrowing repo              |
+| **audience**  | whether the narrative belongs in a release page | **RE-DECIDE** — a human's call, not a measurement |
+
+The failure mode differs by kind. A mechanism claim that is wrong fails loudly. **A topology claim
+that does not port stays silent** — it describes a hazard the borrowing repo does not have, and
+nothing ever fires. **An audience claim is worse still**: it is not checkable at all, so a borrowed
+one imports another project's product decision wearing the authority of a measurement.
+
+_All three fired here in one day: a filter string, the `--first-parent` warning, and the question of
+who the release narrative is for. The last one was settled by asking Cole, not by running anything._
+
 This skill is adapted from another repo's, and the parts marked as carried-not-reproduced are the
 likeliest to be wrong here. If a step misfires — or a scar turns out not to apply to anthill —
 correct it in place and say what you measured. **A borrowed scar that never fires here is worse than
