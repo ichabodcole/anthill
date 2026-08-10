@@ -38,9 +38,29 @@ Create a project folder when:
   and will generate session logs
 
 **Project vs. backlog:** If the work can be described and completed without a
-proposal — it's a known fix, a small refactor, a clear task — it's a backlog
-item, not a project. If the work needs exploration of options, has design
-decisions, or will span multiple sessions, it's a project.
+plan — it's a known fix, a small refactor, a clear task — it's a backlog item,
+not a project. If the work needs exploration of options, has design decisions,
+or will span multiple sessions, it's a project.
+
+### A project does not have to have a proposal
+
+**The trigger for a project folder is needing a PLAN. The trigger for a
+`proposal.md` is having DECISIONS to make.** Those are different thresholds, and
+collapsing them is what produces the stuck feeling of _"this is too big for a
+backlog item but there's nothing to propose."_
+
+- **Plan-only project** — `plan.md` + `sessions/`, no proposal. Use it when the
+  fixes are known and there is nothing to weigh, but the work spans several
+  surfaces or sessions and the order matters. Cite the backlog items it draws
+  from by relative link; they archive individually as their parts land.
+- **Full project** — add `proposal.md` when someone could reasonably argue for a
+  different approach, and the argument should be settled and recorded before the
+  work starts.
+
+A plan-only project is not a lesser project or a missing proposal. It is the
+correct shape for known work that needs sequencing, and it keeps the proposal
+slot meaningful — a folder where every project has a proposal teaches readers to
+skim them.
 
 ## When NOT to Create a Project
 

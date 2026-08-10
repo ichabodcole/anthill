@@ -11,7 +11,7 @@ The backlog provides a lightweight path for tracking work that would otherwise g
 - **Low ceremony** - Create a short file, describe the task, do the work
 - **Discoverable** - Small tasks are tracked rather than forgotten or scattered across commit messages
 - **Archivable** - Completed items move to `_archive/` for history without cluttering the active list
-- **Clear threshold** - If it needs a proposal, it's a project. If it doesn't, it's a backlog item.
+- **Clear threshold** - See _Backlog, plan-only project, or full project?_ below. The short version: a backlog item is work you can do without a **plan**.
 
 ## When to Create a Backlog Item
 
@@ -30,6 +30,35 @@ The backlog provides a lightweight path for tracking work that would otherwise g
 
 **Rule of thumb:** If you can describe the work in a few sentences and someone could complete it without further discussion, it's a backlog item. If it needs design, exploration, or scoping, it's a project.
 
+## Backlog, plan-only project, or full project?
+
+**The discriminator is not "does it need a proposal" — it's these two questions, in order:**
+
+1. **Are there decisions to make, or only work to do?** Options to weigh, a design to settle, a
+   trade-off someone could reasonably argue → **full project** (`proposal.md` + `plan.md`).
+2. **If it's only work: does it need sequencing?** Multiple surfaces, an order that matters, or more
+   than one session → **plan-only project** (`plan.md` + `sessions/`, no proposal, sourcing its
+   backlog items by link). Otherwise → **stay a backlog item and work it in place.**
+
+| shape                             | what it contains                                                      |
+| --------------------------------- | --------------------------------------------------------------------- |
+| **Backlog item, worked in place** | the item **is** the proposal, plan and record — stamp status, archive |
+| **Plan-only project**             | `plan.md` + `sessions/`; backlog items are cited sources              |
+| **Full project**                  | `proposal.md` + `plan.md` + `sessions/`                               |
+
+**A backlog item graduates by growing a PLAN, not a proposal.** That is the answer to _"I want to
+write a dev plan for this backlog item — where does it go?"_ It goes in a plan-only project folder,
+and the backlog item stays a backlog item: cited as a source, archived when it lands.
+
+**Batching is fine, and there is a rule for it:** group items only when they share **the same file,
+the same owner, and the same test surface**. Items grouped that way ship together from one backlog
+item without a project. Items grouped only by _when they were noticed_ are a holding pen, not a work
+unit — split them before starting, or the "batch" is really several branches wearing one filename.
+
+**Discovering mid-work that you guessed wrong is the system working, not a misfile.** A backlog item
+that turns out to contain a real design question becomes an investigation or a project at that
+moment. Promote it then; don't try to price it correctly up front.
+
 ## File Naming
 
 - `YYYY-MM-DD-short-description.md`
@@ -47,8 +76,11 @@ Copy this template to create a new backlog item, replacing the filename with the
 ## Lifecycle
 
 1. **Create** - Describe the task in a new file
-2. **Work** - Pick it up and complete it
-3. **Archive** - Move the completed file to `backlog/_archive/`
+2. **Work** - Pick it up and complete it — _in place_, for the common case. Stamp the outcome in the
+   item itself (`**Status:** ✅ SHIPPED <date> (<sha>)`), including anything found while fixing it.
+3. **Or promote** - If it grew a plan, move the plan into a project folder and cite this item as a
+   source. The item still archives on its own when its part lands.
+4. **Archive** - Move the completed file to `backlog/_archive/`
 
 Active backlog items reflect current work that needs doing. Completed items are archived to keep the active list focused.
 
