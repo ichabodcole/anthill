@@ -10,6 +10,23 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
 
 - `docs/README.md` — the **docs map**: every doc type, its lifecycle, and where things go.
   New session? skim `docs/memories/` first for a recap of recent work.
+- **What shipped in a release, and why — read it out of git, not out of `CHANGELOG.md`:**
+
+  ```bash
+  git log --first-parent main --format='%h %ci %s'    # one line per release
+  git log --first-parent main -1 --format='%b'        # the full release note for the latest
+  ```
+
+  **The release narrative lives in the `develop → main` MERGE COMMIT BODY.** `CHANGELOG.md` is
+  release-please output — conventional-commit subjects and sha links, by construction — so it tells
+  you _which commits_ shipped and never _what the release was about_. The merge body is written at
+  land time (`.claude/skills/land`, §3–5) and carries what changed for a consuming team, the
+  decisions behind it, and what it deliberately does **not** reach.
+
+  _Written down here because the read audience is agents doing archaeology months later, and until
+  2026-08-10 the path was documented only in the `land` skill — which is read at MERGE time, by
+  whoever is landing. The artifact existed and nothing pointed the readers at it._
+
 - `docs/architecture/2026-06-28-anthill-portable-team-os-design.md` — the design-of-record
   (thesis, the three stigmergy principles, the D1–D9 decisions, the config schema).
 - 🧭 **`docs/ROADMAP.md` — THE prioritized view: what we're working on, in what order, and the
