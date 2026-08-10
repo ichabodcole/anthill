@@ -89,6 +89,8 @@ pre-fix file.
 
 ## Follow-up — `"manifest"` is documented narrower than the code, on a reachable input
 
+**✅ FIXED 2026-08-10**, as specified: prose widened at all three sites, code untouched, and the pnpm-no-root-manifest case pinned as a test asserting `evidence` and `warnings` **together** — the pair is the point, since the defect was that the two read as contradictory. The `seams.md` amendment carries a same-day correction note rather than a silent rewrite.
+
 **Found in review 2026-08-10, before this branch merged. The behaviour is right; three shipped
 sentences about it are not.** `"manifest"` is written as a claim about **`package.json` at the root**
 in `scan.ts`'s field doc (_"a readable `package.json` was found at the root"_) and in `bootstrap`

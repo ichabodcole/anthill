@@ -27,7 +27,13 @@ export interface ScanReport {
   /**
    * WHAT THE SCAN HAD TO GO ON — and it is a separate question from `workspace`.
    *
-   * `"manifest"` ⇒ a readable `package.json` was found at the root.
+   * `"manifest"` ⇒ **a readable manifest was found — a root `package.json`, OR a
+   * `pnpm-workspace.yaml` that yielded globs.** Deliberately wider than "a root
+   * `package.json` exists", because the workspace path below sets it without one:
+   * a pnpm monorepo whose root carries only `pnpm-workspace.yaml` still gives the
+   * scan real members to read. On that repo `warnings` DOES report
+   * `"no package.json at repo root"` — the two are consistent, and this sentence
+   * used to claim otherwise.
    * `"none"` ⇒ there was none, so `units[0]` is **SYNTHESIZED** from the directory
    * name and its `stack` is empty **by absence, not by observation.**
    *

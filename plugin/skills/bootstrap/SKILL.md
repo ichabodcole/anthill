@@ -167,7 +167,10 @@ write a half-working config.
 - **Read the repo's shape deterministically:** run **`anthill scan`** and read the `ScanReport` it emits
   (`{ ok, data }` — the `data` is the report). This is the machine reading you'll ratify with the human,
   replacing eyeballing the layout. What matters:
-  - **`data.evidence`** — **read this FIRST.** `"manifest"` ⇒ a readable `package.json` was found;
+  - **`data.evidence`** — **read this FIRST.** `"manifest"` ⇒ a readable manifest was found — a root
+    `package.json`, **or** a `pnpm-workspace.yaml` that yielded globs. _(On the second, `warnings`
+    still says `no package.json at repo root`. That is consistent, not a contradiction: the scan had
+    workspace members to read. Do not treat the warning as a reason to doubt `"manifest"`.)_
     `"none"` ⇒ there was none, so `data.units[0]` is **synthesized from the directory name** and its
     `stack` is empty **by absence, not by observation.** → **`"none"` goes to [§2·0](#20-evidence-none--stop-and-ask-do-not-propose-an-archetype), not to 2a/2b.**
   - **`data.workspace`** — `null` ⇒ **single-surface** repo (one app); non-`null` ⇒ a **multi-surface**

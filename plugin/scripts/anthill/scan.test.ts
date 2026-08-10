@@ -228,6 +228,33 @@ describe("buildScanReport — `evidence` separates 'no manifest' from 'single su
     }
   });
 
+  it("a pnpm workspace with NO root package.json is still 'manifest' — beside the warning", () => {
+    // The input that caught the field's gloss being narrower than its code.
+    // `"manifest"` was documented as "a readable package.json at the root"; here
+    // there is none, `warnings` says so, and `"manifest"` is still the RIGHT
+    // answer — the scan had real workspace members to read.
+    //
+    // Pinned as a PAIR (evidence + warnings together) because the defect was
+    // precisely that the two read as contradictory. Asserting `evidence` alone
+    // would pass without recording why the warning beside it is fine.
+    const root = mkdtempSync(join(tmpdir(), "scan-pnpm-noroot-"));
+    try {
+      mkdirSync(join(root, "packages", "a"), { recursive: true });
+      writeFileSync(join(root, "pnpm-workspace.yaml"), 'packages:\n  - "packages/*"\n');
+      writeFileSync(join(root, "packages", "a", "package.json"), JSON.stringify({ name: "a" }));
+
+      const report = buildScanReport(root);
+      expect({ evidence: report.evidence, warned: report.warnings }).toEqual({
+        evidence: "manifest",
+        warned: ["no package.json at repo root"],
+      });
+      // And it must reach the multi-surface branch, not 2·0.
+      expect(report.workspace?.globs).toEqual(["packages/*"]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it("a workspace is always 'manifest' — globs cannot exist without one", () => {
     const root = mkdtempSync(join(tmpdir(), "scan-ws-"));
     try {
