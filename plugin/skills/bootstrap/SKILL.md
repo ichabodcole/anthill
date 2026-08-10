@@ -55,7 +55,9 @@ two shapes can be compared rather than argued about. What it must never do is ov
 is already there.
 
 **Do the composition first, then one edit.** Steps 2–3 below still apply to the NEW team — scan, draft
-a seating from the nearest archetype, ratify it with the human. Skip step 1 (the dependencies are
+a seating from the nearest archetype, ratify it with the human. _(Or, if the scan reports
+`evidence: "none"`, take **§2·0** and ask instead — there is no nearest archetype. That is not a
+corner case here: a project bootstrapped **via** §2·0 has no archetype behind its first team either.)_ Skip step 1 (the dependencies are
 already installed) and do not touch the incumbent's roster.
 
 Then convert the config **once**, from the flat shape to a `teams` map (spec §5a):
@@ -196,10 +198,15 @@ a wrong answer that collects a signature is worse.
 
 **Say what you found, in these terms, and then ask:**
 
-> _"`anthill scan` found no `package.json` I can read at the root, so I have nothing to derive a team
-> shape from — I can't tell whether this is a non-software project or one in a stack I don't scan
-> (Python, Rust, Go and others all read this way). **What kind of work does this repo hold, and who
-> would the seats be?**"_
+> _"`anthill scan` read no manifest here, so I have nothing to derive a team shape from. **What kind
+> of work does this repo hold, and who would the seats be?**"_
+
+**⚠ That script deliberately names NO repo kinds, and an earlier draft of it did** — it offered
+_"non-software, or a stack I don't scan (Python, Rust, Go…)"_, which **violates the very rule stated
+in the next bullet.** It also enumerates wrongly: a perfectly ordinary JavaScript repo with
+`client/package.json` and `server/package.json` and no root manifest reads `"none"` and is neither of
+those things. **The moment you list possibilities you have started guessing again**, one level below
+the archetype you just declined to guess.
 
 - **Phrase it as what YOU could not read, never as what the repo IS.** `evidence: "none"` is a fact
   about the scanner. Telling a Rust team "this isn't a software project" invites an argument;
@@ -243,6 +250,11 @@ pick-one form**.
   framework, not stack overlap — `[next,react]` and `[expo,react-native,react]` share `react` but are
   **different** surfaces). Distinct `stack[0]` ⇒ **strong seam ⇒ split** (a seat each). Shared
   `stack[0]` ⇒ **weak seam ⇒ fold** (one merged seat).
+
+**⚠ This branch is only reachable with `evidence: "manifest"`, which now REQUIRES at least one unit.
+If you are somehow here with `units` empty, go to §2·0** — the guard below is about _one_ surface and
+must never be applied to _zero_. (Shipped that way for one commit: globs that matched no members
+answered `"manifest"`, and this guard's fall-back to `layered-app` was the road back to the defect.)
 
 **Guard — one real surface ⇒ treat as single-surface.** If the derive leaves only **one** `kind:"app"`
 surface (everything else is a package / tooling with low fan-in), this workspace is effectively
@@ -294,6 +306,10 @@ free-form, and let the human decline (generic `surface` / `shared` / `verify` ha
 reinforces the durable-seats-as-characters model, but it's a nicety — never block ratify on it.
 
 ### 3. Ratify with the human
+
+For repos that came through **§2·0** there is no scan-derived reading to state: open with what you
+could not read and what the human told you instead, then present the roster you composed **from their
+answer** and ratify it the same way. Everything below applies unchanged.
 
 For **single-surface** repos (2a) present the proposed roster (handles · roles · scopes) and confirm —
 one focused round. For **multi-surface** repos (2b) the candidate-seating conversation _is_ this round:

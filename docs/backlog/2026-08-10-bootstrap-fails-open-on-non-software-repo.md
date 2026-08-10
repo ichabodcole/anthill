@@ -122,3 +122,45 @@ fail-closed defect where there is currently none.
 
 _The field header (`what the scan had to go on`) and the `"none"` half are both already exactly
 right; only `"manifest"`'s gloss over-commits._
+
+---
+
+## Second review round — the fix reproduced its own defect, twice
+
+**Found by the independent review at finalize, 2026-08-10, both reproduced before acting.** The
+shipped fix was honest on every input _through the root manifest_ and wrong on two that route around
+it.
+
+**1. `evidence: "manifest"` came from globs PARSING, not from any member being READ.**
+`globs.length > 0` is decided before `expandMembers` runs, so a fresh scaffold —
+`pnpm-workspace.yaml` declaring `packages/*`, no packages yet — returned `evidence: "manifest"` with
+`units: []`. bootstrap reads `evidence` first, so **§2·0 never fired**; it landed in §2b, whose
+entire derive is over units it does not have, and whose escape hatch is _"one real surface ⇒ fall
+back to `layered-app`"_ — which a reader applies to zero. **The original defect, one level up, on a
+reachable input.**
+
+**2. A `package.json` containing `"hello"` was a manifest.** `JSON.parse` succeeds and the cast to
+`Manifest` accepted it: `evidence: "manifest"`, **no warning at all**, and `scan --format text`
+printed `Workspace: single-surface` over a unit named after the directory. **The original defect
+verbatim**, through a file that parses. Falsy non-objects (`null`, `0`, `false`) happened to answer
+`"none"` — by falsiness accident, not design, which is exactly why this hid.
+
+**The rule that replaces both:** `"manifest"` iff **at least one unit was derived from a manifest
+that was actually read**. Not "a manifest exists" (round 1's error), not "a manifest parsed"
+(round 2's). Both looser readings shipped on this branch, and both reproduced the thing it exists to
+fix.
+
+**Also fixed:** §2·0's scripted question enumerated repo kinds (_"non-software, or Python/Rust/Go"_),
+violating the wording rule printed in the next bullet — and enumerating **wrongly**, since an
+ordinary JS repo with `client/` + `server/` manifests and no root one reads `"none"` and is neither.
+The script now names no kinds at all. Plus §3's opening (branched only two ways, dead-ending §2·0's
+"step 3 onward works unchanged"), §0a's summary sentence, §2b's zero-units guard, and `seams.md`'s
+Proof line.
+
+**Both guards mutation-verified**: reverting either makes exactly its own test red.
+
+**The lesson, which is the third instance on this branch:** every round here was correct _in
+reasoning_ and wrong _against a fixture_. Round 1 argued globs cannot exist without a readable
+manifest — true of the glob source, false of the units. Round 2 read `JSON.parse` succeeding as a
+manifest being present. **Sixteen fixture repos found in minutes what three careful readings did
+not.**

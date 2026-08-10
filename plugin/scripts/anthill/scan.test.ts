@@ -255,7 +255,57 @@ describe("buildScanReport — `evidence` separates 'no manifest' from 'single su
     }
   });
 
-  it("a workspace is always 'manifest' — globs cannot exist without one", () => {
+  it("globs that match ZERO members are 'none' — the fail-open one level up", () => {
+    // A fresh scaffold: `pnpm-workspace.yaml` declaring `packages/*`, no packages
+    // yet. The globs PARSE, so the first version of this branch answered
+    // "manifest" with `units: []` — bootstrap then read "I had something to go
+    // on", skipped §2·0, and landed in §2b whose entire derive is over units it
+    // does not have, with an escape hatch ("one real surface ⇒ layered-app") that
+    // a reader applies to zero.
+    //
+    // `globs.length > 0` is decided from the PARSE, before members are expanded.
+    // The comment that justified the old line was true of the glob source and
+    // false of the units.
+    const root = mkdtempSync(join(tmpdir(), "scan-emptyws-"));
+    try {
+      writeFileSync(join(root, "pnpm-workspace.yaml"), 'packages:\n  - "packages/*"\n');
+      const report = buildScanReport(root);
+      expect({ evidence: report.evidence, units: report.units.length }).toEqual({
+        evidence: "none",
+        units: 0,
+      });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("a package.json that parses to a NON-OBJECT is 'none' — parsing is not evidence", () => {
+    // `JSON.parse('"hello"')` succeeds, and the cast to `Manifest` made it a
+    // manifest: evidence "manifest", NO warning at all, and `--format text`
+    // printed `Workspace: single-surface` over a unit named after the directory.
+    // The original defect verbatim, through a file that parses.
+    //
+    // Falsy non-objects (`null`, `0`, `false`) already landed on "none" — by
+    // falsiness accident, not by design, which is exactly why this hid. Each
+    // shape is asserted, so the accident cannot be mistaken for the rule.
+    for (const body of ['"hello"', "[]", "123", "null", "true"]) {
+      const root = mkdtempSync(join(tmpdir(), "scan-nonobj-"));
+      try {
+        writeFileSync(join(root, "package.json"), body);
+        const report = buildScanReport(root);
+        expect({ body, evidence: report.evidence }).toEqual({ body, evidence: "none" });
+        // And it must WARN — silence is what made this read as a healthy repo.
+        expect({ body, warned: (report.warnings ?? []).length > 0 }).toEqual({
+          body,
+          warned: true,
+        });
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+      }
+    }
+  });
+
+  it("a workspace with real members is 'manifest'", () => {
     const root = mkdtempSync(join(tmpdir(), "scan-ws-"));
     try {
       mkdirSync(join(root, "apps", "web"), { recursive: true });
