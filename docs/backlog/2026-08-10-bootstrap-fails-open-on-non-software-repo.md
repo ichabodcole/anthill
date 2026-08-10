@@ -86,3 +86,37 @@ because it is the belief that let the defect ship.
 workspace → `manifest`; malformed manifest → `none`; Python repo → `none` (the case the wording must
 not mislabel). All four new `scan.test.ts` cases and the two renderer cases verified RED against the
 pre-fix file.
+
+## Follow-up — `"manifest"` is documented narrower than the code, on a reachable input
+
+**Found in review 2026-08-10, before this branch merged. The behaviour is right; three shipped
+sentences about it are not.** `"manifest"` is written as a claim about **`package.json` at the root**
+in `scan.ts`'s field doc (_"a readable `package.json` was found at the root"_) and in `bootstrap`
+§2's `data.evidence` bullet (_"a readable `package.json` was found"_). The workspace return path sets
+it unconditionally, and its own comment already says the wider thing — _"a manifest (package.json
+**or pnpm-workspace.yaml**)"_.
+
+**Measured — a repo with `pnpm-workspace.yaml` and NO root `package.json`:**
+
+```
+evidence: "manifest"
+warnings: ["no package.json at repo root"]     ← the field's documented meaning, denied
+units:    ["a"]        workspace: { globs: ["packages/*"] }
+```
+
+**The scan genuinely had something to go on**, so `"manifest"` is the correct value and `bootstrap`
+correctly reaches §2b. Nothing is broken. What is wrong is that **the one artifact whose entire value
+is being true about what the data supports says something the same payload contradicts** — and this
+is a ratified `seams.md` contract, re-ratified this week for exactly this reason. A consumer trusting
+the sentence would conclude a root manifest exists; a human reading `scan --format text` beside §2
+gets the warning and the claim at once.
+
+**Fix — one sentence, three places, no code:** state the value as _"a readable manifest — a root
+`package.json`, **or** a `pnpm-workspace.yaml` that yielded globs"_, and note that `warnings` may
+still report no root `package.json`. Touch `scan.ts`'s field doc, `bootstrap` §2's bullet, and the
+`seams.md` amendment's ratified-at line if it names the narrower reading. **Do not narrow the code to
+match the prose** — refusing a real pnpm workspace for lacking a root `package.json` would be a new
+fail-closed defect where there is currently none.
+
+_The field header (`what the scan had to go on`) and the `"none"` half are both already exactly
+right; only `"manifest"`'s gloss over-commits._
