@@ -28,6 +28,7 @@ import { afterAll, describe, expect, test } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { SPELLBOOK_CACHE_ROOT } from "../coord.ts";
 import { boardOwnerFromBinding } from "./team-support.ts";
 import { cleanGitEnv } from "./test-support.ts";
 
@@ -72,50 +73,78 @@ describe("boardOwnerFromBinding — PURE", () => {
   });
 });
 
+/**
+ * ⚠ GATED ON SPELLBOOK BEING INSTALLED, and the ungated version turned CI red.
+ *
+ * This test runs a REAL `anthill convene`, which shells out to spellbook's
+ * `bounty` — an optional dependency this repo resolves at runtime and CI does not
+ * install. It passed on every developer machine and failed on the one environment
+ * that had never seen spellbook.
+ *
+ * **The comment below the assertion said exactly the right thing and the code did
+ * the opposite** — _"if bounty is unavailable the marker never appears, REPORT
+ * that rather than asserting on a file that was never written, so a missing
+ * dependency does not read as a format change"_ — and then it asserted. A
+ * skipped-dependency failure was reported as the upstream-format-change alarm.
+ *
+ * `test.skipIf` is the idiom this repo already uses for exactly this
+ * (`coord.test.ts`'s live smoke), keyed on the same `SPELLBOOK_CACHE_ROOT`.
+ *
+ * ⚠ AND THE COST HAS TO BE STATED, because a skip is silent by nature: **on CI
+ * this guard does not run.** Its whole job is to catch spellbook changing its
+ * derived-id format, so a green CI is NOT evidence the round trip holds — only a
+ * green local run is. That is a real gap, and the honest fix is installing
+ * spellbook in CI rather than pretending the skip covers it. Filed, not hidden.
+ */
 describe("ROUND TRIP — what `convene` writes, this reader recognizes", () => {
-  test("a real convene's `.bounty-session` resolves back to the team that wrote it", async () => {
-    const dir = join(ROOT, "roundtrip");
-    mkdirSync(join(dir, ".anthill"), { recursive: true });
-    writeFileSync(
-      join(dir, ".anthill/config.json"),
-      JSON.stringify({
-        version: 2,
-        teams: {
-          dev: {
-            channel: "myproject",
-            lead: "maestro",
-            seats: [{ handle: "maestro", role: "lead", scope: "o" }],
-            paths: { teamDir: ".anthill" },
+  const haveSpellbook = existsSync(SPELLBOOK_CACHE_ROOT);
+
+  test.skipIf(!haveSpellbook)(
+    "a real convene's `.bounty-session` resolves back to the team that wrote it",
+    async () => {
+      const dir = join(ROOT, "roundtrip");
+      mkdirSync(join(dir, ".anthill"), { recursive: true });
+      writeFileSync(
+        join(dir, ".anthill/config.json"),
+        JSON.stringify({
+          version: 2,
+          teams: {
+            dev: {
+              channel: "myproject",
+              lead: "maestro",
+              seats: [{ handle: "maestro", role: "lead", scope: "o" }],
+              paths: { teamDir: ".anthill" },
+            },
+            lean: {
+              lead: "boss",
+              seats: [{ handle: "boss", role: "lead", scope: "o" }],
+            },
           },
-          lean: {
-            lead: "boss",
-            seats: [{ handle: "boss", role: "lead", scope: "o" }],
-          },
-        },
-      }),
-    );
+        }),
+      );
 
-    const proc = Bun.spawn(["bun", CLI, "convene", "--team", "dev", "--format", "json"], {
-      cwd: dir,
-      stdout: "pipe",
-      stderr: "pipe",
-      env: GIT_ENV,
-    });
-    await proc.exited;
+      const proc = Bun.spawn(["bun", CLI, "convene", "--team", "dev", "--format", "json"], {
+        cwd: dir,
+        stdout: "pipe",
+        stderr: "pipe",
+        env: GIT_ENV,
+      });
+      await proc.exited;
 
-    const marker = join(dir, ".bounty-session");
-    // If bounty is unavailable in this environment the marker never appears —
-    // report that rather than asserting on a file that was never written, so a
-    // missing dependency does not read as a format change.
-    expect({ marker: ".bounty-session", written: existsSync(marker) }).toEqual({
-      marker: ".bounty-session",
-      written: true,
-    });
+      // Reached only when spellbook IS installed (see the describe), so a missing
+      // marker here is a real failure rather than an absent dependency — which is
+      // the distinction the un-gated version collapsed.
+      const marker = join(dir, ".bounty-session");
+      expect({ marker: ".bounty-session", written: existsSync(marker) }).toEqual({
+        marker: ".bounty-session",
+        written: true,
+      });
 
-    const binding = readFileSync(marker, "utf8");
-    expect({ binding: binding.trim(), owner: boardOwnerFromBinding(binding, TEAMS) }).toEqual({
-      binding: binding.trim(),
-      owner: "dev",
-    });
-  });
+      const binding = readFileSync(marker, "utf8");
+      expect({ binding: binding.trim(), owner: boardOwnerFromBinding(binding, TEAMS) }).toEqual({
+        binding: binding.trim(),
+        owner: "dev",
+      });
+    },
+  );
 });
