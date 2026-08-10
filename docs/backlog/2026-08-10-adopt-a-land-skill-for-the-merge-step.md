@@ -1,6 +1,6 @@
 # Adopt a `land` skill — the merge step, with a real PR message
 
-**Added:** 2026-08-10 · **Status:** In progress on `feat/land-skill` · **Shape:** one internal skill + an `AGENTS.md` pointer
+**Added:** 2026-08-10 · **Status:** ✅ **SHIPPED** 2026-08-10 on `feat/land-skill` · **Shape:** one internal skill + an `AGENTS.md` pointer
 **Source:** Cole, after seeing spellbook's local `land` skill
 (`~/Projects/spellbook/.claude/skills/land/`). **Adopted, not copied** — see what was left behind.
 **Provenance matters here:** without this file the only record would be a commit adding a skill, with
@@ -65,7 +65,9 @@ release time, and even there they answer different questions — _is it ready_ v
 - **Spellbook's §7 `--first-parent develop` warning.** It claims develop adopts main's spine after a
   back-merge fast-forwards, hiding named merges. **Measured here: not true of anthill today** —
   `git log --first-parent develop` shows develop's own commits and its feature merges, because this
-  repo's one back-merge (`12612ba`) was a real merge, not a fast-forward. **Not copied, because
+  repo's **three** back-merges (`12612ba`, `9f1a3a5`, `01314c6`) were all real merges, not
+  fast-forwards. _(Filed as "one" first; review recounted. The conclusion survived — the count did
+  not, which is what §7 warns about.)_ **Not copied, because
   copying an unverified topology claim is the exact defect this week keeps producing.** If a
   back-merge ever fast-forwards, revisit.
 
@@ -77,3 +79,23 @@ having settled on squash-merge (2026-07-27, unbuilt) and the 2026-08-07 triage m
 costs a repo whose docs pin shas. **This skill documents the procedure the CURRENT policy points at
 and does not close that question.** If the policy flips to squash, the skill's §2 changes and its
 §1 gains the script above; nothing else here depends on the answer.
+
+## What review caught, on the branch that adds a skill about being careful
+
+Every borrowed scar **reproduced** — the `-m`/`-F` concatenation (a real git behaviour, tested in a
+throwaway repo), the `| tail` false green (`sh -c 'exit 7' | tail -5; echo $?` → `0`), the
+`tail -n +3` two-line-subject caveat, and the 32/46 count exactly. So §7's worry — a borrowed hazard
+that does not exist here — did **not** fire.
+
+**What did fire was my own edit.** The ROADMAP "numbering fix" bundled into this branch renumbered
+**Next** while leaving **Later** alone, and the two share one continuous scheme: it produced a
+duplicate `8.` and silently repointed **five** `#N` cross-references at the wrong items
+(`"#3 above"`, `"the #4 dogfood"`, `"#5, #7"`, `"#1–#3"`). **The ROADMAP was less correct after that
+commit than before it** — a cosmetic fix that broke working references.
+
+Reverted, and the real defect addressed instead: **nothing said the numbers were load-bearing.**
+There is now a warning at the head of the list, and the shipped entry takes no number at all.
+
+**And the count in this file was wrong**: "this repo's one back-merge" — there are three
+(`12612ba`, `9f1a3a5`, `01314c6`). All three are real merges, so the conclusion held and only the
+number was wrong, which is precisely the failure mode §7 names. It is now stated as three, measured.

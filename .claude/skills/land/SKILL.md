@@ -46,8 +46,8 @@ git checkout <base> && git merge --ff-only origin/<base>   # the base must be cu
 > bun run check > /tmp/gate.log 2>&1; echo $?
 > ```
 >
-> _Carried from spellbook, where it produced a false green more than once. Believed here on the
-> strength of `$?` semantics, not on a local reproduction — if you hit it, say so._
+> _Carried from spellbook, where it produced a false green more than once. **Reproduced here**
+> 2026-08-10: `sh -c 'exit 7' | tail -5; echo $?` → `0`, in both bash and zsh, with `pipefail` off._
 
 ## 1 · The strategy is already decided — compute the facts anyway
 
@@ -71,7 +71,9 @@ already forbids squashing** — the day the policy is revisited, these numbers a
 ## 2 · Feature → develop: the named merge
 
 **Subject convention — `merge(<scope>): <what a reader got, in their terms>`.** Already 32 of this
-repo's 46 non-PR merges; this stops the drift rather than starting a convention. `merge` is not a
+repo's 46 non-PR merges **as of 2026-08-10** — and 32 of the 36 that are actually feature→develop
+landings, since the other 10 are back-merges, merges into `seat/*`, and develop→feature merges that
+would never take this form. This stops the drift rather than starting a convention. `merge` is not a
 conventional-commit type, so it triggers no release — correct for something reaching only `develop`.
 
 **Build ONE file** — subject, **blank line**, body:
@@ -182,13 +184,14 @@ get anything different?** If not, it is a `chore`.
 
 ```bash
 git log --first-parent main --format='%h %ci %s'                       # RELEASES
-git log --merges --format='%h %ci %s' | grep -v "Merge pull request"   # FEATURE merges
+git log develop --merges --format='%h %ci %s' | grep -v "Merge pull request"   # FEATURE merges
 ```
 
 > **⚠ Spellbook warns that `--first-parent develop` is useless there**, because its back-merge
 > fast-forwards develop onto main's spine and every named merge drops to a second parent.
-> **That is NOT true of anthill today** — this repo's one back-merge (`12612ba`) was a real merge, so
-> `--first-parent develop` still shows develop's own history. **Re-measure rather than trusting
+> **That is NOT true of anthill today** — this repo's **three** back-merges (`12612ba`, `9f1a3a5`,
+> `01314c6`) were **all real merges**, so `--first-parent develop` still shows develop's own history
+> (81 commits, measured). **Re-measure rather than trusting
 > either claim** if a back-merge ever fast-forwards.
 
 ## 7 · Feedback

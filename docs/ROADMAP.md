@@ -523,6 +523,12 @@ state, not a defect queue to drain.
 
 ## Next
 
+> **⚠ These numbers are CROSS-REFERENCED — do not renumber.** Entries below and in **Later** share one
+> continuous scheme, and prose throughout this file cites items as `#N` (`"#3 above"`, `"#5, #7"`,
+> `"#1–#3"`, `"(#8–#10)"`). _Renumbering Next alone produced a duplicate `8.` and silently repointed
+> five references at the wrong items — caught in review, 2026-08-10._ A new entry takes a suffixed
+> position (`2b.`) or goes at the end; it does not shift its neighbours.
+
 1. 🔬 **Methodology externalization — the acceptance experiment.** _NEW 2026-08-10._ Hand-write a
    3-seat `manager / implementer / reviewer` config, convene it, and **count the skill instructions
    the seats cannot execute as written.** Non-zero → externalization is a precondition for variants
@@ -536,16 +542,25 @@ state, not a defect queue to drain.
    **bare `anthill` in emitted strings** (4 sites; resolves through PATH to the highest cached
    release, so a string a seat runs verbatim can execute on a different binary than composed it).
    Plus four smaller. [backlog](backlog/2026-08-10-post-multi-team-defect-sweep.md).
-3. ✅ **Multi-team support** — **SHIPPED** 2026-08-10 (merged to `develop`, gate green).
-   One project can hold several teams, resolved ambiently (`--team` → `ANTHILL_TEAM` → the pin → the
-   sole team → **throw**, no fallback at any rung); `anthill team ls|use|show`; a `bootstrap` §0a
-   add-a-team route; `migrate` refuses a multi-team config; `Anthill-Team` attribution on commits and
-   retro entries. **A single-team project sees zero change.** MVP items 8 and 9 were moved out at
-   finalize rather than quietly dropped — see the scope amendment.
-   [proposal](projects/_archive/multi-team-support/proposal.md) · [plan + implementation
-   record](projects/_archive/multi-team-support/plan.md) ·
-   [session](projects/_archive/multi-team-support/sessions/2026-08-10-multi-team-support-implementation.md).
-4. ✅ **Multi-surface archetype + candidate seatings** — **SHIPPED** 2026-07-05 (`de3aa58`, on
+
+---
+
+**Not numbered on purpose — see the warning above.** This shipped between items 2 and 3 and takes
+no list position, because the numbers are cited as `#N` elsewhere in this file.
+
+✅ **Multi-team support** — **SHIPPED** 2026-08-10 (merged to `develop`, gate green).
+One project can hold several teams, resolved ambiently (`--team` → `ANTHILL_TEAM` → the pin → the
+sole team → **throw**, no fallback at any rung); `anthill team ls|use|show`; a `bootstrap` §0a
+add-a-team route; `migrate` refuses a multi-team config; `Anthill-Team` attribution on commits and
+retro entries. **A single-team project sees zero change.** MVP items 8 and 9 were moved out at
+finalize rather than quietly dropped — see the scope amendment.
+[proposal](projects/_archive/multi-team-support/proposal.md) · [plan + implementation
+record](projects/_archive/multi-team-support/plan.md) ·
+[session](projects/_archive/multi-team-support/sessions/2026-08-10-multi-team-support-implementation.md).
+
+---
+
+3. ✅ **Multi-surface archetype + candidate seatings** — **SHIPPED** 2026-07-05 (`de3aa58`, on
    `feat/multi-surface-archetype`; awaiting human sign-off → `develop`). A by-surface archetype +
    `anthill scan` (deterministic workspace detector) + bootstrap candidate seatings as a
    conversation-opener, ratify-not-reconstruct. `anthill scan` was pulled into the MVP to give the
@@ -554,24 +569,24 @@ state, not a defect queue to drain.
    [proposal](projects/_archive/multi-surface-archetype/proposal.md) ·
    [plan](projects/_archive/multi-surface-archetype/plan.md) ·
    [session](projects/_archive/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md).
-5. ✅ **First instrumented dogfood session** — **SHIPPED** 2026-07-05. #3 above **was** the first real
+4. ✅ **First instrumented dogfood session** — **SHIPPED** 2026-07-05. #3 above **was** the first real
    `anthill:plan` run with the convened team (seats as subagents over a live vine + board). The ratify
    gate caught **two load-bearing seam errors at zero rework cost** — the empirical data point the
    memory work (#8–#10) is gated on. Trail is traceable end-to-end (vine #2→#5, board, `seams.md`
    Contract 1, `de3aa58`); the four seat docs went scaffold-empty → first real content.
    [session](projects/_archive/multi-surface-archetype/sessions/2026-07-05-multi-surface-dogfood.md).
-6. ✅ **Ritual checklists baked into the lifecycle skills** — **SHIPPED** 2026-07-04 (`ead9e66`).
+5. ✅ **Ritual checklists baked into the lifecycle skills** — **SHIPPED** 2026-07-04 (`ead9e66`).
    The skills now **emit** skip-resistant checklists: `convene` (lead setup), `join` (member), and a
    `finalize-session` teardown checklist carrying the previously-missing **human sign-off gate before
    the feature branch merges to develop**.
    [session](projects/_archive/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md).
-7. ✅ **Rail-guarding paper-cut fix — `anthill commit` × lint-staged** — **SHIPPED** 2026-07-04
+6. ✅ **Rail-guarding paper-cut fix — `anthill commit` × lint-staged** — **SHIPPED** 2026-07-04
    (`ee8b62d`). Stage → verify-index-is-exactly-our-paths → pathspec-less commit (runs the hook
    against the real index, dodging the temp-index corruption); unexpected staged content aborts.
    [paper-cuts](../.anthill/paper-cuts.md) ·
    [session](projects/_archive/skill-hygiene-pass/sessions/2026-07-04-skill-hygiene-pass.md).
    _Still open (the other half): channel hygiene in convene/down (dream-flute paper-cut #14)._
-8. ✅ **Cheap ritual/SOP edits** — **SHIPPED** 2026-07-04 (`ead9e66`). Into the SOP seed:
+7. ✅ **Cheap ritual/SOP edits** — **SHIPPED** 2026-07-04 (`ead9e66`). Into the SOP seed:
    _no store without a named re-read moment_, _the vine evaporates_ (land decisions in an artifact),
    _one intake route at synthesis_; playbook-pointer rule into `docs/README.md`
    ([report recs 2, 6](reports/2026-07-02-conceptual-implementation-review-report.md);
