@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url";
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, emittingCli, resolveFormat } from "../agent-layer.ts";
 import { buildCommsIncantation } from "../comms.ts";
 import { execCoord, firstErrorLine, resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
@@ -280,7 +280,7 @@ export const teamConveneCommand = defineAnthillCommand({
         error:
           `${alreadyUp.map(describeLiveTeam).join(" and ")} is already convened, and only one team ` +
           "can hold the board: `.bounty-session` is a single repo-root file, so convening now would " +
-          "rebind that team's board underneath its seats. Stand it down first (`anthill down`), or " +
+          `rebind that team's board underneath its seats. Stand it down first (${emittingCli()} down), or ` +
           "pass `--force` if you know it is idle.",
       });
       process.exit(1);
@@ -344,7 +344,7 @@ export const teamConveneCommand = defineAnthillCommand({
     // blocker cannot resolve to different binaries (Contract 7(d): a
     // load-bearing emitted command resolves to the EMITTING cli, never PATH).
     const leadStandDown = config.lead
-      ? `bun ${fileURLToPath(new URL("../cli.ts", import.meta.url))} comms stand-down --as ${config.lead}`
+      ? `${emittingCli()} comms stand-down --as ${config.lead}`
       : null;
     if (!config.lead) {
       warnings.push(

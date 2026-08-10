@@ -87,3 +87,49 @@ a bare `anthill` unresolvable. Verified: 1 fail before, **2 fail** after.
 
 _The lesson is not "audit harder." I had a rule, applied it correctly, and applied it to one file. The
 repo already held the list I needed._
+
+---
+
+## Third round — the guard could not see a revert of the defect it was built for
+
+**F1, and it is the worst finding this item has produced.** The rebuilt guard deduped hits by the
+MATCHED SUBSTRING, so its allow-list key was _(file, verb-phrase)_ — meaning the one allow-listed
+human-facing `anthill comms` in `team-comms.ts` **exonerated every `anthill comms` in that file**,
+including the two agent-facing ones this whole item exists to fix. Measured: reverting the
+`emitError` fix left the guard green **and the full 688-test suite green**.
+
+> A bare `anthill comms read …` inside an `emitError` that literally says _"Read them with:"_ could
+> be reintroduced with nothing going red.
+
+Keyed on **context** now — the matched text plus a quote-free slug of the preceding 52 characters —
+so each occurrence is its own entry and a new agent-facing string in an already-listed file fails
+CLOSED. Verified: reverting either fix now fails the guard.
+
+**F2 — three "prose" entries were argument-free runnable commands in agent-facing envelopes**, which
+is the same classification error as round 1 pointing the other way. `anthill down` in
+`team-convene`'s and `team-team`'s `emitError`, and `anthill init` in `team-join`'s `warnings[]`,
+are structurally identical to `team-attach`'s `anthill spawn` — which round 1 called a defect and I
+fixed. **The branch cannot have it both ways.** All three now resolve. The discriminator the
+allow-list already used is the honest one: _carries a `<placeholder>`, so it cannot be pasted and
+run._
+
+**F3 — the shape assertions passed on a bogus path.** `startsWith("bun /")` + `contains("/cli.ts ")`
+stayed green when the helper was mutated to `bun /nonexistent/wrong/cli.ts`. They now assert the
+path **exists**. Same class as round 1's finding: an assertion that looks like it proves resolution
+and does not.
+
+**F4 — four guard-defeat vectors closed**: `anthill help` (the help output does not list itself, so
+the derivation was self-blind), `anthill --version`, string concatenation split across lines (this
+codebase splits long errors at ~100 columns, so a formatter break between `anthill` and its verb
+exonerated the string), and a double space.
+
+**F5 — the rendered team docs had no shorthand legend.** All seven skills carry _"`anthill <command>`
+is shorthand, not a binary on PATH"_; `templates/docs-team/README.md` instructs seats to run
+`anthill comms stand-down --as <handle>` and carried none. Added.
+
+**Also folded** `team-convene`'s two hand-rolled copies of the derivation onto the shared helper —
+the helper existed to end that duplication and had not been applied to its own neighbour.
+
+_Three review rounds, each finding what the previous two missed. The pattern across all three is the
+same: the rule was right every time, and its APPLICATION kept stopping at whatever I happened to be
+looking at._

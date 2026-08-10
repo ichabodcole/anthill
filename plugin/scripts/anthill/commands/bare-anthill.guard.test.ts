@@ -62,7 +62,18 @@ function cliVerbs(): string[] {
 }
 
 const VERBS = cliVerbs();
-const BARE = new RegExp(`anthill (?:${VERBS.join("|")})\\b`, "g");
+
+/**
+ * `anthill <verb>`, `anthill help`, or `anthill --flag`.
+ *
+ * ⚠ `help` IS NOT IN `cliVerbs()` — the help output does not list itself, so the
+ * derivation is self-blind and has to be topped up by hand. Same for a bare
+ * `anthill --version`. Both were demonstrated as guard-defeat vectors.
+ */
+const BARE = new RegExp(`anthill (?:${VERBS.join("|")}|help|--?[a-z])`, "g");
+
+/** How much preceding text distinguishes one occurrence from another. */
+const CONTEXT = 52;
 
 /**
  * Every bare-`anthill` string that is ALLOWED, and why. A hit not listed fails.
@@ -74,32 +85,34 @@ const BARE = new RegExp(`anthill (?:${VERBS.join("|")})\\b`, "g");
  *                  as written, so it cannot be executed by the wrong binary.
  */
 const ALLOWED: Record<string, string> = {
-  // ── human: reached only through renderText / a TTY ──────────────────────────
-  "commands/team-comms.ts:anthill comms":
-    "human — the `Establish an anchor with:` hint, inside renderText",
-  "commands/team-spawn.ts:anthill attach": "human — the `Watch:` line, inside renderText",
-  "commands/team-spawn.ts:anthill down": "human — the `Stand down:` line, inside renderText",
-
-  // ── template: carries <placeholders>, so it cannot be pasted and run ────────
-  "commands/team-commit.ts:anthill commit":
-    'template — the usage line `anthill commit -m "<msg>" <path>...`',
-  "commands/team-feedback.ts:anthill feedback":
-    "template — the usage line carrying <message>; the RUNNABLE submitCmd resolves, asserted below",
-  "team-resolve.ts:anthill team": "template — `anthill team use <name>` in a ConfigError",
-  "commands/team-team.ts:anthill team": "template — `anthill team use <name>` in the rung prose",
-
-  // ── prose: the command is NAMED as a remedy, with no arguments to run ───────
-  "commands/team-convene.ts:anthill down":
-    "prose — names the remedy in the one-team-at-a-time guard",
-  "commands/team-team.ts:anthill down": "prose — the same remedy in `team use`'s live-team guard",
-  "commands/team-convene.ts:anthill join":
-    "prose — explains that seats join; not addressed to the reader as a command",
-  "commands/team-join.ts:anthill init":
-    "prose — names the remedy for a missing team doc, no arguments given",
-  "config.ts:anthill attach":
-    "prose — explains WHY channels must be prefix-free, describing attach's folding",
-  "feedback.ts:anthill feedback":
-    "prose — the `_Filed via ..._` footer written into a GitHub issue body, read by a human on github.com",
+  "config.ts :: anthill attach @ tbeprefixfreenotmerelyunique":
+    "prose - explains WHY channels must be prefix-free, by describing attach's folding",
+  "feedback.ts :: anthill feedback @ pmessagetrimFiledvia":
+    "prose - a footer written INTO a GitHub issue body, read by a human on github.com",
+  "team-resolve.ts :: anthill team @ nfigErrorerrmessageRepinwith":
+    "template - `anthill team use <name>`, a syntax illustration",
+  "team-resolve.ts :: anthill team @ mejoinPickoneforthisrepowith":
+    "template - the same, in the ambiguity error",
+  "commands/team-commit.ts :: anthill commit @ rroracommitmessageisrequired":
+    "template - the usage line, with <msg> and <path> placeholders",
+  "commands/team-commit.ts :: anthill commit @ agedfilepassexactlyyourpaths":
+    "template - the same usage line in the no-pathspec refusal",
+  "commands/team-comms.ts :: anthill comms @ oguessnEstablishananchorwith":
+    "human - inside renderText",
+  "commands/team-convene.ts :: anthill join @ eadwillbeUNWIREDunlessitruns":
+    "template - `anthill join <handle>`; reaches warnings[] but is not runnable as written",
+  "commands/team-convene.ts :: anthill down @ ushYourLASTactandrunitBEFORE":
+    "human - inside renderText (lines.push on the render callback)",
+  "commands/team-feedback.ts :: anthill feedback @ orafeedbackmessageisrequired":
+    "template - the usage line carrying <message>",
+  "commands/team-spawn.ts :: anthill attach @ hAttachingelselinespushWatch":
+    "human - the Watch: line, inside renderText",
+  "commands/team-spawn.ts :: anthill down @ hillattachlinespushStanddown":
+    "human - the Stand down: line, inside renderText",
+  "commands/team-team.ts :: anthill team @ inthepinatanthillcurrentteam":
+    "template - `anthill team use <name>` in the rung prose",
+  "commands/team-team.ts :: anthill team @ gth1rowspushNoteamisselected":
+    "template - the same, in the ls footer",
 };
 
 /** Every `*.ts` under the anthill scripts tree, excluding tests. */
@@ -113,16 +126,55 @@ function sourceFiles(dir: string, prefix = ""): string[] {
   return out;
 }
 
-/** Source with comments stripped — this file's own prose would otherwise match. */
+/**
+ * Source, normalized so the scan cannot be dodged by formatting.
+ *
+ * Comments go first — this file's own prose would otherwise match. Then adjacent
+ * string literals are JOINED: this codebase splits long error strings at ~100
+ * columns (`config.ts`, `team-convene.ts`, `team-team.ts` all do), so a
+ * formatter break landing between `anthill` and its verb silently exonerated the
+ * string. Finally runs of spaces collapse, closing the double-space dodge.
+ * Every one of these was demonstrated against the previous version.
+ */
 function code(rel: string): string {
   return readFileSync(join(ROOT, rel), "utf8")
     .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/^\s*\/\/.*$/gm, "");
+    .replace(/^\s*\/\/.*$/gm, "")
+    .replace(/"\s*\+\s*"/g, "")
+    .replace(/`\s*\+\s*`/g, "")
+    .replace(/\s+/g, " ");
+}
+
+/**
+ * A stable key per OCCURRENCE — the matched text plus the text before it.
+ *
+ * ⚠ THIS IS THE REPAIR FOR THE WORST DEFECT THIS GUARD HAS HAD. It keyed on the
+ * matched substring alone, deduped per file — so ONE allow-listed
+ * `anthill comms` in `team-comms.ts` exonerated EVERY `anthill comms` in that
+ * file, including the two agent-facing ones the branch existed to fix.
+ * Demonstrated: reverting the `emitError` fix left the guard green AND the whole
+ * 688-test suite green. Keying on context makes each occurrence its own entry,
+ * so a new agent-facing string in an already-listed file fails CLOSED.
+ */
+function occurrences(src: string): string[] {
+  const out: string[] = [];
+  for (const m of src.matchAll(BARE)) {
+    const at = m.index ?? 0;
+    // A QUOTE-FREE slug of the preceding text. The raw source context carries
+    // quotes and backticks, which cannot go in a string-literal key — and the
+    // slug is stable under requoting, which raw context is not.
+    const slug = src
+      .slice(Math.max(0, at - CONTEXT), at)
+      .replace(/[^a-zA-Z0-9]+/g, "")
+      .slice(-28);
+    out.push(`${m[0]} @ ${slug}`);
+  }
+  return [...new Set(out)];
 }
 
 describe("bare `anthill` — every occurrence is accounted for", () => {
   const hits = sourceFiles(ROOT).flatMap((rel) =>
-    [...new Set(code(rel).match(BARE) ?? [])].map((m) => `${rel}:${m}`),
+    occurrences(code(rel)).map((m) => `${rel} :: ${m}`),
   );
 
   test("POSITIVE CONTROL: the scan reaches files that mention it", () => {

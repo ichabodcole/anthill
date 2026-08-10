@@ -1,4 +1,3 @@
-import { fileURLToPath } from "node:url";
 /**
  * Dual-audience output layer. Every command runs through `emit` / `emitError`.
  *
@@ -15,6 +14,8 @@ import { fileURLToPath } from "node:url";
  *   - In JSON mode, attach non-fatal notices to `data.warnings: string[]` —
  *     do NOT print warnings to stderr (it pollutes captured streams).
  */
+
+import { fileURLToPath } from "node:url";
 
 import { nowMillis } from "./runtime.ts";
 

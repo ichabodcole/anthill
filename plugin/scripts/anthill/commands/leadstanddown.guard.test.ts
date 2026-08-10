@@ -97,7 +97,12 @@ describe("K1 — the lead's teardown release is composed correctly (source-level
     // Asserted together: a command that names the verb but resolves through
     // PATH satisfies neither half of 7(d), and would pass either check alone.
     expect({
-      resolvesToEmittingCli: c.includes('new URL("../cli.ts"') && c.includes("import.meta.url"),
+      // Now via the shared `emittingCli()` in agent-layer.ts rather than a
+      // hand-rolled `new URL("../cli.ts", import.meta.url)` — the helper was
+      // introduced to end exactly that duplication. Either form satisfies 7(d).
+      resolvesToEmittingCli:
+        c.includes("emittingCli()") ||
+        (c.includes('new URL("../cli.ts"') && c.includes("import.meta.url")),
       namesTheVerb: /comms stand-down --as/.test(c),
     }).toEqual({ resolvesToEmittingCli: true, namesTheVerb: true });
   });

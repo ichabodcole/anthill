@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import type { GhResult } from "../feedback.ts";
 import { buildFeedback, type FeedbackDeps } from "./team-feedback.ts";
@@ -98,6 +99,10 @@ describe("buildFeedback — behavior branches", () => {
     ).toBe(true);
     expect(data.submitCmd?.startsWith("bun /")).toBe(true);
     expect(data.submitCmd).toContain("/cli.ts ");
+    // ⚠ THE PATH MUST EXIST. "bun /…/cli.ts" is a shape any wrong path satisfies
+    // — review mutated the helper to `bun /nonexistent/wrong/cli.ts` and these
+    // assertions stayed green. Same class as the round-1 finding they replaced.
+    expect(existsSync(String(data.submitCmd).split(" ")[1] ?? "")).toBe(true);
     expect(data.warnings).toBeUndefined();
   });
 
