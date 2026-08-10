@@ -149,8 +149,17 @@ gh pr create --base main --head develop \
 ```
 
 > **⚠ `gh` splits title and body; `git` does not.** And `tail -n +3` assumes **exactly one** subject
-> line and **one** blank line — check with `sed -n '1,3p' msg.md` first, or the body silently loses
-> its first line.
+> line and **one** blank line — check with `awk 'NR<=3'` first, or the body silently loses its first
+> line.
+
+**If the PR already exists** — which is the normal case, since the human usually opens it before
+asking for a message — it is `edit`, not `create`, and the flags are otherwise identical:
+
+```bash
+gh pr edit <n> --title "$(head -1 msg.md)" --body-file <(tail -n +3 msg.md)
+```
+
+_Added after the first real run: this skill only documented `create`, and the PR was already open._
 
 **⛔ The agent does NOT merge to `main`.** That is the release: `main` is branch-protected, and
 release-please cuts a version on merge. **Hand the human the command; do not run it:**
