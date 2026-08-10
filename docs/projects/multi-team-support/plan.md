@@ -587,6 +587,64 @@ each verified failing against a locally-reverted `liveTeams` → `bun run check`
 policy, not tooling** (`anthill init` is already file-level idempotent), plus the config-writing path
 and the incumbent's explicit `paths.teamDir` from 1.1. Run `cascade-check`.
 
+### 4.2 — `init` is a PROJECT-level renderer, so a pin must not narrow it
+
+**Type:** `fix:` · **Files:** `commands/team-init.ts` (`teamsToRender`, `InitData.teamDir`),
+`plugin/skills/bootstrap/SKILL.md` (§0a's _"No `--team` here, deliberately"_ paragraph and its
+verification step) · test `commands/team-init.multiteam.test.ts` · **Added 2026-08-09 from the
+Phase 4 review.**
+
+**4.1 fixed the ambiguity refusal and left the pin in place — so the route works exactly once.**
+`teamsToRender` treats **any** successful resolution as a narrowing, and a pin is a successful
+resolution. §0a's own justification says _"there is no pin yet"_, which is true for the flat→two-team
+conversion it was written against and **false for every later use of the same route**: a repo that has
+run `anthill team use` has a pin forever after.
+
+**Measured on a three-team repo pinned to `lean`, adding `research`:**
+
+```
+$ anthill init
+ok: true   teams: [lean]   written: []   skipped: [7 lean files]
+           gitignore: .anthill/teams/research/scratch/  -> added
+                      .anthill/teams/research/comms     -> added
+$ ls .anthill/teams/          → lean          # research's docs were never written
+$ anthill team ls             → research listed, teamDir .anthill/teams/research
+```
+
+**The success envelope is convincing precisely because the run did do work** — `research` got its
+gitignore lines. It ends with a team that the config knows, `ls` lists, `.gitignore` covers, and
+**that has no living docs at all**. `anthill team use research` then `convene` hands its seats an
+empty footprint — the one outcome the DEV_KICKOFF invariant forbids, arrived at through the
+documented route with `ok: true` at every step.
+
+**⚠ The two halves of this one command already disagree, and 4.1 is where they split.** The same
+commit made the gitignore half project-wide, reasoning that _"the ignore file is project-level, and a
+repo pinned to `dev` that leaves `lean`'s comms log trackable is the same committed-log bug one team
+over."_ **That argument is about `init`, not about gitignore** — it applies unchanged to the template
+half, which was left pinned. The probe above is that split, printed.
+
+**Contract:**
+
+- **Only an explicit `--team` narrows.** The pin and `ANTHILL_TEAM` answer _"which team am I
+  operating AS"_; `init` does not operate as a team — it renders the project's footprint, never
+  clobbers, and is a no-op on what already exists. Rung 1 is a deliberate act on this invocation;
+  rungs 2–4 are ambient state about something else.
+- **A bad `--team` still hard-errors.** Unchanged from 4.1 — it names a team that does not exist.
+- **`InitData.teamDir` goes**, or stops being top-level. It currently means _"the first rendered team,
+  in config order"_ — a total field carrying a partial answer, which is the exact shape `soleTeam` was
+  refused for in 1.1. `teams[]` already says it completely; on a single-team project the two are
+  identical, so `teamDir` is redundant where it is right and misleading where it is not.
+- **§0a's prose loses _"there is no pin yet"_ as its reason** — the reason is that `init` is
+  project-level — **and its verification step must be able to fail.** _"Read `team ls`'s output"_
+  passes in the probe above, because `ls` reads the config, not the disk. Replace it with a check that
+  looks at what was rendered: `anthill init` reporting a `written`/`skipped` entry for **every** row
+  `team ls` shows.
+
+**Tasks:** a failing CLI test — three teams, pin set, a new team added → `init` renders the new team's
+docs — **verified RED against the current file** → implement → assert 4.1's no-pin case and the
+single-team byte-identical case both still pass → `bun run check` → `cascade-check` for the prose →
+commit `fix(init): render every configured team unless --team narrows it`.
+
 ---
 
 ## Phase 5 — `upgrade` refuses on a multi-team config
