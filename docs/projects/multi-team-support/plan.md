@@ -761,6 +761,75 @@ algorithm in the skill** so a reader can reproduce it.
 **⚠ Known limit, stated in the artifact:** this makes a session **labelled**, not **comparable**.
 Proposal Open Question 3 is unanswered and this phase does not answer it.
 
+### 6.3 — 🔴 `appendTrailer` destroys the trailers on a one-line conventional commit
+
+**Type:** `fix:` · **Files:** `commands/team-commit.ts` (`appendTrailer`, `TRAILER_LINE`) · test
+`commands/team-commit.test.ts` · **Added 2026-08-10 from the Phase 6 review. This is a live
+regression on single-team repos, not a multi-team-only defect.**
+
+**6.1's fix made the common case worse than the defect it fixed.** `appendTrailer` decides its
+separator by testing the body's LAST LINE against `TRAILER_LINE`
+(`/^[A-Za-z][A-Za-z0-9-]*: .+$/`) — and **a conventional-commit subject matches that pattern
+exactly.** `feat: a thing` is `<token>: <text>`. So on a one-line message the stamp is joined with a
+single `\n`, no blank line is ever created, the whole message stays one paragraph, and git sees **no
+trailer block at all.**
+
+**Measured, `anthill commit --as boss --team lean -m "feat: a thing"` on a real repo:**
+
+```
+$ git log -1 --format=%B          $ git log -1 --format=%B | git interpret-trailers --parse
+feat: a thing                     (nothing)
+Anthill-Seat: boss                ↑ BOTH stamps invisible to git
+Anthill-Team: lean
+```
+
+Verified against the two neighbouring shapes, which are both fine — `feat: another` **with a body
+paragraph** parses correctly, and `add a thing` (no colon) parses correctly. **The defect is exactly
+the one-line conventional commit**, which is this repo's mandated commit convention
+(`AGENTS.md:44-53`) and the dominant shape a seat produces.
+
+**⚠ Severity: this breaks `Anthill-Seat` on EVERY anthill consumer, single-team included.**
+`stampSeat` goes through the same function, and the team stamp is not involved. Before 6.1 the
+separator was an unconditional `\n\n` and this case was correct — so Phase 6 regressed seat
+attribution, which has shipped and been in use, in order to fix a two-trailer case that had not.
+
+**Why the tests are green at 666 pass:** every fixture in `team-commit.test.ts` uses `"subject"` or
+`"subject line"` — **no colon.** Including the `git interpret-trailers` test at `:1028`, which asks
+git the right question about the one shape that was never going to fail. **This is 6.1's own lesson
+recurring one level up:** it noted that `git log --grep` survives a broken trailer block, so the
+documented query keeps working while trailer-aware consumers lose the data. The same is true here,
+which is why nothing caught it.
+
+**Contract — decide from the PARAGRAPH, the way git does, not from one line.**
+
+Git's rule: the trailer block is the **last paragraph**, it must consist of trailer lines, and **it
+must not be the first paragraph** — a subject line alone can never hold trailers, which is precisely
+the case above.
+
+```ts
+// Split into paragraphs; the last one is a trailer block only if it is NOT the
+// first (the subject) and every line in it is a trailer.
+const lines = body.split("\n");
+const lastBlank = lines.findLastIndex((l) => l.trim() === "");
+const para = lines.slice(lastBlank + 1).filter((l) => l.trim() !== "");
+const joinsBlock =
+  lastBlank !== -1 &&
+  para.length > 0 &&
+  para.every((l) => TRAILER_LINE.test(l.trim()));
+return `${body}${joinsBlock ? "\n" : "\n\n"}${trailer}`;
+```
+
+**`lastBlank !== -1` is the fix** — no blank line anywhere means the body is a bare subject, so a
+trailer must open a new paragraph however much that subject looks like a trailer. Keep `TRAILER_LINE`
+as it is; it was never the wrong regex, it was asked the wrong question.
+
+**Tasks:** a failing test **at the CLI level, asserting through `git interpret-trailers --parse`**,
+for `-m "feat: a thing"` with `--as` on a **single-team** repo (seat only) and on a multi-team repo
+(seat + team) → verify RED → implement → assert every existing `stampSeat`/`stampTeam` case still
+passes, and **add a colon to the subject in the existing fixtures** so the suite stops testing only
+the shape that cannot fail → `bun run check` → commit
+`fix(commit): a conventional subject is not a trailer block`.
+
 ---
 
 ## Implementation record — where the build diverged from this plan
