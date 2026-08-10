@@ -1,98 +1,164 @@
 /**
- * A bare `anthill` in an AGENT-facing string is a different binary.
+ * A bare `anthill` in a string an AGENT re-invokes is a different binary.
  *
  * PATH resolves `anthill` to the optional global launcher, which picks the
  * highest CACHED RELEASE — so a string a seat runs verbatim can execute on a
  * binary other than the one that composed it, and a flag the composer has may
- * not exist there. `buildLandCommand` (`team-join.ts`) hit this for real and
- * resolves to the emitting `cli.ts` instead.
+ * not exist there. `buildLandCommand` (`team-join.ts`) hit this for real.
  *
- * ⚠ THE SCOPE IS THE WHOLE POINT, AND THE BACKLOG ITEM DID NOT HAVE IT.
- * The item that filed this listed five line numbers. Three of them are
- * `renderText` output — the HUMAN surface — where a bare `anthill` is CORRECT:
- * a person typing `anthill attach` wants PATH resolution, which is exactly what
- * the optional global launcher exists for (`bootstrap` §1 — "purely for the
- * human; agents don't need it"). Fixing all five would have handed a person an
- * absolute path into a plugin cache to fix an agent-facing bug.
+ * ⚠ IT IS NOT A BAN. `renderText` is the HUMAN half of the envelope
+ * (`agent-layer.ts`'s `resolveFormat` returns "text" only for a TTY, so an
+ * agent's piped subprocess cannot reach it without asking), and a person typing
+ * `anthill attach` WANTS PATH resolution — that is what the optional global
+ * launcher is for. Resolving there hands them an absolute path into a plugin
+ * cache. So the rule is a DISTINCTION, and both halves are asserted below.
  *
- * So this guard asserts a DISTINCTION, not a ban:
- *   - strings reaching the JSON envelope (`emitError`, payload fields) → resolved
- *   - strings inside `renderText` → left alone, and that is asserted too, so a
- *     later "cleanup" pass cannot quietly make the human output worse.
+ * ⚠⚠ THIS IS AN ALLOW-LIST, AND THE FIRST VERSION WAS NOT — that is the repair.
+ * v1 scanned ONE file with a CLOSED VERB LIST and classified hits by whether
+ * they fell inside a 1200-character window after `renderText:`. Review broke it
+ * three ways in one pass, each reproduced:
  *
- * ⚠ BOUND: this reads SOURCE, like `leadstanddown.guard.test.ts`. It proves the
- * composition, not the emission. It also covers `team-comms.ts` ONLY — the file
- * the audit found. It must never be recorded as "bare `anthill` is covered
- * everywhere."
+ *   - the window made the guard LOOSER, not stricter as its own comment
+ *     claimed — a hit swallowed by a window is silently exonerated, and those
+ *     windows land in live handler code;
+ *   - the verb list omitted `spawn`, `feedback`, `commit`, `init`, `team`,
+ *     `migrate` … including the verb of the biggest real miss;
+ *   - it covered `team-comms.ts` alone, while three same-class defects sat in
+ *     `team-feedback.ts` and `team-attach.ts` — one of which
+ *     `.anthill/dev/seams.md` (Contract 2) had ALREADY enumerated as
+ *     "the stronger case because it is a string we hand a seat to re-invoke".
+ *
+ * An allow-list inverts all three: it scans EVERY source file, needs no verb
+ * list, and anything unrecognised fails CLOSED. To add an entry you must state
+ * why the string is safe — that sentence is the point, as in
+ * `tmpleak.guard.test.ts`.
  */
 
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
+const ROOT = join(import.meta.dir, "..");
+
 /**
- * The source with COMMENTS STRIPPED — and the stripping is not tidiness.
+ * The CLI's OWN command names, read from its help output — not a list typed here.
  *
- * `team-comms.ts` documents this very rule in prose, so its own doc comment
- * contains ``a human typing `anthill attach` WANTS PATH resolution``. Scanned
- * raw, the guard flags the sentence explaining the guard. Caught by running it:
- * the first version came back RED naming a comment.
+ * ⚠ THIS IS THE FIX FOR v1's CLOSED VERB LIST, which review broke: it omitted
+ * `spawn` and `feedback`, and `feedback` was the verb of the biggest real miss.
+ * Deriving means A NEW COMMAND JOINS THE SCAN THE DAY IT IS ADDED, with nobody
+ * remembering to update this file.
  *
- * Same class as `tmpleak.guard.test.ts` excluding itself — an instrument that
- * matches its own description of what it looks for — and recorded rather than
- * silently filtered, because a later reader would otherwise take the strip for
- * an oversight.
+ * It also stops the guard matching ENGLISH. A bare `/anthill [a-z]+/` flagged
+ * "anthill depends on spellbook", "anthill itself", "anthill footprint" — prose,
+ * not invocations. Constraining to real verbs removes every one of those without
+ * a hand-maintained exclusion list.
  */
-const SRC = readFileSync(join(import.meta.dir, "team-comms.ts"), "utf8")
-  .replace(/\/\*[\s\S]*?\*\//g, "")
-  .replace(/^\s*\/\/.*$/gm, "");
-
-/** A bare `anthill …` inside a template literal or after a colon — the emitted forms. */
-const BARE = /(?:`|: )anthill (?:comms|attach|down|status|join|convene) /g;
-
-/** Everything between `renderText:` and the end of its arrow body, roughly — the
- * human surface. Crude on purpose: it over-includes, which makes the
- * agent-facing assertion below STRICTER, never looser. */
-function renderTextRegions(src: string): string {
-  const out: string[] = [];
-  let i = src.indexOf("renderText:");
-  while (i !== -1) {
-    out.push(src.slice(i, i + 1200));
-    i = src.indexOf("renderText:", i + 1);
-  }
-  return out.join("\n");
+function cliVerbs(): string[] {
+  const out = Bun.spawnSync(["bun", join(ROOT, "cli.ts"), "help", "--format", "json"]);
+  const parsed = JSON.parse(out.stdout.toString()) as {
+    data: { commands: Array<{ name: string }> };
+  };
+  return parsed.data.commands.map((c) => c.name);
 }
 
-describe("bare `anthill` — agent-facing strings resolve, human-facing ones do not", () => {
-  test("POSITIVE CONTROL: the scan finds bare invocations at all", () => {
-    // Without this, every assertion below passes on a regex that matches nothing
-    // — the failure this whole file exists to prevent, inside the file.
-    expect(SRC.match(BARE)?.length ?? 0).toBeGreaterThan(0);
+const VERBS = cliVerbs();
+const BARE = new RegExp(`anthill (?:${VERBS.join("|")})\\b`, "g");
+
+/**
+ * Every bare-`anthill` string that is ALLOWED, and why. A hit not listed fails.
+ *
+ * Two legitimate kinds:
+ *   **human**    — reached only via `renderText` / a TTY, where PATH resolution
+ *                  is what the person wants.
+ *   **template** — a syntax illustration carrying `<placeholders>`, not runnable
+ *                  as written, so it cannot be executed by the wrong binary.
+ */
+const ALLOWED: Record<string, string> = {
+  // ── human: reached only through renderText / a TTY ──────────────────────────
+  "commands/team-comms.ts:anthill comms":
+    "human — the `Establish an anchor with:` hint, inside renderText",
+  "commands/team-spawn.ts:anthill attach": "human — the `Watch:` line, inside renderText",
+  "commands/team-spawn.ts:anthill down": "human — the `Stand down:` line, inside renderText",
+
+  // ── template: carries <placeholders>, so it cannot be pasted and run ────────
+  "commands/team-commit.ts:anthill commit":
+    'template — the usage line `anthill commit -m "<msg>" <path>...`',
+  "commands/team-feedback.ts:anthill feedback":
+    "template — the usage line carrying <message>; the RUNNABLE submitCmd resolves, asserted below",
+  "team-resolve.ts:anthill team": "template — `anthill team use <name>` in a ConfigError",
+  "commands/team-team.ts:anthill team": "template — `anthill team use <name>` in the rung prose",
+
+  // ── prose: the command is NAMED as a remedy, with no arguments to run ───────
+  "commands/team-convene.ts:anthill down":
+    "prose — names the remedy in the one-team-at-a-time guard",
+  "commands/team-team.ts:anthill down": "prose — the same remedy in `team use`'s live-team guard",
+  "commands/team-convene.ts:anthill join":
+    "prose — explains that seats join; not addressed to the reader as a command",
+  "commands/team-join.ts:anthill init":
+    "prose — names the remedy for a missing team doc, no arguments given",
+  "config.ts:anthill attach":
+    "prose — explains WHY channels must be prefix-free, describing attach's folding",
+  "feedback.ts:anthill feedback":
+    "prose — the `_Filed via ..._` footer written into a GitHub issue body, read by a human on github.com",
+};
+
+/** Every `*.ts` under the anthill scripts tree, excluding tests. */
+function sourceFiles(dir: string, prefix = ""): string[] {
+  const out: string[] = [];
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    const rel = prefix ? `${prefix}/${e.name}` : e.name;
+    if (e.isDirectory()) out.push(...sourceFiles(join(dir, e.name), rel));
+    else if (e.name.endsWith(".ts") && !e.name.endsWith(".test.ts")) out.push(rel);
+  }
+  return out;
+}
+
+/** Source with comments stripped — this file's own prose would otherwise match. */
+function code(rel: string): string {
+  return readFileSync(join(ROOT, rel), "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "");
+}
+
+describe("bare `anthill` — every occurrence is accounted for", () => {
+  const hits = sourceFiles(ROOT).flatMap((rel) =>
+    [...new Set(code(rel).match(BARE) ?? [])].map((m) => `${rel}:${m}`),
+  );
+
+  test("POSITIVE CONTROL: the scan reaches files that mention it", () => {
+    // A zero makes every assertion below pass for the wrong reason — the
+    // failure this guard exists to prevent, inside the guard.
+    expect(hits.length).toBeGreaterThan(0);
   });
 
-  test("no bare `anthill` reaches the JSON envelope", () => {
-    const human = renderTextRegions(SRC);
-    const offenders = (SRC.match(BARE) ?? []).filter((hit) => {
-      // A hit is agent-facing unless every occurrence of it sits in renderText.
-      const inHumanRegion = human.split(hit).length - 1;
-      const total = SRC.split(hit).length - 1;
-      return inHumanRegion < total;
-    });
-    expect(offenders).toEqual([]);
+  test("every bare `anthill` is on the allow-list, with a stated reason", () => {
+    expect(hits.filter((h) => !(h in ALLOWED))).toEqual([]);
   });
 
-  test("the agent-facing strings resolve to the EMITTING cli", () => {
-    // `emittingCli()` is the single derivation; both repaired sites call it.
-    expect(SRC).toContain("function emittingCli()");
-    expect(SRC).toContain('fileURLToPath(new URL("../cli.ts", import.meta.url))');
-    // The definition plus both repaired call sites. Counting CALLS rather than
-    // the interpolation form, which biome reads as a template-string mistake.
-    expect(SRC.split("emittingCli()").length - 1).toBeGreaterThanOrEqual(3);
+  test("the strings an AGENT re-invokes resolve to the emitting cli", () => {
+    // Named individually rather than derived, because these are exactly the
+    // ones seams.md Contract 2 enumerates as agent-re-invoked.
+    for (const [file, needle] of [
+      ["commands/team-comms.ts", "catchUpWith"],
+      ["commands/team-feedback.ts", "buildSubmitCmd"],
+      ["commands/team-attach.ts", "spawn one with"],
+    ] as const) {
+      const src = code(file);
+      expect({ file, needle, present: src.includes(needle) }).toEqual({
+        file,
+        needle,
+        present: true,
+      });
+      expect({ file, resolves: src.includes("emittingCli()") }).toEqual({ file, resolves: true });
+    }
   });
 
-  test("the HUMAN-facing anchor hint still says bare `anthill` — not a bug", () => {
-    // Asserted so a later sweep cannot "fix" it. If this goes red because
-    // someone resolved it, the question to ask is who reads `--format text`.
-    expect(SRC).toContain("Establish an anchor with: anthill comms read");
+  test("the HUMAN-facing hints still say bare `anthill` — not a bug", () => {
+    // Asserted so a later sweep cannot "fix" them into absolute plugin-cache
+    // paths. If this goes red, the question is who reads `--format text`.
+    expect(code("commands/team-comms.ts")).toContain(
+      "Establish an anchor with: anthill comms read",
+    );
+    expect(code("commands/team-spawn.ts")).toContain("anthill attach");
   });
 });

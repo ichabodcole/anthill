@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { platform, release } from "node:os";
-import { emit, emitError, refuseArg, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, emittingCli, refuseArg, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
 import {
   buildIssueUrl,
@@ -55,7 +55,7 @@ export interface FeedbackData {
  * send always goes back through this command's no-loss guards. `JSON.stringify`
  * quotes + escapes the message/skill safely. */
 function buildSubmitCmd(message: string, category: string, skill?: string): string {
-  const parts = [`anthill feedback ${JSON.stringify(message)}`, `--category ${category}`];
+  const parts = [`${emittingCli()} feedback ${JSON.stringify(message)}`, `--category ${category}`];
   if (skill?.trim()) parts.push(`--skill ${JSON.stringify(skill.trim())}`);
   parts.push("--submit");
   return parts.join(" ");

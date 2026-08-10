@@ -86,6 +86,9 @@ describe("formatMultiSessionHint", () => {
     expect(msg).toContain("  - operator");
     expect(msg).toContain("  - operator-p2");
     // Suggests a sibling, since the base is the one they'd have gotten anyway.
-    expect(msg).toContain("anthill attach --session operator-p2");
+    // Shape, not exact-match: this hint reaches emitError, so it resolves to
+    // the emitting cli rather than a bare `anthill` (machine-specific path).
+    expect(msg).toContain("attach --session operator-p2");
+    expect(msg).toContain("Pick one:  bun /");
   });
 });

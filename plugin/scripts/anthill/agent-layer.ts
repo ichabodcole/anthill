@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 /**
  * Dual-audience output layer. Every command runs through `emit` / `emitError`.
  *
@@ -168,4 +169,22 @@ export function emitError(options: {
     },
   };
   process.stderr.write(`${JSON.stringify(envelope)}\n`);
+}
+
+/**
+ * The `cli.ts` that EMITTED this string — never a bare `anthill`.
+ *
+ * ⚠ USE THIS IN ANYTHING AN AGENT RE-INVOKES. A bare `anthill` resolves through
+ * PATH to the optional global launcher, which picks the highest CACHED RELEASE,
+ * so a string a seat runs verbatim can execute on a *different binary than the
+ * one that composed it* — and a flag the composer has may not exist there.
+ *
+ * ⚠ DO **NOT** USE IT IN `renderText`. That is the HUMAN half of the envelope
+ * (`resolveFormat` returns "text" only for a TTY), and a person typing
+ * `anthill attach` WANTS PATH resolution — that is what the optional global
+ * launcher is for. Resolving there hands them an absolute path into a plugin
+ * cache. `bare-anthill.guard.test.ts` enforces both halves.
+ */
+export function emittingCli(): string {
+  return `bun ${fileURLToPath(new URL("./cli.ts", import.meta.url))}`;
 }
