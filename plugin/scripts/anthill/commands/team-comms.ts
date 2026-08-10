@@ -1,4 +1,27 @@
 /**
+ * The cli.ts that EMITTED this string — never a bare `anthill`.
+ *
+ * ⚠ SCOPED TO STRINGS AN AGENT CONSUMES, and the scoping is the finding. A bare
+ * `anthill` resolves through PATH to the global launcher, which picks the highest
+ * CACHED RELEASE — so a string a seat runs verbatim can execute on a *different
+ * binary than the one that composed it*, and a flag the composer has may not exist
+ * there. `buildLandCommand` (`team-join.ts`) hit this and documents it.
+ *
+ * ⚠ BUT `renderText` OUTPUT IS NOT THIS CASE. `--format text` is the HUMAN
+ * surface, and a human typing `anthill attach` WANTS PATH resolution — that is
+ * what the optional global launcher exists for (`bootstrap` §1: "purely for the
+ * human; agents don't need it"). Replacing those would hand a person an absolute
+ * path to a plugin cache instead of the command they installed.
+ *
+ * The backlog item that filed this listed five line numbers without the
+ * distinction. Three of them are correct as they stand; fixing all five would
+ * have regressed the human-facing output to fix an agent-facing bug.
+ */
+function emittingCli(): string {
+  return `bun ${fileURLToPath(new URL("../cli.ts", import.meta.url))}`;
+}
+
+/**
  * `anthill comms` — the team's seat-aware message log.
  *
  * Verb surface is deliberately rigid, and the rigidity IS the guardrail:
@@ -30,6 +53,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { emit, emitError, type OutputFormat, resolveFormat } from "../agent-layer.ts";
 import {
   buildCommsIncantation,
@@ -417,7 +441,7 @@ const sendCommand = defineCommand({
             error:
               `stale: ${crossedIds.length} message(s) were added after #${asOf} was emitted to you ` +
               `(#${crossedIds.join(", #")} — from ${who}). Nothing was sent. ` +
-              `Read them with: anthill comms read --channel ${channel} --since ${asOf} ` +
+              `Read them with: ${emittingCli()} comms read --channel ${channel} --since ${asOf} ` +
               "— then re-send with an updated --as-of, or pass --anyway to send regardless.",
           });
           process.exit(1);
@@ -840,7 +864,7 @@ const followCommand = defineCommand({
         // establish an anchor; this field never guesses.
         catchUpWith:
           gap !== null && gap > 0 && previous
-            ? `anthill comms read --channel ${channel} --since ${previous.emittedThrough}`
+            ? `${emittingCli()} comms read --channel ${channel} --since ${previous.emittedThrough}`
             : null,
       };
       emit({

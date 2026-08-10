@@ -738,8 +738,16 @@ describe("comms follow announces its gap (H8's falsifier)", () => {
     expect(notice.previousPosition).toBe(1);
     expect(notice.head).toBe(4);
     expect(notice.gap).toBe(3); // the number, not merely "there is a gap"
-    // A fully-resolved command, not a description of one (Contract 4(d)).
-    expect(notice.catchUpWith).toBe("anthill comms read --channel test-channel --since 1");
+    // A fully-resolved command, not a description of one (Contract 4(d)) — and
+    // "resolved" now includes the BINARY. It used to read `anthill comms read …`,
+    // where a bare `anthill` goes through PATH to the global launcher and can be
+    // a different build than the one that composed the string. Asserted by SHAPE
+    // rather than exact-match, because the absolute cli path is machine-specific.
+    const catchUp = String(notice.catchUpWith);
+    expect(catchUp.endsWith("comms read --channel test-channel --since 1")).toBe(true);
+    expect(catchUp.startsWith("bun /")).toBe(true);
+    expect(catchUp).toContain("/cli.ts ");
+    expect(catchUp.startsWith("anthill ")).toBe(false);
 
     rmSync(dir, { recursive: true, force: true });
   }, 25_000);
@@ -767,12 +775,18 @@ describe("comms follow announces its gap (H8's falsifier)", () => {
     const notice = (await firstEnvelope(again)).data as Record<string, unknown>;
     again.kill();
 
-    // Re-run the emitted command by parsing it back into argv — no hand-built
-    // arguments, so a wrong string fails here rather than being papered over.
-    const argv = String(notice.catchUpWith)
-      .replace(/^anthill /, "")
-      .split(" ");
-    const caught = parse(run(dir, argv).stdout);
+    // Re-run the emitted command VERBATIM — and it is now literally verbatim.
+    // This used to strip a leading `anthill ` before running, which quietly
+    // proved a command nobody could actually execute: the emitted string needed
+    // munging first. Now it is `bun <cli> …`, self-contained, so the test spawns
+    // exactly what a seat would paste.
+    const emitted = String(notice.catchUpWith).split(" ");
+    const caught = parse(
+      Bun.spawnSync([...emitted, "--format", "json"], {
+        cwd: dir,
+        env: cleanGitEnv(),
+      }).stdout.toString(),
+    );
     const texts = (caught.data?.messages as Array<{ text: string }>).map((m) => m.text);
     expect(texts).toEqual(["missed-a", "missed-b"]);
 
