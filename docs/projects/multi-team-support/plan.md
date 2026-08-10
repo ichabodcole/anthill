@@ -1235,6 +1235,29 @@ checklist item (the thing read under time pressure). It is the phase's known lim
 most likely claim to grow in the retelling — a fingerprint that distinguishes shapes reads as a
 licence to compare them, and Proposal Open Question 3 is unanswered.
 
+**6.3 — built as specified. The finding that matters is about the TEST, not the code.**
+
+The fix is the plan's, unchanged. What is worth recording is why 6.1 shipped it: **every fixture in
+`team-commit.test.ts` used `"subject"` or `"subject line"` — no colon** — so the suite exercised only
+the shape that could not fail. Giving those fixtures a conventional subject was not cosmetic:
+**4 of the 6 tests that go RED against the reverted rule are the re-colonized pure ones.** The two
+CLI tests found the defect; the fixture edit is what stops it recurring in the pure layer.
+
+**And 6.1's own lesson recurred one level up, inside the test written to apply it.** 6.1 recorded
+that `git log --grep` survives a broken trailer block, so the documented query keeps working while
+trailer-aware consumers lose the data — then added a `git interpret-trailers` test that asked git the
+right question **about `"subject"`**. Asking the authoritative tool the right question about the wrong
+fixture is indistinguishable from not asking. The three new CLI tests all assert through
+`interpret-trailers`, and one of them pins the two neighbouring shapes (a body paragraph; no colon)
+**because they are what makes the one-line case identifiable as the defect rather than general
+breakage**.
+
+**6.3 — ⚖ `TRAILER_LINE` is unchanged, and its doc comment now says why it should stay that way.**
+The regex was never wrong; it was asked the wrong question. A conventional subject IS a
+`Key: value` line, so **no per-line pattern can separate the two** — which is exactly why git decides
+by paragraph. Without that stated, the next reader's instinct on seeing this bug is to tighten the
+regex against `feat|fix|chore|…`, which fails on the first custom type and re-opens the same hole.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows

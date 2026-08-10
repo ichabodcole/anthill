@@ -71,9 +71,13 @@ export function stampSeat(body: string, seat: string): string {
 }
 
 /**
- * A `Key: value` line, which is what git means by a trailer. Deliberately narrow
- * — it decides SEPARATION below, and reading a prose line ending in a colon as a
- * trailer would glue a stamp onto the end of a paragraph.
+ * A `Key: value` line, which is what git means by a trailer.
+ *
+ * ⚠ **A CONVENTIONAL-COMMIT SUBJECT MATCHES THIS, and that is not a bug in the
+ * regex.** `feat: a thing` is `<token>: <text>`. No pattern over ONE LINE can
+ * separate a subject from a trailer, because at the line level they are the same
+ * thing — which is exactly why git decides by PARAGRAPH instead. See
+ * `appendTrailer`, which asks this regex the right question.
  */
 const TRAILER_LINE = /^[A-Za-z][A-Za-z0-9-]*: .+$/;
 
@@ -99,11 +103,38 @@ const TRAILER_LINE = /^[A-Za-z][A-Za-z0-9-]*: .+$/;
  * working while every trailer-AWARE consumer loses the seat. The cross-seat
  * atomic land — one commit carrying several `Anthill-Seat:` lines — has the same
  * shape and was already landing this way before a second trailer key existed.
+ *
+ * ⚠ **THE DECISION IS PER-PARAGRAPH, NOT PER-LINE, and the per-line version was
+ * WORSE than the defect it fixed.** Testing only the last line against
+ * `TRAILER_LINE` joins `feat: a thing` with a single `\n` — a conventional
+ * subject IS a `Key: value` line — so the message never gains a blank line, stays
+ * one paragraph, and git sees **no trailer block at all**. Measured, at the CLI,
+ * on a SINGLE-team repo where no team stamp is involved:
+ *
+ *     $ anthill commit --as forager -m "feat: a thing" f.txt
+ *     $ git log -1 --format=%B | git interpret-trailers --parse
+ *     (nothing)                              # ← `Anthill-Seat` invisible too
+ *
+ * That regressed seat attribution — shipped, in use, on every consumer — to fix a
+ * two-trailer case that had not shipped. Both neighbours were fine
+ * (`feat: another` **with a body**, and `add a thing` with no colon), so the
+ * broken shape is precisely the one-line conventional commit: this project's own
+ * mandated convention and the dominant thing a seat writes.
+ *
+ * So mirror git's actual rule: the trailer block is the LAST paragraph, every
+ * line in it is a trailer, **and it is not the first paragraph.** `lastBlank ===
+ * -1` is that last clause — no blank line anywhere means the body is a bare
+ * subject, and a subject can never hold trailers however much it looks like one.
  */
 function appendTrailer(body: string, trailer: string): string {
-  if (body.split("\n").some((line) => line.trim() === trailer)) return body;
-  const last = body.split("\n").at(-1)?.trim() ?? "";
-  return `${body}${TRAILER_LINE.test(last) ? "\n" : "\n\n"}${trailer}`;
+  const lines = body.split("\n");
+  if (lines.some((line) => line.trim() === trailer)) return body;
+
+  const lastBlank = lines.findLastIndex((l) => l.trim() === "");
+  const para = lines.slice(lastBlank + 1).filter((l) => l.trim() !== "");
+  const joinsBlock =
+    lastBlank !== -1 && para.length > 0 && para.every((l) => TRAILER_LINE.test(l.trim()));
+  return `${body}${joinsBlock ? "\n" : "\n\n"}${trailer}`;
 }
 
 /**
