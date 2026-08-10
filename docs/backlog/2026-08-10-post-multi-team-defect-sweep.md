@@ -1,79 +1,37 @@
-# Defect sweep — loose fixes surfacing around the multi-team branch
+# Post-multi-team defect sweep — INDEX, not a work item
 
-**Filed:** 2026-08-10 · **Status:** Open · **Shape:** one `fix:` branch, or several small ones
-**Source:** MVP item 8 of [multi-team-support](../projects/_archive/multi-team-support/proposal.md) (moved out
-at finalize) + that branch's independent review.
+**Added:** 2026-08-10 · **Status:** Split into seven items, 2026-08-10 · **Shape:** register only
+**Source:** MVP item 8 of the archived
+[multi-team-support](../projects/_archive/multi-team-support/proposal.md) proposal + that branch's
+independent review.
 
-**None of these is multi-team work.** They are grouped only by when they surfaced. Two are wrong
-**today, with one team** — those are the ones worth pulling forward.
+**This file was filed as one "sweep" and that was a mis-grouping by this repo's own rule.** The
+grouping rule is stated in
+[`anthill-commit-correctness-batch`](_archive/2026-07-27-anthill-commit-correctness-batch.md):
 
----
+> grouped because they are **the same file, the same seat, and the same test surface**; they are
+> **not** one change.
 
-## 🔴 1. bootstrap fails open on a non-software repo — WRONG TODAY
+These items share none of that — bootstrap's archetype selection, four emitted strings, a config
+validator, a repo-wide JSON idiom, and two small hygiene items. **They were grouped only by when they
+were noticed**, which makes a holding pen rather than a work unit: nobody can start "the sweep", only
+one of its parts.
 
-**Was MVP item 8 of `multi-team-support`, and was never built.** It got swept into that proposal
-because it touches `bootstrap`; it has nothing to do with team resolution.
+**Kept as an index rather than deleted** because the archived proposal links here, and because the
+provenance is worth one file.
 
-A non-software repo scans to `data.workspace === null`, **the single-surface branch fires
-unconditionally**, and the project is handed the `layered-app` archetype verbatim — an engine seat
-scoped to _"goldens, unit tests"_ in a repo with neither.
+## The items
 
-**Why it is the worst one here: it produces a team, the team is meaningless, and nothing reports a
-problem.** A bootstrapping agent has no signal that the shape it just ratified with a human was a
-fallback. Same family as the invariant the multi-team ladder is built on — _a wrong answer must be a
-named error, never a plausible-looking empty one._
+| item                                                                                                     | shape                        | wrong today? |
+| -------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------ |
+| [bootstrap fails open on a non-software repo](./2026-08-10-bootstrap-fails-open-on-non-software-repo.md) | ⚠ carries a design decision  | **yes**      |
+| [bare `anthill` in emitted strings](./2026-08-10-bare-anthill-in-emitted-strings.md)                     | one mechanical edit, 4 sites | **yes**      |
+| [cross-knob living-docs overlap](./2026-08-10-cross-knob-living-docs-overlap.md)                         | one function, one test       | no           |
+| [declared-total fields drop from JSON](./2026-08-10-declared-total-fields-drop-from-json.md)             | repo-wide idiom + a guard    | no           |
+| [`config.ts` resolver hygiene](./2026-08-10-config-resolver-hygiene.md)                                  | two small fixes, one file    | no           |
+| [`migrate` gitignore lines not derived](./2026-08-10-migrate-gitignore-lines-not-derived.md)             | one file, one golden         | no           |
+| [DECIDE: `team ls` on a stale pin](./2026-08-10-team-ls-refuses-on-a-stale-pin.md)                       | a decision, not a defect     | no           |
 
-## 🔴 2. Bare `anthill` in emitted strings — WRONG TODAY
-
-`team-comms.ts:334,739,755` and `team-spawn.ts:290-291` emit a bare `anthill …`. A bare `anthill`
-resolves through PATH to the launcher, which picks the **highest cached release** — so a string a
-seat is told to run verbatim can be executed by a _different binary_ than the one that composed it.
-`buildLandCommand` already solved this (`bun ${cliPath}`) and documents why; these four sites never
-got the same treatment.
-
-**This is also the only real fix for the older-cached-CLI problem** that `multi-team-support`'s
-Decision Point 1 rationale mistakenly claimed a version check would solve — a claim that proposal
-corrected in place.
-
-## 3. Cross-knob living-docs overlap survives `validateAcrossTeams`
-
-**Reproduced 2026-08-10.** The check compares same-knob pairs only (`a.seatDir` vs `b.seatDir`), never
-across knobs. So:
-
-```jsonc
-"dev":  { "paths": { "teamDir": ".anthill" } },       // seatDir → .anthill/dev
-"lean": { "paths": { "teamDir": ".anthill/dev" } }    // teamDir → .anthill/dev
-```
-
-is accepted, and `init` writes `.anthill/dev/README.md` for `dev` then reports it **`skipped`** for
-`lean`, which silently inherits the other team's roster README. `ok: true`, one file, two owners —
-the failure mode task 1.3 exists to prevent, arriving through a gap in the check.
-
-**Low reachability:** needs a hand-authored `paths` override. No documented route produces it — §0a
-gives the incumbent `.anthill` and lets new teams default to `.anthill/teams/<name>`. Shipped prose
-(`bootstrap` §0a: _"no two teams may resolve to the same `teamDir`, `seatDir` or `seams`"_) is, read
-literally, still true — **which is exactly why this is worth fixing rather than documenting.**
-
-## 4. Declared-total fields vanish from JSON when `undefined`
-
-`ShowData.forkedFrom`, `TeamRow.lead` / `forkedFrom` / `forkedAt`, `UseData.previous` are typed
-`string | undefined`, and `JSON.stringify` drops them. This codebase argues at length
-(`agent-layer.ts:25-33`, `team-support.ts`'s `uncheckedAgainst`) that **a sometimes-absent field is
-unreadable** — you cannot tell "inapplicable" from "unpopulated" from "older binary". Use `?? null`.
-
-**Repo-wide idiom question, not a multi-team one** — worth doing as one sweep with a guard, rather
-than field by field.
-
-## 5. Smaller
-
-- **`loadConfig` has no production caller left** (`config.ts`) — only tests and one convene-test mock.
-  Its doc comment still presents it as the fs entrypoint peer of `loadProject`.
-- **A non-object `paths`** (e.g. a string) is spread character-by-character and silently resolves to
-  the default `teamDir` instead of erroring.
-- **`team ls` refuses on a stale pin.** Deliberate — the error names the valid teams — but it sits
-  against the branch's own rule that _a command that helps you resolve ambiguity must not require
-  ambiguity to be already resolved._ Decide it rather than leaving it as a wrinkle.
-- **`migrate.ts` hardcodes `.anthill/comms` / `.anthill/current-team`** while `team-init` derives the
-  comms line from `teamDir` — divergent on a `keepPaths` migration. Pre-existing for `comms`; the pin
-  and `.bounty-session` ops inherit the pairing (correctly, since both are `CONFIG_DIR`-fixed, but the
-  three now read as inconsistent).
+**Order:** the two "wrong today" items first. The bootstrap one leads — it is the only one that
+produces a wrong artifact **a human then ratifies**, which is the thing that makes it worse than the
+others rather than merely first.
