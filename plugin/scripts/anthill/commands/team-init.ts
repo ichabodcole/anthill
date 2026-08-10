@@ -7,7 +7,7 @@ import { COMMS_DIR } from "../comms.ts";
 import { ConfigError, type ResolvedConfig, type ResolvedProject } from "../config.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
-import { AmbiguousTeamError, PIN_REL_PATH, readPin, resolveTeam } from "../team-resolve.ts";
+import { PIN_REL_PATH, resolveTeam } from "../team-resolve.ts";
 import { requireProject } from "./team-support.ts";
 
 /**
@@ -247,9 +247,17 @@ function defaultTemplatesDir(): string {
 }
 
 interface InitData {
-  /** The rendered team's dir. With several rendered, the first in config order. */
-  teamDir: string;
-  /** Every team this run rendered, in config order. One entry on a single-team project. */
+  /**
+   * Every team this run rendered, in config order. One entry on a single-team
+   * project.
+   *
+   * **There is deliberately no top-level `teamDir` beside this.** There was, meaning
+   * "the first rendered team, in config order" — a TOTAL field carrying a partial
+   * answer, identical to `teams[0].teamDir` where it was right and quietly wrong
+   * where it was not. It is the same shape `ResolvedProject.soleTeam` was refused
+   * for: an absence cannot carry a verdict, and neither can a singular field over a
+   * plural fact.
+   */
   teams: Array<{ name: string; teamDir: string }>;
   written: string[];
   skipped: string[];
@@ -258,43 +266,53 @@ interface InitData {
 }
 
 /**
- * WHICH TEAMS DOES `init` RENDER — and why ambiguity is not an error here.
+ * WHICH TEAMS DOES `init` RENDER — **the whole project's, unless `--team` narrows
+ * it.** `init` is the one command that does not sit on the resolution ladder.
  *
  * Every other command routes through `requireConfig`, so an unselected team on a
  * multi-team project is a hard refusal. That is right for commands that ACT AS a
  * team (post to its wire, read its board, spawn its seats): acting as the wrong
  * team is the failure the ladder exists to prevent.
  *
- * `init` is not one of those. It is the deterministic, file-level-idempotent
- * RENDERER — it never clobbers, so rendering a team's scaffold that was already
- * there is a no-op, and rendering all of them is the same no-op N times.
+ * `init` is not one of those. It renders the PROJECT's footprint — deterministic,
+ * file-level idempotent, never clobbering — so rendering a team's scaffold that is
+ * already there is a no-op, and rendering all of them is that no-op N times.
  *
- * The refusal was also self-defeating, and this is how it was found: the
- * documented route for adding a second team (`bootstrap` §0a) is *edit
- * `config.json`, then run `anthill init` to render the new team's docs*. On a
- * freshly-converted two-team repo there is no pin yet, so `init` refused — the
- * new team's docs could never be rendered by following the route as written.
+ * ⚠ **ONLY RUNG 1 NARROWS, and the distinction is not a detail.** `--team lean` is
+ * a deliberate act on *this invocation*. The pin and `ANTHILL_TEAM` are ambient
+ * state answering a different question — *which team am I operating AS* — and
+ * letting them narrow a renderer means the project's own footprint depends on
+ * which team someone last switched to.
  *
- * Same shape as `team ls` and `team use`: **a command that helps you resolve
- * ambiguity must not require ambiguity to be already resolved.** A selector still
- * narrows (`--team lean` renders only lean); absence of one now means ALL rather
- * than a refusal. Every other ladder failure — a bad `--team`, a stale pin —
- * still throws, because those name a team that does not exist.
+ * Both halves of this were found the same way, by running the documented
+ * add-a-team route (`bootstrap` §0a) against a fixture repo:
+ *
+ * 1. Through `requireConfig`, `init` **refused** on the freshly-converted two-team
+ *    repo — no pin yet, so the new team's docs could never be rendered at all.
+ * 2. Fixing only that left the pin narrowing, so the route worked **exactly once**:
+ *    every later add-a-team runs on a repo that HAS a pin, and there `init` reports
+ *    `ok: true` with `written: []` while the new team gets its gitignore lines, its
+ *    `team ls` row — and **no living docs**. `convene` then hands its seats an empty
+ *    footprint, through the documented route, with a success envelope at every step.
+ *
+ * Same rule as `team ls` and `team use`: **a command that helps you resolve
+ * ambiguity must not require ambiguity to be already resolved.** A **bad** `--team`
+ * still hard-errors — it names a team that does not exist, which is a typo to
+ * report rather than an absence to fill.
  */
 function teamsToRender(
   format: OutputFormat,
   teamArg: string | undefined,
 ): { project: ResolvedProject; targets: ResolvedConfig[] } {
   const project = requireProject(format, "init");
+  const name = teamArg?.trim();
+  if (!name) return { project, targets: project.teams };
   try {
-    const { team } = resolveTeam(project, {
-      team: teamArg,
-      env: process.env,
-      pin: readPin(project.projectRoot),
-    });
+    // Rung 1 alone: no `env`, no `pin`. The ladder still owns the not-configured
+    // message, so a bad `--team` reads identically here and everywhere else.
+    const { team } = resolveTeam(project, { team: name });
     return { project, targets: [team] };
   } catch (err) {
-    if (err instanceof AmbiguousTeamError) return { project, targets: project.teams };
     if (err instanceof ConfigError) {
       emitError({ format, command: "init", error: err.message });
       process.exit(1);
@@ -320,8 +338,7 @@ export const teamInitCommand = defineAnthillCommand({
     },
     team: {
       type: "string",
-      description:
-        "Which configured team (default: the resolved team, or ALL when none is selected)",
+      description: "Render only this configured team (default: every configured team)",
       valueHint: "name",
     },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
@@ -387,7 +404,6 @@ export const teamInitCommand = defineAnthillCommand({
     if (content !== (before ?? "")) writeFileSync(gitignorePath, content ?? "");
 
     const data: InitData = {
-      teamDir: teams[0]?.teamDir ?? "",
       teams,
       written,
       skipped,
@@ -406,7 +422,7 @@ export const teamInitCommand = defineAnthillCommand({
                 `Rendered ${d.teams.length} team scaffolds:`,
                 ...d.teams.map((t) => `  ${t.name} -> ${t.teamDir}/`),
               ]
-            : [`Rendered team scaffold into ${d.teamDir}/`];
+            : [`Rendered team scaffold into ${d.teams[0]?.teamDir ?? "?"}/`];
         if (d.written.length) {
           lines.push(`Wrote ${d.written.length} file(s):`);
           for (const p of d.written) lines.push(`  + ${p}`);

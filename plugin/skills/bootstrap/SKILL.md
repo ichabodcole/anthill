@@ -96,18 +96,26 @@ Then convert the config **once**, from the flat shape to a `teams` map (spec §5
 **Then render and verify — both, and in this order:**
 
 ```sh
-anthill init                     # renders ONLY the new team's docs; skips every existing file
-anthill team ls                  # both teams, with their resolved directories
+anthill team ls                  # every team, with its resolved directory
+anthill init                     # renders the new team's docs; skips every existing file
 ```
 
-**No `--team` here, deliberately.** There is no pin yet — the repo has just become ambiguous, and
-you are running `init` precisely to finish making it usable. So `init` renders **every** configured
-team when nothing selects one, and because it is idempotent at the file level, the incumbent's
-entire footprint comes back as _skipped_ while only the new team's docs are written. It cannot touch
-the incumbent's living docs. (`--team <name>` still narrows if you want only one.)
+**No `--team` here, deliberately.** `init` renders the **project's** footprint, not one team's: it
+covers every configured team, and because it is idempotent at the file level, the incumbent's entire
+footprint comes back as _skipped_ while only the new team's docs are written. It cannot touch the
+incumbent's living docs. (`--team <name>` still narrows if you want only one. The pin does **not** —
+it says which team you are operating _as_, which is a different question from what this repo
+contains.)
 
-**Read `team ls`'s output rather than assuming**: if the incumbent's row does not say `.anthill/`,
-item 1 above was missed and its docs are orphaned.
+**Then check the two outputs against each other. Both checks can fail, which is the point:**
+
+1. **Every row `team ls` printed must appear in `init`'s `written` or `skipped`.** A team listed by
+   `ls` and rendered by neither is a team with **no living docs at all** — `ls` reads the config, so
+   it will happily list a team whose directory does not exist. That is the outcome to catch here:
+   `convene` would hand its seats an empty footprint, which every seat reads as _"my docs are
+   missing"_.
+2. **The incumbent's row must say `.anthill/`.** If it does not, item 1 above was missed and its
+   accumulated docs are orphaned one directory up.
 
 **Constraints the config layer enforces, so you get an error rather than a silent collision:** team
 names match `[A-Za-z0-9._-]` and may not be `.` or `..`; channels must be unique **and prefix-free**

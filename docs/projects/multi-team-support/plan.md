@@ -941,6 +941,31 @@ leaves `lean`'s comms log trackable — the identical committed-log bug those li
 one team over. The ignore file is project-level; so is the set it derives from now. Byte-identical on
 a single-team project, where the two are the same list.
 
+**4.2 — built as specified; three notes on what the build added.**
+
+- **🔧 the coverage test takes its expected set from `team ls`, not from `init`'s own output.** The
+  contract says _"a `written`/`skipped` entry for every row `team ls` shows"_ and the first draft
+  checked `init.data.teams` instead — which **the bug satisfies perfectly**, reporting one team and
+  rendering that one team. Written that way it passed against the unfixed file. `ls` reads the
+  CONFIG; `init.data.teams` reports what it chose. **A coverage check whose expected set comes from
+  the thing under test measures nothing**, and the tell was that it went green while the other two
+  went red. Asserted on the SECOND run as well, where everything lands in `skipped` — the run
+  reporting no writes is the one whose emptiness reads as fine.
+- **⚖ rung 1 is reached through `resolveTeam`, not through `project.team(name)`.** One line shorter
+  the other way, and it would fork the _"not configured"_ message into a second copy that drifts. The
+  ladder keeps owning it; `init` just declines to consult rungs 2–4.
+- **⚖ criterion 1 is now asserted at the CLI, not reasoned about.** _"Render every team"_ and
+  _"render the sole team"_ are the same sentence when there is one team — true, and the claim the
+  whole project rests on, so a flat-config run pins it: one team named `default` at `.anthill/`, no
+  `.anthill/teams/` directory, and the exact pre-multi-team gitignore file byte for byte.
+
+**4.2 — ⚖ what rule 7 caught that the phase-4 verification did not.** 4.1's end-to-end run was the
+flat→two-team conversion §0a is written against, and it passed. **The pin only exists on the SECOND
+use of the route**, which the documentation does not describe as a separate state — so the fixture
+has to be built past the documented one: convert, then `team use`, then add a third team. That is the
+gap rule 7 closes and the reason it says _"in the state its documentation describes"_ rather than
+_"in the state the task describes"_.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows
