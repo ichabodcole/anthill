@@ -52,6 +52,8 @@ const ALLOWED: Record<string, string> = {
     "one module-level mint + afterAll(rmSync); every repo() is a subdir of it; measured +0 per run",
   "commands/team-join.test.ts": "try/finally; measured +0 per run",
   "commands/team-migrate.test.ts": "try/finally; measured +0 per run",
+  "commands/team-support.boardbinding.test.ts":
+    "one module-level mint + afterAll(rmSync); every fixture is a subdir of it; measured +0 per run",
   "commands/team-support.liveteams.test.ts":
     "one module-level mint + afterAll(rmSync); measured +0 per run",
   "config.test.ts":

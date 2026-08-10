@@ -21,6 +21,14 @@ import { CURRENT_VERSION } from "./config.ts";
 /** The consolidated v2 root every migration target lands in. */
 export const ANTHILL_DIR = ".anthill";
 
+/**
+ * The repo-root bound-board marker. Kept here as a literal rather than imported
+ * from `team-init.ts` because `migrate.ts` is the PURE planner and must not pull
+ * in a command module — but the two must agree, and `migrate.test.ts` asserts the
+ * emitted set against `gitignoreLines()` so a divergence is RED, not silent.
+ */
+export const BOUNTY_SESSION_LINE = ".bounty-session";
+
 /** The v1 config-dir marker (its `config.json` was the v1 root marker). */
 export const V1_CONFIG_DIR = ".team";
 
@@ -206,6 +214,24 @@ export function planV1ToV2(scan: RepoScan): MigrationPlan {
   });
   notes.push(
     `gitignore: ensure ${ANTHILL_DIR}/current-team (the local team pin — never committed)`,
+  );
+
+  // The pinned bounty-session marker, for the SAME reason and by the same route.
+  //
+  // ⚠ ADDED BECAUSE ITS ABSENCE MADE A CHECKLIST LIE. `init` ensures four lines;
+  // migrate ensured three, so `anthill init` right after a migration always
+  // reported `.bounty-session` as `added` — and `upgrade`'s v1→v2 checklist reads
+  // any `added` line as proof that migrate and init disagree about a line's
+  // SPELLING and the repo now carries both forms. Every upgrader would have gone
+  // hunting for a duplicate that does not exist.
+  //
+  // Two ways to fix that; this is the one that makes the checklist's claim TRUE
+  // rather than narrowing it, and it closes the same commit-the-local-state hole
+  // the pin op above exists for: a repo that migrates and never re-runs `init`
+  // would otherwise commit `.bounty-session` and rebind everyone else's board.
+  ops.push({ kind: "gitignore", remove: BOUNTY_SESSION_LINE, add: BOUNTY_SESSION_LINE });
+  notes.push(
+    `gitignore: ensure ${BOUNTY_SESSION_LINE} (this checkout's bound board — never committed)`,
   );
 
   // 4. Remove the vacated config dir (only the disposable, gitignored scratch

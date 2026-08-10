@@ -1202,19 +1202,38 @@ work. Recorded in the code rather than only here, since the person who hits it i
 
 **6.2 — ⚖ the fingerprint covers the TEAM-LEVEL KEYS, not the raw entry.** The task says "that team's
 own config entry", which is unambiguous under a `teams` map and undefined for a flat config, where
-the "entry" is the whole file — `version`, `gate`, `grounding` and all. Scoping it to
-`channel`/`lead`/`paths`/`seats` (the existing `TEAM_LEVEL_KEYS`) makes the two shapes mean the same
-thing and buys a property worth having, all four measured:
+the "entry" is the whole file — `version`, `gate`, `grounding` and all. Scoping it to the team's own
+keys makes the two shapes mean the same thing and buys a property worth having.
 
-| change                                 | fingerprint |
-| -------------------------------------- | ----------- |
-| flat config                            | `d7b1001a`  |
-| the same team after the §0a conversion | `d7b1001a`  |
-| project-level `gate` edited            | `d7b1001a`  |
-| a seat added                           | `e55c39f4`  |
+> **🔴 CORRECTED at finalize (2026-08-10), by the independent review — the original entry here was
+> FALSE, and it said "measured".** It claimed `channel`/`lead`/`paths`/`seats` and printed a table
+> whose second row asserted the §0a conversion does not move the fingerprint. **`paths` was in the
+> hash, and §0a REQUIRES adding `paths.teamDir: ".anthill"` to the incumbent** — its own BEFORE
+> example carries no `paths` — so the conversion moved it, and the property was false **exactly on
+> the route it was written for**.
+>
+> **The measurement was real and the fixture was wrong**: I hashed a flat config that already had an
+> explicit `paths` block, which is the one shape where the claim holds. That is the
+> fixture-shaped-to-pass error this same record catches in 4.2 and 6.3 — **third instance, and the
+> first one where I wrote the false claim into a SHIPPED SKILL rather than into a test.** The gate
+> cannot see it: it is prose and a `bun -e` snippet.
+>
+> **Fixed by making the property true rather than retracting it** — `paths` is now excluded, because
+> WHERE a team's docs live is not WHAT SHAPE the team is. Re-measured against §0a's actual BEFORE and
+> AFTER, verbatim from the skill:
 
-**The second row is the one that earns the scoping:** §0a moves nothing, so a project adding its
-second team must not read as having reshaped its first. Under the raw-entry reading it would.
+| change                                          | fingerprint |
+| ----------------------------------------------- | ----------- |
+| §0a BEFORE — flat, no `paths` (as shipped)      | `5d7b4d70`  |
+| §0a AFTER — the same team, `paths` now required | `5d7b4d70`  |
+| another team's entry edited                     | `5d7b4d70`  |
+| project-level `gate` edited                     | `5d7b4d70`  |
+| the team's `teamDir` relocated                  | `5d7b4d70`  |
+| a seat added                                    | `02a0dfa7`  |
+
+**Rows 1–2 are the ones that earn the scoping:** §0a moves nothing about the team, so a project
+adding its second team must not read as having reshaped its first. Row 5 is what excluding `paths`
+buys on top — moving a team's docs is not a reshape either.
 
 **6.2 — 🔧 the algorithm is stated in prose as well as shipped as a command.** The task says state it
 so a reader can reproduce it; a `bun -e` snippet is a command, not a statement — nobody can check a
@@ -1257,6 +1276,72 @@ The regex was never wrong; it was asked the wrong question. A conventional subje
 `Key: value` line, so **no per-line pattern can separate the two** — which is exactly why git decides
 by paragraph. Without that stated, the next reader's instinct on seeing this bug is to tighten the
 regex against `feat|fix|chore|…`, which fails on the first custom type and re-opens the same hole.
+
+### Finalize — what the independent review found (2026-08-10)
+
+**Two reviewers on the net diff, one execution-capable. The static one returned "ready to merge" with
+nothing above its confidence bar; the one that could RUN THINGS returned "with fixes" and five
+confirmed defects.** That gap is the finding. Every one of the five is in **shipped content or an
+emitted command**, and none is visible to `bun run check` — the same class this plan has been
+recording since Phase 3, arriving one last time at the point where the branch was declared done.
+
+**🕳 1 — the retro fingerprint property was false, and said "measured".** Full entry above, under
+6.2. The short version: I hashed a fixture that already carried `paths`, so the one shape where the
+claim holds. **Third fixture-shaped-to-pass in this project, and the first written into a shipped
+skill rather than a test.**
+
+**🕳 2 — `<teamDir>` shipped unresolved into every rendered SOP.** 0.4 changed skill prose from
+`.anthill/…` to `<teamDir>/…` and correctly added a legend saying it resolves. **The same edit went
+into `templates/docs-team/README.md`, which has no legend and is rendered into a repo where the value
+is known.** A single-team project's SOP regressed from `.anthill/scratch/<handle>/…` to an undefined
+placeholder — criterion 1, in the file every seat reads. Fixed by making it a real token
+(`{{teamDir}}`/`{{seatDir}}`) rather than by reverting the prose. **Found by rendering a footprint
+from `develop` and one from HEAD and diffing them**, which is the only instrument that sees it: both
+are valid markdown.
+
+**🕳 3 — the convene guard read a LATER artifact than the one it names.** Its stated reason is
+`.bounty-session`, written by `convene`; every signal it consulted came from the comms session-open
+record, written by `spawn`. So the whole convene → brief → spawn window was unguarded **in the
+guard's own scenario**, and a second convene silently rebound the first team's board. The guard now
+reads the file it names. _A guard whose evidence is written later than the event it guards cannot
+cover the gap between them_ — and 3.3's own rule about stating the real reason is what made this
+findable: the comment named the right artifact all along.
+
+**🕳 4 — `join` emitted commands that drop the team.** The emitted string runs in a fresh process
+where the ladder starts over, so `--team lean` on `join` did not survive into the `commit` line it
+printed. On the forked-team layout §0a actively recommends — overlapping handles — a `lean` seat's
+land came back `ok:true` stamped `Anthill-Team: dev`. **6.1's trailer exists to answer "which shape
+produced this?", so a confidently wrong answer is worse than none.** Both emitted commands now carry
+`--team` when, and only when, the project configures several.
+
+**🕳 5 — a checklist item added this branch cried wolf on every v1→v2 migration.** `init` ensures
+four gitignore lines; `migrate` ensured three, so `.bounty-session` always came back `added` — which
+the new checklist reads as proof that the two disagree about a line's spelling. Fixed by adding the
+missing op, which makes the claim true rather than narrowing it, and closes the same
+commit-the-local-state hole the pin op exists for.
+
+**🕳 6 — the convene checklist told the lead to run a command that refuses in the state it
+addresses.** `anthill team show` on an unpinned multi-team repo exits 1; the checklist reached for it
+precisely there. Now `team ls`, which tolerates ambiguity. **The compounding half was worse and
+unstated:** `convene --team dev` does not pin, so every later command refuses unless `--team` is
+repeated — and the skill named the pin only inside the guard's remedy, never on the happy path.
+
+**⚖ 7 — an inherited `ANTHILL_TEAM` hard-errors in an unrelated single-team repo, and that is
+ACCEPTED.** `spawn` exports it into every pane of a multi-team project; a pane whose agent then works
+in a different, single-team repo gets a refusal on every command. This is a criterion-1 cost and it
+was not in the accounting. Kept, because the alternative is rung 2 silently ignoring a name it cannot
+match, which is the one thing the ladder must never do — **it fails loudly, in the direction the
+invariant chooses.** Recorded here rather than fixed, so the next person to read criterion 1 as
+absolute finds the exception.
+
+**⚖ deferred, with reasons.** `team ls` refusing on a stale pin (deliberate — the message names the
+valid teams, and a pin naming nothing is a typo to report); declared-total fields dropping out of
+JSON when `undefined` (real, and it is a repo-wide idiom question, not this branch's); a dead
+`loadConfig`; a non-object `paths` resolving to the default instead of erroring; and the **cross-knob
+directory overlap** — `validateAcrossTeams` compares `a.seatDir` to `b.seatDir` but never to
+`b.teamDir`, so two teams can share a directory through different knobs. **I reproduced that one**:
+`init` writes `.anthill/dev/README.md` for `dev` and reports it `skipped` for `lean`, which silently
+inherits it. Reachable only by hand-authoring a `paths` override no documented route produces.
 
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,

@@ -24,6 +24,8 @@ const CONFIG = {
     { handle: "maestro", role: "lead", scope: "orchestration" },
     { handle: "loom", role: "surface", scope: "UI components" },
   ],
+  teamDir: ".anthill",
+  seatDir: ".anthill/dev",
 };
 
 const TEMPLATES: TemplateFile[] = [

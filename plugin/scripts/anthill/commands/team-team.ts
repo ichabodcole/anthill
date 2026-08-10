@@ -257,13 +257,19 @@ const useCommand = defineAnthillCommand({
       process.exit(1);
     }
 
-    // ⚠ REFUSES IF **ANY** CONFIGURED TEAM LOOKS LIVE — not merely the resolved
-    // one. The existing presence guard is scoped to one team, so switching away
-    // from a live team would leave its seats working while every command the lead
-    // runs resolves somewhere else. They are not torn down; they are ORPHANED,
-    // which is worse, because nothing reports it.
+    // ⚠ REFUSES IF ANY **OTHER** CONFIGURED TEAM LOOKS LIVE — not merely the
+    // resolved one, and not the team being pinned. The existing presence guard is
+    // scoped to one team, so switching AWAY from a live team would leave its seats
+    // working while every command the lead runs resolves somewhere else. They are
+    // not torn down; they are ORPHANED, which is worse, because nothing reports it.
+    //
+    // Switching TO a live team is the opposite act and must stay allowed:
+    // `anthill team use dev` while `dev` holds the board is a lead adopting the
+    // running team's binding, and it strands nobody. Unfiltered, this also refused
+    // `team use <the only team>` on a SINGLE-team project the moment a board was
+    // bound — a command that can only ever mean "stay where you are".
     if (!ctx.args.force) {
-      const live = liveTeams(project);
+      const live = liveTeams(project).filter((t) => t.name !== name);
       if (live.length > 0) {
         emitError({
           format,

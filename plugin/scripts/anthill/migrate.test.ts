@@ -40,6 +40,7 @@ describe("planV1ToV2 — default layout (no paths override)", () => {
         remove: ".anthill/current-team",
         add: ".anthill/current-team",
       },
+      { kind: "gitignore", remove: ".bounty-session", add: ".bounty-session" },
       { kind: "rm", path: ".team" },
       { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
     ]);
@@ -102,6 +103,7 @@ describe("planV1ToV2 — bespoke paths override (genuine escape hatch)", () => {
         remove: ".anthill/current-team",
         add: ".anthill/current-team",
       },
+      { kind: "gitignore", remove: ".bounty-session", add: ".bounty-session" },
       { kind: "rm", path: ".team" },
       { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
     ]);
@@ -136,6 +138,7 @@ describe("planV1ToV2 — redundant-default paths override (the media-buffet trap
         remove: ".anthill/current-team",
         add: ".anthill/current-team",
       },
+      { kind: "gitignore", remove: ".bounty-session", add: ".bounty-session" },
       { kind: "rm", path: ".team" },
       { kind: "stamp-version", file: ".anthill/config.json", version: 2 },
     ]);

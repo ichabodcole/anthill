@@ -296,7 +296,9 @@ once the human has steered you to one seating, treat it as the ratified roster a
   (the SOP, `principles.md` — **empty by design**, `retro.md` — **also empty by design, guidance
   only**, `paper-cuts.md`, `seams.md`, the roster `dev/README.md`, one
   `dev/<handle>.md` per seat) and ensures the local-state lines in `.gitignore` (the team's
-  `scratch/` and `comms`, both derived from `paths.teamDir`, plus the repo-root `.bounty-session`).
+  `scratch/` and `comms`, both derived from `paths.teamDir`, plus the two repo-root markers
+  `.bounty-session` and `.anthill/current-team` — this checkout's bound board and its team pin, both
+  local state that would switch someone else's session out from under them if committed).
   It's idempotent — re-running never clobbers existing docs.
   - **That is a file-level guarantee, and it cuts both ways.** An existing doc is **skipped**, so
     re-running is safe — and also **inert**: it will never bring a doc up to date with a newer

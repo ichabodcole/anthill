@@ -308,7 +308,7 @@ happened, this evaluates it.
 **Stamp the entry with the team and its shape**, on the line under the heading:
 
 ```
-**Team:** dev · **shape:** `d7b1001a`
+**Team:** dev · **shape:** `4f2a9c01`
 ```
 
 The shape is an 8-hex fingerprint of **this team's own config entry** — run this from the repo root
@@ -317,7 +317,7 @@ with `TEAM` set to your team's name (`anthill team show` prints it; on a single-
 
 ```sh
 TEAM=dev bun -e '
-const KEYS = ["channel", "lead", "paths", "seats"];
+const KEYS = ["channel", "lead", "seats"];
 const raw = JSON.parse(await Bun.file(".anthill/config.json").text());
 const entry = raw.teams ? (raw.teams[process.env.TEAM] ?? {}) : raw;
 const shape = Object.fromEntries(KEYS.filter((k) => entry[k] !== undefined).map((k) => [k, entry[k]]));
@@ -331,17 +331,23 @@ console.log(new Bun.CryptoHasher("sha256").update(canon(shape)).digest("hex").sl
 ```
 
 **The algorithm, stated so a reader can reproduce it without this snippet:** take the team's
-`channel` / `lead` / `paths` / `seats` (absent keys omitted), serialize as JSON with **object keys
+`channel` / `lead` / `seats` (absent keys omitted), serialize as JSON with **object keys
 sorted recursively and no whitespace**, arrays left in their authored order; SHA-256; first 8 hex
 characters.
 
-**Three properties, each deliberate and each measured:**
+**Four properties, each deliberate and each measured against the configs `bootstrap` §0a actually
+ships** — not against a fixture built to agree:
 
 - **Only the team's OWN keys.** Editing another team's entry must not move this one's fingerprint, or
   every team's stamp churns whenever any team is touched.
 - **Project-level fields are excluded** (`version`, `gate`, `grounding`, `launch`). Changing the
   project's `gate` is not a change of team shape, and a fingerprint that moved on it would report a
   reshape that did not happen.
+- **⚠ `paths` is excluded too, and that exclusion is load-bearing rather than tidy.** WHERE a team's
+  docs live is not WHAT SHAPE the team is — and §0a **requires** giving the incumbent an explicit
+  `paths.teamDir: ".anthill"` while changing nothing about the team. With `paths` in the hash, that
+  one required edit moved it, so the next property was **false exactly on the route it was written
+  for**. It also means relocating a team's docs is correctly silent here.
 - **A flat config and the same team after the `teams`-map conversion hash IDENTICALLY.** That
   conversion moves nothing (`anthill:bootstrap` §0a), so the fingerprint says nothing moved — a
   project that adds a second team does not falsely read as having reshaped its first.

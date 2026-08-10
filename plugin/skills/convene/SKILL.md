@@ -241,9 +241,14 @@ positions`.** This is the named moment to run it; without one it is a verb nobod
 
 The stand-up beats that get skipped when you're eager to spawn. Run them as a list:
 
-- ◻ **On the intended team**, if this project configures more than one — `anthill team show` names it
-  and the rung that chose it. Convene **refuses while another team is still convened** (the board is
-  one repo-root file): `anthill down`, then `anthill team use <name>`.
+- ◻ **On the intended team**, if this project configures more than one — **`anthill team ls`** lists
+  every team and marks the resolved one. _(Not `team show`: with nothing pinned yet — the normal state
+  before a lead picks a team — `show` refuses, because it answers about ONE team. `ls` tolerates the
+  ambiguity, which is the whole state you are in here.)_
+  **Then pin it: `anthill team use <name>`.** `convene --team <name>` binds this convene and nothing
+  after it — every later command re-resolves from scratch, so without the pin you repeat `--team` on
+  `status`, `commit --as` and `comms read` or they refuse. Convene **refuses while another team is
+  still convened** (the board is one repo-root file): `anthill down` first.
 - ◻ **Grounded** as the lead (grounding docs → SOP → **principles** → seams → your seat doc).
   `<teamDir>/principles.md` is short and is the highest-leverage read in that list.
 - ◻ **Work gathered** from the human; **plan phase** run (`anthill:plan`) if it's a multi-seat feature

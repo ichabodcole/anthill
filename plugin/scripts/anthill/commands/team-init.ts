@@ -22,6 +22,7 @@ import { requireProject } from "./team-support.ts";
  *     {{channel}}      config.channel
  *     {{lead}}         config.lead (or "")
  *     {{rosterTable}}  a generated markdown table of all seats
+ *     {{teamDir}} {{seatDir}}  this team's resolved doc locations, repo-relative
  *   Content tokens (per-seat, only inside a {{handle}} template):
  *     {{handle}} {{role}} {{scope}}
  *   Unknown {{tokens}} are left untouched (so literal braces survive).
@@ -41,6 +42,20 @@ export interface RenderConfig {
   channel: string;
   lead: string | undefined;
   seats: Array<{ handle: string; role: string; scope: string }>;
+  /**
+   * The team's resolved doc locations, REPO-RELATIVE, for `{{teamDir}}` /
+   * `{{seatDir}}`.
+   *
+   * A rendered doc must never carry `<teamDir>` verbatim. The skills write it as
+   * a placeholder and say so in a legend, because a skill is read by an agent in
+   * an unknown repo — but a TEMPLATE is rendered once into a repo where the value
+   * is known, and it ships with no legend. It went out as literal `<teamDir>`,
+   * which regressed a single-team project's SOP from `.anthill/scratch/…` to an
+   * undefined placeholder: criterion 1, caught by diffing a rendered footprint
+   * against one rendered from `develop`.
+   */
+  teamDir: string;
+  seatDir: string;
 }
 
 export interface RenderPlan {
@@ -108,6 +123,8 @@ export function renderTemplates(opts: {
     channel: config.channel,
     lead: config.lead ?? "",
     rosterTable: rosterTable(config.seats),
+    teamDir: config.teamDir,
+    seatDir: config.seatDir,
   };
 
   const writes: RenderPlan["writes"] = [];
@@ -373,7 +390,13 @@ export const teamInitCommand = defineAnthillCommand({
       const resolvedPaths = { teamDir, seatDir: team.seatDirPath(), seams: team.seamsPath() };
       const plan = renderTemplates({
         templates,
-        config: { channel: team.channel, lead: team.lead, seats: team.roster() },
+        config: {
+          channel: team.channel,
+          lead: team.lead,
+          seats: team.roster(),
+          teamDir: relative(team.projectRoot, teamDir),
+          seatDir: relative(team.projectRoot, team.seatDirPath()),
+        },
         dest: (relPath) => templateDestination(relPath, resolvedPaths),
         exists: existsSync,
       });

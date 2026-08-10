@@ -14,9 +14,17 @@
  */
 
 import { afterAll, describe, expect, test } from "bun:test";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { join, relative, resolve } from "node:path";
 
 const CLI = resolve(import.meta.dir, "..", "cli.ts");
 const ROOT = mkdtempSync(join(tmpdir(), "anthill-init-multi-"));
@@ -151,6 +159,50 @@ describe("`anthill init` with nothing selecting a team", () => {
     const { json } = init(dir);
     expect(readFileSync(seat, "utf8")).toBe("HARD-WON KNOWLEDGE");
     expect((json.data as { written: string[] }).written).toEqual([]);
+  });
+});
+
+describe("a rendered footprint resolves every path it names", () => {
+  // A SKILL may write `<teamDir>` and explain in a legend that it is resolved —
+  // it is read by an agent in an unknown repo. A TEMPLATE is rendered once into a
+  // repo where the value is known, and it ships with NO legend, so the same
+  // placeholder is just an undefined path in the team's SOP.
+  //
+  // This shipped: a single-team project's `.anthill/README.md` regressed from
+  // `.anthill/scratch/<handle>/…` to `<teamDir>/scratch/<handle>/…`. Found by
+  // rendering a footprint from `develop` and one from HEAD and diffing them —
+  // which is the only instrument that can see it, since both are "valid markdown"
+  // and the gate has no opinion about prose.
+  test("no rendered doc contains a `<teamDir>`/`<seatDir>` placeholder", () => {
+    const dir = repo("placeholders", THREE_TEAMS);
+    init(dir);
+    const offenders: string[] = [];
+    const walk = (d: string): void => {
+      for (const e of readdirSync(d, { withFileTypes: true })) {
+        const p = join(d, e.name);
+        if (e.isDirectory()) walk(p);
+        else if (e.name.endsWith(".md")) {
+          for (const ph of ["<teamDir>", "<seatDir>"]) {
+            if (readFileSync(p, "utf8").includes(ph)) offenders.push(`${relative(dir, p)} → ${ph}`);
+          }
+        }
+      }
+    };
+    walk(join(dir, ".anthill"));
+    expect(offenders).toEqual([]);
+  });
+
+  test("each team's docs name ITS OWN dir, not the first team's", () => {
+    // The token is global-per-render, and `init` renders every team in one run —
+    // so a token resolved once and reused across teams would give `lean` and
+    // `research` the incumbent's `.anthill/` paths. Pinned because that failure
+    // reads as correct in every single-team fixture.
+    const dir = repo("perteam", THREE_TEAMS);
+    init(dir);
+    const sop = (rel: string) => readFileSync(join(dir, rel), "utf8");
+    expect(sop(".anthill/README.md")).toContain(".anthill/scratch/");
+    expect(sop(".anthill/teams/lean/README.md")).toContain(".anthill/teams/lean/scratch/");
+    expect(sop(".anthill/teams/research/README.md")).toContain(".anthill/teams/research/scratch/");
   });
 });
 

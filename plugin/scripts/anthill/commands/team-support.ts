@@ -7,6 +7,8 @@
  * roster, the default spawn set — is config-driven now.
  */
 
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { emitError, type OutputFormat } from "../agent-layer.ts";
 import { hasDeparted, readPosition, readSessionOpen } from "../comms.ts";
 import { ConfigError, loadProject, type ResolvedConfig, type ResolvedProject } from "../config.ts";
@@ -140,7 +142,31 @@ export function liveTeams(project: ResolvedProject): Array<{
   presence: SeatPresence;
 }> {
   const live: Array<{ name: string; channel: string; presence: SeatPresence }> = [];
+  const boardHolder = boardBoundTo(project);
   for (const team of project.teams) {
+    // ⚠ THE BOARD BINDING IS CHECKED FIRST, BECAUSE IT IS WRITTEN FIRST.
+    //
+    // The convene guard's stated reason is `.bounty-session` — a single repo-root
+    // file. But every signal below comes from the comms session-open record, which
+    // `spawn` writes, while `.bounty-session` is written by `convene`. So the
+    // entire convene → brief → spawn window was unguarded, in the guard's own
+    // scenario. Measured on a two-team fixture:
+    //
+    //   $ anthill convene --team dev    → .bounty-session = k-myproject-1a36f1b1
+    //   $ anthill convene --team lean   → ok:true, REBOUND to k-lean-1a36f1b1
+    //
+    // No refusal, and `dev`'s board is now `lean`'s underneath its seats — exactly
+    // the outcome the guard exists to prevent, reachable in the seconds before any
+    // seat is spawned. A guard that reads a LATER artifact than the one it names
+    // cannot cover the window between them.
+    if (boardHolder === team.name) {
+      live.push({
+        name: team.name,
+        channel: team.channel,
+        presence: { state: "unknown", reason: "holds the pinned board (`.bounty-session`)" },
+      });
+      continue;
+    }
     // ⚠ NEVER CONVENED IS A POSITIVE OBSERVATION, and it must be made BEFORE
     // asking about presence. `seatPresence` answers `unknown` for a team with no
     // session-open record — correctly, since it cannot scope departures without
@@ -161,6 +187,45 @@ export function liveTeams(project: ResolvedProject): Array<{
     }
   }
   return live;
+}
+
+/** The repo-root marker `bounty open --pin` writes: this checkout's bound board. */
+export const BOUNTY_SESSION_FILE = ".bounty-session";
+
+/**
+ * PURE: which configured team a pinned board id belongs to, or `null`.
+ *
+ * ⚠ THIS READS SPELLBOOK'S ID FORMAT, and that coupling is deliberate but has to
+ * be held honestly. anthill opens with `--session-key <channel>`
+ * (`bountyOpenArgs`), and bounty derives `k-<key>-<hash>`. Nothing else in anthill
+ * parses this file.
+ *
+ * **The prefix test is unambiguous because channels are validated PREFIX-FREE**
+ * (`config.ts`) — the rule that exists so `anthill attach` cannot fold
+ * `<channel>-<suffix>` into a sibling's menu. At most one configured channel can
+ * match, by construction.
+ *
+ * **What keeps this from rotting silently is the round-trip test, not this
+ * comment:** `team-support.boardbinding.test.ts` runs a real `convene` and asserts
+ * that what it wrote is recognized here. If spellbook changes its derivation, that
+ * test goes RED — rather than this returning `null` forever and the guard quietly
+ * failing open, which is the failure mode that produced the bug it fixes.
+ */
+export function boardOwnerFromBinding(
+  binding: string,
+  teams: Array<{ name: string; channel: string }>,
+): string | null {
+  const id = binding.trim();
+  if (id === "") return null;
+  const owner = teams.find((t) => id.startsWith(`k-${t.channel}-`) || id === t.channel);
+  return owner ? owner.name : null;
+}
+
+/** The fs half: read `.bounty-session` and name the team holding it, if any. */
+function boardBoundTo(project: ResolvedProject): string | null {
+  const path = join(project.projectRoot, BOUNTY_SESSION_FILE);
+  if (!existsSync(path)) return null;
+  return boardOwnerFromBinding(readFileSync(path, "utf8"), project.teams);
 }
 
 /** PURE: how a live team reads in a refusal — who is on it, or why we cannot tell. */
