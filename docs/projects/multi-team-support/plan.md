@@ -966,6 +966,61 @@ has to be built past the documented one: convert, then `team use`, then add a th
 gap rule 7 closes and the reason it says _"in the state its documentation describes"_ rather than
 _"in the state the task describes"_.
 
+### Phase 5
+
+**5 — 🕳 the break is REAL but LATENT, and the plan states it as live.** The task calls `scanRepo`'s
+top-level-only `paths.teamDir` read _"a silent wrong answer"_ in the present tense. Run against a
+real multi-team repo today, `migrate` answers `ok: true, notes: ["already at v2"]` — the wrong answer
+never fires, because `pendingMigrations(2)` is empty and the command returns before the scan is used.
+**Reproducing it took a v1 config carrying a `teams` map**, which anthill itself cannot produce:
+
+```
+living docs: docs/team/* → .anthill/* (0 entries)
+stamped version → 2
+```
+
+Seven ops applied, `ok: true`, the team's living docs still at `docs/crew/`, and the config now
+claiming v2 with **no `paths`** — so every command resolves to an empty `.anthill/`. **The invariant
+this project is built on, produced with a success envelope.** The guard ships as specified; what
+changed is the honest framing: this is a **latent** defect that arms itself the moment
+`CURRENT_VERSION` moves, at which point every multi-team repo has a pending migration and hits it.
+Recorded because "measured as live" and "measured as latent" are different claims, and the second one
+is the one a reader can act on.
+
+**5 — ⚖ the refusal covers `--dry-run` too.** The contract says refuse before building a `RepoScan`,
+which naturally covers both, but it is worth stating why the dry run must not be exempted as
+"harmless": the pre-guard preview printed the same seven-op plan and called it a migration. A reader
+who trusts it runs the real thing. **A preview that lies is the mechanism, not a lesser version of
+it.**
+
+**5 — 🕳 the `already at v2` answer was the live defect all along, and no task named it.** Every real
+multi-team repo today gets `ok: true` and _"already at v2 — nothing to migrate"_ — true about the
+layout, and misleading about the command, in a skill (`upgrade` step 1) whose whole thesis is that
+_"nothing to migrate" does not mean the team is current_. It is now a refusal that says what the
+command can and cannot reason about.
+
+**5 — 🕳 two shipped docs argued the version rule from a consequence this phase removed.** Both
+`bootstrap` §0a item 2 and spec §5a justified _"`version` stays 2"_ with _"bumping it would make
+`anthill migrate` report **already at v3**"_. After the guard, `migrate` never reads the version on a
+`teams` config — it refuses first — so the stated consequence cannot occur. The rule is unchanged and
+its reason is now the direct one (a stamped `3` claims a layout that does not exist). **A rule
+defended by a symptom outlives the symptom**, and this is the second time in this project that
+shipped prose kept teaching a mechanism the code had moved on from.
+
+**5 — 🔧 `upgrade`'s multi-team guidance is per-team wherever it was per-project.** The task named
+five sites; four needed the same widening rather than a mention. 4a's reconcile runs **once per
+team** against each `teamDir` (`anthill team ls` prints them) — a team at `.anthill/teams/lean/` is
+invisible to a diff rooted at `.anthill/` and would keep its bootstrap-version guidance while the
+release is recorded as reconciled. Step 6 reports per team for the same reason. 4d gained one line:
+under a `teams` map `gate` is **project-level**.
+
+**5 — 🕳 rule 7 corrected the `status` line I had just written.** Step 5's first draft said `status`
+_"will refuse if nothing selects one"_. Running it found the refusal is the **safe** case: on the
+pinned repo — which is every operated multi-team repo — `status` **succeeds and reports the pinned
+team only**, saying nothing about the other two. So a single clean `status` reads as "the project
+verifies" and is one team verified. The loud failure was the one I documented; the quiet one is the
+hazard.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows

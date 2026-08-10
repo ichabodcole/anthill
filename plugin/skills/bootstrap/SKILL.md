@@ -28,7 +28,9 @@ Before anything, check for an existing footprint: if **`.anthill/config.json`** 
 do NOT re-bootstrap (you'd double-write or clobber). Instead:
 
 - on an **older** version (e.g. the legacy `.team/` layout) → run **`anthill:upgrade`** to migrate it
-  to the current `.anthill/` layout (history-preserving). `anthill migrate --dry-run` reports which.
+  to the current `.anthill/` layout (history-preserving). `anthill migrate --dry-run` reports which —
+  except on a project that already configures several teams, where it refuses by name and the answer
+  is the living-doc reconcile in `anthill:upgrade` instead.
 - on the **current** version → run **`anthill:convene`** to start a session. **But if the plugin was
   just updated, run `anthill:upgrade` first even though the version matches** — the stamped version
   tracks _layout_, and a release can change the SOP and team guidance without moving it. Living docs
@@ -84,8 +86,9 @@ Then convert the config **once**, from the flat shape to a `teams` map (spec §5
    while their real ones sit untouched one directory up. **With the line: zero file moves, zero
    migration**, and new teams still get the new default.
 2. **⚠ `version` STAYS `2`.** It describes the footprint LAYOUT, and nothing moved. The shape is
-   detected structurally (the presence of `teams`), so there is no version to bump — and bumping it
-   would make `anthill migrate` report _"already at v3"_ against a plugin whose current version is 2.
+   detected structurally (the presence of `teams`), so there is no version to bump — a stamped `3`
+   would claim a layout that does not exist, against a plugin whose current version is 2. (`anthill
+migrate` will not tell you: it refuses a `teams` config before it ever reads the version.)
 3. **⚠ Keep the incumbent's existing `channel`.** It is the message log's filename
    (`<teamDir>/comms/<channel>.ndjson`); renaming it orphans every message the team has sent.
    A new team's `channel` defaults to its own name, which is usually what you want.

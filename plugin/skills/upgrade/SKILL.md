@@ -84,6 +84,14 @@ prints the migration plan **without touching anything**.
   opinion about guidance**, and neither does `anthill status`.
   → Skip steps 2–3 (there is no migration to consent to or apply) and **go to step 4** — the living-doc
   reconcile is the whole job on a content-only release, and it is the common case.
+- **This project configures several teams** (a `teams` map in `.anthill/config.json`) → `migrate`
+  **refuses by name and exits 1.** _That is the correct answer, not a failure to work around._ The
+  `teams` map is a config **shape**, not a footprint layout — nothing moved on disk when it was
+  adopted, so there is no migration to run and `version` stays where it is. **Do not hand-edit the
+  config to get past it, and do not pass `--team`** (the verb refuses that too): `migrate` moves the
+  whole footprint, which every team shares.
+  → Same route as "already current": skip steps 2–3, **go to step 4**, and run the reconcile
+  **once per configured team** (see 4a).
 
 > **Run `anthill field-notes` as part of this step.** anthill's cross-team observations live in the
 > **plugin**, not in your footprint — deliberately, because `init` never updates a file you already
@@ -199,6 +207,13 @@ diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" "$TEAMDIR/README.md"
 Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
 `principles.md`, `retro.md`.
 
+**⚠ Several teams → run this whole reconcile once PER TEAM, against each team's own `teamDir`.**
+`anthill team ls` prints every team with its resolved directory; use those, not `.anthill/` — a team
+whose `teamDir` is `.anthill/teams/lean/` is invisible to the diff above and would silently keep its
+bootstrap-version guidance while you record the release as reconciled. **Each team's living docs are
+independently divergent**: they were seeded at different times, and each has been written in by its
+own seats since. There is no such thing as reconciling "the project's" `README.md`.
+
 **On `retro.md`, expect a diff the size of the whole file, and do NOT reconcile it.** It is seeded
 by `init` with the ritual's guidance and then written by the **team** at finalize — so a footprint
 that has run a session diverges by every entry it has accumulated, which is the file working, not
@@ -260,6 +275,10 @@ config is where a silent gap survives an upgrade that reports success.
   ratify or correct it. **There is no default and you must not invent one** — a guessed gate is worse
   than a blank one, because a blank one tells the truth. **"We don't have one" is a valid answer:**
   leave it unset.
+  - **Under a `teams` map, `gate` is PROJECT-level** — write it once at the top level, beside
+    `version` / `launch` / `grounding`, and every team inherits it. Writing it into each entry is not
+    wrong but it is four copies of one answer, and a `gate` inside an entry silently overrides the
+    project's for that team alone.
 
 ### 5. Verify, then land
 
@@ -267,11 +286,19 @@ config is where a silent gap survives an upgrade that reports success.
   - **`anthill status`** _resolves_ the config (it reads `.anthill/config.json`). With no live session
     it will **warn** the bounty daemon isn't running and show `Board: unavailable` — that's fine; you
     only care there's **no config error**.
+    **Several teams? Run it once per team, `anthill status --team <name>`** — and the reason is the
+    quiet case, not the loud one. Unpinned, it refuses and names the teams, which is correct
+    behaviour rather than a config error. **Pinned, it succeeds and reports the pinned team only** —
+    no mention that two others exist — so a single clean `status` is one team verified and the rest
+    unread. `anthill team ls` is the list to iterate.
   - **`anthill init`** _clobbers nothing_ — every existing doc is **skipped**. It MAY **add** a scaffold
     file a newer release introduced (or a doc a seat was missing); that's expected, not a failure —
     fold any additions into the commit below.
     **Note it only ADDS.** It never refreshes a doc that already exists — that is step 4a's job, and
     running `init` is not a substitute for it.
+    **It is PROJECT-level**: with no `--team` it covers every configured team, so one run reaches all
+    of them. Additions land under each team's own `teamDir` — check the `written` list against
+    `anthill team ls`, not against `.anthill/` alone.
   - Spot-check a relocated seat doc reads correctly.
   - **If the repo has a code formatter** (prettier / biome), make sure the whole `.anthill/` footprint is
     in its ignore now that config + docs live there — that includes **`.anthill/config.json`** (JSON a
@@ -299,6 +326,10 @@ the human should see both: **what shared guidance you pulled down** from the cur
 you deliberately left** as their local specificity, and **anything you weren't sure about**. If there
 was no structural migration at all, say so plainly — _"no layout change; the update was to the team's
 standing guidance"_ — so "nothing to migrate" is never mistaken for "nothing happened."
+
+**Several teams → report per team.** A single "reconciled" for a project with three teams is the
+report a team gets when its docs were never opened; name each team and what you did to its docs, and
+say which ones you left alone.
 
 ## Output
 

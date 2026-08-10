@@ -222,10 +222,11 @@ current footprint version (`2`).
 
 A project may carry a **`teams` map** instead of a flat team. **The shape is detected structurally —
 `"teams" in raw` — and NO new version is stamped.** `version` means _footprint layout_ (what
-`migrate` relocates); overloading it with schema shape would make `anthill migrate` report
-_"already at v3"_ while `CURRENT_VERSION` is `2`, which reads as "ahead of the plugin" when nothing
-moved on disk. AWS has carried `[default]` beside `[profile foo]` for a decade with no version field
-at all.
+`migrate` relocates); overloading it with schema shape would stamp a layout that does not exist —
+`3` against a `CURRENT_VERSION` of `2` reads as "ahead of the plugin" when nothing moved on disk. AWS
+has carried `[default]` beside `[profile foo]` for a decade with no version field at all.
+**`migrate` itself refuses a `teams` config outright**, before it reads the version or builds a
+`RepoScan` — see §8.
 
 ```jsonc
 {
@@ -409,7 +410,11 @@ subcommands — and the five that are not about a team (`info`, `scan`, `migrate
   configured team unless `--team` narrows it, and the pin/`ANTHILL_TEAM` do not narrow it at all.
 - `anthill scan` — deterministic workspace/surface detection, feeding bootstrap's candidate seatings
 - `anthill feedback` — send a bug or idea upstream to the anthill repo
-- `anthill migrate` — apply a footprint version migration (v1 → v2), planned purely by `migrate.ts`
+- `anthill migrate` — apply a footprint version migration (v1 → v2), planned purely by `migrate.ts`.
+  **Refuses a multi-team config by name** (§5a), before building a `RepoScan`: it reads
+  `paths.teamDir` from the top level only, so under a `teams` map it would plan against the era
+  default and report a successful move of zero living docs. A guard, not a migrator —
+  `MigrationOp` has no op that can restructure config content
 - `anthill info` — environment/config introspection
 - `anthill team ls|use|show` — the team noun group (§5a). `ls` lists every configured team marking
   the resolved one; `use <name>` pins this repo to one (`.anthill/current-team`, gitignored),
