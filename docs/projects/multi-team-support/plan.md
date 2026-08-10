@@ -32,6 +32,30 @@
    fake root and object fixtures (`config.test.ts:16-32`, `const ROOT = "/proj"`); anything touching
    the filesystem uses `mkdtempSync(tmpdir())` + `afterAll(rmSync)` — and **`tmpleak.guard.test.ts`
    enforces this.**
+7. **A task that changes a command's behaviour is not done until the command has been RUN against a
+   fixture repo in the state its documentation describes — and whatever that run finds gets a test
+   before the fix is committed.** Added 2026-08-09, after four phases in a row.
+
+   **Every defect this project's reviews have found was invisible to unit tests and visible in one
+   command.** `team ls` refused to list on the repo it exists for; `team use` refused every fresh
+   project; `init` refused the documented add-a-team route; then `init` silently rendered nothing on
+   the second use of that same route. **All four were green at `0 fail` while broken**, because the
+   pure half was always right — `renderTemplates` never rendered wrong, it never ran.
+
+   **The failure is structural, not careless.** A unit test is written from the same understanding
+   that wrote the code, so it inherits that understanding's blind spot. **A fixture repo is the one
+   thing in this loop that was not written by whoever is wrong.** It also catches the class no unit
+   test can see: `ok: true` on a run that did part of its job — 4.2's probe wrote `research`'s
+   gitignore lines and none of its docs, which is a passing envelope over a half-finished act.
+
+   **In the state its documentation describes** is the load-bearing clause. 4.1's fix was verified on
+   a repo with no pin, which is what `bootstrap` §0a assumed; the pinned repo — every later use of the
+   route — was never run. **Read the prose, build the repo the prose describes, run the command the
+   prose gives.**
+
+   **And the fix gets a test, in the same commit.** Twice now a fix found this way landed with
+   nothing holding it (task 3.6 exists only to retrofit two of them). A defect found by hand and
+   fixed by hand is a defect that comes back.
 
 ## Overview
 

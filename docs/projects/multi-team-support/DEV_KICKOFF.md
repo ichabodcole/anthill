@@ -89,7 +89,10 @@ fallback at any rung.
    ratified decisions.
 2. **Start at Phase 0.1.** Phases 0 → 1 → 2 are strictly ordered; 3–6 depend on 1–2.
 3. Per task: failing test → verify it fails → minimal implementation → verify it passes →
-   **you run `bun run check`** → commit.
+   **you run `bun run check`** → **if the task changed a command's behaviour, run that command
+   against a fixture repo in the state its documentation describes, and give whatever that finds a
+   test before committing** (plan.md §Execution model, rule 7 — added after four phases where the
+   only defect found was invisible to unit tests and visible in one command) → commit.
 4. **Run the Phase 0 fixture gate** before starting Phase 1 — it is the only end-to-end check in the
    plan and it catches what unit tests cannot.
 5. Raise anything the plan gets wrong. Four review passes found real defects in it; a fifth pair of
