@@ -85,13 +85,20 @@ prints the migration plan **without touching anything**.
   → Skip steps 2–3 (there is no migration to consent to or apply) and **go to step 4** — the living-doc
   reconcile is the whole job on a content-only release, and it is the common case.
 - **This project configures several teams** (a `teams` map in `.anthill/config.json`) → `migrate`
-  **refuses by name and exits 1.** _That is the correct answer, not a failure to work around._ The
-  `teams` map is a config **shape**, not a footprint layout — nothing moved on disk when it was
-  adopted, so there is no migration to run and `version` stays where it is. **Do not hand-edit the
-  config to get past it, and do not pass `--team`** (the verb refuses that too): `migrate` moves the
-  whole footprint, which every team shares.
-  → Same route as "already current": skip steps 2–3, **go to step 4**, and run the reconcile
-  **once per configured team** (see 4a).
+  **refuses by name and exits 1.** _That is the correct answer, not a failure to work around._ **Do
+  not hand-edit the config to get past it, and do not pass `--team`** (the verb refuses that too):
+  `migrate` moves the whole footprint, which every team shares.
+
+  **⚠ READ WHICH REFUSAL IT IS — there are two, and they route differently.**
+  - _"There is nothing here to migrate … already at vN"_ → the common case. The `teams` map is a
+    config **shape**, not a footprint layout; nothing moved on disk when it was adopted. Same route
+    as "already current": skip steps 2–3, **go to step 4**, and run the reconcile **once per
+    configured team** (see 4a).
+  - _"This repo ALSO has a pending footprint migration (vN → vM)"_ → **STOP. Do not go to step 4.**
+    The layout genuinely needs to move, and this command cannot move it against a multi-team config.
+    Report it to the human and end the upgrade there. Running the reconcile would leave the repo
+    looking upgraded while its footprint is still on the old layout — the one outcome worse than
+    refusing, because it is recorded as done.
 
 > **Run `anthill field-notes` as part of this step.** anthill's cross-team observations live in the
 > **plugin**, not in your footprint — deliberately, because `init` never updates a file you already

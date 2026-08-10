@@ -1074,6 +1074,26 @@ team only**, saying nothing about the other two. So a single clean `status` read
 verifies" and is one team verified. The loud failure was the one I documented; the quiet one is the
 hazard.
 
+**5.1 — built as specified. Two notes.**
+
+- **🕳 the task's file list stopped at the code, and the routing lives in a skill.** `upgrade` step 1
+  had just been given (in Phase 5, by me) a bullet ending _"→ Same route as 'already current': skip
+  steps 2–3, go to step 4"_ — written when there was one refusal. With two, that sentence sends the
+  **pending-migration** case to the living-doc reconcile, which is precisely the wrong answer 5.1
+  names: the repo ends up recorded as upgraded while its footprint is still on the old layout. The
+  bullet now branches on which refusal was printed. **A guard that gains a second branch obsoletes
+  every doc that told you what to do after the first one** — and this one was six commits old.
+- **⚖ the version numbers come from `pending.from`/`pending.to`, not from `version` and
+  `CURRENT_VERSION`.** Identical today (one migration, one step). They stop being identical the
+  moment the chain has two steps, and the message should name the step that is actually next rather
+  than the endpoint.
+
+**5.1 — 🕳 the bold-markdown line was one instance of a class, and the grep proves the class is
+otherwise empty.** The task says the refusal is the only emitted runtime string in
+`plugin/scripts/anthill/` carrying `**bold**`. Re-verified after the edit: zero remain. Pinned with a
+test that runs `--format text` and asserts the output carries no `**`, because "I checked once" is
+what the rest of this record keeps finding insufficient.
+
 **0.3 (late) — 🕳 the cascade was FIVE claims, not four.** Found while writing §5a: **spec §6's
 template table** lists what `init` renders and had never gained `principles.md` (added 2026-08-01,
 by someone else) — so `retro.md` would have been the second omission in the same table. Both rows

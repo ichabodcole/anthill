@@ -281,6 +281,41 @@ describe("anthill migrate — v1 → v2", () => {
     expect(env?.error).toContain("dev, lean");
   });
 
+  // The two refusals are DERIVED from what `pendingMigrations` says, not asserted.
+  // The first draft claimed "there is nothing here to migrate" unconditionally,
+  // which held only because MIGRATIONS carries one obsolete entry and the guard
+  // fires before the version is read. Add a v2→v3 layout migration and every
+  // multi-team repo would be told there is nothing to migrate in the one state
+  // where that is false. These two tests are what makes the difference visible;
+  // collapsing them into "it refuses" is what lets the messages merge back.
+  test("nothing pending → the refusal routes to the living-doc reconcile", async () => {
+    root = seedMultiTeamRepo(2);
+    const { stderr } = await runCli(["migrate", "--format", "json"], root);
+    const error = String((firstJson(stderr) as { error?: string } | null)?.error);
+    expect(error).toContain("nothing here to migrate");
+    expect(error).toContain("anthill:upgrade");
+  });
+
+  test("a migration IS pending → a different refusal that does NOT send you to the reconcile", async () => {
+    // v1 + a `teams` map: v1→v2 is pending, so the "nothing to migrate" sentence
+    // is false. Routing this one to the content-only reconcile is the specific
+    // wrong answer — the layout genuinely needs to move and this command cannot
+    // move it.
+    root = seedMultiTeamRepo(1);
+    const { stderr } = await runCli(["migrate", "--format", "json"], root);
+    const error = String((firstJson(stderr) as { error?: string } | null)?.error);
+    expect(error).toContain("pending footprint migration (v1 → v2)");
+    expect(error).not.toContain("nothing here to migrate");
+    expect(error).not.toContain("anthill:upgrade");
+  });
+
+  test("no emitted refusal carries markdown bold — it prints to a terminal", async () => {
+    // `--format text` writes these straight to a TTY, where `**` is just noise.
+    root = seedMultiTeamRepo(2);
+    const { stderr } = await runCli(["migrate", "--format", "text"], root);
+    expect(stderr).not.toContain("**");
+  });
+
   test("a single-team config is untouched by the guard", async () => {
     // Criterion 1, at the guard: the check is `"teams" in raw`, so a flat config
     // must not be able to trip it. Asserted through the ordinary happy path.
