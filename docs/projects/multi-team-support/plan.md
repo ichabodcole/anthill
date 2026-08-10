@@ -689,6 +689,59 @@ failure the proposal calls a data-integrity bug.**
 **Contract:** if the raw config has a `teams` key, `team-migrate` **refuses by name before building a
 `RepoScan`.**
 
+### 5.1 — The refusal asserts a fact that expires, and names no retirement condition
+
+**Type:** `fix:` · **Files:** `commands/team-migrate.ts` (`multiTeamRefusal`, and the call site at
+`:250` which must pass the version) · test `commands/team-migrate.test.ts` · **Added 2026-08-09 from
+the Phase 5 review.**
+
+The shipped refusal says, unconditionally:
+
+> **There is nothing here to migrate:** the `teams` map is a config SHAPE, not a footprint layout —
+> nothing moved on disk when it was adopted, so `version` stays 2.
+
+**That is true today only because `MIGRATIONS` holds one obsolete entry** (`migrate.ts:224`, v1→v2).
+The guard fires **before the version is ever read**, so the claim is not derived from anything — it is
+asserted. The moment a v2→v3 layout migration is added — **which this plan explicitly anticipates**,
+and which the implementation record says is when the underlying defect "arms itself" — every
+multi-team repo gets a blanket refusal stating there is nothing to migrate, **in the one state where
+that sentence is false and the human most needs the truth**: this repo has a pending layout migration
+that this command cannot perform.
+
+**This is the rule this plan already wrote for another guard, applied here.** Task 3.3: _"a guard
+whose stated reason is wrong outlives the constraint that justified it, because nobody can tell when
+it stopped applying."_ The convene guard names the board and says when to delete it. **This one names
+a consequence with an expiry date and no expiry note** — and refusing is the safe direction, so
+nothing will fail loudly when it goes stale.
+
+**Contract — two states, keyed on what is actually pending.** The version is one line, the same one
+`scanRepo` uses (`:114`): `typeof raw.version === "number" ? raw.version : 1`. Read it in the guard
+and pass it to `pendingMigrations` — already imported in this file (`:18`).
+
+- **`pendingMigrations(version).length === 0`** → today's message, unchanged. The claim is now
+  _derived_ rather than asserted, which is the whole point.
+- **Non-empty** → a DIFFERENT refusal: this repo has a pending footprint migration (name the
+  from→to), `migrate` cannot run it against a `teams` config because it reads `paths.teamDir` from the
+  top level only, and **stop — do not hand-edit the config to get past it.** Do not route this one to
+  the living-doc reconcile; that is the right answer for "nothing pending" and the wrong one here.
+- **A comment on the second branch addressed to whoever adds that migration:** this branch going live
+  is the signal that the blanket refusal has to become per-team-aware, not that the message needs
+  rewording.
+
+**⚠ Do not "simplify" this back into one message.** Both branches refuse and exit 1, so the two look
+redundant from the outside. The difference is the only thing a reader can act on: one says _go do the
+reconcile_, the other says _stop, this needs work that does not exist yet_.
+
+**Also, one line while in here:** the refusal is the **only** emitted runtime string in
+`plugin/scripts/anthill/` carrying markdown `**bold**` — verified by grep across every `ConfigError`
+and `error:` string. Under `--format text` it prints the asterisks literally to a terminal. Drop the
+markers; the surrounding sentences already carry the emphasis.
+
+**Tasks:** two failing tests — a v2 `teams` config → the "nothing pending" refusal; a **v1** `teams`
+config (v1→v2 is pending) → the "pending migration" refusal, asserting it does **not** mention the
+reconcile → implement → assert the single-team paths are untouched → `bun run check` → commit
+`fix(migrate): derive the multi-team refusal from what is actually pending`.
+
 ---
 
 ## Phase 6 — Attribution
