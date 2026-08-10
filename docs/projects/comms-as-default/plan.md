@@ -295,6 +295,17 @@ CONTROL    same command shape, token known-present → 45 rows (the instrument C
 
 **The question for weaver:** what is the enumeration that bounds this class, given that the obvious token does not?
 
+_Reconciled 2026-08-09 @ `ff0ac71` — **"`anthill status` renders `On the vine: …`": FIXED**, it now
+renders `On comms: …`, and the presence path it labelled no longer calls grapevine at all (the last
+executable `resolveCoordCli("grapevine")` is gone, with `humans`, `classifyPresence` and
+`combinePresence`). **"the proposal's 36 references is arithmetically exact": HELD** — unchanged, and
+this pass did not touch prose beyond one stale sentence in `comms/SKILL.md`. **"`vine` as a standalone
+alias: 79 lines in `plugin/`": UNCHECKED — not re-measured, and NOT addressed.** **"two SKILL
+`description:` frontmatter fields + `plugin.json`": UNCHECKED, NOT addressed.** **"`bootstrap` tells
+the human the field is 'the team's grapevine channel name'": UNCHECKED, NOT addressed.** The
+executable surface is closed; **the prose surface (C4-b) is open and is the larger half by the
+measurement above.**_
+
 #### C4-b — prose that ARMS the wrong wire, not merely describes it (`t-f26a1e5d`, weaver)
 
 **Added at session 9's join, from scout — C4 as I first wrote it was too narrow.**

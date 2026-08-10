@@ -193,6 +193,138 @@ describe("anthill migrate — v1 → v2", () => {
     expect(cfg.paths.teamDir).toBe("team-docs");
   });
 
+  // ---------------------------------------------------------------------------
+  // A `teams` map is refused BEFORE a RepoScan is built. Not a style preference:
+  // `scanRepo` reads `paths.teamDir` from the top level only, so under a `teams`
+  // map it finds none, plans against the era default, and reports a successful
+  // move of ZERO living docs — measured on the fixture below before the guard
+  // existed:
+  //
+  //     living docs: docs/team/* → .anthill/* (0 entries)
+  //     stamped version → 2
+  //
+  // ok: true, seven ops applied, the docs still at `docs/crew`, and the config now
+  // claiming v2 with no `paths` — so every command resolves to an empty
+  // `.anthill/`. The refusal is the fix because there is no migrator to write:
+  // `MigrationOp` has no op that can restructure config content.
+  // ---------------------------------------------------------------------------
+  function seedMultiTeamRepo(version: number): string {
+    const dir = mkdtempSync(resolve(tmpdir(), "anthill-multiteam-"));
+    sh(["git", "init", "-q"], dir);
+    const configDir = version < 2 ? ".team" : ".anthill";
+    mkdirSync(join(dir, configDir), { recursive: true });
+    writeFileSync(
+      join(dir, configDir, "config.json"),
+      `${JSON.stringify(
+        {
+          version,
+          teams: {
+            dev: {
+              lead: "maestro",
+              seats: [{ handle: "maestro", role: "lead", scope: "o" }],
+              // The knob the scanner cannot see from the top level.
+              paths: { teamDir: "docs/crew" },
+            },
+            lean: { lead: "boss", seats: [{ handle: "boss", role: "lead", scope: "o" }] },
+          },
+        },
+        null,
+        2,
+      )}\n`,
+    );
+    mkdirSync(join(dir, "docs/crew/dev"), { recursive: true });
+    writeFileSync(join(dir, "docs/crew/README.md"), "# SOP\n");
+    writeFileSync(join(dir, "docs/crew/dev/maestro.md"), "HARD-WON KNOWLEDGE\n");
+    return dir;
+  }
+
+  test("a v1 `teams` config is REFUSED, and nothing on disk moves", async () => {
+    root = seedMultiTeamRepo(1);
+    const { code, stderr } = await runCli(["migrate", "--format", "json"], root);
+    expect(code).toBe(1);
+
+    const env = firstJson(stderr) as { ok?: boolean; error?: string } | null;
+    expect(env?.ok).toBe(false);
+    // Named, not generic: the message has to say WHICH teams, or a lead reading it
+    // cannot tell this repo from a corrupt config.
+    expect(env?.error).toContain("dev, lean");
+
+    // The state the un-guarded run destroyed: docs in place, version un-stamped.
+    expect(readFileSync(join(root, "docs/crew/dev/maestro.md"), "utf8")).toBe(
+      "HARD-WON KNOWLEDGE\n",
+    );
+    expect(existsSync(join(root, ".team/config.json"))).toBe(true);
+    expect(JSON.parse(readFileSync(join(root, ".team/config.json"), "utf8")).version).toBe(1);
+  });
+
+  test("--dry-run is refused too — a preview that lies is the thing being prevented", async () => {
+    // The pre-guard dry run printed the same seven-op plan and called it a
+    // migration. Someone reads that, believes the repo needs migrating, and runs
+    // it for real. A guard on apply alone would leave the misleading half.
+    root = seedMultiTeamRepo(1);
+    const { code, stderr } = await runCli(["migrate", "--dry-run", "--format", "json"], root);
+    expect(code).toBe(1);
+    expect((firstJson(stderr) as { ok?: boolean } | null)?.ok).toBe(false);
+  });
+
+  test("a v2 `teams` config is refused rather than reported 'already at v2'", async () => {
+    // Today this is where every real multi-team repo lands, and the old answer was
+    // a cheerful `ok: true, notes: ["already at v2"]`. That is TRUE about the
+    // version and misleading about the command: `upgrade` teaches that "nothing to
+    // migrate" does not mean the team is current, and this config is one the
+    // command cannot reason about at all. Say so instead.
+    root = seedMultiTeamRepo(2);
+    const { code, stderr } = await runCli(["migrate", "--format", "json"], root);
+    expect(code).toBe(1);
+    const env = firstJson(stderr) as { ok?: boolean; error?: string } | null;
+    expect(env?.ok).toBe(false);
+    expect(env?.error).toContain("dev, lean");
+  });
+
+  // The two refusals are DERIVED from what `pendingMigrations` says, not asserted.
+  // The first draft claimed "there is nothing here to migrate" unconditionally,
+  // which held only because MIGRATIONS carries one obsolete entry and the guard
+  // fires before the version is read. Add a v2→v3 layout migration and every
+  // multi-team repo would be told there is nothing to migrate in the one state
+  // where that is false. These two tests are what makes the difference visible;
+  // collapsing them into "it refuses" is what lets the messages merge back.
+  test("nothing pending → the refusal routes to the living-doc reconcile", async () => {
+    root = seedMultiTeamRepo(2);
+    const { stderr } = await runCli(["migrate", "--format", "json"], root);
+    const error = String((firstJson(stderr) as { error?: string } | null)?.error);
+    expect(error).toContain("nothing here to migrate");
+    expect(error).toContain("anthill:upgrade");
+  });
+
+  test("a migration IS pending → a different refusal that does NOT send you to the reconcile", async () => {
+    // v1 + a `teams` map: v1→v2 is pending, so the "nothing to migrate" sentence
+    // is false. Routing this one to the content-only reconcile is the specific
+    // wrong answer — the layout genuinely needs to move and this command cannot
+    // move it.
+    root = seedMultiTeamRepo(1);
+    const { stderr } = await runCli(["migrate", "--format", "json"], root);
+    const error = String((firstJson(stderr) as { error?: string } | null)?.error);
+    expect(error).toContain("pending footprint migration (v1 → v2)");
+    expect(error).not.toContain("nothing here to migrate");
+    expect(error).not.toContain("anthill:upgrade");
+  });
+
+  test("no emitted refusal carries markdown bold — it prints to a terminal", async () => {
+    // `--format text` writes these straight to a TTY, where `**` is just noise.
+    root = seedMultiTeamRepo(2);
+    const { stderr } = await runCli(["migrate", "--format", "text"], root);
+    expect(stderr).not.toContain("**");
+  });
+
+  test("a single-team config is untouched by the guard", async () => {
+    // Criterion 1, at the guard: the check is `"teams" in raw`, so a flat config
+    // must not be able to trip it. Asserted through the ordinary happy path.
+    root = seedV1Repo();
+    const { code } = await runCli(["migrate", "--format", "json"], root);
+    expect(code).toBe(0);
+    expect(existsSync(join(root, ".anthill/README.md"))).toBe(true);
+  });
+
   test("no footprint at all → clean {ok:false} envelope, exit 1", async () => {
     root = mkdtempSync(resolve(tmpdir(), "anthill-nomig-"));
     sh(["git", "init", "-q"], root);

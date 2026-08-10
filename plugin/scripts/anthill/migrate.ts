@@ -21,6 +21,14 @@ import { CURRENT_VERSION } from "./config.ts";
 /** The consolidated v2 root every migration target lands in. */
 export const ANTHILL_DIR = ".anthill";
 
+/**
+ * The repo-root bound-board marker. Kept here as a literal rather than imported
+ * from `team-init.ts` because `migrate.ts` is the PURE planner and must not pull
+ * in a command module — but the two must agree, and `migrate.test.ts` asserts the
+ * emitted set against `gitignoreLines()` so a divergence is RED, not silent.
+ */
+export const BOUNTY_SESSION_LINE = ".bounty-session";
+
 /** The v1 config-dir marker (its `config.json` was the v1 root marker). */
 export const V1_CONFIG_DIR = ".team";
 
@@ -166,15 +174,65 @@ export function planV1ToV2(scan: RepoScan): MigrationPlan {
   // arrives via `anthill init` or the upgrade skill's reconcile step.
   // Exposure is small (a stray untracked `.anthill/comms/*.ndjson`); the
   // belief that it was already handled was the actual risk. Caught in review.
-  // Spelled as an ensure (`remove` === `add`) rather than a pure add: the
-  // executor filters lines equal to `remove`, so an empty `remove` would match
-  // every BLANK line and silently reflow the consumer's `.gitignore`.
+  // A genuine swap, slashed → SLASHLESS: strip the legacy `…/comms/` line and
+  // write the `…/comms` form `team-init`'s `commsGitignoreLine()` derives. The
+  // trailing slash is not cosmetic — a slash-suffixed rule matches a DIRECTORY
+  // only, so it stops matching the moment `comms` is a symlink (how a team
+  // shares one log across per-seat worktrees) and the link shows up untracked
+  // in every seat's tree. `team-init.ts` carries the twenty-line version.
+  //
+  // ⚠ `remove` MUST stay non-empty. The executor filters lines equal to
+  // `remove`, so an empty `remove` would match every BLANK line and silently
+  // reflow the consumer's `.gitignore`. This op was spelled as an ensure
+  // (`remove` === `add`) for exactly that reason; changing only `add` keeps
+  // `remove` a real string while making the op do real work. Do not reverse
+  // the pair, and do not empty either side.
   ops.push({
     kind: "gitignore",
     remove: `${ANTHILL_DIR}/comms/`,
-    add: `${ANTHILL_DIR}/comms/`,
+    add: `${ANTHILL_DIR}/comms`,
   });
-  notes.push(`gitignore: ensure ${ANTHILL_DIR}/comms/ (team comms log — never committed)`);
+  notes.push(
+    `gitignore: ${ANTHILL_DIR}/comms/ → ${ANTHILL_DIR}/comms (team comms log — never committed; slashless so a symlinked dir stays ignored)`,
+  );
+
+  // The pin — `.anthill/current-team`, the local "which team am I on" marker.
+  //
+  // ⚠ THIS NEEDS A MIGRATE OP AND NOT ONLY AN `init` ENTRY. A repo that upgrades
+  // and never re-runs `init` would COMMIT the pin, and then one person's team
+  // choice switches everyone else's team on their next pull. This is byte for
+  // byte the scar written up above about the comms line: the ignore line has to
+  // arrive by the same route the thing it guards does.
+  //
+  // Spelled as an ensure (`remove` === `add`) — there is no legacy spelling to
+  // strip, and `remove` must stay non-empty or the executor's line filter would
+  // match every blank line.
+  ops.push({
+    kind: "gitignore",
+    remove: `${ANTHILL_DIR}/current-team`,
+    add: `${ANTHILL_DIR}/current-team`,
+  });
+  notes.push(
+    `gitignore: ensure ${ANTHILL_DIR}/current-team (the local team pin — never committed)`,
+  );
+
+  // The pinned bounty-session marker, for the SAME reason and by the same route.
+  //
+  // ⚠ ADDED BECAUSE ITS ABSENCE MADE A CHECKLIST LIE. `init` ensures four lines;
+  // migrate ensured three, so `anthill init` right after a migration always
+  // reported `.bounty-session` as `added` — and `upgrade`'s v1→v2 checklist reads
+  // any `added` line as proof that migrate and init disagree about a line's
+  // SPELLING and the repo now carries both forms. Every upgrader would have gone
+  // hunting for a duplicate that does not exist.
+  //
+  // Two ways to fix that; this is the one that makes the checklist's claim TRUE
+  // rather than narrowing it, and it closes the same commit-the-local-state hole
+  // the pin op above exists for: a repo that migrates and never re-runs `init`
+  // would otherwise commit `.bounty-session` and rebind everyone else's board.
+  ops.push({ kind: "gitignore", remove: BOUNTY_SESSION_LINE, add: BOUNTY_SESSION_LINE });
+  notes.push(
+    `gitignore: ensure ${BOUNTY_SESSION_LINE} (this checkout's bound board — never committed)`,
+  );
 
   // 4. Remove the vacated config dir (only the disposable, gitignored scratch
   //    remains in it). An active session's scratch is transient by design.

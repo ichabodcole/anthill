@@ -1,11 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import {
-  classifyPresence,
-  combinePresence,
-  commsPresence,
-  type SeatPresence,
-  summarizeBoard,
-} from "./team-support.ts";
+import { readFileSync } from "node:fs";
+import { commsPresence, type SeatPresence, summarizeBoard } from "./team-support.ts";
 
 /**
  * Presence was SINGLE-WIRE on a multi-wire team, and `anthill down` kills panes.
@@ -176,73 +171,64 @@ describe("commsPresence — a live follower is presence; an unchecked one is not
   });
 });
 
-describe("combinePresence — `none` requires positive absence on EVERY wire", () => {
-  const none: SeatPresence = { state: "none" };
-  const unknown: SeatPresence = { state: "unknown", reason: "r" };
-  const present: SeatPresence = { state: "present", seats: ["a"] };
-
-  // The full 3x3 lattice as ONE assertion. Nine cells, and the whole point is
-  // that no cell resolves toward `none` unless both sides did.
-  test("the whole lattice at once", () => {
-    const cells: SeatPresence[][] = [
-      [none, none],
-      [none, unknown],
-      [none, present],
-      [unknown, none],
-      [unknown, unknown],
-      [unknown, present],
-      [present, none],
-      [present, unknown],
-      [present, present],
-    ];
-    expect(
-      cells.map(([x, y]) => combinePresence(x as SeatPresence, y as SeatPresence).state),
-    ).toEqual([
-      "none",
-      "unknown",
-      "present",
-      "unknown",
-      "unknown",
-      "present",
-      "present",
-      "present",
-      "present",
+// `combinePresence`'s 3x3-lattice suite lived here, and it went with the
+// function when grapevine left anthill's model. What replaces it is NOT a
+// smaller lattice — it is the one property the lattice existed to protect,
+// asserted on the single wire that remains.
+describe("seatPresence — an unreachable wire is UNKNOWN, never an absence", () => {
+  // ⚠ RUN IN A SUBPROCESS, DELIBERATELY, AND THE FIRST VERSION OF THIS SUITE DID
+  // NOT — it imported `seatPresence` from the module above, went green locally,
+  // and FAILED IN CI. `team-convene.spawnset.test.ts` and
+  // `team-down.command-path.test.ts` both `mock.module("./team-support.ts", …)`,
+  // and bun loads-and-runs PER FILE, so whether this file sees the real module or
+  // a stub depends on runner file order. Forcing the bad order locally reproduces
+  // it as `Export named 'commsPresence' not found`.
+  //
+  // This is the scar already written down in `team-convene.spawnset.test.ts`:
+  // "the suite's own file order comes from the runner, so `bun run check` being
+  // green locally was LUCK, NOT EVIDENCE." That block predicted this exact
+  // failure and I stepped on it anyway, because the tests I added were the first
+  // in this file to depend on a *mocked export's* real behaviour — the
+  // pre-existing ones use `commsPresence`/`summarizeBoard`, which the stubs
+  // happen not to shadow in the orders CI has been running.
+  //
+  // A fresh process has no mock registry, so it cannot inherit a stub no matter
+  // what ran first — the same principle as that file's repair (rebuild from a
+  // module nobody mocks), reached by a different route because `seatPresence`
+  // has no unmocked source to rebuild from.
+  const realSeatPresence = (): SeatPresence => {
+    const r = Bun.spawnSync([
+      "bun",
+      "-e",
+      `import {seatPresence} from ${JSON.stringify(new URL("./team-support.ts", import.meta.url).pathname)};` +
+        `console.log(JSON.stringify(seatPresence("anthill-dev")))`,
     ]);
+    return JSON.parse(r.stdout.toString().trim());
+  };
+
+  // The `down` guard permits teardown on exactly one state, so this is the whole
+  // safety surface of the removal: with no config there is no comms wire to
+  // read, and the answer must be the state that BLOCKS.
+  test("no config → unknown, and it is not `none`", () => {
+    const p = realSeatPresence();
+    expect(p.state).toBe("unknown");
+    expect(p.state).not.toBe("none");
   });
 
-  // THE LIVE CASE, stated on its own because it is the defect: the vine
-  // positively reported nobody and it was RIGHT about the vine.
-  test("vine says nobody + comms says someone → PRESENT", () => {
-    expect(combinePresence(none, { state: "present", seats: ["forager", "maestro"] })).toEqual({
-      state: "present",
-      seats: ["forager", "maestro"],
-    });
+  test("unknown carries a REASON, so a caller can say WHY it could not tell", () => {
+    const p = realSeatPresence();
+    expect(p.state === "unknown" && p.reason).toContain("no config");
   });
 
-  test("unions and dedupes seats across wires", () => {
-    expect(
-      combinePresence({ state: "present", seats: ["b", "a"] }, { state: "present", seats: ["a"] }),
-    ).toEqual({ state: "present", seats: ["a", "b"] });
-  });
-
-  test("is symmetric — neither wire is privileged", () => {
-    const pairs: [SeatPresence, SeatPresence][] = [
-      [none, unknown],
-      [none, present],
-      [unknown, present],
-    ];
-    for (const [x, y] of pairs) {
-      expect(combinePresence(x, y).state).toBe(combinePresence(y, x).state);
-    }
-  });
-
-  test("carries every reason forward, so a human can see WHY it refused", () => {
-    const p = combinePresence(
-      { state: "unknown", reason: "vine down" },
-      { state: "unknown", reason: "pids unchecked" },
-    );
-    expect(p.state === "unknown" && p.reason).toContain("vine down");
-    expect(p.state === "unknown" && p.reason).toContain("pids unchecked");
+  // Regression pin for the removal itself. The vine leg could flip exactly one
+  // cell — `vine: unknown` + `comms: none` → `unknown` — and on a machine
+  // without spellbook's grapevine, `resolveCoordCli` THROWS, so that cell was
+  // the permanent state for every consuming project: `down` blocked every clean
+  // teardown and demanded `--force`. Nothing may reintroduce a leg that makes a
+  // verdict depend on a CLI anthill no longer calls.
+  test("the verdict does not depend on grapevine being installed", () => {
+    const src = readFileSync(new URL("./team-support.ts", import.meta.url), "utf8");
+    expect(src).not.toContain('resolveCoordCli("grapevine")');
   });
 });
 
@@ -298,68 +284,6 @@ describe("summarizeBoard", () => {
 // teardown." It is the fail-OPEN direction on a destructive command: a dead
 // daemon was reported as an empty channel, and `down` read that as "no seats
 // present, safe to kill the panes."
-describe("classifyPresence — the discriminator", () => {
-  test("a live daemon with subscribers reports them present", () => {
-    expect(
-      classifyPresence({ ok: true }, { daemon: true, subscribers: ["loom", "mosaic"] }),
-    ).toEqual({ state: "present", seats: ["loom", "mosaic"] });
-  });
-
-  test("a live daemon with no subscribers is NONE — a real, positive answer", () => {
-    expect(classifyPresence({ ok: true }, { daemon: true, subscribers: [] })).toEqual({
-      state: "none",
-    });
-  });
-
-  test("a failed call is UNKNOWN, never none", () => {
-    expect(classifyPresence({ ok: false, stderrLine: "connection refused" }, null).state).toBe(
-      "unknown",
-    );
-  });
-
-  test("an unparseable response is UNKNOWN, never none", () => {
-    expect(classifyPresence({ ok: true }, null).state).toBe("unknown");
-  });
-
-  test("a daemon that is NOT RUNNING is UNKNOWN, never none — the case that shipped inverted", () => {
-    // grapevine answers `daemon: false` perfectly successfully: `ok` is true and
-    // the payload parses. Only the field says nobody is home. Reading that as an
-    // empty channel is how "the wire is down" became "the team has stood down".
-    expect(classifyPresence({ ok: true }, { daemon: false, subscribers: [] }).state).toBe(
-      "unknown",
-    );
-  });
-
-  test("a missing subscribers field is UNKNOWN — absent is not empty", () => {
-    expect(classifyPresence({ ok: true }, { daemon: true }).state).toBe("unknown");
-  });
-
-  // The set-assertion. Any single case above is satisfied by a hardcoded value;
-  // three distinct values out of one function are not. Same shape as the
-  // three-outcome checks on `resolveSeatIdentity` and `positionState`.
-  test("the three cases produce three DISTINCT states", () => {
-    const states = [
-      classifyPresence({ ok: true }, { daemon: true, subscribers: ["a"] }).state,
-      classifyPresence({ ok: true }, { daemon: true, subscribers: [] }).state,
-      classifyPresence({ ok: false }, null).state,
-    ];
-    expect(new Set(states).size).toBe(3);
-    expect(states).toEqual(["present", "none", "unknown"]);
-  });
-
-  test("unknown carries a REASON, so a caller can say WHY it could not tell", () => {
-    const p = classifyPresence({ ok: false, stderrLine: "connection refused" }, null);
-    expect(p.state === "unknown" && p.reason).toContain("connection refused");
-  });
-
-  test("subscribers are deduped and sorted — presence is who is here, not sockets", () => {
-    expect(classifyPresence({ ok: true }, { daemon: true, subscribers: ["b", "a", "b"] })).toEqual({
-      state: "present",
-      seats: ["a", "b"],
-    });
-  });
-});
-
 /**
  * D1 — the departed-but-live qualifier, and D3's caller invariant.
  *

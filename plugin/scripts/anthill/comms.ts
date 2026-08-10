@@ -170,8 +170,24 @@ export function buildCommsIncantation(i: {
   cliPath: string;
   channel: string;
   handle: string;
+  /**
+   * The team to bind to, when — and ONLY when — this project configures several.
+   *
+   * ⚠ AN EMITTED COMMAND MUST CARRY ITS OWN TEAM. The seat runs this string
+   * verbatim in a fresh process, where the ladder starts over: `--team lean` on
+   * `anthill join` does NOT survive into the command join printed. On a repo
+   * pinned to another team the positional channel then belongs to one team while
+   * resolution lands on another, and `rejectOtherTeam` refuses — loudly, which is
+   * the good case. The bad case is `commit`, which has no channel to disagree
+   * with; see `buildLandCommand`.
+   *
+   * Omitted on a single-team project: there is nothing to disambiguate, and a
+   * flag appearing in every existing repo's incantation is criterion 1.
+   */
+  team?: string | undefined;
 }): string {
-  return `bun ${i.cliPath} comms follow ${i.channel} --as ${i.handle}`;
+  const team = i.team ? ` --team ${i.team}` : "";
+  return `bun ${i.cliPath} comms follow ${i.channel} --as ${i.handle}${team}`;
 }
 
 // ---------------------------------------------------------------------------

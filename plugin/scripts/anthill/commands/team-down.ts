@@ -32,15 +32,24 @@ interface DownData {
 
 // `anthill down [--session <name>] [--force]` — a scoped, curated teardown of the
 // team session. Refuses to kill panes while seats are still present on the team
-// CHANNEL — presence spans BOTH wires (grapevine and comms, via
-// `combinePresence`), so no single wire is named here — unless forced; tearing
-// down an absent session is a graceful no-op (success).
+// CHANNEL — presence reads the COMMS wire, and only comms — unless forced;
+// tearing down an absent session is a graceful no-op (success).
 //
 // This header said "on the vine" for the whole of the session in which presence
 // stopped being vine-only. The refusal string forty lines down was fixed for
 // exactly that (`4cbf355`) and this comment was not, because the card named the
 // STRING. It is the third site of one claim, found by a verifier after two
 // separate fixes had each corrected the line they were pointed at.
+//
+// 🔴 AND IT WENT STALE A SECOND TIME, IN THE OPPOSITE DIRECTION, BY THE SAME
+// MECHANISM — a FOURTH site of the same claim. `4d091dc` removed the grapevine
+// leg and deleted `combinePresence`; this header kept asserting presence "spans
+// BOTH wires (grapevine and comms, via `combinePresence`)", naming a function
+// that no longer exists. The cascade pass that session grepped the SEAT-FACING
+// STRINGS — which were already correct here, so this file reported clean and was
+// never opened. **The lesson is not "check comments too": it is that a comment
+// arguing for the general case is exactly what a grep for the specific case
+// cannot see.** Corrected 2026-08-09.
 //
 // Zero functional impact, and that is precisely why it is worth the line: this
 // is the FIRST thing a maintainer reads about this module, so a reader auditing
@@ -60,12 +69,20 @@ export const teamDownCommand = defineAnthillCommand({
       valueHint: "name",
     },
     force: { type: "boolean", description: "Tear down even if seats are still present" },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "down");
+    const config = requireConfig(format, "down", {
+      team: ctx.args.team as string | undefined,
+      session: ctx.args.session as string | undefined,
+    });
 
     // Preflight: no point reading presence if tmux is missing.
     if (!hasTmux()) {
@@ -102,10 +119,12 @@ export const teamDownCommand = defineAnthillCommand({
 
     // Presence guard — the one thing raw tmux can't do. Reads the config channel.
     const force = Boolean(ctx.args.force);
-    // Config is passed so presence spans BOTH wires. Without it this reads the
-    // vine alone and reports a confident "nobody" on a comms-only session —
-    // which is the defect, on the one command that kills panes.
-    const { presence } = await seatPresence(config.channel, config);
+    // Config is REQUIRED for a verdict at all: comms is the only wire, and it
+    // is reached through the config. Without it `seatPresence` returns `unknown`
+    // and this guard blocks — which is the correct direction on the one command
+    // that kills panes. It used to fall back to reading the vine alone and
+    // reporting a confident "nobody" on a comms-only session; that leg is gone.
+    const presence = seatPresence(config.channel, config);
     if (shouldBlockTeardown(presence, force)) {
       // Two distinct refusals. They must not share a sentence: one says who is
       // still working, the other says we could not find out — and a reader who

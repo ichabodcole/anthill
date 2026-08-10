@@ -24,6 +24,42 @@ export interface ScanReport {
   root: string;
   /** `null` ⇒ single-surface. Manager/globs are detection byproducts. */
   workspace: { manager: PackageManager | null; globs: string[] } | null;
+  /**
+   * WHAT THE SCAN HAD TO GO ON — and it is a separate question from `workspace`.
+   *
+   * `"manifest"` ⇒ **at least one unit was derived from a manifest that was
+   * actually read** — a root `package.json`, or workspace members expanded from
+   * globs. Deliberately wider than "a root `package.json` exists" (a pnpm
+   * monorepo whose root carries only `pnpm-workspace.yaml` qualifies, and
+   * `warnings` will still say `"no package.json at repo root"` — consistent, not
+   * contradictory) and deliberately narrower than "a manifest parsed" (globs that
+   * match zero members, or a `package.json` containing `"hello"`, are `"none"`).
+   *
+   * **The test is what was READ, not what exists.** Both looser readings shipped
+   * on this branch and both reproduced the original fail-open.
+   * `"none"` ⇒ there was none, so `units[0]` is **SYNTHESIZED** from the directory
+   * name and its `stack` is empty **by absence, not by observation.**
+   *
+   * ⚠ WHY THIS IS ITS OWN FIELD RATHER THAN A `warnings` STRING A CONSUMER GREPS.
+   * `warnings` already carries `"no package.json at repo root"`, and reading it
+   * would be inferring a verdict from prose — the defect that made
+   * `AmbiguousTeamError` a TYPE, after a measured reword left the whole suite
+   * green while `anthill team ls` broke. In a SKILL that coupling is worse still,
+   * because nothing there can go red.
+   *
+   * ⚠ AND IT DOES NOT MEAN "NOT A SOFTWARE PROJECT." It means *this scanner*
+   * found nothing it can read — a Python or Rust repo is software and answers
+   * `"none"` today. A consumer must phrase its response as "I found no manifest I
+   * can read", never as a claim about what the repo is.
+   *
+   * The fail-open it closes: `workspace: null` was TRUE for both a real
+   * single-surface app and a repo with no manifest at all, and
+   * `skills/bootstrap` picked its archetype from that one boolean by its own
+   * admission. A novel was handed `layered-app` — an engine seat scoped to
+   * "goldens, unit tests" — and a human ratified it, because nothing said the
+   * reading was a fallback.
+   */
+  evidence: "manifest" | "none";
   /** Workspace members; single-surface ⇒ the ONE root package (len 1, path "."). */
   units: ScanUnit[];
   /** Non-fatal notices — house convention: on `data.warnings`, never stderr in JSON mode. */
@@ -232,9 +268,25 @@ export function internalDepsOf(manifest: Manifest, memberNames: Iterable<string>
 
 // ---- Orchestrator (does the filesystem reads) ------------------------------
 
+/**
+ * Read a `package.json`, or `null` if it is missing / unparseable / **not an
+ * object**.
+ *
+ * ⚠ THE OBJECT CHECK IS NOT DEFENSIVE TIDYING. `JSON.parse` succeeds on
+ * `"hello"`, `[]` and `123`, and the cast to `Manifest` made every one of them a
+ * "manifest": `evidence` came back `"manifest"`, NO warning was emitted at all,
+ * and `scan --format text` printed `Workspace: single-surface` over a unit named
+ * after the directory. That is the fail-open this field exists to close,
+ * reproduced exactly, through a file that parses.
+ *
+ * Falsy non-objects (`null`, `0`, `false`) landed on `"none"` before this — by
+ * falsiness accident, not by design, which is why the accident was invisible.
+ */
 function readManifest(pkgPath: string): Manifest | null {
   try {
-    return JSON.parse(readFileSync(pkgPath, "utf8")) as Manifest;
+    const parsed: unknown = JSON.parse(readFileSync(pkgPath, "utf8"));
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
+    return parsed as Manifest;
   } catch {
     return null;
   }
@@ -293,6 +345,7 @@ export function buildScanReport(rootDir: string): ScanReport {
     return {
       root,
       workspace: null,
+      evidence: rootPkg ? "manifest" : "none",
       units: [unit],
       ...(warnings.length > 0 && { warnings }),
     };
@@ -327,6 +380,20 @@ export function buildScanReport(rootDir: string): ScanReport {
   return {
     root,
     workspace: { manager: detectManager(root), globs },
+    // ⚠ FOLLOWS THE UNITS, NOT THE GLOBS — and the earlier version of this line
+    // said `"manifest"` unconditionally, with a comment arguing that globs cannot
+    // exist without a readable manifest. True of the GLOB SOURCE, false of the
+    // UNITS: `globs.length > 0` is decided from the parse, before `expandMembers`
+    // runs. A fresh scaffold (`pnpm-workspace.yaml` with `packages/*` and no
+    // packages yet) returned `evidence: "manifest"` with `units: []` — so
+    // bootstrap read "I had something to go on", skipped §2·0, and landed in §2b
+    // whose entire derive is over units it does not have. Its escape hatch is
+    // "one real surface ⇒ fall back to layered-app", which a reader applies to
+    // zero. **The fail-open this file exists to close, one level up.**
+    //
+    // The rule across both return paths: `"manifest"` iff at least one unit was
+    // derived from a manifest that was actually read.
+    evidence: units.length > 0 ? "manifest" : "none",
     units,
     ...(warnings.length > 0 && { warnings }),
   };

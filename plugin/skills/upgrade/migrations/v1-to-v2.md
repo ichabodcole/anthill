@@ -17,6 +17,7 @@ changes, so there is nothing to reconcile.
 | `docs/team/dev/seams.md`          | `.anthill/dev/seams.md`           |
 | `docs/team/dev/<handle>.md`       | `.anthill/dev/<handle>.md`        |
 | `.gitignore`: `.team/scratch/`    | `.gitignore`: `.anthill/scratch/` |
+| `.gitignore`: `.anthill/comms/`   | `.gitignore`: `.anthill/comms`    |
 | config `version`: unstamped / `1` | config `version`: `2`             |
 
 The vacated `.team/` (only the disposable, gitignored scratch remains in it) and the emptied
@@ -49,7 +50,12 @@ paper-cuts entry the team hand-edited arrives intact. Nothing is merged or overw
 - [ ] The living docs are under `.anthill/` (or at the `paths` override, if one was set).
 - [ ] `.team/` and the default `docs/team/` are gone.
 - [ ] `.gitignore` has `.anthill/scratch/` and no longer `.team/scratch/`.
+- [ ] `.gitignore` has `.anthill/comms` **without a trailing slash**, and does not also carry the
+      slashed `.anthill/comms/`. A slash-suffixed rule matches a directory only, so it stops matching
+      the moment `comms` is a symlink — how a team shares one log across per-seat worktrees.
 - [ ] **After you land the commit (not before):** `git log --follow .anthill/<a moved file>` shows the
       pre-move history. `--follow` reads _committed_ history, so at staged-verify time (pre-commit) it
       returns empty — that's expected, not a failure. Run this check post-land.
-- [ ] `anthill status` resolves; `anthill init` is a clean no-op.
+- [ ] `anthill status` resolves; `anthill init` is a clean no-op — **including `.gitignore`**. If
+      `init` reports a gitignore line `added` right after a migration, the two disagree about that
+      line's spelling and the repo now carries both forms.

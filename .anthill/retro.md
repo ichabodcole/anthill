@@ -25,6 +25,14 @@ does not.
 > `docs/projects/_archive/team-comms-spike/slice-two-proposal.md`, landed after discovering the decision record
 > was sitting in an ignored file._
 
+**Every entry from session 14 on carries `**Team:** <name> · **shape:** <8 hex>`** — the team and a
+fingerprint of its config entry (`channel`/`lead`/`seats`, keys sorted, SHA-256, first 8 — `paths` is
+deliberately NOT in it: where the docs live is not what shape the team is).
+The command is in `anthill:finalize-session` step 4.5. It answers _were these two entries written by
+the same team in the same shape?_, which is what you need before recording a carried-forward Q3 as
+held or falsified. **Labelled, not comparable** — a different fingerprint says the shapes differed,
+not that one shape did better. Entries 1–13 predate it and carry none.
+
 ---
 
 ## 2026-08-08 · Session 13 — criterion 7 closed, and the lead's own "I verified it" was a proxy

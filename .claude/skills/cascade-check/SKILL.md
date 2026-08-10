@@ -39,10 +39,10 @@ Find the row for what you changed. Check every dependent.
 
 - ◻ **This repo's own `.anthill/`.** `anthill init` **never clobbers existing files** — by design, so
   a consumer's living docs are safe. The cost: our own footprint never receives template updates.
-  Mirror by hand. **The full token set is in `team-init.ts`'s header — six, not three:**
+  Mirror by hand. **The full token set is in `team-init.ts`'s header — eight, not three:**
   `{{handle}}` as a _path_ token (fans a template out once per seat), `{{channel}}` / `{{lead}}` /
-  `{{rosterTable}}` as global content, and `{{handle}}` / `{{role}}` / `{{scope}}` inside a per-seat
-  template. **`{{rosterTable}}` is a generated markdown table** — hand-mirroring with a partial token
+  `{{rosterTable}}` / `{{teamDir}}` / `{{seatDir}}` as global content, and `{{handle}}` / `{{role}}` /
+  `{{scope}}` inside a per-seat template. **`{{rosterTable}}` is a generated markdown table** — hand-mirroring with a partial token
   list leaves a literal `{{rosterTable}}` or a wrong roster. (Unknown tokens are left untouched by
   design, which is what makes the `grep -rn '{{'` smoke below meaningful.)
 - ◻ **Any skill that describes what the template contains.** `bootstrap` renders it; `join` and

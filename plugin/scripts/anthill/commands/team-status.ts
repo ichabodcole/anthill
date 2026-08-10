@@ -15,7 +15,6 @@ interface StatusData {
   /** Which of the three presence states the channel actually reported. `present`
    * is empty for BOTH `none` and `unknown` — read this to tell them apart. */
   presence: SeatPresence["state"];
-  humans: string[];
   board: BoardCounts | null;
   /** Title of the board the counts came from — labels an ambient/stranger board
    * (read off bounty's global "latest"), so it isn't mistaken for this team's. */
@@ -23,19 +22,24 @@ interface StatusData {
   warnings?: string[];
 }
 
-// `anthill status` — combined snapshot of who's on the grapevine channel and the
+// `anthill status` — combined snapshot of who's on the comms channel and the
 // bounty board's column counts. Channel comes from .anthill/config.json (overridable
 // with --channel). Degrades gracefully: a missing daemon/board is a warning.
 export const teamStatusCommand = defineAnthillCommand({
   meta: {
     name: "status",
-    description: "Who's on the channel + the task board state (grapevine + bounty)",
+    description: "Who's on the channel + the task board state (comms + bounty)",
     scope: "workspace",
   },
   args: {
     channel: {
       type: "string",
-      description: "Grapevine channel (default: config.channel)",
+      description: "Comms channel (default: config.channel)",
+      valueHint: "name",
+    },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
       valueHint: "name",
     },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
@@ -43,11 +47,14 @@ export const teamStatusCommand = defineAnthillCommand({
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "status");
+    const config = requireConfig(format, "status", {
+      team: ctx.args.team as string | undefined,
+      channel: ctx.args.channel as string | undefined,
+    });
     const channel = (ctx.args.channel as string | undefined) || config.channel;
     const warnings: string[] = [];
 
-    // Presence comes from `seatPresence`, NOT from an inline grapevine read.
+    // Presence comes from `seatPresence` — ONE shared implementation.
     //
     // This command had its own SECOND copy of the presence logic, so the fix
     // that made `down` span both wires left `status` still single-wire: it
@@ -60,7 +67,9 @@ export const teamStatusCommand = defineAnthillCommand({
     // Two copies of one verdict is the defect; patching the second copy would
     // have left the defect and removed its symptom. Found by the lead against a
     // running session, one command outside the card that fixed the first copy.
-    const { presence: classified, humans } = await seatPresence(channel, config);
+    // The lesson outlived the two-wire era that produced it — it is why this
+    // still calls the shared helper now that there is only one wire to read.
+    const classified = seatPresence(channel, config);
     const presence: SeatPresence["state"] = classified.state;
     const present = classified.state === "present" ? classified.seats : [];
     if (classified.state === "unknown") {
@@ -74,7 +83,6 @@ export const teamStatusCommand = defineAnthillCommand({
       channel,
       present,
       presence,
-      humans,
       board,
       ...(boardTitle && { boardTitle }),
       ...(warnings.length > 0 && { warnings }),
@@ -90,14 +98,17 @@ export const teamStatusCommand = defineAnthillCommand({
         // "(nobody)" is a claim. Only make it when the channel actually said so
         // — otherwise say we could not tell. A reader who sees "(nobody)" after
         // a dead daemon concludes the team stood down.
+        // "On the vine" named the wire this verdict does NOT come from. It read
+        // as a live grapevine roster right through the swap — and a label that
+        // names the wrong wire is worse than an unlabelled one, because it tells
+        // a lead which wire to go and check when the answer surprises them.
         lines.push(
           d.presence === "present"
-            ? `On the vine: ${d.present.join(", ")}`
+            ? `On comms: ${d.present.join(", ")}`
             : d.presence === "none"
-              ? "On the vine: (nobody)"
-              : "On the vine: (unknown — could not read presence)",
+              ? "On comms: (nobody)"
+              : "On comms: (unknown — could not read presence)",
         );
-        if (d.humans.length > 0) lines.push(`Humans: ${d.humans.join(", ")}`);
         if (d.board) {
           const label = d.boardTitle ? `Board «${d.boardTitle}»` : "Board";
           lines.push(

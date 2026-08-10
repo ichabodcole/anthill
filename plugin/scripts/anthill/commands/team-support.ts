@@ -7,19 +7,47 @@
  * roster, the default spawn set — is config-driven now.
  */
 
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { emitError, type OutputFormat } from "../agent-layer.ts";
 import { hasDeparted, readPosition, readSessionOpen } from "../comms.ts";
-import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
-import { execCoord, firstErrorLine, parseJsonLine, resolveCoordCli } from "../coord.ts";
+import { ConfigError, loadProject, type ResolvedConfig, type ResolvedProject } from "../config.ts";
+import { execCoord, parseJsonLine, resolveCoordCli } from "../coord.ts";
+import { readPin, resolveTeam, type TeamRung, type TeamSelector } from "../team-resolve.ts";
 
 /**
- * Load the resolved `.anthill/config.json` for a team command, or emit a clear
- * error and exit(1). Centralizes the "no config yet" failure so every command
- * fails the same way (pointing at `anthill:bootstrap`).
+ * Load the resolved config for a team command — for the ONE TEAM this invocation
+ * is about — or emit a clear error and exit(1). Centralizes both the "no config
+ * yet" failure (pointing at `anthill:bootstrap`) and the "which team?" decision,
+ * so every command answers them the same way.
+ *
+ * ⚠ ONE INSERTION POINT IS NOT ENOUGH, and this doc comment is the reminder.
+ * `--team` must ALSO be declared on each command locally — root `args` are not
+ * inherited into subcommands (`cli.ts`) — and `team-comms.ts` deliberately
+ * bypasses this function with its own loader. Threading the ladder here and
+ * stopping is how the central safety requirement ends up green while
+ * `anthill comms read` still binds to whatever config it finds up-tree.
  */
-export function requireConfig(format: OutputFormat, command: string): ResolvedConfig {
+export function requireConfig(
+  format: OutputFormat,
+  command: string,
+  sel: TeamSelector & { channel?: string | undefined; session?: string | undefined } = {},
+): ResolvedConfig {
+  return requireTeam(format, command, sel).team;
+}
+
+/**
+ * The project, WITHOUT resolving a team — and the distinction is load-bearing.
+ *
+ * `anthill team use <name>` is the command you run precisely BECAUSE the project
+ * is ambiguous. Routing it through `requireTeam` would make it throw "two teams
+ * and nothing selected one" and name `anthill team use` as the remedy — for the
+ * command you are already running. A project with no pin and two teams must be
+ * able to gain a pin.
+ */
+export function requireProject(format: OutputFormat, command: string): ResolvedProject {
   try {
-    return loadConfig();
+    return loadProject();
   } catch (err) {
     if (err instanceof ConfigError) {
       emitError({ format, command, error: err.message });
@@ -27,6 +55,186 @@ export function requireConfig(format: OutputFormat, command: string): ResolvedCo
     }
     throw err;
   }
+}
+
+/**
+ * The same resolution, with the PROJECT and the RUNG kept.
+ *
+ * Most commands want only their team and say so by calling `requireConfig`. Three
+ * things need more, and each needs a different part: `anthill team show` prints
+ * the rung, `anthill team ls`/`use` and the convene guard reason about EVERY
+ * configured team, and `spawn` needs to know whether this project has more than
+ * one — a single-team project must not gain an `ANTHILL_TEAM=` in its pane launch
+ * lines, which would be a visible change to a repo that configured nothing.
+ */
+export function requireTeam(
+  format: OutputFormat,
+  command: string,
+  sel: TeamSelector & { channel?: string | undefined; session?: string | undefined } = {},
+): { project: ResolvedProject; team: ResolvedConfig; via: TeamRung } {
+  try {
+    const project = loadProject();
+    const { team, via } = resolveTeam(project, {
+      team: sel.team,
+      env: process.env,
+      pin: readPin(project.projectRoot),
+    });
+    rejectOtherTeam(project, team, sel);
+    return { project, team, via };
+  } catch (err) {
+    if (err instanceof ConfigError) {
+      emitError({ format, command, error: err.message });
+      process.exit(1);
+    }
+    throw err;
+  }
+}
+
+/**
+ * Refuse a `--channel`/`--session` that names a DIFFERENT configured team.
+ *
+ * The hazard is narrow and specific: the team resolved to A, and the value points
+ * at B, so the command would half-address each — B's wire with A's roster, gate
+ * and seat docs. Naming a value that matches NO configured team stays allowed;
+ * that is a legitimate escape hatch (an ad-hoc session, a channel outside the
+ * config) and refusing it would break existing single-team use.
+ */
+export function rejectOtherTeam(
+  project: ResolvedProject,
+  resolved: ResolvedConfig,
+  sel: { channel?: string | undefined; session?: string | undefined },
+): void {
+  for (const [flag, value] of [
+    ["--channel", sel.channel],
+    ["--session", sel.session],
+  ] as const) {
+    if (!value) continue;
+    const owner = project.teams.find((t) => t.channel === value && t.name !== resolved.name);
+    if (owner) {
+      throw new ConfigError(
+        `${flag} "${value}" belongs to team "${owner.name}", but this command resolved to team ` +
+          `"${resolved.name}". Use \`--team ${owner.name}\` to address that team — passing its ` +
+          `channel alone would run "${owner.name}"'s wire against "${resolved.name}"'s roster, ` +
+          "gate and seat docs.",
+      );
+    }
+  }
+}
+
+/**
+ * Which configured teams look LIVE right now — every team, not just the resolved
+ * one.
+ *
+ * ⚠ THE SCOPE IS THE WHOLE POINT. The existing presence guard
+ * (`seatPresence(config.channel, config)` in `down`) is scoped to ONE team, so a
+ * stale resolution lets you switch away from a live team and strand its seats:
+ * they keep working while every command the lead runs resolves somewhere else.
+ * Both callers — `team use` and the `convene` guard — must ask about all of them.
+ *
+ * `unknown` COUNTS AS LIVE, matching `shouldBlockTeardown`'s direction and for the
+ * same asymmetry: a false "live" costs one `--force`, a false "idle" strands a
+ * working seat. An advisory signal may push toward the recoverable failure and
+ * must never push toward the other.
+ */
+export function liveTeams(project: ResolvedProject): Array<{
+  name: string;
+  channel: string;
+  presence: SeatPresence;
+}> {
+  const live: Array<{ name: string; channel: string; presence: SeatPresence }> = [];
+  const boardHolder = boardBoundTo(project);
+  for (const team of project.teams) {
+    // ⚠ THE BOARD BINDING IS CHECKED FIRST, BECAUSE IT IS WRITTEN FIRST.
+    //
+    // The convene guard's stated reason is `.bounty-session` — a single repo-root
+    // file. But every signal below comes from the comms session-open record, which
+    // `spawn` writes, while `.bounty-session` is written by `convene`. So the
+    // entire convene → brief → spawn window was unguarded, in the guard's own
+    // scenario. Measured on a two-team fixture:
+    //
+    //   $ anthill convene --team dev    → .bounty-session = k-myproject-1a36f1b1
+    //   $ anthill convene --team lean   → ok:true, REBOUND to k-lean-1a36f1b1
+    //
+    // No refusal, and `dev`'s board is now `lean`'s underneath its seats — exactly
+    // the outcome the guard exists to prevent, reachable in the seconds before any
+    // seat is spawned. A guard that reads a LATER artifact than the one it names
+    // cannot cover the window between them.
+    if (boardHolder === team.name) {
+      live.push({
+        name: team.name,
+        channel: team.channel,
+        presence: { state: "unknown", reason: "holds the pinned board (`.bounty-session`)" },
+      });
+      continue;
+    }
+    // ⚠ NEVER CONVENED IS A POSITIVE OBSERVATION, and it must be made BEFORE
+    // asking about presence. `seatPresence` answers `unknown` for a team with no
+    // session-open record — correctly, since it cannot scope departures without
+    // one — and `unknown` counts as live below. Applied to a team that has simply
+    // never been convened, that reads every fresh project as fully live and
+    // refuses `anthill team use` on the exact repo it exists to serve. Measured:
+    // a brand-new two-team config refused BOTH teams.
+    //
+    // `down` does not hit this because it runs only after confirming the tmux
+    // session exists; there is no such precondition here, so the precondition has
+    // to be stated. The absence of the record is not an absence we failed to
+    // observe — it is the file the open would have written, and it is not there.
+    if (!readSessionOpen(team.teamDirPath(), team.channel)) continue;
+
+    const presence = seatPresence(team.channel, team);
+    if (presence.state !== "none") {
+      live.push({ name: team.name, channel: team.channel, presence });
+    }
+  }
+  return live;
+}
+
+/** The repo-root marker `bounty open --pin` writes: this checkout's bound board. */
+export const BOUNTY_SESSION_FILE = ".bounty-session";
+
+/**
+ * PURE: which configured team a pinned board id belongs to, or `null`.
+ *
+ * ⚠ THIS READS SPELLBOOK'S ID FORMAT, and that coupling is deliberate but has to
+ * be held honestly. anthill opens with `--session-key <channel>`
+ * (`bountyOpenArgs`), and bounty derives `k-<key>-<hash>`. Nothing else in anthill
+ * parses this file.
+ *
+ * **The prefix test is unambiguous because channels are validated PREFIX-FREE**
+ * (`config.ts`) — the rule that exists so `anthill attach` cannot fold
+ * `<channel>-<suffix>` into a sibling's menu. At most one configured channel can
+ * match, by construction.
+ *
+ * **What keeps this from rotting silently is the round-trip test, not this
+ * comment:** `team-support.boardbinding.test.ts` runs a real `convene` and asserts
+ * that what it wrote is recognized here. If spellbook changes its derivation, that
+ * test goes RED — rather than this returning `null` forever and the guard quietly
+ * failing open, which is the failure mode that produced the bug it fixes.
+ */
+export function boardOwnerFromBinding(
+  binding: string,
+  teams: Array<{ name: string; channel: string }>,
+): string | null {
+  const id = binding.trim();
+  if (id === "") return null;
+  const owner = teams.find((t) => id.startsWith(`k-${t.channel}-`) || id === t.channel);
+  return owner ? owner.name : null;
+}
+
+/** The fs half: read `.bounty-session` and name the team holding it, if any. */
+function boardBoundTo(project: ResolvedProject): string | null {
+  const path = join(project.projectRoot, BOUNTY_SESSION_FILE);
+  if (!existsSync(path)) return null;
+  return boardOwnerFromBinding(readFileSync(path, "utf8"), project.teams);
+}
+
+/** PURE: how a live team reads in a refusal — who is on it, or why we cannot tell. */
+export function describeLiveTeam(live: { name: string; presence: SeatPresence }): string {
+  if (live.presence.state === "present") {
+    return `"${live.name}" (seats present: ${live.presence.seats.join(", ")})`;
+  }
+  const reason = live.presence.state === "unknown" ? live.presence.reason : "state not observed";
+  return `"${live.name}" (could not confirm it is idle: ${reason})`;
 }
 
 export interface BoardCounts {
@@ -325,35 +533,22 @@ export function commsPresence(
   );
 }
 
-/**
- * PURE: combine presence across the wires into ONE verdict, fail-closed.
+/*
+ * `combinePresence` lived here — a fail-closed lattice over TWO wires, whose one
+ * rule was "`none` requires a positive observation of absence on EVERY wire
+ * consulted."
  *
- * The lattice, and every rule is the same rule: **`none` requires a positive
- * observation of absence on EVERY wire consulted.**
+ * It is gone because there is one wire. The rule it enforced did not go with it:
+ * it now lives where it always actually held, in `commsPresence`'s requirement
+ * that `none` means `spawned ≠ ∅ ∧ every spawned seat has a departure record`.
+ * A lattice over a single input is the identity function, and keeping one would
+ * imply a second wire exists to be combined with.
  *
- *   - either wire `present`  → present (union of seats)
- *   - either wire `unknown`  → unknown
- *   - both `none`            → none
- *
- * A team that runs one wire and not the other is the normal case, not an edge
- * case: this session armed comms alone and deliberately left the vine
- * unsubscribed. So a verdict derived from one wire is a verdict about that wire,
- * and the bug was reporting it as a verdict about the team.
+ * ⚠ Restore it — do not re-derive it — if anthill ever grows a second presence
+ * source. The subtle part was never the union; it was that `unknown` outranks
+ * `none`, and that ordering is the reason a broken wire cannot authorise a
+ * teardown. See `seatPresence` for the case analysis that justified removal.
  */
-export function combinePresence(a: SeatPresence, b: SeatPresence): SeatPresence {
-  const seats = [
-    ...(a.state === "present" ? a.seats : []),
-    ...(b.state === "present" ? b.seats : []),
-  ];
-  if (seats.length > 0) return { state: "present", seats: [...new Set(seats)].sort() };
-  const unknowns = [a, b].filter(
-    (p): p is { state: "unknown"; reason: string } => p.state === "unknown",
-  );
-  if (unknowns.length > 0) {
-    return { state: "unknown", reason: unknowns.map((u) => u.reason).join(" · ") };
-  }
-  return { state: "none" };
-}
 
 /**
  * Advisory pid liveness — `process.kill(pid, 0)`. ESRCH means gone; **EPERM
@@ -410,90 +605,56 @@ function commsPresenceFor(config: ResolvedConfig, channel: string): SeatPresence
 }
 
 /**
- * PURE classifier (the unit-test target) over what grapevine's `who` returned.
- *
- * Every branch that is not a positively-observed subscriber list is `unknown`.
- * The one that reads like an answer and is not: `daemon: false` arrives with
- * `ok: true` and parses cleanly — the call succeeded and told us the wire is
- * down. That is the least information available about who is present, not the
- * most.
- */
-export function classifyPresence(
-  result: { ok: boolean; stderrLine?: string },
-  parsed: { daemon?: boolean; subscribers?: string[] } | null,
-): SeatPresence {
-  if (!result.ok) {
-    return { state: "unknown", reason: result.stderrLine || "grapevine 'who' failed" };
-  }
-  if (!parsed) return { state: "unknown", reason: "grapevine 'who' returned no parseable JSON" };
-  if (parsed.daemon === false) {
-    return { state: "unknown", reason: "grapevine daemon not running — no presence available" };
-  }
-  // Absent is not empty. A payload with no `subscribers` key is a shape we did
-  // not expect, and guessing "empty" is the fail-open direction.
-  if (!parsed.subscribers) {
-    return { state: "unknown", reason: "grapevine 'who' returned no subscribers field" };
-  }
-  // Dedupe by handle — a seat with >1 live connection (vine tail + board tail)
-  // otherwise shows up twice. Presence is "who's here", not sockets.
-  const seats = [...new Set(parsed.subscribers)].sort();
-  return seats.length === 0 ? { state: "none" } : { state: "present", seats };
-}
-
-/**
- * Seat presence on the grapevine channel. NEVER throws — but a failure now
- * reports `unknown` rather than an empty list.
+ * Seat presence. **Comms is the sole wire, so this IS `commsPresenceFor`** — the
+ * grapevine leg is gone, per the human's Q4 ruling that grapevine leaves
+ * anthill's model entirely (`docs/projects/comms-as-default/proposal.md`).
  *
  * The previous contract was "any failure returns `[]` so a broken vine can never
  * wedge a teardown." That traded a wedged teardown for a silent one: the only
  * consumer is `down`'s guard, which read `[]` as "the team has stood down" and
  * killed the panes. `--force` is where "tear down anyway" belongs — a human
- * saying so, not a guard guessing on our behalf.
+ * saying so, not a guard guessing on our behalf. **That contract survives the
+ * removal intact**; it just has one wire to uphold it on instead of two.
+ *
+ * ## What removing the vine leg actually changed, by case analysis
+ *
+ * The verdict was `combinePresence(vine, comms)`: present wins, else any
+ * `unknown` survives, else `none`. Enumerating both legs, **the vine could
+ * change the answer in exactly one cell**:
+ *
+ * | vine      | comms     | was       | now       |
+ * | --------- | --------- | --------- | --------- |
+ * | `none`    | any       | = comms   | = comms   |
+ * | `unknown` | `present` | present   | present   |
+ * | `unknown` | `unknown` | unknown   | unknown   |
+ * | `unknown` | **`none`**| **unknown** (blocks teardown) | **`none`** (permits it) |
+ *
+ * `present` was unreachable for the vine — nothing joins that channel any more —
+ * so the leg was inert everywhere except when grapevine was **unresolvable**.
+ *
+ * **And that one cell was a bug, not a safety margin.** `resolveCoordCli` throws
+ * when spellbook's grapevine is absent, which is the ordinary state of a
+ * consuming project that installed anthill after the swap. For them the verdict
+ * could never be `none`, so **`down` blocked every clean teardown and demanded
+ * `--force`** — the "degrades into always-block" failure this file's own comments
+ * name as the thing that "trains people to pass `--force` reflexively and thereby
+ * removes the guard for real."
+ *
+ * **The safety argument does not rest on the vine.** It rests on `none` requiring
+ * a POSITIVE observation of departure (`spawned ≠ ∅ ∧ every spawned seat has a
+ * departure record`), which is a comms property and is unchanged here.
+ *
+ * ⚠ `humans` is gone with the leg. It was read from grapevine's `who` payload and
+ * was anthill's ONLY source of it. Ruled 2026-08-08: anthill does not give agents
+ * visibility into the human — **the arrow points the other way.** The capability
+ * was nominal and pointed the wrong direction, so removing it costs nothing.
  */
-export interface TeamPresence {
-  presence: SeatPresence;
-  /** Humans watching the VINE. Not part of the presence verdict — they are
-   * observers, not seats — but read from the same payload, which is why this
-   * rides along rather than costing a second call. */
-  humans: string[];
-}
-
-export async function seatPresence(
-  channel: string,
-  config?: ResolvedConfig,
-): Promise<TeamPresence> {
-  let vine: SeatPresence;
-  let humans: string[] = [];
-  try {
-    const grapevineCli = resolveCoordCli("grapevine");
-    const who = await execCoord(grapevineCli, ["who", channel]);
-    const parsed = parseJsonLine<{
-      daemon?: boolean;
-      subscribers?: string[];
-      humans?: string[];
-    }>(who.stdout);
-    vine = classifyPresence(
-      { ok: who.ok, stderrLine: firstErrorLine(who.stderr, "could not read channel") },
-      parsed,
-    );
-    humans = [...new Set(parsed?.humans ?? [])].sort();
-  } catch (err) {
-    vine = { state: "unknown", reason: `grapevine CLI unresolved: ${(err as Error).message}` };
-  }
-  // With no config we cannot reach the comms wire at all — and saying so is the
-  // point. Returning the vine's verdict alone here would be the original bug
-  // with an extra step: a one-wire answer presented as a team-wide one.
+export function seatPresence(channel: string, config?: ResolvedConfig): SeatPresence {
+  // No config means the comms wire cannot be reached AT ALL, and saying so is
+  // the point. There is no second wire to fall back to any more, so the honest
+  // answer is `unknown` — never an absence we did not observe.
   if (!config) {
-    return {
-      presence:
-        vine.state === "none"
-          ? {
-              state: "unknown",
-              reason: "comms wire not consulted (no config) — vine alone reported nobody",
-            }
-          : vine,
-      humans,
-    };
+    return { state: "unknown", reason: "comms wire not consulted — no config" };
   }
-  return { presence: combinePresence(vine, commsPresenceFor(config, channel)), humans };
+  return commsPresenceFor(config, channel);
 }

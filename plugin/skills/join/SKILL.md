@@ -23,14 +23,22 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
      runtime label, etc.) are **separate namespaces** — they need not match. If you're `mosaic` here
      and `Gandalf` on a bridge, that's fine; this seat handle is who you are _on this team_.
 
-2. **Re-ground in your seat (the heart of this).** Read, in order (paths from `.anthill/config.json`):
+2. **Re-ground in your seat (the heart of this).** Read, in order. **`<teamDir>` and `<seatDir>` are
+   RESOLVED, not literal** — they come from `paths` in `.anthill/config.json` and default to
+   `.anthill/` and `.anthill/dev/`. **The manifest `anthill join` just printed lists them already
+   resolved for this repo; read the paths from there, not from the defaults shown here:**
    - the **`grounding`** docs (the _product_ context) — your seat doc assumes you know it;
-   - `.anthill/README.md` — the **SOP** (how the team works, the rituals, commit discipline);
-   - `.anthill/principles.md` — **what this team learned the hard way**, each with its scar. Short,
+   - `<teamDir>/README.md` — the **SOP** (how the team works, the rituals, commit discipline);
+   - `<teamDir>/principles.md` — **what this team learned the hard way**, each with its scar. Short,
      and the highest-leverage read here;
-   - `.anthill/dev/seams.md` — the shared inter-seat **contracts**. You **defer** to these; you never
+   - `<seatDir>/seams.md` — the shared inter-seat **contracts**. You **defer** to these; you never
      restate them in your own doc;
-   - `.anthill/dev/<handle>.md` — **your own living doc**: its epitaph, scope, boundaries,
+   - **⚠ If this project configures several teams, these docs are the RESOLVED team's** — you are
+     not told which one, by design, because a seat should never have to name a team. **A wrong
+     binding looks exactly like amnesia**: your seat doc reads thin, the seams look unfamiliar, the
+     principles are somebody else's. That is `anthill team show`, not a re-read — it names the team
+     and the rung that chose it (this pane's `ANTHILL_TEAM`, the repo's pin, or being the only team).
+   - `<seatDir>/<handle>.md` — **your own living doc**: its epitaph, scope, boundaries,
      relationships, reflexes, anti-patterns, hard-won lessons. This is _you_. Internalize it before
      you touch code.
      - **Start with the `## Epitaph` at the top, and give it more weight than its length suggests.**
@@ -206,14 +214,14 @@ status`** shows who's on + the board.
        ([#54](https://github.com/ichabodcole/anthill/issues/54)). `pull` for catch-up, `tail` for live.
 
 4. **Mint your session scratch.** Create your running-capture file:
-   **`.anthill/scratch/<handle>/<YYYY-MM-DD>-<slug>.md`** (it's gitignored — `anthill init` added the
+   **`<teamDir>/scratch/<handle>/<YYYY-MM-DD>-<slug>.md`** (it's gitignored — `anthill init` added the
    line). This is where you drop cheap notes as you work ("this just bit me", "this seam is fuzzy") —
    the raw material you'll synthesize at finalize. Start it now so capture is frictionless later.
    - **Scratch is gitignored — it does NOT survive the session.** Everything you learn lives in an
      untracked file until you synthesize it, so an abrupt session-end evaporates the whole trail —
      precisely the loss anthill exists to prevent. Synthesize into your seat doc at finalize, **or
      earlier, whenever the reasoning is warm**. Earlier is not jumping the gun; it's insurance.
-   - **`.anthill/scratch/` is the right home for _throwaway artifacts_** — verify mints, screenshots,
+   - **`<teamDir>/scratch/` is the right home for _throwaway artifacts_** — verify mints, screenshots,
      seeds, any harness output. It is **gitignored, and excluded from the typecheck/lint target set**,
      so a stray artifact dropped there never trips the shared tree and blocks another seat's land.
      Don't scatter throwaways at the repo root or under `plugin/`, where the gate _will_ scan them.
@@ -298,7 +306,9 @@ status`** shows who's on + the board.
 ## Join checklist (the beats that get skipped)
 
 - ◻ **Grounded** in your seat (grounding docs → SOP → **principles** → seams → your seat doc).
-  `.anthill/principles.md` is short and is the highest-leverage read in that list. A doc flagged
+  **Docs feel thin or unfamiliar on a multi-team project? That is `anthill team show`, not a
+  re-read** — a wrong team binding is indistinguishable from an amnesiac seat.
+  `<teamDir>/principles.md` is short and is the highest-leverage read in that list. A doc flagged
   **⚠ unfilled template** in your join output is _not_ evidence the project lacks that content —
   it means nobody wrote it yet. Say so to the lead rather than inferring from it.
 - ◻ **Caught up** if you joined mid-session — the **finite read** verb, anchored with `--since <id>`,
@@ -380,7 +390,7 @@ status`** shows who's on + the board.
   both times. **A recovery that looks clean and is half-missing is worse than one that fails**, and
   the file you lose is whichever one you weren't looking at. `cd` to the root first, then apply, then
   **diff what you got against what you preserved** rather than trusting the exit code.
-- ◻ **Scratch minted** — `.anthill/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
+- ◻ **Scratch minted** — `<teamDir>/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
 - ◻ **Route through the lead — and SAY when you're waiting.** Questions + decisions go to the
   lead/liaison on comms, not direct to the human. But routing through the lead is a **default, not
   an exclusive channel** — the human can attach to your pane at any time, so never assume you're

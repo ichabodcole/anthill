@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, refuseArg, resolveFormat } from "../agent-layer.ts";
 import { defineCommand } from "../define.ts";
 import { PROJECT_PACKAGE_NAME, PROJECT_ROOT } from "../paths.ts";
 import { nowMillis } from "../runtime.ts";
@@ -12,15 +12,29 @@ interface InfoShowData {
   projectPackageName: string;
 }
 
+/** Why this verb refuses `--team`. ONE string, used by the arg def AND the
+ * refusal in `run` — two copies of a reason drift, and a refusal that argues
+ * with itself teaches worse than the generic "unknown option" it replaced. */
+const REFUSED_TEAM =
+  "`info` reports on the PLUGIN, not on a team — there is nothing here a team scopes";
+
 export const infoShowCommand = defineCommand({
   meta: {
     name: "show",
     description: "Show resolved paths, runtime, and project info",
   },
   args: {
+    team: { type: "string", refused: REFUSED_TEAM },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
+    refuseArg({
+      format: resolveFormat(ctx.args.format as string | undefined),
+      command: "info",
+      flag: "--team",
+      value: ctx.args.team,
+      why: REFUSED_TEAM,
+    });
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
     try {

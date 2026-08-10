@@ -151,11 +151,132 @@ silently-skipped one are the same artifact to a future reader** — and this pro
 is that `UNCHECKED` is a verdict that must be written. **The criterion is DISCHARGED BY A DIFFERENT
 ROUTE, by the human's decision, and the protocol is still not amended.**
 
+---
+
+## 🔴 AMENDMENT, 2026-08-09 — THE SUBJECT DIED AFTER WE CLOSED, AND IT ANSWERS QUESTION 1
+
+**Read after the report above, which stands as written. Nothing below changes the NOT TESTED
+verdict** — it changes what we know about the daemon, not what this run measured.
+
+```
+2026-08-09T00:02:00.725Z  k-anthill-dev-adad92ec  pid 74370  reason:"timeout"  subscribers:0  idleMs:7200099.21
+```
+
+**`pid 74370` is this report's measurement subject.** It was alive at session close and idle-died
+**two hours later**, at the same threshold as every other death on this board.
+
+**⚠ This is NOT a `#64` confirmation.** `subscribers: 0`, and nobody was tailing — a daemon with no
+subscribers idling out at its idle timeout is the timer **working**. It is reported because it
+resolves a question this report left open, not because it demonstrates the bug.
+
+### It answers Q1 — and it answers it by making the question stop mattering
+
+**Q1 asked whether pids 15132 / 93692 were running `2.1.0`, because the value of those two rows
+turned on it.** We still do not know. **We no longer need to:** `74370` was spawned by this session
+from the installed `2.1.0`, so **its build is certain** — and it died with `idleMs` within **0.1
+seconds** of both of them. **`2.1.0` idles out at 2h with 0 subscribers exactly as its predecessors
+did.** The "before/after" arm the report was fishing for shows **no difference in the observable**.
+
+### The census — 34 deaths, 8 boards, four weeks, one number
+
+Read from the full `~/.bounty/daemon.log` (499 frames), **not from the excerpt above**:
+
+| fact                      | value                                                                                                          |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `reason:"timeout"` frames | **34**, 2026-07-14 → 2026-08-09                                                                                |
+| distinct boards           | **8** (`anthill-dev`, `spellbook`, `dream-flute`, `operator`, `story-loom`, `media-buffet`, `forge`, + probes) |
+| `subscribers` at death    | **0 — all 34, no exceptions**                                                                                  |
+| `idleMs` at death         | **≈ 7 200 000 (2h), every one within ±0.22s**                                                                  |
+| the single outlier        | `k-daed-probe`, `idleMs 5215` — a deliberate short-timeout probe, not a counterexample                         |
+
+**And the `subscribers` field is not stuck at zero — it reports up to 4.** Eight frames carry
+`subscribers > 0`; every one is a `reason:"close"` with `idleMs ≈ 0.1ms` (an explicit close while
+active). **So "0 at all 34 timeouts" is a real measurement, and that matters more than the count.**
+
+### 🔴 THE THING THE LOG CANNOT DO, AND IT IS THE WHOLE REASON A DEDICATED TEST EXISTS
+
+**A death at `subscribers: 0` is equally consistent with two stories, and the log has no frame that
+separates them:**
+
+1. **No tail was ever attached** — the daemon idled out correctly, by design.
+2. **A tail WAS attached and got severed** — `subscriberCount` fell to 0, and the daemon idled out
+   two hours later. **That is `#64`'s mechanism exactly.**
+
+**There is no subscriber-attach/detach frame in the log.** By the time the timeout fires, both
+stories have produced a byte-identical record. **34 deaths cannot distinguish them, and neither
+could 340** — which is why the answer needs an experiment that holds a tail open and watches the
+connection, rather than more log-reading.
+
+**⚠ So do not read the census as evidence for `#64`, and do not read it as evidence against it.**
+It is evidence about the _idle timeout_, which is a different claim.
+
+### 📎 Also observed — `snapshotBackedUp` fired in the wild, unprompted
+
+```
+2026-08-08T21:03:46.825Z  k-spellbook-f4249899  pid 23405  reason:"snapshotBackedUp"
+   priorTasks:35  nextTasks:0  backup:.../k-spellbook-f4249899.pre-1786223026825.bak.json
+```
+
+**A real board, not ours, about to shrink 35 → 0 — caught and backed up automatically.** `S13-N`
+proposes re-scoping `boardShadowWarning` onto exactly this field; **this is the field doing its job
+on live traffic, which is stronger than the source read this report already recorded.** The ruling
+is still Cole's.
+
+### ✅ RESULT 2026-08-09T02:32Z — the board SURVIVED its idle timeout with a tail attached
+
+**Pre-registered outcome, and it went the way the log could not predict.** The daemon crossed
+7200 s at `t+7202s` and was still serving at `t+7803s`. Evidence of continuous attachment is
+**received bytes, not process liveness**: the tail's keepalive stream grew `+304 bytes / 240 s`
+with **no gap for 1h40m** — 16 frames per 4 min, one per 15 s, matching `server.ts:923`.
+A drop-and-reconnect would show as a discontinuity; there is none.
+
+**This is the verification the maintainer said was missing** — `#64`'s own thread records 2.1.0 as
+shipping _"a probable root cause — staying open, because nobody has reproduced the original symptom
+against it."_ Posted as `#64` comment `5229438564`.
+
+**The mechanism is deterministic, and the arithmetic is the whole story:** the SSE keepalive is
+**15 s** and Bun's default request `idleTimeout` is **10 s**, so before 2.1.0 _every keepalive
+arrived 5 s after the connection had already been severed._ `subscriberCount` fell to 0 in every
+gap and `shouldIdleClose` (`server.ts:216` — returns false whenever `subscriberCount > 0`) then
+fired correctly. 2.1.0 sets `idleTimeout: 255` (`server.ts:1183`), ~17× the keepalive.
+
+**The control arm is our own pid 74370**: same machine, same 2.1.0 build, **no subscriber**, dead at
+7200 s to within 0.1 s. So the timeout works as documented and the subscriber is the variable.
+
+**⚠ A hypothesis this report should NOT be read as supporting.** Mid-probe, maestro proposed that
+the dream-flute team's keep-alive tail had been _attached to nothing_ — generalising from our own
+cwd-scoping scar below. **That is downgraded.** The `idleTimeout` mechanism explains their report
+better, it was already written in `#64`'s thread, and their tail was attached — it was being
+severed. **The scar was reached for instead of the document, which is the same failure this report
+already logs twice.** The non-attachment problem is real but separate, and is filed as
+spellbook`#98` on its own evidence: a tail that resolves no board retries forever, exits 0, and
+looks alive in `ps`.
+
+**What it does not establish:** n=1; 1.15.0 was never run side by side, so this shows 2.1.0 holds
+rather than reproducing the old failure; and it does not isolate _which_ property of the connection
+resets the clock (keepalive frames vs. the socket merely being open) — those imply different fixes
+if it ever regresses.
+
+### ▶ The dedicated test was launched 2026-08-09T00:32Z
+
+Board `k-anthill-64-probe-adad92ec`, daemon **pid 9772**, port 51922, **one live tail**, 4h window,
+zero-touch sampling to `~/.bounty/probe64/samples.log`. **It is on its OWN board key, so anthill
+development traffic cannot reset its idle timer** — which retires the design doc's claim that the
+experiment and ordinary work are mutually exclusive. **That claim was true of one board and was
+written as though true of the machine.**
+
+---
+
 ### The honest one-line summary for `#64`
 
 > **Survival: NOT TESTED — the workload never let the board idle.** **But the log carries two
 > `reason:"timeout"` deaths on this board at ~2h idle with 0 subscribers, and one of them is what
 > emptied our board between sessions.** **The protocol's one permitted `cli.ts` call went unspent.**
+
+_Superseded 2026-08-09T02:32Z by the dedicated probe — see the RESULT section above. Survival is now
+**TESTED and POSITIVE** on 2.1.0 with a subscriber attached. The line above remains accurate about
+what the **log** could establish, which was the point it was making; it is the log's limit, not a
+finding, and the probe is what moved past it._
 
 ## An unplanned first-hand finding, logged because it is `S13-N`'s subject
 

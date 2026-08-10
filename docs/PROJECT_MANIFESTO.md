@@ -77,6 +77,17 @@ with what makes sense."_
 - **The anthill adapts to the work.** App, process, _and team_ structure are mutable in service
   of the work. Persistent friction — toe-stepping, a seam that won't hold, an overloaded or idle
   seat — is a signal to reshape, not to endure.
+- **anthill is an INSTRUMENT FOR EXPERIMENTATION, not only a way to run a team.** _"One of the tent
+  poles of this project should be experimentation with teams — not just the ability to have a single
+  team in a project, but to experiment with different shapes to see what works for that project."_
+  — Cole, 2026-08-09. The principle is **broader than team shape** — anthill is an experimental
+  framework for multi-agent coordination and project development — and **team structure is simply the
+  first thing it should be able to run experiments ON.**
+  → **This is a design constraint, not an aspiration.** Anything welded into the tooling cannot be
+  varied, and anything unrecorded cannot be compared. Methodology that lives in skill prose is a
+  **constant across every team in the project**; a team shape that leaves no lineage **cannot be
+  attributed after the fact.** The principle above says structure adapts to the work — this one says
+  **adaptation without an instrument is just churn.**
 - **Three homes for knowledge.** Taste → the seat's living doc; truth → `seams.md` (single-source
   contracts, never restated); proof → tests.
 - **The team's value is the INTERSECTION, not the headcount.** _"Where you get the really interesting
@@ -114,9 +125,9 @@ with what makes sense."_
   app code, CI, or framework setup.
 - **It does not give AGENTS visibility into the HUMAN.** Ruled 2026-08-08: seats do not need to
   observe what the human is doing. **The arrow points the other way** — the human talks to the lead,
-  and the lead is their liaison. _(This is why removing anthill's only `humans` source, which came
-  from grapevine's presence call, costs nothing: the capability was nominal and pointed the wrong
-  way.)_
+  and the lead is their liaison. _(anthill's only `humans` source came from grapevine's presence call
+  and was **removed 2026-08-09** — the capability was nominal and pointed the wrong way, so it cost
+  nothing.)_
 - **It does not run without its dependencies.** spellbook (grapevine + bounty), Bun, tmux, and
   the `claude` CLI are required; bootstrap preflights them.
 
