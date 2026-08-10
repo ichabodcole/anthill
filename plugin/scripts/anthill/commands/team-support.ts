@@ -7,19 +7,47 @@
  * roster, the default spawn set — is config-driven now.
  */
 
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { emitError, type OutputFormat } from "../agent-layer.ts";
 import { hasDeparted, readPosition, readSessionOpen } from "../comms.ts";
-import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
+import { ConfigError, loadProject, type ResolvedConfig, type ResolvedProject } from "../config.ts";
 import { execCoord, parseJsonLine, resolveCoordCli } from "../coord.ts";
+import { readPin, resolveTeam, type TeamRung, type TeamSelector } from "../team-resolve.ts";
 
 /**
- * Load the resolved `.anthill/config.json` for a team command, or emit a clear
- * error and exit(1). Centralizes the "no config yet" failure so every command
- * fails the same way (pointing at `anthill:bootstrap`).
+ * Load the resolved config for a team command — for the ONE TEAM this invocation
+ * is about — or emit a clear error and exit(1). Centralizes both the "no config
+ * yet" failure (pointing at `anthill:bootstrap`) and the "which team?" decision,
+ * so every command answers them the same way.
+ *
+ * ⚠ ONE INSERTION POINT IS NOT ENOUGH, and this doc comment is the reminder.
+ * `--team` must ALSO be declared on each command locally — root `args` are not
+ * inherited into subcommands (`cli.ts`) — and `team-comms.ts` deliberately
+ * bypasses this function with its own loader. Threading the ladder here and
+ * stopping is how the central safety requirement ends up green while
+ * `anthill comms read` still binds to whatever config it finds up-tree.
  */
-export function requireConfig(format: OutputFormat, command: string): ResolvedConfig {
+export function requireConfig(
+  format: OutputFormat,
+  command: string,
+  sel: TeamSelector & { channel?: string | undefined; session?: string | undefined } = {},
+): ResolvedConfig {
+  return requireTeam(format, command, sel).team;
+}
+
+/**
+ * The project, WITHOUT resolving a team — and the distinction is load-bearing.
+ *
+ * `anthill team use <name>` is the command you run precisely BECAUSE the project
+ * is ambiguous. Routing it through `requireTeam` would make it throw "two teams
+ * and nothing selected one" and name `anthill team use` as the remedy — for the
+ * command you are already running. A project with no pin and two teams must be
+ * able to gain a pin.
+ */
+export function requireProject(format: OutputFormat, command: string): ResolvedProject {
   try {
-    return loadConfig();
+    return loadProject();
   } catch (err) {
     if (err instanceof ConfigError) {
       emitError({ format, command, error: err.message });
@@ -27,6 +55,186 @@ export function requireConfig(format: OutputFormat, command: string): ResolvedCo
     }
     throw err;
   }
+}
+
+/**
+ * The same resolution, with the PROJECT and the RUNG kept.
+ *
+ * Most commands want only their team and say so by calling `requireConfig`. Three
+ * things need more, and each needs a different part: `anthill team show` prints
+ * the rung, `anthill team ls`/`use` and the convene guard reason about EVERY
+ * configured team, and `spawn` needs to know whether this project has more than
+ * one — a single-team project must not gain an `ANTHILL_TEAM=` in its pane launch
+ * lines, which would be a visible change to a repo that configured nothing.
+ */
+export function requireTeam(
+  format: OutputFormat,
+  command: string,
+  sel: TeamSelector & { channel?: string | undefined; session?: string | undefined } = {},
+): { project: ResolvedProject; team: ResolvedConfig; via: TeamRung } {
+  try {
+    const project = loadProject();
+    const { team, via } = resolveTeam(project, {
+      team: sel.team,
+      env: process.env,
+      pin: readPin(project.projectRoot),
+    });
+    rejectOtherTeam(project, team, sel);
+    return { project, team, via };
+  } catch (err) {
+    if (err instanceof ConfigError) {
+      emitError({ format, command, error: err.message });
+      process.exit(1);
+    }
+    throw err;
+  }
+}
+
+/**
+ * Refuse a `--channel`/`--session` that names a DIFFERENT configured team.
+ *
+ * The hazard is narrow and specific: the team resolved to A, and the value points
+ * at B, so the command would half-address each — B's wire with A's roster, gate
+ * and seat docs. Naming a value that matches NO configured team stays allowed;
+ * that is a legitimate escape hatch (an ad-hoc session, a channel outside the
+ * config) and refusing it would break existing single-team use.
+ */
+export function rejectOtherTeam(
+  project: ResolvedProject,
+  resolved: ResolvedConfig,
+  sel: { channel?: string | undefined; session?: string | undefined },
+): void {
+  for (const [flag, value] of [
+    ["--channel", sel.channel],
+    ["--session", sel.session],
+  ] as const) {
+    if (!value) continue;
+    const owner = project.teams.find((t) => t.channel === value && t.name !== resolved.name);
+    if (owner) {
+      throw new ConfigError(
+        `${flag} "${value}" belongs to team "${owner.name}", but this command resolved to team ` +
+          `"${resolved.name}". Use \`--team ${owner.name}\` to address that team — passing its ` +
+          `channel alone would run "${owner.name}"'s wire against "${resolved.name}"'s roster, ` +
+          "gate and seat docs.",
+      );
+    }
+  }
+}
+
+/**
+ * Which configured teams look LIVE right now — every team, not just the resolved
+ * one.
+ *
+ * ⚠ THE SCOPE IS THE WHOLE POINT. The existing presence guard
+ * (`seatPresence(config.channel, config)` in `down`) is scoped to ONE team, so a
+ * stale resolution lets you switch away from a live team and strand its seats:
+ * they keep working while every command the lead runs resolves somewhere else.
+ * Both callers — `team use` and the `convene` guard — must ask about all of them.
+ *
+ * `unknown` COUNTS AS LIVE, matching `shouldBlockTeardown`'s direction and for the
+ * same asymmetry: a false "live" costs one `--force`, a false "idle" strands a
+ * working seat. An advisory signal may push toward the recoverable failure and
+ * must never push toward the other.
+ */
+export function liveTeams(project: ResolvedProject): Array<{
+  name: string;
+  channel: string;
+  presence: SeatPresence;
+}> {
+  const live: Array<{ name: string; channel: string; presence: SeatPresence }> = [];
+  const boardHolder = boardBoundTo(project);
+  for (const team of project.teams) {
+    // ⚠ THE BOARD BINDING IS CHECKED FIRST, BECAUSE IT IS WRITTEN FIRST.
+    //
+    // The convene guard's stated reason is `.bounty-session` — a single repo-root
+    // file. But every signal below comes from the comms session-open record, which
+    // `spawn` writes, while `.bounty-session` is written by `convene`. So the
+    // entire convene → brief → spawn window was unguarded, in the guard's own
+    // scenario. Measured on a two-team fixture:
+    //
+    //   $ anthill convene --team dev    → .bounty-session = k-myproject-1a36f1b1
+    //   $ anthill convene --team lean   → ok:true, REBOUND to k-lean-1a36f1b1
+    //
+    // No refusal, and `dev`'s board is now `lean`'s underneath its seats — exactly
+    // the outcome the guard exists to prevent, reachable in the seconds before any
+    // seat is spawned. A guard that reads a LATER artifact than the one it names
+    // cannot cover the window between them.
+    if (boardHolder === team.name) {
+      live.push({
+        name: team.name,
+        channel: team.channel,
+        presence: { state: "unknown", reason: "holds the pinned board (`.bounty-session`)" },
+      });
+      continue;
+    }
+    // ⚠ NEVER CONVENED IS A POSITIVE OBSERVATION, and it must be made BEFORE
+    // asking about presence. `seatPresence` answers `unknown` for a team with no
+    // session-open record — correctly, since it cannot scope departures without
+    // one — and `unknown` counts as live below. Applied to a team that has simply
+    // never been convened, that reads every fresh project as fully live and
+    // refuses `anthill team use` on the exact repo it exists to serve. Measured:
+    // a brand-new two-team config refused BOTH teams.
+    //
+    // `down` does not hit this because it runs only after confirming the tmux
+    // session exists; there is no such precondition here, so the precondition has
+    // to be stated. The absence of the record is not an absence we failed to
+    // observe — it is the file the open would have written, and it is not there.
+    if (!readSessionOpen(team.teamDirPath(), team.channel)) continue;
+
+    const presence = seatPresence(team.channel, team);
+    if (presence.state !== "none") {
+      live.push({ name: team.name, channel: team.channel, presence });
+    }
+  }
+  return live;
+}
+
+/** The repo-root marker `bounty open --pin` writes: this checkout's bound board. */
+export const BOUNTY_SESSION_FILE = ".bounty-session";
+
+/**
+ * PURE: which configured team a pinned board id belongs to, or `null`.
+ *
+ * ⚠ THIS READS SPELLBOOK'S ID FORMAT, and that coupling is deliberate but has to
+ * be held honestly. anthill opens with `--session-key <channel>`
+ * (`bountyOpenArgs`), and bounty derives `k-<key>-<hash>`. Nothing else in anthill
+ * parses this file.
+ *
+ * **The prefix test is unambiguous because channels are validated PREFIX-FREE**
+ * (`config.ts`) — the rule that exists so `anthill attach` cannot fold
+ * `<channel>-<suffix>` into a sibling's menu. At most one configured channel can
+ * match, by construction.
+ *
+ * **What keeps this from rotting silently is the round-trip test, not this
+ * comment:** `team-support.boardbinding.test.ts` runs a real `convene` and asserts
+ * that what it wrote is recognized here. If spellbook changes its derivation, that
+ * test goes RED — rather than this returning `null` forever and the guard quietly
+ * failing open, which is the failure mode that produced the bug it fixes.
+ */
+export function boardOwnerFromBinding(
+  binding: string,
+  teams: Array<{ name: string; channel: string }>,
+): string | null {
+  const id = binding.trim();
+  if (id === "") return null;
+  const owner = teams.find((t) => id.startsWith(`k-${t.channel}-`) || id === t.channel);
+  return owner ? owner.name : null;
+}
+
+/** The fs half: read `.bounty-session` and name the team holding it, if any. */
+function boardBoundTo(project: ResolvedProject): string | null {
+  const path = join(project.projectRoot, BOUNTY_SESSION_FILE);
+  if (!existsSync(path)) return null;
+  return boardOwnerFromBinding(readFileSync(path, "utf8"), project.teams);
+}
+
+/** PURE: how a live team reads in a refusal — who is on it, or why we cannot tell. */
+export function describeLiveTeam(live: { name: string; presence: SeatPresence }): string {
+  if (live.presence.state === "present") {
+    return `"${live.name}" (seats present: ${live.presence.seats.join(", ")})`;
+  }
+  const reason = live.presence.state === "unknown" ? live.presence.reason : "state not observed";
+  return `"${live.name}" (could not confirm it is idle: ${reason})`;
 }
 
 export interface BoardCounts {

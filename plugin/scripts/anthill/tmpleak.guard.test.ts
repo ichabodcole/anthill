@@ -47,10 +47,19 @@ const ALLOWED: Record<string, string> = {
   "commands/team-commit.test.ts": "try/finally at every makeRepo site; measured +0 per run",
   "commands/team-comms.test.ts": "per-test cleanup; measured +0 per run",
   "commands/team-field-notes.test.ts": "try/finally; measured +0 per run",
+  "commands/team-init.test.ts": "one module-level mint + afterAll(rmSync); measured +0 per run",
+  "commands/team-init.multiteam.test.ts":
+    "one module-level mint + afterAll(rmSync); every repo() is a subdir of it; measured +0 per run",
   "commands/team-join.test.ts": "try/finally; measured +0 per run",
   "commands/team-migrate.test.ts": "try/finally; measured +0 per run",
-  "config.test.ts": "try/finally; measured +0 per run",
+  "commands/team-support.boardbinding.test.ts":
+    "one module-level mint + afterAll(rmSync); every fixture is a subdir of it; measured +0 per run",
+  "commands/team-support.liveteams.test.ts":
+    "one module-level mint + afterAll(rmSync); measured +0 per run",
+  "config.test.ts":
+    "try/finally, plus two module-level mints with afterAll(rmSync); measured +0 per run",
   "scan.test.ts": "try/finally; measured +0 per run",
+  "team-resolve.test.ts": "one module-level mint + afterAll(rmSync); measured +0 per run",
   // The three #100 leakers now mint through a registered helper, so their only
   // remaining `mkdtempSync` is INSIDE that helper. They are listed because the
   // helper itself is a raw mint — removing the registry would leave this entry

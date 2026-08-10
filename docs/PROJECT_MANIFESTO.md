@@ -77,6 +77,17 @@ with what makes sense."_
 - **The anthill adapts to the work.** App, process, _and team_ structure are mutable in service
   of the work. Persistent friction — toe-stepping, a seam that won't hold, an overloaded or idle
   seat — is a signal to reshape, not to endure.
+- **anthill is an INSTRUMENT FOR EXPERIMENTATION, not only a way to run a team.** _"One of the tent
+  poles of this project should be experimentation with teams — not just the ability to have a single
+  team in a project, but to experiment with different shapes to see what works for that project."_
+  — Cole, 2026-08-09. The principle is **broader than team shape** — anthill is an experimental
+  framework for multi-agent coordination and project development — and **team structure is simply the
+  first thing it should be able to run experiments ON.**
+  → **This is a design constraint, not an aspiration.** Anything welded into the tooling cannot be
+  varied, and anything unrecorded cannot be compared. Methodology that lives in skill prose is a
+  **constant across every team in the project**; a team shape that leaves no lineage **cannot be
+  attributed after the fact.** The principle above says structure adapts to the work — this one says
+  **adaptation without an instrument is just churn.**
 - **Three homes for knowledge.** Taste → the seat's living doc; truth → `seams.md` (single-source
   contracts, never restated); proof → tests.
 - **The team's value is the INTERSECTION, not the headcount.** _"Where you get the really interesting

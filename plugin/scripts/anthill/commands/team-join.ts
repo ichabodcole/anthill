@@ -7,7 +7,7 @@ import { execCoord, firstErrorLine, resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { detectPlaceholder } from "../placeholder.ts";
 import { nowMillis } from "../runtime.ts";
-import { requireConfig } from "./team-support.ts";
+import { requireTeam } from "./team-support.ts";
 
 /**
  * Where a grounding entry came from. Load-bearing ONLY when the file is missing:
@@ -141,6 +141,9 @@ export interface ChecklistInput {
   /** Absolute path to the emitting cli.ts, so the LAND string resolves to the
    * binary that composed it rather than through PATH. */
   cliPath: string;
+  /** The team name to bake into emitted commands, when this project configures
+   * several — `undefined` on a single-team project. See `buildLandCommand`. */
+  team?: string | undefined;
   /** THE BOARD READ-BACK's payload. REQUIRED, not optional, and the three states
    * carry different instructions — `null` (we could not look) must not silently
    * render as `[]` (you owe nothing). Made required rather than defaulted so a
@@ -233,6 +236,25 @@ export function buildLandCommand(i: {
   msgFileRel: string;
   /** Absolute path to the cli.ts that EMITTED this string. See below. */
   cliPath: string;
+  /**
+   * The team to stamp and resolve against, when this project configures several.
+   *
+   * ⚠ THIS IS THE SILENT HALF, and it is why the flag is threaded rather than
+   * left to the ladder. The emitted string runs in a FRESH process — `--team
+   * lean` on `anthill join` does not survive into it — so the seat's land
+   * resolves through the pin instead. `bootstrap` §0a actively encourages a
+   * forked team (`forkedFrom`), which means OVERLAPPING HANDLES, and then
+   * `--as maestro` is valid in both rosters and nothing disagrees. Measured on a
+   * repo pinned to `dev` with a seat joined as `lean`:
+   *
+   *     $ anthill commit --as maestro -m "feat: y" y.txt
+   *     ok:true   "feat: y\n\nAnthill-Seat: maestro\nAnthill-Team: dev"
+   *
+   * The seat wrote into `.anthill/teams/lean/…` and its commit says `dev`. The
+   * trailer added in 6.1 exists to answer "which shape produced this?", so an
+   * attribution that is confidently wrong is worse than none.
+   */
+  team?: string | undefined;
 }): string {
   // FULLY RESOLVED, never a bare `anthill` — Contract 4(a), which this string
   // was violating while the comms incantation beside it obeyed.
@@ -248,7 +270,8 @@ export function buildLandCommand(i: {
   // executes it, so the two can never disagree about which flags exist. That is
   // the same guarantee `--version`'s `source` field reports, applied rather
   // than merely observed.
-  const commit = `bun ${i.cliPath} commit --as ${i.handle} -F ${i.msgFileRel} <path>…`;
+  const teamFlag = i.team ? ` --team ${i.team}` : "";
+  const commit = `bun ${i.cliPath} commit --as ${i.handle}${teamFlag} -F ${i.msgFileRel} <path>…`;
   const decision = decideGate(i.gate);
   // The returned value is A COMMAND OR NOTHING ELSE. It previously concatenated
   // the no-gate warning INTO the string under a label reading "LAND with this
@@ -449,7 +472,7 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // error carrying backticks — the defect this line exists to prevent, inside
     // the line that prevents it. A notice that cannot be run is not a safer
     // notice; it is an unusable command.
-    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel, cliPath: i.cliPath })}${(() => {
+    `LAND with this EXACT string — gate and commit in one, no pipe, no inline -m (write your message to ${i.msgFileRel} first):\n    ${buildLandCommand({ handle: i.handle, gate: i.gate, msgFileRel: i.msgFileRel, cliPath: i.cliPath, team: i.team })}${(() => {
       const d = decideGate(i.gate);
       return d.composable ? "" : `\n  ${d.notice}`;
     })()}\n  Do NOT pipe the gate to \`tail\`/\`head\`/\`grep\` to shorten its output: \`&&\` would then test the FILTER's exit status, which is always 0, and your commit runs on a red gate while the guard is still visibly there. Redirect to a file and read that instead. Do NOT pass the body with \`-m\` if it contains backticks — the shell executes them before the tool sees them. Both of these defeated agents who had just read the warning against them.`,
@@ -567,7 +590,7 @@ export function buildMissingWarnings(
   }
   if (team.length > 0) {
     warnings.push(
-      `${team.length} team doc(s) not found: ${team.join(", ")} — these are NOT in \`config.grounding\`, so editing it will not help. A footprint that predates a doc gets it from \`anthill init\`, which creates missing team docs and skips the ones you already have (see \`anthill:upgrade\`).`,
+      `${team.length} team doc(s) not found: ${team.join(", ")} — these are NOT in \`config.grounding\`, so editing it will not help. A footprint that predates a doc gets it from \`anthill init\`, which creates missing team docs and skips the ones you already have (see \`anthill:upgrade\`). The same remedy covers a moved \`paths\` knob: init renders at the newly resolved locations and leaves any copies at the old ones untouched, so move the content you want to keep.`,
     );
   }
   return warnings;
@@ -594,12 +617,22 @@ export const teamJoinCommand = defineAnthillCommand({
       description: "Comms channel (default: config.channel)",
       valueHint: "name",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const config = requireConfig(format, "join");
+    const { project, team: config } = requireTeam(format, "join", {
+      team: ctx.args.team as string | undefined,
+      channel: ctx.args.channel as string | undefined,
+    });
+    // Only when there is something to disambiguate — see `buildLandCommand`.
+    const teamFlag = project.teams.length > 1 ? config.name : undefined;
     const handle = String(ctx.args.handle);
     const channel = (ctx.args.channel as string | undefined) || config.channel;
 
@@ -721,10 +754,12 @@ export const teamJoinCommand = defineAnthillCommand({
       cliPath,
       channel,
       handle,
+      team: teamFlag,
     });
 
     const checklist = buildChecklist({
       coord,
+      team: teamFlag,
       commsIncantation,
       cliPath,
       handle,

@@ -23,7 +23,7 @@ the next instance follows**.
    called over time. A lean, true trail beats an exhaustive, rotting one.
 
 2. **Running capture → curated synthesis.** Don't wait for the end. Keep a cheap **running session
-   scratch** as you work (`.anthill/scratch/<handle>/<date>-<slug>.md`, gitignored) — "this just bit
+   scratch** as you work (`{{teamDir}}/scratch/<handle>/<date>-<slug>.md`, gitignored) — "this just bit
    me," "this seam is fuzzy." **Finalize** is where those are articulated into durable form for the
    next agent. Cheap capture, deliberate synthesis.
 
@@ -332,7 +332,7 @@ Its output flows to seat docs, `seams.md`, and **occasionally the roster/config 
 anthill is yours to re-shape.
 
 Then the **retro** — _what went well · what didn't · what would you change_ — written to
-`.anthill/retro.md`, newest first. It differs from the reflection above by asking for **judgement**
+`{{teamDir}}/retro.md`, newest first. It differs from the reflection above by asking for **judgement**
 rather than shape, and two rules are what make it more than a mood:
 
 - **Every "what would you change" is a HYPOTHESIS the next session can test**, or it isn't an answer.

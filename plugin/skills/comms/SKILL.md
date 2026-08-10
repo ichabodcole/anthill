@@ -17,6 +17,13 @@ flag below, it is because the flag needs a reason attached, not because the list
 > (`${CLAUDE_PLUGIN_ROOT}` is set by Claude Code whenever a plugin skill runs.)
 > Every command reads `.anthill/config.json` (the root marker; walk up from cwd).
 
+> **You never name a team, and that is deliberate.** The channel comes from the team this pane
+> resolves to — `--team` exists but a seat should not need it. **If the messages look like another
+> team's, run `anthill team show`**: it names the team AND the rung that chose it (the `--team` flag,
+> `ANTHILL_TEAM` in this pane, the pin, or being the only team). **Do not guess with `--channel`** —
+> a `--channel` naming another configured team is refused for exactly that reason, because guessing
+> is the reflex that would otherwise put you in their log.
+
 > **The verbs are siblings, not clones.** `--as` is **required** on `send` and `follow` (identity is
 > never inferred) and **refused** on `read` (reads are not attributed — you are observing, not
 > writing). That is three verbs and three different answers, so check rather than generalise from the
@@ -46,7 +53,8 @@ id with `read --since <id>`. (A `send` also returns the id it assigned, which an
 moment you first speak.)
 
 Reach past the CLI to the log file only when you want something the verbs do not offer — it is one
-NDJSON file per channel, at `.anthill/comms/<channel>.ndjson`.
+NDJSON file per channel, at `<teamDir>/comms/<channel>.ndjson` (`teamDir` resolves from `paths` in
+`.anthill/config.json`, default `.anthill/`).
 
 - **⚠ An anchor past the end returns EMPTY and exits 0.** `read --since 999` on a 7-message log
   prints nothing and succeeds. That is indistinguishable from "nothing new since I last looked", so

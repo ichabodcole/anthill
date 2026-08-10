@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { foreignDirtyPaths, stampSeat, unexpectedStaged } from "./team-commit.ts";
+import { foreignDirtyPaths, stampSeat, stampTeam, unexpectedStaged } from "./team-commit.ts";
 import { cleanGitEnv } from "./test-support.ts";
 
 // This suite git-inits throwaway repos and commits inside them. Give every git
@@ -586,6 +586,160 @@ describe("anthill commit — seat attribution (StoryLoom field request)", () => 
     }
   });
 
+  /** The same repo, converted to a two-team `teams` map (bootstrap §0a's shape). */
+  function withTwoTeams(dir: string): void {
+    mkdirSync(join(dir, ".anthill"), { recursive: true });
+    writeFileSync(
+      join(dir, ".anthill", "config.json"),
+      JSON.stringify({
+        version: 2,
+        teams: {
+          dev: {
+            channel: "t",
+            lead: "maestro",
+            seats: ["maestro", "forager"].map((h) => ({
+              handle: h,
+              role: "r",
+              scope: "s",
+              spawn: true,
+            })),
+            paths: { teamDir: ".anthill" },
+          },
+          lean: {
+            lead: "boss",
+            seats: [{ handle: "boss", role: "r", scope: "s", spawn: true }],
+          },
+        },
+      }),
+    );
+    writeFileSync(join(dir, ".anthill", "current-team"), "dev\n");
+  }
+
+  test("a MULTI-team project also stamps Anthill-Team, in the same trailer block", async () => {
+    const dir = makeRepo();
+    try {
+      withTwoTeams(dir);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code } = await runCli(
+        ["commit", "-m", "do a thing", "--as", "forager", "mine.txt"],
+        dir,
+      );
+      expect(code).toBe(0);
+      const body = Bun.spawnSync(["git", "log", "-1", "--format=%B"], {
+        cwd: dir,
+        env: GIT_ENV,
+      }).stdout.toString();
+      expect(body).toMatch(/^Anthill-Team: dev$/m);
+      // Contiguous, so git's own trailer parser sees both. A blank line between
+      // them yields ONE trailer and silently drops the seat.
+      expect(body).toContain("Anthill-Seat: forager\nAnthill-Team: dev");
+      const found = Bun.spawnSync(["git", "log", "--grep=Anthill-Team: dev", "--format=%s"], {
+        cwd: dir,
+        env: GIT_ENV,
+      }).stdout.toString();
+      expect(found).toMatch(/do a thing/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  /** What GIT thinks the trailers are — the only question that matters here. */
+  function parsedTrailers(dir: string): string[] {
+    const body = Bun.spawnSync(["git", "log", "-1", "--format=%B"], {
+      cwd: dir,
+      env: GIT_ENV,
+    }).stdout.toString();
+    const r = Bun.spawnSync(["git", "interpret-trailers", "--parse"], {
+      stdin: Buffer.from(body),
+      env: GIT_ENV,
+    });
+    return r.stdout.toString().trim().split("\n").filter(Boolean);
+  }
+
+  // A ONE-LINE CONVENTIONAL SUBJECT IS THE BROKEN SHAPE, and it is this project's
+  // mandated convention (AGENTS.md:44-53) — so it is the dominant thing a seat
+  // writes. `feat: a thing` matches /^[A-Za-z][A-Za-z0-9-]*: .+$/ exactly, so a
+  // per-LINE separator rule joined the stamp with a single \n, the message never
+  // gained a blank line, and git saw no trailer block at all.
+  //
+  // ⚠ ASSERTED THROUGH `git interpret-trailers`, NOT THROUGH THE STRING. Every
+  // fixture in this file used "subject" / "subject line" — no colon — including
+  // the interpret-trailers test below, which asked git the right question about
+  // the one shape that could never fail. `git log --grep` also survives a broken
+  // block, which is why nothing anywhere caught this.
+  test("a one-line conventional subject still yields a trailer block git can parse", async () => {
+    const dir = makeRepo();
+    try {
+      withConfig(dir, ["maestro", "forager"]);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code } = await runCli(
+        ["commit", "-m", "feat: a thing", "--as", "forager", "mine.txt"],
+        dir,
+      );
+      expect(code).toBe(0);
+      // Single-team: the seat stamp alone, and it was the one being destroyed.
+      expect(parsedTrailers(dir)).toEqual(["Anthill-Seat: forager"]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("…and with a team stamp too, both land in one parseable block", async () => {
+    const dir = makeRepo();
+    try {
+      withTwoTeams(dir);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      const { code } = await runCli(
+        ["commit", "-m", "feat: a thing", "--as", "forager", "mine.txt"],
+        dir,
+      );
+      expect(code).toBe(0);
+      expect(parsedTrailers(dir)).toEqual(["Anthill-Seat: forager", "Anthill-Team: dev"]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("the two neighbouring shapes keep working — a body paragraph, and no colon", async () => {
+    // Both were correct before AND after; pinned because they are what makes the
+    // one-line case identifiable as the defect rather than a general breakage.
+    for (const message of ["feat: another\n\nsome body", "add a thing"]) {
+      const dir = makeRepo();
+      try {
+        withConfig(dir, ["maestro", "forager"]);
+        writeFileSync(join(dir, "mine.txt"), "mine\n");
+        await runCli(["commit", "-m", message, "--as", "forager", "mine.txt"], dir);
+        expect({ message, trailers: parsedTrailers(dir) }).toEqual({
+          message,
+          trailers: ["Anthill-Seat: forager"],
+        });
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    }
+  });
+
+  test("a SINGLE-team project gains no team trailer — criterion 1", async () => {
+    // The trailer answers "which shape produced this?". With one team the answer
+    // is constant, so it would carry no information while rewriting the text of
+    // every commit a seat lands in every repo that configured nothing. Same call
+    // Phase 2.3 made about ANTHILL_TEAM in the spawn launch lines.
+    const dir = makeRepo();
+    try {
+      withConfig(dir, ["maestro", "forager"]);
+      writeFileSync(join(dir, "mine.txt"), "mine\n");
+      await runCli(["commit", "-m", "do a thing", "--as", "forager", "mine.txt"], dir);
+      const body = Bun.spawnSync(["git", "log", "-1", "--format=%B"], {
+        cwd: dir,
+        env: GIT_ENV,
+      }).stdout.toString();
+      expect(body).toMatch(/^Anthill-Seat: forager$/m);
+      expect(body).not.toMatch(/Anthill-Team:/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   test("an unknown seat is refused BEFORE anything is staged, and names the valid set", async () => {
     const dir = makeRepo();
     try {
@@ -882,16 +1036,18 @@ describe("anthill commit — the shell hazard, demonstrated on both sides", () =
 // A situational warning fails at the recognition step, so this is mechanical.
 describe("stampSeat", () => {
   test("appends the trailer when the body has none", () => {
-    expect(stampSeat("subject line", "forager")).toBe("subject line\n\nAnthill-Seat: forager");
+    expect(stampSeat("feat: subject line", "forager")).toBe(
+      "feat: subject line\n\nAnthill-Seat: forager",
+    );
   });
 
   test("does NOT append a second trailer for the same seat", () => {
-    const body = "subject\n\nAnthill-Seat: forager";
+    const body = "feat: subject\n\nAnthill-Seat: forager";
     expect(stampSeat(body, "forager")).toBe(body);
   });
 
   test("counts exactly one trailer after stamping an already-stamped body", () => {
-    const out = stampSeat("subject\n\nAnthill-Seat: forager", "forager");
+    const out = stampSeat("feat: subject\n\nAnthill-Seat: forager", "forager");
     expect(out.split("\n").filter((l) => l.startsWith("Anthill-Seat:")).length).toBe(1);
   });
 
@@ -899,9 +1055,20 @@ describe("stampSeat", () => {
   // commit legitimately carrying several seats. Dropping a real seat is a worse
   // failure than repeating one, so the match is scoped to the same handle.
   test("still appends when the existing trailer names a DIFFERENT seat", () => {
-    const out = stampSeat("subject\n\nAnthill-Seat: weaver", "forager");
+    const out = stampSeat("feat: subject\n\nAnthill-Seat: weaver", "forager");
     expect(out).toContain("Anthill-Seat: weaver");
     expect(out).toContain("Anthill-Seat: forager");
+  });
+
+  test("joins an existing trailer block instead of starting a new paragraph", () => {
+    // Measured with `git interpret-trailers --parse`: a blank line between two
+    // trailers yields ONE trailer — the later — and silently discards the seat.
+    // `git log --grep` survives either shape, which is why this would have
+    // shipped: the one query we document keeps working while every trailer-aware
+    // consumer loses the provenance.
+    expect(stampSeat("feat: subject\n\nAnthill-Team: dev", "forager")).toBe(
+      "feat: subject\n\nAnthill-Team: dev\nAnthill-Seat: forager",
+    );
   });
 
   test("is not fooled by a trailer mentioned mid-prose rather than on its own line", () => {
@@ -910,5 +1077,40 @@ describe("stampSeat", () => {
     // real stamp — the same word-vs-claim trap this seat has hit twice before.
     const out = stampSeat("we always write Anthill-Seat: forager in the body", "forager");
     expect(out.split("\n").filter((l) => l.trim() === "Anthill-Seat: forager").length).toBe(1);
+  });
+});
+
+describe("stampTeam — mirrors stampSeat", () => {
+  test("appends the trailer when the body has none", () => {
+    expect(stampTeam("feat: subject line", "dev")).toBe("feat: subject line\n\nAnthill-Team: dev");
+  });
+
+  test("does NOT append a second trailer for the same team", () => {
+    const body = "feat: subject\n\nAnthill-Team: dev";
+    expect(stampTeam(body, "dev")).toBe(body);
+  });
+
+  test("lands in the SAME trailer block as the seat, in a stable order", () => {
+    // The composition the call site actually performs. Asserted as one string
+    // rather than two `toContain`s, because the defect this pins is the
+    // SEPARATOR — both trailers are present either way.
+    expect(stampTeam(stampSeat("feat: subject", "forager"), "dev")).toBe(
+      "feat: subject\n\nAnthill-Seat: forager\nAnthill-Team: dev",
+    );
+  });
+
+  test("git itself parses both trailers out of that block", () => {
+    // The assertion above encodes what git does; this one asks git. Without it,
+    // a future edit could satisfy the string shape while breaking the property
+    // the string shape exists for.
+    const body = stampTeam(stampSeat("feat: subject", "forager"), "dev");
+    const r = Bun.spawnSync(["git", "interpret-trailers", "--parse"], {
+      stdin: Buffer.from(`${body}\n`),
+      env: GIT_ENV,
+    });
+    expect(r.stdout.toString().trim().split("\n")).toEqual([
+      "Anthill-Seat: forager",
+      "Anthill-Team: dev",
+    ]);
   });
 });

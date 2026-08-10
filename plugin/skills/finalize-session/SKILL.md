@@ -12,8 +12,9 @@ _live_. Don't skip it on a real session.
 > **The anthill CLI** — driven from the plugin:
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below
 > (shorthand, not a binary on PATH). (`${CLAUDE_PLUGIN_ROOT}` is set by Claude Code whenever a plugin
-> skill runs.) Doc paths below show the **defaults** (`.anthill/…`); the real locations resolve from
-> `.anthill/config.json` (`paths.teamDir` / `paths.seatDir` / `paths.seams`).
+> skill runs.) **`<teamDir>` and `<seatDir>` below are RESOLVED, not literal**: they come from `paths`
+> in `.anthill/config.json` (`paths.teamDir` / `paths.seatDir` / `paths.seams`) and default to
+> `.anthill/` and `.anthill/dev/`. `anthill join <handle>` prints them already resolved.
 
 ## Steps
 
@@ -57,14 +58,14 @@ _live_. Don't skip it on a real session.
 ### Per seat — each agent does this for its own doc
 
 1. **Review your session — two passes:**
-   - **Reactive:** the work you did + the ah-ha judgments in your scratch (`.anthill/scratch/<handle>/…`)
+   - **Reactive:** the work you did + the ah-ha judgments in your scratch (`<teamDir>/scratch/<handle>/…`)
      — what bit, what surprised you, what you'd do differently.
    - **Reflective:** even if the session ran _smoothly_, did anything you trusted **by default** — a
      contract, a default, an assumption this seat never questioned — turn out to be load-bearing in a way
      worth naming? Smooth runs hide exactly these, and a quiet assumption that held is often the most
      durable lesson. (Reactive catches friction; reflective catches assumptions — both become seat-doc
      scars below.)
-2. **Synthesize → your seat doc** (`.anthill/dev/<handle>.md`) — this is curation as pheromone:
+2. **Synthesize → your seat doc** (`<seatDir>/<handle>.md`) — this is curation as pheromone:
    **strengthen the load-bearing trails, let the unimportant ones fade.**
    - **Route, don't re-sort** (the SOP's _one intake, route at synthesis_ rule). Your scratch was one
      cheap intake — synthesis is where each note finds its durable home: your seat doc (taste),
@@ -78,7 +79,8 @@ _live_. Don't skip it on a real session.
      (next), not your seat doc.
    - **A HYPOTHESIS is not a lesson — hold it for the retro (step 4.5).** A lesson says what you now
      know; a hypothesis says what you predict and how it could be proven wrong, and the next convene
-     has to read it back. **`.anthill/retro.md` does not exist yet at this step**, which is exactly
+     has to read it back. **This session's retro is not written until step 4.5** — `<teamDir>/retro.md`
+     holds the ritual's guidance and previous sessions' entries, and nothing of yours — which is exactly
      why this line is here: two seats on the ritual's first run independently wrote their hypotheses
      into their seat docs, from correct reasoning — a hypothesis nobody re-reads is worthless, and at
      step 2 the seat doc is the only home with a re-read moment. **The ordering created the
@@ -90,7 +92,7 @@ _live_. Don't skip it on a real session.
      that has already moved.
    - Your scratch is **disposable after synthesis** — the durable form is the seat doc.
    - **⚠ WRITE YOUR EPITAPH — LAST, and it goes FIRST in the doc.** One sentence at the top of
-     `.anthill/dev/<handle>.md`, under the seat header and **above "Who I am"**: the single thing you
+     `<seatDir>/<handle>.md`, under the seat header and **above "Who I am"**: the single thing you
      want the next holder of this seat to know, above all else. _It has to be first or it is not an
      epitaph, it is an appendix._
      - **Exactly one thing.** The whole discipline is the selection — everything the seat knows
@@ -157,7 +159,7 @@ artifact may have been moved or deleted since you wrote the line.
 
 ### Shared — the lead coordinates over comms
 
-3. **Seams pass.** As a team, look at `.anthill/dev/seams.md`: did we learn anything at the **team
+3. **Seams pass.** As a team, look at `<seatDir>/seams.md`: did we learn anything at the **team
    level** — a contract that shifted, a boundary that moved? If so, update it **single-source** (the
    owning seat edits; the others point). Don't restate it across seat docs.
 
@@ -284,7 +286,7 @@ team that ran it.
      and it still never reached anthill, because nothing in this ritual asked it to. **The reflection
      produces the most valuable feedback anthill gets and currently routes none of it upstream.**
 
-4.5. **Retro — three questions, answered as a team. THE LEAD WRITES `.anthill/retro.md` (newest first)
+4.5. **Retro — three questions, answered as a team. THE LEAD WRITES `<teamDir>/retro.md` (newest first)
 before teardown, from the seats' answers on the wire.**
 Name the writer or the file does not get written: seats answer, and every one of them can follow
 this step exactly while the artifact still fails to exist. **The first run of this ritual produced
@@ -302,6 +304,59 @@ happened, this evaluates it.
 1.  **What went well?**
 2.  **What didn't go well?**
 3.  **What would you change for the next round?**
+
+**Stamp the entry with the team and its shape**, on the line under the heading:
+
+```
+**Team:** dev · **shape:** `4f2a9c01`
+```
+
+The shape is an 8-hex fingerprint of **this team's own config entry** — run this from the repo root
+with `TEAM` set to your team's name (`anthill team show` prints it; on a single-team project it is
+`default`, and the `raw.teams` branch simply doesn't fire):
+
+```sh
+TEAM=dev bun -e '
+const KEYS = ["channel", "lead", "seats"];
+const raw = JSON.parse(await Bun.file(".anthill/config.json").text());
+const entry = raw.teams ? (raw.teams[process.env.TEAM] ?? {}) : raw;
+const shape = Object.fromEntries(KEYS.filter((k) => entry[k] !== undefined).map((k) => [k, entry[k]]));
+const canon = (v) =>
+  Array.isArray(v) ? `[${v.map(canon).join(",")}]`
+  : v && typeof v === "object"
+    ? `{${Object.keys(v).sort().map((k) => `${JSON.stringify(k)}:${canon(v[k])}`).join(",")}}`
+    : JSON.stringify(v);
+console.log(new Bun.CryptoHasher("sha256").update(canon(shape)).digest("hex").slice(0, 8));
+'
+```
+
+**The algorithm, stated so a reader can reproduce it without this snippet:** take the team's
+`channel` / `lead` / `seats` (absent keys omitted), serialize as JSON with **object keys
+sorted recursively and no whitespace**, arrays left in their authored order; SHA-256; first 8 hex
+characters.
+
+**Four properties, each deliberate and each measured against the configs `bootstrap` §0a actually
+ships** — not against a fixture built to agree:
+
+- **Only the team's OWN keys.** Editing another team's entry must not move this one's fingerprint, or
+  every team's stamp churns whenever any team is touched.
+- **Project-level fields are excluded** (`version`, `gate`, `grounding`, `launch`). Changing the
+  project's `gate` is not a change of team shape, and a fingerprint that moved on it would report a
+  reshape that did not happen.
+- **⚠ `paths` is excluded too, and that exclusion is load-bearing rather than tidy.** WHERE a team's
+  docs live is not WHAT SHAPE the team is — and §0a **requires** giving the incumbent an explicit
+  `paths.teamDir: ".anthill"` while changing nothing about the team. With `paths` in the hash, that
+  one required edit moved it, so the next property was **false exactly on the route it was written
+  for**. It also means relocating a team's docs is correctly silent here.
+- **A flat config and the same team after the `teams`-map conversion hash IDENTICALLY.** That
+  conversion moves nothing (`anthill:bootstrap` §0a), so the fingerprint says nothing moved — a
+  project that adds a second team does not falsely read as having reshaped its first.
+
+**⚠ Say the limit when you report this, and do not let it grow in the retelling: the stamp makes a
+session LABELLED, not COMPARABLE.** It answers _were these two entries written by the same team in
+the same shape?_ — worth knowing before you record a carried-forward Q3 as held or falsified, since a
+different shape means a different team tested it. It does **not** support _"shape A outperformed
+shape B"_: two sessions differ in work, people and luck, and nothing here controls for any of that.
 
 Two rules do all the work here. Without them a retro produces a mood, and a mood cannot be checked.
 
@@ -347,7 +402,7 @@ Two rules do all the work here. Without them a retro produces a mood, and a mood
 
 **4. Did this session produce a PRINCIPLE?** Asked once, at the end, and **usually the answer is
 no.** A principle is a claim about **how work goes wrong**, general enough to survive a change of
-tool, stack or team — not a convention and not a mechanic. It goes in `.anthill/principles.md`
+tool, stack or team — not a convention and not a mechanic. It goes in `<teamDir>/principles.md`
 **with the scar that paid for it**: a principle without its experience is a slogan, and the
 experience is what makes it hold when following it costs something.
 
@@ -414,9 +469,13 @@ nobody has scoped is a horizon in name only.
      signal; **do not settle for "we looked at it"** — an unwritten verdict and a skipped check are
      the same artifact.
    - ◻ **Principle question asked** (Q4) — did this session produce one? **Usually no.** If yes it
-     goes to `.anthill/principles.md` **with its scar**; if it has no scar it is a Q3 hypothesis, and
+     goes to `<teamDir>/principles.md` **with its scar**; if it has no scar it is a Q3 hypothesis, and
      if it only holds for this tool it is an SOP practice.
-   - ◻ **Retro written to `.anthill/retro.md` BY THE LEAD** (step 4.5), newest first — the seats
+   - ◻ **The retro entry carries its `**Team:** … · **shape:** …` stamp** (step 4.5) — the team name
+     and the 8-hex fingerprint of its config entry. A missing stamp is invisible until the session
+     that needs it: a carried-forward Q3 read as held or falsified by a team that reshaped in between,
+     with nothing in the file to say so. **Labelled, not comparable** — say that when you report it.
+   - ◻ **Retro written to `<teamDir>/retro.md` BY THE LEAD** (step 4.5), newest first — the seats
      answered on the wire; **a wire is not a store — the file is the thing the next convene reads.**
      _(**The comms log survives and nothing ever reads it back** — no ritual, no command, no next
      convene. **Surviving and being re-read are different properties**, and only the file has the

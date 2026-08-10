@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { platform, release } from "node:os";
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, refuseArg, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
 import {
   buildIssueUrl,
@@ -153,6 +153,11 @@ async function realEnv(): Promise<FeedbackEnv> {
 // prefilled URL (never dropping the report) on any failure. Team-routing framing
 // (who submits on a team) lives in the SOP, NOT here — the command has no team
 // concept.
+/** Why this verb refuses `--team`. ONE string, used by the arg def AND the
+ * refusal in `run` — two copies of a reason drift, and a refusal that argues
+ * with itself teaches worse than the generic "unknown option" it replaced. */
+const REFUSED_TEAM = "feedback goes upstream to anthill, not to a team on this project";
+
 export const teamFeedbackCommand = defineAnthillCommand({
   meta: {
     name: "feedback",
@@ -182,9 +187,17 @@ export const teamFeedbackCommand = defineAnthillCommand({
       description: "File the issue via gh (default: compose + emit only, send nothing)",
       default: false,
     },
+    team: { type: "string", refused: REFUSED_TEAM },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
+    refuseArg({
+      format: resolveFormat(ctx.args.format as string | undefined),
+      command: "feedback",
+      flag: "--team",
+      value: ctx.args.team,
+      why: REFUSED_TEAM,
+    });
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
 

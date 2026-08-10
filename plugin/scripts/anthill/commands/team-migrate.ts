@@ -8,8 +8,8 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { dirname, join, relative, resolve } from "node:path";
+import { emit, emitError, refuseArg, resolveFormat } from "../agent-layer.ts";
 import { CURRENT_VERSION } from "../config.ts";
 import { defineAnthillCommand } from "../define.ts";
 import {
@@ -62,7 +62,90 @@ function findFootprintConfig(
   }
 }
 
-type RawConfig = { version?: unknown; paths?: { teamDir?: unknown } };
+type RawConfig = { version?: unknown; paths?: { teamDir?: unknown }; teams?: unknown };
+
+/**
+ * REFUSE A MULTI-TEAM CONFIG — before a `RepoScan` is built, because the scan is
+ * where the wrong answer is manufactured.
+ *
+ * `scanRepo` below reads `raw.paths.teamDir` from the **top level only**. Under a
+ * `teams` map that key lives at `teams.<name>.paths.teamDir`, so `pathsExplicit`
+ * silently comes back `false`, `teamDir` falls back to the era default, and the
+ * planner plans a move of a directory the team does not use.
+ *
+ * **Measured, on a v1 config carrying a `teams` map with `teamDir: "docs/crew"`:**
+ *
+ *     living docs: docs/team/* → .anthill/* (0 entries)
+ *     stamped version → 2
+ *
+ * `ok: true`, seven ops applied, and the team's living docs still at `docs/crew`
+ * while the config now claims v2 with no `paths` — so every command resolves to an
+ * empty `.anthill/`. That is the empty-footprint failure this whole project treats
+ * as the governing invariant, produced by the one command whose failure the
+ * proposal calls a data-integrity bug.
+ *
+ * ⚠ **A GUARD, NOT A MIGRATOR, and deliberately so.** `MIGRATIONS` holds exactly
+ * one entry (v1→v2) which cannot apply to a `teams` config anyway, and
+ * `MigrationOp` (`migrate.ts:31-42`) has **no op that can restructure config
+ * content** — `config-drop-paths` only deletes a key. There is nothing here that
+ * could do the right thing, so the honest move is to say so by name.
+ *
+ * Checked once, at the entry point: the apply loop re-reads the config between
+ * steps, but no `MigrationOp` can introduce a `teams` key, so a config that lacked
+ * one on the first read cannot grow one mid-migration.
+ *
+ * ⚠ **TWO MESSAGES, DERIVED FROM WHAT IS ACTUALLY PENDING — do not collapse them
+ * back into one.** Both refuse and exit 1, so from the outside they look
+ * redundant. The difference is the only part a reader can act on: one says *go do
+ * the living-doc reconcile*, the other says *stop, this needs work that does not
+ * exist yet.*
+ *
+ * The first version of this guard asserted "there is nothing here to migrate"
+ * unconditionally. That was true only because `MIGRATIONS` holds one obsolete
+ * entry, and the guard fires before the version is read — so the claim rested on
+ * nothing. Add a v2→v3 layout migration (which this design anticipates) and every
+ * multi-team repo would be told there is nothing to migrate **in the one state
+ * where that is false and the human most needs the truth.** Refusing is the safe
+ * direction, so nothing would have failed loudly when it went stale. Same rule the
+ * convene guard follows: a guard whose stated reason is wrong outlives the
+ * constraint that justified it, because nobody can tell when it stopped applying.
+ */
+function multiTeamRefusal(raw: RawConfig, configPath: string): string | null {
+  if (!("teams" in raw) || typeof raw.teams !== "object" || raw.teams === null) return null;
+  const names = Object.keys(raw.teams as Record<string, unknown>);
+  // The same read `scanRepo` does — an unstamped config is v1.
+  const version = typeof raw.version === "number" ? raw.version : 1;
+  const who = `${configPath} configures ${names.length} team(s) (${names.join(", ")}), and migrate refuses a multi-team config.`;
+  // Why the scan is never built: it reads `paths.teamDir` from the top level only,
+  // so under a `teams` map it finds none, plans against the era default, and
+  // reports a successful move of zero living docs.
+  const why =
+    "This command reads paths.teamDir from the TOP LEVEL only; under a `teams` map it finds none, " +
+    "plans against the era default, and would report a successful move of zero living docs while " +
+    "leaving them where they are.";
+
+  const pending = pendingMigrations(version)[0];
+  if (!pending) {
+    return (
+      `${who} There is nothing here to migrate: the \`teams\` map is a config SHAPE, not a footprint ` +
+      `layout — nothing moved on disk when it was adopted, and this repo is already at v${version}. ` +
+      `${why} If a release changed the SOP or the team guidance, that is the living-doc reconcile in ` +
+      "`anthill:upgrade` — not this command."
+    );
+  }
+
+  // ⚠ TO WHOEVER ADDS THE NEXT LAYOUT MIGRATION: this branch going live is the
+  // signal that the blanket refusal has to become per-team-aware — `scanRepo` needs
+  // to plan one move per configured team's `teamDir`. It is NOT a signal that this
+  // message needs rewording.
+  return (
+    `${who} This repo ALSO has a pending footprint migration (v${pending.from} → v${pending.to}), ` +
+    `and migrate cannot run it against a multi-team config. ${why} ` +
+    "Do not hand-edit the config to get past this, and do not treat it as the content-only case: " +
+    "the layout genuinely needs to move and this command cannot move it. Stop here and report it — " +
+    "a multi-team repo with a pending layout migration needs work that does not exist yet."
+  );
+}
 
 /** Build the pure `RepoScan` from disk — the only place IO meets the planner. */
 function scanRepo(root: string, configDir: string, raw: RawConfig, keepPaths: boolean): RepoScan {
@@ -152,6 +235,12 @@ interface MigrateData {
   alreadyCurrent: boolean;
 }
 
+/** Why this verb refuses `--team`. ONE string, used by the arg def AND the
+ * refusal in `run` — two copies of a reason drift, and a refusal that argues
+ * with itself teaches worse than the generic "unknown option" it replaced. */
+const REFUSED_TEAM =
+  "`migrate` moves the whole FOOTPRINT, which every team shares — and it refuses a multi-team config outright";
+
 export const teamMigrateCommand = defineAnthillCommand({
   meta: {
     name: "migrate",
@@ -165,9 +254,17 @@ export const teamMigrateCommand = defineAnthillCommand({
       description:
         "Honor a `paths` override even when it just repeats the v1 default (don't consolidate the docs)",
     },
+    team: { type: "string", refused: REFUSED_TEAM },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
+    refuseArg({
+      format: resolveFormat(ctx.args.format as string | undefined),
+      command: "migrate",
+      flag: "--team",
+      value: ctx.args.team,
+      why: REFUSED_TEAM,
+    });
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
     const dryRun = ctx.args["dry-run"] === true;
@@ -188,6 +285,11 @@ export const teamMigrateCommand = defineAnthillCommand({
     let firstScan: RepoScan;
     try {
       const raw = JSON.parse(readFileSync(found.configPath, "utf8")) as RawConfig;
+      const refusal = multiTeamRefusal(raw, relative(root, found.configPath));
+      if (refusal) {
+        emitError({ format, command: "migrate", error: refusal });
+        process.exit(1);
+      }
       firstScan = scanRepo(root, found.configDir, raw, keepPaths);
     } catch (err) {
       emitError({

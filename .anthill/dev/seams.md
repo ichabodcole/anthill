@@ -124,6 +124,18 @@ Resolution is **spellbook-side** (v1.16.0): a verb with no `--session` resolves 
 
 **Scope bound (the binding is project-tree-local, not global).** The id spellbook derives is `k-<keyname>-<projecthash>` — **project-path-scoped**. Both the `.bounty-session` walk-up and the `$BOUNTY_SESSION_KEY` env-key derivation resolve **only from within the project tree**; the same key from an unrelated cwd (e.g. `/tmp`) resolves to "no session", never the team board. Correct in practice — seats always run inside the repo — but the guarantee is bounded to the tree, not the machine. (Proof: **UNVERIFIED-BY-CONSTRUCTION** — see the note under Proof below; the observation was an env-decoy bound only from the repo, with `anthill-dev` from `/tmp` resolving to "no session".)
 
+**AMENDMENT (2026-08-10, multi-team) — the derived id now has a SECOND reader, and it is a guard.**
+`boardOwnerFromBinding` (`commands/team-support.ts`) reads `.bounty-session` and matches
+`k-<channel>-` against every configured team's channel, to answer _which team holds the board_. It is
+the only anthill code that parses this file, and it leans on two things stated above: the
+`k-<keyname>-<projecthash>` shape, and — new — the config layer's **prefix-free channel** rule, which
+is what makes at most one team match. **The reason this is written here rather than only in the code:
+if spellbook changes its derivation, the guard does not error, it returns `null` for every binding
+and fails OPEN** — restoring the exact convene-rebind hole it was added to close. The tripwire is
+`team-support.boardbinding.test.ts`'s round trip: a real `convene`, then assert this reader
+recognizes what it wrote. **Do not replace that test with a fixture string** — a fixture agrees with
+whatever this file already believes, which is the failure being guarded against.
+
 **REVISION (session 6) — under per-seat worktrees, mechanism 2 does not merely stop working, it BREAKS mechanism 1.**
 The clause above is correct, and its reassurance — *"correct in practice — seats always run inside the repo"* — was falsified the first session seats ran inside **different** repos.
 `findScopeRoot` walks up to the first `existsSync(dir/.git)`, and **`existsSync` is true for a FILE**; a linked worktree's `.git` is a small `gitdir:` pointer file, so the walk stops at the *worktree* and `k-<key>-<sha256(root)[0:8]>` derives an id no board answers to. (Mechanism from source by steward; the failing cell reproduced independently by four seats.)

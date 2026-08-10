@@ -28,7 +28,9 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
 - **Built by a convened team — anthill dogfoods itself.** This repo is self-hosted: its own
   anthill team lives in **`.anthill/`** (`.anthill/README.md` is the SOP; **`.anthill/principles.md`
   is what the team learned the hard way, each with its scar**; `.anthill/dev/<handle>.md`
-  is each seat's living doc/brain; the roster is `.anthill/dev/README.md`). Substantial work is done
+  is each seat's living doc/brain; the roster is `.anthill/dev/README.md`). _Those paths are this
+  repo's, and this repo runs one team. A project may configure several — each after the first lives
+  at `.anthill/teams/<name>/`, and `anthill team show` says which one you are on._ Substantial work is done
   by a lead + seats owning scopes, not a lone agent — run **`anthill:convene`** to start a session (or
   `anthill:join <handle>` to take a seat). Consider it for anything non-trivial.
 - **anthill adapts to the host project — it does not dictate its conventions.** Where a design

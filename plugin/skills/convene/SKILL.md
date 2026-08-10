@@ -22,15 +22,17 @@ stay solo.
 
 ## Steps
 
-1. **Ground as the lead.** Read, in the canonical order (paths resolve from `.anthill/config.json` —
-   defaults shown):
+1. **Ground as the lead.** Read, in the canonical order. **`<teamDir>` and `<seatDir>` below are
+   RESOLVED, not literal** — they come from `paths` in `.anthill/config.json` and default to
+   `.anthill/` and `.anthill/dev/`. `anthill join <lead>` prints every one of them already resolved;
+   if you are unsure which layout this repo uses, read them from there rather than guessing:
    - the **`grounding`** docs in `.anthill/config.json` (the _product_ context — e.g. `AGENTS.md`,
      `README.md`) so you can judge what you're building;
-   - `.anthill/README.md` — the **SOP** (how the team works, the principles, the rituals);
-   - `.anthill/principles.md` — **what this team learned the hard way**, each with the scar that
+   - `<teamDir>/README.md` — the **SOP** (how the team works, the principles, the rituals);
+   - `<teamDir>/principles.md` — **what this team learned the hard way**, each with the scar that
      paid for it. Short, and the highest-leverage read here;
-   - `.anthill/dev/seams.md` — the shared inter-seat **contracts**;
-   - your own **lead seat doc** `.anthill/dev/<lead>.md` (your orchestration reflexes + scars).
+   - `<seatDir>/seams.md` — the shared inter-seat **contracts**;
+   - your own **lead seat doc** `<seatDir>/<lead>.md` (your orchestration reflexes + scars).
      You are now the **lead**.
 
 2. **Gather the work from the human** (ask only what you need — one focused round):
@@ -45,10 +47,11 @@ stay solo.
      seat scopes against what this phase actually needs — if a scope has drifted or doesn't fit, **split
      / merge / re-draw it now** (and `anthill init` any new seat doc). This is the forward half of the
      finalize re-scope reflection: last session's captured misfit is this session's signal to act on.
-   - **Read the last retro's Q3 hypotheses (`.anthill/retro.md`, newest first) and say which ones this
-     session will test.** **No `retro.md`?** That is the normal state before this team's first
-     finalize — `init` does not render one, it is written at finalize. **Say so in the brief and move
-     on; do not go looking for it or report it as missing.** They were written to be falsifiable; a hypothesis nobody checks is the same
+   - **Read the last retro's Q3 hypotheses (`<teamDir>/retro.md`, newest first) and say which ones this
+     session will test.** **No entries in it?** That is the normal state before this team's first
+     finalize — `init` seeds the file with the ritual's guidance and nothing else; the entries are
+     written at finalize. **Say so in the brief and move
+     on; do not go looking for them or report them as missing.** They were written to be falsifiable; a hypothesis nobody checks is the same
      shape as an untested backup — it reads as protection and has never once been exercised. **Name
      them in the convene brief**, so the seats know what they're testing, and carry the verdict into
      the next retro. **A prediction that comes back _wrong_ is the valuable outcome**, not a failure of
@@ -65,6 +68,14 @@ stay solo.
      **"We don't have one" is a real answer:** leave it unset and the land command announces the
      absence loudly instead of skipping the gate silently. What you must not do is invent one to
      make the field look filled. Ask **once** at convene; if it is already set, say nothing.
+
+   - **⚠ ONE TEAM AT A TIME, if this project configures several.** `anthill convene` refuses while
+     another configured team is still convened, **because the board is one repo-root file** —
+     convening now would rebind that team's board underneath its seats. The remedy is two commands,
+     and they are the whole of it: **stand the other team down (`anthill down`), then
+     `anthill team use <name>`** to move this repo onto the team you want. `anthill team ls` shows
+     what is configured; `anthill team show` says which one you are on and why. _(A guard without a
+     route reads as a wall, and this is the moment a lead meets it.)_
 
 3. **Stand up coordination.**
    - **Channel:** run **`anthill convene`**. **There is no wire to open** — `anthill comms` is an
@@ -230,8 +241,16 @@ positions`.** This is the named moment to run it; without one it is a verb nobod
 
 The stand-up beats that get skipped when you're eager to spawn. Run them as a list:
 
+- ◻ **On the intended team**, if this project configures more than one — **`anthill team ls`** lists
+  every team and marks the resolved one. _(Not `team show`: with nothing pinned yet — the normal state
+  before a lead picks a team — `show` refuses, because it answers about ONE team. `ls` tolerates the
+  ambiguity, which is the whole state you are in here.)_
+  **Then pin it: `anthill team use <name>`.** `convene --team <name>` binds this convene and nothing
+  after it — every later command re-resolves from scratch, so without the pin you repeat `--team` on
+  `status`, `commit --as` and `comms read` or they refuse. Convene **refuses while another team is
+  still convened** (the board is one repo-root file): `anthill down` first.
 - ◻ **Grounded** as the lead (grounding docs → SOP → **principles** → seams → your seat doc).
-  `.anthill/principles.md` is short and is the highest-leverage read in that list.
+  `<teamDir>/principles.md` is short and is the highest-leverage read in that list.
 - ◻ **Work gathered** from the human; **plan phase** run (`anthill:plan`) if it's a multi-seat feature
   without a ratified plan.
 - ◻ **`gate` set in `.anthill/config.json`** — if it is unset, you asked the human for this project's

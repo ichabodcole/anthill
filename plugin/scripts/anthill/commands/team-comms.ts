@@ -30,7 +30,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname } from "node:path";
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, type OutputFormat, resolveFormat } from "../agent-layer.ts";
 import {
   buildCommsIncantation,
   buildPositionsReport,
@@ -49,29 +49,79 @@ import {
   type SeatPosition,
   type SeatPositionRow,
 } from "../comms.ts";
-import { ConfigError, loadConfig, type ResolvedConfig } from "../config.ts";
+import { ConfigError, loadProject, type ResolvedConfig, type ResolvedProject } from "../config.ts";
 import { defineAnthillCommand, defineCommand } from "../define.ts";
 import { acquireLock, releaseLock } from "../lock.ts";
 import { nowMillis } from "../runtime.ts";
+import { readPin, resolveTeam } from "../team-resolve.ts";
+import { rejectOtherTeam } from "./team-support.ts";
 
 /**
  * Load config WITHOUT the usual `requireConfig` exit. A missing config is not a
  * generic command failure here — it is one of identity resolution's three
  * outcomes, and it has to reach the caller AS that outcome rather than as a
  * different error shape. Absent evidence is not evidence of absence.
+ *
+ * ⚠ AND IT RESOLVES THE TEAM, which is why the ladder had to reach in here
+ * separately. This file deliberately bypasses `requireConfig`, so threading the
+ * ladder through that function alone would have left every `comms` verb — the
+ * commands a seat runs most — binding to whatever config it found up-tree,
+ * ignoring both the pin and `--team`. The worst version of the hazard: reading
+ * another team's messages, silently.
+ *
+ * ⚠ AMBIGUITY IS A FOURTH OUTCOME, NOT A THROW. A `ConfigError` from
+ * `resolveTeam` would land in the catch below and be reported as *"could not
+ * find `.anthill/config.json`"* — which is a lie about a repo whose config was
+ * found and read. It is returned as `teamError` instead, and the verbs report it
+ * verbatim.
  */
-function loadTeam(): { config: ResolvedConfig | null; configSearch: string } {
+function loadTeam(sel: { team?: string | undefined } = {}): {
+  config: ResolvedConfig | null;
+  configSearch: string;
+  /** The config loaded and the TEAM did not resolve — a different failure. */
+  teamError: string;
+  /** Every configured team — the cross-team `--channel` guard needs the others. */
+  project: ResolvedProject | null;
+} {
+  let project: ResolvedProject;
   try {
-    return { config: loadConfig(), configSearch: "" };
+    project = loadProject();
   } catch (err) {
     if (err instanceof ConfigError) {
       // Pass the config layer's OWN locator through verbatim. It names the start
       // dir and says "or any parent", which is what actually happened; rebuilding
       // an absolute path here would name one place out of the many it checked.
-      return { config: null, configSearch: err.message };
+      return { config: null, configSearch: err.message, teamError: "", project: null };
     }
     throw err;
   }
+
+  try {
+    const { team } = resolveTeam(project, {
+      team: sel.team,
+      env: process.env,
+      pin: readPin(project.projectRoot),
+    });
+    return { config: team, configSearch: "", teamError: "", project };
+  } catch (err) {
+    if (err instanceof ConfigError) {
+      return { config: null, configSearch: "", teamError: err.message, project };
+    }
+    throw err;
+  }
+}
+
+/**
+ * The team failed to resolve on a repo that HAS a config — report that, and stop.
+ *
+ * Never falls through to a channel: `resolveChannel` would happily fall back to
+ * `--channel` with no config behind it, which is how "two teams, pick one"
+ * becomes "wrote to a channel belonging to nobody".
+ */
+function exitIfTeamUnresolved(format: OutputFormat, command: string, teamError: string): void {
+  if (teamError === "") return;
+  emitError({ format, command, error: teamError });
+  process.exit(1);
 }
 
 function identify(config: ResolvedConfig | null, configSearch: string, handle: unknown) {
@@ -86,6 +136,33 @@ function identify(config: ResolvedConfig | null, configSearch: string, handle: u
 function resolveChannel(config: ResolvedConfig | null, flag: unknown): string | null {
   if (typeof flag === "string" && flag.trim() !== "") return flag;
   return config ? config.channel : null;
+}
+
+/**
+ * Refuse a `--channel` that belongs to a DIFFERENT configured team.
+ *
+ * `requireConfig` applies this rule to every other command; this file does not go
+ * through it, and `--channel` here is the sharpest version of the hazard — the
+ * flag names a wire, so an unguarded value reads and writes another team's
+ * messages while everything else about the invocation stays this team's.
+ */
+function exitIfOtherTeamChannel(
+  format: OutputFormat,
+  command: string,
+  project: ResolvedProject | null,
+  team: ResolvedConfig,
+  channel: string,
+): void {
+  if (!project) return;
+  try {
+    rejectOtherTeam(project, team, { channel });
+  } catch (err) {
+    if (err instanceof ConfigError) {
+      emitError({ format, command, error: err.message });
+      process.exit(1);
+    }
+    throw err;
+  }
 }
 
 function readChannel(teamDir: string, channel: string) {
@@ -168,12 +245,20 @@ const sendCommand = defineCommand({
       type: "boolean",
       description: "Send even though --as-of is stale (you have decided the crossing is fine)",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const { config, configSearch } = loadTeam();
+    const { config, configSearch, teamError, project } = loadTeam({
+      team: ctx.args.team as string | undefined,
+    });
+    exitIfTeamUnresolved(format, "comms send", teamError);
 
     const identity = identify(config, configSearch, ctx.args.as);
     if (identity.outcome !== "resolved-from-roster") {
@@ -188,6 +273,7 @@ const sendCommand = defineCommand({
       emitError({ format, command: "comms send", error: "no channel resolved" });
       process.exit(1);
     }
+    exitIfOtherTeamChannel(format, "comms send", project, config, channel);
 
     const teamDir = config.teamDirPath();
     let path: string;
@@ -443,6 +529,11 @@ const readCommand = defineCommand({
       description: "Only the most recent N messages (finite — use it to find an anchor id)",
       valueHint: "N",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
     // RECOGNISED and REFUSED, not unknown. Every sibling wire takes `--as` on a
     // read verb, so muscle memory supplies it — and `read` is the one verb a
@@ -468,7 +559,10 @@ const readCommand = defineCommand({
       });
       process.exit(1);
     }
-    const { config, configSearch } = loadTeam();
+    const { config, configSearch, teamError, project } = loadTeam({
+      team: ctx.args.team as string | undefined,
+    });
+    exitIfTeamUnresolved(format, "comms read", teamError);
     const channel = resolveChannel(config, ctx.args.channel);
     if (!config || !channel) {
       // Same locator discipline as `send`: the config layer's own message, which
@@ -480,6 +574,7 @@ const readCommand = defineCommand({
       });
       process.exit(1);
     }
+    exitIfOtherTeamChannel(format, "comms read", project, config, channel);
 
     let messages: CommsMessage[];
     let warnings: string[];
@@ -684,11 +779,19 @@ const followCommand = defineCommand({
       description: "Your seat handle (must be in the roster)",
       valueHint: "handle",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const format = resolveFormat(ctx.args.format);
-    const { config, configSearch } = loadTeam();
+    const { config, configSearch, teamError, project } = loadTeam({
+      team: ctx.args.team as string | undefined,
+    });
+    exitIfTeamUnresolved(format, "comms follow", teamError);
 
     const identity = identify(config, configSearch, ctx.args.as);
     if (identity.outcome !== "resolved-from-roster") {
@@ -701,6 +804,7 @@ const followCommand = defineCommand({
       emitError({ format, command: "comms follow", error: "no channel resolved" });
       process.exit(1);
     }
+    exitIfOtherTeamChannel(format, "comms follow", project, config, channel);
 
     const teamDir = config.teamDirPath();
     const path = resolveCommsLog(teamDir, channel);
@@ -898,12 +1002,20 @@ const standDownCommand = defineCommand({
       description: "Channel (default: config.channel)",
       valueHint: "name",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
   },
   async run(ctx) {
     const started = nowMillis();
     const format = resolveFormat(ctx.args.format);
-    const { config, configSearch } = loadTeam();
+    const { config, configSearch, teamError, project } = loadTeam({
+      team: ctx.args.team as string | undefined,
+    });
+    exitIfTeamUnresolved(format, "comms stand-down", teamError);
     const identity = identify(config, configSearch, ctx.args.as);
     if (identity.outcome !== "resolved-from-roster") {
       emitError({ format, command: "comms stand-down", error: identity.error });
@@ -918,6 +1030,7 @@ const standDownCommand = defineCommand({
       });
       process.exit(1);
     }
+    exitIfOtherTeamChannel(format, "comms stand-down", project, config, channel);
 
     const teamDir = config.teamDirPath();
     const path = commsDeparturePath(teamDir, channel, identity.handle);
@@ -964,6 +1077,11 @@ const positionsCommand = defineCommand({
       description: "Channel (default: config.channel)",
       valueHint: "name",
     },
+    team: {
+      type: "string",
+      description: "Which configured team (default: resolved from the pin / sole team)",
+      valueHint: "name",
+    },
     format: { type: "string", description: "Output format", valueHint: "text|json" },
     as: {
       type: "string",
@@ -983,7 +1101,10 @@ const positionsCommand = defineCommand({
       });
       process.exit(1);
     }
-    const { config, configSearch } = loadTeam();
+    const { config, configSearch, teamError, project } = loadTeam({
+      team: ctx.args.team as string | undefined,
+    });
+    exitIfTeamUnresolved(format, "comms positions", teamError);
     const channel = resolveChannel(config, ctx.args.channel);
     if (!config || !channel) {
       emitError({
@@ -993,6 +1114,7 @@ const positionsCommand = defineCommand({
       });
       process.exit(1);
     }
+    exitIfOtherTeamChannel(format, "comms positions", project, config, channel);
 
     // READ ORDER IS LOAD-BEARING: positions FIRST, head SECOND.
     //
