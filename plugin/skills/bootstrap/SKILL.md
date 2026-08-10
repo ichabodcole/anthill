@@ -13,6 +13,9 @@ reads) + a rendered `.anthill/` living-docs scaffold. This is the **one-time set
 seatings**, and let the human ratify. Single-surface repos get **layered-app**; a workspace of several
 apps + shared packages gets **multi-surface** (a seat per surface + the shared-contract seat). The
 archetype is a starting hypothesis, not a gate — the human always ratifies, corrects, or hand-tailors.
+**And when the scan finds no manifest it can read, there is no nearest archetype — you say so and ask
+(§2·0).** Ratification is not a safety net for a shape nobody had grounds for; a human will sign off on
+a plausible-looking roster, which is exactly how the old fail-open shipped teams into novel repos.
 
 > **The anthill CLI** — driven from the plugin (nothing installed in the target repo):
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below
@@ -52,7 +55,9 @@ two shapes can be compared rather than argued about. What it must never do is ov
 is already there.
 
 **Do the composition first, then one edit.** Steps 2–3 below still apply to the NEW team — scan, draft
-a seating from the nearest archetype, ratify it with the human. Skip step 1 (the dependencies are
+a seating from the nearest archetype, ratify it with the human. _(Or, if the scan reports
+`evidence: "none"`, take **§2·0** and ask instead — there is no nearest archetype. That is not a
+corner case here: a project bootstrapped **via** §2·0 has no archetype behind its first team either.)_ Skip step 1 (the dependencies are
 already installed) and do not touch the incumbent's roster.
 
 Then convert the config **once**, from the flat shape to a `teams` map (spec §5a):
@@ -164,14 +169,58 @@ write a half-working config.
 - **Read the repo's shape deterministically:** run **`anthill scan`** and read the `ScanReport` it emits
   (`{ ok, data }` — the `data` is the report). This is the machine reading you'll ratify with the human,
   replacing eyeballing the layout. What matters:
+  - **`data.evidence`** — **read this FIRST.** `"manifest"` ⇒ a readable manifest was found — a root
+    `package.json`, **or** a `pnpm-workspace.yaml` that yielded globs. _(On the second, `warnings`
+    still says `no package.json at repo root`. That is consistent, not a contradiction: the scan had
+    workspace members to read. Do not treat the warning as a reason to doubt `"manifest"`.)_
+    `"none"` ⇒ there was none, so `data.units[0]` is **synthesized from the directory name** and its
+    `stack` is empty **by absence, not by observation.** → **`"none"` goes to [§2·0](#20-evidence-none--stop-and-ask-do-not-propose-an-archetype), not to 2a/2b.**
   - **`data.workspace`** — `null` ⇒ **single-surface** repo (one app); non-`null` ⇒ a **multi-surface**
-    workspace (several apps + shared packages). This one boolean picks the archetype.
+    workspace (several apps + shared packages). Picks the archetype **once `evidence` is `"manifest"`** —
+    on its own it cannot tell a real single-surface app from a repo the scanner could not read at all.
   - **`data.units[]`** — each workspace member: `name`, `path`, `kind` (`"app"`|`"package"` — a
     best-effort hint you may overrule), `stack` (dep-derived, **dominant-first**, so `stack[0]` is the
     unit's primary framework), `private`, and `internalDeps` (names of other units it depends on — the
     edges).
 
-#### 2a. Single-surface (`data.workspace === null`) — layered-app, unchanged
+#### 2·0. `evidence: "none"` — STOP AND ASK. Do not propose an archetype.
+
+**Nothing below this point has evidence behind it.** `units[0]` was synthesized from the directory
+name; the empty `stack` is the scanner having found no manifest, not a repo having no stack. Every
+archetype in `templates/archetypes/` is a **software** shape, and proposing one here is a guess
+wearing a scan's authority.
+
+**⚠ This was a live defect, and its shape is why the rule is "ask", not "refuse".** 2a used to fire
+on `workspace === null` alone, so a novel repo received `layered-app` — an engine seat scoped to
+_"goldens, unit tests"_ — and **a human ratified it**, because nothing in the reading said it was a
+fallback. The bogus roster was laundered through a human "yes". A wrong answer nobody can see is bad;
+a wrong answer that collects a signature is worse.
+
+**Say what you found, in these terms, and then ask:**
+
+> _"`anthill scan` read no manifest here, so I have nothing to derive a team shape from. **What kind
+> of work does this repo hold, and who would the seats be?**"_
+
+**⚠ That script deliberately names NO repo kinds, and an earlier draft of it did** — it offered
+_"non-software, or a stack I don't scan (Python, Rust, Go…)"_, which **violates the very rule stated
+in the next bullet.** It also enumerates wrongly: a perfectly ordinary JavaScript repo with
+`client/package.json` and `server/package.json` and no root manifest reads `"none"` and is neither of
+those things. **The moment you list possibilities you have started guessing again**, one level below
+the archetype you just declined to guess.
+
+- **Phrase it as what YOU could not read, never as what the repo IS.** `evidence: "none"` is a fact
+  about the scanner. Telling a Rust team "this isn't a software project" invites an argument;
+  telling them "I can't read Cargo.toml" invites a correction, which is the thing you want.
+- **Then compose from their answer**, not from an archetype — **[step 3](#3-ratify-with-the-human)
+  onward works unchanged**, with the human's description standing in for the scan's reading. **The
+  seats are theirs to name.**
+- **Do NOT fall through to 2a or 2b**, and do not "start from `layered-app` and adjust". A shape the
+  human corrects is anchored on a shape nobody had grounds for.
+- **This is `adapts, not dictates` at its sharpest.** anthill has no opinion about what a
+  non-JavaScript team looks like, and the honest move is to say so and ask rather than to install a
+  guess.
+
+#### 2a. Single-surface (`evidence: "manifest"` and `data.workspace === null`) — layered-app, unchanged
 
 - **Load the draft:** read `${CLAUDE_PLUGIN_ROOT}/templates/archetypes/layered-app.json`. It seeds: a
   lead + engine / spine / surface seats + a verify seat (verifier `spawn:true`), with a `CHANGE-ME`
@@ -182,7 +231,7 @@ write a half-working config.
   human has names in mind — they ratify next.
 - Skip 2b entirely; go to step 3.
 
-#### 2b. Multi-surface (`data.workspace !== null`) — offer candidate seatings
+#### 2b. Multi-surface (`evidence: "manifest"` and `data.workspace !== null`) — offer candidate seatings
 
 A workspace of several apps + shared packages has **vertical** seams (one seat per surface + the shared
 contract), not the horizontal layers `layered-app` assumes. Read the `ScanReport`, derive three facts,
@@ -201,6 +250,11 @@ pick-one form**.
   framework, not stack overlap — `[next,react]` and `[expo,react-native,react]` share `react` but are
   **different** surfaces). Distinct `stack[0]` ⇒ **strong seam ⇒ split** (a seat each). Shared
   `stack[0]` ⇒ **weak seam ⇒ fold** (one merged seat).
+
+**⚠ This branch is only reachable with `evidence: "manifest"`, which now REQUIRES at least one unit.
+If you are somehow here with `units` empty, go to §2·0** — the guard below is about _one_ surface and
+must never be applied to _zero_. (Shipped that way for one commit: globs that matched no members
+answered `"manifest"`, and this guard's fall-back to `layered-app` was the road back to the defect.)
 
 **Guard — one real surface ⇒ treat as single-surface.** If the derive leaves only **one** `kind:"app"`
 surface (everything else is a package / tooling with low fan-in), this workspace is effectively
@@ -252,6 +306,10 @@ free-form, and let the human decline (generic `surface` / `shared` / `verify` ha
 reinforces the durable-seats-as-characters model, but it's a nicety — never block ratify on it.
 
 ### 3. Ratify with the human
+
+For repos that came through **§2·0** there is no scan-derived reading to state: open with what you
+could not read and what the human told you instead, then present the roster you composed **from their
+answer** and ratify it the same way. Everything below applies unchanged.
 
 For **single-surface** repos (2a) present the proposed roster (handles · roles · scopes) and confirm —
 one focused round. For **multi-surface** repos (2b) the candidate-seating conversation _is_ this round:

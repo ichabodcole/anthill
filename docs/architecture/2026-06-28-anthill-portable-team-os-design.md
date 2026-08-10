@@ -408,7 +408,12 @@ subcommands — and the five that are not about a team (`info`, `scan`, `migrate
   into the target repo (idempotent; re-runnable when the team reshapes — renders new seat docs
   without clobbering existing ones). **PROJECT-level, not team-level** (§5a): it renders **every**
   configured team unless `--team` narrows it, and the pin/`ANTHILL_TEAM` do not narrow it at all.
-- `anthill scan` — deterministic workspace/surface detection, feeding bootstrap's candidate seatings
+- `anthill scan` — deterministic workspace/surface detection, feeding bootstrap's candidate seatings.
+  **Reports whether it had anything to go on** (`evidence: "manifest" | "none"`), because
+  `workspace: null` alone was true of both a real single-surface app and a repo with no readable
+  manifest — and bootstrap picked its archetype from that one boolean, handing non-JS repos
+  `layered-app`. `"none"` sends bootstrap to §2·0 (say so and ask) instead of any archetype, and it
+  means _this scanner found nothing it can read_, **not** "not a software project"
 - `anthill feedback` — send a bug or idea upstream to the anthill repo
 - `anthill migrate` — apply a footprint version migration (v1 → v2), planned purely by `migrate.ts`.
   **Refuses a multi-team config by name** (§5a), before building a `RepoScan`: it reads

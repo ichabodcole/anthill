@@ -1,5 +1,7 @@
-import { describe, expect, test } from "bun:test";
-import { resolve } from "node:path";
+import { afterAll, describe, expect, test } from "bun:test";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import type { ScanReport } from "../scan.ts";
 
 // e2e: drive the whole CLI over an in-tree fixture and assert the emitted
@@ -52,5 +54,40 @@ describe("anthill scan — e2e", () => {
     expect(data.units).toHaveLength(1);
     expect(data.units[0]?.path).toBe(".");
     expect(data.units[0]?.name).toBe("solo-app");
+  });
+});
+
+// The TEXT half of the fail-open, which the JSON fix did not cover and which is
+// the surface a human actually reads. `renderScan` printed "Workspace:
+// single-surface" for a repo with no manifest — the same unevidenced claim,
+// after the payload was already honest. Found by running the command rather than
+// by reading the diff.
+//
+// CLEANUP: one module-level mkdtempSync + afterAll(rmSync) (see tmpleak.guard).
+const TEXT_ROOT = mkdtempSync(join(tmpdir(), "anthill-scan-text-"));
+afterAll(() => rmSync(TEXT_ROOT, { recursive: true, force: true }));
+
+describe("anthill scan --format text — never asserts a shape it cannot support", () => {
+  test("a repo with no manifest does NOT print 'single-surface'", async () => {
+    const dir = join(TEXT_ROOT, "novel");
+    mkdirSync(join(dir, "chapters"), { recursive: true });
+    writeFileSync(join(dir, "README.md"), "# My Novel\n");
+
+    const { stdout } = await runCli(["scan", "--root", dir, "--format", "text"]);
+    expect(stdout).not.toContain("single-surface");
+    expect(stdout).toContain("no readable package.json");
+    // "?" reads as "we looked and found nothing"; we never looked.
+    expect(stdout).toContain("not scanned");
+  });
+
+  test("a real single-surface app still prints 'single-surface' — the control", async () => {
+    // Without this the assertion above is satisfied by deleting the line.
+    const dir = join(TEXT_ROOT, "app");
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, "package.json"), JSON.stringify({ name: "solo" }));
+
+    const { stdout } = await runCli(["scan", "--root", dir, "--format", "text"]);
+    expect(stdout).toContain("Workspace: single-surface");
+    expect(stdout).not.toContain("not scanned");
   });
 });

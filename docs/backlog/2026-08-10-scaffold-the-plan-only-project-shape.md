@@ -55,3 +55,36 @@ one in `docs/ROADMAP.md` as a `# ▶ THE SCOPE OF WORK:` heading with its own cr
 projects, which works and is entirely undocumented. **Do not add it on the strength of one repo's
 improvisation** — but note that the improvisation exists, because that is the signal that would justify
 it later.
+
+---
+
+## Second instance of the same root cause — `finalize-branch` Step 4 has no home for backlog work
+
+**Measured 2026-08-10, finalizing `fix/bootstrap-fail-open`** (a backlog item worked in place, no
+project folder).
+
+`project-docs:finalize-branch` Step 4 says **"Always create a session document"** in
+`docs/projects/<project>/sessions/`, and its Important Constraints repeat it: _"Always create session
+doc — even for smooth work."_ **There is no project.** Following it literally means minting a project
+folder to house one session doc for a three-commit fix — the ceremony the backlog tier exists to
+avoid.
+
+**And the scaffold already contradicts it in the other direction:** `sweep-project` Step 0 states that
+for a backlog item _"the single file serves as plan, proposal, and record."_ So one skill says the
+item IS the record and another says a session doc is mandatory. **Two skills in the same plugin, one
+work item, opposite instructions.**
+
+**Same root cause as the gap above:** the process assumes work lives in a project. The tier model
+needs to say what each shape's _record_ is, not only what its _plan_ is:
+
+| shape                         | plan lives in        | record lives in                       |
+| ----------------------------- | -------------------- | ------------------------------------- |
+| Backlog item, worked in place | the item             | **the item** — stamp status + outcome |
+| Plan-only project             | `plan.md`            | `sessions/`                           |
+| Full project                  | `proposal.md` + plan | `sessions/`                           |
+
+**Suggested resolution:** Step 4 becomes conditional on the work having a project, with an explicit
+backlog branch — _"stamp the outcome into the backlog item; do not create a project folder to hold a
+session doc."_ Worth checking the same skill's Steps 5–7 for the same assumption while in there
+(Step 7 stages `docs/`, which is fine either way; Step 6's plan reconciliation already handles the
+backlog case correctly).

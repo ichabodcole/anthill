@@ -60,12 +60,22 @@ function renderScan(d: ScanReport): string {
     lines.push(
       `Workspace: ${d.workspace.manager ?? "unknown"} · ${d.workspace.globs.join(", ") || "(no globs)"}`,
     );
+  } else if (d.evidence === "none") {
+    // ⚠ NOT "single-surface". The JSON half of this fix was pointless if the line
+    // a HUMAN reads still asserts a shape nothing supports: `workspace: null` is
+    // true here only because there was no manifest to find globs in, and the unit
+    // below is synthesized from the directory name. Caught by running the command
+    // after the payload was already correct.
+    lines.push("Workspace: (no readable package.json — nothing to derive a shape from)");
   } else {
     lines.push("Workspace: single-surface");
   }
   lines.push(`Units (${d.units.length}):`);
   for (const u of d.units) {
-    const stack = u.stack.length > 0 ? u.stack.join(">") : "?";
+    // "?" reads as "we looked and found nothing"; with no manifest we never
+    // looked. Same distinction the `evidence` field exists for, one line down.
+    const stack =
+      u.stack.length > 0 ? u.stack.join(">") : d.evidence === "none" ? "not scanned" : "?";
     const flags = [u.private ? "private" : "public", stack].join(" · ");
     const edges = u.internalDeps.length > 0 ? ` → ${u.internalDeps.join(", ")}` : "";
     lines.push(`  ${u.kind === "app" ? "▸" : "·"} ${u.name} [${u.path}] (${flags})${edges}`);

@@ -39,6 +39,7 @@
 interface ScanReport {
   root: string; // absolute repo root: .git / topmost package.json / cwd — resolved BEFORE .anthill exists
   workspace: { manager: "bun" | "pnpm" | "npm" | "yarn" | null; globs: string[] } | null; // null ⇒ single-surface
+  evidence: "manifest" | "none"; // what the scan had to go on: "manifest" ⇒ at least one unit was derived from a manifest ACTUALLY READ (root package.json, or members expanded from globs — so `warnings` may still report no root package.json, which is consistent). "none" ⇒ nothing was read: units[0] (if any) is SYNTHESIZED, stack empty by ABSENCE. NOT "a manifest parsed" — globs matching zero members, and a package.json containing `"hello"`, are both "none"
   units: ScanUnit[]; // workspace members; single-surface ⇒ the ONE root package (len 1, path ".")
   warnings?: string[];
 }
@@ -63,11 +64,35 @@ the exposed raw signals (`private`, `stack`, `internalDeps`) rather than trustin
 limitation:** pnpm negation globs (`!packages/x`) are parsed-and-dropped, not applied as excludes;
 `workspace.manager` is null when no lockfile is committed (a non-load-bearing byproduct).
 
+**AMENDMENT (2026-08-10) — `evidence` added, and this contract's own escape clause is what asked for it.**
+Ratified at: the field's two values and their meaning. The clause above says _"a consumer needing a field not listed here has hit a new seam"_ — `skills/bootstrap` had, and had been silently coping.
+
+**The fail-open:** `workspace: null` was true of BOTH a real single-surface app and a repo with no readable manifest at all, and bootstrap picked its archetype from that one boolean — in its own words, _"This one boolean picks the archetype."_ So a novel repo was handed `layered-app`, an engine seat scoped to _"goldens, unit tests"_. **Measured:** a git repo of `README.md` + `chapters/01.md` returned `workspace: null`, `stack: []`, `warnings: ["no package.json at repo root"]` — indistinguishable, on the ratified field set, from a React app.
+
+**Why not have the consumer read `warnings`.** The signal was already there in prose, and grepping it is inferring a verdict from a string — the defect that made `AmbiguousTeamError` a TYPE after a measured reword left the suite green while `anthill team ls` broke. In a SKILL that coupling is worse: nothing there can go red.
+
+**⚠ `evidence: "none"` DOES NOT MEAN "not a software project".** It means this scanner found nothing it can read; a Python or Rust repo is software and answers `"none"` today. A consumer must phrase its response as _"I found no manifest I can read"_ and ask — never as a claim about what the repo is. That distinction is the contract, not a nicety: the first wording invites a human to correct it, the second invites them to argue with it.
+
+**CORRECTION to this amendment (same day, caught in review before merge).** As first written, `"manifest"` was glossed as _"a readable `package.json` was found at the root"_ — **narrower than the code, on a reachable input.** Measured on a repo carrying `pnpm-workspace.yaml` and no root `package.json`: `evidence: "manifest"` **beside** `warnings: ["no package.json at repo root"]`, the field's own documented meaning denied by the same payload. The value is CORRECT — the scan had real members to read and bootstrap correctly reaches §2b — so the code was deliberately **not** narrowed to match: refusing a genuine pnpm workspace for lacking a root manifest would invent a fail-closed defect where none exists. The gloss was widened instead, here and at both consumer sites.
+
+**SECOND CORRECTION, same day, same shape — and it is the one that matters.** The first widening
+fixed the gloss and left the CODE reading `"manifest"` from *a manifest having parsed*. Review then
+found two inputs where that is false of the units: **globs matching zero members** (a fresh scaffold —
+`evidence: "manifest"`, `units: []`, so bootstrap skipped §2·0, reached §2b, and could take its
+one-surface fall-back to `layered-app`) and **a `package.json` containing `"hello"`** (`JSON.parse`
+succeeds, the cast made it a manifest, **no warning at all**, and `--format text` printed
+`Workspace: single-surface`). **The original defect, reproduced twice, inside its own fix.** The rule
+is now: `"manifest"` iff at least one unit was derived from a manifest that was *actually read*.
+
+**Worth keeping as the lesson rather than the diff:** this landed in the same commit that re-ratified this contract *because* a consumer was coping with an under-specified field — and the replacement field shipped over-specified in the other direction, in the one artifact whose whole value is being true about what the data supports. **A contract is not made accurate by being rewritten; it is made accurate by being checked against a payload.** One `pnpm-workspace.yaml` fixture found it in seconds.
+
 **Why it bites:** `scan` runs during bootstrap discovery, **before** `.anthill/` is written — so
 `root` must NOT resolve from the config walk-up (it would throw). And without `internalDeps`,
 "the package both surfaces use" is a fiction on any repo with >1 package: the consumer mints a
 contract seat for a config package or picks the wrong one. Both failures were caught at the ratify,
 before a line was built.
+
+**Proof (green), `evidence` half:** `scan.test.ts`'s `evidence` describe — the no-manifest case, the real-app control, the malformed manifest, the non-object manifest (`"hello"` / `[]` / `123`), globs matching zero members, and a pnpm workspace with no root manifest asserted as `evidence`+`warnings` TOGETHER; plus `commands/team-scan.test.ts` for the text rendering, each with a control. **Named rather than counted** — see the note at the foot of this file about counts rotting.
 
 **Proof (green):** `plugin/scripts/anthill/scan.test.ts` over in-tree fixtures at `plugin/scripts/anthill/__fixtures__/` — the pure detectors (`sniffStack` dominant-first ordering, `classifyUnit` position-primary, `internalDepsOf` fan-in, `parseWorkspaceGlobs`) plus a full `ScanReport` golden.
 A `workspace-repo` fixture (2 apps + 1 shared package with a real edge) asserts the full `ScanReport` golden; a `single-surface-repo` fixture asserts `workspace: null` + one root unit.
