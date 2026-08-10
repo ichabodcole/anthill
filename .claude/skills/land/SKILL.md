@@ -167,11 +167,42 @@ _Added after the first real run: this skill only documented `create`, and the PR
 release-please cuts a version on merge. **Hand the human the command; do not run it:**
 
 ```bash
-gh pr merge <n> --merge --subject "<subject>"
+gh pr merge <n> --merge \
+  --subject "$(head -1 msg.md)" \
+  --body-file <(tail -n +3 msg.md)
 ```
 
-> Without `--subject`, GitHub writes `Merge pull request #NN from ichabodcole/develop` — which is
-> exactly the empty-title problem this skill exists to fix, reintroduced at the last step.
+**⚠ BOTH FLAGS, from the SAME file that produced the PR — and the body is the half that is easy to
+skip.** What GitHub pre-fills is `Merge pull request #NN from ichabodcole/develop` as the subject and
+**the PR's _title_** as the body. **The PR's DESCRIPTION never enters git at all** — it lives only in
+GitHub's database.
+
+**Measured on this repo, 2026-08-10 — every release merge ever cut here:**
+
+```
+4df9539  Merge pull request #103 from ichabodcole/develop     body: [Develop]
+7b24759  Merge pull request #87  from ichabodcole/develop     body: [Develop]
+8f68492  Merge pull request #84  from ichabodcole/develop     body: [Develop]
+```
+
+So §6's `git log --first-parent main` — **the query this skill names as how you read releases** — is
+a list of indistinguishable entries. **A good PR description fixes the GitHub view and does nothing
+for `git log`, a fresh clone, `git bisect`, or anyone offline.**
+
+> **Why the merge commit, and not just the PR body.** Two patterns are both legitimate: a thin merge
+> commit with a rich PR description (history is a pointer to GitHub), or a rich merge commit with the
+> PR as the conversation (history is the record). **This repo is the second, and not by taste** —
+> `AGENTS.md`'s landing policy exists so sha citations keep resolving and trailers stay readable _in
+> git_, and release-please builds the changelog from commits. A repo that reads its own history back
+> must not keep its release story where `git log` cannot reach.
+>
+> **The duplication is fine, and asymmetric on purpose:** the commit is immutable, the PR body is
+> editable. The commit is a snapshot of what you believed at merge time, which is what a release
+> record should be. A long body costs nothing in the common view — `--first-parent` shows subjects
+> unless you ask for `%b`.
+
+_This said `--subject` only until 2026-08-10, carried from spellbook without asking whether the body
+should ride along. The measurement above is what changed it._
 
 **Which commit types release:** `AGENTS.md` § Branch Landing Policy has it — `feat` minor, `fix`
 patch, and **`docs` / `test` / `chore` are hidden and trigger no release at all.** A docs-only merge
