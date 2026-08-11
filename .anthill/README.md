@@ -309,6 +309,16 @@ work_ — don't stop mid-task to decide whether a note is a seat-doc lesson, a s
 paper-cut. The genre-sorting happens **here, at finalize**, when you route each captured note to its
 durable home. Sorting-while-working is a tax that suppresses capture.
 
+**Then get a cold read of what you wrote — you are the one person who cannot judge it.** Hand your
+seat doc to a reader holding **none of your session context** (a subagent spawned fresh, so none of
+your framing travels with it) and ask it to **restate each lesson in its own words** and quote
+whatever it could not interpret. **A doc can be entirely true and still fail to transmit**, and
+nothing about writing it tells you which one you produced: the assumptions you baked in are the
+things you did not need to say. Give it the whole doc and let it find the weak parts. **Scars need
+the most attention**, because a scar compresses a lived incident hardest — name this project's tools,
+docs and teammates freely, since your reader has them, and make sure the **event** survives without
+you: what was done, what happened, what it cost. **Say what a number meant, not what it was.**
+
 **A hypothesis is a fourth home, and it is the one the routing list keeps missing.** A lesson says
 what you now know; a **hypothesis** says what you predict and what would prove it wrong — so it goes
 to the **retro** (team-level, where the next convene reads it back) or to your **seat doc** (personal,

@@ -157,6 +157,26 @@ artifact may have been moved or deleted since you wrote the line.
 - Stigmergy is the whole thesis here: a trail that confidently points the wrong way is **worse than
   no trail**, because the next ephemeral agent has no way to know it's being misled.
 
+2.6. **Get a COLD READ of your seat doc.**
+You are the one person who cannot judge it. The assumptions you baked in are the things you did not
+need to say, so they are invisible to you by construction — 2.5 checks your prose against the
+**code**, and this checks it against a **reader**.
+
+- **Send it to a reader holding none of this session's context** — a subagent spawned fresh, so none
+  of your framing travels with it.
+- **Ask for a restatement in the reader's own words**, lesson by lesson, plus an exact quote of
+  anything it could not interpret. Its restatement is the measurement; you decide what changes.
+- **Hand over the whole doc and let the reader find the weak parts**, rather than pointing at the
+  passage you are unsure of. You learn where it actually fails, which is rarely where you expected.
+- **Give the epitaph the closest attention.** It is written for someone who will not remember this
+  session, so a cold reader is exactly its audience. If the reader cannot say what would go wrong
+  without it, neither will your successor.
+- **Write scars so the EVENT survives without you** — what was done, what happened, what it cost.
+  Name this project's tools, docs and teammates freely; your reader is inside the project and has
+  them. **What has to be recoverable is the incident**, which is the part a scar compresses hardest.
+- **Say what a number meant, not what it was.** A count carries its meaning to whoever measured it
+  and needs restating for anyone else.
+
 ### Shared — the lead coordinates over comms
 
 3. **Seams pass.** As a team, look at `<seatDir>/seams.md`: did we learn anything at the **team
@@ -459,6 +479,11 @@ nobody has scoped is a horizon in name only.
    - ◻ **Every seat re-read the docs it owns as their authority** (step 2.5) and verified each claim
      — proofs especially — against current code. Assume drift; the one session that measured this
      found it in **every** seat's docs.
+   - ◻ **Every seat got a COLD READ of its doc** (step 2.6) — a fresh reader with none of the
+     session's context, asked to restate each lesson in its own words and quote what it could not
+     interpret. **A doc can be entirely true and still fail to transmit**, and step 2.5 cannot see
+     that: it checks the prose against the code. This checks it against a reader, which is the one
+     judgement the author cannot make.
    - ◻ **Every seat reconciled its doc against contracts that CHANGED this session** (step 3.5) —
      restatement replaced with a pointer. The ordering makes this violation the default, not the
      exception: a four-seat team hit it in all five docs at once.
