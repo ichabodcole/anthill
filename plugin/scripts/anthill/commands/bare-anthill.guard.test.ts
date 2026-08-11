@@ -208,6 +208,29 @@ describe("bare `anthill` — every occurrence is accounted for", () => {
     expect(hits.filter((h) => !(h in ALLOWED))).toEqual([]);
   });
 
+  /**
+   * ⚠ THE OTHER DIRECTION, AND THE ONE THAT CATCHES A SHRINKING SCAN.
+   *
+   * The assertion above asks *"is every hit allowed?"* — which **a scan that
+   * reaches nothing satisfies perfectly.** This asks *"is every allowance still
+   * earning itself?"*, so a file dropped from the walk orphans its entries and
+   * goes RED.
+   *
+   * Review measured why this is needed: after the walk was pinned by level, an
+   * unnamed file could still be skipped silently — including `team-attach.ts` and
+   * `team-feedback.ts`, **two of the three files `seams.md` Contract 2 names as
+   * agent-re-invoked**, which is the exact class of the original miss. It also
+   * closes a second hole: a verb quietly lost from `cliVerbs()` stops matching,
+   * which orphans that verb's entries here.
+   *
+   * The allow-list stops being write-only: an entry that no longer describes
+   * anything real must be deleted, and deleting it is a decision someone makes on
+   * purpose rather than a silence nobody notices.
+   */
+  test("every allow-list entry is still EARNED — a stale or orphaned one fails", () => {
+    expect(Object.keys(ALLOWED).filter((k) => !hits.includes(k))).toEqual([]);
+  });
+
   test("the strings an AGENT re-invokes resolve to the emitting cli", () => {
     // Named individually rather than derived, because these are exactly the
     // ones seams.md Contract 2 enumerates as agent-re-invoked.
@@ -273,8 +296,9 @@ describe("bare `anthill` — POSITIVE CONTROLS: the detector still detects", () 
       // The formatter splits long errors at ~100 columns. A break landing between
       // the binary and its verb used to exonerate the whole string.
       concatenated: detects('error: "spawn one with: anthill " + "spawn --as forager"'),
-      // ⚠ THE BACKTICK FORM IS THE DOMINANT ONE IN THIS TREE (`migrate.ts` splits
-      // this way five times), and `normalize` repairs it with a SEPARATE branch
+      // ⚠ THE BACKTICK FORM IS THE DOMINANT ONE IN THIS TREE — it outnumbers the
+      // double-quote split across the scanned sources — and `normalize` repairs
+      // it with a SEPARATE branch
       // from the double-quote case above. Review measured that blinding that
       // branch left this whole file green — the commoner shape was the
       // uncontrolled one.
@@ -344,15 +368,30 @@ describe("bare `anthill` — POSITIVE CONTROLS: the detector still detects", () 
    * exact list, so adding a source file does not fail this — only LOSING reach
    * does.
    */
-  test("the scan reaches the whole tree — root, subdirectory, and a floor on the count", () => {
+  test("the scan reaches both directory levels and every agent-re-invoked file", () => {
     const files = sourceFiles(ROOT);
     expect({
       root: files.includes("config.ts"),
       commands: files.includes("commands/team-comms.ts"),
+      // ⚠ NAMED, NOT DERIVED: these are `seams.md` Contract 2's agent-re-invoked
+      // strings, and they are the files the v1 miss actually lived in. The
+      // allow-list consumption assertion cannot protect them — they hold NO
+      // entries, precisely because their strings were all fixed — so a walk that
+      // silently stopped reaching them would be green on every other assertion
+      // here. Review measured exactly that.
+      contract2: ["commands/team-attach.ts", "commands/team-feedback.ts"].every((f) =>
+        files.includes(f),
+      ),
       // Well under the real count, so this pins REACH and not a census.
       atLeast: files.length >= 20,
       excludesTests: files.every((f) => !f.endsWith(".test.ts")),
-    }).toEqual({ root: true, commands: true, atLeast: true, excludesTests: true });
+    }).toEqual({
+      root: true,
+      commands: true,
+      contract2: true,
+      atLeast: true,
+      excludesTests: true,
+    });
   });
 
   test("NEGATIVE CONTROL: the resolved form is not flagged, so the guard is not just matching everything", () => {

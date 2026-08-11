@@ -149,11 +149,23 @@ two are the same class borrowed** — worth stating, because a fixture presented
 earn is the thing this section exists to prevent.
 
 **And control the SCAN SET, not only the detector.** Every synthetic-defect control feeds the detector
-a string, so none of them notices if the file walk stops reaching a directory — measured, and silent.
-That is the shape of this guard's own worst historic miss, so `bare-anthill` and `tmpleak` both pin
-reach with a floor and a named file per level. Where a guard's exoneration is deliberately coarse,
-**assert the limit** rather than leave it implied — see `tmpleak.guard.test.ts`'s two `KNOWN LIMIT`
-cases.
+a string, so none of them notices if the file walk stops reaching part of the tree — measured, and
+silent. That is the shape of these guards' own worst historic miss.
+
+**The assertion that actually closes it is the allow-list read BACKWARDS.** _"Is every hit allowed?"_
+is satisfied perfectly by a scan that reaches nothing; _"is every allowance still earning itself?"_
+goes red the moment a file leaves the walk, and red again when a listed string is fixed and its entry
+left behind. It also catches a verb quietly lost from a derived verb set. **An allow-list nothing
+reads back is write-only**, which is the state both guards shipped in — one of them listing two files
+whose actual mints its pattern could not match. Pinning the directory levels is the weaker companion
+check, and its test is named for what it does rather than for what it suggests: files an allow-list
+never names need naming separately, which is why the agent-re-invoked set from `seams.md` Contract 2
+is pinned by hand.
+
+Where a guard's exoneration is deliberately coarse, **assert the limit** rather than leave it implied
+— see `tmpleak.guard.test.ts`'s two `KNOWN LIMIT` cases. **And check the limit's own prose against the
+tree**: the first version of one declared a spelling absent from this repo while seven of them sat in
+two allow-listed files.
 
 _Corollary for both: an allow-list entry states WHY, and the reason and the rule must have the same
 predicate. `emittingCli` enforced "is it in `renderText`" while its comment argued "is the reader

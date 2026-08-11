@@ -156,7 +156,7 @@ unread, because the blocking prompt would not let him get to it. He stayed stuck
 path, for about as long as the rest of the team took to exchange forty messages._
 
 **There is no message budget** (unless your tool has one).
-Seats ration themselves against limits nothing imposes, and **compression is where findings die** —
+People ration themselves against limits nothing imposes, and **compression is where findings die** —
 what gets cut is the second-most-important thing you know.
 
 **Dispatch an outside reviewer to FIND, never to DESIGN — and reproduce before acting, either way.**

@@ -36,8 +36,16 @@ import { join } from "node:path";
 
 const ROOT = new URL(".", import.meta.url).pathname;
 
-/** A raw mint: `mkdtempSync(join(tmpdir(), …))` written directly in a test. */
-const RAW_MINT = /mkdtempSync\(\s*join\(\s*tmpdir\(\)/;
+/**
+ * A raw mint: `mkdtempSync(join(tmpdir(), …))` written directly in a test.
+ *
+ * ⚠ `resolve` IS IN HERE BECAUSE IT WAS ALWAYS IN THE TREE. Review measured seven
+ * `mkdtempSync(resolve(tmpdir(), …))` mints across `config.test.ts` and
+ * `commands/team-migrate.test.ts` — **both allow-listed**, so the guard advertised
+ * coverage of two files whose actual mints it could not see. The allow-list
+ * consumption assertion below is what makes that impossible to repeat.
+ */
+const RAW_MINT = /mkdtempSync\(\s*(?:join|resolve)\(\s*tmpdir\(\)/;
 
 /**
  * Files permitted to mint raw, each with the mechanism that makes it safe.
@@ -122,6 +130,15 @@ describe("#100 — a new temp-dir leak must be RED, not merely unnoticed", () =>
     expect(entries.filter(([, src]) => mintsRaw(src)).length).toBeGreaterThan(0);
 
     expect(unaccountedIn(entries)).toEqual([]);
+
+    // ⚠ THE OTHER DIRECTION, AND IT IS THE ONE THAT CATCHES A SHRINKING SCAN.
+    // `unaccountedIn` asks "is every hit allowed?" — which a walk that reaches
+    // NOTHING satisfies perfectly. This asks "is every allowance still earning
+    // itself?", so dropping a file from the walk orphans its entry and goes red.
+    // Review measured the gap: skipping one file by name left this guard green,
+    // and the floor below permits losing nearly half the tree.
+    const scanned = new Set(entries.filter(([, src]) => mintsRaw(src)).map(([rel]) => rel));
+    expect(Object.keys(ALLOWED).filter((k) => !scanned.has(k))).toEqual([]);
   });
 
   /**
@@ -145,7 +162,8 @@ describe("#100 — a new temp-dir leak must be RED, not merely unnoticed", () =>
 
   test("POSITIVE CONTROL: the pattern matches the real shape, and tolerates wrapping", () => {
     // ⚠ ONLY `inline` IS AN OBSERVED SHAPE. Every raw mint in this tree today is
-    // single-line with double quotes, and biome — not prettier — formats it, so
+    // single-line with double quotes, and biome formats TypeScript here (prettier
+    // runs, but only over markdown), so
     // the wrapped and spaced cases are INSURANCE against a future formatter or a
     // longer path, not evidence of anything. Labelled rather than implied,
     // because an earlier version of this comment claimed all three were real
@@ -165,10 +183,14 @@ describe("#100 — a new temp-dir leak must be RED, not merely unnoticed", () =>
    * THE SCAN SET — uncontrolled until review measured it. Narrowing the walk to
    * one subdirectory, or dropping a file by name, left this file green.
    *
-   * Floor plus one named file per level, so ADDING a test file never fails this
-   * and only LOSING reach does.
+   * ⚠ THIS PINS THE TWO LEVELS, NOT THE SCAN SET — say so, because the first
+   * version of this test was named as though it proved the latter. Dropping a
+   * single unnamed file still passes here. **The allow-list consumption assertion
+   * above is what actually catches that**, and it only covers files an entry
+   * names. `seams.md` Contract 6 forbids an assertion shaped to look like proof
+   * of a claim it does not test.
    */
-  test("the scan reaches the whole test tree — root, subdirectory, and a floor", () => {
+  test("the scan reaches both directory levels — NOT a proof it reaches every file", () => {
     const files = testFiles(ROOT);
     expect({
       root: files.includes("config.test.ts"),
@@ -202,24 +224,27 @@ describe("#100 — a new temp-dir leak must be RED, not merely unnoticed", () =>
    * repo's own rule is to assert a limit rather than leave it implied, and the
    * per-file one below was shipped alone while this was merely true.
    *
-   * `RAW_MINT` is SYNTACTIC. It matches one spelling: `mkdtempSync(join(tmpdir()`.
-   * Every form below is a real leak this guard does not see. All are measured.
-   * None appears in the tree today, which is why the narrow pattern is still the
-   * right trade — a broader one would flag prose and helper names — but a reader
-   * must not read a green here as "no test can leak".
+   * `RAW_MINT` is SYNTACTIC: it matches `mkdtempSync(join(…))` and
+   * `mkdtempSync(resolve(…))` around a bare `tmpdir()`, and nothing else. Every
+   * form below is a real leak it does not see, and all are measured.
+   *
+   * **None of these four appears in the tree today** — checked, not assumed,
+   * because the version of this comment that shipped first said the same of
+   * `resolve(tmpdir())` while seven of them sat in two allow-listed files. That is
+   * why the pattern grew rather than the comment. The narrow form is still the
+   * right trade — a broader one flags prose and helper names — but a reader must
+   * not read a green here as "no test can leak".
    */
   test("KNOWN LIMIT: the pattern is syntactic, so other spellings of the same leak pass", () => {
     expect({
       // Built, not written literally: a `${…}` inside a plain string is a biome error.
       templateLiteral: mintsRaw(`mkdtempSync(\`\${tmpdir()}/x-\`)`),
       asyncForm: mintsRaw('await mkdtemp(join(tmpdir(), "x-"))'),
-      viaResolve: mintsRaw('mkdtempSync(resolve(tmpdir(), "x-"))'),
       throughALocal: mintsRaw('const base = tmpdir(); mkdtempSync(join(base, "x-"))'),
       namespaced: mintsRaw('mkdtempSync(join(os.tmpdir(), "x-"))'),
     }).toEqual({
       templateLiteral: false,
       asyncForm: false,
-      viaResolve: false,
       throughALocal: false,
       namespaced: false,
     });
