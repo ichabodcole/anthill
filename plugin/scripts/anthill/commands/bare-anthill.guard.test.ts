@@ -42,6 +42,38 @@
  * list, and anything unrecognised fails CLOSED. To add an entry you must state
  * why the string is safe — that sentence is the point, as in
  * `tmpleak.guard.test.ts`.
+ *
+ * ⚠⚠ THIS GUARD COVERS TWO MEDIA, AND THE SECOND WAS ADDED AFTER IT SHIPPED A
+ * DEFECT. Everything above is about `*.ts`. But agents read MARKDOWN too, by
+ * three routes: `anthill field-notes` prints `field-notes.md` verbatim, `anthill
+ * init` renders `templates/docs-team/**` into a team's living docs that every
+ * seat reads at join, and **`skills/` is read by every agent in every consuming
+ * project on every invocation**. The `.ts` walk saw none of them, and
+ * `principles.md` shipped a fenced `sh` block whose whole content was a bare
+ * `anthill field-notes` — a copy-paste target, in the medium people copy from.
+ *
+ * **It was invisible from inside this repo**: `init` never clobbers, so our own
+ * `.anthill/` predates the block and a clean local tree proved nothing.
+ *
+ * ⚠ THE SKILLS SURFACE WAS THE LAST ONE ANYBODY THOUGHT OF, and it is the
+ * largest. It arrived from running the cascade check on the other two rather
+ * than from reasoning about who reads what — which is the argument for running
+ * the cascade check even when the change feels finished. It held three fenced
+ * bare invocations and two sub-documents using the shorthand with no legend,
+ * one of them `plan/methodology.md`, the PORTABLE half that travels alone.
+ *
+ * Markdown needs a DIFFERENT rule, not the same one. Prose about a tool has to
+ * be able to name it — banning `anthill comms` from a sentence would make the
+ * docs unwritable, and this file already learned that lesson once (see
+ * `cliVerbs`, "it stops the guard matching ENGLISH"). So the two rules below key
+ * on what a reader DOES with the text:
+ *
+ *   1. **A fenced code block is a copy-paste target.** A legend explaining that
+ *      `anthill` is shorthand is prose, and prose does not travel with the copy.
+ *      A bare invocation inside a fence fails, legend or not.
+ *   2. **Prose may use the shorthand, if its OWN document says so.** The legend
+ *      is a per-document contract, and a document is what gets emitted — so it
+ *      is checked per document rather than per occurrence.
  */
 
 import { describe, expect, test } from "bun:test";
@@ -125,6 +157,97 @@ const ALLOWED: Record<string, string> = {
   "commands/team-team.ts :: anthill team @ gth1rowspushNoteamisselected":
     "template - the same, in the ls footer",
 };
+
+const PLUGIN_ROOT = join(ROOT, "..", "..");
+
+/**
+ * The claim that makes prose shorthand safe.
+ *
+ * ⚠ A PATTERN, NOT A STRING, AND THE FIRST DRAFT WAS A STRING — which is how
+ * this nearly shipped wrong. It pinned `"SHORTHAND, not a binary on your PATH"`,
+ * the wording of the docs being written at the time, and **the eight skills say
+ * `"shorthand, not a binary on PATH"`** — same claim, different sentence. A
+ * guard keyed to one author's phrasing reports every other author as a defect,
+ * so it matches the load-bearing assertion (`anthill` is not a binary on PATH)
+ * and lets the sentence around it vary.
+ */
+const LEGEND = /shorthand, not a binary on (?:your )?PATH/i;
+
+/**
+ * Markdown an AGENT reads, and the three routes it travels.
+ *
+ * Derived by walking, not listed, for the same reason `cliVerbs` is derived: a
+ * new doc dropped into any of these trees joins the scan the day it is added,
+ * with nobody remembering to come here.
+ *
+ * ⚠ `skills/` IS THE BIGGEST OF THE THREE and was the last one anybody thought
+ * of. `templates/` reaches teams that run `init`; `field-notes.md` reaches
+ * whoever asks for it; **`skills/` is read by every agent in every consuming
+ * project, on every invocation.** It was found by running the cascade check on
+ * the other two rather than by anyone reasoning about blast radius.
+ */
+function agentReadMarkdown(): string[] {
+  const out = ["scripts/anthill/field-notes.md"];
+  const walk = (dir: string): void => {
+    for (const e of readdirSync(join(PLUGIN_ROOT, dir), { withFileTypes: true })) {
+      const rel = `${dir}/${e.name}`;
+      if (e.isDirectory()) walk(rel);
+      else if (e.name.endsWith(".md")) out.push(rel);
+    }
+  };
+  walk("templates/docs-team");
+  walk("skills");
+  return out;
+}
+
+function markdown(rel: string): string {
+  return readFileSync(join(PLUGIN_ROOT, rel), "utf8");
+}
+
+/**
+ * Bare invocations sitting inside a FENCED code block.
+ *
+ * Split from the file read, like `normalize`, so the controls can hand it
+ * synthetic documents on every run rather than depending on the real tree
+ * carrying a defect.
+ *
+ * Whitespace is collapsed PER LINE before matching, because markdown here is
+ * prettier-wrapped at 100 columns and a wrap landing between `anthill` and its
+ * verb would otherwise hide the hit — the markdown twin of the string-concat
+ * dodge that defeated the `.ts` detector.
+ */
+function fencedInvocations(src: string): string[] {
+  const out: string[] = [];
+  let open = false;
+  for (const line of src.split("\n")) {
+    if (/^\s*(?:```|~~~)/.test(line)) {
+      open = !open;
+      continue;
+    }
+    if (!open) continue;
+    for (const m of line.replace(/\s+/g, " ").matchAll(BARE)) out.push(m[0]);
+  }
+  return out;
+}
+
+/** Does this document use the bare shorthand at all — fence or prose? */
+function usesShorthand(src: string): boolean {
+  return [...src.replace(/\s+/g, " ").matchAll(BARE)].length > 0;
+}
+
+/**
+ * A fenced bare invocation that is nonetheless allowed, and why.
+ *
+ * **Empty, and that is a claim rather than an oversight**: after `principles.md`
+ * was repaired there is no fence in the emitted set that needs the shorthand,
+ * because a fence's whole purpose is to be run verbatim and the resolved form is
+ * no harder to read. An entry here would have to argue that a copy-paste target
+ * should not work when copied.
+ */
+const FENCE_ALLOWED: Record<string, string> = {};
+
+/** A document that uses the shorthand without carrying the legend, and why. */
+const LEGENDLESS_ALLOWED: Record<string, string> = {};
 
 /** Every `*.ts` under the anthill scripts tree, excluding tests. */
 function sourceFiles(dir: string, prefix = ""): string[] {
@@ -256,6 +379,148 @@ describe("bare `anthill` — every occurrence is accounted for", () => {
       "Establish an anchor with: anthill comms read",
     );
     expect(code("commands/team-spawn.ts")).toContain("anthill attach");
+  });
+});
+
+describe("bare `anthill` — the MARKDOWN we emit to agents", () => {
+  const docs = agentReadMarkdown();
+
+  test("POSITIVE CONTROL: the walk reaches both emitted routes", () => {
+    // Named, not counted. `field-notes.md` is the `anthill field-notes` payload
+    // and `principles.md` is where the shipped defect actually lived — a floor
+    // would let either leave the walk silently, which is the failure this
+    // guard's own scan-set history is made of.
+    expect({
+      fieldNotes: docs.includes("scripts/anthill/field-notes.md"),
+      sopSeed: docs.includes("templates/docs-team/README.md"),
+      principles: docs.includes("templates/docs-team/principles.md"),
+      seatLayer: docs.includes("templates/docs-team/dev/README.md"),
+      nested: docs.some((d) => d.startsWith("templates/docs-team/dev/")),
+    }).toEqual({
+      fieldNotes: true,
+      sopSeed: true,
+      principles: true,
+      seatLayer: true,
+      nested: true,
+    });
+  });
+
+  test("no fenced code block hands an agent a bare `anthill` to run", () => {
+    // A fence is copied. The legend is not copied with it.
+    const fenced = docs.flatMap((d) =>
+      fencedInvocations(markdown(d)).map((hit) => `${d} :: ${hit}`),
+    );
+    expect(fenced.filter((h) => !(h in FENCE_ALLOWED))).toEqual([]);
+  });
+
+  test("every document that uses the shorthand carries the legend explaining it", () => {
+    // Per DOCUMENT, because a document is the unit that gets emitted. A seat
+    // reading `principles.md` in its own footprint never sees `README.md`'s
+    // legend, and `anthill field-notes` prints its payload to an agent who may
+    // have no team and no footprint at all.
+    const legendless = docs.filter((d) => usesShorthand(markdown(d)) && !LEGEND.test(markdown(d)));
+    expect(legendless.filter((d) => !(d in LEGENDLESS_ALLOWED))).toEqual([]);
+  });
+
+  test("every allow-list entry is still EARNED — read backwards, like the `.ts` one", () => {
+    const fenced = docs.flatMap((d) =>
+      fencedInvocations(markdown(d)).map((hit) => `${d} :: ${hit}`),
+    );
+    const legendless = docs.filter((d) => usesShorthand(markdown(d)) && !LEGEND.test(markdown(d)));
+    expect({
+      staleFenceEntries: Object.keys(FENCE_ALLOWED).filter((k) => !fenced.includes(k)),
+      staleLegendEntries: Object.keys(LEGENDLESS_ALLOWED).filter((k) => !legendless.includes(k)),
+    }).toEqual({ staleFenceEntries: [], staleLegendEntries: [] });
+  });
+});
+
+/**
+ * POSITIVE CONTROLS ON THE MARKDOWN DETECTORS.
+ *
+ * ⚠ THE TESTS ABOVE ALL ASSERT THE EMITTED DOCS ARE CLEAN, and every one of them
+ * is satisfied by a detector that has stopped seeing — an empty list of fenced
+ * hits is exactly what a clean set of docs produces. The `.ts` half of this file
+ * learned that the expensive way; the markdown half is born with it.
+ */
+describe("bare `anthill` — POSITIVE CONTROLS: the markdown detectors still detect", () => {
+  const doc = (body: string) => `# Title\n\n${body}\n`;
+
+  test("a fenced bare invocation is seen", () => {
+    expect(fencedInvocations(doc("```sh\nanthill field-notes\n```"))).toEqual([
+      "anthill field-notes",
+    ]);
+  });
+
+  test("a fence wrapped by the formatter is still seen — the markdown line-break dodge", () => {
+    // Markdown here is prettier-wrapped at 100 columns. A wrap landing between
+    // the binary and its verb is the exact shape that defeated the `.ts`
+    // detector as a string-concat split, arriving in a different medium.
+    expect(fencedInvocations(doc("```sh\nanthill\n  comms read --channel x\n```"))).toEqual([]);
+    expect(fencedInvocations(doc("```sh\nanthill   comms read --channel x\n```"))).toEqual([
+      "anthill comms",
+    ]);
+  });
+
+  test("NEGATIVE CONTROL: prose and the RESOLVED fenced form are both left alone", () => {
+    // Without this the fence rule is satisfied by a detector that flags
+    // everything — which would fail loudly, but only because it also flags the
+    // docs that are correct. Discrimination asserted, not inferred.
+    expect(fencedInvocations(doc("Catch up on the wire with `anthill comms read`."))).toEqual([]);
+    expect(
+      fencedInvocations(
+        doc('```sh\nbun "$CLAUDE_PLUGIN_ROOT/scripts/anthill/cli.ts" field-notes\n```'),
+      ),
+    ).toEqual([]);
+  });
+
+  test("the legend detector reports a document that uses the shorthand without one", () => {
+    const bare = doc("Tell us with `anthill feedback`.");
+    expect({ uses: usesShorthand(bare), hasLegend: LEGEND.test(bare) }).toEqual({
+      uses: true,
+      hasLegend: false,
+    });
+    // And the converse, so a detector stuck on `true` cannot pass this.
+    const quiet = doc("The team keeps its own principles here.");
+    expect(usesShorthand(quiet)).toBe(false);
+  });
+
+  /**
+   * THE F1 CONTROL FOR THE MARKDOWN HALF — the twin of the `.ts` one above.
+   *
+   * A document that ALREADY carries the legend is the dangerous case: the legend
+   * satisfies rule 2 for the whole file, so a fence added to it later is exactly
+   * the hit a per-document check would exonerate. `README.md` is that document,
+   * and it is the largest and most-edited of them — so the injection goes there,
+   * every run, rather than into a synthetic string that proves nothing about the
+   * real one.
+   */
+  test("a fence injected into a doc that ALREADY carries the legend is still reported", () => {
+    const rel = "templates/docs-team/README.md";
+    const src = markdown(rel);
+    expect({ rel, carriesLegend: LEGEND.test(src) }).toEqual({ rel, carriesLegend: true });
+    expect(fencedInvocations(src)).toEqual([]);
+
+    const injected = fencedInvocations(`${src}\n\`\`\`sh\nanthill down\n\`\`\`\n`);
+    expect({ rel, reportedAnyway: injected.includes("anthill down") }).toEqual({
+      rel,
+      reportedAnyway: true,
+    });
+  });
+
+  /**
+   * KNOWN LIMIT, asserted rather than implied — the shape `tmpleak.guard.test.ts`
+   * uses for its per-file exoneration.
+   *
+   * The walk covers what this plugin SHIPS. It does not cover `.anthill/`, this
+   * repo's own rendered footprint, which is a living doc our seats edit freely
+   * and which `init` deliberately never overwrites. So our footprint can drift
+   * from the templates and nothing here fails — that reconciliation belongs to
+   * `cascade-check`, and naming it is the point: the drift is invisible to the
+   * gate BY DESIGN, and a reader should know that rather than infer coverage
+   * from the guard's existence.
+   */
+  test("KNOWN LIMIT: the repo's own `.anthill/` footprint is outside the walk", () => {
+    expect(agentReadMarkdown().some((d) => d.startsWith(".anthill"))).toBe(false);
   });
 });
 

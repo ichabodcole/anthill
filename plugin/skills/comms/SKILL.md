@@ -99,7 +99,7 @@ positions`. Count it by hand when you want the receipts:
 
 ```sh
 # --format json is explicit here because a lead reading in a terminal would otherwise get text
-anthill comms read --since <session-anchor> --format json    # then count distinct `from` values
+bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" comms read --since <session-anchor> --format json
 ```
 
 If you convened four seats and can name three, the fourth is not quiet, it is **missing** — go and

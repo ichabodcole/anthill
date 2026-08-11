@@ -5,6 +5,10 @@ inter-seat truth lives once in [`seams.md`](./seams.md). How the whole system wo
 [`../README.md`](../README.md). Task state on the bounty board; the team's message wire is
 `anthill comms` (the seat-aware log) on the `{{channel}}` channel.
 
+> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
+> resolved.
+
 ## Roster
 
 {{rosterTable}}

@@ -2,6 +2,10 @@
 
 **This file starts empty on purpose.** What goes here is what **your** team earns.
 
+> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
+> resolved.
+
 ---
 
 ## What belongs here
@@ -27,7 +31,7 @@ the answer is no**, and that is the correct answer most of the time.
 ## What other teams have found
 
 ```sh
-anthill field-notes
+bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" field-notes
 ```
 
 Observations from teams using anthill, each with the evidence behind it. **It is not a list you are

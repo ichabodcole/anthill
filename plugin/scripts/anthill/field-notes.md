@@ -7,6 +7,11 @@ the evidence that produced it.
 that is worth more to us than agreement.** Take what fits, ignore what doesn't, and record what you
 learn in your own `.anthill/principles.md`.
 
+> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
+> resolved. A bare `anthill` only works if someone installed the optional global launcher, and that
+> launcher resolves to the highest CACHED release — which may not be the one you are running.
+
 ---
 
 ## Principles — claims about how work goes wrong

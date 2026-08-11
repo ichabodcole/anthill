@@ -214,6 +214,20 @@ diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" "$TEAMDIR/README.md"
 Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
 `principles.md`, `retro.md`.
 
+> **Named correction to look for (2026-08-10) — `principles.md`, and it is a CORRECTION, not an
+> addition.** The "What other teams have found" section shipped a fenced block whose whole content
+> was `anthill field-notes`. **A bare `anthill` is not a binary on your PATH**, so a seat that copied
+> that fence either got "command not found" or — worse, and silently — the optional global launcher's
+> highest CACHED release, which need not be the one this project runs. It is now the resolved
+> `bun "${CLAUDE_PLUGIN_ROOT}/…" field-notes` form. **The same release added the shorthand legend to
+> `principles.md`, `paper-cuts.md`, `dev/README.md` and the shipped field notes** — every emitted doc
+> that uses `anthill <command>` in prose now says, in its own text, that the shorthand is not a
+> binary. A team seeded before this carries the fence and none of the legends.
+>
+> Worth stating plainly because it inverts the usual reconcile calculus: for an ADDITION, skipping
+> the reconcile costs you guidance you never had. For a CORRECTION, skipping it leaves a doc that is
+> **actively wrong** sitting in your footprint, reading exactly as authoritative as the rest.
+
 **⚠ Several teams → run this whole reconcile once PER TEAM, against each team's own `teamDir`.**
 `anthill team ls` prints every team with its resolved directory; use those, not `.anthill/` — a team
 whose `teamDir` is `.anthill/teams/lean/` is invisible to the diff above and would silently keep its

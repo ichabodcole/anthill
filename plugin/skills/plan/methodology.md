@@ -6,6 +6,10 @@ It is self-contained (it depends on no other plugin) and portable — it travels
 project unchanged. Where it names a concrete example, that's illustration; each project fills in its
 own owners, contracts, and tools.
 
+> **⚠ `anthill <command>` below is shorthand, not a binary on PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`. Stated here as well as in
+> `SKILL.md` because this file is the **portable half** — it is read on its own.
+
 ## What this is
 
 The team's method for turning an **approved design** into a **dev plan**. The **lead** authors a

@@ -104,8 +104,10 @@ migrate` will not tell you: it refuses a `teams` config before it ever reads the
 **Then render and verify — both, and in this order:**
 
 ```sh
-anthill team ls                  # every team, with its resolved directory
-anthill init                     # renders the new team's docs; skips every existing file
+# Resolved, not the `anthill …` shorthand this doc uses in prose: a fence is copied
+# and run verbatim, and the legend explaining the shorthand does not travel with it.
+bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" team ls   # every team, with its resolved directory
+bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" init      # renders the new team's docs; skips every existing file
 ```
 
 **No `--team` here, deliberately.** `init` renders the **project's** footprint, not one team's: it
