@@ -47,7 +47,7 @@ matches a real board frame"_ — extracts the shipped pattern and asserts it aga
 **An event type bounty has never emitted.** The test invented its sample instead of capturing one, so
 it passes on a filter that matches nothing, under a name that claims the opposite. This is the same
 shape as the `not.toContain("grapevine")` vacuous-green already recorded in
-[`comms-as-default/plan.md`](../projects/comms-as-default/plan.md): a green that can never fail,
+[`comms-as-default/plan.md`](../projects/_archive/comms-as-default/plan.md): a green that can never fail,
 inside the assertion built to catch false greens.
 
 **Fixing the regex without fixing this test re-arms the trap for the next change.**

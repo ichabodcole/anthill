@@ -17,7 +17,7 @@ fully finalized six-seat session
 > converts diligence into a defect.
 >
 > **1. "Can never pass" is FALSIFIED.** `comms stand-down` shipped after this card was written.
-> [`comms-as-default/plan.md:429-434`](../projects/comms-as-default/plan.md) (STEP D/E) planned and
+> [`comms-as-default/plan.md:429-434`](../projects/_archive/comms-as-default/plan.md) (STEP D/E) planned and
 > **measured** `down` authorising with **no `--force`**, once the lead stood itself down last. The
 > guard passes. It always could, after that verb existed.
 >

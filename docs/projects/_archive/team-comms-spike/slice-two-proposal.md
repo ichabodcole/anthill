@@ -2,7 +2,7 @@
 
 **Status:** **Rulings ENACTED** — R15 (the sole-wire gate configuration) was ruled by the human
 2026-08-04 and executed by session 8: comms carried the session alone, zero seat fallbacks.
-See [ship-plan.md](../../comms-as-default/proposal.md) for what follows. · **Created:** 2026-08-01 · **Author:** maestro
+See [ship-plan.md](../comms-as-default/proposal.md) for what follows. · **Created:** 2026-08-01 · **Author:** maestro
 **Follows:** [session-2-friction.md](./session-2-friction.md) · [`.anthill/retro.md`](../../../../.anthill/retro.md)
 
 ---

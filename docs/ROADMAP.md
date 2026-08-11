@@ -363,7 +363,11 @@ room; do not delete on the trigger alone._
 > record; **preserving** it is the one unsafe design_ — and preserving it is the tidiest-looking
 > option. **Do not re-derive this.**
 
-**→ The working runway is [`projects/comms-as-default/plan.md` § NEXT PHASE](projects/comms-as-default/plan.md#-next-phase--what-session-12-picks-up).** That file carries the
+**→ ✅ THAT PROJECT IS DELIVERED AND ARCHIVED (2026-08-10) — it is no longer a runway.** The record is
+[`projects/_archive/comms-as-default/plan.md` § NEXT PHASE](projects/_archive/comms-as-default/plan.md#-next-phase--what-session-13-picks-up),
+and the one commitment that travelled out is
+[the live rotation cell](backlog/2026-08-10-rotation-has-no-trigger-and-its-live-cell-was-never-run.md).
+_(This link previously named `session-12` against a `session 13` heading, so it did not resolve.)_ That file carries the
 per-step detail, the carried debt, and the merge decision that is **Cole's to make, not the lead's to
 assume** (his framing: _"one feature, one release"_).
 

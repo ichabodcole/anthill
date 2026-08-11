@@ -1,9 +1,16 @@
 # Comms as the default team wire — the route from "it works" to "we can recommend it"
 
-**Created:** 2026-08-04 · **Status:** ✅ **PROPOSAL ACCEPTED AND LARGELY DELIVERED.** `plan.md` exists
-(authored session 9) and steps 1–2, 4 and 5 have shipped across sessions 9–11. **Two steps remain:
-(3) rotation and (6) the swap run — [see the NEXT PHASE section of `plan.md`](./plan.md#-next-phase--what-session-12-picks-up),
-which is the current runway. Read that, not this file, to start work.**
+**Created:** 2026-08-04 · **Status:** ✅ **ACCEPTED AND FULLY DELIVERED — archived 2026-08-10.** All six
+steps shipped across sessions 9–13; all 8 exit criteria met; the grapevine leg left the presence path
+at `4d091dc`. See [`plan.md`](./plan.md) for the reconciled record.
+
+> **The status line this file carried until close-out, kept because it went stale in the specific way
+> it warned about:** _"steps 1–2, 4 and 5 have shipped … **Two steps remain: (3) rotation and (6) the
+> swap run** — see the NEXT PHASE section of `plan.md`, which is the current runway."_ 🔴 **FALSIFIED**
+> — rotation landed at `81d3991` and the swap run at `89dea31`, both in session 12. **Its link was also
+> broken**, pointing at `#-next-phase--what-session-12-picks-up` against a heading that reads _session
+> 13_. **A pointer that names the wrong session AND does not resolve is the failure this document opens
+> by describing**, one document down.
 
 > ⚠ **This document is the WHY and the WHAT, and parts of it are now superseded by what execution
 > found.** Two known stale claims, both corrected in `plan.md` rather than here: the Non-goals section

@@ -97,7 +97,7 @@ what remains or archives it.
 against a sha. **That is claim-level. `sweep-project` is lifecycle-level:** _is this project finished,
 and should it be archived?_ **Nothing in anthill's loop ever asks that.**
 
-**The live instance is in our own tree.** `docs/projects/comms-as-default/` carries a
+**The live instance is in our own tree.** `docs/projects/_archive/comms-as-default/` carries a
 `§ NEXT PHASE — what session 12 picks up`, **two sessions stale**, and its proposal opens by declaring
 itself partly superseded. **Criterion 7 closed tonight; nobody asked whether that project is done.**
 
