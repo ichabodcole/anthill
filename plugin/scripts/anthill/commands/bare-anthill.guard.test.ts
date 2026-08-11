@@ -146,13 +146,23 @@ function sourceFiles(dir: string, prefix = ""): string[] {
  * string. Finally runs of spaces collapse, closing the double-space dodge.
  * Every one of these was demonstrated against the previous version.
  */
-function code(rel: string): string {
-  return readFileSync(join(ROOT, rel), "utf8")
+function normalize(src: string): string {
+  return src
     .replace(/\/\*[\s\S]*?\*\//g, "")
     .replace(/^\s*\/\/.*$/gm, "")
     .replace(/"\s*\+\s*"/g, "")
     .replace(/`\s*\+\s*`/g, "")
     .replace(/\s+/g, " ");
+}
+
+/**
+ * `normalize` split from the file read ON PURPOSE — it is the DETECTOR, and a
+ * detector that can only be fed the real tree can only be tested by breaking the
+ * real tree. Taking a string lets `POSITIVE CONTROLS` below hand it synthetic
+ * defects on every run instead of once, by hand, at authoring time.
+ */
+function code(rel: string): string {
+  return normalize(readFileSync(join(ROOT, rel), "utf8"));
 }
 
 /**
@@ -222,5 +232,98 @@ describe("bare `anthill` — every occurrence is accounted for", () => {
       "Establish an anchor with: anthill comms read",
     );
     expect(code("commands/team-spawn.ts")).toContain("anthill attach");
+  });
+});
+
+/**
+ * POSITIVE CONTROLS ON THE DETECTOR — the guard proving it can still SEE.
+ *
+ * ⚠ EVERY TEST ABOVE ASSERTS THE TREE IS CLEAN. Not one of them asserts this
+ * file could tell if it were not. Those are different claims, and a guard that
+ * has quietly stopped detecting satisfies the first one perfectly — it reports
+ * an empty list, which is exactly what a clean tree reports.
+ *
+ * This is not hypothetical here. It is the documented history of this file:
+ * a closed verb list missed **6 of 6** injected variants including the branch's
+ * own biggest miss, and a dedup key let one allow-listed string exonerate its
+ * neighbours — **so reverting the fix left this guard green and all 688 tests
+ * green.** Both were found by a reviewer injecting defects BY HAND. Hand
+ * injection happens once, by whoever remembers; these run on every `bun test`.
+ *
+ * Each case below is a defect that once defeated this guard, kept as a
+ * regression test on the INSTRUMENT rather than on the tree.
+ */
+describe("bare `anthill` — POSITIVE CONTROLS: the detector still detects", () => {
+  const detects = (src: string) => occurrences(normalize(src)).length > 0;
+
+  test("a plainly injected agent-facing invocation is seen", () => {
+    expect(detects('emitError({ error: "Read them with: anthill comms read --channel x" })')).toBe(
+      true,
+    );
+  });
+
+  test("the four historic guard-defeat vectors are all still seen", () => {
+    expect({
+      // `help` is absent from `anthill help --format json`'s own output, so the
+      // derived verb set is self-blind to it and `BARE` tops it up by hand.
+      help: detects('lines.push("run anthill help for the command set")'),
+      // `--?[a-z]` — a flag, not a verb, so no derivation can supply it.
+      flag: detects('lines.push("check anthill --version before filing")'),
+      // The formatter splits long errors at ~100 columns. A break landing between
+      // the binary and its verb used to exonerate the whole string.
+      concatenated: detects('error: "spawn one with: anthill " + "spawn --as forager"'),
+      // Two spaces made the literal `anthill <verb>` pattern miss.
+      doubleSpaced: detects('error: "run anthill  down to release the board"'),
+    }).toEqual({ help: true, flag: true, concatenated: true, doubleSpaced: true });
+  });
+
+  /**
+   * THE F1 CONTROL, AND THE MOST IMPORTANT TEST IN THIS FILE.
+   *
+   * The failure was not "the detector missed a string" — it saw it. The KEY
+   * collapsed: hits were deduped by matched text per file, so the one
+   * allow-listed human-facing `anthill comms` in `team-comms.ts` covered every
+   * `anthill comms` in it, including the two agent-facing ones the fix existed to
+   * repair. **Nothing in a clean tree can show that**, because a clean tree has
+   * no neighbour to be exonerated. It needs a defect injected into a file the
+   * allow-list ALREADY covers — so that is what this does, every run.
+   */
+  test("a NEW defect in an already-allow-listed file is reported, not exonerated by its neighbour", () => {
+    const file = "commands/team-comms.ts";
+    const listedAlready = Object.keys(ALLOWED).some((k) =>
+      k.startsWith(`${file} :: anthill comms`),
+    );
+    expect({ file, hasAnAllowListedTwin: listedAlready }).toEqual({
+      file,
+      hasAnAllowListedTwin: true,
+    });
+
+    const clean = occurrences(code(file));
+    const injected = occurrences(
+      normalize(
+        `${readFileSync(join(ROOT, file), "utf8")}
+         const leak = 'catch up with: anthill comms read --channel x --since 0';`,
+      ),
+    );
+    const fresh = injected.filter((h) => !clean.includes(h));
+
+    expect({ newOccurrences: fresh.length }).toEqual({ newOccurrences: 1 });
+    expect({ file, wouldBeReported: !(`${file} :: ${fresh[0]}` in ALLOWED) }).toEqual({
+      file,
+      wouldBeReported: true,
+    });
+  });
+
+  test("NEGATIVE CONTROL: the resolved form is not flagged, so the guard is not just matching everything", () => {
+    // Without this, every control above is satisfied by a detector that returns
+    // true unconditionally — which would fail the tree assertions loudly, but
+    // only because it flags the allow-listed strings too. Stated separately so
+    // the discrimination is asserted rather than inferred.
+    // Built, not written literally: a `${…}` inside a plain string is a biome
+    // error, and the fixture is only faithful if it carries the interpolation.
+    const sub = (expr: string) => `\${${expr}}`;
+    expect(
+      detects(`error: \`Read them with: ${sub("emittingCli()")} comms read --channel x\``),
+    ).toBe(false);
   });
 });

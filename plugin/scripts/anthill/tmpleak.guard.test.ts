@@ -96,18 +96,91 @@ function testFiles(dir: string, prefix = ""): string[] {
   return out;
 }
 
+/** The detector, as a pure function of source text. */
+function mintsRaw(src: string): boolean {
+  return RAW_MINT.test(src);
+}
+
+/**
+ * The verdict, over `[relative path, source]` pairs rather than over the tree.
+ *
+ * Split from the filesystem walk so it can be handed synthetic files. A detector
+ * reachable only through the real tree can only be tested by BREAKING the real
+ * tree — which means, in practice, it is tested once by hand and never again.
+ */
+function unaccountedIn(entries: Array<readonly [string, string]>): string[] {
+  return entries.filter(([rel, src]) => mintsRaw(src) && !(rel in ALLOWED)).map(([rel]) => rel);
+}
+
 describe("#100 — a new temp-dir leak must be RED, not merely unnoticed", () => {
   test("every test file that mints a temp dir is accounted for", () => {
-    const files = testFiles(ROOT);
+    const entries = testFiles(ROOT).map((f) => [f, readFileSync(join(ROOT, f), "utf8")] as const);
 
     // POSITIVE CONTROL: the scan must actually reach files that mint. A zero
     // here would make the assertion below pass for the wrong reason — the
     // failure mode this whole guard exists to prevent, inside the guard.
-    const minters = files.filter((f) => RAW_MINT.test(readFileSync(join(ROOT, f), "utf8")));
-    expect(minters.length).toBeGreaterThan(0);
+    expect(entries.filter(([, src]) => mintsRaw(src)).length).toBeGreaterThan(0);
 
-    const unaccounted = minters.filter((f) => !(f in ALLOWED));
-    expect(unaccounted).toEqual([]);
+    expect(unaccountedIn(entries)).toEqual([]);
+  });
+
+  /**
+   * POSITIVE CONTROLS ON THE DETECTOR — the guard proving it can still SEE.
+   *
+   * ⚠ THE CONTROL ABOVE ASSERTS THE SCAN REACHES MINTERS. IT DOES NOT ASSERT THE
+   * DETECTOR STILL RECOGNISES ONE. Both failures print the same thing on a clean
+   * tree — an empty list — so `toEqual([])` is satisfied just as well by a guard
+   * that has gone blind as by a tree that is clean.
+   *
+   * Written after `bare-anthill.guard.test.ts` shipped twice with a detector that
+   * could not see the defect it was built for, both times caught by a reviewer
+   * injecting one by hand. Hand injection happens once, by whoever remembers.
+   */
+  test("POSITIVE CONTROL: an unlisted file that mints raw is reported", () => {
+    const raw = "const dir = mkdtempSync(join(tmpdir(), 'anthill-x-'));";
+    expect(unaccountedIn([["commands/brand-new.test.ts", raw] as const])).toEqual([
+      "commands/brand-new.test.ts",
+    ]);
+  });
+
+  test("POSITIVE CONTROL: the pattern tolerates the formatting the formatter produces", () => {
+    // Every one of these is a real shape in this tree or one prettier can produce
+    // from it. A pattern that only matches the single-line form goes silently
+    // blind the first time a call wraps.
+    expect({
+      inline: mintsRaw("mkdtempSync(join(tmpdir(), 'a-'))"),
+      wrapped: mintsRaw("mkdtempSync(\n  join(\n    tmpdir(),\n    'a-',\n  ),\n)"),
+      spaced: mintsRaw("mkdtempSync( join( tmpdir(), 'a-' ) )"),
+      // NEGATIVE half — without it, a detector stuck at `true` passes every case
+      // above while the verdict test stays green only because everything is
+      // allow-listed.
+      unrelated: mintsRaw("const dir = makeRepo();"),
+    }).toEqual({ inline: true, wrapped: true, spaced: true, unrelated: false });
+  });
+
+  /**
+   * ⚠ A STATED LIMIT, NOT A GAP LEFT UNNOTICED — and it is the same class of
+   * defect that cost `bare-anthill.guard.test.ts` two review rounds.
+   *
+   * **This allow-list is keyed by FILE.** A second raw mint added to an already
+   * listed file is exonerated by its neighbour, exactly as one allow-listed
+   * `anthill comms` once exonerated every `anthill comms` in its file. Asserted
+   * here so the property is visible rather than assumed.
+   *
+   * Kept deliberately, because unlike that case the ENTRY'S REASON is genuinely a
+   * file-level claim — *"try/finally at every `makeRepo` site; measured +0 per
+   * run"* is a statement about the whole file, re-measurable by rerunning the
+   * suite and counting `$TMPDIR`. Per-occurrence keying would buy strictness the
+   * reasons could not honestly support.
+   *
+   * **The cost is real: an unclean mint added to a listed file passes.** The
+   * mitigation is that the entry's `measured +0 per run` goes stale, and re-
+   * measuring is what a reviewer of that file is supposed to do.
+   */
+  test("KNOWN LIMIT: exoneration is per FILE, so a listed file's new mint is not caught", () => {
+    const listed = "commands/team-commit.test.ts";
+    expect(listed in ALLOWED).toBe(true);
+    expect(unaccountedIn([[listed, "mkdtempSync(join(tmpdir(), 'leaky-'))"] as const])).toEqual([]);
   });
 
   test("the three repaired leakers still register what they mint", () => {

@@ -44,6 +44,21 @@ The failure is indistinguishable from success at the moment it happens, so vigil
 similarity_ — several cases producing identical output, two counts that should differ and don't.
 _Scar: eight instances across three agents and a lead in one session._
 
+**A guard's passing output is identical to a guard that has gone blind — so it has to prove it can
+still see.**
+The sharpest case of the above, because here _"verify the instrument registered"_ has nothing to
+check: a check whose success is **finding nothing** reports an empty list either way. Vigilance
+cannot close it and neither can review, because the guard was written from the same understanding as
+the thing it guards, and inherits that understanding's blind spot. **Put the defect back and watch it
+go red — including in a place the guard's own exception list already covers**, which is where an
+exception for one case silently covers its neighbours. Then keep that as a test rather than a ritual:
+hand the detector a synthetic defect on every run, so the proof survives the person who remembers to
+do it.
+_Scar: two rounds, one guard. Reverting the very defect it was built for left the guard green and the
+whole 688-test suite green — once because its pattern list was incomplete, then again because its
+results were deduplicated in a way that let one approved string exonerate the rest of its file. Both
+were caught by a reviewer injecting defects by hand, which is exactly the step nobody repeats._
+
 **A count is not a reading.**
 A number can be identical on both sides of a change that reversed the meaning.
 

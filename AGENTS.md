@@ -112,6 +112,46 @@ session interleaves seats by construction.
 - `bun run check` — the full gate (typecheck + biome + tests); the husky pre-commit runs it.
 - `bun test` — tests · `bun run anthill <cmd>` — the CLI (`plugin/scripts/anthill/cli.ts`).
 
+## How we test — the two rules `bun run check` cannot enforce
+
+Both were paid for. Both are about the same thing: **a test written by whoever wrote the code
+inherits that code's blind spot**, so each rule names the one participant in the loop that was not
+written by whoever is wrong.
+
+**1. A change to a command is not done until the command has been RUN against a fixture repo — _in
+the state its documentation describes_ — and whatever that run finds gets a test before the fix is
+committed.**
+
+Every defect four rounds of review found on `multi-team-support` was invisible to unit tests and
+visible in one command. `team ls` refused to list on the repo it exists for; `team use` refused every
+fresh project; `init` refused the documented add-a-team route, then silently rendered nothing on the
+second use of it. **All four were green at `0 fail` while broken**, because the pure half was always
+right — `renderTemplates` never rendered wrong, it never ran. _In the state its documentation
+describes_ is the load-bearing clause: one fix was verified on a repo with no pin, which is what
+`bootstrap` §0a assumes, while the pinned repo — every later use of the route — was never run. **Read
+the prose, build the repo the prose describes, run the command the prose gives.**
+
+**2. A GUARD is not done until it has been run against a tree with the defect PUT BACK — including
+put back in a file its allow-list already covers.**
+
+A guard encodes its author's belief about a defect, so it inherits that belief's blind spot one level
+up, and the failure is invisible: **a guard that has gone blind reports an empty list, which is
+exactly what a clean tree reports.** Measured on `bare-anthill.guard.test.ts` — reverting the fix left
+the guard green **and all 688 tests green**, twice, for two different reasons (a closed verb list that
+missed 6 of 6 injected variants; then a dedup key that let one allow-listed string exonerate its
+neighbours). Both were found by a reviewer injecting defects by hand.
+
+So the rule is discharged **in the test file, not in a ritual**: split the detector into a pure
+function of source text, and give it `POSITIVE CONTROLS` that hand it synthetic defects on every run.
+`bare-anthill`, `leadstanddown` and `tmpleak` all carry them, each case a defect that once defeated
+that guard. Where a guard's exoneration is deliberately coarse, **assert the limit** rather than leave
+it implied — see `tmpleak.guard.test.ts`'s `KNOWN LIMIT`.
+
+_Corollary for both: an allow-list entry states WHY, and the reason and the rule must have the same
+predicate. `emittingCli` enforced "is it in `renderText`" while its comment argued "is the reader
+human" — two different expressions, and the divergence was invisible until someone wrote the second
+one down as code._
+
 ## When you change something, something else probably has to change too
 
 anthill's content is **referentially dependent and unenforced**: the same rule lives in a skill, a
