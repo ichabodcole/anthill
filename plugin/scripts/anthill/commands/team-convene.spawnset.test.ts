@@ -87,7 +87,7 @@ const calls: string[] = [];
  * equality below pins. A hand-written stub here would silently drop it and the
  * assertion would be pinning two calls while claiming to pin the set.
  */
-import { loadConfig } from "../config.ts";
+import { loadProject } from "../config.ts";
 
 // `mock.module` replaces the module WHOLESALE — every export that `convene`
 // (and `team-support.ts`, which resolves the same specifier) imports must be
@@ -179,7 +179,13 @@ describe("convene's coordination spawn set — criterion 2, absence of OPENING",
     // `readBoardCounts()` call at :173 that team-down's stub does not define. So
     // naming only `requireConfig` here leaves `readBoardCounts` real, which the
     // three-entry ledger assertion depends on.
-    mock.module("./team-support.ts", () => ({ requireConfig: () => loadConfig() }));
+    mock.module("./team-support.ts", () => ({
+      requireConfig: () => {
+        const team = loadProject().teams[0];
+        if (!team) throw new Error("fixture config resolved no team");
+        return team;
+      },
+    }));
   });
 
   test("invokes EXACTLY the bounty verbs — the SET, not the absence of a member", async () => {

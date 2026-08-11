@@ -9,8 +9,9 @@ import {
   DEFAULT_LAUNCH,
   DEFAULT_PATHS,
   findConfigFile,
-  loadConfig,
   loadProject,
+  PATH_KNOBS,
+  type ResolvedConfig,
   resolveConfig,
   resolveProject,
 } from "./config.ts";
@@ -214,7 +215,7 @@ describe("resolveConfig — validation errors", () => {
   });
 });
 
-describe("findConfigFile + loadConfig — walk up from cwd", () => {
+describe("findConfigFile + loadProject — walk up from cwd", () => {
   const base = mkdtempSync(resolve(tmpdir(), "anthill-config-"));
   const projectRoot = resolve(base, "repo");
   const nested = resolve(projectRoot, "a", "b", "c");
@@ -230,8 +231,8 @@ describe("findConfigFile + loadConfig — walk up from cwd", () => {
     expect(found.configPath).toBe(resolve(projectRoot, CONFIG_REL_PATH));
   });
 
-  test("loadConfig resolves from a nested cwd, projectRoot = config's dir", () => {
-    const cfg = loadConfig(nested);
+  test("loadProject resolves from a nested cwd, projectRoot = config's dir", () => {
+    const cfg = loadProject(nested).teams[0] as ResolvedConfig;
     expect(cfg.channel).toBe("tiny");
     expect(cfg.projectRoot).toBe(projectRoot);
     expect(cfg.seatDocPath("worker")).toBe(resolve(projectRoot, ".anthill/dev/worker.md"));
@@ -251,7 +252,7 @@ describe("findConfigFile + loadConfig — walk up from cwd", () => {
     try {
       mkdirSync(resolve(bad, CONFIG_REL_PATH, ".."), { recursive: true });
       writeFileSync(resolve(bad, CONFIG_REL_PATH), "{ not json ");
-      expect(() => loadConfig(bad)).toThrow(/invalid JSON/);
+      expect(() => loadProject(bad)).toThrow(/invalid JSON/);
     } finally {
       rmSync(bad, { recursive: true, force: true });
     }
@@ -421,7 +422,7 @@ describe("resolveProject — shape validation", () => {
   });
 });
 
-describe("loadProject — the fs entrypoint, beside loadConfig", () => {
+describe("loadProject — THE fs entrypoint", () => {
   const base = mkdtempSync(resolve(tmpdir(), "anthill-project-"));
   afterAll(() => rmSync(base, { recursive: true, force: true }));
 
@@ -438,8 +439,10 @@ describe("loadProject — the fs entrypoint, beside loadConfig", () => {
     expect(project.teams.map((t) => t.name)).toEqual(["default"]);
     expect(project.projectRoot).toBe(root);
     expect(project.configPath).toBe(resolve(root, CONFIG_REL_PATH));
-    // Byte-for-byte the same team `loadConfig` returns.
-    expect(project.teams[0]?.seatDocPath("worker")).toBe(loadConfig(root).seatDocPath("worker"));
+    // Byte-for-byte the team the PURE one-team resolver returns from the same raw.
+    expect(project.teams[0]?.seatDocPath("worker")).toBe(
+      resolveConfig(MINIMAL_CONFIG, { projectRoot: root }).seatDocPath("worker"),
+    );
   });
 
   test("a v3 config loads every team, with paths anchored at the project root", () => {
@@ -450,7 +453,7 @@ describe("loadProject — the fs entrypoint, beside loadConfig", () => {
     expect(project.team("dev-lean")?.teamDirPath()).toBe(resolve(root, ".anthill/teams/dev-lean"));
   });
 
-  test("walks up from a nested cwd, exactly as loadConfig does", () => {
+  test("walks up from a nested cwd", () => {
     const root = write("nested", V3_TWO_TEAMS);
     const deep = resolve(root, "packages", "app", "src");
     mkdirSync(deep, { recursive: true });
@@ -523,6 +526,67 @@ describe("resolveProject — cross-team validation (the checks one team cannot n
   });
 });
 
+describe("`paths` is validated, never coerced", () => {
+  const seats = MINIMAL_CONFIG.seats;
+
+  // The defect this replaces: a wrong-shaped `paths` was DISCARDED and the
+  // defaults used in its place. A config saying in plain sight "put the team
+  // somewhere else" resolved to `.anthill/…` and reported `ok`, and nothing
+  // downstream could tell that apart from a config that never asked.
+
+  test("a non-object `paths` is refused, not silently replaced by the defaults", () => {
+    expect(() =>
+      resolveConfig({ channel: "c", seats, paths: ".anthill/custom" }, { projectRoot: ROOT }),
+    ).toThrow(/config\.paths must be an object/);
+  });
+
+  test("a non-object `paths` inside a `teams` entry is refused BEFORE anything reshapes it", () => {
+    // The team-entry path injects a default `teamDir` by spreading the entry's
+    // `paths`. Spreading a STRING splays it into numeric keys and yields an
+    // object carrying the DEFAULT teamDir — which then validates cleanly. So the
+    // rejection has to happen before the spread, not after.
+    //
+    // Pinned to `config.paths` BY NAME: `config.teams.dev must be a JSON object`
+    // — thrown when the ENTRY is non-object — satisfies a looser match, so a
+    // looser assertion here would go green on a different error entirely.
+    expect(() =>
+      resolveProject(
+        { teams: { dev: { seats, paths: ".anthill/custom" } } },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/config\.teams\.dev: config\.paths must be an object/);
+  });
+
+  test("a wrong-TYPE knob inside a well-formed `paths` is refused too", () => {
+    for (const knob of PATH_KNOBS) {
+      expect(() =>
+        resolveConfig({ channel: "c", seats, paths: { [knob]: 42 } }, { projectRoot: ROOT }),
+      ).toThrow(new RegExp(`config\\.paths\\.${knob} must be a non-empty string`));
+    }
+  });
+
+  test("an empty-string knob is refused — it would resolve to the project root", () => {
+    expect(() =>
+      resolveConfig({ channel: "c", seats, paths: { teamDir: "  " } }, { projectRoot: ROOT }),
+    ).toThrow(/config\.paths\.teamDir/);
+  });
+
+  test("an absent `paths`, and a partial one, still resolve through the cascade", () => {
+    expect(resolveConfig({ channel: "c", seats }, { projectRoot: ROOT }).paths).toEqual(
+      DEFAULT_PATHS,
+    );
+    const partial = resolveConfig(
+      { channel: "c", seats, paths: { teamDir: "docs/team" } },
+      { projectRoot: ROOT },
+    );
+    expect(partial.paths).toEqual({
+      teamDir: "docs/team",
+      seatDir: "docs/team/dev",
+      seams: "docs/team/dev/seams.md",
+    });
+  });
+});
+
 describe("resolveProject — two teams may not share a living-docs directory", () => {
   const seats = MINIMAL_CONFIG.seats;
 
@@ -568,6 +632,55 @@ describe("resolveProject — two teams may not share a living-docs directory", (
         { projectRoot: ROOT },
       ),
     ).toThrow(/seatDir/i);
+  });
+
+  test("A'': the two teams reach the same directory through DIFFERENT knobs", () => {
+    // Reproduced 2026-08-10 against the same-knob check, which compared
+    // `a.seatDir` to `b.seatDir` and never to `b.teamDir`. What makes a directory
+    // contested is that two teams write there; which knob each arrived through is
+    // invisible to the file underneath. Here dev's SEAT dir is lean's TEAM dir —
+    // `init` wrote `.anthill/dev/README.md` for dev and reported it `skipped` for
+    // lean, which then silently inherited the other team's roster README.
+    expect(() =>
+      resolveProject(
+        {
+          teams: {
+            dev: { seats, paths: { teamDir: ".anthill" } }, // seatDir -> .anthill/dev
+            lean: { seats, paths: { teamDir: ".anthill/dev" } }, // teamDir -> .anthill/dev
+          },
+        },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/teamDir[\s\S]*seatDir|seatDir[\s\S]*teamDir/);
+  });
+
+  test("A''': and in the other direction, and against `seams`", () => {
+    // Both orderings, because the pair loop visits each unordered pair once.
+    expect(() =>
+      resolveProject(
+        {
+          teams: {
+            lean: { seats, paths: { teamDir: ".anthill/dev" } },
+            dev: { seats, paths: { teamDir: ".anthill" } },
+          },
+        },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(ConfigError);
+    // `seams` is a FILE and the others are directories, so a same-knob check
+    // reads this as three unrelated values — but one team's seams register
+    // landing on another's seat doc is the same lost-knowledge failure.
+    expect(() =>
+      resolveProject(
+        {
+          teams: {
+            dev: { seats, paths: { teamDir: ".anthill/a", seams: ".anthill/shared/notes.md" } },
+            lean: { seats, paths: { teamDir: ".anthill/b", seatDir: ".anthill/shared/notes.md" } },
+          },
+        },
+        { projectRoot: ROOT },
+      ),
+    ).toThrow(/seams|seatDir/);
   });
 
   test("B: `..` is a legal SAFE_TEAM_NAME and a directory traversal", () => {

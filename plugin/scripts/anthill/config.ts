@@ -14,7 +14,12 @@
  *   and resolve EVERY team, in config order. Built on `resolveConfig`, not
  *   instead of it, so the single-team answer is the same function's.
  * - `findConfigFile(startDir)` — walk up for `.anthill/config.json`.
- * - `loadConfig(startDir)` / `loadProject(startDir)` — the fs entrypoints.
+ * - `loadProject(startDir)` — THE fs entrypoint. There is deliberately no
+ *   single-team `loadConfig` peer: a project's shape is not knowable until the
+ *   file is parsed, so an fs entrypoint that resolves exactly one team would
+ *   throw `config.channel is required` on a perfectly valid `teams` map. Load
+ *   the project, then let `resolveTeam` (`team-support.ts`) decide which team
+ *   applies. `resolveConfig` stays public as the PURE one-team resolver.
  *
  * Schema: spec §5 (`docs/architecture/2026-06-28-anthill-portable-team-os-design.md`).
  */
@@ -34,6 +39,8 @@ export const DEFAULT_PATHS = {
   seatDir: ".anthill/dev",
   seams: ".anthill/dev/seams.md",
 } as const;
+/** The three path knobs, in cascade order — `seatDir` derives from `teamDir`, `seams` from `seatDir`. */
+export const PATH_KNOBS = ["teamDir", "seatDir", "seams"] as const;
 export const DEFAULT_LAUNCH = 'claude "/anthill:join {handle}"';
 /** Unstamped / legacy configs resolve as v1 — the old `.team/` + `docs/team/` layout. */
 export const DEFAULT_VERSION = 1;
@@ -241,6 +248,25 @@ export function resolveConfig(
   if (raw.gate !== undefined && typeof raw.gate !== "string") {
     throw new ConfigError("config.gate must be a string");
   }
+  // `paths` is validated rather than coerced. A wrong-shaped `paths` used to be
+  // discarded and the DEFAULTS used in its place — so a config that says, in
+  // plain sight, "put the team somewhere else" resolved to `.anthill/…` and
+  // reported `ok`. There is no reading under which that is what the author
+  // wanted, and nothing downstream can tell the two apart.
+  if (raw.paths !== undefined) {
+    if (!isObject(raw.paths)) {
+      throw new ConfigError(
+        `config.paths must be an object mapping ${PATH_KNOBS.map((k) => `\`${k}\``).join(" / ")} ` +
+          "to strings",
+      );
+    }
+    for (const knob of PATH_KNOBS) {
+      const value = raw.paths[knob];
+      if (value !== undefined && (typeof value !== "string" || value.trim() === "")) {
+        throw new ConfigError(`config.paths.${knob} must be a non-empty string`);
+      }
+    }
+  }
 
   const seats = raw.seats.map((s, i) => validateSeat(s, i));
 
@@ -313,12 +339,20 @@ const SAFE_TEAM_NAME = /^[a-zA-Z0-9._-]+$/;
 /** Names that pass `SAFE_TEAM_NAME` but traverse when used as a path segment. */
 const TRAVERSAL_NAMES = new Set([".", ".."]);
 
+/**
+ * Each knob's resolver. Keyed on `PATH_KNOBS`' union rather than written out
+ * beside it, so a fourth knob is a TYPE ERROR here until it gains a resolver —
+ * the alternative is two three-element lists that agree only by attention, and
+ * the one that silently falls behind is the one doing the collision check.
+ */
+const KNOB_RESOLVERS: Record<(typeof PATH_KNOBS)[number], (t: ResolvedConfig) => string> = {
+  teamDir: (t) => t.teamDirPath(),
+  seatDir: (t) => t.seatDirPath(),
+  seams: (t) => t.seamsPath(),
+};
+
 /** Every path knob two teams must not share, with its resolver. */
-const LIVING_DOC_PATHS = [
-  ["teamDir", (t: ResolvedConfig) => t.teamDirPath()],
-  ["seatDir", (t: ResolvedConfig) => t.seatDirPath()],
-  ["seams", (t: ResolvedConfig) => t.seamsPath()],
-] as const;
+const LIVING_DOC_PATHS = PATH_KNOBS.map((knob) => [knob, KNOB_RESOLVERS[knob]] as const);
 
 /**
  * The checks that only exist once a project has MORE THAN ONE team. Never runs on
@@ -355,13 +389,22 @@ function validateAcrossTeams(teams: ResolvedConfig[]): void {
       // Compared on the RESOLVED absolute paths, not the configured strings: a
       // collision is only visible after defaults apply, and `resolve()`
       // normalizes `.anthill/` and `.anthill` to the same answer.
-      for (const [knob, resolvePath] of LIVING_DOC_PATHS) {
-        if (resolvePath(a) === resolvePath(b)) {
+      //
+      // ⚠ EVERY KNOB AGAINST EVERY KNOB, not knob against its own name. What
+      // makes a directory contested is that two teams WRITE there — which knob
+      // each team reached it through is irrelevant to the file underneath.
+      // `{dev: teamDir ".anthill"}` beside `{lean: teamDir ".anthill/dev"}`
+      // gives dev's SEAT dir and lean's TEAM dir the same resolved path: one
+      // roster README, two owners, and a same-knob comparison sees nothing.
+      for (const [knobA, resolveA] of LIVING_DOC_PATHS) {
+        for (const [knobB, resolveB] of LIVING_DOC_PATHS) {
+          if (resolveA(a) !== resolveB(b)) continue;
           throw new ConfigError(
-            `config.teams.${b.name}: \`paths.${knob}\` resolves to "${resolvePath(b)}", the same ` +
-              `location as team "${a.name}". Two teams sharing a living-docs directory would write ` +
-              "their seat docs, seams and comms log on top of each other — the knowledge each team " +
-              "accumulates is the thing this whole layer exists to keep separate.",
+            `config.teams.${b.name}: \`paths.${knobB}\` resolves to "${resolveB(b)}", the same ` +
+              `location as team "${a.name}"'s \`paths.${knobA}\`. Two teams sharing a living-docs ` +
+              "location would write their seat docs, seams and comms log on top of each other — " +
+              "the knowledge each team accumulates is the thing this whole layer exists to keep " +
+              "separate.",
           );
         }
       }
@@ -447,7 +490,16 @@ export function resolveProject(
       }
       // Every team gets its own container by default, so two teams' living docs
       // cannot land on top of each other.
-      if (!isObject(merged.paths) || typeof merged.paths.teamDir !== "string") {
+      //
+      // ⚠ A NON-OBJECT `paths` is left alone for `resolveConfig` to reject.
+      // Spreading one here splays a string into numeric keys — `"…"` becomes
+      // `{0:".", 1:"a", …}` — and hands back a `paths` carrying the DEFAULT
+      // `teamDir`, which then validates cleanly. The rejection has to happen
+      // before anything reshapes the value into something well-formed.
+      if (
+        merged.paths === undefined ||
+        (isObject(merged.paths) && typeof merged.paths.teamDir !== "string")
+      ) {
         merged.paths = { teamDir: `${CONFIG_DIR}/teams/${name}`, ...(merged.paths ?? {}) };
       }
       // The name reaches a shell prefix — `SAFE_SESSION_KEY` in `team-spawn.ts`
@@ -522,16 +574,7 @@ export function findConfigFile(startDir: string = process.cwd()): {
 }
 
 /**
- * Find, read, parse, and resolve `.anthill/config.json` starting from `startDir`.
- * Clear `ConfigError`s for a missing file (via `findConfigFile`) or malformed JSON.
- */
-export function loadConfig(startDir: string = process.cwd()): ResolvedConfig {
-  const { raw, projectRoot, configPath } = readConfigFile(startDir);
-  return resolveConfig(raw, { projectRoot, configPath });
-}
-
-/**
- * The fs entrypoint for the PROJECT — beside `loadConfig`, same discovery.
+ * The fs entrypoint: find, read, parse and resolve `.anthill/config.json`.
  * Resolves every configured team; deciding which one applies is `resolveTeam`'s job.
  */
 export function loadProject(startDir: string = process.cwd()): ResolvedProject {
@@ -539,7 +582,7 @@ export function loadProject(startDir: string = process.cwd()): ResolvedProject {
   return resolveProject(raw, { projectRoot, configPath });
 }
 
-/** Find + read + parse — the shared half of `loadConfig` and `loadProject`. */
+/** Find + read + parse — the fs half, split out so `loadProject` stays about resolution. */
 function readConfigFile(startDir: string): {
   raw: unknown;
   projectRoot: string;

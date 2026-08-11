@@ -120,7 +120,7 @@ protectedBranches: string[], force: boolean): string | null` — returns a refus
 - **Arg**: add `force: { type: "boolean", description: "Bypass the protected-branch guard" }` to the
   command's `args`.
 - **Wire** (`run()`, after the message/paths guards, **before** `acquireLock`): resolve config via
-  `loadConfig(root)` wrapped in try/catch — on `ConfigError` (no team config) treat as **guard off**, do
+  `loadProject(root)` wrapped in try/catch — on `ConfigError` (no team config) treat as **guard off**, do
   not fail the command. Read the current branch with `git(["rev-parse", "--abbrev-ref", "HEAD"], root)`
   (a detached HEAD returns `"HEAD"` — harmless, won't be in the set). Call `protectedTrunkBlock`; on a
   non-null reason, `emitError` (message names the branch, cites the branch policy / convene beat, and
@@ -200,8 +200,17 @@ string[]): string[]` — split `git status --porcelain` output, strip the two-ch
 
 ## Key Risks & Mitigations
 
-- **`loadConfig` throws where the command used to work config-free** → wrap in try/catch, `ConfigError`
+- **`loadProject` throws where the command used to work config-free** → wrap in try/catch, `ConfigError`
   ⇒ guard off. `anthill commit` must never regress for a non-team or config-less use.
+
+  > **Amended 2026-08-10.** This move originally said `loadConfig`, which was **deleted** that day
+  > (`fix/config-resolver-hygiene`) — a single-team fs entrypoint reports `config.channel is required`
+  > against a valid `teams` map, so it was wrong for the shapes that now exist, not merely unused.
+  > `loadProject` is the resolving fs entrypoint; which team applies is `resolveTeam`'s job
+  > (`commands/team-support.ts`), and `requireConfig` is the ready-made wrapper for a command that
+  > needs one team. The guard wants the PROJECT here — a protected trunk is a repo-level fact, not a
+  > team's.
+
 - **Foreign-red hint over-claims causation** → phrase as a heuristic possibility, always show the raw
   gate output too; the hint augments, never replaces, the real error.
 - **`git status --porcelain` path parsing** (renames, quoted paths with spaces/unicode) → the pure helper

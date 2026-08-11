@@ -213,12 +213,22 @@ current footprint version (`2`).
   toward early verifier inclusion.)
 - `grounding` and `paths` are **overridable plugin defaults** — most real configs are just
   `channel` + `seats`.
+- **`paths` is validated, never coerced** (2026-08-10). The three knobs cascade — `seatDir` derives
+  from `teamDir`, `seams` from `seatDir` — and a `paths` that is not an object, or a knob that is
+  not a non-empty string, is a `ConfigError`. It used to be discarded in favour of the defaults, so
+  a config that said in plain sight "put the team somewhere else" resolved to `.anthill/…` and
+  reported `ok`, with nothing downstream able to tell that apart from a config that never asked.
 - `launch` is a template (`{handle}` substituted); defaults to the plugin-namespaced join.
 
 ### 5a. Many teams in one project (added 2026-08-09)
 
 > **Current.** Implemented by `resolveProject()` / `loadProject()` in `config.ts`, beside the
-> single-team `resolveConfig()` / `loadConfig()`, which are unchanged.
+> single-team `resolveConfig()`, which is unchanged. **`loadProject()` is the only fs entrypoint that
+> RESOLVES a config** (2026-08-10) — `findConfigFile` still discovers, and `migrate` deliberately
+> reads the raw JSON itself, since it operates on footprints too old to resolve: a project's shape is
+> not knowable until the file is parsed, so a
+> single-team fs peer would report `config.channel is required` against a perfectly valid `teams`
+> map. Load the project, then let `resolveTeam` decide which team applies.
 
 A project may carry a **`teams` map** instead of a flat team. **The shape is detected structurally —
 `"teams" in raw` — and NO new version is stamped.** `version` means _footprint layout_ (what
@@ -268,6 +278,12 @@ has carried `[default]` beside `[profile foo]` for a decade with no version fiel
   be unique**, since a channel is the message log's filename; and channels must be **prefix-free**,
   which is stricter — `anthill attach` folds `<channel>-<suffix>` sessions in as siblings of
   `<channel>`, so `anthill-dev` + `anthill-dev-lean` would put a fork's panes in its parent's menu.
+  Finally, **no two teams may resolve to the same living-docs location** — compared on the resolved
+  absolute paths, as **equality** (teams nest by design, so a prefix rule would reject the intended
+  layout), and **every knob against every knob** (2026-08-10). What makes a directory contested is
+  that two teams write there; which knob each reached it through is invisible to the file
+  underneath. A same-knob comparison misses `{dev: teamDir ".anthill"}` beside
+  `{lean: teamDir ".anthill/dev"}`, where dev's _seat_ dir is lean's _team_ dir.
 - **`forkedFrom` / `forkedAt`** are lineage, surfaced by `anthill team ls`.
 
 **Which team applies is resolved AMBIENTLY — an agent never names one in a command.** That ladder
