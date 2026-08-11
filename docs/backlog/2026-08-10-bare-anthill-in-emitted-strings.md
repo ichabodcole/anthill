@@ -133,3 +133,50 @@ the helper existed to end that duplication and had not been applied to its own n
 _Three review rounds, each finding what the previous two missed. The pattern across all three is the
 same: the rule was right every time, and its APPLICATION kept stopping at whatever I happened to be
 looking at._
+
+---
+
+## Fourth round — the discriminator is `renderText` vs `emitError`; the stated REASON is who reads it
+
+**Not a defect — an accepted cost that is nowhere recorded as accepted, and that contradicts the
+reason given for the other half.** The guard, the helper's doc comment and round 1's table all draw
+the line at the CONSTRUCT (`renderText` = human, `emitError` = agent). But every justification is
+about the AUDIENCE — and **`emitError` fires in both formats, so under `--format text` its reader is
+a TTY human**, the same person `renderText` is protected for.
+
+**Measured — `anthill attach` on a repo whose session is not running, `--format text`:**
+
+```
+Error: no team session "lean" running — spawn one with: bun /Users/…/anthill/plugin/scripts/anthill/cli.ts spawn
+```
+
+That is exactly the harm round 1 called decisive when it declined to touch the `renderText` sites:
+_"a person typing `anthill attach` WANTS PATH resolution — resolving hands them an absolute path into
+a plugin cache."_
+
+**`attach` is the sharpest case, and it is one of the two strings round 2 resolved.** The file's own
+header says so — `team-attach.ts:92-93`: _"a **human-facing convenience** … from a non-TTY (an agent)
+it just hands back the command"_ — and `bootstrap` §1 names `anthill attach` as the example of what
+the optional global launcher exists for, which is the citation round 1 used. **`attach` splits its
+audience on `isTty`, the same predicate `resolveFormat` uses**, so the construct-based rule and the
+audience-based reason come apart here most visibly. `:79` (`Pick one: … attach --session`) and `:180`
+(`spawn one with: … spawn`) are both affected.
+
+**Two honest options. Both are defensible; what is not defensible is leaving the reason and the rule
+saying different things.**
+
+- **(a) Make the helper format-aware** — `emittingCli(format)`, returning bare `anthill` for `"text"`.
+  Each audience gets what it needs, the envelope already differs by format elsewhere (`data` vs
+  `renderText`), and every `emitError` call site named above already has `format` in scope.
+- **(b) Keep "always resolve" and write the cost down** — an agent on the wrong binary is a real
+  failure, a human on an ugly path is cosmetic, so the asymmetry is worth paying. Then say that in
+  the helper's doc comment, where it currently claims a clean split that does not hold.
+
+**⚠ Whichever is chosen, apply it by rule and not by file.** `buildMissingWarnings`
+(`team-join.ts:593`) is a PURE builder with no `format` parameter, so (a) does not reach it without
+threading one — that is the kind of exception this item has three times failed to notice. **Decide
+the rule, apply it everywhere `format` is available, and record what happens where it is not.**
+
+_Verified independently before filing: the rebuilt guard genuinely fails closed. Reverting the
+`comms` `emitError` fix goes red, and a NEW bare `anthill down` injected into an already-allow-listed
+file (`team-spawn.ts`, whose `renderText` entries are listed) is reported by name. F1's repair holds._
