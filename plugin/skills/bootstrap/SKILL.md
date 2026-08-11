@@ -128,7 +128,9 @@ contains.)
 **Constraints the config layer enforces, so you get an error rather than a silent collision:** team
 names match `[A-Za-z0-9._-]` and may not be `.` or `..`; channels must be unique **and prefix-free**
 (`anthill attach` folds `<channel>-<suffix>` in as a sibling session); and no two teams may resolve
-to the same `teamDir`, `seatDir` or `seams`.
+to the same living-docs location — **any** of `teamDir` / `seatDir` / `seams` against **any** of the
+other team's, not just the matching one. One team's `seatDir` being another's `teamDir` is the same
+contested directory.
 
 **Finally, tell the human the two operating facts** — they are the whole difference between one team
 and several:
