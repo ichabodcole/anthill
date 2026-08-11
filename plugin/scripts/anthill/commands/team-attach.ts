@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, emittingCli, resolveFormat } from "../agent-layer.ts";
 import { ConfigError, findConfigFile } from "../config.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
@@ -76,7 +76,7 @@ export function formatMultiSessionHint(channel: string, sessions: string[]): str
     "Sessions bound to this project:",
     ...sessions.map((s) => `  - ${s}`),
     "",
-    `Pick one:  anthill attach --session ${sessions[1] ?? channel}`,
+    `Pick one:  ${emittingCli()} attach --session ${sessions[1] ?? channel}`,
   ].join("\n");
 }
 
@@ -177,7 +177,7 @@ export const teamAttachCommand = defineAnthillCommand({
       emitError({
         format,
         command: "attach",
-        error: `no team session "${sessionName}" running — spawn one with: anthill spawn`,
+        error: `no team session "${sessionName}" running — spawn one with: ${emittingCli()} spawn`,
       });
       process.exit(1);
     }

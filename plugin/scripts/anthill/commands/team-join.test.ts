@@ -257,7 +257,7 @@ describe("buildMissingWarnings — the remedy has to match the origin", () => {
   test("a missing team doc is NOT blamed on config.grounding", () => {
     const [w] = buildMissingWarnings([{ rel: ".anthill/principles.md", origin: "team" }]);
     expect(w).toContain(".anthill/principles.md");
-    expect(w).toContain("anthill init");
+    expect(w).toMatch(/cli\.ts init|anthill init/);
     // The load-bearing negative: the old text sent this case to the wrong file.
     expect(w).not.toMatch(/fix `config\.grounding`/);
   });
@@ -276,7 +276,7 @@ describe("buildMissingWarnings — the remedy has to match the origin", () => {
   test("a dangling configured ref gets the config.grounding remedy and NOT the team one", () => {
     const [w] = buildMissingWarnings([{ rel: "AGENTS.md", origin: "configured" }]);
     expect(w).toMatch(/fix `config\.grounding`/);
-    expect(w).not.toMatch(/anthill init/);
+    expect(w).not.toMatch(/cli\.ts init|anthill init/);
     expect(w).not.toMatch(/NOT in `config\.grounding`/);
   });
 
@@ -303,8 +303,8 @@ describe("buildMissingWarnings — the remedy has to match the origin", () => {
     expect(team).not.toContain("AGENTS.md");
     // ...and the pairing itself, which is what the comment always claimed.
     expect(configured).toMatch(/fix `config\.grounding`/);
-    expect(configured).not.toMatch(/anthill init/);
-    expect(team).toMatch(/anthill init/);
+    expect(configured).not.toMatch(/cli\.ts init|anthill init/);
+    expect(team).toMatch(/cli\.ts init|anthill init/);
     expect(team).not.toMatch(/fix `config\.grounding`/);
   });
 

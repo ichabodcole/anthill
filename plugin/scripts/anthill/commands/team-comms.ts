@@ -30,7 +30,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { dirname } from "node:path";
-import { emit, emitError, type OutputFormat, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, emittingCli, type OutputFormat, resolveFormat } from "../agent-layer.ts";
 import {
   buildCommsIncantation,
   buildPositionsReport,
@@ -417,7 +417,7 @@ const sendCommand = defineCommand({
             error:
               `stale: ${crossedIds.length} message(s) were added after #${asOf} was emitted to you ` +
               `(#${crossedIds.join(", #")} — from ${who}). Nothing was sent. ` +
-              `Read them with: anthill comms read --channel ${channel} --since ${asOf} ` +
+              `Read them with: ${emittingCli()} comms read --channel ${channel} --since ${asOf} ` +
               "— then re-send with an updated --as-of, or pass --anyway to send regardless.",
           });
           process.exit(1);
@@ -840,7 +840,7 @@ const followCommand = defineCommand({
         // establish an anchor; this field never guesses.
         catchUpWith:
           gap !== null && gap > 0 && previous
-            ? `anthill comms read --channel ${channel} --since ${previous.emittedThrough}`
+            ? `${emittingCli()} comms read --channel ${channel} --since ${previous.emittedThrough}`
             : null,
       };
       emit({

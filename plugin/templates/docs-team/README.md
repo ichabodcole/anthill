@@ -8,6 +8,13 @@ wire and a board** — `anthill comms` (the seat-aware log, durable across sessi
 **`{{channel}}` is not only the wire's name** — it also keys the bounty board and names the tmux
 session, so it identifies this team rather than any one tool. See **Tools** below.
 
+> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
+> resolved. A bare `anthill` only works if someone installed the optional global launcher — and that
+> launcher resolves to the highest CACHED release, which may not be the one this project is running.
+> _Added 2026-08-10: the skills all carry this legend and the rendered team docs did not, so a seat
+> reading only its own footprint had no way to know._
+
 ## The idea: living context (stigmergy)
 
 The team is **ephemeral agents in durable seats**. An agent's hard-won understanding would evaporate

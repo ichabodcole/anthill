@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { isAbsolute, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, emittingCli, resolveFormat } from "../agent-layer.ts";
 import { buildCommsIncantation } from "../comms.ts";
 import { execCoord, firstErrorLine, resolveCoordCli } from "../coord.ts";
 import { defineAnthillCommand } from "../define.ts";
@@ -590,7 +590,7 @@ export function buildMissingWarnings(
   }
   if (team.length > 0) {
     warnings.push(
-      `${team.length} team doc(s) not found: ${team.join(", ")} — these are NOT in \`config.grounding\`, so editing it will not help. A footprint that predates a doc gets it from \`anthill init\`, which creates missing team docs and skips the ones you already have (see \`anthill:upgrade\`). The same remedy covers a moved \`paths\` knob: init renders at the newly resolved locations and leaves any copies at the old ones untouched, so move the content you want to keep.`,
+      `${team.length} team doc(s) not found: ${team.join(", ")} — these are NOT in \`config.grounding\`, so editing it will not help. A footprint that predates a doc gets it from ${emittingCli()} init, which creates missing team docs and skips the ones you already have (see \`anthill:upgrade\`). The same remedy covers a moved \`paths\` knob: init renders at the newly resolved locations and leaves any copies at the old ones untouched, so move the content you want to keep.`,
     );
   }
   return warnings;

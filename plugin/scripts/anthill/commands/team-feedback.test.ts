@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import type { GhResult } from "../feedback.ts";
 import { buildFeedback, type FeedbackDeps } from "./team-feedback.ts";
@@ -88,9 +89,20 @@ describe("buildFeedback — behavior branches", () => {
     expect(data.repo).toBe("ichabodcole/anthill");
     expect(data.issueUrl).toContain("https://github.com/ichabodcole/anthill/issues/new?");
     expect(data.issueUrl).toContain("labels=anthill-feedback");
-    expect(data.submitCmd).toBe(
-      'anthill feedback "scan misreads pnpm globs" --category friction --submit',
-    );
+    // Asserted by SHAPE — the cli path is machine-specific. `submitCmd` is a
+    // string the LEAD re-invokes (finalize-session §447), so it must resolve to
+    // the emitting cli rather than a bare `anthill`, which PATH sends to the
+    // global launcher — possibly a different build. seams.md Contract 2 names
+    // this "the stronger case" precisely because it is re-invoked.
+    expect(
+      data.submitCmd?.endsWith('feedback "scan misreads pnpm globs" --category friction --submit'),
+    ).toBe(true);
+    expect(data.submitCmd?.startsWith("bun /")).toBe(true);
+    expect(data.submitCmd).toContain("/cli.ts ");
+    // ⚠ THE PATH MUST EXIST. "bun /…/cli.ts" is a shape any wrong path satisfies
+    // — review mutated the helper to `bun /nonexistent/wrong/cli.ts` and these
+    // assertions stayed green. Same class as the round-1 finding they replaced.
+    expect(existsSync(String(data.submitCmd).split(" ")[1] ?? "")).toBe(true);
     expect(data.warnings).toBeUndefined();
   });
 
@@ -99,9 +111,10 @@ describe("buildFeedback — behavior branches", () => {
       { message: "x", category: "idea", skill: "bootstrap", submit: false },
       forbiddenGh(),
     );
-    expect(data.submitCmd).toBe(
-      'anthill feedback "x" --category idea --skill "bootstrap" --submit',
-    );
+    expect(
+      data.submitCmd?.endsWith('feedback "x" --category idea --skill "bootstrap" --submit'),
+    ).toBe(true);
+    expect(data.submitCmd?.startsWith("bun /")).toBe(true);
   });
 
   test("submit success: returns the created issue URL, no repo/submitCmd/warnings", () => {

@@ -10,7 +10,7 @@
  * incantations ship it.
  */
 
-import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import { emit, emitError, emittingCli, resolveFormat } from "../agent-layer.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { nowMillis } from "../runtime.ts";
 import {
@@ -277,7 +277,7 @@ const useCommand = defineAnthillCommand({
           error:
             `${live.map(describeLiveTeam).join(" and ")} still looks live, so switching now would ` +
             "leave those seats working while every command you run resolves elsewhere. " +
-            "Stand the team down first (`anthill down`), or pass `--force` if you know it is idle.",
+            `Stand the team down first (${emittingCli()} down), or pass \`--force\` if you know it is idle.`,
         });
         process.exit(1);
       }

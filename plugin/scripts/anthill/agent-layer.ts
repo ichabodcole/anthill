@@ -15,6 +15,8 @@
  *     do NOT print warnings to stderr (it pollutes captured streams).
  */
 
+import { fileURLToPath } from "node:url";
+
 import { nowMillis } from "./runtime.ts";
 
 export type OutputFormat = "text" | "json";
@@ -168,4 +170,42 @@ export function emitError(options: {
     },
   };
   process.stderr.write(`${JSON.stringify(envelope)}\n`);
+}
+
+/**
+ * The `cli.ts` that EMITTED this string — never a bare `anthill`.
+ *
+ * ⚠ USE THIS IN ANYTHING AN AGENT RE-INVOKES. A bare `anthill` resolves through
+ * PATH to the optional global launcher, which picks the highest CACHED RELEASE,
+ * so a string a seat runs verbatim can execute on a *different binary than the
+ * one that composed it* — and a flag the composer has may not exist there.
+ *
+ * ⚠ DO **NOT** USE IT IN `renderText`. `renderText` is the one surface an agent
+ * can NEVER read — `resolveFormat` returns "text" only for a TTY — so it is the
+ * one place a bare `anthill` cannot reach the wrong binary. And a person typing
+ * `anthill attach` WANTS PATH resolution: that is what the optional global
+ * launcher is for, and resolving there hands them an absolute path into a plugin
+ * cache. `bare-anthill.guard.test.ts` enforces both halves.
+ *
+ * ⚠⚠ THE TEST IS "CAN AN AGENT EVER READ THIS", NOT "IS THE READER HUMAN" — and
+ * getting that backwards is a documented review finding on this very helper.
+ * **`emitError` fires in BOTH formats**, so under `--format text` its reader is
+ * a TTY human, the same person `renderText` is protected for. Payload fields are
+ * the same shape: `submitCmd` goes into the JSON envelope AND gets printed by
+ * `feedback`'s `renderText`. Those surfaces are DUAL-READ, and they resolve
+ * anyway — deliberately, at a cost:
+ *
+ *   > A human sees a long absolute path in an error. An agent that does not
+ *   > resolve runs a DIFFERENT BINARY and fails in a way nothing reports. The
+ *   > asymmetry is the whole reason, and it is worth paying.
+ *
+ * The rejected alternative was an `emittingCli(format)` returning bare `anthill`
+ * for "text". It gives each audience what it wants, but it makes every call site
+ * responsible for passing `format` correctly, fails OPEN when one forgets (the
+ * agent silently gets the bare form), and does not reach pure builders that have
+ * no `format` at all — `buildMissingWarnings` in `team-join.ts` being the live
+ * example. Reversible if the cosmetics ever outweigh that.
+ */
+export function emittingCli(): string {
+  return `bun ${fileURLToPath(new URL("./cli.ts", import.meta.url))}`;
 }
