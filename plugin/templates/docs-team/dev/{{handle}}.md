@@ -4,6 +4,11 @@
 > **Handle:** {{handle}} · **Role:** {{role}} · **Scope:** {{scope}} · **Channel:** {{channel}}
 
 This is {{handle}}'s **living doc** — the seat's brain, carried between ephemeral agents.
+
+> **⚠ `anthill <command>` here is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and `${CLAUDE_PLUGIN_ROOT}` is only
+> set while a plugin skill is running — take the resolved command from `anthill:join`. Seeded here
+> because this file starts without the shorthand and accumulates it as the team writes.
 The next agent to take this seat re-grounds from here.
 Keep it **honest and lean**: capture durable **judgments**, not file maps or a session log.
 When something's no longer true, fix it.

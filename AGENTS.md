@@ -148,9 +148,25 @@ All three source-scanning guards carry them. **`bare-anthill`'s cases are its ow
 two are the same class borrowed** — worth stating, because a fixture presented as a scar it did not
 earn is the thing this section exists to prevent.
 
+**A guard's medium is part of its scan set.** `bare-anthill` also reads the MARKDOWN agents are
+handed, because the same defect ships there and the `*.ts` walk could not see it. Markdown gets its
+own rules rather than the code ones: a **fenced block** is a copy-paste target and must be runnable
+or absent, while **prose** may use a shorthand its own document explains — which means the detector
+is a fence parser, and a fence parser has its own blind spots (indented blocks, HTML, hand-wrapped
+lines). Those are asserted as `KNOWN LIMIT` tests, so nobody reads silence as coverage.
+
 **And control the SCAN SET, not only the detector.** Every synthetic-defect control feeds the detector
 a string, so none of them notices if the file walk stops reaching part of the tree — measured, and
 silent. That is the shape of these guards' own worst historic miss.
+
+**⚠ AN EMPTY ALLOW-LIST CANNOT DO THAT JOB, and the markdown half shipped believing it could.**
+Reading an allow-list backwards protects a walk only through the entries it holds; with none, there
+is nothing to orphan. `bare-anthill` was extended to the markdown agents read — `field-notes.md`,
+the team-doc templates, and `skills/`, which is read by every agent in every consuming project — and
+pinned four template paths by name while pinning **nothing** under `skills/`, the surface its own
+header calls the biggest of the three. Review measured it: deleting the `skills` walk left the guard
+green **and the whole suite green with the branch's own defect put back**. So a walk gets **named
+files**, and an allow-list that happens to be empty buys no coverage at all.
 
 **The assertion that actually closes it is the allow-list read BACKWARDS.** _"Is every hit allowed?"_
 is satisfied perfectly by a scan that reaches nothing; _"is every allowance still earning itself?"_

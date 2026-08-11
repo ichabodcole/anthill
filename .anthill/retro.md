@@ -6,7 +6,8 @@ does not.
 
 > **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
-> resolved.
+> resolved — **`${CLAUDE_PLUGIN_ROOT}` is only set while a plugin skill is running**, so
+> outside one, take the resolved command from `anthill:join` rather than retyping this.
 
 > **`artifact:` means a thing in the repo a stranger can run or read** — a sha, a test count, a file.
 > **Neither wire is an artifact: nothing either one writes is tracked, and quoting our own messages is

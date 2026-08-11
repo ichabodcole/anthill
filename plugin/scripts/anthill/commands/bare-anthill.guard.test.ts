@@ -165,7 +165,7 @@ const PLUGIN_ROOT = join(ROOT, "..", "..");
  *
  * ⚠ A PATTERN, NOT A STRING, AND THE FIRST DRAFT WAS A STRING — which is how
  * this nearly shipped wrong. It pinned `"SHORTHAND, not a binary on your PATH"`,
- * the wording of the docs being written at the time, and **the eight skills say
+ * the wording of the docs being written at the time, and **the seven skills say
  * `"shorthand, not a binary on PATH"`** — same claim, different sentence. A
  * guard keyed to one author's phrasing reports every other author as a defect,
  * so it matches the load-bearing assertion (`anthill` is not a binary on PATH)
@@ -211,21 +211,39 @@ function markdown(rel: string): string {
  * synthetic documents on every run rather than depending on the real tree
  * carrying a defect.
  *
- * Whitespace is collapsed PER LINE before matching, because markdown here is
- * prettier-wrapped at 100 columns and a wrap landing between `anthill` and its
- * verb would otherwise hide the hit — the markdown twin of the string-concat
- * dodge that defeated the `.ts` detector.
+ * ⚠ THE FIRST VERSION TOGGLED A BOOLEAN ON ANY ``` OR ~~~ LINE, and review
+ * broke it three ways, each reproduced against a real doc:
+ *
+ *   - **a fence inside a BLOCKQUOTE was invisible** — and that is the shape
+ *     that matters most here, because every legend this guard requires is
+ *     itself a blockquote, so blockquoted content is the house idiom;
+ *   - **a `~~~` line quoted INSIDE a ``` block flipped parity for the rest of
+ *     the file**, so a document that merely illustrates a tilde fence turned
+ *     every later fence into prose;
+ *   - **a 4-backtick fence containing a 3-backtick example** closed early, for
+ *     the same reason.
+ *
+ * So the marker's CHARACTER and LENGTH are tracked, a closing fence must match
+ * or exceed the opener and carry no info string, and leading `>` is stripped.
  */
 function fencedInvocations(src: string): string[] {
   const out: string[] = [];
-  let open = false;
-  for (const line of src.split("\n")) {
-    if (/^\s*(?:```|~~~)/.test(line)) {
-      open = !open;
+  let fence: { marker: string; length: number } | null = null;
+  for (const raw of src.split("\n")) {
+    const line = raw.replace(/^\s*(?:>\s?)+/, "");
+    const m = /^\s{0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+    if (m) {
+      const marker = (m[1] as string)[0] as string;
+      const length = (m[1] as string).length;
+      if (fence === null) {
+        fence = { marker, length };
+      } else if (marker === fence.marker && length >= fence.length && (m[2] ?? "").trim() === "") {
+        fence = null;
+      }
       continue;
     }
-    if (!open) continue;
-    for (const m of line.replace(/\s+/g, " ").matchAll(BARE)) out.push(m[0]);
+    if (fence === null) continue;
+    for (const hit of line.replace(/\s+/g, " ").matchAll(BARE)) out.push(hit[0]);
   }
   return out;
 }
@@ -233,6 +251,24 @@ function fencedInvocations(src: string): string[] {
 /** Does this document use the bare shorthand at all — fence or prose? */
 function usesShorthand(src: string): boolean {
   return [...src.replace(/\s+/g, " ").matchAll(BARE)].length > 0;
+}
+
+/**
+ * Does the document carry the legend where a READER will meet it?
+ *
+ * ⚠ FENCED CONTENT IS STRIPPED FIRST. Review found the legend satisfied by text
+ * sitting inside a code block — a doc that merely QUOTES the legend as an
+ * example (this file's own controls do exactly that) would otherwise license
+ * every bare mention in it. The legend has to be an assertion the document
+ * makes, not a string it happens to contain.
+ *
+ * KNOWN LIMIT, unfixable by pattern: a NEGATED legend ("ignore anyone who says
+ * this is shorthand, not a binary on PATH") still satisfies this. Detecting
+ * that needs a reader, and the reader is the cold read.
+ */
+function carriesLegend(src: string): boolean {
+  const prose = src.replace(/^\s*(?:>\s?)*(?:```|~~~)[\s\S]*?^\s*(?:>\s?)*(?:```|~~~)\s*$/gm, "");
+  return LEGEND.test(prose);
 }
 
 /**
@@ -385,23 +421,43 @@ describe("bare `anthill` — every occurrence is accounted for", () => {
 describe("bare `anthill` — the MARKDOWN we emit to agents", () => {
   const docs = agentReadMarkdown();
 
-  test("POSITIVE CONTROL: the walk reaches both emitted routes", () => {
+  test("POSITIVE CONTROL: the walk reaches all THREE emitted routes", () => {
     // Named, not counted. `field-notes.md` is the `anthill field-notes` payload
     // and `principles.md` is where the shipped defect actually lived — a floor
     // would let either leave the walk silently, which is the failure this
     // guard's own scan-set history is made of.
+    //
+    // ⚠ THE SKILLS ROW EXISTS BECAUSE REVIEW MEASURED ITS ABSENCE. The first
+    // version of this test named `field-notes.md` and four template paths and
+    // pinned NOTHING under `skills/` — the surface this file's own header calls
+    // the biggest of the three. Deleting `walk("skills")` left the guard green
+    // AND the whole suite green **with the branch's own defect put back** (the
+    // fenced `anthill comms` in `comms/SKILL.md` restored from develop). Worse
+    // than the `.ts` half it was written to improve on: not a weak floor, no
+    // floor at all. Both allow-lists are empty, so the read-backwards assertion
+    // could not cover for it either — an empty allow-list orphans nothing.
     expect({
       fieldNotes: docs.includes("scripts/anthill/field-notes.md"),
       sopSeed: docs.includes("templates/docs-team/README.md"),
       principles: docs.includes("templates/docs-team/principles.md"),
       seatLayer: docs.includes("templates/docs-team/dev/README.md"),
       nested: docs.some((d) => d.startsWith("templates/docs-team/dev/")),
+      // The three skill docs that HELD a fenced defect, plus the portable half
+      // — the files a shrinking walk would have to keep reaching to stay honest.
+      skillsThatHeldDefects: ["skills/bootstrap/SKILL.md", "skills/comms/SKILL.md"].every((f) =>
+        docs.includes(f),
+      ),
+      portableHalf: docs.includes("skills/plan/methodology.md"),
+      skillSubdocs: docs.includes("skills/upgrade/migrations/v1-to-v2.md"),
     }).toEqual({
       fieldNotes: true,
       sopSeed: true,
       principles: true,
       seatLayer: true,
       nested: true,
+      skillsThatHeldDefects: true,
+      portableHalf: true,
+      skillSubdocs: true,
     });
   });
 
@@ -418,7 +474,9 @@ describe("bare `anthill` — the MARKDOWN we emit to agents", () => {
     // reading `principles.md` in its own footprint never sees `README.md`'s
     // legend, and `anthill field-notes` prints its payload to an agent who may
     // have no team and no footprint at all.
-    const legendless = docs.filter((d) => usesShorthand(markdown(d)) && !LEGEND.test(markdown(d)));
+    const legendless = docs.filter(
+      (d) => usesShorthand(markdown(d)) && !carriesLegend(markdown(d)),
+    );
     expect(legendless.filter((d) => !(d in LEGENDLESS_ALLOWED))).toEqual([]);
   });
 
@@ -426,7 +484,9 @@ describe("bare `anthill` — the MARKDOWN we emit to agents", () => {
     const fenced = docs.flatMap((d) =>
       fencedInvocations(markdown(d)).map((hit) => `${d} :: ${hit}`),
     );
-    const legendless = docs.filter((d) => usesShorthand(markdown(d)) && !LEGEND.test(markdown(d)));
+    const legendless = docs.filter(
+      (d) => usesShorthand(markdown(d)) && !carriesLegend(markdown(d)),
+    );
     expect({
       staleFenceEntries: Object.keys(FENCE_ALLOWED).filter((k) => !fenced.includes(k)),
       staleLegendEntries: Object.keys(LEGENDLESS_ALLOWED).filter((k) => !legendless.includes(k)),
@@ -451,14 +511,59 @@ describe("bare `anthill` — POSITIVE CONTROLS: the markdown detectors still det
     ]);
   });
 
-  test("a fence wrapped by the formatter is still seen — the markdown line-break dodge", () => {
-    // Markdown here is prettier-wrapped at 100 columns. A wrap landing between
-    // the binary and its verb is the exact shape that defeated the `.ts`
-    // detector as a string-concat split, arriving in a different medium.
-    expect(fencedInvocations(doc("```sh\nanthill\n  comms read --channel x\n```"))).toEqual([]);
+  test("the double-space dodge is closed inside a fence", () => {
     expect(fencedInvocations(doc("```sh\nanthill   comms read --channel x\n```"))).toEqual([
       "anthill comms",
     ]);
+  });
+
+  test("a fence inside a BLOCKQUOTE is seen — the house idiom, and the first version's worst miss", () => {
+    // Every legend this guard requires is a blockquote, so blockquoted content
+    // is how this repo writes. The boolean-toggle version could not see in.
+    expect(fencedInvocations(doc("> ```sh\n> anthill down\n> ```"))).toEqual(["anthill down"]);
+  });
+
+  test("fence PARITY survives a quoted fence of the other kind, and a nested shorter one", () => {
+    // A doc that merely ILLUSTRATES a `~~~` fence used to invert parity for its
+    // whole remainder, turning every later fence into prose. Same for a
+    // 4-backtick block containing a 3-backtick example.
+    expect(fencedInvocations(doc("```md\n~~~\n```\n\n```sh\nanthill down\n```"))).toEqual([
+      "anthill down",
+    ]);
+    expect(
+      fencedInvocations(
+        doc("````md\n```\nnot a real fence\n```\n````\n\n```sh\nanthill init\n```"),
+      ),
+    ).toEqual(["anthill init"]);
+  });
+
+  /**
+   * KNOWN LIMITS, asserted rather than implied — the `tmpleak.guard.test.ts`
+   * shape. Each is a construct the fence rule genuinely cannot see, kept as a
+   * failing-by-design expectation so nobody infers coverage from silence.
+   *
+   * ⚠ AN EARLIER VERSION OF THIS FILE CLAIMED THE OPPOSITE for the wrap case,
+   * in a test NAMED "still seen" whose assertion said the reverse, justified by
+   * a rationale that was also false — this repo sets `proseWrap: preserve` and
+   * prettier never reflows fenced content in any case. Corrected here rather
+   * than quietly dropped, because the wrong version is instructive: the test
+   * name is what a future reader trusts.
+   */
+  test("KNOWN LIMIT: an indented block, an HTML <pre>, and a hand-wrapped line are NOT seen", () => {
+    expect({
+      // Measured, and the reason it stays a limit: treating 4-space indentation
+      // as code produces 26 hits across four skills, every one a nested LIST
+      // CONTINUATION rather than a command. A rule with that false-positive
+      // rate would be turned off within a week.
+      indented: fencedInvocations(doc("    anthill down")),
+      html: fencedInvocations(doc("<pre>anthill down</pre>")),
+      // A hand-authored break between the binary and its verb. Whitespace is
+      // collapsed PER LINE, so this survives; `usesShorthand` collapses the
+      // whole document and does see it, which is why the legend rule is the
+      // one that catches a wrapped prose mention.
+      handWrapped: fencedInvocations(doc("```sh\nanthill\n  down\n```")),
+    }).toEqual({ indented: [], html: [], handWrapped: [] });
+    expect(usesShorthand("```sh\nanthill\n  down\n```")).toBe(true);
   });
 
   test("NEGATIVE CONTROL: prose and the RESOLVED fenced form are both left alone", () => {
@@ -475,7 +580,7 @@ describe("bare `anthill` — POSITIVE CONTROLS: the markdown detectors still det
 
   test("the legend detector reports a document that uses the shorthand without one", () => {
     const bare = doc("Tell us with `anthill feedback`.");
-    expect({ uses: usesShorthand(bare), hasLegend: LEGEND.test(bare) }).toEqual({
+    expect({ uses: usesShorthand(bare), hasLegend: carriesLegend(bare) }).toEqual({
       uses: true,
       hasLegend: false,
     });
@@ -497,7 +602,7 @@ describe("bare `anthill` — POSITIVE CONTROLS: the markdown detectors still det
   test("a fence injected into a doc that ALREADY carries the legend is still reported", () => {
     const rel = "templates/docs-team/README.md";
     const src = markdown(rel);
-    expect({ rel, carriesLegend: LEGEND.test(src) }).toEqual({ rel, carriesLegend: true });
+    expect({ rel, carriesLegend: carriesLegend(src) }).toEqual({ rel, carriesLegend: true });
     expect(fencedInvocations(src)).toEqual([]);
 
     const injected = fencedInvocations(`${src}\n\`\`\`sh\nanthill down\n\`\`\`\n`);

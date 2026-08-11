@@ -7,7 +7,8 @@ so a recurring tax becomes a tracked fix instead of a re-discovered annoyance.
 
 > **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
-> resolved.
+> resolved — **`${CLAUDE_PLUGIN_ROOT}` is only set while a plugin skill is running**, so
+> outside one, take the resolved command from `anthill:join` rather than retyping this.
 
 ## The method
 

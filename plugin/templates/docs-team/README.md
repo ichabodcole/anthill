@@ -12,6 +12,11 @@ session, so it identifies this team rather than any one tool. See **Tools** belo
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
 > resolved. A bare `anthill` only works if someone installed the optional global launcher — and that
 > launcher resolves to the highest CACHED release, which may not be the one this project is running.
+>
+> **`${CLAUDE_PLUGIN_ROOT}` is only set while a plugin skill is running** — outside one it expands to
+> nothing and the command fails. Take the resolved invocation from `anthill:join` rather than retyping
+> the form above; no document can carry a runnable path, because the path depends on where the plugin
+> is installed.
 > _Added 2026-08-10: the skills all carry this legend and the rendered team docs did not, so a seat
 > reading only its own footprint had no way to know._
 
