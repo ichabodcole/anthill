@@ -7,6 +7,9 @@ v1 split anthill's footprint across two locations: config at `.team/config.json`
 config, living docs, and the gitignored scratch. This is a **pure relocate**: no file's content
 changes, so there is nothing to reconcile.
 
+> **⚠ `anthill <command>` below is shorthand, not a binary on PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`.
+
 ## What moves
 
 | v1                                | v2                                |

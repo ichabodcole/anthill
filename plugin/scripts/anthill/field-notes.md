@@ -7,6 +7,16 @@ the evidence that produced it.
 that is worth more to us than agreement.** Take what fits, ignore what doesn't, and record what you
 learn in your own `.anthill/principles.md`.
 
+> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
+> resolved. A bare `anthill` only works if someone installed the optional global launcher, and that
+> launcher resolves to the highest CACHED release — which may not be the one you are running.
+>
+> **`${CLAUDE_PLUGIN_ROOT}` is only set while a plugin skill is running.** Outside one it expands to
+> nothing and the command fails. So take the resolved invocation from a skill — `anthill:join` prints
+> it for your seat — rather than retyping the form above. No document can carry a runnable path,
+> because the path depends on where the plugin is installed.
+
 ---
 
 ## Principles — claims about how work goes wrong

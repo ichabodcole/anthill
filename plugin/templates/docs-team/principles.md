@@ -2,6 +2,11 @@
 
 **This file starts empty on purpose.** What goes here is what **your** team earns.
 
+> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
+> resolved — **`${CLAUDE_PLUGIN_ROOT}` is only set while a plugin skill is running**, so
+> outside one, take the resolved command from `anthill:join` rather than retyping this.
+
 ---
 
 ## What belongs here
@@ -26,9 +31,9 @@ the answer is no**, and that is the correct answer most of the time.
 
 ## What other teams have found
 
-```sh
-anthill field-notes
-```
+Run the `field-notes` command — **`anthill:join` prints the exact invocation for this project, with
+the path already resolved.** Take it from there rather than retyping one from a doc: no document can
+carry a runnable path, because the path depends on where the plugin is installed.
 
 Observations from teams using anthill, each with the evidence behind it. **It is not a list you are
 expected to adopt** — it is what has been seen elsewhere, so you can take what fits and ignore what

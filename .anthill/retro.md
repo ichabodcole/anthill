@@ -4,6 +4,11 @@ Written at `anthill:finalize-session` step 4.5. **Q3 answers are hypotheses the 
 and tests.** Q1/Q2 answers carry an artifact where one exists, and are labelled `testimony` where one
 does not.
 
+> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
+> resolved — **`${CLAUDE_PLUGIN_ROOT}` is only set while a plugin skill is running**, so
+> outside one, take the resolved command from `anthill:join` rather than retyping this.
+
 > **`artifact:` means a thing in the repo a stranger can run or read** — a sha, a test count, a file.
 > **Neither wire is an artifact: nothing either one writes is tracked, and quoting our own messages is
 > quoting ourselves either way.** Anything whose only evidence is "we said so" is `testimony:`, however

@@ -5,6 +5,11 @@ sessions — what bit, and the suggested fix. Distinct from a seat's `dev/<handl
 _taste_) and `seams.md` (inter-seat _contracts_): this is the **process/tooling backlog**, captured
 so a recurring tax becomes a tracked fix instead of a re-discovered annoyance.
 
+> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
+> resolved — **`${CLAUDE_PLUGIN_ROOT}` is only set while a plugin skill is running**, so
+> outside one, take the resolved command from `anthill:join` rather than retyping this.
+
 ## The method
 
 1. **Append during the session.** The moment something bites — a clunky command, a doc that lied, a

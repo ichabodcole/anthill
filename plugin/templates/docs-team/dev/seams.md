@@ -4,6 +4,11 @@
 > where one seat's work meets another's. A seat doc must **point here, never restate this**. That rule
 > is self-referential: a contract copied into three seat docs will drift, violating the very rule it
 > states. So: one source.
+
+> **⚠ `anthill <command>` here is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and `${CLAUDE_PLUGIN_ROOT}` is only
+> set while a plugin skill is running — take the resolved command from `anthill:join`. Seeded here
+> because this file starts without the shorthand and accumulates it as the team writes.
 >
 > **What belongs here.** A contract earns a place here when it is **shared truth that more than one
 > seat must agree on** and that **drifts if restated** — a data shape passed across a boundary, an

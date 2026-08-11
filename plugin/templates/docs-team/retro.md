@@ -4,6 +4,11 @@
 **`anthill:finalize-session`** (step 4.5), from the seats' answers on the wire. **Newest first** —
 the next convene reads the top of this file, and a retro nobody re-reads is a write-only store.
 
+> **⚠ `anthill <command>` here is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and `${CLAUDE_PLUGIN_ROOT}` is only
+> set while a plugin skill is running — take the resolved command from `anthill:join`. Seeded here
+> because this file starts without the shorthand and accumulates it as the team writes.
+
 ---
 
 ## The three questions
