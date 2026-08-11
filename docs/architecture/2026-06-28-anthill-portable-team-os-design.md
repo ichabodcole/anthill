@@ -223,8 +223,10 @@ current footprint version (`2`).
 ### 5a. Many teams in one project (added 2026-08-09)
 
 > **Current.** Implemented by `resolveProject()` / `loadProject()` in `config.ts`, beside the
-> single-team `resolveConfig()`, which is unchanged. **`loadProject()` is the only fs entrypoint**
-> (removed 2026-08-10): a project's shape is not knowable until the file is parsed, so a
+> single-team `resolveConfig()`, which is unchanged. **`loadProject()` is the only fs entrypoint that
+> RESOLVES a config** (2026-08-10) — `findConfigFile` still discovers, and `migrate` deliberately
+> reads the raw JSON itself, since it operates on footprints too old to resolve: a project's shape is
+> not knowable until the file is parsed, so a
 > single-team fs peer would report `config.channel is required` against a perfectly valid `teams`
 > map. Load the project, then let `resolveTeam` decide which team applies.
 

@@ -545,12 +545,16 @@ describe("`paths` is validated, never coerced", () => {
     // `paths`. Spreading a STRING splays it into numeric keys and yields an
     // object carrying the DEFAULT teamDir — which then validates cleanly. So the
     // rejection has to happen before the spread, not after.
+    //
+    // Pinned to `config.paths` BY NAME: `config.teams.dev must be a JSON object`
+    // — thrown when the ENTRY is non-object — satisfies a looser match, so a
+    // looser assertion here would go green on a different error entirely.
     expect(() =>
       resolveProject(
         { teams: { dev: { seats, paths: ".anthill/custom" } } },
         { projectRoot: ROOT },
       ),
-    ).toThrow(/config\.teams\.dev[\s\S]*must be an object/);
+    ).toThrow(/config\.teams\.dev: config\.paths must be an object/);
   });
 
   test("a wrong-TYPE knob inside a well-formed `paths` is refused too", () => {

@@ -339,12 +339,20 @@ const SAFE_TEAM_NAME = /^[a-zA-Z0-9._-]+$/;
 /** Names that pass `SAFE_TEAM_NAME` but traverse when used as a path segment. */
 const TRAVERSAL_NAMES = new Set([".", ".."]);
 
+/**
+ * Each knob's resolver. Keyed on `PATH_KNOBS`' union rather than written out
+ * beside it, so a fourth knob is a TYPE ERROR here until it gains a resolver —
+ * the alternative is two three-element lists that agree only by attention, and
+ * the one that silently falls behind is the one doing the collision check.
+ */
+const KNOB_RESOLVERS: Record<(typeof PATH_KNOBS)[number], (t: ResolvedConfig) => string> = {
+  teamDir: (t) => t.teamDirPath(),
+  seatDir: (t) => t.seatDirPath(),
+  seams: (t) => t.seamsPath(),
+};
+
 /** Every path knob two teams must not share, with its resolver. */
-const LIVING_DOC_PATHS = [
-  ["teamDir", (t: ResolvedConfig) => t.teamDirPath()],
-  ["seatDir", (t: ResolvedConfig) => t.seatDirPath()],
-  ["seams", (t: ResolvedConfig) => t.seamsPath()],
-] as const;
+const LIVING_DOC_PATHS = PATH_KNOBS.map((knob) => [knob, KNOB_RESOLVERS[knob]] as const);
 
 /**
  * The checks that only exist once a project has MORE THAN ONE team. Never runs on
