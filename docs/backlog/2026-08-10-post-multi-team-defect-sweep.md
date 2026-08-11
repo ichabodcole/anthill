@@ -25,13 +25,22 @@ provenance is worth one file.
 | item                                                                                                              | shape                        | wrong today? |
 | ----------------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------ |
 | [bootstrap fails open on a non-software repo](./_archive/2026-08-10-bootstrap-fails-open-on-non-software-repo.md) | ⚠ carries a design decision  | **yes**      |
-| [bare `anthill` in emitted strings](./2026-08-10-bare-anthill-in-emitted-strings.md)                              | one mechanical edit, 4 sites | **yes**      |
-| [cross-knob living-docs overlap](./2026-08-10-cross-knob-living-docs-overlap.md)                                  | one function, one test       | no           |
+| [bare `anthill` in emitted strings](./_archive/2026-08-10-bare-anthill-in-emitted-strings.md)                     | one mechanical edit, 4 sites | **yes**      |
+| [cross-knob living-docs overlap](./_archive/2026-08-10-cross-knob-living-docs-overlap.md)                         | one function, one test       | no           |
 | [declared-total fields drop from JSON](./2026-08-10-declared-total-fields-drop-from-json.md)                      | repo-wide idiom + a guard    | no           |
-| [`config.ts` resolver hygiene](./2026-08-10-config-resolver-hygiene.md)                                           | two small fixes, one file    | no           |
+| [`config.ts` resolver hygiene](./_archive/2026-08-10-config-resolver-hygiene.md)                                  | two small fixes, one file    | no           |
 | [`migrate` gitignore lines not derived](./2026-08-10-migrate-gitignore-lines-not-derived.md)                      | one file, one golden         | no           |
 | [DECIDE: `team ls` on a stale pin](./2026-08-10-team-ls-refuses-on-a-stale-pin.md)                                | a decision, not a defect     | no           |
 
 **Order:** the two "wrong today" items first. The bootstrap one leads — it is the only one that
 produces a wrong artifact **a human then ratifies**, which is the thing that makes it worse than the
 others rather than merely first.
+
+**Status 2026-08-10:** four of seven shipped — bootstrap fail-open, bare `anthill`, and both config
+items (the last two together, `fix/config-resolver-hygiene`, since they shared a file and a test
+surface). Links above point into `_archive/` as each landed. Still open: declared-total fields,
+`migrate` gitignore derivation, and the `team ls` stale-pin decision.
+
+The config branch's review round left one item behind rather than widening scope:
+[one team's `seams` can be another's seat doc](./2026-08-10-one-teams-seams-can-be-anothers-seat-doc.md)
+— the cross-knob fix compares the three CONFIGURED knobs, and a seat doc is derived.
