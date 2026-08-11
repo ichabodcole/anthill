@@ -53,8 +53,9 @@ const ROOT = join(import.meta.dir, "..");
 /**
  * The CLI's OWN command names, read from its help output — not a list typed here.
  *
- * ⚠ THIS IS THE FIX FOR v1's CLOSED VERB LIST, which review broke: it omitted
- * `spawn` and `feedback`, and `feedback` was the verb of the biggest real miss.
+ * ⚠ THIS IS THE FIX FOR v1's CLOSED VERB LIST, which review broke by injecting
+ * variants it could not see — including `spawn` and `feedback`, and `feedback`
+ * was the verb of the biggest real miss.
  * Deriving means A NEW COMMAND JOINS THE SCAN THE DAY IT IS ADDED, with nobody
  * remembering to update this file.
  *
@@ -272,9 +273,21 @@ describe("bare `anthill` — POSITIVE CONTROLS: the detector still detects", () 
       // The formatter splits long errors at ~100 columns. A break landing between
       // the binary and its verb used to exonerate the whole string.
       concatenated: detects('error: "spawn one with: anthill " + "spawn --as forager"'),
+      // ⚠ THE BACKTICK FORM IS THE DOMINANT ONE IN THIS TREE (`migrate.ts` splits
+      // this way five times), and `normalize` repairs it with a SEPARATE branch
+      // from the double-quote case above. Review measured that blinding that
+      // branch left this whole file green — the commoner shape was the
+      // uncontrolled one.
+      backtickConcatenated: detects("error: `spawn one with: anthill ` + `spawn --as forager`"),
       // Two spaces made the literal `anthill <verb>` pattern miss.
       doubleSpaced: detects('error: "run anthill  down to release the board"'),
-    }).toEqual({ help: true, flag: true, concatenated: true, doubleSpaced: true });
+    }).toEqual({
+      help: true,
+      flag: true,
+      concatenated: true,
+      backtickConcatenated: true,
+      doubleSpaced: true,
+    });
   });
 
   /**
@@ -312,6 +325,34 @@ describe("bare `anthill` — POSITIVE CONTROLS: the detector still detects", () 
       file,
       wouldBeReported: true,
     });
+  });
+
+  /**
+   * THE SCAN SET, WHICH IS THE OTHER HALF OF GOING BLIND — and review found it
+   * uncontrolled after the detector had been fixed.
+   *
+   * Every control above feeds `occurrences` a string. **None of them cares which
+   * FILES ever reach it.** Narrow the walk to `commands/` alone, or drop one file
+   * by name, and this file stays green — measured. That is not a hypothetical
+   * failure mode here: it is **the third of the three v1 defects this file's own
+   * header enumerates** ("it covered `team-comms.ts` alone, while three
+   * same-class defects sat in `team-feedback.ts` and `team-attach.ts`"). The
+   * repair made the detector falsifiable and left the scan set exactly as
+   * unfalsifiable as it was.
+   *
+   * Pinned as a floor plus one named file per directory level, rather than an
+   * exact list, so adding a source file does not fail this — only LOSING reach
+   * does.
+   */
+  test("the scan reaches the whole tree — root, subdirectory, and a floor on the count", () => {
+    const files = sourceFiles(ROOT);
+    expect({
+      root: files.includes("config.ts"),
+      commands: files.includes("commands/team-comms.ts"),
+      // Well under the real count, so this pins REACH and not a census.
+      atLeast: files.length >= 20,
+      excludesTests: files.every((f) => !f.endsWith(".test.ts")),
+    }).toEqual({ root: true, commands: true, atLeast: true, excludesTests: true });
   });
 
   test("NEGATIVE CONTROL: the resolved form is not flagged, so the guard is not just matching everything", () => {

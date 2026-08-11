@@ -143,19 +143,39 @@ describe("#100 — a new temp-dir leak must be RED, not merely unnoticed", () =>
     ]);
   });
 
-  test("POSITIVE CONTROL: the pattern tolerates the formatting the formatter produces", () => {
-    // Every one of these is a real shape in this tree or one prettier can produce
-    // from it. A pattern that only matches the single-line form goes silently
-    // blind the first time a call wraps.
+  test("POSITIVE CONTROL: the pattern matches the real shape, and tolerates wrapping", () => {
+    // ⚠ ONLY `inline` IS AN OBSERVED SHAPE. Every raw mint in this tree today is
+    // single-line with double quotes, and biome — not prettier — formats it, so
+    // the wrapped and spaced cases are INSURANCE against a future formatter or a
+    // longer path, not evidence of anything. Labelled rather than implied,
+    // because an earlier version of this comment claimed all three were real
+    // shapes and review falsified it by grepping the tree.
     expect({
-      inline: mintsRaw("mkdtempSync(join(tmpdir(), 'a-'))"),
-      wrapped: mintsRaw("mkdtempSync(\n  join(\n    tmpdir(),\n    'a-',\n  ),\n)"),
-      spaced: mintsRaw("mkdtempSync( join( tmpdir(), 'a-' ) )"),
+      inline: mintsRaw('mkdtempSync(join(tmpdir(), "anthill-x-"))'),
+      wrapped: mintsRaw('mkdtempSync(\n  join(\n    tmpdir(),\n    "anthill-x-",\n  ),\n)'),
+      spaced: mintsRaw('mkdtempSync( join( tmpdir(), "anthill-x-" ) )'),
       // NEGATIVE half — without it, a detector stuck at `true` passes every case
       // above while the verdict test stays green only because everything is
       // allow-listed.
       unrelated: mintsRaw("const dir = makeRepo();"),
     }).toEqual({ inline: true, wrapped: true, spaced: true, unrelated: false });
+  });
+
+  /**
+   * THE SCAN SET — uncontrolled until review measured it. Narrowing the walk to
+   * one subdirectory, or dropping a file by name, left this file green.
+   *
+   * Floor plus one named file per level, so ADDING a test file never fails this
+   * and only LOSING reach does.
+   */
+  test("the scan reaches the whole test tree — root, subdirectory, and a floor", () => {
+    const files = testFiles(ROOT);
+    expect({
+      root: files.includes("config.test.ts"),
+      commands: files.includes("commands/team-commit.test.ts"),
+      atLeast: files.length >= 20,
+      excludesSelf: !files.includes(SELF),
+    }).toEqual({ root: true, commands: true, atLeast: true, excludesSelf: true });
   });
 
   /**
@@ -177,6 +197,34 @@ describe("#100 — a new temp-dir leak must be RED, not merely unnoticed", () =>
    * mitigation is that the entry's `measured +0 per run` goes stale, and re-
    * measuring is what a reviewer of that file is supposed to do.
    */
+  /**
+   * ⚠ THE SECOND KNOWN LIMIT, AND THE WIDER OF THE TWO — declared because this
+   * repo's own rule is to assert a limit rather than leave it implied, and the
+   * per-file one below was shipped alone while this was merely true.
+   *
+   * `RAW_MINT` is SYNTACTIC. It matches one spelling: `mkdtempSync(join(tmpdir()`.
+   * Every form below is a real leak this guard does not see. All are measured.
+   * None appears in the tree today, which is why the narrow pattern is still the
+   * right trade — a broader one would flag prose and helper names — but a reader
+   * must not read a green here as "no test can leak".
+   */
+  test("KNOWN LIMIT: the pattern is syntactic, so other spellings of the same leak pass", () => {
+    expect({
+      // Built, not written literally: a `${…}` inside a plain string is a biome error.
+      templateLiteral: mintsRaw(`mkdtempSync(\`\${tmpdir()}/x-\`)`),
+      asyncForm: mintsRaw('await mkdtemp(join(tmpdir(), "x-"))'),
+      viaResolve: mintsRaw('mkdtempSync(resolve(tmpdir(), "x-"))'),
+      throughALocal: mintsRaw('const base = tmpdir(); mkdtempSync(join(base, "x-"))'),
+      namespaced: mintsRaw('mkdtempSync(join(os.tmpdir(), "x-"))'),
+    }).toEqual({
+      templateLiteral: false,
+      asyncForm: false,
+      viaResolve: false,
+      throughALocal: false,
+      namespaced: false,
+    });
+  });
+
   test("KNOWN LIMIT: exoneration is per FILE, so a listed file's new mint is not caught", () => {
     const listed = "commands/team-commit.test.ts";
     expect(listed in ALLOWED).toBe(true);

@@ -289,10 +289,13 @@ seat doc to a reader holding **none of your session context** (a subagent spawne
 your framing travels with it) and ask it to **restate each lesson in its own words** and quote
 whatever it could not interpret. **A doc can be entirely true and still fail to transmit**, and
 nothing about writing it tells you which one you produced: the assumptions you baked in are the
-things you did not need to say. Give it the whole doc and let it find the weak parts. **Scars need
-the most attention**, because a scar compresses a lived incident hardest — name this project's tools,
-docs and teammates freely, since your reader has them, and make sure the **event** survives without
-you: what was done, what happened, what it cost. **Say what a number meant, not what it was.**
+things you did not need to say. Give it the whole doc and let it find the weak parts, and **ask for a
+restatement rather than a verdict** — a reader asked whether the doc is clear will say yes, and you
+will have measured nothing. **Scars compress hardest**, so they need the most care: name this
+project's tools, docs and teammates freely, since your reader has them, and make sure the **event**
+survives without you — what was done, what happened, what it cost. **Say what a number meant, not
+what it was.** The **epitaph** is the sharpest case of all, being written for someone who will not
+remember the session at all.
 
 **A hypothesis is a fourth home, and it is the one the routing list keeps missing.** A lesson says
 what you now know; a **hypothesis** says what you predict and what would prove it wrong — so it goes

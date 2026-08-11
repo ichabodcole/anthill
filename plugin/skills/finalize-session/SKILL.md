@@ -165,12 +165,16 @@ need to say, so they are invisible to you by construction — 2.5 checks your pr
 - **Send it to a reader holding none of this session's context** — a subagent spawned fresh, so none
   of your framing travels with it.
 - **Ask for a restatement in the reader's own words**, lesson by lesson, plus an exact quote of
-  anything it could not interpret. Its restatement is the measurement; you decide what changes.
+  anything it could not interpret. **Ask for a restatement, never a verdict** — a reader asked
+  whether the doc is clear will tell you it is, and you will have measured nothing. What it can and
+  cannot say back is the measurement; you decide what changes.
 - **Hand over the whole doc and let the reader find the weak parts**, rather than pointing at the
   passage you are unsure of. You learn where it actually fails, which is rarely where you expected.
-- **Give the epitaph the closest attention.** It is written for someone who will not remember this
+- **The epitaph is the sharpest case.** It is written for someone who will not remember this
   session, so a cold reader is exactly its audience. If the reader cannot say what would go wrong
   without it, neither will your successor.
+- **Run it after your last edit to the doc.** Steps 3.5 and 3.75 can change it again; anything they
+  rewrite has not been read by anyone but you.
 - **Write scars so the EVENT survives without you** — what was done, what happened, what it cost.
   Name this project's tools, docs and teammates freely; your reader is inside the project and has
   them. **What has to be recoverable is the incident**, which is the part a scar compresses hardest.

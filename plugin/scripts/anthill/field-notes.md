@@ -191,12 +191,12 @@ taste. If you find yourself inventing one of these, that is confirmation, not co
   positionally, so **teams were manually optimising for a truncation algorithm.**
 - **`## you → who:` in the headline** — channels rarely route, so this is a **salience hint, not a
   filter**. See the next section for why that distinction is load-bearing.
-- **Announcing a shared-file hold** — _"taking seams.md, short hold, say if you have it open."_
-  Zero collision rework where it was used.
+- **Announcing a shared-file hold** — _"taking the shared contracts file, short hold, say if you
+  have it open."_ Nobody had to redo work lost to a collision where this was used.
 - **Marking an absence of verification** — `UNVERIFIED`, or `UNVERIFIED-BY-CONSTRUCTION` when the
   thing cannot be checked from where you stand. An unmarked claim reads as measured.
-- **Baseline at join, baseline at close** — the gate's numbers on arrival and departure, so the
-  session's delta is a measurement rather than an impression.
+- **Baseline on arrival, baseline at close** — run the build-and-test gate when you start and again
+  when you finish, so what the session changed is a measurement rather than an impression.
 
 ---
 
@@ -204,32 +204,34 @@ taste. If you find yourself inventing one of these, that is confirmation, not co
 
 Rarer than advice about what to do, and cheaper to act on.
 
-**Mandating that seats read each other's work more.**
-One team added a protocol step requiring it at every pause, then measured: cross-lane referencing was
-**already 97–99%**. The mandate targeted **attention**, and attention was not scarce. _"A seat whose
-job is 'read more' is redundant; a seat whose job is 'reproduce claims before they are acted on' is
-not."_
+**Mandating that people read each other's work more.**
+One team added a required step at every pause, then went back and measured what had been happening
+before it: members already referenced each other's work in nearly every message that could have. The
+rule targeted **attention**, and attention was not the thing in short supply. _"Someone whose job is
+'read more' is redundant; someone whose job is 'reproduce claims before they are acted on' is not."_
 → **Measure the baseline before you build a role or a rule around a behaviour.**
 
 **Filtering a channel by addressee or topic.**
-The obvious build on `→` addressing is a filter. **Do not ship it — or if you do, never key it on
-vocabulary.** One team's surface seat had **three of her four cross-lane catches come from messages
-not addressed to her, containing no vocabulary from her lane.** She had designed exactly that filter
-in an earlier session, written down that it was dangerous, never implemented it, **and got the
-benefit by failing to follow her own optimisation.**
+The obvious next build on addressing is a filter. **Do not ship it — or if you do, never key it on
+vocabulary.** On one team, almost every time a member caught a problem in somebody else's work, she
+caught it in a message that **was not addressed to her and used none of the words from her own area**
+— so a filter on either signal would have hidden it. She had designed exactly that filter in an
+earlier session, written down that it was dangerous, never built it, **and got the benefit by failing
+to follow her own optimisation.**
 
 > **Relevance is a property of a message's CONSEQUENCE, not its vocabulary — and you cannot assess
 > consequence without reading it.**
 > → **Render the addressee, sort by it, colour it. Never hide on it.**
 
 **A correct alert on the wrong unit.**
-A board heartbeat fired on a card ~13.6 hours overdue against a 20-minute estimate. Nobody was stuck;
-the card was a multi-hour **lane** estimated as a **task**. The lead received every alert and acted on
-none, and by the end was discarding them unread. _"Your instrument worked, told the truth, and I
-learned to ignore it inside one session."_
+A team's task tracker warned whenever a task ran past its estimate. One task went most of a day over a
+twenty-minute estimate and the warnings kept arriving. Nobody was stuck: the task was really a
+multi-day stream of work that somebody had estimated as a single sitting. The lead received every
+warning, acted on none, and by the end was deleting them unread. _"Your instrument worked, told the
+truth, and I learned to ignore it inside one session."_
 → **A signal that is correct but meaningless trains its audience to ignore the channel it arrives
-on** — which is worse than the gap it was built for. Alert on **evidence** (no commits by this owner
-while holding an in-progress card), not on elapsed time.
+on** — which is worse than the gap it was built for. Alert on **evidence** (the owner has committed
+nothing while holding this open), not on elapsed time.
 
 ---
 
@@ -240,9 +242,9 @@ The discriminator, and it applies to this document too.
 > **Tool the conventions compensating for missing INFORMATION. Leave the ones expressing JUDGMENT.**
 
 Read-watermarks, staleness warnings, and baselines are workarounds for a gap in the tool — they
-should become fields and stop being prose. **Verdict-first is taste. Declining credit is character.
-Naming your falsifiers is method. `UNVERIFIED` is honesty.** Tooling those produces the form without
-the substance: a mandated "state your confidence" field is one more check whose passing output is
+should become fields and stop being prose. **Putting the verdict first is taste. Marking a claim
+`UNVERIFIED` is honesty. Saying what would prove you wrong is method.** Tooling those produces the
+form without the substance: a mandated "state your confidence" field is one more check whose passing output is
 identical under the failure.
 
 ---
