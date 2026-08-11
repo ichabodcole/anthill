@@ -6,12 +6,22 @@
  * binary other than the one that composed it, and a flag the composer has may
  * not exist there. `buildLandCommand` (`team-join.ts`) hit this for real.
  *
- * ⚠ IT IS NOT A BAN. `renderText` is the HUMAN half of the envelope
+ * ⚠ IT IS NOT A BAN. `renderText` is the one surface an agent can NEVER read
  * (`agent-layer.ts`'s `resolveFormat` returns "text" only for a TTY, so an
  * agent's piped subprocess cannot reach it without asking), and a person typing
  * `anthill attach` WANTS PATH resolution — that is what the optional global
  * launcher is for. Resolving there hands them an absolute path into a plugin
  * cache. So the rule is a DISTINCTION, and both halves are asserted below.
+ *
+ * ⚠⚠ THE DISCRIMINATOR IS "CAN AN AGENT EVER READ IT", NOT "IS THE READER
+ * HUMAN". Review found this file arguing the second while enforcing the first.
+ * **`emitError` fires in BOTH formats** — under `--format text` a TTY human
+ * reads it, and gets the long path. Payload fields are dual-read the same way
+ * (`submitCmd` is in the JSON envelope AND printed by `feedback`'s
+ * `renderText`). They resolve anyway, because an unresolved agent string runs a
+ * different binary and fails silently while an unresolved human string is only
+ * ugly. That cost is ACCEPTED, and `emittingCli`'s doc comment records why the
+ * format-aware alternative was rejected.
  *
  * ⚠⚠ THIS IS AN ALLOW-LIST, AND THE FIRST VERSION WAS NOT — that is the repair.
  * v1 scanned ONE file with a CLOSED VERB LIST and classified hits by whether

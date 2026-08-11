@@ -177,6 +177,33 @@ saying different things.**
 threading one — that is the kind of exception this item has three times failed to notice. **Decide
 the rule, apply it everywhere `format` is available, and record what happens where it is not.**
 
+### Resolved: **(b)** — the rule stands, the reason was repaired
+
+The finding is correct and the contradiction is real. It is resolved by **fixing the sentence, not the
+code**, because the honest form of the rule turns out to be construct-shaped after all:
+
+> **`renderText` is the one surface an agent can NEVER read.** Everything else — `emitError`, payload
+> fields — is **DUAL-READ**, and resolves anyway. The test is _"can an agent ever read this"_, not
+> _"is the reader human"_.
+
+`emitError` under `--format text` and `submitCmd` (in the JSON envelope **and** printed by `feedback`'s
+`renderText`) are both dual-read, so the human cost is real and is now **written down as accepted**:
+
+> A human sees a long absolute path in an error. An agent that does not resolve **runs a different
+> binary and fails in a way nothing reports.** The asymmetry is the whole reason, and it is worth
+> paying.
+
+**Why not (a).** `emittingCli(format)` gives each audience what it wants, but it makes every call site
+responsible for passing `format`, **fails OPEN when one forgets** — the agent silently gets the bare
+form, which is the original defect — and does not reach pure builders that have no `format` at all
+(`buildMissingWarnings`, exactly the exception this item asked to be checked for). Recorded as
+rejected-and-reversible in the helper's doc comment, not dropped.
+
+**Applied by rule, not by file, and re-checked as such.** Under the honest test every allow-list entry
+still holds: the `human` entries are reached only through `renderText`, and **every** non-`renderText`
+entry carries a `<placeholder>` — verified line by line — so none is paste-runnable. `config.ts:382`
+and `feedback.ts:78` are backticked prose. **No code changed; two doc comments did.**
+
 _Verified independently before filing: the rebuilt guard genuinely fails closed. Reverting the
 `comms` `emitError` fix goes red, and a NEW bare `anthill down` injected into an already-allow-listed
 file (`team-spawn.ts`, whose `renderText` entries are listed) is reported by name. F1's repair holds._
