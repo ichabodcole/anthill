@@ -80,8 +80,24 @@ const SRC = readFileSync(join(new URL(".", import.meta.url).pathname, "team-conv
 
 /** The `leadStandDown = …` composition, source text only. */
 function composition(): string {
-  const m = SRC.match(/const leadStandDown\s*=([\s\S]*?);\n/);
+  return extractComposition(SRC);
+}
+
+/**
+ * Split from `composition()` so the extractor can be handed synthetic source.
+ * The positive control below only proves the regex found SOMETHING in the real
+ * file; it cannot prove the regex still finds the right thing, or that the
+ * predicates below still fire on a bad composition. Those need inputs this file
+ * controls.
+ */
+function extractComposition(src: string): string {
+  const m = src.match(/const leadStandDown\s*=([\s\S]*?);\n/);
   return m?.[1] ?? "";
+}
+
+/** Invokes the PATH launcher rather than the emitting cli — the defect. */
+function invokesBareAnthill(composed: string): boolean {
+  return /`anthill |"anthill |'anthill /.test(composed);
 }
 
 describe("K1 — the lead's teardown release is composed correctly (source-level)", () => {
@@ -111,7 +127,50 @@ describe("K1 — the lead's teardown release is composed correctly (source-level
     // The scar: two binaries reported an identical --version while differing in
     // two behaviours, and the emitted LAND string was unrunnable on the one
     // PATH resolved. A dogfooding window is exactly when they diverge.
-    expect(/`anthill |"anthill |'anthill /.test(composition())).toBe(false);
+    expect(invokesBareAnthill(composition())).toBe(false);
+  });
+
+  /**
+   * POSITIVE CONTROLS ON THE DETECTOR — this guard proving it can still SEE.
+   *
+   * Every assertion above states the composition is CORRECT. None states this
+   * file could tell if it were not, and those are different claims: a
+   * `toBe(false)` on a predicate that has stopped matching passes exactly as a
+   * clean composition does. The extraction control at the top of this describe
+   * covers only ONE way to go blind (the extractor returning ""); these cover the
+   * predicates themselves.
+   *
+   * Not a hypothetical for this predicate. Its cousin in
+   * `bare-anthill.guard.test.ts` shipped with a closed verb list that missed 6 of
+   * 6 injected variants, and was only caught because a reviewer injected them by
+   * hand. Hand injection happens once; this runs every time.
+   */
+  it("POSITIVE CONTROL: the bare-`anthill` predicate fires on a composition that has the defect", () => {
+    // Built rather than written literally: a `${…}` inside a plain string is a
+    // biome error (`noTemplateCurlyInString`), and the fixture is only faithful
+    // to the real source text if it carries the interpolation.
+    const sub = (expr: string) => `\${${expr}}`;
+    expect({
+      // The pre-fix form, verbatim — what this guard was written to make red.
+      backtick: invokesBareAnthill(`\`anthill comms stand-down --as ${sub("config.lead")}\``),
+      double: invokesBareAnthill('"anthill comms stand-down --as maestro"'),
+      // NEGATIVE half: the resolved form must NOT trip it, or the predicate is
+      // just returning true and the assertion above is red for a fake reason.
+      resolved: invokesBareAnthill(
+        `\`${sub("emittingCli()")} comms stand-down --as ${sub("config.lead")}\``,
+      ),
+    }).toEqual({ backtick: true, double: true, resolved: false });
+  });
+
+  it("POSITIVE CONTROL: the extractor finds the composition by SHAPE, not by luck", () => {
+    // Pins what the extractor is actually keyed on, so a rename in
+    // `team-convene.ts` produces a red here (which the top-of-file note reads as
+    // "I can no longer SEE it") rather than a silent "" that makes every
+    // assertion above vacuously true.
+    expect(extractComposition("const leadStandDown = `x comms stand-down --as y`;\n")).toContain(
+      "stand-down",
+    );
+    expect(extractComposition("const somethingElse = `unrelated`;\n")).toBe("");
   });
 
   it("stays a TOTAL field — `string | null`, never an absent key (Contract 5(a))", () => {

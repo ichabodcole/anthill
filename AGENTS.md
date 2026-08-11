@@ -112,6 +112,66 @@ session interleaves seats by construction.
 - `bun run check` — the full gate (typecheck + biome + tests); the husky pre-commit runs it.
 - `bun test` — tests · `bun run anthill <cmd>` — the CLI (`plugin/scripts/anthill/cli.ts`).
 
+## How we test — the two rules `bun run check` cannot enforce · as of 2026-08-10
+
+Both were paid for. Both are about the same thing: **a test written by whoever wrote the code
+inherits that code's blind spot**, so each rule names the one participant in the loop that was not
+written by whoever is wrong. _Stated as assertions rather than counts, per `seams.md`'s second
+authoring note — every numeric citation in that file has been wrong at least once._
+
+**1. A change to a command is not done until the command has been RUN against a fixture repo — _in
+the state its documentation describes_ — and whatever that run finds gets a test before the fix is
+committed.**
+
+The defects review found on `multi-team-support` were invisible to unit tests and visible in one
+command: `team ls` refused to list on the repo it exists for; `team use` refused every fresh project;
+`init` refused the documented add-a-team route, then silently rendered nothing on the second use of
+it. **Every one was green at `0 fail` while broken**, because the pure half was always right —
+`renderTemplates` never rendered wrong, it never ran. _In the state its documentation describes_ is
+the load-bearing clause: a fix was verified on a repo with no pin, which is what `bootstrap` §0a
+assumes, while the pinned repo — every later use of the route — was never run. **Read
+the prose, build the repo the prose describes, run the command the prose gives.**
+
+**2. A GUARD is not done until it has been run against a tree with the defect PUT BACK — including
+put back in a file its allow-list already covers.**
+
+A guard encodes its author's belief about a defect, so it inherits that belief's blind spot one level
+up, and the failure is invisible: **a guard that has gone blind reports an empty list, which is
+exactly what a clean tree reports.** Measured on `bare-anthill.guard.test.ts`: reverting the fix left
+the guard green **and the whole suite green**, twice, for two different reasons — a closed verb list
+that missed every injected variant, then a dedup key that let one allow-listed string exonerate its
+neighbours. Both were found by a reviewer injecting defects by hand.
+
+So the rule is discharged **in the test file, not in a ritual**: split the detector into a pure
+function of source text, and give it `POSITIVE CONTROLS` that hand it synthetic defects on every run.
+All three source-scanning guards carry them. **`bare-anthill`'s cases are its own history; the other
+two are the same class borrowed** — worth stating, because a fixture presented as a scar it did not
+earn is the thing this section exists to prevent.
+
+**And control the SCAN SET, not only the detector.** Every synthetic-defect control feeds the detector
+a string, so none of them notices if the file walk stops reaching part of the tree — measured, and
+silent. That is the shape of these guards' own worst historic miss.
+
+**The assertion that actually closes it is the allow-list read BACKWARDS.** _"Is every hit allowed?"_
+is satisfied perfectly by a scan that reaches nothing; _"is every allowance still earning itself?"_
+goes red the moment a file leaves the walk, and red again when a listed string is fixed and its entry
+left behind. It also catches a verb quietly lost from a derived verb set. **An allow-list nothing
+reads back is write-only**, which is the state both guards shipped in — one of them listing two files
+whose actual mints its pattern could not match. Pinning the directory levels is the weaker companion
+check, and its test is named for what it does rather than for what it suggests: files an allow-list
+never names need naming separately, which is why the agent-re-invoked set from `seams.md` Contract 2
+is pinned by hand.
+
+Where a guard's exoneration is deliberately coarse, **assert the limit** rather than leave it implied
+— see `tmpleak.guard.test.ts`'s two `KNOWN LIMIT` cases. **And check the limit's own prose against the
+tree**: the first version of one declared a spelling absent from this repo while seven of them sat in
+two allow-listed files.
+
+_Corollary for both: an allow-list entry states WHY, and the reason and the rule must have the same
+predicate. `emittingCli` enforced "is it in `renderText`" while its comment argued "is the reader
+human" — two different expressions, and the divergence was invisible until someone wrote the second
+one down as code._
+
 ## When you change something, something else probably has to change too
 
 anthill's content is **referentially dependent and unenforced**: the same rule lives in a skill, a

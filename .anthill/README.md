@@ -8,6 +8,13 @@ here is meant to evolve by use, not stand as the final answer. The team coordina
 **`anthill-dev` is not only the wire's name** — it also keys the bounty board and names the tmux
 session, so it identifies this team rather than any one tool.
 
+> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
+> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
+> resolved. A bare `anthill` only works if someone installed the optional global launcher — and that
+> launcher resolves to the highest CACHED release, which may not be the one this project is running.
+> _Added 2026-08-10 to the template; mirrored here 2026-08-10, having been missed in the pass that
+> added it — the exact cascade this footprint exists to receive._
+
 ## The idea: living context (stigmergy)
 
 The team is **ephemeral agents in durable seats**. An agent's hard-won understanding would evaporate
@@ -308,6 +315,19 @@ can; to a durable concept or a commit otherwise; never to a transient line/file 
 work_ — don't stop mid-task to decide whether a note is a seat-doc lesson, a seam truth, or a
 paper-cut. The genre-sorting happens **here, at finalize**, when you route each captured note to its
 durable home. Sorting-while-working is a tax that suppresses capture.
+
+**Then get a cold read of what you wrote — you are the one person who cannot judge it.** Hand your
+seat doc to a reader holding **none of your session context** (a subagent spawned fresh, so none of
+your framing travels with it) and ask it to **restate each lesson in its own words** and quote
+whatever it could not interpret. **A doc can be entirely true and still fail to transmit**, and
+nothing about writing it tells you which one you produced: the assumptions you baked in are the
+things you did not need to say. Give it the whole doc and let it find the weak parts, and **ask for a
+restatement rather than a verdict** — a reader asked whether the doc is clear will say yes, and you
+will have measured nothing. **Scars compress hardest**, so they need the most care: name this
+project's tools, docs and teammates freely, since your reader has them, and make sure the **event**
+survives without you — what was done, what happened, what it cost. **Say what a number meant, not
+what it was.** The **epitaph** is the sharpest case of all, being written for someone who will not
+remember the session at all.
 
 **A hypothesis is a fourth home, and it is the one the routing list keeps missing.** A lesson says
 what you now know; a **hypothesis** says what you predict and what would prove it wrong — so it goes
