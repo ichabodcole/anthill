@@ -389,6 +389,31 @@ describe("M5 — a flag BEFORE the subcommand is parsed, not dropped on the floo
     expect(before.ok).toBe(false);
   });
 
+  test("an unknown flag with NO subcommand at all is refused BY NAME", () => {
+    // The third position of the same defect, and the last one unparsed: with no
+    // subcommand named, rawArgs never reached the parser, so `anthill --nope`
+    // answered "No command specified." — which names the wrong problem and sends
+    // an agent to add a command it already has no use for. Found by pointing a
+    // black-box conformance kit at the root; the two positions above were
+    // covered and this one was not.
+    const { stdout, stderr, exitCode } = run(["--nope"]);
+    expect(exitCode).toBe(1);
+    expect(stdout).toBe("");
+    const env = JSON.parse(stderr);
+    expect(env.ok).toBe(false);
+    expect(env.error).toMatch(/--nope/);
+    expect(env.error).not.toMatch(/No command specified/);
+  });
+
+  test("CONTROL: a VALID root flag with no subcommand still reports no command", () => {
+    // The guard must refuse only UNKNOWN flags. `--format` is declared on the
+    // root, so this argv is well-formed and still names no command — the
+    // pre-existing diagnostic is the right one and must survive the fix.
+    const { stderr, exitCode } = run(["--format", "json"]);
+    expect(exitCode).toBe(1);
+    expect(JSON.parse(stderr).error).toMatch(/No command specified/);
+  });
+
   test("CONTROL: a VALID root flag before the subcommand still dispatches", () => {
     // `--format` is declared on the root, so it must not be rejected by the new
     // validation — only unknown flags are.

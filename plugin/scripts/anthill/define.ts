@@ -466,7 +466,22 @@ export async function runCommand(cmd: AnyCommand, rawArgs: string[]): Promise<vo
       await runCommand(sub, rawArgs.slice(idx + 1));
       return;
     }
-    if (typeof cmd.run !== "function") throw new CLIError("No command specified.");
+    if (typeof cmd.run !== "function") {
+      // Validate this level's own tokens BEFORE reporting "no command". With no
+      // subcommand named, `rawArgs` was never handed to the parser at all, so an
+      // unknown flag was dropped on the floor and the caller was told the wrong
+      // thing: `anthill --nope` answered "No command specified.", which sends an
+      // agent off to add a command when the actual defect is the flag — and it
+      // will hit the same wall again with the command supplied.
+      //
+      // This is the THIRD position of the same defect. The two fixed above are
+      // the flag before a subcommand and the flag after it; the case with no
+      // subcommand at all was the one position still unparsed. Uses the same
+      // strict parser as those, so a flag is judged by one rule wherever it
+      // appears — including where it appears alone.
+      parseArgs(rawArgs, argsDef);
+      throw new CLIError("No command specified.");
+    }
   }
   if (typeof cmd.run === "function") {
     const args = parseArgs(rawArgs, argsDef);
