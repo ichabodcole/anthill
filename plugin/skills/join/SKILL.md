@@ -149,23 +149,31 @@ status`** shows who's on + the board.
        **A rotated session mints fresh positions and removes this**, but rotation destroys nothing and
        reaches a team only once one actually runs for it — **so until then this is live, and "the tool
        will handle it" is a claim about a world your team may not be in yet.**
-     - **⚠ AN UNKNOWN FLAG IS REFUSED BY NAME. AN UNKNOWN POSITIONAL IS SWALLOWED IN SILENCE — and
-       that is the direction that will cost you a session.** Measured on this wire, one command apart:
+     - **⚠ AN UNKNOWN FLAG AND AN UNKNOWN POSITIONAL ARE BOTH REFUSED BY NAME. What is NOT refused
+       is an unrecognised flag VALUE.** Re-measured on this wire 2026-08-23, three commands apart:
        ```
        comms read --channel <ch> --zzz999   ->  exit 1  ok:false  "Unknown option '--zzz999'.
-                                                          Valid flags: --channel, --format, --id, --last, --since"
-       comms read --channel <ch> zzz999     ->  exit 0  ok:true   THE ENTIRE LOG, from message #1
+                                                          Valid flags: --channel, --format, --id, --last, --since, --team"
+       comms read --channel <ch> zzz999     ->  exit 1  ok:false  "this command takes no positional
+                                                          arguments, but got "zzz999". … If you meant a
+                                                          VALUE, it belongs to one of those flags"
+       anthill status --format josn         ->  exit 0  ok:true   AND THE FORMAT SILENTLY IGNORED
        ```
-       **The second one is what a seat produces by reaching for a neighbouring tool's signature** —
-       positional-shaped `read <channel> <id>` habits are the common source — **and it does not fail.
-       It succeeds, plausibly, with the wrong answer.** You get a wall of history, exit 0, and nothing
-       anywhere says you asked the wrong question.
-       - **So use the FLAGS, always: `--since <id>` for a window, `--id <id>` for exactly one
-         message.** If a read hands you far more than you expected, **suspect your invocation before
-         you suspect the channel** — the size of the result is your only tell.
-       - **This asymmetry is a property of the tool as it stands today, not a law.** It may be closed;
-         a guard for it has been attempted. **Check what you actually got rather than trusting either
-         this paragraph or an exit code** — that instruction is the only part here that always holds.
+       **The third one is the live hazard, and it is environment-dependent**: an unrecognised
+       `--format` value falls through to the same detection used when you pass no flag at all, so
+       `--format josn` yields JSON on a pipe and text at a terminal. It does not fail. **It succeeds,
+       plausibly, having ignored what you asked for**, and which wrong answer you get depends on where
+       you are running. It is pinned by a test (`agent-layer.test.ts`) that exists to fail when someone
+       fixes it, so treat it as live until that test tells you otherwise.
+       - **Use the FLAGS, and check the VALUE came back the way you meant it**: `--since <id>` for a
+         window, `--id <id>` for exactly one message. If a read hands you far more than you expected,
+         **suspect your invocation before you suspect the channel** — the size of the result is your
+         only tell.
+       - **None of this is a law, and this paragraph decays.** The positional half of this warning was
+         true when it was written on 2026-08-05 and was fixed twelve hours later (`4c339fa`); it then
+         sat here misinstructing seats for two weeks. **Check what you actually got rather than trusting
+         either this paragraph or an exit code** — that instruction is the only part here that has
+         survived every re-measurement.
      - **`--help` on the verb you are actually using, rather than the one you learned first.** These
        tools are siblings, not clones: a flag that identifies the writer on one verb scopes results on
        another and is refused outright by a third, each correctly. **Prefer the commands your manifest
@@ -320,11 +328,13 @@ status`** shows who's on + the board.
   — the only way to learn it is to break it, measured at n=2 in one session. **And a POINTER to the
   card, published on that same channel, is not delivery either:** a seat obeying the rule cannot reach
   it, which is why the board is where you look first.
-- ◻ **Used the FLAGS, not a positional.** Measured, one command apart: an unknown **flag** is refused
-  by name, exit 1; an unknown **positional** is **swallowed — exit 0, `ok:true`, and the entire log
-  comes back.** The silent one is what you produce by reaching for a neighbouring tool's signature,
-  and it does not fail: **it succeeds with the wrong answer.** If a read hands you far more than you
-  expected, suspect your invocation before you suspect the channel.
+- ◻ **Used the FLAGS, and checked the VALUE was honoured.** Re-measured 2026-08-23: an unknown
+  **flag** and an unknown **positional** are now both refused by name at exit 1. What still passes
+  silently is an unrecognised flag **VALUE** — `--format josn` exits 0, `ok:true`, and falls through
+  to the same detection used when you pass nothing, so it yields JSON on a pipe and text at a
+  terminal. **It succeeds, having ignored what you asked for**, and the wrong answer it gives depends
+  on where you are running. If a read hands you far more than you expected, or in a shape you did not
+  ask for, suspect your invocation before you suspect the channel.
 - ◻ **Confirmed the backfill was COMPLETE, not merely successful.** Send it to a **file** and **parse
   the file** — not through a pipe, not straight into your context. **A payload that does not parse is
   a payload you did not fully receive.** Exit 0 is not the check, and neither is any completeness
