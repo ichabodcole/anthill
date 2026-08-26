@@ -116,6 +116,23 @@ needs **already exists** — `manifest.ts` simply has nowhere to put it and drop
 The check needs no new machinery: we generate the path list from our own manifest and the rejection
 strings are our own.
 
+**⚠ The root is ours to probe, and the upstream guide will tell you otherwise.** `acc`'s
+recorded-surface guide says to omit the root from a batch, and it is right — _when `acc` is running_,
+because the kit probes the root itself and a second observer at one path would give one census line
+two observers. Our run compared the root only for that reason:
+
+> `SELF-DECLARED FLAGS — read back from the target's own rejection at the root, which is the only
+path the kit probes. enumerated 1 flag at the root: --format`
+
+**With no kit in the loop, that instruction becomes a hole**, and it is the worst-placed one
+available: the root is where a global flag gets added, so a token added at the root is exactly what
+an in-house census following the guide would not see. Upstream hit this from the other side on
+2026-08-26 — an adopter told to add `--version` to satisfy `D1` ended up with help naming a token
+their parser refused, and their census could not see it because the flag lived at the root. **The
+remediation introduced the drift and the instrument's own scoping rule hid it.**
+
+So our probe list is **26 paths, not 25**: every declared path _including_ `[]`.
+
 ## Impact & Risks
 
 **Benefits.** The document our own seats are instructed to trust becomes true. The check makes the
@@ -138,7 +155,7 @@ question are the work.
 
 1. **Order.** Fixing the emitter first makes the test trivially green, which is the worse order.
    Land the test first with the 8 pinned?
-2. **Test or script?** 25 subprocesses per commit against gate speed.
+2. **Test or script?** 26 subprocesses per commit against gate speed.
 3. **Who parses the bare manifest?** Decides whether defect 3 is breaking.
 4. **Sequencing against `agent-failure-surface`** — both touch `cli.ts` and `define.ts`, so they
    cannot run in parallel worktrees.
