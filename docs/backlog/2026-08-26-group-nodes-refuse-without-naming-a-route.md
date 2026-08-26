@@ -50,3 +50,47 @@ keeping:
 
 Raised upstream as a possible catalogue rule — probe a declared group path, require the rejection to
 name either a flag set or a subcommand set. Theirs to mint or decline; no id claimed here.
+
+## Upstream surveyed it, and the answer constrains our fix — 2026-08-26
+
+They widened it past our three paths: one sentinel flag after a group node, five vendors. **Three of
+six name a set** (`git remote`, `git stash`, `gh repo`), and it splits **three** ways rather than
+two:
+
+| shape                          | tools                                                 | satisfies the rule? |
+| ------------------------------ | ----------------------------------------------------- | ------------------- |
+| names the set                  | `git remote`, `git stash`, `gh repo`                  | yes                 |
+| names a **pointer** to the set | `docker image`, `kubectl config` (_"Run '… --help'"_) | **no**              |
+| names nothing                  | **`anthill comms`**                                   | no                  |
+
+**Their recommendation is the strict form**: name the valid set; a pointer does not satisfy it.
+Reason — _when a caller makes a mistake, return more information rather than less; a rejection is
+the moment the tool knows most and the caller knows least._ The bloat objection is refused
+empirically: `gh repo` prints **nineteen** subcommands in a rejection and nobody calls it broken,
+while the two tools declining to print have twelve and sixteen.
+
+Marked `design-choice` rather than `defect`, deliberately, so it reads as _Docker and Kubernetes
+chose differently and it is legitimate_. **Ours is the third row, where no design is being
+expressed** — only an omission.
+
+## ⚠ The trap this sets for our fix
+
+The principled fix and the one their reader can see are **not the same fix today**.
+
+Our own house rule (and their Part 3) says a field must distinguish **absent, null and zero**. So
+the instinct is to have a group node answer with an explicitly empty flag set — `"choices": []`,
+present and empty, honestly saying "this node takes no flags."
+
+**Their reader scores that as `not-enumerated`** — dropped from the comparison and rendered as
+`none named a set (NOT a tool with no flags)`, which is exactly the string our _silent_ nodes
+produce today. They have filed it against themselves (fixture vendored, fix pending a sweep), and
+name it as their own Part 3 violated by the one field it exists to read.
+
+Two consequences for us:
+
+1. **Fixing this by emitting an empty set would look identical to not fixing it**, in their
+   instrument, until their sweep lands. The fix that is visible today is naming the **subcommands**.
+2. **Our in-house census must not inherit the bug.** When we build the extractor
+   ([cli-declared-surface](../projects/cli-declared-surface/proposal.md)), "named an empty set" and
+   "named nothing" must be two states, not one — or our own gate reproduces the defect on the one
+   node type this item is about.
