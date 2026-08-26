@@ -104,7 +104,7 @@ interceptor later will be invisible the same way.
 2. **Is #3 a breaking change?** Anything already parsing the bare manifest breaks if we wrap it.
    Worth finding out who parses it before deciding — our own skills instruct seats to run it.
 3. **Does this ride with the exit-code item
-   ([2026-08-21](2026-08-21-usage-errors-and-bugs-share-exit-1.md)) or land before it?** Both are
+   ([2026-08-21](../2026-08-21-usage-errors-and-bugs-share-exit-1.md)) or land before it?** Both are
    "the CLI's machine-facing contract is not what we think it is". The exit-code one has a published
    contract argument; this one does not — a manifest that gains a field is additive in a way an exit
    code is not.
