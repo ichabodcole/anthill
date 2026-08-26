@@ -112,7 +112,10 @@ interceptor later will be invisible the same way.
    that would have caught #1 and #2 is cheap and needs no external kit: **diff the parser's own
    `Valid flags: …` rejection string against the manifest's flag list, per command path.** Their
    standard names this as the highest-yield thing to build and says to build it before anything
-   else. It is a test we could own.
+   else. It is a test we could own — **now run once and scoped in its own item**:
+   [own the declared-versus-accepted census as a gate test](2026-08-26-own-the-declared-versus-accepted-census-as-a-gate-test.md).
+   It catches #1 and #2 and does **not** catch #3 or #4, so it is a partial answer to this
+   question and not the whole one.
 
 ## What is NOT claimed here
 
