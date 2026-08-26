@@ -63,7 +63,7 @@ cannot see a defect in the source. "Declared versus accepted" sounds like comple
 
 **So this does not replace pointing an outside kit at us periodically** — that is the only thing
 that reads our surface without sharing our assumptions, which is
-[AGENTS.md's own testing rule](../../AGENTS.md) applied to the manifest.
+[AGENTS.md's own testing rule](../../../AGENTS.md) applied to the manifest.
 
 ## What to decide
 
@@ -81,17 +81,9 @@ that reads our surface without sharing our assumptions, which is
    approached from two ends, and doing the fix first makes the test trivially green, which is the
    worse order.
 
-## Sibling finding, filed here because it surfaced in the same run
+## Sibling finding, extracted
 
-**A group command refuses a flag while offering no route forward.**
-
-```
-anthill comms --acc-not-a-flag
--> {"ok":false,"error":"Unknown option '--acc-not-a-flag'"}      no valid set named
-```
-
-`info`, `comms` and `team` are group nodes with subcommands and no flags of their own, so there is
-nothing to enumerate and they say nothing rather than saying so. An agent that mistypes a flag on a
-group gets a refusal and no next step — while every leaf verb names its valid set. The remedy is
-probably to name the **subcommands** where there are no flags. Raised upstream as a possible
-catalogue rule rather than a census feature.
+The same run turned up that `info`, `comms` and `team` refuse an unknown flag while naming no valid
+set, which is why 3 of 25 paths could not be compared. It is filed separately, and routed to the
+failure-path project rather than travelling with the manifest work:
+[a group command refuses an unknown flag while offering no route forward](../2026-08-26-group-nodes-refuse-without-naming-a-route.md).
