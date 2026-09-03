@@ -51,9 +51,8 @@ Those stay; the work is the gap.
 
 **Non-Goals:**
 
-- Enveloping the bare `help --json` manifest (proposal defect 3). Recorded as a **declined
-  recommendation** pending Cole's call on external consumers — the CONTROL test at
-  `cli.test.ts` pins it as a shipped contract. `help --format json` is the enveloped spelling.
+- ~~Enveloping the bare `help --json` manifest (proposal defect 3).~~ Was a non-goal pending the
+  external-consumer answer; Cole supplied it the same day (none) and it shipped — see Open Questions.
 - The fuller acc exit-code taxonomy (auth 3, permission 4, not-found 5, …). anthill has no auth
   and its "not found" cases are mostly config. Two codes now (`2` usage, `1` internal), with the
   table published so more can be appended without renumbering.
@@ -202,8 +201,8 @@ session doc with the census line verbatim.
 
 ## Open Questions
 
-1. **Envelope the bare `help --json`?** Declined for now; `help --format json` is enveloped.
-   Needs the external-consumer answer. — **Cole**
+1. ~~**Envelope the bare `help --json`?**~~ **Ruled 2026-09-03: nothing outside parses it —
+   wrapped.** `help --json` is now shorthand for `--format json`; proposal defect 3 closed.
 2. ~~**Release classification** of the exit-code split and the manifest shape change.~~ **Ruled
    2026-09-03: minor.** Both ship under `feat`, no `!`.
 3. **Do the shipped skills state the exit-code contract anywhere?** No (grepped). Phase 7 states

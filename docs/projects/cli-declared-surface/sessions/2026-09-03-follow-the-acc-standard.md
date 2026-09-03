@@ -53,8 +53,8 @@ surface), `contract.ts` + `CONTRACT.md` (new), three new test files, `scripts/ac
 
 ## Follow-up
 
-- **One ruling left with Cole**: the bare `help --json`. Release classification was ruled the
-  same day — minor, no `!` — and the exit-code commit reworded to match.
+- Both rulings came the same day: minor bump (commit reworded, no `!`), and `help --json`
+  enveloped once Cole confirmed nothing outside parses the bare form. Nothing pending.
 - **`next` as `{exec, args}`** — CONTRACT.md names it as debt. The `join` tail commands and
   `attach`'s `attachCommand` are shell strings today.
 - **`down`'s envelope carries no `because`** — still open in agent-failure-surface.

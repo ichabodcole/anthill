@@ -359,14 +359,16 @@ describe("M3 — the help/usage interceptors honour the format verdict", () => {
     expect(Array.isArray(env.data.commands)).toBe(true);
   });
 
-  test("CONTROL: `help --json` keeps emitting the BARE manifest", () => {
-    // A shipped contract with existing consumers. Two spellings, two shapes,
-    // both honoured — the defect was one being silently ignored, not both
-    // existing. If this ever starts returning an envelope, that is a break.
+  test("`help --json` is the enveloped manifest — one shape, same as piped `help`", () => {
+    // Until 2026-09-03 this asserted the OPPOSITE: a bare document, guarded as
+    // "a shipped contract with existing consumers". Cole confirmed nothing
+    // outside this repo parses it, so the one machine document that did not
+    // speak the envelope now does (STANDARD.md, DT-9).
     const out = JSON.parse(run(["help", "--json"]).stdout);
-    expect(out.ok).toBeUndefined();
-    expect(out.name).toBe("anthill");
-    expect(Array.isArray(out.commands)).toBe(true);
+    expect(out.ok).toBe(true);
+    expect(out.data.name).toBe("anthill");
+    expect(Array.isArray(out.data.commands)).toBe(true);
+    expect(out).toEqual(JSON.parse(run(["help", "--format", "json"]).stdout));
   });
 });
 

@@ -11,7 +11,7 @@
  *
  * ---
  *
- * Wires the root command and installs interceptors for `help --json` (machine
+ * Wires the root command and installs interceptors for `help` (machine
  * manifest), bare `<cli>` / `<cli> help` (grouped human help), `--version`, and
  * `--help` (per-command usage) BEFORE the arg dispatcher.
  *
@@ -90,7 +90,7 @@ export const main: AnyCommand = defineCommand({
         scope: "workspace",
       },
       args: {
-        json: { type: "boolean", description: "Emit the bare manifest document (unenveloped)" },
+        json: { type: "boolean", description: "Shorthand for --format json" },
         declaration: {
           type: "boolean",
           description:
@@ -111,10 +111,11 @@ export const main: AnyCommand = defineCommand({
       },
       async run(ctx) {
         const manifest = await buildManifest(main);
-        if (ctx.args.json) {
-          process.stdout.write(`${JSON.stringify(manifest, null, 2)}\n`);
-          return;
-        }
+        // `--json` used to emit the manifest BARE — the one machine document in
+        // the CLI that did not speak the envelope, kept that way as "a shipped
+        // contract". Cole confirmed 2026-09-03 that nothing outside parses it,
+        // so it is now what its name says: the enveloped spelling, same as a
+        // piped `help`. One shape everywhere.
         if (ctx.args.declaration) {
           // A bare document too, and for the same reason as `--json`: it is
           // consumed by a reader with a fixed schema that refuses unknown keys,
@@ -126,7 +127,7 @@ export const main: AnyCommand = defineCommand({
           scope: ctx.args.scope as ScopeLabel | undefined,
         });
         emit({
-          format: resolveFormat(ctx.args.format as string | undefined),
+          format: ctx.args.json ? "json" : resolveFormat(ctx.args.format as string | undefined),
           command: "help",
           data: manifest,
           renderText: () => text,

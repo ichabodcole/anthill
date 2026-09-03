@@ -15,7 +15,7 @@ that advises is weaker than a check that fails; where only the paragraph exists,
 | invocation                   | answers                                                                    |
 | ---------------------------- | -------------------------------------------------------------------------- |
 | `anthill` (bare) / `help`    | grouped help at a terminal; the manifest, enveloped, when piped            |
-| `anthill help --json`        | the manifest, **bare** (unenveloped) — a shipped contract, see _Declined_  |
+| `anthill help --json`        | shorthand for `help --format json` — the manifest, enveloped               |
 | `anthill help --declaration` | the interface as an acc v0 declaration, `provenance: emitted`, bare        |
 | `anthill <cmd> --help`       | usage for that command; piped, its manifest entry, enveloped               |
 | `anthill --help` / `-h`      | piped, the whole manifest — the same document `help` emits                 |
@@ -151,10 +151,10 @@ the first.
    enveloped manifest — the one-call discovery an agent bootstraps from. The rule's own page names
    this case as the defensible exception. Cost: `anthill $UNSET_VAR` looks like success; every
    emitted incantation anthill ships names a verb, so the exposure is a human's shell.
-2. **`help --json` stays a bare document.** A shipped contract with consumers outside this repo
-   (`cli.test.ts`, the CONTROL test). The standard's objection — the one machine document that does
-   not speak the envelope — is right, and `help --format json` is the enveloped spelling. **Pending
-   Cole:** whether the bare spelling is deprecated for a major. Recorded 2026-09-03.
+2. ~~**`help --json` stays a bare document.**~~ **Adopted 2026-09-03.** It was kept bare as "a
+   shipped contract with consumers outside this repo"; Cole confirmed there are none, and it is now
+   the enveloped manifest, byte-identical to `help --format json`. The only bare document left is
+   `help --declaration`, whose reader (`acc`) refuses unknown keys by design.
 3. **No environment-variable override for machine mode.** Every caller anthill has is a shell that
    can pass `--format`; an env var would be a third precedence rule with no caller to serve.
    Revisit when a harness that cannot alter argv appears.
