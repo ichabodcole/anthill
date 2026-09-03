@@ -40,7 +40,7 @@ describe("anthill feedback — guard envelopes (--format json)", () => {
     expect(stderr).not.toMatch(/at run \(/);
   });
 
-  test("unknown --category → clean {ok:false} envelope on stderr, exit 1", async () => {
+  test("unknown --category → clean {ok:false} envelope on stderr, exit 2 (usage)", async () => {
     const { code, stderr } = await runCli([
       "feedback",
       "hello",
@@ -49,7 +49,7 @@ describe("anthill feedback — guard envelopes (--format json)", () => {
       "--format",
       "json",
     ]);
-    expect(code).toBe(1);
+    expect(code).toBe(2);
     const env = firstJson(stderr);
     expect(env?.ok).toBe(false);
     expect(env?.error).toMatch(/--category must be one of/);

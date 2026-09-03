@@ -20,7 +20,7 @@
  */
 
 import { fileURLToPath } from "node:url";
-import { emit, emitError, resolveFormat } from "./agent-layer.ts";
+import { EXIT_CODE, emit, emitError, resolveFormat } from "./agent-layer.ts";
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
 import { teamCommitCommand } from "./commands/team-commit.ts";
@@ -341,18 +341,29 @@ async function runCli(): Promise<void> {
       // Rendered usage NEVER enters a JSON field — not truncated, not escaped, not
       // under a `usage` key. `err.message` already names what was wrong and the
       // valid flag set, which is what an agent needs to self-correct.
-      emitError({ format, command: commandPath(cmd, parent), error: err.message });
+      emitError({
+        format,
+        command: commandPath(cmd, parent),
+        kind: "usage",
+        choices: err.choices,
+        error: err.message,
+      });
     } else {
       // An unexpected throw is a BUG, so the stack is the most valuable thing in
       // the process — carried on `meta` rather than flattened away.
       emitError({
         format,
         command: commandPath(cmd, parent),
+        kind: "internal",
         error: err instanceof Error ? err.message : String(err),
         stack: err instanceof Error ? err.stack : undefined,
       });
     }
-    process.exit(1);
+    // "You invoked me wrong" and "anthill broke" leave by different codes. The
+    // envelope already said which; this is the one boundary every non-agent
+    // consumer reads — a shell, a CI step, a hook — and until now it collapsed
+    // both into 1 (docs/backlog/2026-08-21-usage-errors-and-bugs-share-exit-1.md).
+    process.exit(err instanceof CLIError ? EXIT_CODE.usage : EXIT_CODE.internal);
   }
 }
 

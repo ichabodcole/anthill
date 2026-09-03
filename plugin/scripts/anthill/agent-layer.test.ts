@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { resolveFormat } from "./agent-layer.ts";
+import { EXIT_CODE, resolveFormat } from "./agent-layer.ts";
 
 /**
  * The dual-audience layer had NO test file. Every command emits through it, and
@@ -100,5 +100,14 @@ describe("resolveFormat — the full dual-audience matrix, finally reachable", (
     // The tell that makes it a defect rather than a policy: the same bad input
     // produces different output depending on where it ran.
     expect(resolveFormat("josn", true)).not.toBe(resolveFormat("josn", false));
+  });
+});
+
+describe("EXIT_CODE — the kind → code table is append-only and never renumbered", () => {
+  test("usage is 2; failed and internal are 1", () => {
+    // A shell reading $? can tell "you invoked me wrong" from "anthill could
+    // not" — C2 in the acc catalogue. Changing a value here breaks every
+    // consumer that branches on it, silently; add a kind, never renumber.
+    expect(EXIT_CODE).toEqual({ usage: 2, failed: 1, internal: 1 });
   });
 });

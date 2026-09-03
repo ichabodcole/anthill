@@ -188,9 +188,14 @@ export function defineAnthillCommand<const T extends ArgsDef = ArgsDef>(
 
 /** Signals a usage error — the dispatcher renders usage + this message, exit 1. */
 export class CLIError extends Error {
-  constructor(message: string) {
+  /** The valid alternatives the message names, as data — so the envelope can
+   * carry them structurally and nothing has to re-parse the prose. `null` when
+   * the rejection offered no set. */
+  readonly choices: string[] | null;
+  constructor(message: string, options: { choices?: string[] | null } = {}) {
     super(message);
     this.name = "CLIError";
+    this.choices = options.choices ?? null;
   }
 }
 
@@ -271,6 +276,13 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
     if (valid.length > 0) return `. Valid flags: ${valid.join(", ")}`;
     if (subs.length > 0) return `. This command takes no flags; subcommands: ${subs.join(", ")}`;
     return "";
+  };
+  /** The same set, as data for the envelope's `choices`. */
+  const routeChoices = (): string[] | null => {
+    const valid = validSet();
+    if (valid.length > 0) return valid;
+    const subs = context.subcommands ?? [];
+    return subs.length > 0 ? subs : null;
   };
 
   // Short alias → long name, so a dash-leading VALUE can be re-attached below.
@@ -368,7 +380,9 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
       const hint = dashValue
         ? `. If "${dashValue}" was meant as a VALUE rather than flags, ${escapes.join(" ")}`
         : "";
-      throw new CLIError(`${detail.trim() || "invalid option"}${routeForward()}${hint}`);
+      throw new CLIError(`${detail.trim() || "invalid option"}${routeForward()}${hint}`, {
+        choices: routeChoices(),
+      });
     }
     parsed = { values: {}, positionals: processed };
   }
@@ -398,6 +412,7 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
     throw new CLIError(
       `this command takes no positional arguments, but got ${got}${routeForward()}` +
         (validSet().length > 0 ? `. If you meant a VALUE, it belongs to one of those flags` : ""),
+      { choices: routeChoices() },
     );
   }
 
@@ -426,6 +441,7 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
       `unexpected positional argument(s) ${got}: this command takes exactly ${
         positionals.length === 1 ? "one argument" : `${positionals.length} arguments`
       }, ${declared}${routeForward()}`,
+      { choices: routeChoices() },
     );
   }
 
@@ -437,7 +453,9 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
   for (const [name, values] of closedSets) {
     const got = out[name];
     if (typeof got === "string" && !values.includes(got)) {
-      throw new CLIError(`--${name} must be one of: ${values.join(", ")} (got "${got}")`);
+      throw new CLIError(`--${name} must be one of: ${values.join(", ")} (got "${got}")`, {
+        choices: values,
+      });
     }
   }
 
@@ -485,11 +503,15 @@ function findSubCommandIndex(rawArgs: string[], argsDef: ArgsDef): number {
  */
 let ROOT_ARGS: ArgsDef = {};
 
-function nameTheVerbs(subCommands: Record<string, AnyCommand>): string {
-  const names = Object.entries(subCommands)
+function verbsOf(subCommands: Record<string, AnyCommand>): string[] {
+  return Object.entries(subCommands)
     .filter(([, s]) => !s.meta?.hidden)
     .map(([n]) => n)
     .sort();
+}
+
+function nameTheVerbs(subCommands: Record<string, AnyCommand>): string {
+  const names = verbsOf(subCommands);
   return names.length > 0 ? `. Valid commands: ${names.join(", ")}` : "";
 }
 
@@ -530,7 +552,11 @@ export async function runCommand(cmd: AnyCommand, rawArgs: string[], depth = 0):
       const sub = subCommands[name];
       // An unknown verb names the verbs it could have been — the same
       // just-in-time slice of the surface an unknown flag already gets.
-      if (!sub) throw new CLIError(`Unknown command ${name}${nameTheVerbs(subCommands)}`);
+      if (!sub) {
+        throw new CLIError(`Unknown command ${name}${nameTheVerbs(subCommands)}`, {
+          choices: verbsOf(subCommands),
+        });
+      }
       // Validate the tokens BEFORE the subcommand against this level's spec.
       // They were previously dropped on the floor: only `rawArgs.slice(idx + 1)`
       // was ever parsed, so `anthill --nope status` exited 0 with `ok:true`.
@@ -559,7 +585,9 @@ export async function runCommand(cmd: AnyCommand, rawArgs: string[], depth = 0):
       // strict parser as those, so a flag is judged by one rule wherever it
       // appears — including where it appears alone.
       parseArgs(rawArgs, argsDef, context);
-      throw new CLIError(`No command specified${nameTheVerbs(subCommands)}`);
+      throw new CLIError(`No command specified${nameTheVerbs(subCommands)}`, {
+        choices: verbsOf(subCommands),
+      });
     }
   }
   if (typeof cmd.run === "function") {

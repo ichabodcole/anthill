@@ -40,9 +40,41 @@ export interface OutputEnvelope<T> {
   meta?: OutputMeta;
 }
 
+/**
+ * WHY the invocation failed, as a stable contract a program can branch on.
+ * `error` is presentation — prose, free to improve — and `kind` is the field
+ * that must never be repurposed. Append-only: a new kind may be added, an
+ * existing one never renamed, and the kind → exit-code mapping never changes
+ * (CONTRACT.md).
+ *
+ *   usage     the invocation was wrong: unknown flag, unknown verb, bad value,
+ *             a refused flag, a missing positional. Exit 2. Retrying unchanged
+ *             fails identically; the fix is in the argv.
+ *   failed    anthill ran and could not do it: a missing config, a seat that is
+ *             not configured, a session that is not up. Exit 1. The fix is in
+ *             the world, not the argv.
+ *   internal  anthill threw. Exit 1, with the stack on `meta`. A bug.
+ */
+export type ErrorKind = "usage" | "failed" | "internal";
+
+/** The exit code each kind carries. One table, read by every exit site that
+ * classifies — so the code and the `kind` cannot disagree. */
+export const EXIT_CODE: Record<ErrorKind, 1 | 2> = { usage: 2, failed: 1, internal: 1 };
+
 export interface ErrorEnvelope {
   ok: false;
   error: string;
+  kind: ErrorKind;
+  exitCode: number;
+  /** Whether the same invocation, retried unchanged, could succeed. Nothing
+   * anthill does today is retryable in that sense; the field is TOTAL so a
+   * consumer never has to treat its absence as an answer. */
+  retryable: boolean;
+  /** The valid alternatives, where the failure was an invalid value — the flags
+   * this command accepts, the verbs this node holds, the values a flag binds
+   * to. `null` is the positive statement that no set was offered, held apart
+   * from `[]`, which would claim the set exists and is empty. */
+  choices: string[] | null;
   meta?: OutputMeta;
 }
 
@@ -119,15 +151,21 @@ export function refuseArg(opts: {
   emitError({
     format: opts.format,
     command: opts.command,
+    kind: "usage",
     error: `\`${opts.flag}\` is not accepted here. ${opts.why}. Drop the flag and the command works unchanged.`,
   });
-  process.exit(1);
+  process.exit(EXIT_CODE.usage);
 }
 
 export function emitError(options: {
   format: OutputFormat;
   command: string;
   error: string;
+  /** Defaults to `failed` — "anthill ran and could not do it" — which is what
+   * every per-command guard site is. The parser boundary passes `usage`; the
+   * catch-all passes `internal`. */
+  kind?: ErrorKind;
+  choices?: string[] | null;
   /** Only for an unexpected throw — see {@link OutputMeta.stack}. */
   stack?: string;
 }): void {
@@ -161,9 +199,14 @@ export function emitError(options: {
   // response shape" or "drop the redundant ok" change removes the only thing that
   // survives the pipe, **and nothing announces it** — every test that reads the
   // envelope directly still passes, because they do not pipe.
+  const kind = options.kind ?? "failed";
   const envelope: ErrorEnvelope = {
     ok: false,
     error: options.error,
+    kind,
+    exitCode: EXIT_CODE[kind],
+    retryable: false,
+    choices: options.choices ?? null,
     meta: {
       command: options.command,
       ...(options.stack !== undefined && { stack: options.stack }),
