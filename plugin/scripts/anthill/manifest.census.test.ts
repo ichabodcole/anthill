@@ -49,15 +49,8 @@ const SENTINEL_VERB = "acc-not-a-verb";
 const KNOWN = new Set<string>([
   // (Phase 2 deleted its rows: refused flags now publish `status: "refused"`,
   // and the root is declared at `path: []`.)
-  // Phase 3 — group nodes refuse an unknown flag naming nothing.
-  "not-enumerated at info",
-  "not-enumerated at comms",
-  "not-enumerated at team",
-  // Phase 3 — an unknown verb is refused without naming the valid verbs.
-  "verbs-not-named at (root)",
-  "verbs-not-named at info",
-  "verbs-not-named at comms",
-  "verbs-not-named at team",
+  // (Phase 3 deleted its rows: group nodes name their subcommands, and an
+  // unknown or missing verb names the valid verbs.)
 ]);
 
 type Reading = {
@@ -98,7 +91,7 @@ function declaredPaths(commands: ManifestCommand[]): ManifestCommand[] {
 /** The set a rejection names, as the tool's own bytes say it. */
 function readRejection(error: string): Pick<Reading, "status" | "accepted" | "subcommandsNamed"> {
   const flags = /Valid flags: ([^.\n]+)/.exec(error);
-  const subs = /[Ss]ubcommands?: ([^.\n]+)/.exec(error);
+  const subs = /subcommands: ([^.\n]+)/.exec(error);
   const takesNoFlags = /takes no flags/.test(error);
   const accepted = new Set(
     (flags?.[1] ?? "")

@@ -64,9 +64,21 @@ describe("parseArgs — the shapes strict mode must NOT break", () => {
     const a = parseArgs(["seatname"], SPEC);
     expect(a.handle).toBe("seatname");
     expect(a._).toEqual(["seatname"]);
-    const b = parseArgs(["-m", "msg", "--", "a.txt", "b.txt"], SPEC);
+    const b = parseArgs(["-m", "msg", "--", "a.txt"], SPEC);
     expect(b.message).toBe("msg");
-    expect(b._).toEqual(["a.txt", "b.txt"]);
+    expect(b._).toEqual(["a.txt"]);
+    // Free-form commands declare it, and then `--` carries everything through.
+    const FREE = { message: SPEC.message, paths: { type: "positionals" as const } };
+    const c = parseArgs(["-m", "msg", "--", "a.txt", "b.txt"], FREE);
+    expect(c.paths).toEqual(["a.txt", "b.txt"]);
+  });
+
+  test("a SURPLUS positional after the declared one is refused, not dropped", () => {
+    // `team use alpha beta` switched to `alpha` and never mentioned `beta`. The
+    // same rule that refuses a positional on a command declaring none now holds
+    // a command to the count it declared.
+    expect(() => parseArgs(["alpha", "beta"], SPEC)).toThrow(/"beta"/);
+    expect(() => parseArgs(["alpha", "beta"], SPEC)).toThrow(/exactly one argument, HANDLE/);
   });
 
   test("a path that merely LOOKS flag-ish is safe after `--`", () => {
