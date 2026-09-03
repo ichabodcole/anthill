@@ -178,6 +178,9 @@ export interface ResolvedConfig {
   seamsPath(): string;
   /** Absolute path to a seat's doc: `<seatDir>/<handle>.md`. */
   seatDocPath(handle: string): string;
+  /** Absolute path to the team wiki: `<teamDir>/wiki`. Derived, not a knob — it is
+   * a team-layer artifact and moves with the team; a second team has its own. */
+  wikiPath(): string;
 }
 
 export class ConfigError extends Error {
@@ -326,6 +329,7 @@ export function resolveConfig(
     seatDirPath: () => underRoot(projectRoot, paths.seatDir),
     seamsPath: () => underRoot(projectRoot, paths.seams),
     seatDocPath: (handle: string) => resolve(underRoot(projectRoot, paths.seatDir), `${handle}.md`),
+    wikiPath: () => resolve(underRoot(projectRoot, paths.teamDir), "wiki"),
   };
   return resolved;
 }

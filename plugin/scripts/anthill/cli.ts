@@ -36,6 +36,7 @@ import { teamScanCommand } from "./commands/team-scan.ts";
 import { teamSpawnCommand } from "./commands/team-spawn.ts";
 import { teamStatusCommand } from "./commands/team-status.ts";
 import { teamTeamCommand } from "./commands/team-team.ts";
+import { teamWikiCommand } from "./commands/team-wiki.ts";
 import {
   type AnyCommand,
   CLIError,
@@ -177,6 +178,7 @@ export const main: AnyCommand = defineCommand({
     "field-notes": fieldNotesCommand,
     init: teamInitCommand,
     migrate: teamMigrateCommand,
+    wiki: teamWikiCommand,
   },
 });
 
