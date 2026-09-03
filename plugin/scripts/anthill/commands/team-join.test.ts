@@ -160,6 +160,7 @@ const base = {
   lead: "maestro" as string | undefined,
   gate: "bun run check" as string | undefined,
   msgFileRel: ".anthill/scratch/forager/commit-msg.txt",
+  reportRel: ".anthill/reports/2026-09-03/forager.md",
   cliPath: "/plugin/scripts/anthill/cli.ts",
   // The DEFAULT fixture reads "we looked and you owe nothing", so every
   // pre-existing assertion below runs against the read-back's quiet state and
@@ -488,6 +489,26 @@ describe("buildChecklist — claim + catch-up guidance", () => {
     const finalize = line("Finalize BEFORE");
     expect(finalize).toContain("never TRAVELS");
     expect(finalize).not.toContain("does not survive");
+  });
+});
+
+// anthill-evolution: the seat doc is identity and is CURATED; the session REPORT
+// is the outlet. The checklist is the seat-resolved surface that gets read, so
+// the report path and the curated rule are emitted here — not left to prose.
+describe("buildChecklist — the report is the outlet, the seat doc is curated", () => {
+  test("mints the report by its resolved path, and says the curated docs are off-limits", () => {
+    const mint = line("Mint your session REPORT");
+    expect(mint).toContain(".anthill/reports/2026-09-03/forager.md");
+    expect(mint).toContain("CURATED");
+    expect(mint).toContain("--curated");
+    expect(mint).toContain(".anthill/dev/forager.md");
+  });
+
+  test("finalize closes the REPORT — it no longer synthesizes into the seat doc", () => {
+    const finalize = line("Finalize BEFORE");
+    expect(finalize).toContain("CLOSE your report at .anthill/reports/2026-09-03/forager.md");
+    expect(finalize).not.toContain("synthesize durable lessons");
+    expect(finalize).not.toContain("retro answers");
   });
 });
 

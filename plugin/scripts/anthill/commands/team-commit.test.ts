@@ -763,6 +763,91 @@ describe("anthill commit — seat attribution (StoryLoom field request)", () => 
     }
   });
 
+  // anthill-evolution: the durable team docs are CURATED — a seat doc, seams.md,
+  // principles.md and the wiki change only at anthill:curate, never by a seat
+  // mid-session. Prose said so for two months and two teams grew their seat docs
+  // past a thousand lines; this is the rule at the one write-point every seat
+  // uses. `--curated` is the declared exception for the two legitimate writers.
+  test("CURATED GUARD — an attributed commit of a seat doc is refused, and nothing is staged", async () => {
+    const dir = makeRepo();
+    try {
+      withConfig(dir, ["maestro", "forager"]);
+      mkdirSync(join(dir, ".anthill", "dev"), { recursive: true });
+      writeFileSync(join(dir, ".anthill", "dev", "forager.md"), "# forager\n\nlesson\n");
+      const { code, stderr } = await runCli(
+        ["commit", "-m", "hard-won lesson", "--as", "forager", ".anthill/dev/forager.md"],
+        dir,
+      );
+      expect(code).toBe(1);
+      const env = firstJson(stderr);
+      expect(env?.ok).toBe(false);
+      expect(env?.error).toMatch(/refusing to commit CURATED doc/);
+      expect(env?.error).toContain(".anthill/dev/forager.md (seat doc (forager))");
+      expect(env?.error).toContain("--curated");
+      expect(env?.error).toMatch(/session report/);
+      expect(stagedNames(dir)).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("CURATED GUARD — the wiki is a directory prefix; seams and principles are files; --curated lets it through", async () => {
+    const dir = makeRepo();
+    try {
+      withConfig(dir, ["maestro", "forager"]);
+      mkdirSync(join(dir, ".anthill", "dev"), { recursive: true });
+      mkdirSync(join(dir, ".anthill", "wiki", "touchpoints"), { recursive: true });
+      writeFileSync(join(dir, ".anthill", "wiki", "touchpoints", "curate.md"), "# Curate\n");
+      writeFileSync(join(dir, ".anthill", "dev", "seams.md"), "# seams\n");
+      writeFileSync(join(dir, ".anthill", "principles.md"), "# principles\n");
+      for (const p of [
+        ".anthill/wiki/touchpoints/curate.md",
+        ".anthill/dev/seams.md",
+        ".anthill/principles.md",
+      ]) {
+        const { code, stderr } = await runCli(["commit", "-m", "x", "--as", "maestro", p], dir);
+        expect(code, p).toBe(1);
+        expect(firstJson(stderr)?.error, p).toMatch(/refusing to commit CURATED doc/);
+      }
+      // The declared exception: curation, or the lead landing a ratified seam.
+      const ok = await runCli(
+        [
+          "commit",
+          "-m",
+          "curate: seam 1 ratified",
+          "--as",
+          "maestro",
+          "--curated",
+          ".anthill/dev/seams.md",
+        ],
+        dir,
+      );
+      expect(ok.code).toBe(0);
+      const log = Bun.spawnSync(["git", "log", "-1", "--format=%s"], { cwd: dir, env: GIT_ENV })
+        .stdout.toString()
+        .trim();
+      expect(log).toBe("curate: seam 1 ratified");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("CURATED GUARD — a REPORT is not curated: an attributed commit of one lands", async () => {
+    const dir = makeRepo();
+    try {
+      withConfig(dir, ["maestro", "forager"]);
+      mkdirSync(join(dir, ".anthill", "reports", "2026-09-03"), { recursive: true });
+      writeFileSync(join(dir, ".anthill", "reports", "2026-09-03", "forager.md"), "# forager\n");
+      const { code } = await runCli(
+        ["commit", "-m", "report", "--as", "forager", ".anthill/reports/2026-09-03/forager.md"],
+        dir,
+      );
+      expect(code).toBe(0);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   test("no --as still commits cleanly (the flag is optional)", async () => {
     const dir = makeRepo();
     try {

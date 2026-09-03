@@ -222,14 +222,19 @@ status`** shows who's on + the board.
        what you missed. Three seats hit this independently in one session before it was diagnosed
        ([#54](https://github.com/ichabodcole/anthill/issues/54)). `pull` for catch-up, `tail` for live.
 
-4. **Mint your session scratch.** Create your running-capture file:
-   **`<teamDir>/scratch/<handle>/<YYYY-MM-DD>-<slug>.md`** (it's gitignored — `anthill init` added the
-   line). This is where you drop cheap notes as you work ("this just bit me", "this seam is fuzzy") —
-   the raw material you'll synthesize at finalize. Start it now so capture is frictionless later.
-   - **Scratch is gitignored — it does NOT survive the session.** Everything you learn lives in an
-     untracked file until you synthesize it, so an abrupt session-end evaporates the whole trail —
-     precisely the loss anthill exists to prevent. Synthesize into your seat doc at finalize, **or
-     earlier, whenever the reasoning is warm**. Earlier is not jumping the gun; it's insurance.
+4. **Mint your session REPORT and your scratch.** Two files, two jobs:
+   - **Your report — `<teamDir>/reports/<YYYY-MM-DD>/<handle>.md`.** The manifest names the exact
+     path (`report`). Create it now, from the shape in `<teamDir>/reports/README.md`, and **write into
+     it as things happen** — in full, in whatever words come, for a curator who was not here. It is
+     committed, it is the only place this session's lessons go, and it is on no joining seat's read
+     path. **Your seat doc, `seams.md`, `principles.md` and the wiki are CURATED** — nobody edits
+     them mid-session, including you, and `commit` refuses them without `--curated`. If one of them
+     reads wrong to you, that is the first line of your report. (Read `<teamDir>/wiki/touchpoints/join.md`
+     for how this team runs join; that page, not this skill, is the one your team owns.)
+   - **Your scratch — `<teamDir>/scratch/<handle>/<YYYY-MM-DD>-<slug>.md`** (gitignored — `anthill init`
+     added the line). Throwaway working notes and artifacts. **Scratch never travels** — the files stay
+     on your disk, nothing commits them, no future instance reads them. Anything worth a curator's
+     time goes in the report, not here.
    - **`<teamDir>/scratch/` is the right home for _throwaway artifacts_** — verify mints, screenshots,
      seeds, any harness output. It is **gitignored, and excluded from the typecheck/lint target set**,
      so a stray artifact dropped there never trips the shared tree and blocks another seat's land.
@@ -401,7 +406,9 @@ status`** shows who's on + the board.
   both times. **A recovery that looks clean and is half-missing is worse than one that fails**, and
   the file you lose is whichever one you weren't looking at. `cd` to the root first, then apply, then
   **diff what you got against what you preserved** rather than trusting the exit code.
-- ◻ **Scratch minted** — `<teamDir>/scratch/<handle>/<date>-<slug>.md`, so capture is frictionless.
+- ◻ **Report minted** — `<teamDir>/reports/<date>/<handle>.md` (the manifest's `report`), the one file
+  from this session that travels; write into it as things happen.
+- ◻ **Scratch minted** — `<teamDir>/scratch/<handle>/<date>-<slug>.md`, for throwaways; it never travels.
 - ◻ **Route through the lead — and SAY when you're waiting.** Questions + decisions go to the
   lead/liaison on comms, not direct to the human. But routing through the lead is a **default, not
   an exclusive channel** — the human can attach to your pane at any time, so never assume you're
@@ -412,7 +419,7 @@ status`** shows who's on + the board.
 
 ## Output
 
-A grounded seat: re-grounded in your role, present on the wires this session armed, scratch minted,
+A grounded seat: re-grounded in your role, present on the wires this session armed, report and scratch minted,
 working your lane.
 
 ## Skill feedback

@@ -60,8 +60,10 @@ Keep this file lean — an index + the non-obvious essentials, not a tutorial.
   anthill team lives in **`.anthill/`** (`.anthill/README.md` is the SOP; **`.anthill/principles.md`
   is what the team learned the hard way, each with its scar**; `.anthill/dev/<handle>.md`
   is each seat's living doc/brain; the roster is `.anthill/dev/README.md`; **`.anthill/wiki/` is the
-  team wiki — one page per lifecycle touch point, this team's own method, linted by `anthill wiki lint`**
-  — added 2026-09-03 by [anthill-evolution](docs/projects/anthill-evolution/proposal.md), which is
+  team wiki — one page per lifecycle touch point, this team's own method, linted by `anthill wiki lint`;
+  `.anthill/reports/<date>/<handle>.md` is a seat's session report, the outlet that replaced writing
+  into the seat doc, and the seat doc / seams / principles / wiki are curated — `anthill commit` refuses
+  them without `--curated`** — added 2026-09-03 by [anthill-evolution](docs/projects/anthill-evolution/proposal.md), which is
   mid-flight on `feat/anthill-evolution`: seat docs shrink to identity, seats write reports, a
   `curate` step edits the durable docs). _Those paths are this
   repo's, and this repo runs one team. A project may configure several — each after the first lives

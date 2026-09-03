@@ -357,7 +357,8 @@ once the human has steered you to one seating, treat it as the ratified roster a
 - **Render:** run **`anthill init`**. It reads the config and deterministically renders `.anthill/`
   (the SOP, `principles.md` — **empty by design**, `retro.md` — **also empty by design, guidance
   only**, `paper-cuts.md`, `seams.md`, the roster `dev/README.md`, one
-  `dev/<handle>.md` per seat, and the team **wiki** — `wiki/SCHEMA.md`, `wiki/index.md`, one
+  `dev/<handle>.md` per seat, `reports/README.md` — the shape of the per-session report every seat
+  writes instead of editing its seat doc — and the team **wiki** — `wiki/SCHEMA.md`, `wiki/index.md`, one
   `wiki/touchpoints/<event>.md` per lifecycle touch point, shipped as anthill's suggestions for the
   team to rewrite) and ensures the local-state lines in `.gitignore` (the team's
   `scratch/` and `comms`, both derived from `paths.teamDir`, plus the two repo-root markers

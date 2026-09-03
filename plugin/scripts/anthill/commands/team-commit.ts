@@ -2,6 +2,8 @@ import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { emit, emitError, resolveFormat } from "../agent-layer.ts";
+import type { ResolvedConfig } from "../config.ts";
+import { curatedEntries, curatedHits } from "../curated.ts";
 import { defineAnthillCommand } from "../define.ts";
 import { acquireLock, releaseLock } from "../lock.ts";
 import { nowMillis } from "../runtime.ts";
@@ -293,6 +295,10 @@ export const teamCommitCommand = defineAnthillCommand({
       description: "Seat handle to attribute this commit to (must be in config.seats)",
       valueHint: "handle",
     },
+    curated: {
+      type: "boolean",
+      description: "Allow a curated doc (seat doc, seams, principles, wiki) — curation only",
+    },
     team: {
       type: "string",
       description: "Which configured team (default: resolved from the pin / sole team)",
@@ -393,10 +399,16 @@ export const teamCommitCommand = defineAnthillCommand({
     // rewriting the text of every commit a seat lands. Same call Phase 2.3 made
     // about `ANTHILL_TEAM` in the spawn launch lines, for the same reason.
     let teamName: string | undefined;
+    // Held past the block so the curated guard below can see the team's paths.
+    // Only an ATTRIBUTED commit loads a config, so only an attributed commit is
+    // guarded — which is every commit the emitted land command makes. A commit
+    // with no `--as` on a team tree is already outside the seat protocol.
+    let config: ResolvedConfig | undefined;
     if (seat !== undefined) {
-      const { project, team: config } = requireTeam(format, "commit", {
+      const { project, team } = requireTeam(format, "commit", {
         team: ctx.args.team as string | undefined,
       });
+      config = team;
       if (!config.seat(seat)) {
         const seats = config.roster().map((s) => s.handle);
         emitError({
@@ -448,6 +460,29 @@ export const teamCommitCommand = defineAnthillCommand({
           'peer\'s staged file — pass exactly your paths: `anthill commit -m "<msg>" <path>…`',
       });
       process.exit(1);
+    }
+
+    // THE CURATED GUARD (anthill-evolution). A seat doc, seams.md, principles.md
+    // and the wiki change only at `anthill:curate`, or by the lead landing a
+    // ratified seam — never by a seat mid-session, including the seat the doc
+    // describes. The rule was prose for two months and both long-running teams
+    // grew their seat docs past a thousand lines anyway. So the write-permission
+    // split is enforced at the one write-point every seat uses, and `--curated`
+    // is the declared exception, not a hint.
+    if (config && !ctx.args.curated) {
+      const hits = curatedHits(paths, curatedEntries(config), config.projectRoot, process.cwd());
+      if (hits.length > 0) {
+        emitError({
+          format,
+          command: "commit",
+          error:
+            `refusing to commit CURATED doc(s) — ${hits.map((h) => `${h.path} (${h.what})`).join(", ")}. ` +
+            "These change only at anthill:curate, from the seats' reports, or when the lead lands a " +
+            "ratified seam. Anything you would have written there goes in your session report " +
+            "(the join manifest names it). If you ARE curating, pass --curated.",
+        });
+        process.exit(1);
+      }
     }
 
     const root = repoRoot(process.cwd());

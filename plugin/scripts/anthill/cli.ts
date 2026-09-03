@@ -383,7 +383,12 @@ async function runCli(): Promise<void> {
       const manifest = await buildManifest(main);
       if (parent === undefined) {
         emit({ format, command: "help", data: manifest, renderText: () => "" });
-        process.exit(0);
+        // RETURN, never exit, after the manifest: Bun's stdout is async on a
+        // pipe and `process.exit` truncates at 65536 bytes. The manifest crossed
+        // the exit-drain tripwire (half the ceiling) on 2026-09-03 when `wiki
+        // lint` and `commit --curated` were added; the tripwire's own remedy is
+        // this line. The `help` verb already returned; this path now matches.
+        return;
       }
       const path = commandPath(cmd, parent);
       const entry = findManifestCommand(manifest.commands, path.split(" "));
