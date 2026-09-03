@@ -58,6 +58,9 @@ surface), `contract.ts` + `CONTRACT.md` (new), three new test files, `scripts/ac
 - **`next` as `{exec, args}`** — CONTRACT.md names it as debt. The `join` tail commands and
   `attach`'s `attachCommand` are shell strings today.
 - **`down`'s envelope carries no `because`** — still open in agent-failure-surface.
-- **Tell upstream** (skill step 7, category 3 "it worked and I wanted more"): the group-node
-  `choices` reading, and that `probe-plan` from a directory other than the target's tree worked
-  first time this session. Not sent from this session; Cole owns the channel.
+- **Told upstream** (skill step 7, category 3), at Cole's request, in the shape REPORTING.md asks
+  for: [#38](https://github.com/ichabodcole/agent-cli-conformance/issues/38) alias rows need the
+  rejection to name short aliases; [#39](https://github.com/ichabodcole/agent-cli-conformance/issues/39)
+  an in-house census must put the root back; [#40](https://github.com/ichabodcole/agent-cli-conformance/issues/40)
+  a group node naming its subcommands in `choices` reads as `did not enumerate`. Not filed: the
+  `D3` line's wording (category 1) — minor, mentioned in chat only.
