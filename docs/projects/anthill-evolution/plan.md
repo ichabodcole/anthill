@@ -70,6 +70,13 @@ Steps 3–5 may reorder after step 2 — that is the point of doing 1–2 first.
   SOP's feedback-routing section now sends project-local friction to the report, but the template still ships and the
   bootstrap render line still names it. Retire it with the migration in step 6, when there is a report batch for its
   contents to go into.
+- **2026-09-03 · step 5 (second pass) · improvement.** Cole asked what in the finalize skill actually has to be there. The
+  test that settled it: a beat stays in the skill only if the tooling depends on it, another skill depends on it, or it
+  defines the touch point's boundary. Everything else is method and moved to the wiki finalize page: the close prompts,
+  the carry-forward content, the docs-of-record sweep, deferred-item placement, dedupe, the red-tree stash recipe, board
+  and human sign-off, the merge traps. Skill 160 → 85 lines; page 60 → 115. The close prompts had three copies (skill,
+  page, reports README) — now one, on the page, with the README pointing at it. Draft pages (`status: draft`,
+  `generated.by: anthill`) are the ones `upgrade` may refresh; a `stable` page is the team's and is never touched.
 - **2026-09-03 · step 1 · improvement.** The lifted lint core was split into `collectDocsLint` (pure) + `runDocsLint`
   (printing) so the CLI can put the report through its own envelope. Worth upstreaming to agent-cli-conformance; the file
   header says so.

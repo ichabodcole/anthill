@@ -31,29 +31,16 @@ without it the curator only ever sees failures.
 
 ## At finalize — the close
 
-Three open prompts, answered in prose, as long as they need to be. They ask what happened; they do
-not ask you to sort it.
-
-### What did you hit?
-
-Everything that cost you time, surprised you, or went wrong — including things you fixed.
-
-### What worked?
-
-The move, tool, or sequence you would do again. This is where playbooks come from, and it is the half
-every retro under-reports.
-
-### What would you change?
-
-About your seat doc, a seam, a principle, a wiki page, or the team's shape. **Proposals, not
-edits.** If you had one thing to tell your successor, say it here: it is interesting, and curation
-decides whether it is load-bearing.
+Answer the close prompts at the bottom of your report, in prose, as long as they need to be. **The
+prompts live on this team's wiki finalize page — `.anthill/wiki/touchpoints/finalize.md` — not here**,
+so the team can rewrite them at curation without three copies drifting. anthill's seed asks three
+open questions: what did you hit · what worked · what would you change. They ask what happened; they
+do not ask you to sort it.
 
 ## The lead's report
 
-The same three, plus **Carry-forward** — what the next session must test, decide, or not do, each
-with what would prove it wrong. This is the one report the next `anthill:convene` reads. Keep it to
-what changes the next session's first hour.
+The same prompts, plus a section titled **Carry-forward** — what the next session must test, decide,
+or not do. `anthill:convene` reads that section by name; what goes in it is on the wiki finalize page.
 
 ## What happens to it
 
