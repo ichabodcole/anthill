@@ -29,7 +29,12 @@ export const infoEnvCommand = defineCommand({
   },
   args: {
     team: { type: "string", refused: REFUSED_TEAM },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
     file: {
       type: "string",
       description: "Relative path to the .env file (from project root)",

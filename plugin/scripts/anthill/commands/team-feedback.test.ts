@@ -52,7 +52,7 @@ describe("anthill feedback — guard envelopes (--format json)", () => {
     expect(code).toBe(1);
     const env = firstJson(stderr);
     expect(env?.ok).toBe(false);
-    expect(env?.error).toMatch(/unknown --category/);
+    expect(env?.error).toMatch(/--category must be one of/);
     expect(env?.meta?.command).toBe("feedback");
   });
 });

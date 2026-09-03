@@ -250,7 +250,12 @@ const sendCommand = defineCommand({
       description: "Which configured team (default: resolved from the pin / sole team)",
       valueHint: "name",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     const started = nowMillis();
@@ -534,7 +539,12 @@ const readCommand = defineCommand({
       description: "Which configured team (default: resolved from the pin / sole team)",
       valueHint: "name",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
     // RECOGNISED and REFUSED, not unknown. Every sibling wire takes `--as` on a
     // read verb, so muscle memory supplies it — and `read` is the one verb a
     // JOINING seat runs before it knows its seat.
@@ -784,7 +794,12 @@ const followCommand = defineCommand({
       description: "Which configured team (default: resolved from the pin / sole team)",
       valueHint: "name",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     const format = resolveFormat(ctx.args.format);
@@ -1007,7 +1022,12 @@ const standDownCommand = defineCommand({
       description: "Which configured team (default: resolved from the pin / sole team)",
       valueHint: "name",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     const started = nowMillis();
@@ -1082,7 +1102,12 @@ const positionsCommand = defineCommand({
       description: "Which configured team (default: resolved from the pin / sole team)",
       valueHint: "name",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
     as: {
       type: "string",
       refused:

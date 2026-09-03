@@ -250,7 +250,12 @@ export const teamConveneCommand = defineAnthillCommand({
       type: "boolean",
       description: "Convene even though another configured team looks live",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     const started = nowMillis();

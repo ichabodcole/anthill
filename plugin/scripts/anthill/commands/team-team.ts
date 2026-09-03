@@ -66,7 +66,12 @@ const showCommand = defineAnthillCommand({
       description: "Which configured team (default: resolved from the pin / sole team)",
       valueHint: "name",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     const started = nowMillis();
@@ -143,7 +148,12 @@ const lsCommand = defineAnthillCommand({
       description: "Which team to mark as current (default: the resolved one)",
       valueHint: "name",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     const started = nowMillis();
@@ -233,7 +243,12 @@ const useCommand = defineAnthillCommand({
       type: "boolean",
       description: "Switch even though a configured team looks live",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     const started = nowMillis();

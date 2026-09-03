@@ -26,7 +26,9 @@ interface WalkArg {
   default?: unknown;
   alias?: string | string[];
   valueHint?: string;
+  values?: string[];
   required?: boolean;
+  refused?: string;
 }
 
 interface WalkMeta {
@@ -42,22 +44,53 @@ interface WalkableCommand {
   subCommands?: Record<string, Resolvable<WalkableCommand>>;
 }
 
+/**
+ * A FLAG — never a positional. Positionals have their own container below,
+ * because the container is what a consumer iterates: seven positionals emitted
+ * inside `flags` were each rejected when a consumer spelled one as `--handle`
+ * (upstream drift trial, DT-3).
+ */
 export interface ManifestFlag {
   name: string;
-  type?: string;
+  type: "string" | "boolean";
+  /**
+   * `valid` — accepted here. `refused` — RECOGNISED and deliberately rejected,
+   * with the reason in `refusedReason`. Required on every flag: a slot that can
+   * be omitted is how eight refused flags shipped as valid ones (DT-2) — the
+   * generator had nowhere to put refusal, wrote nothing, and nothing read as
+   * valid. An agent building an invocation must skip `refused` flags.
+   */
+  status: "valid" | "refused";
+  refusedReason?: string;
   description?: string;
   default?: unknown;
   alias?: string | string[];
+  /** A display label with NO semantics. Never a constraint. */
   valueHint?: string;
+  /** A closed set the parser ENFORCES. Absent means no claim, not "any value". */
+  values?: string[];
   required?: boolean;
+}
+
+export interface ManifestPositional {
+  name: string;
+  description?: string;
+  required: boolean;
+  /** Consumes every remaining token. */
+  variadic: boolean;
+  default?: unknown;
+  valueHint?: string;
+  values?: string[];
 }
 
 export interface ManifestCommand {
   name: string;
   description?: string;
+  /** Argv tokens that select this command. `[]` is the root. */
   path: string[];
   scope?: ScopeLabel;
   flags: ManifestFlag[];
+  positionals: ManifestPositional[];
   subcommands: ManifestCommand[];
 }
 
@@ -65,6 +98,14 @@ export interface Manifest {
   name?: string;
   version?: string;
   description?: string;
+  /**
+   * The ROOT as a command path of its own — the flags `anthill` answers before
+   * any verb (`--format`, `--help`/`-h`, `--version`/`-v`). A walker over "the
+   * commands" walks straight past these, which is how a manifest of 25 paths
+   * declared no root while the root accepted `--format` (DT-1). Declared at
+   * `path: []` so the one path every checker can reach is in the census.
+   */
+  root: ManifestCommand;
   commands: ManifestCommand[];
 }
 
@@ -83,15 +124,34 @@ async function buildCommandEntry(
   const meta = (await resolveValue(cmd.meta)) ?? {};
   const scope = meta.scope ?? inheritedScope;
 
-  const flags: ManifestFlag[] = Object.entries(cmd.args ?? {}).map(([flagName, a]) => ({
-    name: flagName,
-    type: a.type,
-    description: a.description,
-    default: a.default,
-    alias: a.alias,
-    valueHint: a.valueHint,
-    required: a.required,
-  }));
+  const flags: ManifestFlag[] = [];
+  const positionals: ManifestPositional[] = [];
+  for (const [argName, a] of Object.entries(cmd.args ?? {})) {
+    if (a.type === "positional" || a.type === "positionals") {
+      positionals.push({
+        name: argName,
+        description: a.description,
+        required: a.type === "positional" && a.required !== false && a.default === undefined,
+        variadic: a.type === "positionals",
+        default: a.default,
+        valueHint: a.valueHint,
+        values: a.values,
+      });
+      continue;
+    }
+    flags.push({
+      name: argName,
+      type: a.type === "boolean" ? "boolean" : "string",
+      status: a.refused === undefined ? "valid" : "refused",
+      ...(a.refused !== undefined && { refusedReason: a.refused }),
+      description: a.description,
+      default: a.default,
+      alias: a.alias,
+      valueHint: a.valueHint,
+      values: a.values,
+      required: a.required,
+    });
+  }
 
   const subcommands: ManifestCommand[] = [];
   for (const [subName, subCmd] of Object.entries(cmd.subCommands ?? {})) {
@@ -107,6 +167,7 @@ async function buildCommandEntry(
     path,
     scope,
     flags,
+    positionals,
     subcommands,
   };
 }
@@ -126,10 +187,18 @@ export async function buildManifest(root: unknown): Promise<Manifest> {
       commands.push(await buildCommandEntry(name, resolved, [name]));
     }
   }
+  // The root's OWN args, at `path: []`, with no subcommand tree of their own —
+  // the tree is `commands` beside it.
+  const rootEntry = await buildCommandEntry(
+    meta.name ?? "",
+    { meta: rootCmd.meta, args: rootCmd.args },
+    [],
+  );
   return {
     name: meta.name,
     version: meta.version,
     description: meta.description,
+    root: rootEntry,
     commands,
   };
 }

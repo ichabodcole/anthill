@@ -35,6 +35,14 @@ interface BaseArgDef<T extends ArgType, VT extends boolean | string> {
   type?: T;
   description?: string;
   valueHint?: string;
+  /** A CLOSED value set the parser ENFORCES: an out-of-set value is a usage
+   * error naming the set. Distinct from `valueHint`, which is a display label
+   * with no semantics — `"text|json"` as a hint and `["text", "json"]` as
+   * `values` look alike and behave oppositely (one refuses, one falls through to
+   * a heuristic at exit 0), and nothing in a hint says which. The manifest
+   * publishes `values` as a constraint and `valueHint` as a label, so an agent
+   * reading it never has to guess. */
+  values?: string[];
   alias?: string | string[];
   default?: VT;
   required?: boolean;
@@ -208,6 +216,7 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
   const positionals: Array<{ name: string; def: PositionalArgDef }> = [];
   const freeForm: string[] = [];
   const refused = new Set<string>();
+  const closedSets = new Map<string, string[]>();
 
   for (const [name, def] of Object.entries(argsDef)) {
     if (def.type === "positional") {
@@ -230,7 +239,20 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
     if (short) opt.short = short;
     options[name] = opt;
     if (def.default !== undefined) defaults[name] = def.default;
+    if (def.values !== undefined) closedSets.set(name, def.values);
   }
+  for (const { name, def } of positionals) {
+    if (def.values !== undefined) closedSets.set(name, def.values);
+  }
+
+  /** The advertised set, as the rejection names it: every long name that is
+   * not refused, plus its short alias — so `-h` is discoverable from the same
+   * line as `--help`, and a declaration listing both compares clean. */
+  const validSet = (): string[] =>
+    Object.entries(options)
+      .filter(([n]) => !refused.has(n))
+      .sort(([a], [b]) => a.localeCompare(b))
+      .flatMap(([n, o]) => (o.short ? [`--${n}`, `-${o.short}`] : [`--${n}`]));
 
   // Short alias → long name, so a dash-leading VALUE can be re-attached below.
   const shortToName = new Map<string, string>();
@@ -310,10 +332,7 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
     ) {
       // Refused args are registered so they don't read as "unknown", but they are
       // NOT valid to pass — advertising one would offer a flag we reject.
-      const valid = Object.keys(options)
-        .filter((n) => !refused.has(n))
-        .sort()
-        .map((n) => `--${n}`);
+      const valid = validSet();
       const detail =
         err instanceof Error
           ? err.message.replace(/\s*To specify.*$/s, "").replace(/\.\s*$/, "")
@@ -361,10 +380,7 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
   // because the other half of the criterion (does the body read `ctx.args._`?)
   // is invisible from here.
   if (positionals.length === 0 && freeForm.length === 0 && parsed.positionals.length > 0) {
-    const valid = Object.keys(options)
-      .filter((n) => !refused.has(n))
-      .sort()
-      .map((n) => `--${n}`);
+    const valid = validSet();
     const got = parsed.positionals.map((p) => `"${p}"`).join(", ");
     throw new CLIError(
       `this command takes no positional arguments, but got ${got}` +
@@ -384,6 +400,18 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
       throw new CLIError(`Missing required positional argument: ${name.toUpperCase()}`);
     } else {
       out[name] = def.default;
+    }
+  }
+
+  // A declared closed set BINDS. `--format nonsense` used to fall through to
+  // the TTY heuristic at exit 0 — the value was read, judged unknown, and the
+  // command ran anyway with a default it never said it was using. That is the
+  // silent-fallback shape `strict: true` exists to prevent, one token further
+  // in: the flag was known, its value was not, and nothing said so.
+  for (const [name, values] of closedSets) {
+    const got = out[name];
+    if (typeof got === "string" && !values.includes(got)) {
+      throw new CLIError(`--${name} must be one of: ${values.join(", ")} (got "${got}")`);
     }
   }
 

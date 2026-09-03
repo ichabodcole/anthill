@@ -61,9 +61,61 @@ export const main: AnyCommand = defineCommand({
       type: "string",
       description: "Output format",
       valueHint: "text|json",
+      values: ["text", "json"],
     },
+    // The universal surface, REGISTERED rather than known only to the
+    // interceptors below. `--help` and `--version` are answered before dispatch
+    // and never reach the parser on the happy path; they are declared here so
+    // that the one table the manifest walks, the root rejection enumerates and
+    // usage renders is the same table that says they exist. Undeclared, they
+    // were "present but undeclared — the entire universal surface" (DT-6): a
+    // caller holding the manifest could not rediscover the door it came through.
+    help: { type: "boolean", alias: "h", description: "Show usage for a command" },
+    version: { type: "boolean", alias: "v", description: "Print the CLI version and source" },
   },
   subCommands: {
+    // `help` is intercepted before dispatch (below) — it is registered here so
+    // the manifest DECLARES the verb that produces it and `Unknown command`
+    // names it. The run body is reachable only if the interceptor is removed,
+    // and does the same thing.
+    help: defineCommand({
+      meta: {
+        name: "help",
+        description: "Show grouped help, or the machine-readable manifest",
+        scope: "workspace",
+      },
+      args: {
+        json: { type: "boolean", description: "Emit the bare manifest document (unenveloped)" },
+        scope: {
+          type: "string",
+          description: "Limit grouped help to one scope",
+          valueHint: "workspace|app",
+          values: ["workspace", "app"],
+        },
+        format: {
+          type: "string",
+          description: "Output format",
+          valueHint: "text|json",
+          values: ["text", "json"],
+        },
+      },
+      async run(ctx) {
+        const manifest = await buildManifest(main);
+        if (ctx.args.json) {
+          process.stdout.write(`${JSON.stringify(manifest, null, 2)}\n`);
+          return;
+        }
+        const text = await renderGroupedHelp(main, {
+          scope: ctx.args.scope as ScopeLabel | undefined,
+        });
+        emit({
+          format: resolveFormat(ctx.args.format as string | undefined),
+          command: "help",
+          data: manifest,
+          renderText: () => text,
+        });
+      },
+    }),
     info: infoCommand,
     convene: teamConveneCommand,
     join: teamJoinCommand,
@@ -190,40 +242,19 @@ async function runCli(): Promise<void> {
   // once, here, from the same sniffer + the same `resolveFormat`.
   const format = resolveFormat(sniffFormatValue(rawArgs));
 
-  // Intercept `<cli> help --json` BEFORE the grouped-help interceptor. Ordering
-  // matters: the bare-help check below also matches `argv[2] === "help"`, so if
-  // you flip these the JSON manifest path will never be reached.
+  // `help` is a REGISTERED command (see `main.subCommands.help`), dispatched like
+  // any other verb, so its flags are parsed by the same strict parser that
+  // judges every other command: `help --nope` is refused by name, `--scope`
+  // binds to its declared value set, and the manifest declares the door it
+  // came through. It used to be two interceptors here that read argv by hand —
+  // which is how `help --anything` answered with grouped help at exit 0, and
+  // how `help` went missing from the manifest it emits.
   //
-  // `--json` keeps emitting the BARE manifest, pretty-printed. That is a shipped
-  // contract with existing consumers, so it is deliberately NOT enveloped;
-  // `--format json` below is the enveloped spelling. Two spellings, two shapes,
-  // both honoured — the defect was one being silently ignored, not both existing.
-  if (argv[2] === "help" && argv.includes("--json")) {
-    const manifest = await buildManifest(main);
-    process.stdout.write(`${JSON.stringify(manifest, null, 2)}\n`);
-    process.exit(0);
-  }
-
-  // Intercept bare `<cli>` and `<cli> help` for grouped human help.
-  //
-  // These interceptors bypass arg dispatch entirely, so any NEW root flag you add
-  // later (e.g. `--verbose`) will not affect help output unless you also parse it
-  // here.
-  if (argv.length === 2 || argv[2] === "help") {
-    const i = argv.indexOf("--scope");
-    const scope = i >= 0 ? (argv[i + 1] as ScopeLabel | undefined) : undefined;
-    if (format === "json") {
-      emit({
-        format,
-        command: "help",
-        data: await buildManifest(main),
-        renderText: () => "",
-      });
-      process.exit(0);
-    }
-    process.stdout.write(`${await renderGroupedHelp(main, { scope })}\n`);
-    process.exit(0);
-  }
+  // A bare `<cli>` is the one thing still decided here: no arguments means
+  // grouped help. Deliberate, and declined against the upstream default that a
+  // bare invocation is a usage error — see `acc.config.json` (D2) and
+  // CONTRACT.md. Piped, it is the enveloped manifest an agent discovers from.
+  if (rawArgs.length === 0) rawArgs.push("help");
 
   // `--version` / `-v` (root only, matching the old citty builtin). Matched
   // against argv with `--format` stripped: `--version --format json` is one

@@ -47,18 +47,8 @@ const SENTINEL_VERB = "acc-not-a-verb";
  * docs/projects/cli-declared-surface/plan.md that deletes it.
  */
 const KNOWN = new Set<string>([
-  // Phase 2 — defect 1: `refused` has no manifest slot, publishes as valid.
-  "declared-not-accepted --team at info show",
-  "declared-not-accepted --team at info env",
-  "declared-not-accepted --as at comms read",
-  "declared-not-accepted --as at comms positions",
-  "declared-not-accepted --team at scan",
-  "declared-not-accepted --team at feedback",
-  "declared-not-accepted --team at field-notes",
-  "declared-not-accepted --team at migrate",
-  // Phase 2 — defect 4: the manifest has no root entry, so root `--format` is
-  // accepted and undeclared.
-  "accepted-not-declared --format at (root)",
+  // (Phase 2 deleted its rows: refused flags now publish `status: "refused"`,
+  // and the root is declared at `path: []`.)
   // Phase 3 — group nodes refuse an unknown flag naming nothing.
   "not-enumerated at info",
   "not-enumerated at comms",
@@ -127,13 +117,17 @@ function readRejection(error: string): Pick<Reading, "status" | "accepted" | "su
   return { status: "not-enumerated", accepted, subcommandsNamed };
 }
 
+/** What the manifest says is VALID here — long names and their short aliases,
+ * refused flags excluded, positionals never (they have their own container). */
 function declaredFlags(cmd: ManifestCommand | undefined): Set<string> {
   if (!cmd) return new Set();
   return new Set(
     cmd.flags
-      .filter((f) => f.type === "string" || f.type === "boolean")
-      .filter((f) => (f as { status?: string }).status !== "refused")
-      .map((f) => `--${f.name}`),
+      .filter((f) => f.status === "valid")
+      .flatMap((f) => {
+        const aliases = Array.isArray(f.alias) ? f.alias : f.alias ? [f.alias] : [];
+        return [`--${f.name}`, ...aliases.filter((a) => a.length === 1).map((a) => `-${a}`)];
+      }),
   );
 }
 
@@ -142,8 +136,8 @@ describe("the census — declared versus accepted, at every path including the r
     const manifest = await buildManifest(main);
     const byLabel = new Map<string, ManifestCommand>();
     for (const c of declaredPaths(manifest.commands)) byLabel.set(label(c.path), c);
+    byLabel.set("(root)", manifest.root);
 
-    // The root is declared only once Phase 2 lands; probe it either way.
     const paths: string[][] = [[], ...declaredPaths(manifest.commands).map((c) => c.path)];
     const disagreements = new Set<string>();
 
