@@ -437,6 +437,13 @@ subcommands — and the five that are not about a team (`info`, `scan`, `migrate
   default and report a successful move of zero living docs. A guard, not a migrator —
   `MigrationOp` has no op that can restructure config content
 - `anthill info` — environment/config introspection
+- `anthill help [command] [--json | --declaration]` — the discovery surface (2026-09). A registered
+  command, not an interceptor, so the manifest declares the verb that produces it: grouped help at a
+  terminal; the manifest, enveloped, when piped or with `--json`; the interface as an acc v0
+  declaration with `--declaration`. **What the interface owes a program** — exit codes (`2` usage,
+  `1` failed/internal), the error envelope's `kind`/`exitCode`/`retryable`/`choices`, machine-mode
+  scope, output kind per command — is stated once, in `plugin/scripts/anthill/CONTRACT.md`, and held
+  by `manifest.census.test.ts` and `contract.test.ts`.
 - `anthill team ls|use|show` — the team noun group (§5a). `ls` lists every configured team marking
   the resolved one; `use <name>` pins this repo to one (`.anthill/current-team`, gitignored),
   validating the name at write time and refusing while any configured team looks live; `show` names

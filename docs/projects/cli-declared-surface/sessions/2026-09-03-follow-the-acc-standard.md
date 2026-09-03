@@ -51,6 +51,31 @@ flags at every level), `manifest.ts` (`status`, `positionals`, `values`, `root`,
 surface), `contract.ts` + `CONTRACT.md` (new), three new test files, `scripts/acc-census.sh`,
 `acc.config.json`. 24 tests updated for exit 2; 731 pass.
 
+## Review
+
+**Census** (roster: this session's available-agent-types listing, read in context): `general-purpose`
+(`*`, shell) — **chosen as review of record**, briefed against the plan; `feature-dev:code-reviewer`
+(explicit list with `BashOutput`/`KillShell` but **no `Bash`** — read-only) — used as a labelled
+second opinion with the saved diff; rejected for the record: `feature-dev:code-explorer` and `Plan`
+(no shell, not reviewers), `doc-reviewer` and `project-docs:docs-curator` (shell, but document-scoped),
+`Explore` (shell, but a search agent by charter).
+
+**What each executed.** The review of record's log lists `bun run check` ("731 pass / 0 fail"),
+`bun test plugin/scripts/anthill/manifest.census.test.ts`, `bun run acc:census` twice (quoting
+`CONFORMANT (L0)` and `24 of 27 declared command paths compared; 0 disagreements`), the generated
+`capture.sh` inspected before running, ~30 direct CLI probes (`--version --nope`, `help --no-bogus`,
+`help --no-format`, `info --format json show`, `comms send --message -h`, `help --json --format
+text`, …), two `script -q /dev/null` TTY runs, a synthetic `parseArgs`/`runCommand` probe file, and
+`git status --porcelain; tmux ls` afterwards. The second opinion's log: "none — static read."
+
+**Findings and resolutions.** Record: 7 confirmed (3 medium, 4 low), verdict _With fixes_; second
+opinion: 3 (2 important, 1 minor), verdict _With fixes_. Overlap: the `join` skill's exit-1 text.
+Fixed in the review-round commit: `--version <verb>` (second opinion #1, reproduced on both
+branches), `--no-*` unchecked (record #1), `join` skill (both), CONTRACT.md's `--format` sentence
+(record #2), `help <command>` (record #4), `values` on booleans (record #6), the `CLIError` comment
+(second #3). Carried as follow-ups: record #5 and #7 and the `-h`-as-value suspicion. Plan
+Divergences 7–10 record the rest.
+
 ## Follow-up
 
 - Both rulings came the same day: minor bump (commit reworded, no `!`), and `help --json`

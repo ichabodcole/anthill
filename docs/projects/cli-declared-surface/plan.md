@@ -251,3 +251,26 @@ they happen._
    panes. Torn down and the stray `.anthill/comms/anthill-dev.session.json` removed. The acc safety
    page's first question ("does your tool do work on a plausible-looking argv?") is one anthill
    answers _yes_ to below the root — which is why the census sends only sentinel flags.
+7. **`gap` — review found three silently-dropped requests the census cannot see.** `--version
+<verb>` ran the verb (registering `version` as a root arg made the pre-verb parse accept it);
+   `--no-<anything>` was never checked against the declared booleans, so `--no-format` slipped a
+   `false` under the closed-set check — which means Phase 2's claim that `resolveFormat`'s
+   fallback "becomes unreachable" was false until this fix; and `help <command>` had regressed to
+   a surplus-positional error. The census probes one sentinel flag per path; none of these is that
+   shape. Fixed with tests in the review-round commit.
+8. **`gap` — the shipped `join` skill stated the old contract.** Open Question 3 said the skills
+   state no exit-code contract; they stated it incidentally, as measured examples (`exit 1`,
+   `--format josn` passing silently). Both reviewers caught it. Rewritten to exit 2 with a pointer
+   to CONTRACT.md.
+9. **`judgement` — CONTRACT.md's `--format` sentence was narrowed, not the behaviour widened.**
+   "Accepted before or after the verb at every level" was false: root args are not inherited, so
+   `anthill --format json status` at a terminal prints text, and `info --format json show` is
+   refused because `info` has no flags. The honest sentence says where to put the flag. Root
+   `--format` pass-through is named as debt in CONTRACT.md; not built here.
+10. **`improvement` — `values` is no longer typed on booleans**, so publishing an unenforced
+    constraint is a compile error rather than a manifest lie.
+
+_Not taken from review, carried as follow-ups:_ `Missing required positional` carries no
+`choices`; `-h` inside a value (`comms send --message -h`) is intercepted as help (pre-existing);
+`help --json --scope app` ignores `--scope` (documented in CONTRACT.md); the `EXIT_CODE` table test
+pins a constant to itself and is a renumbering tripwire, not coverage.

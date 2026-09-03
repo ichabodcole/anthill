@@ -160,12 +160,12 @@ status`** shows who's on + the board.
                                                           VALUE, it belongs to one of those flags"
        anthill status --format josn         ->  exit 2  ok:false  "--format must be one of: text, json (got \"josn\")"
        ```
-       **The third one is the live hazard, and it is environment-dependent**: an unrecognised
-       `--format` value falls through to the same detection used when you pass no flag at all, so
-       `--format josn` yields JSON on a pipe and text at a terminal. It does not fail. **It succeeds,
-       plausibly, having ignored what you asked for**, and which wrong answer you get depends on where
-       you are running. It is pinned by a test (`agent-layer.test.ts`) that exists to fail when someone
-       fixes it, so treat it as live until that test tells you otherwise.
+       **The third one used to be the live hazard** — until 2026-09-03 an unrecognised `--format`
+       value fell through to the TTY heuristic and _succeeded_ with an environment-dependent wrong
+       answer. Every flag that declares a closed set (`--format`, `--category`, `--scope`) now refuses
+       an out-of-set value at the parser, and the manifest publishes the set as `values`. What is
+       still not checked is the _meaning_ of a free-form value: a handle not in the roster, an id that
+       matches nothing. Those are refused by the command, `kind: "failed"`, exit 1.
        - **Use the FLAGS, and check the VALUE came back the way you meant it**: `--since <id>` for a
          window, `--id <id>` for exactly one message. If a read hands you far more than you expected,
          **suspect your invocation before you suspect the channel** — the size of the result is your
