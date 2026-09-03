@@ -1,7 +1,7 @@
 {
   "name": "anthill",
   "version": "2.3.0",
-  "description": "Portable team-OS — installs an ephemeral-agent team (durable seats, coordination over comms + bounty, living docs) into any project. Stigmergy-driven methodology, a Bun CLI, and the bootstrap / convene / plan / join / finalize-session / upgrade lifecycle skills.",
+  "description": "Portable team-OS — installs an ephemeral-agent team (durable seats, coordination over comms + bounty, living docs) into any project. Stigmergy-driven methodology, a Bun CLI, and the bootstrap / convene / plan / join / finalize-session / curate / upgrade lifecycle skills — seats write session reports, a separate curate step turns them into method, and a per-team OKF wiki holds each touch point's how.",
   "author": {
     "name": "Cole Reed"
   },

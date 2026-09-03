@@ -32,7 +32,16 @@ stay solo.
    - `<teamDir>/principles.md` — **what this team learned the hard way**, each with the scar that
      paid for it. Short, and the highest-leverage read here;
    - `<seatDir>/seams.md` — the shared inter-seat **contracts**;
-   - your own **lead seat doc** `<seatDir>/<lead>.md` (your orchestration reflexes + scars).
+   - your own **lead seat doc** `<seatDir>/<lead>.md` — identity only: who this seat is and what it
+     owns. It carries no lessons; those went to reports, and curation decides what comes back.
+   - **`<teamDir>/wiki/touchpoints/convene.md`** — **how THIS team convenes.** This skill is the
+     trigger; that page is the method, seeded by anthill and rewritten by the team at curation. Where
+     it and this skill differ on _how_, the page wins.
+   - **the latest lead report's Carry-forward** — `<teamDir>/reports/<latest date>/<lead>.md`, the
+     one report a session reads back. **None yet?** Normal before this team's first finalize; say so
+     and move on. **Count the unprocessed reports while you are there** (any report without
+     `curated:` front matter) and say the number in the brief: a pile of unread reports is the old
+     accumulation under a new filename, and `anthill:curate` is how it clears.
      You are now the **lead**.
 
 2. **Gather the work from the human** (ask only what you need — one focused round):
@@ -47,15 +56,12 @@ stay solo.
      seat scopes against what this phase actually needs — if a scope has drifted or doesn't fit, **split
      / merge / re-draw it now** (and `anthill init` any new seat doc). This is the forward half of the
      finalize re-scope reflection: last session's captured misfit is this session's signal to act on.
-   - **Read the last retro's Q3 hypotheses (`<teamDir>/retro.md`, newest first) and say which ones this
-     session will test.** **No entries in it?** That is the normal state before this team's first
-     finalize — `init` seeds the file with the ritual's guidance and nothing else; the entries are
-     written at finalize. **Say so in the brief and move
-     on; do not go looking for them or report them as missing.** They were written to be falsifiable; a hypothesis nobody checks is the same
-     shape as an untested backup — it reads as protection and has never once been exercised. **Name
-     them in the convene brief**, so the seats know what they're testing, and carry the verdict into
-     the next retro. **A prediction that comes back _wrong_ is the valuable outcome**, not a failure of
-     the previous team — say so when you brief it, or seats will quietly protect it.
+   - **Read the previous lead report's Carry-forward and say which items this session will test,
+     decide, or not do.** They were written to be falsifiable; a hypothesis nobody checks is the same
+     shape as an untested backup. **Name them in the convene brief**, so the seats know what they are
+     testing, and carry the verdict into your own report's carry-forward. **A prediction that comes
+     back _wrong_ is the valuable outcome**, not a failure of the previous team — say so when you brief
+     it, or seats will quietly protect it.
    - Anything constraining: what's already in flight, deadlines, sensitivities.
    - **Is `gate` set in `.anthill/config.json`? If not, ask for it now — this is the one field a
      footprint cannot backfill on its own.** Every seat's land runs the project's gate in front of
@@ -211,10 +217,12 @@ positions`.** This is the named moment to run it; without one it is a verb nobod
      directly** (dispatch → result); there are **no tails to wire** (a one-shot subagent can't hold a
      Monitor tail — that's the terminal-seat path). The seat still grounds via `anthill:join`, but
      skips the tail wiring. Good for a small single-session build.
-     - **Bake the finalize-capture into every subagent brief** — the one thing to remember when
-       dispatching seats. Make it the **final step of the task itself**: self-synthesize into your own
-       seat doc, **return** (don't write) any `seams.md` candidate, don't commit. The full spec — the
-       three-part split + the lead's residual pass — lives in `anthill:finalize-session` step 0.
+     - **Bake the report close into every subagent brief** — the one thing to remember when
+       dispatching seats. Make it the **final step of the task itself**: write and close your session
+       report (`<teamDir>/reports/<date>/<handle>.md` — what you hit · what worked · what you would
+       change), **return**, do not commit, and **do not touch your seat doc, `seams.md`,
+       `principles.md` or the wiki** — those are curated. The lead lands the report. Mechanism in
+       `anthill:finalize-session` step 0.
 
 5. **Orchestrate** from here, per the SOP: **comms** is discussion, the **board** is state; route the
    human's decisions through you; you own the **file-scoped atomic land** (`anthill commit -- <paths>`,
@@ -235,7 +243,7 @@ positions`.** This is the named moment to run it; without one it is a verb nobod
      agent" resumes a conversation thread, and a thread is not a seat — a verify-seat re-gate has
      misrouted into the builder's thread, caught only by the subagent's own honesty. Keep an explicit
      thread→seat map and check it before continuing an agent; a misroute silently attributes one
-     seat's work to another, which then poisons that seat's living doc at finalize.
+     seat's work to another, which then lands in the wrong seat's report.
 
 ## Convene checklist (don't skip a setup beat)
 
@@ -249,8 +257,11 @@ The stand-up beats that get skipped when you're eager to spawn. Run them as a li
   after it — every later command re-resolves from scratch, so without the pin you repeat `--team` on
   `status`, `commit --as` and `comms read` or they refuse. Convene **refuses while another team is
   still convened** (the board is one repo-root file): `anthill down` first.
-- ◻ **Grounded** as the lead (grounding docs → SOP → **principles** → seams → your seat doc).
-  `<teamDir>/principles.md` is short and is the highest-leverage read in that list.
+- ◻ **Grounded** as the lead (grounding docs → SOP → **principles** → seams → your seat doc → the wiki's
+  convene page → the latest lead report's carry-forward). `<teamDir>/principles.md` is short and is the
+  highest-leverage read in that list; the carry-forward is the one that changes this session's first hour.
+- ◻ **Unprocessed reports counted** and named in the brief. If there are more than a session's worth,
+  ask the human whether `anthill:curate` should run before this session rather than after.
 - ◻ **Work gathered** from the human; **plan phase** run (`anthill:plan`) if it's a multi-seat feature
   without a ratified plan.
 - ◻ **`gate` set in `.anthill/config.json`** — if it is unset, you asked the human for this project's

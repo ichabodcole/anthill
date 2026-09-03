@@ -34,26 +34,39 @@ the next instance follows**.
    successor. **Curation = strengthening the load-bearing trails and letting unimportant ones fade**,
    called over time. A lean, true trail beats an exhaustive, rotting one.
 
-2. **Running capture → curated synthesis.** Don't wait for the end. Keep a cheap **running session
-   scratch** as you work (`{{teamDir}}/scratch/<handle>/<date>-<slug>.md`, gitignored) — "this just bit
-   me," "this seam is fuzzy." **Finalize** is where those are articulated into durable form for the
-   next agent. Cheap capture, deliberate synthesis.
+2. **Capture → report → curation, by someone else.** Don't wait for the end. Write into your **session
+   report** as you work (`{{teamDir}}/reports/<date>/<handle>.md`, committed) — "this just bit me,"
+   "this seam is fuzzy," "this went cleanly" — in full, for a reader who was not here. **Finalize**
+   closes the report; it does not synthesise. A separate **curate** step, run outside the session by an
+   agent who was not in it with the human ruling, decides what — if anything — becomes a doc, a skill,
+   or a tool. The agent that did the work is the wrong one to decide what a stranger needs from it.
+   (Your **scratch** — `{{teamDir}}/scratch/<handle>/<date>-<slug>.md`, gitignored — is for throwaways and
+   never travels; anything worth a curator's time goes in the report.)
 
 3. **The anthill adapts to the work.** Structure — app, process, **and team** — is mutable in service
    of the work. Persistent friction (toe-stepping, a seam that won't hold, an overloaded or idle
    seat) is a **signal to reshape, not to endure**.
 
-## Three homes — where knowledge lives
+## Where knowledge lives — curated docs, and the reports they are curated from
 
-- **Taste → the seat doc** (`dev/<handle>.md`) — each seat's own face: **its epitaph**, scope +
-  boundaries, relationships, reflexes, anti-patterns, hard-won lessons. Opinionated. **Capture
-  judgments, not file maps** — the reasoning and the generalizable lesson, never a lesson-less event.
-  **The epitaph is written last and read first:** one sentence, chosen at finalize out of everything
-  the seat knows, addressed to the next instance. It is the one line that must survive if nothing
-  else does.
+**Curated — nobody edits these during a session, including the seat they describe.** They change at
+`anthill:curate`, from the reports, by an agent who was not in the session, with the human ruling.
+`anthill commit` refuses them on an attributed commit without `--curated`.
+
+- **Identity → the seat doc** (`dev/<handle>.md`) — who this seat is and what it owns: Who I am ·
+  Scope · Boundaries · Relationships · Taste & reflexes. **Five sections, readable whole.** No lessons,
+  no scars, no session log — those were tried here and did not change what the next agent did.
 - **Truth → `dev/seams.md`** — the contracts _between_ seats, stated **once**, owned by the
-  authoritative seat. Seat docs **point** at it, never restate it.
-- **Proof → the tests** — executable where it exists. A lesson pinned to a green test can't rot.
+  authoritative seat: invariant · ratified grain · proof. Seat docs **point** at it, never restate it.
+- **Principles → `principles.md`** — what this team learned the hard way, each with its scar. Rare.
+- **Method → `wiki/`** — one page per lifecycle touch point (convene · join · plan · work · finalize ·
+  curate): **how this team does it.** anthill's skills are the triggers and point here; the pages are
+  yours. Linted by `anthill wiki lint`.
+- **Proof → the tests** — executable where it exists. A contract pinned to a green test can't rot.
+
+**Reports — `reports/<date>/<handle>.md`** — one per seat per session, committed, on no joining seat's
+read path. What happened, in full. The evidence the curated docs are curated from. See
+`reports/README.md`.
 
 **The one strict rule: defer to one source — don't restate shared truth.** Restating a contract in
 three docs guarantees drift. Everything else stays flexible.
@@ -67,7 +80,7 @@ welcome as a bug report. Lead with the improvement, not just the friction — th
 Route it by **where it lives**:
 
 - **About _your_ project / team** (friction in your code, an idea for this repo) → stays here: your
-  `anthill:finalize-session` synthesis or `paper-cuts.md`. It loops back into your own work.
+  **session report**. Curation routes it — into a doc, a skill, a tool, or the project's backlog.
 - **About _anthill itself_** — a bug, a rough edge, **or an idea to make anthill better** → send it
   _home_ so every project that uses anthill benefits. The path is **`anthill feedback`** (run
   `anthill feedback --help` for what it's for and how to invoke it — the command is the single source
@@ -129,10 +142,15 @@ direct.
 - **Work** — builders build against the ratified seams; the lead and seats watch for **structure
   signals** (toe-stepping, a renegotiated seam, an overloaded/idle seat, a verify finding that
   bounces work back).
-- **Finalize (+ reflection)** — each seat curates its scratch → seat doc and **lands its own**; a
-  shared `seams.md` pass; then the **structure reflection** and the **retro** (below); then each seat
-  **stands down last** (`anthill comms stand-down --as <handle>` — see below; the order is the part
-  that gets inverted). The lead lands what is genuinely cross-seat and tears down the session.
+- **Finalize** — each seat **closes its report** (what it hit · what worked · what it would change)
+  and **lands its own**; the lead closes the lead report with the **carry-forward** the next convene
+  reads, sweeps the docs of record, places every deferred item; then each seat **stands down last**
+  (`anthill comms stand-down --as <handle>` — see below; the order is the part that gets inverted).
+  Nothing curated changes. The lead tears down the session.
+- **Curate** _(outside any session)_ — a fresh agent and the human read the unprocessed reports and
+  decide what, if anything, flows into a seat doc, a seam, a principle, a wiki page, a skill, or
+  tooling. Disagreements are written on the wiki's curate page: that is the method accreting. Run
+  **`anthill:curate`**.
 
 **Verification is dynamic, not end-of-line.** A verify seat engages at **verification points** —
 which may be early (we need tests before building further), mid (prove a feature), or late — and
@@ -278,106 +296,34 @@ before you treat a green as a verdict on your commit.**_
   (prettier / biome) may reflow them — and a hard-wrapped continuation line can be mangled into a
   stray list bullet, corrupting the trail. One sentence per line makes a reflow a no-op.
 
-## Finalize + the structure reflection
+## Finalize — close the report; curation does the rest
 
-At finalize, **synthesize**: promote the durable lessons from your scratch into your seat doc (or
-`seams.md` if it's a boundary truth), **prune**, keep it lean. Pin a lesson to a green test where you
-can; to a durable concept or a commit otherwise; never to a transient line/file ref.
+At finalize, **close your report**: answer the three prompts at the bottom of
+`reports/<date>/<handle>.md` — what you hit · what worked · what you would change — in prose, in full,
+for a curator who was not here. Name this project's tools, docs and teammates freely; make the
+**event** survive without you: what was done, what happened, what it cost. Say what a number meant,
+not what it was. **Proposals, not edits**: if your seat doc, a seam, a principle or a wiki page read
+wrong this session, say so here. Then land the report with the land command your join emitted.
 
-**One intake, route at synthesis.** Capture everything cheaply into one place (your scratch) _as you
-work_ — don't stop mid-task to decide whether a note is a seat-doc lesson, a seam truth, or a
-paper-cut. The genre-sorting happens **here, at finalize**, when you route each captured note to its
-durable home. Sorting-while-working is a tax that suppresses capture.
+**You do not synthesise.** The old ritual promoted lessons from scratch into the seat doc here, with
+a cold read and a seams pass and a retro after it. Measured across two teams it produced seat docs
+past a thousand lines that the next agent read and then repeated the mistakes they named — the agent
+writing its own doc is context-rich about the session and blind to what a stranger needs. So the
+report is the outlet, and `anthill:curate` — later, outside the session, a fresh agent with the human
+ruling — is where anything durable gets written. How this team closes a report, what its docs-of-record
+sweep covers, and what the lead carries forward is on **`wiki/touchpoints/finalize.md`**; the skill is
+the trigger, the page is the method.
 
-**Then get a cold read of what you wrote — you are the one person who cannot judge it.** Hand your
-seat doc to a reader holding **none of your session context** (a subagent spawned fresh, so none of
-your framing travels with it) and ask it to **restate each lesson in its own words** and quote
-whatever it could not interpret. **A doc can be entirely true and still fail to transmit**, and
-nothing about writing it tells you which one you produced: the assumptions you baked in are the
-things you did not need to say. Give it the whole doc and let it find the weak parts, and **ask for a
-restatement rather than a verdict** — a reader asked whether the doc is clear will say yes, and you
-will have measured nothing. **Scars compress hardest**, so they need the most care: name this
-project's tools, docs and teammates freely, since your reader has them, and make sure the **event**
-survives without you — what was done, what happened, what it cost. **Say what a number meant, not
-what it was.** The **epitaph** is the sharpest case of all, being written for someone who will not
-remember the session at all.
-
-**A hypothesis is a fourth home, and it is the one the routing list keeps missing.** A lesson says
-what you now know; a **hypothesis** says what you predict and what would prove it wrong — so it goes
-to the **retro** (team-level, where the next convene reads it back) or to your **seat doc** (personal,
-re-read at join), and to exactly one of them. State it once: a prediction copied into two homes
-drifts, and a **stale prediction is worse than a stale lesson** because it commissions work against a
-world that has already moved.
-
-**Then sweep the DOCS OF RECORD — the ones that claim something true of the tree, and that nobody
-owns. THE LEAD runs this beat and names who checks each doc** — unlike the synthesis above, it is
-not a per-seat act, and the docs it covers are in no seat's scope by definition.
-Every seat re-reads the docs it owns at finalize; a plan of record, a roadmap, a proposal, a
-principles file is in **no seat's scope**, so that sweep passes cleanly over a doc that has been wrong
-for sessions. **The predicate was right and its domain was seats.**
-
-**The project names which docs are in the set, not anthill** — ask _which docs here claim something
-that must stay true of the tree?_ and take the answer from this project's own config or grounding docs.
-**Anything deliberately kept as a record of what USED to be true — archives, scars, superseded
-decisions — is out of scope**; rewriting those destroys the record. The test is whether a reader would
-ACT on the sentence today.
-
-**Write a dated reconciliation line INTO each doc, claim by claim, stamped with the sha you checked at:
-`HELD` / `FALSIFIED <what> → <where it moved>` / `UNCHECKED`.** The line is the deliverable and its
-absence for a session is the signal — a doc carrying lines for two sessions and none for the third says
-so on its face. **`UNCHECKED` is a real verdict and must be written**: a claim you silently skipped is
-indistinguishable from one you confirmed.
-_"Re-read the plan" is the shape that goes 0-for-4 — a situational warning fails at the recognition
-step, so the beat has to name what was checked or it has not fired._
-**And the case that bites hardest is the claim that is still TRUE while its REASON has died:** ask what
-each sentence's justification RESTED on, not what it is about. A reason resting on a property this
-world no longer has does not go stale, it **inverts**, and the sentence still reads fine.
-
-**⚠ SWEEP THE PROSE, NOT JUST THE TABLES — a document's NARRATIVE goes stale too, and it is the half
-a structured reader skips.** Status tables and criteria rows are the easy targets because they look
-like claims; the assertions buried in headers, blockquotes and scar boxes read as commentary and get
-no second look.
-_Measured on this beat's own first run: **4 stale claims found across 10 table rows, and a 5th MISSED
-among 91 assertion-bearing prose lines** — the miss sitting inside the very box warning that this
-document goes stale, and caught by a reader rather than by the sweep._
-
-_Scar: a session spent its night hunting predicates whose domain had gone unwritten, while its own
-plan of record carried **four stale claims** — one falsified by a test that landed the same session.
-The ritual caught none. **All four surfaced because the human asked whether the runway was clean.**_
-
-Then the **structure reflection** — the team turns the lens on itself:
-
-- **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)
-- **What are the natural seams?** (the contracts that actually emerged vs. the ones we guessed.)
-- **Who actually owned what?** (vs. the roster on paper.)
-- **Did the composition fit the work?** (an idle seat, an overloaded one, a missing lens.)
-
-Its output flows to seat docs, `seams.md`, and **occasionally the roster/config itself** — re-run
-`anthill init` after a reshape to render new seat docs (existing ones are never clobbered). The
-anthill is yours to re-shape.
-
-Then the **retro** — _what went well · what didn't · what would you change_ — written to
-`{{teamDir}}/retro.md`, newest first. It differs from the reflection above by asking for **judgement**
-rather than shape, and two rules are what make it more than a mood:
-
-- **Every "what would you change" is a HYPOTHESIS the next session can test**, or it isn't an answer.
-  The next convene reads them back and says which it will test — so a prediction that comes back
-  **wrong** is the valuable outcome, not a failure of the team that wrote it.
-- **Agreement is not truth: ask what is behind each answer besides everyone agreeing.** Claims about
-  **artifacts** are executable — run them, and nobody had to agree with anything. Claims about **us**
-  are testimony; label them, and prefer the version carrying a number, a diff or a count. A retro of
-  agents who shared one session and one frame will converge, and that convergence is the expected
-  output of shared priors rather than evidence. **A unanimous "what went well" is a smell.**
-  **The lead is in scope** — a retro where the lead comes out clean is a retro that did not run.
-  **And the lead should not open by listing his own errors.** It reads as the opposite of
-  defensiveness and it is not: **a well-executed self-list pre-empts the audit**, leaving a seat
-  nothing to do but concur, so the document becomes indistinguishable from one where the audit found
-  nothing. _Scar: an observer seat checked and found **no seat produced a criticism of the lead he
-  had not already volunteered.**_ Say you are in scope; then say nothing until the seats have written.
+**The lead's report** carries **carry-forward**: what the next session must test, decide, or not do,
+each with what would prove it wrong — including whether the team's shape fit the work. The next
+convene reads it. **The lead also sweeps the docs of record** — the plan of record, the roadmap, the
+proposal: anything that claims something true of the tree and that no seat owns — and writes a dated
+`HELD` / `FALSIFIED` / `UNCHECKED` line into each, claim by claim. `UNCHECKED` is a real verdict and
+must be written.
 
 ### Standing down — a seat's LAST act, and the verb has to be named
 
-**Every seat ends with `anthill comms stand-down --as <handle>` — after synthesis, after landing its own doc, and after its retro answers.**
+**Every seat ends with `anthill comms stand-down --as <handle>` — after closing its report, after landing it, and after anything else it has to say.**
 That order is the whole content of this beat: **stand down last.**
 
 **Name the verb when you call for it.** The instruction a seat receives at join says _"commit, **THEN stand down**"_ — in English, without naming the command — so a seat reads it as _"finish up and leave"_, which is an act with no artifact.
@@ -401,6 +347,6 @@ _**The order was not missing. It was present, correct, and overridden by a messa
 ## Onboarding a fresh agent
 
 Ground in the **product** first (the `grounding` docs in `.anthill/config.json`), then: this SOP →
-`dev/seams.md` (shared contracts) → your seat's `dev/<handle>.md` → go. For the current state of
-play, check the bounty board + the active project docs. Then **keep your seat doc honest**: when
-something's no longer true, fix it.
+`dev/seams.md` (shared contracts) → your seat's `dev/<handle>.md` (identity only) → the wiki page for
+the touch point you are in → go. For the current state of play, check the bounty board + the active
+project docs. **Do not edit your seat doc** — if it is wrong, say so in your report; curation fixes it.

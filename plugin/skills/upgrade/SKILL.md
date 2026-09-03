@@ -212,7 +212,7 @@ diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" "$TEAMDIR/README.md"
 ```
 
 Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
-`principles.md`, `retro.md`.
+`principles.md`. _(`retro.md` was retired 2026-09-03 — see the note below.)_
 
 > **Named correction to look for (2026-08-10) — `principles.md`, and it is a CORRECTION, not an
 > addition.** The "What other teams have found" section shipped a fenced block whose whole content
@@ -235,11 +235,12 @@ bootstrap-version guidance while you record the release as reconciled. **Each te
 independently divergent**: they were seeded at different times, and each has been written in by its
 own seats since. There is no such thing as reconciling "the project's" `README.md`.
 
-**On `retro.md`, expect a diff the size of the whole file, and do NOT reconcile it.** It is seeded
-by `init` with the ritual's guidance and then written by the **team** at finalize — so a footprint
-that has run a session diverges by every entry it has accumulated, which is the file working, not
-drift. Mirror down only changes to the guidance above the entries. _(A footprint that predates the
-template has no left-hand side at all; `anthill init` seeds it, skipping every doc that exists.)_
+**On `retro.md`: it is RETIRED (2026-09-03) and has no template, so there is nothing to diff it
+against — leave it alone.** A footprint that has one keeps it until the anthill-evolution migration
+folds it into the team's first report batch; do not delete it by hand and do not reconcile it. The
+same holds for the seat docs' retired sections (Epitaph, Hard-won lessons, Anti-patterns, Candidates):
+the template no longer has them, so the diff will show them as "extra" — **that is the migration's
+job, not the reconcile's.** Reconcile only the identity sections and the header.
 
 **The general rule worth carrying: before you trust a diff, confirm both sides exist.** This is the
 failure mode step 0 spends five lines warning about, arriving from the other direction — there, an

@@ -38,16 +38,18 @@ how a fresh session inherits the seat's lineage: its hard-won understanding live
      binding looks exactly like amnesia**: your seat doc reads thin, the seams look unfamiliar, the
      principles are somebody else's. That is `anthill team show`, not a re-read — it names the team
      and the rung that chose it (this pane's `ANTHILL_TEAM`, the repo's pin, or being the only team).
-   - `<seatDir>/<handle>.md` — **your own living doc**: its epitaph, scope, boundaries,
-     relationships, reflexes, anti-patterns, hard-won lessons. This is _you_. Internalize it before
-     you touch code.
-     - **Start with the `## Epitaph` at the top, and give it more weight than its length suggests.**
-       It is one sentence, written **last** by the previous instance in this seat — the single thing
-       it chose, out of everything it knew, for you specifically. **Everything else in the doc is
-       what the seat knows; the epitaph is what it got wrong.** It usually names a disposition rather
-       than a fact, because that is the part that survives the code moving.
-       **No epitaph?** That means this seat has not finished a session yet — a normal state, not a
-       missing file. You may be the one who writes the first.
+   - `<seatDir>/<handle>.md` — **your seat doc**: who this seat is, what it owns, what it does not,
+     who it works with, how it likes to work. **Five sections, identity only, readable whole.** This
+     is _you_; internalize it before you touch code.
+     - **It carries no lessons, and that is deliberate.** It used to: an epitaph, hard-won lessons,
+       anti-patterns, a candidates list — and measured across two teams, reading them did not stop
+       the next instance repeating what they named. What a seat learns now goes in its **session
+       report**, and `anthill:curate` — a fresh agent with the human — decides what comes back into
+       this doc. **You do not edit it**, this session or any session; if it reads wrong, that is the
+       first line of your report.
+     - **A thin seat doc is the normal state**, not a missing file. Identity is short.
+   - **`<teamDir>/wiki/touchpoints/join.md`** — **how THIS team joins.** This skill is the trigger;
+     that page is the method, seeded by anthill and rewritten by the team at curation.
 
    Running **`anthill join <handle>`** prints this grounding manifest (the exact files, in order) plus
    your tail commands and an action checklist — use it as your source of truth; don't restate it.
@@ -279,7 +281,7 @@ status`** shows who's on + the board.
        truth. Don't infer from a self-contained assignment message that there is no gate.
 
 6. **Work** your lane per the SOP + your seat doc. As you go, **capture ah-ha judgments to your
-   scratch** (the reasoning + the generalizable lesson — not lesson-less events) for synthesis at
+   report** (the event in full — what you did, what happened, what it cost — for a curator who was not here) for the close at
    finalize. Route questions + decisions to the lead on comms, not direct to the human — the lead
    is the routing **default**, not proof the human isn't watching. **Blocked on a human? Say so on
    comms** — waiting silently looks exactly like working.

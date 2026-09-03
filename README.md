@@ -33,7 +33,9 @@ snapshot of where things stand.
 2. **In a project:** run `anthill:bootstrap` — it explores the repo, proposes a team
    composition (archetype-seeded), you ratify, and it writes `.anthill/config.json` + renders
    the `.anthill/` scaffold.
-3. **Per session:** `anthill:convene` → work → `anthill:finalize-session`.
+3. **Per session:** `anthill:convene` → work → `anthill:finalize-session` — seats write session
+   reports, not their own docs. **Between sessions:** `anthill:curate` turns the reports into method,
+   with you in the loop.
 
 The only footprint in a consuming repo is the `.anthill/` root (config, living docs, and
 scratch) plus one `.gitignore` line — everything else lives in the plugin.

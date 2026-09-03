@@ -357,8 +357,12 @@ so action names stay clear.
 - **`anthill:join <handle>`** _(a seat re-grounds)_ — identify handle, re-ground (grounding →
   SOP → `seams.md` → own seat doc), get on the wires (CLI emits tail commands), **open the
   running scratch**, signal ready, claim card, work.
-- **`anthill:finalize-session`** — each seat curates scratch → seat doc; shared `seams.md` pass;
-  the **structure reflection**; lead lands doc commits + tears down the session.
+- **`anthill:finalize-session`** — _(as revised 2026-09-03)_ each seat **closes its session report**
+  and lands it; the lead closes the lead report (carry-forward), sweeps the docs of record, tears down.
+  Nothing curated is edited here.
+- **`anthill:curate`** _(added 2026-09-03)_ — outside any session, a fresh agent + the human read the
+  unprocessed reports and decide what flows into a seat doc / seam / principle / wiki page / skill /
+  tooling; lands with `commit --curated`; records disagreements on the wiki's curate page.
 
 The human surface is intentionally tiny: _"convene the team"_ … _"finalize."_ The lead agent
 drives the CLI; the human rarely intervenes.
@@ -377,6 +381,14 @@ finalize-session`. The lead scaffolds a plan **skeleton** (integration order + c
 > **`anthill:bootstrap`** (Piece 5, §9) is itself a lifecycle skill. Current set:
 > `bootstrap · convene · plan · join · finalize-session · upgrade`.
 
+> **Addendum (2026-09-03) — the skill set is now seven, and the knowledge loop changed shape.**
+> [anthill-evolution](../projects/anthill-evolution/proposal.md): seats no longer synthesise into
+> their seat docs at finalize — they write a **session report**, and a new **`anthill:curate`** touch
+> point (outside the session, human in the loop) is the only writer of the curated docs (seat doc ·
+> `seams.md` · `principles.md` · `wiki/`), enforced by `anthill commit --curated`. Every lifecycle
+> skill is now a trigger that points at a page in the team **wiki** for the how. `retro.md` retired.
+> Current set: `bootstrap · convene · plan · join · finalize-session · curate · upgrade`.
+
 ---
 
 ## 8. Plugin/repo structure + CLI (Pieces 1–2)
@@ -394,7 +406,7 @@ anthill/
 │   ├─ .claude-plugin/
 │   │   └─ plugin.json         # plugin manifest
 │   ├─ skills/
-│   │   └─ bootstrap/ convene/ join/ plan/ finalize-session/ upgrade/
+│   │   └─ bootstrap/ convene/ join/ plan/ finalize-session/ curate/ upgrade/
 │   ├─ scripts/anthill/        # CLI — zero-dependency (in-house parseArgs layer)
 │   │   ├─ cli.ts  define.ts  agent-layer.ts  manifest.ts  help-renderer.ts  paths.ts  …
 │   │   ├─ config.ts           # find + parse .anthill/config.json (root marker)
