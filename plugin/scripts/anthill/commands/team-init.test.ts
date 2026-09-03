@@ -148,7 +148,7 @@ describe("templateDestination (the template tree's `dev/` is layout, not a path)
   };
 
   it("puts team-level docs under teamDir", () => {
-    for (const rel of ["README.md", "principles.md", "paper-cuts.md", "retro.md"]) {
+    for (const rel of ["README.md", "principles.md", "paper-cuts.md"]) {
       expect(templateDestination(rel, PATHS)).toBe(join(PATHS.teamDir, rel));
     }
   });
@@ -188,37 +188,46 @@ describe("the bundled template set", () => {
     new URL("../../../templates/docs-team", import.meta.url).pathname.replace(/\/$/, ""),
   );
 
-  it("ships retro.md, the doc finalize-session tells the lead to write", () => {
-    // It had no template, no resolver and no CLI reference — orphaned by
-    // construction, at a path only skill prose named.
-    expect(existsSync(join(bundled, "retro.md"))).toBe(true);
+  it("does NOT ship retro.md — retired by anthill-evolution (2026-09-03)", () => {
+    // It shipped 2026-08-09 as the doc finalize-session told the lead to write, and
+    // it did what every append-only shared file does: 1059 lines here, 656 in
+    // Spellbook, nothing re-read. The lead's per-session REPORT carries the
+    // carry-forward now, and convene reads only the latest one. `init` never
+    // deletes, so existing teams keep theirs until `upgrade` migrates it into the
+    // first report batch.
+    expect(existsSync(join(bundled, "retro.md"))).toBe(false);
   });
 
-  it("renders retro.md to teamDir, then skips it once the team has written in it", () => {
-    const paths = {
-      teamDir: "/proj/.anthill",
-      seatDir: "/proj/.anthill/dev",
-      seams: "/proj/.anthill/dev/seams.md",
-    };
-    const templates: TemplateFile[] = [
-      { relPath: "retro.md", content: readFileSync(join(bundled, "retro.md"), "utf8") },
-    ];
-    const fresh = renderTemplates({
-      templates,
-      config: CONFIG,
-      dest: (rel) => templateDestination(rel, paths),
-      exists: () => false,
-    });
-    expect(fresh.writes.map((w) => w.path)).toEqual(["/proj/.anthill/retro.md"]);
+  it("the seat doc template is IDENTITY ONLY — five sections, and none of the retired ones", () => {
+    // The locked structure held for exactly as long as nothing tested it: anthill's
+    // own seats grew `Hard-won lessons` to 660 lines, and Spellbook's seats
+    // bypassed the structure outright, appending a new `##` per session (26 in one
+    // doc). A seat doc is what a seat IS; what happened to it goes in its report.
+    // So the shape is pinned here, and a section that invites accumulation is a
+    // red test, not a judgment call at finalize.
+    const src = readFileSync(join(bundled, "dev", "{{handle}}.md"), "utf8");
+    const headings = [...src.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
+    expect(headings).toEqual([
+      "Who I am",
+      "Scope",
+      "Boundaries",
+      "Relationships",
+      "Taste & reflexes",
+    ]);
+    for (const retired of ["Epitaph", "Hard-won lessons", "Anti-patterns", "Candidates"]) {
+      expect(src, `retired section "${retired}" is back`).not.toMatch(
+        new RegExp(`^#+ ${retired}`, "m"),
+      );
+    }
+    // And it says who may write it, because a rule the file does not carry is a
+    // rule the next agent never sees.
+    expect(src).toContain("Nobody edits this file during a working session");
+  });
 
-    const again = renderTemplates({
-      templates,
-      config: CONFIG,
-      dest: (rel) => templateDestination(rel, paths),
-      exists: (p) => p === "/proj/.anthill/retro.md",
-    });
-    expect(again.writes).toHaveLength(0);
-    expect(again.skipped).toEqual(["/proj/.anthill/retro.md"]);
+  it("the seams template names its admission test and who lands a contract", () => {
+    const src = readFileSync(join(bundled, "dev", "seams.md"), "utf8");
+    expect(src).toContain("the admission test, applied at write time");
+    expect(src).toContain("never edits this file mid-session");
   });
 });
 
