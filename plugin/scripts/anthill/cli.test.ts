@@ -455,3 +455,26 @@ describe("the error envelope carries WHY as data — kind, exitCode, choices", (
     }
   });
 });
+
+describe("review fixes — a request is never silently dropped", () => {
+  test("`--version <verb>` is refused, not run with the flag discarded", () => {
+    // `version` became a registered root arg; the pre-verb parse then ACCEPTED
+    // it and `status` ran at exit 0. On develop this was refused by name.
+    const { stdout, stderr, exitCode } = run(["--version", "status"]);
+    expect(exitCode).toBe(2);
+    expect(stdout).toBe("");
+    const env = JSON.parse(stderr);
+    expect(env.kind).toBe("usage");
+    expect(env.error).toMatch(/answered alone/);
+  });
+
+  test("`help <command>` answers that command's entry, as `<command> --help` does", () => {
+    const viaHelp = JSON.parse(run(["help", "status"]).stdout);
+    const viaFlag = JSON.parse(run(["status", "--help"]).stdout);
+    expect(viaHelp.ok).toBe(true);
+    expect(viaHelp.data).toEqual(viaFlag.data);
+    const bogus = JSON.parse(run(["help", "bogus"]).stderr);
+    expect(bogus.kind).toBe("usage");
+    expect(bogus.choices).toContain("status");
+  });
+});

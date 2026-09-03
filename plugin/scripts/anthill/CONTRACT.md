@@ -35,9 +35,16 @@ argument; a subject's account of its own safety is evidence to test, never a lic
 
 ## Machine mode
 
-**Selection**, in precedence order: an explicit `--format json` / `--format text` always wins; then
-inference — stdout is not a TTY ⇒ JSON. `--format` is accepted before or after the verb at every
-level. There is no environment-variable override (declined below).
+**Selection**, in precedence order: an explicit `--format json` / `--format text` on the command
+that answers wins; then inference — stdout is not a TTY ⇒ JSON. **`--format` is a flag of the root
+and of every leaf, not of a group node, and root args are not inherited:** `anthill --format json
+status` parses the flag at the root and `status` resolves its own, so at a terminal that spelling
+prints text. Put `--format` after the verb (`anthill status --format json`), or pipe — piped, every
+command answers JSON with no flag at all, which is how every incantation anthill emits invokes it.
+`info --format json show` is refused by name because `info` has no flags; the message names its
+subcommands. On `help`, `--json` is shorthand for `--format json` and wins over an explicit
+`--format text` beside it. There is no environment-variable override (declined below). _(Debt: a
+root `--format` passed through to the leaf would make "before or after the verb" true; filed.)_
 
 **Scope: it is a mode, not a flag on one command.** Once selected it governs success output, failure
 output, help and version alike. Nothing is written to stdout in JSON mode except one document

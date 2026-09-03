@@ -61,7 +61,10 @@ interface BaseArgDef<T extends ArgType, VT extends boolean | string> {
   refused?: string;
 }
 
-export type BooleanArgDef = Omit<BaseArgDef<"boolean", boolean>, never>;
+/** A boolean has no value to bind, so `values` is not a thing it can carry —
+ * omitted at the type so declaring one is a compile error, not a published
+ * constraint the parser never enforces. */
+export type BooleanArgDef = Omit<BaseArgDef<"boolean", boolean>, "values">;
 export type StringArgDef = BaseArgDef<"string", string>;
 export type PositionalArgDef = Omit<BaseArgDef<"positional", string>, "alias">;
 /**
@@ -186,7 +189,8 @@ export function defineAnthillCommand<const T extends ArgsDef = ArgsDef>(
 // Runner.
 // ---------------------------------------------------------------------------
 
-/** Signals a usage error — the dispatcher renders usage + this message, exit 1. */
+/** Signals a usage error — the dispatcher renders usage + this message, exit 2
+ * (`EXIT_CODE.usage`; CONTRACT.md). */
 export class CLIError extends Error {
   /** The valid alternatives the message names, as data — so the envelope can
    * carry them structurally and nothing has to re-parse the prose. `null` when
@@ -247,7 +251,8 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
     if (short) opt.short = short;
     options[name] = opt;
     if (def.default !== undefined) defaults[name] = def.default;
-    if (def.values !== undefined) closedSets.set(name, def.values);
+    const values = (def as { values?: string[] }).values;
+    if (values !== undefined) closedSets.set(name, values);
   }
   for (const { name, def } of positionals) {
     if (def.values !== undefined) closedSets.set(name, def.values);
@@ -315,7 +320,17 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
       break;
     }
     if (arg.startsWith("--no-")) {
-      negated.add(arg.slice(5));
+      // Only a DECLARED boolean can be negated. `--no-anything` used to be
+      // stripped and recorded without a check, so `help --no-bogus` ran at
+      // exit 0 and `--no-format` wrote `false` into a string flag — under the
+      // closed-set check, which reads only strings. Review found both.
+      const name = arg.slice(5);
+      if (!booleans.has(name)) {
+        throw new CLIError(`Unknown option '${arg}'${routeForward()}`, {
+          choices: routeChoices(),
+        });
+      }
+      negated.add(name);
       continue;
     }
     // A VALUE beginning with `-` is not a flag. Under `strict: true` node reads

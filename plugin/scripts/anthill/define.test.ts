@@ -283,3 +283,20 @@ describe("t-7bc57308 — an unrecognised POSITIONAL is refused, not swallowed", 
     expect(outcomes).toEqual(["refused", "x", "x"]);
   });
 });
+
+describe("`--no-<flag>` negates only a DECLARED boolean", () => {
+  // Review found `--no-anything` was stripped and recorded without a check:
+  // `help --no-bogus` ran at exit 0, and `--no-format` wrote `false` into a
+  // STRING flag — underneath the closed-set check, which reads only strings.
+  test("a declared boolean negates", () => {
+    expect(parseArgs(["--no-force"], SPEC).force).toBe(false);
+  });
+  test("an undeclared name is refused by name, with the valid set", () => {
+    expect(() => parseArgs(["--no-bogus"], SPEC)).toThrow(/--no-bogus/);
+    expect(() => parseArgs(["--no-bogus"], SPEC)).toThrow(/Valid flags:/);
+  });
+  test("negating a STRING flag is refused — it cannot slip under a closed set", () => {
+    const CLOSED = { format: { type: "string" as const, values: ["text", "json"] } };
+    expect(() => parseArgs(["--no-format"], CLOSED)).toThrow(/--no-format/);
+  });
+});

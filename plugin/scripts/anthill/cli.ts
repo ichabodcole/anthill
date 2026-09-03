@@ -20,7 +20,7 @@
  */
 
 import { fileURLToPath } from "node:url";
-import { EXIT_CODE, emit, emitError, resolveFormat } from "./agent-layer.ts";
+import { EXIT_CODE, emit, emitError, emittingCli, resolveFormat } from "./agent-layer.ts";
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
 import { teamCommitCommand } from "./commands/team-commit.ts";
@@ -90,6 +90,12 @@ export const main: AnyCommand = defineCommand({
         scope: "workspace",
       },
       args: {
+        command: {
+          type: "positional",
+          description: "A command to show usage for (same as `<command> --help`)",
+          required: false,
+          valueHint: "name",
+        },
         json: { type: "boolean", description: "Shorthand for --format json" },
         declaration: {
           type: "boolean",
@@ -111,6 +117,28 @@ export const main: AnyCommand = defineCommand({
       },
       async run(ctx) {
         const manifest = await buildManifest(main);
+        const wanted = ctx.args.command as string | undefined;
+        if (wanted !== undefined) {
+          // `help status` — grouped help used to answer this (the interceptor
+          // ignored the token); routing it through the parser made it a
+          // surplus-positional error with no route to `status --help`. Honour
+          // it the way `--help` does: the command's usage, or its manifest entry.
+          const [cmd, parent] = resolveSubCommand(main, [wanted]);
+          if (parent === undefined) {
+            throw new CLIError(`Unknown command ${wanted}${nameVerbs(manifest)}`, {
+              choices: manifest.commands.map((c) => c.name),
+            });
+          }
+          const path = commandPath(cmd, parent);
+          const entry = findManifestCommand(manifest.commands, path.split(" "));
+          emit({
+            format: ctx.args.json ? "json" : resolveFormat(ctx.args.format as string | undefined),
+            command: path,
+            data: entry ?? { name: cmd.meta?.name ?? "", description: cmd.meta?.description ?? "" },
+            renderText: () => renderCommandUsage(cmd, parent),
+          });
+          return;
+        }
         // `--json` used to emit the manifest BARE — the one machine document in
         // the CLI that did not speak the envelope, kept that way as "a shipped
         // contract". Cole confirmed 2026-09-03 that nothing outside parses it,
@@ -253,6 +281,10 @@ function withoutFormat(rawArgs: string[]): string[] {
 async function runCli(): Promise<void> {
   const argv = process.argv;
   const rawArgs = argv.slice(2);
+  // Only tokens BEFORE `--` can ask for help or the version: after the
+  // terminator everything is data (rule A6; the parser already honours it).
+  const dash = rawArgs.indexOf("--");
+  const optionTokens = dash >= 0 ? rawArgs.slice(0, dash) : rawArgs;
 
   // The help/usage interceptors run BEFORE arg dispatch, so they never saw
   // `ctx.args.format` and wrote prose to stdout under `--format json` — the same
@@ -279,6 +311,24 @@ async function runCli(): Promise<void> {
   // intent, and the un-stripped length check silently failed to match it, so an
   // agent asking for the version as JSON fell through to the dispatcher.
   const versionArgs = withoutFormat(rawArgs);
+  const asksVersion = optionTokens.includes("--version") || optionTokens.includes("-v");
+  if (asksVersion && versionArgs.length !== 1) {
+    // `--version status` used to be refused by name; once `version` became a
+    // registered root arg the pre-verb parse accepted it, and `status` ran at
+    // exit 0 with the flag discarded — a request silently dropped, the exact
+    // shape the strict parser exists to prevent. Review caught it. Refuse it
+    // here, where the interceptor already knows what `--version` means.
+    emitError({
+      format,
+      command: "version",
+      kind: "usage",
+      error: `\`--version\` is answered alone and takes no other arguments (got ${versionArgs
+        .filter((t) => t !== "--version" && t !== "-v")
+        .map((t) => `"${t}"`)
+        .join(", ")}). Run \`${emittingCli()} --version\` by itself`,
+    });
+    process.exit(EXIT_CODE.usage);
+  }
   if (versionArgs.length === 1 && (versionArgs[0] === "--version" || versionArgs[0] === "-v")) {
     const version = main.meta?.version ?? "";
     // `source` — WHICH cli.ts is answering, not just what it calls itself.
@@ -317,8 +367,6 @@ async function runCli(): Promise<void> {
   // Only tokens BEFORE `--` can ask for help: after the terminator everything
   // is data, so `commit -- --help` commits a path named `--help` rather than
   // printing usage for `commit` (rule A6, and the parser already honours it).
-  const dash = rawArgs.indexOf("--");
-  const optionTokens = dash >= 0 ? rawArgs.slice(0, dash) : rawArgs;
   if (optionTokens.includes("--help") || optionTokens.includes("-h")) {
     const [cmd, parent] = resolveSubCommand(main, rawArgs);
     if (format === "json") {
@@ -397,6 +445,10 @@ async function runCli(): Promise<void> {
     // both into 1 (docs/backlog/_archive/2026-08-21-usage-errors-and-bugs-share-exit-1.md).
     process.exit(err instanceof CLIError ? EXIT_CODE.usage : EXIT_CODE.internal);
   }
+}
+
+function nameVerbs(manifest: { commands: Array<{ name: string }> }): string {
+  return `. Valid commands: ${manifest.commands.map((c) => c.name).join(", ")}`;
 }
 
 // NOT top-level `await` on purpose: a sibling command reads `main.meta.version`
