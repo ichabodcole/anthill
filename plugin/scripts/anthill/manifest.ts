@@ -202,3 +202,86 @@ export async function buildManifest(root: unknown): Promise<Manifest> {
     commands,
   };
 }
+
+// ---------------------------------------------------------------------------
+// acc v0 declaration — the same walk, in the one format an outside reader
+// consumes today.
+// ---------------------------------------------------------------------------
+
+/**
+ * The declaration format `acc check --declaration` reads (agent-cli-conformance,
+ * `src/acc/kit/declaration.ts`, format major "0"). Required keys only, nothing
+ * else at any level: the reader refuses an unknown key ANYWHERE rather than
+ * reading what it recognises, because a field it cannot name may be the one
+ * bounding a probe's safety. So the richer facts the manifest carries —
+ * descriptions, defaults, refusal reasons — stay in the manifest; this document
+ * is the checkable subset.
+ *
+ * `provenance: "emitted"` is the strongest claim the format has, and it is true
+ * here: the running binary produces this at answer time from the structures the
+ * parser reads. A disagreement between this document and a rejection is then
+ * one process contradicting itself, which is a defect in its own right — not
+ * "a file and a tool disagree".
+ */
+export interface Declaration {
+  formatVersion: "0";
+  provenance: "emitted";
+  selfDescription: { args: string[] };
+  commands: Array<{
+    path: string[];
+    args: Array<{
+      name: string;
+      type: "string" | "boolean";
+      status: "valid" | "refused";
+      values?: string[];
+      valueHint?: string;
+    }>;
+    positionals: Array<{ name: string; required: boolean; variadic?: boolean }>;
+  }>;
+}
+
+/** The argv that produces the declaration — a literal the census checks is a
+ * declared command (`self-description-not-declared` otherwise). */
+export const SELF_DESCRIPTION_ARGS = ["help", "--declaration"];
+
+export function buildDeclaration(manifest: Manifest): Declaration {
+  const args = (flags: ManifestFlag[]): Declaration["commands"][number]["args"] =>
+    flags.flatMap((f) => {
+      const base = {
+        type: f.type,
+        status: f.status,
+        ...(f.values !== undefined && { values: f.values }),
+        ...(f.valueHint !== undefined && f.values === undefined && { valueHint: f.valueHint }),
+      };
+      // One row per spelling the parser accepts: the long name, and each
+      // single-letter alias as `-x`. The rejection names both, so both compare.
+      const aliases = (Array.isArray(f.alias) ? f.alias : f.alias ? [f.alias] : []).filter(
+        (a) => a.length === 1,
+      );
+      return [
+        { name: `--${f.name}`, ...base },
+        ...aliases.map((a) => ({ name: `-${a}`, ...base })),
+      ];
+    });
+  const positionals = (ps: ManifestPositional[]) =>
+    ps.map((p) => ({ name: p.name, required: p.required, ...(p.variadic && { variadic: true }) }));
+  const commands: Declaration["commands"] = [];
+  const walk = (cmds: ManifestCommand[]) => {
+    for (const c of cmds) {
+      commands.push({ path: c.path, args: args(c.flags), positionals: positionals(c.positionals) });
+      walk(c.subcommands);
+    }
+  };
+  commands.push({
+    path: [],
+    args: args(manifest.root.flags),
+    positionals: positionals(manifest.root.positionals),
+  });
+  walk(manifest.commands);
+  return {
+    formatVersion: "0",
+    provenance: "emitted",
+    selfDescription: { args: SELF_DESCRIPTION_ARGS },
+    commands,
+  };
+}

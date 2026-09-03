@@ -44,7 +44,12 @@ import {
   runCommand,
 } from "./define.ts";
 import { renderCommandUsage, renderGroupedHelp } from "./help-renderer.ts";
-import { buildManifest, type ManifestCommand, type ScopeLabel } from "./manifest.ts";
+import {
+  buildDeclaration,
+  buildManifest,
+  type ManifestCommand,
+  type ScopeLabel,
+} from "./manifest.ts";
 
 // Exported so sibling modules (e.g. `commands/team-feedback.ts`) can read
 // `main.meta.version` — the release-please-tracked CLI version. The top-level
@@ -86,6 +91,11 @@ export const main: AnyCommand = defineCommand({
       },
       args: {
         json: { type: "boolean", description: "Emit the bare manifest document (unenveloped)" },
+        declaration: {
+          type: "boolean",
+          description:
+            "Emit the interface as an acc v0 declaration (agent-cli-conformance), for `acc check --declaration`",
+        },
         scope: {
           type: "string",
           description: "Limit grouped help to one scope",
@@ -103,6 +113,13 @@ export const main: AnyCommand = defineCommand({
         const manifest = await buildManifest(main);
         if (ctx.args.json) {
           process.stdout.write(`${JSON.stringify(manifest, null, 2)}\n`);
+          return;
+        }
+        if (ctx.args.declaration) {
+          // A bare document too, and for the same reason as `--json`: it is
+          // consumed by a reader with a fixed schema that refuses unknown keys,
+          // so the envelope would be the thing that breaks it.
+          process.stdout.write(`${JSON.stringify(buildDeclaration(manifest), null, 2)}\n`);
           return;
         }
         const text = await renderGroupedHelp(main, {
@@ -296,14 +313,28 @@ async function runCli(): Promise<void> {
   }
 
   // `--help` / `-h` anywhere → per-command usage for the resolved (sub)command.
-  if (rawArgs.includes("--help") || rawArgs.includes("-h")) {
+  // Only tokens BEFORE `--` can ask for help: after the terminator everything
+  // is data, so `commit -- --help` commits a path named `--help` rather than
+  // printing usage for `commit` (rule A6, and the parser already honours it).
+  const dash = rawArgs.indexOf("--");
+  const optionTokens = dash >= 0 ? rawArgs.slice(0, dash) : rawArgs;
+  if (optionTokens.includes("--help") || optionTokens.includes("-h")) {
     const [cmd, parent] = resolveSubCommand(main, rawArgs);
     if (format === "json") {
       // The MANIFEST entry, not the rendered usage block. An agent asking for
       // help wants the flags as data; rendered usage in a JSON field is the
       // thing Contract 5 forbids, and it would be prose an agent must re-parse.
-      const path = commandPath(cmd, parent);
+      //
+      // At the ROOT, the whole manifest — the same document `help` emits. A
+      // piped `--help` that answered `{name, description}` was a machine
+      // document missing everything a caller came for, which is worse than
+      // prose because it parses (STANDARD.md Part 1 §1).
       const manifest = await buildManifest(main);
+      if (parent === undefined) {
+        emit({ format, command: "help", data: manifest, renderText: () => "" });
+        process.exit(0);
+      }
+      const path = commandPath(cmd, parent);
       const entry = findManifestCommand(manifest.commands, path.split(" "));
       emit({
         format,

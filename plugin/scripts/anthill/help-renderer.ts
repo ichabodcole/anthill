@@ -75,12 +75,27 @@ export async function renderGroupedHelp(
     lines.push("");
   }
 
+  // The universal surface — what the root answers before any verb, plus the
+  // terminator. Read from the same root entry the manifest publishes, so this
+  // list and that one cannot disagree; `--` is not a flag and is named by hand.
+  const cli = manifest.name ?? "anthill";
+  lines.push(bold("OPTIONS"));
+  const optionRows: Array<[string, string]> = manifest.root.flags
+    .filter((x) => x.status === "valid")
+    .map((f) => {
+      const aliases = Array.isArray(f.alias) ? f.alias : f.alias ? [f.alias] : [];
+      const spelled = [...aliases.map((a) => `-${a}`), `--${f.name}`].join(", ");
+      const hint = f.values ? `=<${f.values.join("|")}>` : f.valueHint ? `=<${f.valueHint}>` : "";
+      return [spelled + hint, f.description ?? ""];
+    });
+  optionRows.push(["--", "Ends options; everything after it is data"]);
+  const w = optionRows.reduce((m, r) => Math.max(m, r[0].length), 0);
+  for (const [flag, desc] of optionRows) lines.push(`  ${accent(flag.padEnd(w))}  ${dim(desc)}`);
+  lines.push("");
   lines.push(
     muted(
-      `Run \`<cli> help --json\` for a machine-readable manifest.`.replace(
-        "<cli>",
-        manifest.name ?? "anthill",
-      ),
+      `Piped, every command answers JSON; --format json|text overrides. ` +
+        `Run \`${cli} help --json\` for the manifest, \`${cli} help --declaration\` for an acc v0 declaration.`,
     ),
   );
 
