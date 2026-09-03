@@ -83,6 +83,16 @@ Steps 3–5 may reorder after step 2 — that is the point of doing 1–2 first.
   Two things were deliberately NOT judged here and are flagged for curation: sentinel's Taste & reflexes is 112 lines and
   reads like lessons wearing a reflex's clothes; and `seams.md` is untouched, because cutting a contract to invariant · grain ·
   proof is a judgment. `paper-cuts.md` is retired from the template in the same commit (the plan's step-5 gap).
+- **2026-09-03 · step 6 (before curation) · improvement — Cole's call.** A classification pass was inserted between the
+  extraction and the curation run: seven blind agents (one per report file) inventoried and classified the batch, a fresh
+  eighth merged them. Result in [`taxonomy/pass-1-anthill/`](./taxonomy/pass-1-anthill/README.md): 1,392 items, 63 source
+  classes → 14 unified classes. The point is methodological — curation's first question becomes "what class is this?",
+  and the classes carry a proposed fix shape each. Two findings change what curation should do first: (1) all seven
+  sources independently proposed the same intervention for the largest class (claims that outran evidence, 275 items) — a
+  mechanical pre-send lint on `comms send` / `commit`, keyed on numbers, shas, universals, causal connectives, retractions
+  and relay markers, demanding a command or an explicit "unmeasured" label — and six of seven give the same reason: the
+  authors repeated recorded lessons within the hour, so re-reading does not work; (2) the sources say the remedies are
+  already in the material, recorded once as prose and never built — which is the proposal's own thesis, measured.
 - **2026-09-03 · step 1 · improvement.** The lifted lint core was split into `collectDocsLint` (pure) + `runDocsLint`
   (printing) so the CLI can put the report through its own envelope. Worth upstreaming to agent-cli-conformance; the file
   header says so.
