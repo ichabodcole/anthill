@@ -2,7 +2,7 @@
 
 **Created:** 2026-09-03
 **Related Proposal:** [proposal](./proposal.md)
-**Status:** Active
+**Status:** Completed 2026-09-03 (branch `chore/cli-conformance-run`, `dc1b25d`…) — two rulings pending with Cole, see Open Questions
 
 ---
 
@@ -34,18 +34,18 @@ Those stay; the work is the gap.
 
 **Definition of Done:**
 
-- [ ] A repo-owned census runs in `bun test`: every manifest path _including the root_ is probed
+- [x] A repo-owned census runs in `bun test`: every manifest path _including the root_ is probed
       with an inert unknown flag, the rejection's named set is diffed against the manifest, and
       "named an empty set" and "named nothing" are two distinct states.
-- [ ] Census reports 0 disagreements in either direction, with no pinned exceptions left.
-- [ ] Every rejection names a route forward: flags at leaves, subcommands at group nodes, verbs
+- [x] Census reports 0 disagreements in either direction, with no pinned exceptions left.
+- [x] Every rejection names a route forward: flags at leaves, subcommands at group nodes, verbs
       on an unknown or missing verb, and the root's own interceptors at the root.
-- [ ] `anthill help --declaration` emits an acc v0 declaration (`provenance: emitted`) and
+- [x] `anthill help --declaration` emits an acc v0 declaration (`provenance: emitted`) and
       `bun run acc:census` round-trips it through `acc check --recorded-surfaces --declaration`
-      with 0 disagreements.
-- [ ] Usage errors and internal faults are distinguishable by exit code, and the envelope carries
+      with 0 disagreements. _(24 of 27 paths compared, not 27 — see Divergences #1.)_
+- [x] Usage errors and internal faults are distinguishable by exit code, and the envelope carries
       a stable `kind`.
-- [ ] A contract document beside the code states exit codes, envelope fields, machine-mode
+- [x] A contract document beside the code states exit codes, envelope fields, machine-mode
       precedence and scope, output kind per command (with a test that every command has an entry),
       and the recommendations we decline with reasons.
 
@@ -118,7 +118,7 @@ the generator trap the registry guide names ("the root is not a command").
 - Root rejection enumerates the interceptor registry alongside `--format`.
 - `findSubCommandIndex` consults the **root's** value-taking flags at every level, so
   `anthill info --format json` no longer reads `json` as a verb
-  (`docs/backlog/2026-08-01-group-commands-read-a-flag-value-as-a-subcommand.md`).
+  (`docs/backlog/_archive/2026-08-01-group-commands-read-a-flag-value-as-a-subcommand.md`).
 - A command declaring one named positional refuses surplus positionals instead of dropping them
   (`team use alpha beta` today drops `beta` silently — rule A4's shape).
 
@@ -215,9 +215,9 @@ session doc with the census line verbatim.
 
 - [Proposal](./proposal.md)
 - [agent-failure-surface](../agent-failure-surface/README.md)
-- [Usage errors and bugs share exit 1](../../backlog/2026-08-21-usage-errors-and-bugs-share-exit-1.md)
-- [Group nodes refuse without naming a route](../../backlog/2026-08-26-group-nodes-refuse-without-naming-a-route.md)
-- [Group commands read a flag value as a subcommand](../../backlog/2026-08-01-group-commands-read-a-flag-value-as-a-subcommand.md)
+- [Usage errors and bugs share exit 1](../../backlog/_archive/2026-08-21-usage-errors-and-bugs-share-exit-1.md)
+- [Group nodes refuse without naming a route](../../backlog/_archive/2026-08-26-group-nodes-refuse-without-naming-a-route.md)
+- [Group commands read a flag value as a subcommand](../../backlog/_archive/2026-08-01-group-commands-read-a-flag-value-as-a-subcommand.md)
 
 ---
 
@@ -225,3 +225,29 @@ session doc with the census line verbatim.
 
 _Deviations from this plan as written, classified `gap` / `improvement` / `judgement`, appended as
 they happen._
+
+1. **`gap` — the round trip reads 24 of 27, not 26 of 26.** Phase 6's criterion assumed the kit
+   would read a group node's answer. It does not: the subcommand list arrives in `choices`, the
+   reader sees members that are not flag-shaped, and files the path as `did not enumerate` — the
+   exact trap the group-node backlog item predicted, and one upstream has filed against themselves.
+   Our own census is the authority for group nodes until their reader moves. `0 disagreements` holds.
+2. **`improvement` — `--help` and `--version` are registered root args, not a separate registry.**
+   The plan proposed a `ROOT_INTERCEPTORS` table read by the interceptors, the manifest and the root
+   rejection. Registering them as boolean args on `main` gets all three from the table that already
+   exists, with `-h`/`-v` as aliases. The interceptors still answer first; the args are never parsed
+   on the happy path, and are declared, enumerated and rendered from one place.
+3. **`improvement` — the two `help` interceptors were deleted, not validated.** `help` is a
+   registered command and dispatches through the same strict parser as every verb. What remains at
+   the top of `runCli` is one line: a bare `anthill` becomes `help`.
+4. **`judgement` — Phase 4 was implemented, not deferred.** The exit-1 backlog item called the split
+   "a team call, not a trial-branch call". Cole's instruction on 2026-09-03 was to follow the
+   guidance; the change is on a branch and reversible until it lands. What is his is the release
+   classification, and the commit is marked `feat!` so it cannot land unnoticed.
+5. **`judgement` — positionals left `flags[]`** (proposal defect 2) rather than being duplicated
+   into a new container beside the old. Keeping them in both is the defect wearing a hat; the
+   manifest's shape changed in one release with the rest of it.
+6. **`gap` — an explorer probe spawned a real tmux session.** During the code survey a subagent ran
+   `spawn --attach --format json`, which has no dry run, and created `anthill-dev` with five claude
+   panes. Torn down and the stray `.anthill/comms/anthill-dev.session.json` removed. The acc safety
+   page's first question ("does your tool do work on a plausible-looking argv?") is one anthill
+   answers _yes_ to below the root — which is why the census sends only sentinel flags.

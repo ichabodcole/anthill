@@ -1,5 +1,7 @@
 # A usage error and a bug in anthill leave the process with the same exit code
 
+> **Archived 2026-09-03 — shipped on `chore/cli-conformance-run`, `cacab25` — `CLIError` exits **2**, everything else stays 1, and the envelope carries `kind`/`exitCode`. The contract is now stated in `plugin/scripts/anthill/CONTRACT.md`. Release classification (fix vs `feat!`) is with Cole at land.**
+
 **Added:** 2026-08-21, from a trial of
 [agent-cli-conformance](https://github.com/ichabodcole/agent-cli-conformance) (`acc` 1.0.1)
 against `plugin/scripts/anthill/cli.ts`. Rule **C2**, _"you invoked me wrong" is

@@ -23,16 +23,25 @@ against this CLI. Both are failure-path concerns; the manifest defects found in 
 went to [cli-declared-surface](../cli-declared-surface/proposal.md) instead, because a document an
 agent reads _before_ anything goes wrong is a different surface.
 
-- **[A usage error and a bug share exit 1](../../backlog/2026-08-21-usage-errors-and-bugs-share-exit-1.md)**
+- **[A usage error and a bug share exit 1](../../backlog/_archive/2026-08-21-usage-errors-and-bugs-share-exit-1.md)**
   — the catch block already branches on which it is holding and emits two different envelopes, then
   drops both into the same `process.exit(1)`. Three classes collapse into one code (`CLIError`,
   `ConfigError`, and an unhandled throw), by way of two separate exit sites. Anything reading `$?`
   rather than parsing stderr cannot tell "you typo'd a flag" from "anthill threw". **Retrofitting
   exit codes onto a tool with consumers is the expensive case** — read the item before scoping.
-- **[A group node refuses without naming a route](../../backlog/2026-08-26-group-nodes-refuse-without-naming-a-route.md)**
+- **[A group node refuses without naming a route](../../backlog/_archive/2026-08-26-group-nodes-refuse-without-naming-a-route.md)**
   — every leaf verb names its valid set on an unknown flag; `info`, `comms` and `team` name nothing,
   because a group's own arg table is empty. Same node type as the `--format json` item above, so one
   fix probably covers both.
+
+## Resolved 2026-09-03, on the conformance branch
+
+Three of the items above shipped together in [cli-declared-surface's plan](../cli-declared-surface/plan.md)
+(phases 3–4), because they share `define.ts` and `cli.ts` with the manifest work and could not run
+in parallel with it: **usage errors exit 2** with `kind` on the envelope, **group nodes name their
+subcommands**, and **`info --format json`** is refused by name. What an agent receives on failure is
+now stated once, in `plugin/scripts/anthill/CONTRACT.md`. Still open here: `down`'s envelope
+carrying no structured `because`, and the `next`-as-argv-array debt CONTRACT.md names.
 
 ## The rule the surface is held to
 

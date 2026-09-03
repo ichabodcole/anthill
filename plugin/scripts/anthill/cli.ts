@@ -393,7 +393,7 @@ async function runCli(): Promise<void> {
     // "You invoked me wrong" and "anthill broke" leave by different codes. The
     // envelope already said which; this is the one boundary every non-agent
     // consumer reads — a shell, a CI step, a hook — and until now it collapsed
-    // both into 1 (docs/backlog/2026-08-21-usage-errors-and-bugs-share-exit-1.md).
+    // both into 1 (docs/backlog/_archive/2026-08-21-usage-errors-and-bugs-share-exit-1.md).
     process.exit(err instanceof CLIError ? EXIT_CODE.usage : EXIT_CODE.internal);
   }
 }

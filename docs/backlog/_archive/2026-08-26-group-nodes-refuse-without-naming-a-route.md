@@ -1,5 +1,7 @@
 # A group command refuses an unknown flag while offering no route forward
 
+> **Archived 2026-09-03 — shipped on `chore/cli-conformance-run`, `e3f15d2` — a group node names its subcommands (`This command takes no flags; subcommands: …`) and carries them in `choices`. The empty-set trap held exactly as written: the acc reader files the answer as `did not enumerate` because the members are not flag-shaped, so `bun run acc:census` reads 24 of 27 while our own census reads all 26 + root.**
+
 **Added:** 2026-08-26 · **Found:** while running the declared-versus-accepted census (25 inert
 probes, one per command path) · **Project:**
 [agent-failure-surface](../projects/agent-failure-surface/README.md)

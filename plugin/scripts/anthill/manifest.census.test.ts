@@ -25,7 +25,7 @@ import { buildManifest, type ManifestCommand } from "./manifest.ts";
  * miss. 26 paths, not 25.
  *
  * Three enumeration states, deliberately (the "empty-set trap" in
- * docs/backlog/2026-08-26-group-nodes-refuse-without-naming-a-route.md):
+ * docs/backlog/_archive/2026-08-26-group-nodes-refuse-without-naming-a-route.md):
  *   enumerated       — the rejection named a non-empty set
  *   enumerated-none  — the rejection said, in words, that this node takes no
  *                      flags (and named its subcommands instead)

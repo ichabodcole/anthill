@@ -1,5 +1,7 @@
 # `anthill info --format json` reads the value as a subcommand name
 
+> **Archived 2026-09-03 — shipped on `chore/cli-conformance-run`, `e3f15d2` — the root's value-taking flags count as value-taking at every level, so `anthill info --format json` is refused by name (`--format` is not a flag of `info`; subcommands named) instead of reading `json` as a verb.**
+
 **Added:** 2026-08-01 · **Status:** ready to design · **Seat:** forager (CLI)
 · **Found:** incidentally, while porting the parser-envelope fix · **Project:** agent-failure-surface
 
