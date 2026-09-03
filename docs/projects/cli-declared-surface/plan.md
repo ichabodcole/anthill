@@ -141,8 +141,8 @@ subcommands named; regression tests for each.
 **Validation:** the C2 line in `acc check` reads `usage errors at exit 2`; existing tests that
 assert `exitCode === 1` on usage errors updated to 2, with the internal-fault case pinned at 1.
 
-**Release note:** this changes an observable, never-documented contract. Whether it ships as
-`fix` or `feat!` is Cole's call at land time — recorded in Open Questions.
+**Release note:** this changes an observable, never-documented contract. **Ruled by Cole,
+2026-09-03: a minor bump, not a major** — the commit is `feat(cli):` with no breaking marker.
 
 ### Phase 5: The help surface is one document
 
@@ -204,8 +204,8 @@ session doc with the census line verbatim.
 
 1. **Envelope the bare `help --json`?** Declined for now; `help --format json` is enveloped.
    Needs the external-consumer answer. — **Cole**
-2. **Release classification** of the exit-code split and the manifest shape change (positionals
-   leave `flags[]`). — **Cole, at land**
+2. ~~**Release classification** of the exit-code split and the manifest shape change.~~ **Ruled
+   2026-09-03: minor.** Both ship under `feat`, no `!`.
 3. **Do the shipped skills state the exit-code contract anywhere?** No (grepped). Phase 7 states
    it; whether `join` should point seats at `CONTRACT.md` is a follow-up.
 
@@ -242,7 +242,8 @@ they happen._
 4. **`judgement` — Phase 4 was implemented, not deferred.** The exit-1 backlog item called the split
    "a team call, not a trial-branch call". Cole's instruction on 2026-09-03 was to follow the
    guidance; the change is on a branch and reversible until it lands. What is his is the release
-   classification, and the commit is marked `feat!` so it cannot land unnoticed.
+   classification — and he ruled the same day: **no major bump**. The commit was reworded from
+   `feat(cli)!:` to `feat(cli):` (`cacab25` → `100bb20`) and its `BREAKING:` line softened.
 5. **`judgement` — positionals left `flags[]`** (proposal defect 2) rather than being duplicated
    into a new container beside the old. Keeping them in both is the defect wearing a hat; the
    manifest's shape changed in one release with the rest of it.

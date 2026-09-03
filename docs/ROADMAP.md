@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-09-03 (the CLI-conformance branch is up, two rulings pending — see Next) · 2026-08-08 (spellbook 2.1.0 landed D1.3 — **S13-N's trigger has fired**; **#96–#102 triaged**, and the batch amended a stale "ready to build" card whose fix was wrong)
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-09-03 (the CLI-conformance branch is up, one ruling pending — see Next) · 2026-08-08 (spellbook 2.1.0 landed D1.3 — **S13-N's trigger has fired**; **#96–#102 triaged**, and the batch amended a stale "ready to build" card whose fix was wrong)
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -555,9 +555,9 @@ commits: the manifest-vs-parser census as a commit gate (26 paths incl. root, 0 
 manifest's missing slots (`status`, `positionals`, `values`, the root, `help`), every rejection
 naming its route, **usage errors exit 2** with `kind` on the envelope, one help document, an
 emitted acc v0 declaration + `bun run acc:census`, and `plugin/scripts/anthill/CONTRACT.md`.
-[plan](projects/cli-declared-surface/plan.md). **With Cole:** (1) release classification of the
-exit-code split and the manifest shape change — the commit is `feat!`; (2) whether the bare
-`help --json` manifest is deprecated for the envelope (CONTRACT.md, declined #2).
+[plan](projects/cli-declared-surface/plan.md). **Ruled 2026-09-03:** no major bump — the
+exit-code split ships as `feat`. **Still with Cole:** whether the bare `help --json` manifest is
+deprecated for the envelope (CONTRACT.md, declined #2).
 
 ---
 
