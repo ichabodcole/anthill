@@ -93,6 +93,14 @@ Steps 3–5 may reorder after step 2 — that is the point of doing 1–2 first.
   and relay markers, demanding a command or an explicit "unmeasured" label — and six of seven give the same reason: the
   authors repeated recorded lessons within the hour, so re-reading does not work; (2) the sources say the remedies are
   already in the material, recorded once as prose and never built — which is the proposal's own thesis, measured.
+- **2026-09-03 · step 6 (before curation) · improvement — Cole's call, pass 2.** The same blind protocol on Spellbook (whole
+  seat docs, seams, retro/paper-cuts/principles; 2,006 items → 11 classes) and a comparison that is the first thing to see
+  both. Result: a [common taxonomy of ten classes](./taxonomy/COMPARISON.md) over 3,398 items; eight of the ten are supported
+  by both teams at 10–12 of 14 classifiers. The two one-sided classes are explained by material (identity sections and the
+  contracts file were only in Spellbook's input) and by one real composition difference: Spellbook's seat docs are dominated
+  by product design rulings (234 vs 32) because its high-yield seats build, anthill's do not. One divergence matters for the
+  design: pass 1 proposed routing tool/ritual lessons into `seams.md`; pass 2, the only side that read a seams file, reports
+  that exact routing has already overgrown it — which is the admission-test finding from the proposal, measured a second way.
 - **2026-09-03 · step 1 · improvement.** The lifted lint core was split into `collectDocsLint` (pure) + `runDocsLint`
   (printing) so the CLI can put the report through its own envelope. Worth upstreaming to agent-cli-conformance; the file
   header says so.
