@@ -1,0 +1,9 @@
+{
+  "defaultOutput": "json",
+  "rules": {
+    "D2": {
+      "severity": "off",
+      "reason": "A bare `anthill` answers with the enveloped command manifest (JSON when piped, grouped help at a terminal) so an agent can discover the surface in one call. Deliberate; see the bare-help interceptor in plugin/scripts/anthill/cli.ts."
+    }
+  }
+}
