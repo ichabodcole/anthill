@@ -27,7 +27,12 @@ export const teamScanCommand = defineAnthillCommand({
       valueHint: "dir",
     },
     team: { type: "string", refused: REFUSED_TEAM },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     refuseArg({

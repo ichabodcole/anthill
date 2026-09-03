@@ -176,6 +176,7 @@ export const teamFeedbackCommand = defineAnthillCommand({
       description: `Feedback kind: ${FEEDBACK_CATEGORIES.join("|")} (default: friction)`,
       default: "friction",
       valueHint: FEEDBACK_CATEGORIES.join("|"),
+      values: [...FEEDBACK_CATEGORIES],
     },
     skill: {
       type: "string",
@@ -188,7 +189,12 @@ export const teamFeedbackCommand = defineAnthillCommand({
       default: false,
     },
     team: { type: "string", refused: REFUSED_TEAM },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     refuseArg({

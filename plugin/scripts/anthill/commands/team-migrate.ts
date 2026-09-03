@@ -255,7 +255,12 @@ export const teamMigrateCommand = defineAnthillCommand({
         "Honor a `paths` override even when it just repeats the v1 default (don't consolidate the docs)",
     },
     team: { type: "string", refused: REFUSED_TEAM },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     refuseArg({

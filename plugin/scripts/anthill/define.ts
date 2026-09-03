@@ -35,6 +35,14 @@ interface BaseArgDef<T extends ArgType, VT extends boolean | string> {
   type?: T;
   description?: string;
   valueHint?: string;
+  /** A CLOSED value set the parser ENFORCES: an out-of-set value is a usage
+   * error naming the set. Distinct from `valueHint`, which is a display label
+   * with no semantics — `"text|json"` as a hint and `["text", "json"]` as
+   * `values` look alike and behave oppositely (one refuses, one falls through to
+   * a heuristic at exit 0), and nothing in a hint says which. The manifest
+   * publishes `values` as a constraint and `valueHint` as a label, so an agent
+   * reading it never has to guess. */
+  values?: string[];
   alias?: string | string[];
   default?: VT;
   required?: boolean;
@@ -53,7 +61,10 @@ interface BaseArgDef<T extends ArgType, VT extends boolean | string> {
   refused?: string;
 }
 
-export type BooleanArgDef = Omit<BaseArgDef<"boolean", boolean>, never>;
+/** A boolean has no value to bind, so `values` is not a thing it can carry —
+ * omitted at the type so declaring one is a compile error, not a published
+ * constraint the parser never enforces. */
+export type BooleanArgDef = Omit<BaseArgDef<"boolean", boolean>, "values">;
 export type StringArgDef = BaseArgDef<"string", string>;
 export type PositionalArgDef = Omit<BaseArgDef<"positional", string>, "alias">;
 /**
@@ -178,11 +189,17 @@ export function defineAnthillCommand<const T extends ArgsDef = ArgsDef>(
 // Runner.
 // ---------------------------------------------------------------------------
 
-/** Signals a usage error — the dispatcher renders usage + this message, exit 1. */
+/** Signals a usage error — the dispatcher renders usage + this message, exit 2
+ * (`EXIT_CODE.usage`; CONTRACT.md). */
 export class CLIError extends Error {
-  constructor(message: string) {
+  /** The valid alternatives the message names, as data — so the envelope can
+   * carry them structurally and nothing has to re-parse the prose. `null` when
+   * the rejection offered no set. */
+  readonly choices: string[] | null;
+  constructor(message: string, options: { choices?: string[] | null } = {}) {
     super(message);
     this.name = "CLIError";
+    this.choices = options.choices ?? null;
   }
 }
 
@@ -200,6 +217,9 @@ function toArray(v: string | string[] | undefined): string[] {
 export function parseArgs<T extends ArgsDef = ArgsDef>(
   rawArgs: string[],
   argsDef: T,
+  /** The node's subcommands, so a rejection at a GROUP node — one with no flags
+   * of its own — can name the route forward instead of nothing. */
+  context: { subcommands?: string[] } = {},
 ): ParsedArgs<T> {
   const options: Record<string, { type: "string" | "boolean"; short?: string }> = {};
   const defaults: Record<string, unknown> = {};
@@ -208,6 +228,7 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
   const positionals: Array<{ name: string; def: PositionalArgDef }> = [];
   const freeForm: string[] = [];
   const refused = new Set<string>();
+  const closedSets = new Map<string, string[]>();
 
   for (const [name, def] of Object.entries(argsDef)) {
     if (def.type === "positional") {
@@ -230,7 +251,44 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
     if (short) opt.short = short;
     options[name] = opt;
     if (def.default !== undefined) defaults[name] = def.default;
+    const values = (def as { values?: string[] }).values;
+    if (values !== undefined) closedSets.set(name, values);
   }
+  for (const { name, def } of positionals) {
+    if (def.values !== undefined) closedSets.set(name, def.values);
+  }
+
+  /** The advertised set, as the rejection names it: every long name that is
+   * not refused, plus its short alias — so `-h` is discoverable from the same
+   * line as `--help`, and a declaration listing both compares clean. */
+  const validSet = (): string[] =>
+    Object.entries(options)
+      .filter(([n]) => !refused.has(n))
+      .sort(([a], [b]) => a.localeCompare(b))
+      .flatMap(([n, o]) => (o.short ? [`--${n}`, `-${o.short}`] : [`--${n}`]));
+
+  /** The route forward, as a sentence: the flags this node accepts, or — at a
+   * group node that accepts none — the subcommands it holds. A rejection that
+   * names nothing is not a design choice, it is an omission: a group is the one
+   * node where the useful answer is sitting right there in the command table,
+   * and the caller is paying a model round-trip to go and find it. Naming the
+   * set is upstream's recommendation (STANDARD.md, "a group node that refuses a
+   * flag should name its subcommands"); a pointer to --help is the answer it
+   * declines. */
+  const routeForward = (): string => {
+    const valid = validSet();
+    const subs = context.subcommands ?? [];
+    if (valid.length > 0) return `. Valid flags: ${valid.join(", ")}`;
+    if (subs.length > 0) return `. This command takes no flags; subcommands: ${subs.join(", ")}`;
+    return "";
+  };
+  /** The same set, as data for the envelope's `choices`. */
+  const routeChoices = (): string[] | null => {
+    const valid = validSet();
+    if (valid.length > 0) return valid;
+    const subs = context.subcommands ?? [];
+    return subs.length > 0 ? subs : null;
+  };
 
   // Short alias → long name, so a dash-leading VALUE can be re-attached below.
   const shortToName = new Map<string, string>();
@@ -262,7 +320,17 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
       break;
     }
     if (arg.startsWith("--no-")) {
-      negated.add(arg.slice(5));
+      // Only a DECLARED boolean can be negated. `--no-anything` used to be
+      // stripped and recorded without a check, so `help --no-bogus` ran at
+      // exit 0 and `--no-format` wrote `false` into a string flag — under the
+      // closed-set check, which reads only strings. Review found both.
+      const name = arg.slice(5);
+      if (!booleans.has(name)) {
+        throw new CLIError(`Unknown option '${arg}'${routeForward()}`, {
+          choices: routeChoices(),
+        });
+      }
+      negated.add(name);
       continue;
     }
     // A VALUE beginning with `-` is not a flag. Under `strict: true` node reads
@@ -310,10 +378,6 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
     ) {
       // Refused args are registered so they don't read as "unknown", but they are
       // NOT valid to pass — advertising one would offer a flag we reject.
-      const valid = Object.keys(options)
-        .filter((n) => !refused.has(n))
-        .sort()
-        .map((n) => `--${n}`);
       const detail =
         err instanceof Error
           ? err.message.replace(/\s*To specify.*$/s, "").replace(/\.\s*$/, "")
@@ -331,11 +395,9 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
       const hint = dashValue
         ? `. If "${dashValue}" was meant as a VALUE rather than flags, ${escapes.join(" ")}`
         : "";
-      throw new CLIError(
-        `${detail.trim() || "invalid option"}${
-          valid.length > 0 ? `. Valid flags: ${valid.join(", ")}` : ""
-        }${hint}`,
-      );
+      throw new CLIError(`${detail.trim() || "invalid option"}${routeForward()}${hint}`, {
+        choices: routeChoices(),
+      });
     }
     parsed = { values: {}, positionals: processed };
   }
@@ -361,15 +423,11 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
   // because the other half of the criterion (does the body read `ctx.args._`?)
   // is invisible from here.
   if (positionals.length === 0 && freeForm.length === 0 && parsed.positionals.length > 0) {
-    const valid = Object.keys(options)
-      .filter((n) => !refused.has(n))
-      .sort()
-      .map((n) => `--${n}`);
     const got = parsed.positionals.map((p) => `"${p}"`).join(", ");
     throw new CLIError(
-      `this command takes no positional arguments, but got ${got}` +
-        (valid.length > 0 ? `. Valid flags: ${valid.join(", ")}` : "") +
-        `. If you meant a VALUE, it belongs to one of those flags`,
+      `this command takes no positional arguments, but got ${got}${routeForward()}` +
+        (validSet().length > 0 ? `. If you meant a VALUE, it belongs to one of those flags` : ""),
+      { choices: routeChoices() },
     );
   }
 
@@ -384,6 +442,35 @@ export function parseArgs<T extends ArgsDef = ArgsDef>(
       throw new CLIError(`Missing required positional argument: ${name.toUpperCase()}`);
     } else {
       out[name] = def.default;
+    }
+  }
+  // The SAME rule one positional further along: a command declaring one named
+  // positional dropped every token after it in silence — `team use alpha beta`
+  // switched to `alpha` and never mentioned `beta`. Free-form commands declare
+  // themselves (`type: "positionals"`) and are exempt above; everyone else is
+  // held to the count they declared.
+  if (freeForm.length === 0 && pending.length > 0) {
+    const got = pending.map((p) => `"${p}"`).join(", ");
+    const declared = positionals.map((p) => p.name.toUpperCase()).join(" ");
+    throw new CLIError(
+      `unexpected positional argument(s) ${got}: this command takes exactly ${
+        positionals.length === 1 ? "one argument" : `${positionals.length} arguments`
+      }, ${declared}${routeForward()}`,
+      { choices: routeChoices() },
+    );
+  }
+
+  // A declared closed set BINDS. `--format nonsense` used to fall through to
+  // the TTY heuristic at exit 0 — the value was read, judged unknown, and the
+  // command ran anyway with a default it never said it was using. That is the
+  // silent-fallback shape `strict: true` exists to prevent, one token further
+  // in: the flag was known, its value was not, and nothing said so.
+  for (const [name, values] of closedSets) {
+    const got = out[name];
+    if (typeof got === "string" && !values.includes(got)) {
+      throw new CLIError(`--${name} must be one of: ${values.join(", ")} (got "${got}")`, {
+        choices: values,
+      });
     }
   }
 
@@ -406,17 +493,41 @@ function isValueFlag(flag: string, argsDef: ArgsDef): boolean {
  * dispatches `status`). Returns -1 if none.
  */
 function findSubCommandIndex(rawArgs: string[], argsDef: ArgsDef): number {
+  // `anthill info --format json` read `json` as a verb, because the group's
+  // own table is empty and the search only consulted that. `--format` is
+  // contractually global — every shipped instruction passes it anywhere — so
+  // the ROOT's value-taking flags count as value-taking at every level.
   for (let i = 0; i < rawArgs.length; i++) {
     const arg = rawArgs[i];
     if (arg === undefined) continue;
     if (arg === "--") return -1;
     if (arg.startsWith("-")) {
-      if (!arg.includes("=") && isValueFlag(arg, argsDef)) i++;
+      if (!arg.includes("=") && (isValueFlag(arg, argsDef) || isValueFlag(arg, ROOT_ARGS))) i++;
       continue;
     }
     return i;
   }
   return -1;
+}
+
+/**
+ * The root's arg table, captured on the first `runCommand` / `resolveSubCommand`
+ * call so `findSubCommandIndex` can consult it below the root. Module state,
+ * set once per process: the CLI has one root, and threading it through every
+ * recursive call would add a parameter to every caller for one lookup.
+ */
+let ROOT_ARGS: ArgsDef = {};
+
+function verbsOf(subCommands: Record<string, AnyCommand>): string[] {
+  return Object.entries(subCommands)
+    .filter(([, s]) => !s.meta?.hidden)
+    .map(([n]) => n)
+    .sort();
+}
+
+function nameTheVerbs(subCommands: Record<string, AnyCommand>): string {
+  const names = verbsOf(subCommands);
+  return names.length > 0 ? `. Valid commands: ${names.join(", ")}` : "";
 }
 
 /**
@@ -428,6 +539,7 @@ export function resolveSubCommand(
   rawArgs: string[],
   parent?: AnyCommand,
 ): [AnyCommand, AnyCommand?] {
+  if (parent === undefined) ROOT_ARGS = cmd.args ?? {};
   const subCommands = cmd.subCommands;
   if (subCommands && Object.keys(subCommands).length > 0) {
     const idx = findSubCommandIndex(rawArgs, cmd.args ?? {});
@@ -443,15 +555,23 @@ export function resolveSubCommand(
  * else parse args and invoke `run(ctx)`. Throws {@link CLIError} on an unknown
  * or missing command.
  */
-export async function runCommand(cmd: AnyCommand, rawArgs: string[]): Promise<void> {
+export async function runCommand(cmd: AnyCommand, rawArgs: string[], depth = 0): Promise<void> {
+  if (depth === 0) ROOT_ARGS = cmd.args ?? {};
   const argsDef = cmd.args ?? {};
   const subCommands = cmd.subCommands;
+  const context = subCommands ? { subcommands: Object.keys(subCommands).sort() } : {};
   if (subCommands && Object.keys(subCommands).length > 0) {
     const idx = findSubCommandIndex(rawArgs, argsDef);
     const name = idx >= 0 ? rawArgs[idx] : undefined;
     if (name) {
       const sub = subCommands[name];
-      if (!sub) throw new CLIError(`Unknown command ${name}`);
+      // An unknown verb names the verbs it could have been — the same
+      // just-in-time slice of the surface an unknown flag already gets.
+      if (!sub) {
+        throw new CLIError(`Unknown command ${name}${nameTheVerbs(subCommands)}`, {
+          choices: verbsOf(subCommands),
+        });
+      }
       // Validate the tokens BEFORE the subcommand against this level's spec.
       // They were previously dropped on the floor: only `rawArgs.slice(idx + 1)`
       // was ever parsed, so `anthill --nope status` exited 0 with `ok:true`.
@@ -462,8 +582,8 @@ export async function runCommand(cmd: AnyCommand, rawArgs: string[]): Promise<vo
       //
       // Reuses the same strict parser rather than a second, laxer check, so a
       // flag is judged by one rule wherever it appears.
-      parseArgs(rawArgs.slice(0, idx), argsDef);
-      await runCommand(sub, rawArgs.slice(idx + 1));
+      parseArgs(rawArgs.slice(0, idx), argsDef, context);
+      await runCommand(sub, rawArgs.slice(idx + 1), depth + 1);
       return;
     }
     if (typeof cmd.run !== "function") {
@@ -479,8 +599,10 @@ export async function runCommand(cmd: AnyCommand, rawArgs: string[]): Promise<vo
       // subcommand at all was the one position still unparsed. Uses the same
       // strict parser as those, so a flag is judged by one rule wherever it
       // appears — including where it appears alone.
-      parseArgs(rawArgs, argsDef);
-      throw new CLIError("No command specified.");
+      parseArgs(rawArgs, argsDef, context);
+      throw new CLIError(`No command specified${nameTheVerbs(subCommands)}`, {
+        choices: verbsOf(subCommands),
+      });
     }
   }
   if (typeof cmd.run === "function") {

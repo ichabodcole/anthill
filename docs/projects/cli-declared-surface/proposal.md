@@ -1,6 +1,6 @@
 # The declared surface — make anthill's manifest describe the CLI it actually has
 
-**Status:** Draft
+**Status:** Active — scope widened to the full standard on 2026-09-03; [plan.md](./plan.md) is the scope of record
 **Created:** 2026-08-26
 **Author:** Cole + Claude Code (unconvened session — no seat)
 **Origin:** three sessions running

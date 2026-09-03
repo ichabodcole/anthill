@@ -48,3 +48,4 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # whole plugin tree to traverse — `bun test` went 22 files -> 44 the moment it landed.
 docs/projects/team-comms-spike/beta-channel/plugin
 .anthill/current-team
+.acc-census/

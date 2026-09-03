@@ -1,6 +1,6 @@
 # Roadmap — what we're working on, in what order
 
-**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-08-08 (spellbook 2.1.0 landed D1.3 — **S13-N's trigger has fired**; **#96–#102 triaged**, and the batch amended a stale "ready to build" card whose fix was wrong)
+**Status:** Active · **Owner:** Cole + lead · **Updated:** 2026-09-03 (the CLI-conformance branch is up and ready to land — see Next) · 2026-08-08 (spellbook 2.1.0 landed D1.3 — **S13-N's trigger has fired**; **#96–#102 triaged**, and the batch amended a stale "ready to build" card whose fix was wrong)
 
 The single prioritized view over everything queued in briefs, projects, investigations, reports,
 and backlog. A **router, not a manual** — one line and a pointer each; the linked doc is the
@@ -546,6 +546,18 @@ state, not a defect queue to drain.
    **bare `anthill` in emitted strings** (4 sites; resolves through PATH to the highest cached
    release, so a string a seat runs verbatim can execute on a different binary than composed it).
    Plus four smaller. [backlog](backlog/2026-08-10-post-multi-team-defect-sweep.md).
+
+---
+
+**Not numbered on purpose (see the warning above) — 🟡 ON A BRANCH, AWAITING TWO RULINGS.**
+_Added 2026-09-03._ **The CLI follows the acc standard** — `chore/cli-conformance-run`, seven
+commits: the manifest-vs-parser census as a commit gate (26 paths incl. root, 0 disagreements), the
+manifest's missing slots (`status`, `positionals`, `values`, the root, `help`), every rejection
+naming its route, **usage errors exit 2** with `kind` on the envelope, one help document, an
+emitted acc v0 declaration + `bun run acc:census`, and `plugin/scripts/anthill/CONTRACT.md`.
+[plan](projects/cli-declared-surface/plan.md). **Ruled 2026-09-03:** no major bump — the
+exit-code split ships as `feat`. Also ruled: `help --json` is enveloped — nothing outside
+parsed the bare form. **Nothing pending; ready to land.**
 
 ---
 

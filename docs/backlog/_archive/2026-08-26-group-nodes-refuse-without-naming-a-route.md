@@ -1,8 +1,10 @@
 # A group command refuses an unknown flag while offering no route forward
 
+> **Archived 2026-09-03 — shipped on `chore/cli-conformance-run`, `e3f15d2` — a group node names its subcommands (`This command takes no flags; subcommands: …`) and carries them in `choices`. The empty-set trap held exactly as written: the acc reader files the answer as `did not enumerate` because the members are not flag-shaped, so `bun run acc:census` reads 24 of 27 while our own census reads all 26 + root.**
+
 **Added:** 2026-08-26 · **Found:** while running the declared-versus-accepted census (25 inert
 probes, one per command path) · **Project:**
-[agent-failure-surface](../projects/agent-failure-surface/README.md)
+[agent-failure-surface](../../projects/agent-failure-surface/README.md)
 **Extracted from** the census backlog item so it lives with the failure-path work rather than with
 the manifest work — it is the same code path as
 [`anthill info --format json` reads the value as a subcommand](2026-08-01-group-commands-read-a-flag-value-as-a-subcommand.md).
@@ -91,6 +93,6 @@ Two consequences for us:
 1. **Fixing this by emitting an empty set would look identical to not fixing it**, in their
    instrument, until their sweep lands. The fix that is visible today is naming the **subcommands**.
 2. **Our in-house census must not inherit the bug.** When we build the extractor
-   ([cli-declared-surface](../projects/cli-declared-surface/proposal.md)), "named an empty set" and
+   ([cli-declared-surface](../../projects/cli-declared-surface/proposal.md)), "named an empty set" and
    "named nothing" must be two states, not one — or our own gate reproduces the defect on the one
    node type this item is about.

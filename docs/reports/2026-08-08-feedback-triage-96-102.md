@@ -610,7 +610,7 @@ it is a decision the report presents as free.
   — **SHIPPED** (`e03ec52`, 2026-08-03). It fixed the _channel_: parser errors now emit `{ok,…}`.
   **#102 is strictly downstream** — the JSON envelope in #102's own transcript _is_ that fix working.
   That card was about rendering; this is about classification.
-- [`2026-08-01-group-commands-read-a-flag-value-as-a-subcommand`](../backlog/2026-08-01-group-commands-read-a-flag-value-as-a-subcommand.md)
+- [`2026-08-01-group-commands-read-a-flag-value-as-a-subcommand`](../backlog/_archive/2026-08-01-group-commands-read-a-flag-value-as-a-subcommand.md)
   — **OPEN, same family, opposite direction.** That one: a flag's **value** read as a **subcommand
   name**. This one: a positional **value** read as a **flag name**. Different code paths; neither fix
   implies the other. (`feedback` is a leaf, not a group, so the dispatch bug cannot reach it.)

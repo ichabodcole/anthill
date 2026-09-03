@@ -151,7 +151,7 @@ describe("parser errors emit the agent envelope (piped, NO --format flag)", () =
     test(`${label} → a single-line {ok:false} envelope on stderr`, () => {
       const { stdout, stderr, exitCode } = run(argv);
 
-      expect(exitCode).toBe(1);
+      expect(exitCode).toBe(2);
       // stdout must stay clean so an agent parsing only stdout gets an empty
       // parse — the RIGHT failure — rather than a wall of usage prose.
       expect(stdout).toBe("");
@@ -264,7 +264,7 @@ describe("THE INVARIANT: the format decision does not depend on where the error 
 describe("--format text is unchanged — a usage block is the right answer for a human", () => {
   test("a parser error still renders usage plus the message", () => {
     const { stdout, stderr, exitCode } = run(["comms", "read", "--nope", "--format", "text"]);
-    expect(exitCode).toBe(1);
+    expect(exitCode).toBe(2);
     expect(stdout).toBe("");
     expect(stderr).toMatch(/USAGE/);
     expect(stderr).toMatch(/Unknown option '--nope'/);
@@ -359,14 +359,16 @@ describe("M3 — the help/usage interceptors honour the format verdict", () => {
     expect(Array.isArray(env.data.commands)).toBe(true);
   });
 
-  test("CONTROL: `help --json` keeps emitting the BARE manifest", () => {
-    // A shipped contract with existing consumers. Two spellings, two shapes,
-    // both honoured — the defect was one being silently ignored, not both
-    // existing. If this ever starts returning an envelope, that is a break.
+  test("`help --json` is the enveloped manifest — one shape, same as piped `help`", () => {
+    // Until 2026-09-03 this asserted the OPPOSITE: a bare document, guarded as
+    // "a shipped contract with existing consumers". Cole confirmed nothing
+    // outside this repo parses it, so the one machine document that did not
+    // speak the envelope now does (STANDARD.md, DT-9).
     const out = JSON.parse(run(["help", "--json"]).stdout);
-    expect(out.ok).toBeUndefined();
-    expect(out.name).toBe("anthill");
-    expect(Array.isArray(out.commands)).toBe(true);
+    expect(out.ok).toBe(true);
+    expect(out.data.name).toBe("anthill");
+    expect(Array.isArray(out.data.commands)).toBe(true);
+    expect(out).toEqual(JSON.parse(run(["help", "--format", "json"]).stdout));
   });
 });
 
@@ -376,7 +378,7 @@ describe("M5 — a flag BEFORE the subcommand is parsed, not dropped on the floo
     // parsed, so `strict: true`'s whole promise was void in this position. A
     // typo is as likely before the subcommand as after it; only one was checked.
     const { stderr, exitCode } = run(["--nope", "status"]);
-    expect(exitCode).toBe(1);
+    expect(exitCode).toBe(2);
     const env = JSON.parse(stderr);
     expect(env.ok).toBe(false);
     expect(env.error).toMatch(/--nope/);
@@ -397,7 +399,7 @@ describe("M5 — a flag BEFORE the subcommand is parsed, not dropped on the floo
     // black-box conformance kit at the root; the two positions above were
     // covered and this one was not.
     const { stdout, stderr, exitCode } = run(["--nope"]);
-    expect(exitCode).toBe(1);
+    expect(exitCode).toBe(2);
     expect(stdout).toBe("");
     const env = JSON.parse(stderr);
     expect(env.ok).toBe(false);
@@ -410,7 +412,7 @@ describe("M5 — a flag BEFORE the subcommand is parsed, not dropped on the floo
     // root, so this argv is well-formed and still names no command — the
     // pre-existing diagnostic is the right one and must survive the fix.
     const { stderr, exitCode } = run(["--format", "json"]);
-    expect(exitCode).toBe(1);
+    expect(exitCode).toBe(2);
     expect(JSON.parse(stderr).error).toMatch(/No command specified/);
   });
 
@@ -419,5 +421,60 @@ describe("M5 — a flag BEFORE the subcommand is parsed, not dropped on the floo
     // validation — only unknown flags are.
     const { exitCode } = run(["--format", "json", "status"]);
     expect(exitCode).toBe(0);
+  });
+});
+
+describe("the error envelope carries WHY as data — kind, exitCode, choices", () => {
+  test("a usage error: kind usage, exit 2, and the valid set as `choices`", () => {
+    const { stderr, exitCode } = run(["status", "--nope"]);
+    expect(exitCode).toBe(2);
+    const env = JSON.parse(stderr);
+    expect(env.kind).toBe("usage");
+    expect(env.exitCode).toBe(2);
+    expect(env.retryable).toBe(false);
+    // The set the prose names, as data — nothing has to re-parse the message.
+    expect(env.choices).toEqual(["--channel", "--format", "--team"]);
+  });
+
+  test("an unknown verb offers the verbs; a refused flag offers nothing (null, not [])", () => {
+    const verb = JSON.parse(run(["comms", "bogus"]).stderr);
+    expect(verb.kind).toBe("usage");
+    expect(verb.choices).toEqual(["follow", "positions", "read", "send", "stand-down"]);
+    const refused = JSON.parse(run(["info", "show", "--team", "x"]).stderr);
+    expect(refused.kind).toBe("usage");
+    expect(refused.exitCode).toBe(2);
+    // `null` is the positive statement that no set was offered — held apart
+    // from `[]`, which would claim a set that exists and is empty.
+    expect(refused.choices).toBeNull();
+  });
+
+  test("the exit code and the envelope's exitCode are one fact", () => {
+    for (const argv of [["status", "--nope"], ["bogus"], ["info", "show", "--team", "x"]]) {
+      const { stderr, exitCode } = run(argv);
+      expect(JSON.parse(stderr).exitCode).toBe(exitCode);
+    }
+  });
+});
+
+describe("review fixes — a request is never silently dropped", () => {
+  test("`--version <verb>` is refused, not run with the flag discarded", () => {
+    // `version` became a registered root arg; the pre-verb parse then ACCEPTED
+    // it and `status` ran at exit 0. On develop this was refused by name.
+    const { stdout, stderr, exitCode } = run(["--version", "status"]);
+    expect(exitCode).toBe(2);
+    expect(stdout).toBe("");
+    const env = JSON.parse(stderr);
+    expect(env.kind).toBe("usage");
+    expect(env.error).toMatch(/answered alone/);
+  });
+
+  test("`help <command>` answers that command's entry, as `<command> --help` does", () => {
+    const viaHelp = JSON.parse(run(["help", "status"]).stdout);
+    const viaFlag = JSON.parse(run(["status", "--help"]).stdout);
+    expect(viaHelp.ok).toBe(true);
+    expect(viaHelp.data).toEqual(viaFlag.data);
+    const bogus = JSON.parse(run(["help", "bogus"]).stderr);
+    expect(bogus.kind).toBe("usage");
+    expect(bogus.choices).toContain("status");
   });
 });

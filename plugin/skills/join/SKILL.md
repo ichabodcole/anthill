@@ -149,22 +149,23 @@ status`** shows who's on + the board.
        **A rotated session mints fresh positions and removes this**, but rotation destroys nothing and
        reaches a team only once one actually runs for it — **so until then this is live, and "the tool
        will handle it" is a claim about a world your team may not be in yet.**
-     - **⚠ AN UNKNOWN FLAG AND AN UNKNOWN POSITIONAL ARE BOTH REFUSED BY NAME. What is NOT refused
-       is an unrecognised flag VALUE.** Re-measured on this wire 2026-08-23, three commands apart:
+     - **⚠ AN UNKNOWN FLAG, AN UNKNOWN POSITIONAL AND AN OUT-OF-SET VALUE ARE ALL REFUSED BY
+       NAME, at exit 2 with `kind: "usage"`.** Re-measured 2026-09-03 (the exit code and the value
+       check both changed that day — the contract is `plugin/scripts/anthill/CONTRACT.md`):
        ```
-       comms read --channel <ch> --zzz999   ->  exit 1  ok:false  "Unknown option '--zzz999'.
+       comms read --channel <ch> --zzz999   ->  exit 2  ok:false  "Unknown option '--zzz999'.
                                                           Valid flags: --channel, --format, --id, --last, --since, --team"
-       comms read --channel <ch> zzz999     ->  exit 1  ok:false  "this command takes no positional
+       comms read --channel <ch> zzz999     ->  exit 2  ok:false  "this command takes no positional
                                                           arguments, but got "zzz999". … If you meant a
                                                           VALUE, it belongs to one of those flags"
-       anthill status --format josn         ->  exit 0  ok:true   AND THE FORMAT SILENTLY IGNORED
+       anthill status --format josn         ->  exit 2  ok:false  "--format must be one of: text, json (got \"josn\")"
        ```
-       **The third one is the live hazard, and it is environment-dependent**: an unrecognised
-       `--format` value falls through to the same detection used when you pass no flag at all, so
-       `--format josn` yields JSON on a pipe and text at a terminal. It does not fail. **It succeeds,
-       plausibly, having ignored what you asked for**, and which wrong answer you get depends on where
-       you are running. It is pinned by a test (`agent-layer.test.ts`) that exists to fail when someone
-       fixes it, so treat it as live until that test tells you otherwise.
+       **The third one used to be the live hazard** — until 2026-09-03 an unrecognised `--format`
+       value fell through to the TTY heuristic and _succeeded_ with an environment-dependent wrong
+       answer. Every flag that declares a closed set (`--format`, `--category`, `--scope`) now refuses
+       an out-of-set value at the parser, and the manifest publishes the set as `values`. What is
+       still not checked is the _meaning_ of a free-form value: a handle not in the roster, an id that
+       matches nothing. Those are refused by the command, `kind: "failed"`, exit 1.
        - **Use the FLAGS, and check the VALUE came back the way you meant it**: `--since <id>` for a
          window, `--id <id>` for exactly one message. If a read hands you far more than you expected,
          **suspect your invocation before you suspect the channel** — the size of the result is your
@@ -328,12 +329,12 @@ status`** shows who's on + the board.
   — the only way to learn it is to break it, measured at n=2 in one session. **And a POINTER to the
   card, published on that same channel, is not delivery either:** a seat obeying the rule cannot reach
   it, which is why the board is where you look first.
-- ◻ **Used the FLAGS, and checked the VALUE was honoured.** Re-measured 2026-08-23: an unknown
-  **flag** and an unknown **positional** are now both refused by name at exit 1. What still passes
-  silently is an unrecognised flag **VALUE** — `--format josn` exits 0, `ok:true`, and falls through
-  to the same detection used when you pass nothing, so it yields JSON on a pipe and text at a
-  terminal. **It succeeds, having ignored what you asked for**, and the wrong answer it gives depends
-  on where you are running. If a read hands you far more than you expected, or in a shape you did not
+- ◻ **Used the FLAGS, and checked the VALUE was honoured.** Re-measured 2026-09-03: an unknown
+  **flag**, an unknown **positional** and an out-of-set **value** (`--format josn`) are all refused by
+  name at **exit 2**, `kind: "usage"`, with the valid set in `choices`. _(Until 2026-09-03 the value
+  case passed silently at exit 0 — it fell through to the TTY heuristic — and the other two exited 1;
+  a seat that learned those numbers should unlearn them.)_ A flag whose value is free-form is still
+  not checked for meaning. If a read hands you far more than you expected, or in a shape you did not
   ask for, suspect your invocation before you suspect the channel.
 - ◻ **Confirmed the backfill was COMPLETE, not merely successful.** Send it to a **file** and **parse
   the file** — not through a pipe, not straight into your context. **A payload that does not parse is

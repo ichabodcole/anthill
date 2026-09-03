@@ -11,7 +11,7 @@
  *
  * ---
  *
- * Wires the root command and installs interceptors for `help --json` (machine
+ * Wires the root command and installs interceptors for `help` (machine
  * manifest), bare `<cli>` / `<cli> help` (grouped human help), `--version`, and
  * `--help` (per-command usage) BEFORE the arg dispatcher.
  *
@@ -20,7 +20,7 @@
  */
 
 import { fileURLToPath } from "node:url";
-import { emit, emitError, resolveFormat } from "./agent-layer.ts";
+import { EXIT_CODE, emit, emitError, emittingCli, resolveFormat } from "./agent-layer.ts";
 import { infoCommand } from "./commands/info.ts";
 import { teamAttachCommand } from "./commands/team-attach.ts";
 import { teamCommitCommand } from "./commands/team-commit.ts";
@@ -44,7 +44,12 @@ import {
   runCommand,
 } from "./define.ts";
 import { renderCommandUsage, renderGroupedHelp } from "./help-renderer.ts";
-import { buildManifest, type ManifestCommand, type ScopeLabel } from "./manifest.ts";
+import {
+  buildDeclaration,
+  buildManifest,
+  type ManifestCommand,
+  type ScopeLabel,
+} from "./manifest.ts";
 
 // Exported so sibling modules (e.g. `commands/team-feedback.ts`) can read
 // `main.meta.version` — the release-please-tracked CLI version. The top-level
@@ -61,9 +66,102 @@ export const main: AnyCommand = defineCommand({
       type: "string",
       description: "Output format",
       valueHint: "text|json",
+      values: ["text", "json"],
     },
+    // The universal surface, REGISTERED rather than known only to the
+    // interceptors below. `--help` and `--version` are answered before dispatch
+    // and never reach the parser on the happy path; they are declared here so
+    // that the one table the manifest walks, the root rejection enumerates and
+    // usage renders is the same table that says they exist. Undeclared, they
+    // were "present but undeclared — the entire universal surface" (DT-6): a
+    // caller holding the manifest could not rediscover the door it came through.
+    help: { type: "boolean", alias: "h", description: "Show usage for a command" },
+    version: { type: "boolean", alias: "v", description: "Print the CLI version and source" },
   },
   subCommands: {
+    // `help` is intercepted before dispatch (below) — it is registered here so
+    // the manifest DECLARES the verb that produces it and `Unknown command`
+    // names it. The run body is reachable only if the interceptor is removed,
+    // and does the same thing.
+    help: defineCommand({
+      meta: {
+        name: "help",
+        description: "Show grouped help, or the machine-readable manifest",
+        scope: "workspace",
+      },
+      args: {
+        command: {
+          type: "positional",
+          description: "A command to show usage for (same as `<command> --help`)",
+          required: false,
+          valueHint: "name",
+        },
+        json: { type: "boolean", description: "Shorthand for --format json" },
+        declaration: {
+          type: "boolean",
+          description:
+            "Emit the interface as an acc v0 declaration (agent-cli-conformance), for `acc check --declaration`",
+        },
+        scope: {
+          type: "string",
+          description: "Limit grouped help to one scope",
+          valueHint: "workspace|app",
+          values: ["workspace", "app"],
+        },
+        format: {
+          type: "string",
+          description: "Output format",
+          valueHint: "text|json",
+          values: ["text", "json"],
+        },
+      },
+      async run(ctx) {
+        const manifest = await buildManifest(main);
+        const wanted = ctx.args.command as string | undefined;
+        if (wanted !== undefined) {
+          // `help status` — grouped help used to answer this (the interceptor
+          // ignored the token); routing it through the parser made it a
+          // surplus-positional error with no route to `status --help`. Honour
+          // it the way `--help` does: the command's usage, or its manifest entry.
+          const [cmd, parent] = resolveSubCommand(main, [wanted]);
+          if (parent === undefined) {
+            throw new CLIError(`Unknown command ${wanted}${nameVerbs(manifest)}`, {
+              choices: manifest.commands.map((c) => c.name),
+            });
+          }
+          const path = commandPath(cmd, parent);
+          const entry = findManifestCommand(manifest.commands, path.split(" "));
+          emit({
+            format: ctx.args.json ? "json" : resolveFormat(ctx.args.format as string | undefined),
+            command: path,
+            data: entry ?? { name: cmd.meta?.name ?? "", description: cmd.meta?.description ?? "" },
+            renderText: () => renderCommandUsage(cmd, parent),
+          });
+          return;
+        }
+        // `--json` used to emit the manifest BARE — the one machine document in
+        // the CLI that did not speak the envelope, kept that way as "a shipped
+        // contract". Cole confirmed 2026-09-03 that nothing outside parses it,
+        // so it is now what its name says: the enveloped spelling, same as a
+        // piped `help`. One shape everywhere.
+        if (ctx.args.declaration) {
+          // A bare document too, and for the same reason as `--json`: it is
+          // consumed by a reader with a fixed schema that refuses unknown keys,
+          // so the envelope would be the thing that breaks it.
+          process.stdout.write(`${JSON.stringify(buildDeclaration(manifest), null, 2)}\n`);
+          return;
+        }
+        const text = await renderGroupedHelp(main, {
+          scope: ctx.args.scope as ScopeLabel | undefined,
+        });
+        emit({
+          format: ctx.args.json ? "json" : resolveFormat(ctx.args.format as string | undefined),
+          command: "help",
+          data: manifest,
+          renderText: () => text,
+        });
+      },
+    }),
     info: infoCommand,
     convene: teamConveneCommand,
     join: teamJoinCommand,
@@ -183,6 +281,10 @@ function withoutFormat(rawArgs: string[]): string[] {
 async function runCli(): Promise<void> {
   const argv = process.argv;
   const rawArgs = argv.slice(2);
+  // Only tokens BEFORE `--` can ask for help or the version: after the
+  // terminator everything is data (rule A6; the parser already honours it).
+  const dash = rawArgs.indexOf("--");
+  const optionTokens = dash >= 0 ? rawArgs.slice(0, dash) : rawArgs;
 
   // The help/usage interceptors run BEFORE arg dispatch, so they never saw
   // `ctx.args.format` and wrote prose to stdout under `--format json` — the same
@@ -190,46 +292,43 @@ async function runCli(): Promise<void> {
   // once, here, from the same sniffer + the same `resolveFormat`.
   const format = resolveFormat(sniffFormatValue(rawArgs));
 
-  // Intercept `<cli> help --json` BEFORE the grouped-help interceptor. Ordering
-  // matters: the bare-help check below also matches `argv[2] === "help"`, so if
-  // you flip these the JSON manifest path will never be reached.
+  // `help` is a REGISTERED command (see `main.subCommands.help`), dispatched like
+  // any other verb, so its flags are parsed by the same strict parser that
+  // judges every other command: `help --nope` is refused by name, `--scope`
+  // binds to its declared value set, and the manifest declares the door it
+  // came through. It used to be two interceptors here that read argv by hand —
+  // which is how `help --anything` answered with grouped help at exit 0, and
+  // how `help` went missing from the manifest it emits.
   //
-  // `--json` keeps emitting the BARE manifest, pretty-printed. That is a shipped
-  // contract with existing consumers, so it is deliberately NOT enveloped;
-  // `--format json` below is the enveloped spelling. Two spellings, two shapes,
-  // both honoured — the defect was one being silently ignored, not both existing.
-  if (argv[2] === "help" && argv.includes("--json")) {
-    const manifest = await buildManifest(main);
-    process.stdout.write(`${JSON.stringify(manifest, null, 2)}\n`);
-    process.exit(0);
-  }
-
-  // Intercept bare `<cli>` and `<cli> help` for grouped human help.
-  //
-  // These interceptors bypass arg dispatch entirely, so any NEW root flag you add
-  // later (e.g. `--verbose`) will not affect help output unless you also parse it
-  // here.
-  if (argv.length === 2 || argv[2] === "help") {
-    const i = argv.indexOf("--scope");
-    const scope = i >= 0 ? (argv[i + 1] as ScopeLabel | undefined) : undefined;
-    if (format === "json") {
-      emit({
-        format,
-        command: "help",
-        data: await buildManifest(main),
-        renderText: () => "",
-      });
-      process.exit(0);
-    }
-    process.stdout.write(`${await renderGroupedHelp(main, { scope })}\n`);
-    process.exit(0);
-  }
+  // A bare `<cli>` is the one thing still decided here: no arguments means
+  // grouped help. Deliberate, and declined against the upstream default that a
+  // bare invocation is a usage error — see `acc.config.json` (D2) and
+  // CONTRACT.md. Piped, it is the enveloped manifest an agent discovers from.
+  if (rawArgs.length === 0) rawArgs.push("help");
 
   // `--version` / `-v` (root only, matching the old citty builtin). Matched
   // against argv with `--format` stripped: `--version --format json` is one
   // intent, and the un-stripped length check silently failed to match it, so an
   // agent asking for the version as JSON fell through to the dispatcher.
   const versionArgs = withoutFormat(rawArgs);
+  const asksVersion = optionTokens.includes("--version") || optionTokens.includes("-v");
+  if (asksVersion && versionArgs.length !== 1) {
+    // `--version status` used to be refused by name; once `version` became a
+    // registered root arg the pre-verb parse accepted it, and `status` ran at
+    // exit 0 with the flag discarded — a request silently dropped, the exact
+    // shape the strict parser exists to prevent. Review caught it. Refuse it
+    // here, where the interceptor already knows what `--version` means.
+    emitError({
+      format,
+      command: "version",
+      kind: "usage",
+      error: `\`--version\` is answered alone and takes no other arguments (got ${versionArgs
+        .filter((t) => t !== "--version" && t !== "-v")
+        .map((t) => `"${t}"`)
+        .join(", ")}). Run \`${emittingCli()} --version\` by itself`,
+    });
+    process.exit(EXIT_CODE.usage);
+  }
   if (versionArgs.length === 1 && (versionArgs[0] === "--version" || versionArgs[0] === "-v")) {
     const version = main.meta?.version ?? "";
     // `source` — WHICH cli.ts is answering, not just what it calls itself.
@@ -265,14 +364,26 @@ async function runCli(): Promise<void> {
   }
 
   // `--help` / `-h` anywhere → per-command usage for the resolved (sub)command.
-  if (rawArgs.includes("--help") || rawArgs.includes("-h")) {
+  // Only tokens BEFORE `--` can ask for help: after the terminator everything
+  // is data, so `commit -- --help` commits a path named `--help` rather than
+  // printing usage for `commit` (rule A6, and the parser already honours it).
+  if (optionTokens.includes("--help") || optionTokens.includes("-h")) {
     const [cmd, parent] = resolveSubCommand(main, rawArgs);
     if (format === "json") {
       // The MANIFEST entry, not the rendered usage block. An agent asking for
       // help wants the flags as data; rendered usage in a JSON field is the
       // thing Contract 5 forbids, and it would be prose an agent must re-parse.
-      const path = commandPath(cmd, parent);
+      //
+      // At the ROOT, the whole manifest — the same document `help` emits. A
+      // piped `--help` that answered `{name, description}` was a machine
+      // document missing everything a caller came for, which is worse than
+      // prose because it parses (STANDARD.md Part 1 §1).
       const manifest = await buildManifest(main);
+      if (parent === undefined) {
+        emit({ format, command: "help", data: manifest, renderText: () => "" });
+        process.exit(0);
+      }
+      const path = commandPath(cmd, parent);
       const entry = findManifestCommand(manifest.commands, path.split(" "));
       emit({
         format,
@@ -310,19 +421,34 @@ async function runCli(): Promise<void> {
       // Rendered usage NEVER enters a JSON field — not truncated, not escaped, not
       // under a `usage` key. `err.message` already names what was wrong and the
       // valid flag set, which is what an agent needs to self-correct.
-      emitError({ format, command: commandPath(cmd, parent), error: err.message });
+      emitError({
+        format,
+        command: commandPath(cmd, parent),
+        kind: "usage",
+        choices: err.choices,
+        error: err.message,
+      });
     } else {
       // An unexpected throw is a BUG, so the stack is the most valuable thing in
       // the process — carried on `meta` rather than flattened away.
       emitError({
         format,
         command: commandPath(cmd, parent),
+        kind: "internal",
         error: err instanceof Error ? err.message : String(err),
         stack: err instanceof Error ? err.stack : undefined,
       });
     }
-    process.exit(1);
+    // "You invoked me wrong" and "anthill broke" leave by different codes. The
+    // envelope already said which; this is the one boundary every non-agent
+    // consumer reads — a shell, a CI step, a hook — and until now it collapsed
+    // both into 1 (docs/backlog/_archive/2026-08-21-usage-errors-and-bugs-share-exit-1.md).
+    process.exit(err instanceof CLIError ? EXIT_CODE.usage : EXIT_CODE.internal);
   }
+}
+
+function nameVerbs(manifest: { commands: Array<{ name: string }> }): string {
+  return `. Valid commands: ${manifest.commands.map((c) => c.name).join(", ")}`;
 }
 
 // NOT top-level `await` on purpose: a sibling command reads `main.meta.version`

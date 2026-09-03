@@ -109,7 +109,12 @@ export const teamAttachCommand = defineAnthillCommand({
       description: "Which configured team (default: resolved from the pin / sole team)",
       valueHint: "name",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     const started = nowMillis();

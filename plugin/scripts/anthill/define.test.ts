@@ -64,9 +64,21 @@ describe("parseArgs — the shapes strict mode must NOT break", () => {
     const a = parseArgs(["seatname"], SPEC);
     expect(a.handle).toBe("seatname");
     expect(a._).toEqual(["seatname"]);
-    const b = parseArgs(["-m", "msg", "--", "a.txt", "b.txt"], SPEC);
+    const b = parseArgs(["-m", "msg", "--", "a.txt"], SPEC);
     expect(b.message).toBe("msg");
-    expect(b._).toEqual(["a.txt", "b.txt"]);
+    expect(b._).toEqual(["a.txt"]);
+    // Free-form commands declare it, and then `--` carries everything through.
+    const FREE = { message: SPEC.message, paths: { type: "positionals" as const } };
+    const c = parseArgs(["-m", "msg", "--", "a.txt", "b.txt"], FREE);
+    expect(c.paths).toEqual(["a.txt", "b.txt"]);
+  });
+
+  test("a SURPLUS positional after the declared one is refused, not dropped", () => {
+    // `team use alpha beta` switched to `alpha` and never mentioned `beta`. The
+    // same rule that refuses a positional on a command declaring none now holds
+    // a command to the count it declared.
+    expect(() => parseArgs(["alpha", "beta"], SPEC)).toThrow(/"beta"/);
+    expect(() => parseArgs(["alpha", "beta"], SPEC)).toThrow(/exactly one argument, HANDLE/);
   });
 
   test("a path that merely LOOKS flag-ish is safe after `--`", () => {
@@ -269,5 +281,22 @@ describe("t-7bc57308 — an unrecognised POSITIONAL is refused, not swallowed", 
       parseArgs(["x"], FREE_FORM)._.join(","),
     ];
     expect(outcomes).toEqual(["refused", "x", "x"]);
+  });
+});
+
+describe("`--no-<flag>` negates only a DECLARED boolean", () => {
+  // Review found `--no-anything` was stripped and recorded without a check:
+  // `help --no-bogus` ran at exit 0, and `--no-format` wrote `false` into a
+  // STRING flag — underneath the closed-set check, which reads only strings.
+  test("a declared boolean negates", () => {
+    expect(parseArgs(["--no-force"], SPEC).force).toBe(false);
+  });
+  test("an undeclared name is refused by name, with the valid set", () => {
+    expect(() => parseArgs(["--no-bogus"], SPEC)).toThrow(/--no-bogus/);
+    expect(() => parseArgs(["--no-bogus"], SPEC)).toThrow(/Valid flags:/);
+  });
+  test("negating a STRING flag is refused — it cannot slip under a closed set", () => {
+    const CLOSED = { format: { type: "string" as const, values: ["text", "json"] } };
+    expect(() => parseArgs(["--no-format"], CLOSED)).toThrow(/--no-format/);
   });
 });

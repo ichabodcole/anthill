@@ -358,7 +358,12 @@ export const teamInitCommand = defineAnthillCommand({
       description: "Render only this configured team (default: every configured team)",
       valueHint: "name",
     },
-    format: { type: "string", description: "Output format", valueHint: "text|json" },
+    format: {
+      type: "string",
+      description: "Output format",
+      valueHint: "text|json",
+      values: ["text", "json"],
+    },
   },
   async run(ctx) {
     const started = nowMillis();
