@@ -355,8 +355,7 @@ once the human has steered you to one seating, treat it as the ratified roster a
   unstamped config reads as the legacy v1 (`.team/` + `docs/team/`) layout. Write it to
   `<repo-root>/.anthill/config.json`.
 - **Render:** run **`anthill init`**. It reads the config and deterministically renders `.anthill/`
-  (the SOP, `principles.md` — **empty by design**, `paper-cuts.md`, `seams.md`, the roster
-  `dev/README.md`, one
+  (the SOP, `principles.md` — **empty by design**, `seams.md`, the roster `dev/README.md`, one
   `dev/<handle>.md` per seat, `reports/README.md` — the shape of the per-session report every seat
   writes instead of editing its seat doc — and the team **wiki** — `wiki/SCHEMA.md`, `wiki/index.md`, one
   `wiki/touchpoints/<event>.md` per lifecycle touch point, shipped as anthill's suggestions for the

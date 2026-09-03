@@ -70,7 +70,7 @@ export interface RenderPlan {
  * answer, not the template folder's. So map every relPath through the config's
  * resolvers instead of joining it onto `teamDir`:
  *
- *   README.md, principles.md, paper-cuts.md, reports/…, wiki/…  ->  <teamDir>/…
+ *   README.md, principles.md, reports/…, wiki/…  ->  <teamDir>/…
  *   dev/README.md, dev/<handle>.md                     ->  seatDirPath()
  *   dev/seams.md                                       ->  seamsPath()
  *

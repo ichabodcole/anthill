@@ -150,7 +150,7 @@ working-tree changes. You land them together in step 5.
 
 The CLI **moves** content; it never **merges** it. For the **v1 → v2** _relocation_ that's the whole
 story — a pure relocate (`git mv` preserves every byte), so nothing needs merging: the seat docs,
-`seams.md`, and paper-cuts arrive intact under `.anthill/`.
+`seams.md`, and any `paper-cuts.md` the team kept arrive intact under `.anthill/`.
 
 **But relocation is not the only thing an upgrade owes the team, and this step runs even when there
 was no migration at all.**
@@ -211,7 +211,7 @@ TEAMDIR=.anthill   # ← `paths.teamDir` in .anthill/config.json, if this repo o
 diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" "$TEAMDIR/README.md"
 ```
 
-Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
+Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `reports/README.md`, the wiki's draft pages,
 `principles.md`. _(`retro.md` was retired 2026-09-03 — see the note below.)_
 
 > **Named correction to look for (2026-08-10) — `principles.md`, and it is a CORRECTION, not an
@@ -220,7 +220,7 @@ Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `p
 > that fence either got "command not found" or — worse, and silently — the optional global launcher's
 > highest CACHED release, which need not be the one this project runs. It is now the resolved
 > `bun "${CLAUDE_PLUGIN_ROOT}/…" field-notes` form. **The same release added the shorthand legend to
-> `principles.md`, `paper-cuts.md`, `dev/README.md` and the shipped field notes** — every emitted doc
+> `principles.md`, `dev/README.md`, `reports/README.md`, the wiki and the shipped field notes** — every emitted doc
 > that uses `anthill <command>` in prose now says, in its own text, that the shorthand is not a
 > binary. A team seeded before this carries the fence and none of the legends.
 >

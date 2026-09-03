@@ -1,3 +1,9 @@
+# paper-cuts — migration report (moved from `.anthill/paper-cuts.md` @ `f73f033`, 2026-09-03)
+
+**Why this file is here.** anthill-evolution retired `paper-cuts.md` as a durable team doc: it was the team's tooling-friction log, and it accumulated the way every append-only shared file does. Its contents are **unchanged below** and are part of the first report batch for `anthill:curate` — what in here is a carry-forward, a principle, a wiki-page edit, tooling, or a drop is curation's call, not this move's.
+
+---
+
 # Team Paper-Cuts — friction log → fix candidates
 
 A running log of friction the team hits in its **tooling, docs, skills, and CLIs** during real

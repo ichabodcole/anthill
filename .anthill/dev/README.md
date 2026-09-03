@@ -1,7 +1,9 @@
 # dev — the development team
 
-The team that builds this project. Each seat keeps its own living doc (`<handle>.md`); shared
-inter-seat truth lives once in [`seams.md`](./seams.md). How the whole system works: the SOP,
+The team that builds this project. Each seat has a seat doc (`<handle>.md`) — **identity only**: who
+it is and what it owns; shared inter-seat truth lives once in [`seams.md`](./seams.md). Both are
+**curated**: nobody edits them during a session. What a seat learns goes in its session report
+(`../reports/`), and `anthill:curate` decides what comes back. How the whole system works: the SOP,
 [`../README.md`](../README.md). Task state on the bounty board; the team's message wire is
 `anthill comms` (the seat-aware log) on the `anthill-dev` channel.
 
@@ -32,7 +34,7 @@ inter-seat truth lives once in [`seams.md`](./seams.md). How the whole system wo
 - **Verification is dynamic** — the verify seat engages at verification points (early/mid/late), not
   only at the end, and ping-pongs with the owning seat until green. See the SOP.
 
-This roster is a **hypothesis**, not law — the finalize **structure reflection** can split, merge, or
-re-scope a seat when the work says so. Re-run `anthill init` after a reshape to render any new seat
+This roster is a **hypothesis**, not law — a lead report's carry-forward can say the shape did not
+fit, and curation can split, merge, or re-scope a seat when the reports say so. Re-run `anthill init` after a reshape to render any new seat
 docs (existing docs are never clobbered). **`init` does not rewrite this roster table** — when a seat
 is added / renamed / re-scoped, the lead updates the row above by hand.

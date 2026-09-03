@@ -148,7 +148,7 @@ describe("templateDestination (the template tree's `dev/` is layout, not a path)
   };
 
   it("puts team-level docs under teamDir", () => {
-    for (const rel of ["README.md", "principles.md", "paper-cuts.md"]) {
+    for (const rel of ["README.md", "principles.md"]) {
       expect(templateDestination(rel, PATHS)).toBe(join(PATHS.teamDir, rel));
     }
   });
@@ -173,7 +173,6 @@ describe("templateDestination (the template tree's `dev/` is layout, not a path)
     for (const rel of [
       "README.md",
       "principles.md",
-      "paper-cuts.md",
       "dev/README.md",
       "dev/seams.md",
       "dev/loom.md",
