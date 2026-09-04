@@ -101,6 +101,15 @@ Steps 3–5 may reorder after step 2 — that is the point of doing 1–2 first.
   by product design rulings (234 vs 32) because its high-yield seats build, anthill's do not. One divergence matters for the
   design: pass 1 proposed routing tool/ritual lessons into `seams.md`; pass 2, the only side that read a seams file, reports
   that exact routing has already overgrown it — which is the admission-test finding from the proposal, measured a second way.
+- **2026-09-04 · scope · judgement — Cole's call.** The taxonomy's route-first interventions (C1 send/land-time claims
+  lint, C2 no-green-without-a-red, C6 the ledger) are **not built on this branch.** They are what curation is expected to
+  produce, and building them here would pre-empt the loop the branch exists to validate; the branch is also already wide.
+  Each is recorded as a candidate backlog item that cites the taxonomy evidence and states what must be measured before
+  design: [C1](../../backlog/2026-09-04-claims-outran-evidence-send-time-lint.md),
+  [C2](../../backlog/2026-09-04-instruments-that-could-not-fail-positive-control-gate.md),
+  [C6](../../backlog/2026-09-04-reflective-machinery-ledger.md) (C6 names the 2026-08-04 lesson-fired item as its
+  predecessor). Exception kept: anything the curation loop itself needs in order to run stays in scope. The first of the
+  three to ship should be framed as the first thing curation produced — that is the cleanest test of the design.
 - **2026-09-03 · step 1 · improvement.** The lifted lint core was split into `collectDocsLint` (pure) + `runDocsLint`
   (printing) so the CLI can put the report through its own envelope. Worth upstreaming to agent-cli-conformance; the file
   header says so.
