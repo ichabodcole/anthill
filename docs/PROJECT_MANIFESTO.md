@@ -1,6 +1,6 @@
 # Project Manifesto
 
-**Last Updated:** 2026-08-08 — the product anchor, the human's role and decision rights, the
+**Last Updated:** 2026-09-05 — the stigmergy principle revised for the report-and-curate mechanism, and the three homes updated. Prior revision 2026-08-08 — the product anchor, the human's role and decision rights, the
 intersection principle, and the human-observability direction. Prior revision 2026-07-03.
 
 ---
@@ -11,7 +11,7 @@ anthill is a portable **team-OS** for agentic development — a Claude Code plug
 a multi-agent development team into _any_ project. The model is **ephemeral agents working in
 durable seats**: roles persist, the agents filling them come and go, and each departing agent
 leaves its context behind as a trail for the next. The name is the thesis: agents are ants, and
-the living docs are the pheromone trail.
+the durable docs are the trail, reinforced by curation rather than by the agent that left them.
 
 ## Who Is It For?
 
@@ -69,11 +69,21 @@ with what makes sense."_
 
 ## Core Principles
 
-- **Stigmergy — docs as pheromone.** Living docs are not documentation; they are the trail the
-  next ephemeral agent follows. Curation means strengthening load-bearing trails and letting
-  unimportant ones fade.
-- **Running capture → curated synthesis.** Agents keep a cheap running session scratch as they
-  work; _finalize_ is where those notes are articulated into durable form for future agents.
+- **Stigmergy: deposit, then reinforce or decay, by different actors.** The durable docs are the
+  trail the next ephemeral agent follows. In the ant model no individual decides which trail gets
+  stronger. Each ant deposits; reinforcement comes from aggregate use, and unused trails evaporate.
+  The first version of anthill asked each agent to be both the depositor and the judge of its own
+  trail: a seat wrote lessons into its own doc at finalize. Measured across two teams, that produced
+  docs the next agent read and did not act on, written for a reader who shared the author's context.
+  The mechanism was wrong. The idea holds, and the revision fits it more closely. **Deposit** is the
+  session report: each seat writes what happened, in full, without deciding what matters.
+  **Reinforcement and decay** are curation: an actor outside the session, a fresh agent with the
+  human ruling, reads the reports and decides what enters a durable doc and what fades. Two
+  consequences follow. Decay is the default and reinforcement is the exception; a curation run that
+  adds more than it removes has drifted. And the reinforcement signal is repetition across reports,
+  not one report's emphasis. One mention is a deposit. The same thing across several reports is a
+  trail getting stronger, and that is what earns a change to a doc, a skill, or a tool. (Revised
+  2026-09-05.)
 - **The anthill adapts to the work.** App, process, _and team_ structure are mutable in service
   of the work. Persistent friction — toe-stepping, a seam that won't hold, an overloaded or idle
   seat — is a signal to reshape, not to endure.
@@ -88,8 +98,9 @@ with what makes sense."_
   **constant across every team in the project**; a team shape that leaves no lineage **cannot be
   attributed after the fact.** The principle above says structure adapts to the work — this one says
   **adaptation without an instrument is just churn.**
-- **Three homes for knowledge.** Taste → the seat's living doc; truth → `seams.md` (single-source
-  contracts, never restated); proof → tests.
+- **Three homes for knowledge.** Role → the seat doc (a job description: what the seat does and
+  owns); truth → `seams.md` (single-source contracts, never restated); proof → tests. Method → the
+  team wiki, one page per lifecycle touch point. Everything else is a report until curation moves it.
 - **The team's value is the INTERSECTION, not the headcount.** _"Where you get the really interesting
   dynamics is where there's teammates intersecting with each other, correcting each other. This
   doesn't happen when you have a single agent."_ Cold reads and self-checks approximate it; they do
