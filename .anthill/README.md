@@ -19,7 +19,7 @@ A bare `anthill` works only if the optional global launcher is installed, and th
 
 The team is ephemeral agents in durable seats.
 A seat persists across sessions. The agent filling it does not.
-Each seat has a committed seat doc that states its identity. The next agent in that seat grounds from it.
+Each seat has a committed seat doc that states its role and what it owns. The next agent in that seat grounds from it.
 
 Three rules follow:
 
