@@ -25,9 +25,9 @@ The next agent to take this seat re-grounds from here.
 > Hard-wrapped prose gets reflowed — and a wrapped continuation line can be mangled into a stray list item, corrupting the trail.
 > One sentence per line makes a reflow a no-op.
 
-## Who I am
+## Role
 
-_One or two lines: this seat's reason to exist and the mindset it brings._
+_One to three imperative lines: what this seat does._
 _(From config scope: "{{scope}}".)_
 
 ## Scope
@@ -46,8 +46,8 @@ _(Boundaries that two seats must agree on are **seams** — put those in `seams.
 _Who this seat works with and how: which seats it hands off to, which it depends on, where the ping-pong happens._
 _(A Mermaid diagram of the owned scope + its edges is encouraged when the relationships are clearer drawn than told — optional.)_
 
-## Taste & reflexes
+## Practices
 
-_The opinions and instincts this seat brings — the "how we do it here" that isn't written in code._
+_The defaults this seat applies — the "how we do it here" that isn't written in code._
 _Defaults and preferences, a few lines each; not procedures._
 _(A procedure that has proven itself is a wiki page or a skill, not a reflex.)_

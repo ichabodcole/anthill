@@ -30,7 +30,7 @@ Test for mechanism versus argument: if the sentence were false, would the reader
 Two special cases of "fact" that are easy to misclassify as argument. Keep both.
 
 - **A distinction between two things that could be confused.** "`null` is not zero." "A departure record is administrative, not terminal." State it as a distinction. If the source says why the distinction must not be collapsed, cut the why.
-- **Identity in a role document.** "I am the lead's capacity, not the team's auditor." A role's self-definition is a fact about the role. Keep it, in the first person, as what the role does. Not as a title for the role.
+- **Identity in a role document.** What the role does and what it owns. Keep it, written as a job description: imperatives for what the role does ("Verify the team's work"), declaratives for what it owns ("This seat owns no code slice"). Not first person, and not a title for the role. A persona invites epithets and self-description. A job description has neither.
 
 ## What to remove, by class
 
@@ -104,7 +104,7 @@ A word can be both a house term and an origin-story marker. "Scar" names the evi
 - Every sentence has a subject and a verb.
 - A sentence stands on its own. If a sentence can only be understood by reading the one after it, rewrite or cut it.
 - Instructions to the reader are imperative: "Run the gate." "Do not pipe it."
-- Facts, definitions, and identity statements are declarative. A first-person document keeps its first person for these: "I do not design." Do not convert identity statements to imperatives. Do not convert instructions to first person.
+- Facts and definitions are declarative. A role document is written as a job description, not in the first person: "Do not design" and "This seat owns the verdict", not "I do not design". Refer to the role by its name when a subject is needed.
 - Literal vocabulary. The plain word for the thing. The same word every time.
 - No em-dashes, anywhere in body prose. Not between clauses, not around an appositive, not before a list. Use a full stop, a comma, a colon, or parentheses. An em-dash in a heading that other documents link to, or in a header block tooling reads, stays.
 - No semicolons joining clauses. A set of parallel short clauses becomes a list, or one sentence with commas and "and".

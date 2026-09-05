@@ -206,13 +206,7 @@ describe("the bundled template set", () => {
     // red test, not a judgment call at finalize.
     const src = readFileSync(join(bundled, "dev", "{{handle}}.md"), "utf8");
     const headings = [...src.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
-    expect(headings).toEqual([
-      "Who I am",
-      "Scope",
-      "Boundaries",
-      "Relationships",
-      "Taste & reflexes",
-    ]);
+    expect(headings).toEqual(["Role", "Scope", "Boundaries", "Relationships", "Practices"]);
     for (const retired of ["Epitaph", "Hard-won lessons", "Anti-patterns", "Candidates"]) {
       expect(src, `retired section "${retired}" is back`).not.toMatch(
         new RegExp(`^#+ ${retired}`, "m"),

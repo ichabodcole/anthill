@@ -41,8 +41,8 @@ finalize.
 
 3. **Triage — one proposal per item, then the human rules.** Walk the reports item by item. For each,
    propose a destination and one sentence of why:
-   - **seat doc** — only if it changes who this seat _is_ or what it _owns_ (Who I am · Scope ·
-     Boundaries · Relationships · Taste & reflexes). A lesson is not a seat-doc change.
+   - **seat doc** — only if it changes who this seat _is_ or what it _owns_ (Role · Scope ·
+     Boundaries · Relationships · Practices). A lesson is not a seat-doc change.
    - **seam** — shared truth two seats rely on that drifts if restated; a data shape, an invariant, a
      protocol. Invariant · ratified grain · proof. A lesson dressed as a contract is the commonest
      way `seams.md` grows into a diary; refuse it.

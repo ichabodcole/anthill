@@ -33,7 +33,7 @@ Three rules follow:
 They change at `anthill:curate`, from the reports, by an agent that was not in the session, with the human ruling.
 `anthill commit` refuses them on an attributed commit unless `--curated` is passed.
 
-- Seat doc, `dev/<handle>.md`: who the seat is and what it owns. Five sections: Who I am, Scope, Boundaries, Relationships, Taste & reflexes. No lessons, no session log.
+- Seat doc, `dev/<handle>.md`: what the seat does and what it owns, as a job description. Five sections: Role, Scope, Boundaries, Relationships, Practices.
 - `dev/seams.md`: the contracts between seats, each stated once and owned by one seat. Seat docs point at it. They do not restate it.
 - `principles.md`: rules about how work goes wrong. Read at convene and at join.
 - `wiki/`: one page per lifecycle touch point (convene, join, plan, work, finalize, curate). The skills are the triggers; the pages are the method. Linted by `anthill wiki lint`.

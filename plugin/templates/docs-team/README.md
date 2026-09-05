@@ -53,8 +53,8 @@ the next instance follows**.
 `anthill:curate`, from the reports, by an agent who was not in the session, with the human ruling.
 `anthill commit` refuses them on an attributed commit without `--curated`.
 
-- **Identity → the seat doc** (`dev/<handle>.md`) — who this seat is and what it owns: Who I am ·
-  Scope · Boundaries · Relationships · Taste & reflexes. **Five sections, readable whole.** No lessons,
+- **Identity → the seat doc** (`dev/<handle>.md`) — who this seat is and what it owns: Role ·
+  Scope · Boundaries · Relationships · Practices. **Five sections, readable whole.** No lessons,
   no scars, no session log — those were tried here and did not change what the next agent did.
 - **Truth → `dev/seams.md`** — the contracts _between_ seats, stated **once**, owned by the
   authoritative seat: invariant · ratified grain · proof. Seat docs **point** at it, never restate it.
