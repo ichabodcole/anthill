@@ -23,8 +23,8 @@ One page per lifecycle event, in the order they fire.
 
 - [Convene](./touchpoints/convene.md) — The lead grounds, gathers the work, stands up
   coordination, and spawns the seats this phase needs.
-- [Join](./touchpoints/join.md) — A seat re-grounds in its role, mints its scratch and its
-  report, and gets on the wire.
+- [Join](./touchpoints/join.md) — An agent takes a seat, reads the grounding docs, creates the
+  scratch file and the session report, and joins the channel and the board.
 - [Plan](./touchpoints/plan.md) — The lead's skeleton plus each owning seat ratifying the seams
   it touches, before anyone drafts.
 - [Work](./touchpoints/work.md) — Building against ratified seams, capturing into the report as

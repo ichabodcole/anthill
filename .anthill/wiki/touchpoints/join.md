@@ -1,7 +1,7 @@
 ---
 type: touchpoint
 title: Join
-description: A seat re-grounds in its role, mints its scratch and its report, and gets on the wire.
+description: An agent takes a seat, reads the grounding docs, creates the scratch file and the session report, and joins the channel and the board.
 tags: [lifecycle, join]
 related: [touchpoint/work, touchpoint/finalize]
 status: draft
@@ -12,18 +12,17 @@ generated: { by: anthill, at: 2026-09-03 }
 
 ## What this touch point is
 
-Fires once per seat per session, run by the seat, via `anthill:join <handle>`. The skill prints
-the manifest with every path resolved and reads this page.
+Fires once per seat per session, run by the agent taking the seat, via `anthill:join <handle>`.
+The skill prints the manifest with every path resolved and reads this page.
 
-**What it must read, in order:** the project's grounding docs, `principles.md`, `seams.md`,
-then your own seat doc (five sections, identity only). Defer to `principles.md` and `seams.md`.
-Never restate them.
+**Read, in order:** the project's grounding docs, `principles.md`, `seams.md`, then the seat doc
+(five sections). Defer to `principles.md` and `seams.md`. Do not restate them.
 
-**What it must produce:** your scratch file and your session report, both minted empty, and
-your presence on the channel and the board.
+**Produce:** the scratch file and the session report, both created empty, and the seat's presence
+on the channel and the board.
 
-**What it must not do:** edit your seat doc, `seams.md`, `principles.md`, or this wiki. Those
-are curated. If any of them is incorrect or needs to change, write that as the first line of your report.
+**Do not edit** the seat doc, `seams.md`, `principles.md`, or this wiki. If any of them is
+incorrect or needs to change, write that as the first line of the session report.
 
 ## How this team does it
 
@@ -34,7 +33,7 @@ curation, then set the page `stable`.
 
 - **The seat doc is short.** It states the role and what the seat owns. Read it and start.
 - **Take the current state from the manifest and the board, not from the wire.** The wire's
-  history replays every session, so a bare read shows you the past. Take the current state from the manifest and the board. Do not
-  infer it from the first message you see.
-- **Thin docs may mean the wrong team.** A wrong team binding looks like amnesia. Check which
-  team you are on before concluding the docs are empty.
+  history replays every session, so a bare read shows the past. Do not infer the current state
+  from the first message on the wire.
+- **Thin docs may mean the wrong team.** A wrong team binding looks like empty docs. Check which
+  team the seat is on before concluding the docs are empty.
