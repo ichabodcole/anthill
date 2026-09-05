@@ -1,40 +1,33 @@
 # dev — the development team
 
-The team that builds this project. Each seat has a seat doc (`<handle>.md`) — **identity only**: who
-it is and what it owns; shared inter-seat truth lives once in [`seams.md`](./seams.md). Both are
-**curated**: nobody edits them during a session. What a seat learns goes in its session report
-(`../reports/`), and `anthill:curate` decides what comes back. How the whole system works: the SOP,
-[`../README.md`](../README.md). Task state on the bounty board; the team's message wire is
-`anthill comms` (the seat-aware log) on the `anthill-dev` channel.
+The team that builds this project.
+Each seat has a seat doc, `<handle>.md`, that states its identity: who it is and what it owns.
+Contracts between seats are in [`seams.md`](./seams.md), stated once.
+Both are curated. Nobody edits them during a session.
+What a seat learns goes in its session report under `../reports/`. `anthill:curate` decides what comes back.
+The SOP is [`../README.md`](../README.md).
 
-> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
-> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
-> resolved — **`${CLAUDE_PLUGIN_ROOT}` is only set while a plugin skill is running**, so
-> outside one, take the resolved command from `anthill:join` rather than retyping this.
+`anthill <command>` is shorthand. See the SOP for the real invocation.
 
 ## Roster
 
-| Handle | Role | Scope |
-| --- | --- | --- |
-| maestro | lead | orchestration, the file-scoped atomic land, human liaison |
-| forager | hands (CLI/engine) | plugin/scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, the comms wire, and their tests |
-| weaver | brain (skills/methodology) | plugin/skills/ (the bootstrap/convene/join/plan/finalize/upgrade lifecycle skills + the methodology) + plugin/templates/ (scaffold + archetypes) |
-| sentinel | verify | cross-cutting verification — the quality gate (typecheck/biome/bun test), fresh-context cold-reads, and real-repo/consumer validation |
-| steward | support (the lead's capacity) | errands the lead would otherwise stop to do — go find out whether X is true, read this and return the decision, hold context. Verifies premises as a by-product, never product code. Disposition: trust but check, including and especially the lead. |
-| scout | research (how the team works) | observes the session and reports on how the team actually behaves — grounded in the tree, not the wire. Never rules, assigns, or corrects mid-session; full participant after it ends. Reports to the lead AND the human. |
+| Handle   | Role                          | Scope                                                                                                                                                                                 |
+| -------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| maestro  | lead                          | orchestration, the file-scoped atomic land, human liaison                                                                                                                             |
+| forager  | hands (CLI/engine)            | plugin/scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, the comms wire, and their tests                                                                  |
+| weaver   | brain (skills/methodology)    | plugin/skills/ (the lifecycle skills and the methodology) and plugin/templates/ (scaffold and archetypes)                                                                              |
+| sentinel | verify                        | cross-cutting verification: the quality gate (typecheck, biome, bun test), fresh-context cold reads, and real-repo validation                                                          |
+| steward  | support (the lead's capacity) | errands the lead would otherwise stop to do: find out whether X is true, read this and return the decision, hold context. Verifies premises, never product code. Checks the lead too. |
+| scout    | research (how the team works) | observes the session and reports on how the team behaves, grounded in the tree. Does not rule, assign, or correct mid-session. Reports to the lead and the human.                     |
 
 ## How work divides
 
-- **Ownership follows the architecture.** Each seat owns a slice; the lead (maestro) orchestrates and
-  lands. Boundaries between slices are the **seams** — single-sourced in [`seams.md`](./seams.md),
-  never restated per seat.
-- **A feature spanning slices** is split into per-seat bounty cards (owner lanes); the seats
-  coordinate on comms; the lead reconciles and lands atomically, **file-scoped** (no seat's
-  tree gets swept into another's commit).
-- **Verification is dynamic** — the verify seat engages at verification points (early/mid/late), not
-  only at the end, and ping-pongs with the owning seat until green. See the SOP.
+- Each seat owns a slice. The lead orchestrates and lands cross-seat work.
+- Boundaries between slices are the seams, single-sourced in [`seams.md`](./seams.md).
+- A feature spanning slices is split into per-seat bounty cards. The seats coordinate on comms. The lead lands the assembled change atomically and file-scoped.
+- The verify seat engages at verification points throughout the session, not only at the end.
 
-This roster is a **hypothesis**, not law — a lead report's carry-forward can say the shape did not
-fit, and curation can split, merge, or re-scope a seat when the reports say so. Re-run `anthill init` after a reshape to render any new seat
-docs (existing docs are never clobbered). **`init` does not rewrite this roster table** — when a seat
-is added / renamed / re-scoped, the lead updates the row above by hand.
+The roster is a hypothesis.
+A lead report's carry-forward can say the shape did not fit. Curation can split, merge, or re-scope a seat.
+After a reshape, run `anthill init` to render any new seat docs. Existing docs are not overwritten.
+`init` does not rewrite the roster table. Update the row by hand.

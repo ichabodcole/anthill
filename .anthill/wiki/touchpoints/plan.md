@@ -15,22 +15,22 @@ generated: { by: anthill, at: 2026-09-03 }
 Fires for multi-seat work, after convene and before building, via `anthill:plan`. Solo work
 skips it.
 
-**What it must produce:** a plan skeleton — the integration order and the cross-seam interface
-contracts, stated as _claims_ — and, from each owning seat, a ratification or falsification of
-every seam it touches. A seam that changes here lands in `seams.md` **through the lead**, who
-single-sources it; a seat proposes, it does not write.
+**What it must produce:** a plan skeleton, and from each owning seat a ratification or
+falsification of every seam it touches. The skeleton states the integration order and the
+cross-seam interface contracts, as claims. A seam that changes here lands in `seams.md` through
+the lead, who single-sources it. A seat proposes a seam change. It does not write one.
 
 ## How this team does it
 
-_Not yet written for this team — the suggestions below are running as-is._
+Not yet written for this team. The suggestions below are running as-is. Rewrite this section at
+curation, then set the page `stable`.
 
 ## anthill's suggestions
 
-- **The skeleton is a hypothesis, not blanks to fill.** Its value is a wrong seam caught before
-  merge, not a document. If ratification finds nothing wrong, say so and move on.
+- **The skeleton is a hypothesis, not blanks to fill.** If ratification finds nothing wrong, say
+  so and move on.
 - **Ratify at a stated grain.** A contract agreed at the envelope level does not cover the field
-  level; a seat that builds past the agreed grain has manufactured a new seam. Name the grain in
+  level. A seat that builds past the agreed grain has manufactured a new seam. Name the grain in
   the contract.
 - **State what must be true across the boundary, not how the owner satisfies it.**
-  Implementation belongs to the owning seat; writing it into the contract freezes a choice that
-  was not yours.
+  Implementation belongs to the owning seat.

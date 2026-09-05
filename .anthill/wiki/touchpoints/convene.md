@@ -16,23 +16,24 @@ Fires once per session, run by the lead, via `anthill:convene`. The skill hands 
 commands and reads this page. It ends with the seats this phase needs spawned and briefed.
 
 **What it must read:** the project's grounding docs, the roadmap or plan of record, `seams.md`,
-`principles.md`, and **the previous lead report's carry-forward** — the one report a session
-reads back. **What it must produce:** a branch decision (from the project's policy, never
-anthill's), a seeded board, and a brief per spawned seat.
+`principles.md`, and the previous lead report's carry-forward. The carry-forward is the one
+report a session reads back.
+
+**What it must produce:** a branch decision (from the project's policy, never anthill's), a
+seeded board, and a brief per spawned seat.
 
 ## How this team does it
 
-_Not yet written for this team — the suggestions below are running as-is. Rewrite this section at
-curation, then set the page `stable`._
+Not yet written for this team. The suggestions below are running as-is. Rewrite this section at
+curation, then set the page `stable`.
 
 ## anthill's suggestions
 
-- **Composition is a hypothesis, not law.** Spawn the seats the current phase needs; the roster
+- **Composition is a hypothesis, not law.** Spawn the seats the current phase needs. The roster
   is what is available, not what is required. Note in your report where the shape was wrong.
 - **Read the carry-forward before you re-derive it.** The previous lead's report names what the
-  next session must test, decide or not do. A convene that re-litigates it spends the session's
-  first hour on last session's last hour.
+  next session must test, decide or not do.
 - **The branch decision is the project's.** Ask what this repo's policy is and take the answer
-  from its grounding docs; if there is none, that absence is a finding for your report.
-- **Say what the session is for in one line** on the wire before anyone starts. A session whose
-  purpose lives only in the lead's head cannot be called short by anyone else.
+  from its grounding docs. If there is none, that absence is a finding for your report.
+- **Session purpose.** State what the session is for in one line on the wire before anyone
+  starts.
