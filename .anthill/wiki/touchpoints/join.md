@@ -32,8 +32,7 @@ curation, then set the page `stable`.
 
 ## anthill's suggestions
 
-- **The seat doc is short.** It says who you are and what you own. It does not say what went
-  wrong last time. Read the role and start.
+- **The seat doc is short.** It states the role and what the seat owns. Read it and start.
 - **Take the current state from the manifest and the board, not from the wire.** The wire's
   history replays every session, so a bare read shows you the past. Take the current state from the manifest and the board. Do not
   infer it from the first message you see.
