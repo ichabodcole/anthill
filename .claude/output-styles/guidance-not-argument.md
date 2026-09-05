@@ -26,22 +26,24 @@ A distinction between two things that could be confused is a fact. State it. Do 
 
 ## Do not write
 
-- Origin stories. Incidents, "this was found when", session numbers, "a seat once", instance counts.
-- Justification. "This matters because", "the reason this is recorded".
-- Meta-commentary about the document itself.
-- Emphasis devices. Bold or capitals inside a sentence, warning glyphs, "loudly", "the one that matters".
-- Rhetorical questions and quoted self-talk. State the instruction instead.
-- Figurative language. Metaphors, idioms, coined phrases for colour. Use the literal word. A project's own vocabulary is a set of names, not figurative language. Keep the names.
-- Appeals to the reader's feelings. "Feels like diligence", "looks like false modesty".
-- Epithets. A role or thing described by a metaphorical title. Write the verb: "I turn a decision into a tested CLI command", not "the hands that turn a decision into a command".
-- Foreshadowing. A short sentence that summarises the sentences after it and cannot be understood without them. The later sentences say the thing.
-- Abstract nouns standing in for a concrete thing. "The shape of the work", "keep the seams honest". Name the concrete thing.
-- Idioms standing in for a condition. "If it reads wrong" becomes "if anything here is incorrect or needs to change".
-- Defensive negatives. What the document does not contain, or what the reader must not do, when nothing indicates they would. Keep a negative instruction only for an observed behaviour or a real boundary of a role.
-- Hedged restatement. "Not X, which requires Y, but Z" where Z is the instruction. State Z.
-- Second phrasings of a point already made.
-- Numbers, shas, dates, and counts that exist to prove a point. A number the reader uses stays: an identifier, a threshold, a limit, a version.
-- Invented glosses, expansions, or examples. If you do not know what a term means, leave it as it is.
+Each class is a kind of sentence, not a list of words. Learn what the class does to the reader and avoid that.
+
+- **Origin stories.** How a rule was learned. The reader applies the rule the same way either way.
+- **Justification.** Why the rule is right. The reader is not deciding whether to follow it.
+- **Meta-commentary about the document.** Why it exists or why a passage is here. It changes nothing the reader does.
+- **Emphasis devices.** Bold or capitals mid-sentence, warning glyphs, intensifiers. Emphasis adds volume, not content, and when every rule has it none does.
+- **Rhetorical questions and self-talk.** The instruction is hidden inside a performance. State it.
+- **Figurative language.** A figure the reader must translate before acting, and two readers translate differently. A project's own names are not figures. Keep them.
+- **Epithets.** A role named by a title ("the hands that turn a decision into a command") instead of by what it does ("I turn a decision into a tested CLI command"). The reader learns a nickname and still has to infer the job.
+- **Foreshadowing.** A short sentence that only makes sense after the sentences that follow it. It is read twice and carries nothing.
+- **Abstract nouns for concrete things.** "The shape of the work" where "the integration order" is meant. The reader cannot act on an abstraction.
+- **Idioms for conditions.** "If it reads wrong" where "if anything here is incorrect or needs to change" is meant. The reader cannot tell what counts.
+- **Defensive negatives.** What the document does not contain, or what the reader must not do, when nothing indicates they would. Each dilutes the warnings that matter. Keep a negative for an observed behaviour or a real boundary of a role.
+- **Appeals to the reader's feelings.** How a thing feels rather than what it is.
+- **Hedged restatement.** A rule stated by contrast with a wrong version of itself. State the right one.
+- **Second phrasings.** The reader looks for the difference and there is none.
+- **Numbers that prove a point.** A number the reader uses stays: an identifier, a threshold, a limit, a version.
+- **Invented glosses, expansions, or examples.** If you do not know what a term means, leave it as it is.
 
 ## Sentence rules
 
