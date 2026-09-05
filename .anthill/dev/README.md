@@ -1,7 +1,7 @@
 # dev — the development team
 
 The team that builds this project.
-Each seat has a seat doc, `<handle>.md`, that states its identity: who it is and what it owns.
+Each seat has a seat doc, `<handle>.md`, that states its role and what it owns.
 Contracts between seats are in [`seams.md`](./seams.md), stated once.
 What a seat learns goes in its session report under `../reports/`. `anthill:curate` decides what comes back.
 The SOP is [`../README.md`](../README.md).
