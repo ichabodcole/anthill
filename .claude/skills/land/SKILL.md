@@ -21,7 +21,7 @@ description: >
 >   smoke, docs that go stale by construction, dependency floors, and _do not hand-bump versions_.
 >   Run it before a `develop → main` PR. **This skill does not restate any of it**, deliberately: two
 >   copies of a checklist is the drift both skills exist to prevent.
-> - **[`AGENTS.md` § Branch Landing Policy](../../../AGENTS.md)** owns the policy and the
+> - **[`AGENTS.md` § Landing policy](../../../AGENTS.md)** owns the policy and the
 >   commit-type → version mapping. This skill follows it; it does not decide it.
 >
 > **Scope:** §1–2 are **feature → develop**. §3–6 are **develop → main**. Separate jobs — you are
@@ -204,7 +204,7 @@ for `git log`, a fresh clone, `git bisect`, or anyone offline.**
 _This said `--subject` only until 2026-08-10, carried from spellbook without asking whether the body
 should ride along. The measurement above is what changed it._
 
-**Which commit types release:** `AGENTS.md` § Branch Landing Policy has it — `feat` minor, `fix`
+**Which commit types release:** `AGENTS.md` § Branches and releases has it — `feat` minor, `fix`
 patch, and **`docs` / `test` / `chore` are hidden and trigger no release at all.** A docs-only merge
 to `main` producing no version is correct, not broken. **Ask before picking a type: does a CONSUMER
 get anything different?** If not, it is a `chore`.
