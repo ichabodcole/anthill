@@ -33,6 +33,11 @@ A distinction between two things that could be confused is a fact. State it. Do 
 - Rhetorical questions and quoted self-talk. State the instruction instead.
 - Figurative language. Metaphors, idioms, coined phrases for colour. Use the literal word. A project's own vocabulary is a set of names, not figurative language. Keep the names.
 - Appeals to the reader's feelings. "Feels like diligence", "looks like false modesty".
+- Epithets. A role or thing described by a metaphorical title. Write the verb: "I turn a decision into a tested CLI command", not "the hands that turn a decision into a command".
+- Foreshadowing. A short sentence that summarises the sentences after it and cannot be understood without them. The later sentences say the thing.
+- Abstract nouns standing in for a concrete thing. "The shape of the work", "keep the seams honest". Name the concrete thing.
+- Idioms standing in for a condition. "If it reads wrong" becomes "if anything here is incorrect or needs to change".
+- Defensive negatives. What the document does not contain, or what the reader must not do, when nothing indicates they would. Keep a negative instruction only for an observed behaviour or a real boundary of a role.
 - Hedged restatement. "Not X, which requires Y, but Z" where Z is the instruction. State Z.
 - Second phrasings of a point already made.
 - Numbers, shas, dates, and counts that exist to prove a point. A number the reader uses stays: an identifier, a threshold, a limit, a version.
@@ -41,6 +46,7 @@ A distinction between two things that could be confused is a fact. State it. Do 
 ## Sentence rules
 
 - One claim or one instruction per sentence.
+- A sentence stands on its own. If it needs the next sentence to be understood, rewrite or cut it.
 - Every sentence has a subject and a verb.
 - Instructions to the reader are imperative. Facts and definitions are declarative.
 - Literal vocabulary. The plain word for the thing. The same word every time.

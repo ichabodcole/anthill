@@ -30,7 +30,7 @@ Test for mechanism versus argument: if the sentence were false, would the reader
 Two special cases of "fact" that are easy to misclassify as argument. Keep both.
 
 - **A distinction between two things that could be confused.** "`null` is not zero." "A departure record is administrative, not terminal." State it as a distinction. If the source says why the distinction must not be collapsed, cut the why.
-- **Identity in a role document.** "I am the lead's capacity, not the team's auditor." A role's self-definition is a fact about the role. Keep it.
+- **Identity in a role document.** "I am the lead's capacity, not the team's auditor." A role's self-definition is a fact about the role. Keep it, in the first person, as what the role does. Not as a title for the role.
 
 ## What to remove, by class
 
@@ -43,6 +43,11 @@ Remove these whenever they appear. Do not shorten them. Remove them.
 - **Rhetorical questions and quoted self-talk.** "Ask yourself: what is behind this?" becomes an instruction: "Ask what evidence supports the claim."
 - **Figurative language.** Metaphors, personification, idioms, coined phrases used for colour. "Marinate", "wearing systems clothing", "the affordance was unnamed", "the trail lied". Replace with the literal word. See "House terms" for the exception.
 - **Appeals to the reader's feelings.** "Feels like diligence", "looks like false modesty", "reads as rigour", "that is expected, not a gap".
+- **Epithets.** A role or thing described by a metaphorical title instead of what it does. "The hands that turn a decision into a command", "the gate the team cannot run on itself", "the brain that turns a mechanism into a procedure". Write the verb: "I turn a decision into a working, tested CLI command."
+- **Foreshadowing.** A short sentence that summarises the sentences after it and cannot be understood without them. "I emit. I do not consume." Cut it. The sentences after it say the thing.
+- **Abstract nouns standing in for a concrete thing.** "The seams whose truth lives in my code", "the shape of the work", "keep the seams honest". Name the concrete thing: "the code that implements Contracts 1, 3, 4, 5(a), and 7", "the integration order", "check that each seam is ratified before its owners build".
+- **Idioms standing in for a condition.** "If it reads wrong" becomes "if anything here is incorrect or needs to change". State the condition.
+- **Defensive negatives.** A statement of what the document does not contain, or what the reader must not do, when nothing indicates the reader would do it. "It does not carry lessons or a session log." Cut it. Keep a negative instruction when the behaviour it forbids has been observed, or when it is a real boundary of a role ("I do not land product code").
 - **Hedged restatement.** "Not X, which requires Y, but Z" where Z is the instruction. State Z.
 - **Second phrasings.** A point made twice in different words. Keep the more concrete phrasing.
 - **Dated amendment notes inside a rule.** "Amended 2026-08-09", "widened session 11", "corrected at the session-13 sweep". State the rule in its current form. See "Rules with provenance" for the exception.
@@ -97,6 +102,7 @@ A word can be both a house term and an origin-story marker. "Scar" names the evi
 
 - One claim or one instruction per sentence.
 - Every sentence has a subject and a verb.
+- A sentence stands on its own. If a sentence can only be understood by reading the one after it, rewrite or cut it.
 - Instructions to the reader are imperative: "Run the gate." "Do not pipe it."
 - Facts, definitions, and identity statements are declarative. A first-person document keeps its first person for these: "I do not design." Do not convert identity statements to imperatives. Do not convert instructions to first person.
 - Literal vocabulary. The plain word for the thing. The same word every time.

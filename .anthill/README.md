@@ -160,7 +160,7 @@ Mechanics for every seat. Principles are in `principles.md`.
 Close your report: answer the prompts at the bottom of `reports/<date>/<handle>.md`, in prose, for a curator who was not here.
 Name tools, docs, and teammates freely.
 Say what a number meant, not only what it was.
-If your seat doc, a seam, a principle, or a wiki page read wrong this session, say so in the report. Do not edit it.
+If your seat doc, a seam, a principle, or a wiki page is incorrect or needs to change, say so in the report. Do not edit it.
 Land the report with the land command your join emitted.
 
 Do not synthesise into a curated doc. That is curation's job.

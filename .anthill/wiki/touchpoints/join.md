@@ -23,7 +23,7 @@ Never restate them.
 your presence on the channel and the board.
 
 **What it must not do:** edit your seat doc, `seams.md`, `principles.md`, or this wiki. Those
-are curated. If any of them reads wrong to you, that is the first line of your report.
+are curated. If any of them is incorrect or needs to change, write that as the first line of your report.
 
 ## How this team does it
 
