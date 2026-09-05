@@ -1,246 +1,106 @@
 # anthill — agent guide
 
-A portable **team-OS** Claude Code plugin: it stands up a multi-agent dev team (ephemeral
-agents in durable seats) in any project, coordinating over grapevine + a bounty board. This
-repo is anthill's own source.
+anthill is a Claude Code plugin that sets up a multi-agent development team in any project: ephemeral agents in durable seats, coordinating over a message wire and a bounty board. This repo is anthill's own source, and it runs its own anthill team.
 
-Keep this file lean — an index + the non-obvious essentials, not a tutorial.
+This file is an index plus the rules that are specific to this repo. It is not a tutorial.
 
 ## Where to look
 
-- `docs/README.md` — the **docs map**: every doc type, its lifecycle, and where things go.
-  New session? skim `docs/memories/` first for a recap of recent work.
-- **What shipped in a release, and why — read it out of git, not out of `CHANGELOG.md`:**
+- `docs/README.md`: the docs map. Every doc type, its lifecycle, and where things go.
+- `docs/memories/`: a recap of recent work. Skim it at the start of a session.
+- `docs/ROADMAP.md`: the prioritised view of what is in flight, in what order, with exit criteria. The lead reads it at convene and updates it at finalize.
+- `docs/architecture/2026-06-28-anthill-portable-team-os-design.md`: the design of record. Thesis, the D1–D9 decisions, the config schema.
+- `docs/PROJECT_MANIFESTO.md`: vision and boundaries.
+- `docs/briefs/`: release bundles and multi-session arcs. Scoped plans, not the priority order.
+- `docs/backlog/`: small ready-to-pick tasks. `docs/investigations/`: research. `docs/lessons-learned/`: field lessons. `docs/projects/`: larger bodies of work.
 
-  ```bash
-  # what RELEASES shipped — main's spine, one line each
-  git log --first-parent main --format='%h %ci %s'
-  git log --first-parent main -1 --format='%b'        # the full release note for the latest
+## Release history
 
-  # what FEATURES landed — the named merges into develop
-  git log develop --merges --format='%h %ci %s' \
-    | grep -vE "Merge pull request|Merge branch 'main' into"
-  ```
+Read what shipped from git, not from `CHANGELOG.md`. The changelog is release-please output: commit subjects and sha links, never what a release was about.
 
-  **Two queries, two questions** — a release is a batch; a feature is a branch.
+```bash
+# releases: main's first-parent spine, one line each
+git log --first-parent main --format='%h %ci %s'
+git log --first-parent main -1 --format='%b'        # the full release note for the latest
 
-  **Both exclusions are load-bearing.** `Merge pull request` drops GitHub's noise; `Merge branch
-'main' into` drops **back-merges**, which are not features and otherwise appear as three
-  identical phantom entries (measured: 87 merges → 47 after the first filter → 44 after both). _(The pairing is
-  lifted from spellbook's `AGENTS.md`, which had it before we did. Both verified here on
-  2026-08-10; the ⚠ that sits under it in their file is a topology claim that does **not** hold for
-  anthill — see `.claude/skills/land` §6.)_
+# features: the named merges into develop
+git log develop --merges --format='%h %ci %s' \
+  | grep -vE "Merge pull request|Merge branch 'main' into"
+```
 
-  **The release narrative lives in the `develop → main` MERGE COMMIT BODY.** `CHANGELOG.md` is
-  release-please output — conventional-commit subjects and sha links, by construction — so it tells
-  you _which commits_ shipped and never _what the release was about_. The merge body is written at
-  land time (`.claude/skills/land`, §3–5) and carries what changed for a consuming team, the
-  decisions behind it, and what it deliberately does **not** reach.
+The release narrative is the body of the `develop → main` merge commit. It is written at land time by the `land` skill.
+Both `grep` exclusions are required: the first drops GitHub's pull-request merges, the second drops back-merges, which otherwise appear as repeated phantom entries.
 
-  _Written down here because the read audience is agents doing archaeology months later, and until
-  2026-08-10 the path was documented only in the `land` skill — which is read at MERGE time, by
-  whoever is landing. The artifact existed and nothing pointed the readers at it._
+## The team in this repo
 
-- `docs/architecture/2026-06-28-anthill-portable-team-os-design.md` — the design-of-record
-  (thesis, the three stigmergy principles, the D1–D9 decisions, the config schema).
-- 🧭 **`docs/ROADMAP.md` — THE prioritized view: what we're working on, in what order, and the
-  exit criteria for the current scope.** The lead **reads it at convene** and **updates it at
-  finalize**. _Added 2026-08-05: it had gone stale for three sessions because nothing pointed
-  here — every grounding doc named the v0.2 brief instead, so no fresh lead had a reason to open it._
-- `docs/briefs/` — release bundles and multi-session arcs (e.g. the
-  [coordination-hardening arc](docs/briefs/2026-07-28-coordination-hardening-arc.md)). **Scoped
-  plans, not the priority order** — `ROADMAP.md` is that.
-- `docs/backlog/` — small ready-to-pick tasks · `docs/investigations/` — research ·
-  `docs/lessons-learned/` — field lessons · `docs/projects/` — larger bodies of work.
-- `docs/PROJECT_MANIFESTO.md` — vision & boundaries.
+This repo is built by a convened anthill team, not by a lone agent. The team's footprint is `.anthill/`:
 
-## What's not obvious
+- `.anthill/README.md`: the SOP.
+- `.anthill/principles.md`: rules about how work goes wrong. Read at convene and at join.
+- `.anthill/dev/README.md`: the roster. `.anthill/dev/<handle>.md`: each seat's doc, a job description.
+- `.anthill/dev/seams.md`: the contracts between seats.
+- `.anthill/wiki/`: one page per lifecycle touch point, this team's method. Linted by `anthill wiki lint`.
+- `.anthill/reports/<date>/<handle>.md`: a seat's session report.
 
-- **Built by a convened team — anthill dogfoods itself.** This repo is self-hosted: its own
-  anthill team lives in **`.anthill/`** (`.anthill/README.md` is the SOP; **`.anthill/principles.md`
-  is what the team learned the hard way, each with its scar**; `.anthill/dev/<handle>.md`
-  is each seat's living doc/brain; the roster is `.anthill/dev/README.md`; **`.anthill/wiki/` is the
-  team wiki — one page per lifecycle touch point, this team's own method, linted by `anthill wiki lint`;
-  `.anthill/reports/<date>/<handle>.md` is a seat's session report, the outlet that replaced writing
-  into the seat doc, and the seat doc / seams / principles / wiki are curated — `anthill commit` refuses
-  them without `--curated`** — added 2026-09-03 by [anthill-evolution](docs/projects/anthill-evolution/proposal.md), which is
-  mid-flight on `feat/anthill-evolution`: seat docs shrink to identity, seats write reports, a
-  `curate` step edits the durable docs). _Those paths are this
-  repo's, and this repo runs one team. A project may configure several — each after the first lives
-  at `.anthill/teams/<name>/`, and `anthill team show` says which one you are on._ Substantial work is done
-  by a lead + seats owning scopes, not a lone agent — run **`anthill:convene`** to start a session (or
-  `anthill:join <handle>` to take a seat). Consider it for anything non-trivial.
-- **anthill adapts to the host project — it does not dictate its conventions.** Where a design
-  question is really _"what standard applies here?"_ (branch policy, naming, which trunk is
-  protected, a formatting rule), anthill's job is to create the **touch point where a team member
-  checks the project's _actual_ standard** — not to hard-code one. The system supplies the **trigger
-  to decide**; the project supplies the **content** (via config, or its grounding docs). A convention
-  baked into a skill or a command default is the anti-pattern — make it a _prompt + a config/grounding
-  hook_ instead. (The branch-flow rule just below is a concrete instance: convene _prompts_ the branch
-  decision and reads the policy from here; it never hard-codes one.)
-- **Branch flow + protected `main`.** Substantive work — a feature, or a fix/refactor of real
-  scope — takes a **feature branch off `develop`** → merge to `develop` → PR `develop` → `main`.
-  **Docs-only commits and very small fixes may commit directly to `develop`** — a single doc or
-  one-line fix doesn't warrant a branch. The judgment is _scope_: if it's a body of work, branch it;
-  if it's a paper-cut, land it. `main` is branch-protected (PR + green CI required, admins included) —
-  never push to it directly; release-please cuts the release on merge to `main` — **but only when
-  there are RELEASABLE commits.** With `release-type: node` and no `changelog-sections` override,
-  `feat` bumps minor and `fix` bumps patch; **`docs`, `test` and `chore` are hidden types and trigger
-  NO release at all.** So a merge of docs-only work brings `main` current and produces no version and
-  no release PR — which is correct, not a broken workflow. _(Cost a moment's confusion after session
-  12: 11 commits, 9 `docs` + 1 `test`, and the expected release never appeared.)_
-  _(`anthill:convene`'s pre-spawn branch beat is the touchpoint to make this call before seats commit.)_
-- **Runtime is Bun** (not Node): use `bun` / `bunx`, and prefer Bun built-ins over npm
-  equivalents.
+The seat docs, seams, principles, and wiki are curated. Nobody edits them during a session. `anthill commit` refuses them on an attributed commit unless `--curated` is passed. A seat writes what it learned into its report, and `anthill:curate` decides what changes.
 
-## Branch Landing Policy
+Run `anthill:convene` to start a session, or `anthill:join <handle>` to take a seat. Use the team for anything non-trivial.
 
-**Merge; do not squash or rewrite.** The procedure this points at is the repo-local **`land`**
-skill (`.claude/skills/land/`) — merge-message shape, the develop→main PR message, and who is
-allowed to merge to `main`. It is the merge step only: `project-docs:finalize-branch` still owns
-review, gates and docs, and **`cascade-check` owns release readiness.**
+A project may configure several teams. Each after the first lives at `.anthill/teams/<name>/`. `anthill team show` says which team the current session is on.
 
-Verified practice as of 2026-08-07: feature branches land on
-`develop` as ordinary merges and `develop → main` by PR merge commit, so every commit keeps the
-`Anthill-Seat:` trailer naming which of the six seats wrote it, and the short-sha citations
-throughout `docs/` and `.anthill/` keep resolving (measured at the foot of this file).
+## anthill adapts to the host project
 
-⚠ **The strategy itself is an OPEN design question — do not settle it in passing.**
-[`session-branch-strategy`](docs/projects/session-branch-strategy/proposal.md) settled on
-**squash-merge** at finalize (2026-07-27, ready for a plan, **unbuilt** — there is no `branch{}`
-config); the 2026-08-07 triage of spellbook#94 then measured what that costs a 4-seat project whose
-docs pin claims to shas, which is anthill's own shape. That proposal also **rejects
-`project-docs:consolidate-long-branch` by name** — it needs _contiguous_ chapters, and a convened
-session interleaves seats by construction.
+Where a design question is "what standard applies here?" (branch policy, naming, which trunk is protected, a formatting rule), anthill creates the touch point where a team member checks the project's own standard. It does not hard-code one.
+The system supplies the trigger to decide. The project supplies the content, through config or its grounding docs.
+Do not bake a convention into a skill or a command default. Make it a prompt plus a config or grounding hook.
 
-## Commands
+## Branches and releases
 
-- `bun run check` — the full gate (typecheck + biome + tests); the husky pre-commit runs it.
-- `bun test` — tests · `bun run anthill <cmd>` — the CLI (`plugin/scripts/anthill/cli.ts`).
+- Substantive work takes a feature branch off `develop`, merges to `develop`, then goes to `main` by pull request.
+- Docs-only commits and one-line fixes may commit directly to `develop`.
+- `main` is branch-protected: pull request and green CI required, admins included. Never push to it directly.
+- release-please cuts a release on merge to `main` when there are releasable commits. `feat` bumps minor and `fix` bumps patch. `docs`, `test`, and `chore` are hidden types and produce no release. A docs-only merge to `main` produces no version, which is correct.
+- `anthill:convene` prompts the branch decision before seats commit.
 
-## How we test — the two rules `bun run check` cannot enforce · as of 2026-08-10
+## Landing policy
 
-Both were paid for. Both are about the same thing: **a test written by whoever wrote the code
-inherits that code's blind spot**, so each rule names the one participant in the loop that was not
-written by whoever is wrong. _Stated as assertions rather than counts, per `seams.md`'s second
-authoring note — every numeric citation in that file has been wrong at least once._
+Merge. Do not squash or rewrite history. Every commit keeps its `Anthill-Seat:` trailer, and short-sha citations in `docs/` and `.anthill/` keep resolving.
 
-**1. A change to a command is not done until the command has been RUN against a fixture repo — _in
-the state its documentation describes_ — and whatever that run finds gets a test before the fix is
-committed.**
+The procedure is the repo-local `land` skill at `.claude/skills/land/`: the merge-message shape, the develop→main pull request message, and who may merge to `main`. It is the merge step only. `project-docs:finalize-branch` owns review, gates, and docs. `cascade-check` owns release readiness.
 
-The defects review found on `multi-team-support` were invisible to unit tests and visible in one
-command: `team ls` refused to list on the repo it exists for; `team use` refused every fresh project;
-`init` refused the documented add-a-team route, then silently rendered nothing on the second use of
-it. **Every one was green at `0 fail` while broken**, because the pure half was always right —
-`renderTemplates` never rendered wrong, it never ran. _In the state its documentation describes_ is
-the load-bearing clause: a fix was verified on a repo with no pin, which is what `bootstrap` §0a
-assumes, while the pinned repo — every later use of the route — was never run. **Read
-the prose, build the repo the prose describes, run the command the prose gives.**
+The branch strategy is an open design question. `docs/projects/session-branch-strategy/proposal.md` proposes squash-merge at finalize and is unbuilt. Do not settle it in passing.
 
-**2. A GUARD is not done until it has been run against a tree with the defect PUT BACK — including
-put back in a file its allow-list already covers.**
+When citing a sha from another repository, name the repository. A foreign sha is indistinguishable from a dead local one.
 
-A guard encodes its author's belief about a defect, so it inherits that belief's blind spot one level
-up, and the failure is invisible: **a guard that has gone blind reports an empty list, which is
-exactly what a clean tree reports.** Measured on `bare-anthill.guard.test.ts`: reverting the fix left
-the guard green **and the whole suite green**, twice, for two different reasons — a closed verb list
-that missed every injected variant, then a dedup key that let one allow-listed string exonerate its
-neighbours. Both were found by a reviewer injecting defects by hand.
+## Runtime and commands
 
-So the rule is discharged **in the test file, not in a ritual**: split the detector into a pure
-function of source text, and give it `POSITIVE CONTROLS` that hand it synthetic defects on every run.
-All three source-scanning guards carry them. **`bare-anthill`'s cases are its own history; the other
-two are the same class borrowed** — worth stating, because a fixture presented as a scar it did not
-earn is the thing this section exists to prevent.
+The runtime is Bun, not Node. Use `bun` and `bunx`, and prefer Bun built-ins over npm equivalents.
 
-**A guard's medium is part of its scan set.** `bare-anthill` also reads the MARKDOWN agents are
-handed, because the same defect ships there and the `*.ts` walk could not see it. Markdown gets its
-own rules rather than the code ones: a **fenced block** is a copy-paste target and must be runnable
-or absent, while **prose** may use a shorthand its own document explains — which means the detector
-is a fence parser, and a fence parser has its own blind spots (indented blocks, HTML, hand-wrapped
-lines). Those are asserted as `KNOWN LIMIT` tests, so nobody reads silence as coverage.
+- `bun run check`: the full gate (typecheck, biome, tests). The husky pre-commit runs it.
+- `bun test`: tests only.
+- `bun run anthill <cmd>`: the CLI, `plugin/scripts/anthill/cli.ts`.
 
-**And control the SCAN SET, not only the detector.** Every synthetic-defect control feeds the detector
-a string, so none of them notices if the file walk stops reaching part of the tree — measured, and
-silent. That is the shape of these guards' own worst historic miss.
+## Testing rules the gate cannot enforce
 
-**⚠ AN EMPTY ALLOW-LIST CANNOT DO THAT JOB, and the markdown half shipped believing it could.**
-Reading an allow-list backwards protects a walk only through the entries it holds; with none, there
-is nothing to orphan. `bare-anthill` was extended to the markdown agents read — `field-notes.md`,
-the team-doc templates, and `skills/`, which is read by every agent in every consuming project — and
-pinned four template paths by name while pinning **nothing** under `skills/`, the surface its own
-header calls the biggest of the three. Review measured it: deleting the `skills` walk left the guard
-green **and the whole suite green with the branch's own defect put back**. So a walk gets **named
-files**, and an allow-list that happens to be empty buys no coverage at all.
+A test written by the author of the code inherits the code's blind spot. Two rules put a participant in the loop that the author did not write.
 
-**The assertion that actually closes it is the allow-list read BACKWARDS.** _"Is every hit allowed?"_
-is satisfied perfectly by a scan that reaches nothing; _"is every allowance still earning itself?"_
-goes red the moment a file leaves the walk, and red again when a listed string is fixed and its entry
-left behind. It also catches a verb quietly lost from a derived verb set. **An allow-list nothing
-reads back is write-only**, which is the state both guards shipped in — one of them listing two files
-whose actual mints its pattern could not match. Pinning the directory levels is the weaker companion
-check, and its test is named for what it does rather than for what it suggests: files an allow-list
-never names need naming separately, which is why the agent-re-invoked set from `seams.md` Contract 2
-is pinned by hand.
+**1. A change to a command is not done until the command has been run against a fixture repo in the state its documentation describes, and whatever that run finds has a test.**
+Unit tests cover the pure half of a command. They do not run the command. Read the prose, build the repo the prose describes, run the command the prose gives, and test what breaks before committing the fix.
 
-Where a guard's exoneration is deliberately coarse, **assert the limit** rather than leave it implied
-— see `tmpleak.guard.test.ts`'s two `KNOWN LIMIT` cases. **And check the limit's own prose against the
-tree**: the first version of one declared a spelling absent from this repo while seven of them sat in
-two allow-listed files.
+**2. A guard is not done until it has been run against a tree with the defect put back, including in a file its allow-list already covers.**
+A guard that has gone blind reports an empty list, which is what a clean tree reports. The rule is discharged in the test file:
 
-_Corollary for both: an allow-list entry states WHY, and the reason and the rule must have the same
-predicate. `emittingCli` enforced "is it in `renderText`" while its comment argued "is the reader
-human" — two different expressions, and the divergence was invisible until someone wrote the second
-one down as code._
+- Split the detector into a pure function of source text, and give it positive controls that hand it synthetic defects on every run.
+- Control the scan set as well as the detector. A synthetic-defect control feeds the detector a string, so it does not notice when the file walk stops reaching part of the tree. Pin named files. An empty allow-list protects nothing.
+- Read the allow-list backwards: assert that every allowance is still earning itself. This goes red when a file leaves the walk, when a listed string is fixed and its entry left behind, and when a verb is lost from a derived verb set.
+- Where a guard's exoneration is deliberately coarse, assert the limit as a `KNOWN LIMIT` test. Check the limit's prose against the tree.
+- An allow-list entry states why, and the reason and the rule have the same predicate.
+- A guard's medium is part of its scan set. `bare-anthill` scans the markdown agents are handed as well as the `.ts` tree. In markdown, a fenced block must be runnable or absent. Prose may use a shorthand its own document explains.
 
-## When you change something, something else probably has to change too
+## Cascade check
 
-anthill's content is **referentially dependent and unenforced**: the same rule lives in a skill, a
-template, a rendered copy of that template, and sometimes a spec section that code cites by number.
-`bun run check` is green while a skill argues with a template — nothing catches it.
+The same rule lives in a skill, a template, a rendered copy of that template, and sometimes a spec section that code cites by number. `bun run check` does not catch a skill that disagrees with a template.
 
-Run the **`cascade-check`** skill (`.claude/skills/cascade-check/`) after any substantive edit to a
-skill, template, CLI behavior, config schema, or path — and always before cutting a release. It carries
-a map of what travels with what, and every entry earned its place by actually failing. It never bumps
-versions; release-please owns those.
+Run the `cascade-check` skill at `.claude/skills/cascade-check/` after any substantive edit to a skill, template, CLI behaviour, config schema, or path, and before cutting a release. It never bumps versions. release-please owns those.
 
-_(That skill lives in `.claude/skills/`, not `plugin/skills/` — the latter is discovered by directory
-and ships to every consuming project, so internal tooling must never go there.)_
-
-## Reconciliation — 2026-08-08 (session 13), by forager @ `47268d8`
-
-Claim by claim, checked by running a command rather than by re-reading. `UNCHECKED` is a real
-verdict here and is written where it applies — a claim silently skipped is indistinguishable from
-one confirmed.
-
-- _"`bun run check` — the full gate (typecheck + biome + tests)"_: **HELD.** `package.json` →
-  `tsc --noEmit -p tsconfig.json && biome check --error-on-warnings . && bun test`.
-- _"the husky pre-commit runs it"_: **HELD.** `.husky/pre-commit` runs `bunx lint-staged` then
-  `bun run check`.
-- _"`main` is branch-protected (PR + green CI required, admins included)"_: **HELD**, from the API:
-  `enforce_admins: true`, `required_pr: true`, required check `check (typecheck + biome + tests)`.
-- _"`release-type: node`"_: **HELD** (`release-please-config.json`). The `docs`/`test`/`chore`-are-
-  hidden claim is **UNCHECKED** — it follows from release-please's defaults rather than from
-  anything in this repo, and I did not exercise a release to confirm it.
-- **Branch Landing Policy — _"merge; do not squash or rewrite"_: HELD, and its REASON is now
-  measured rather than asserted.** On `feat/close-one-wire-scope`, **35 of 35 commits carry an
-  `Anthill-Seat:` trailer**, across six seats (maestro 10 · forager 7 · weaver 6 · sentinel 6 ·
-  steward 3 · scout 3). Session 11 had 9 of its first 11 carrying none, so this is a change in
-  practice and not a restatement.
-- _"~294 short-sha citations … keep resolving"_: **the PREDICATE HELD; the COUNT is FALSIFIED and
-  is being removed rather than re-numbered.** Measured: **344** unique 7-hex tokens in `docs/` +
-  `.anthill/` (excluding scratch), of which **335 resolve** as git objects. Controls both fired —
-  a known-good sha resolved, and `forager.md`'s deliberately-invented `d3ac6dd` correctly did not.
-  **Per `seams.md` Contract 4's authoring note (cite ASSERTIONS, never COUNTS), the number is
-  dropped from the sentence above: a count is a measurement with a shelf life no gate checks.**
-- 🔴 **NEW — that claim has an UNWRITTEN DOMAIN, and it is why two of the nine non-resolvers look
-  like rot and are not.** _"Citations keep resolving"_ ranges over **anthill's own shas**. Four of
-  the nine are documented invented-sha scars (correctly unresolvable), one is the number `3600000`
-  matched as hex, two live under `_archive/` (out of scope), and **two are SPELLBOOK commits
-  (`88a298f`, `cc35636`) cited in our docs — which can never resolve in this repo by construction.**
-  A cross-repo citation is visually identical to a dead local one. **State the repo when citing a
-  foreign sha, or the next sweep re-derives this.**
-- _"`cascade-check` lives in `.claude/skills/`, not `plugin/skills/`"_: **HELD.** Present in the
-  first, absent from the second.
-- _"Runtime is Bun"_: **HELD** (the gate, the CLI and every script above run under `bun`).
+Repo-internal skills live in `.claude/skills/`. `plugin/skills/` ships to every consuming project. Do not put internal tooling there.
