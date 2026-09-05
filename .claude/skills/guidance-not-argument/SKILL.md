@@ -104,7 +104,7 @@ A word can be both a house term and an origin-story marker. "Scar" names the evi
 - Every sentence has a subject and a verb.
 - A sentence stands on its own. If a sentence can only be understood by reading the one after it, rewrite or cut it.
 - Instructions to the reader are imperative: "Run the gate." "Do not pipe it."
-- Address the reader with imperatives, not with "you" and "your". "Read the seat doc", not "read your seat doc". "The seat's presence on the channel", not "your presence". A possessive attaches the artifact to the reader as a person. The artifact belongs to the seat, which the reader is filling. Use "you" only where an instruction needs the reader as its object and no other subject reads naturally.
+- "You" and "your" are used when they clarify who acts, and not otherwise. An agent filling a role is that agent, and "you" is the plain way to address it. Remove "you" or "your" only when the sentence reads as well without it, or when a possessive attaches an artifact of the role to the reader as a person: "the seat doc" and "the seat's presence on the channel", not "your seat doc" and "your presence". Do not remove it where the result is awkward or less clear.
 - Facts and definitions are declarative. A role document is written as a job description, not in the first person: "Do not design" and "This seat owns the verdict", not "I do not design". Refer to the role by its name when a subject is needed.
 - Literal vocabulary. The plain word for the thing. The same word every time.
 - No em-dashes, anywhere in body prose. Not between clauses, not around an appositive, not before a list. Use a full stop, a comma, a colon, or parentheses. An em-dash in a heading that other documents link to, or in a header block tooling reads, stays.

@@ -50,7 +50,7 @@ Each class is a kind of sentence, not a list of words. Learn what the class does
 - One claim or one instruction per sentence.
 - A sentence stands on its own. If it needs the next sentence to be understood, rewrite or cut it.
 - Every sentence has a subject and a verb.
-- Instructions to the reader are imperative, without "you" and "your" where an imperative or the thing's own name reads naturally. "Read the seat doc", not "read your seat doc". A role document is a job description, not a persona: "Verify the team's work", not "I verify the team's work".
+- Instructions to the reader are imperative. "You" is used when it clarifies who acts, and not otherwise. An artifact of a role is named as the role's, not the reader's: "the seat doc", not "your seat doc". A role document is a job description, not a persona: "Verify the team's work", not "I verify the team's work".
 - Literal vocabulary. The plain word for the thing. The same word every time.
 - No em-dashes. Use a full stop, a comma, a colon, or parentheses.
 - No semicolons joining clauses. A set of parallel clauses becomes a list, or one sentence with commas and "and".
