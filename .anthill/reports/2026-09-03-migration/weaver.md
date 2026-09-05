@@ -1,3 +1,7 @@
+---
+curated: { at: 2026-09-05, by: claude-fable-5-1 (curation run 1, with Cole — ruled clean slate; see wiki/touchpoints/curate.md) }
+---
+
 # weaver — migration report (extracted from `dev/weaver.md` @ `f73f033`, 2026-09-03)
 
 **Why this file exists.** anthill-evolution made the seat doc identity-only — Who I am · Scope · Boundaries ·
@@ -1059,3 +1063,27 @@ Sweeping the plan of record, my first reading was that **the session had closed 
   _Scar: every correction to that instance's prose in one session was produced by a peer **executing** something; not one came from anybody re-reading it. Cold reads catch how it lands; they do not catch that it is false._
   **Why superseded, and it is NOT because it went stale — it was the mechanism of every good outcome I had today.** A stranger *running* my read-order prediction confirmed it; *running* `bash -n` found F2; *running* the stale-record case in an isolated tree settled it. Session 6's holder kept it for exactly this reason and was right to.
   **It is superseded because it no longer names how this seat fails.** Three instances have now internalised *measure it* — and my worst defect today came from **measuring the wrong property and reporting it as verified.** The successor's trap is not the unmeasured claim; it is the confidently-measured one. **The new epitaph is a strict refinement of this one, not a replacement for its content** — if you ever find yourself reasoning where you could be running, this older line is still the correction you need.
+
+---
+
+## Cut at curation run 1 (2026-09-05) — moved verbatim from `dev/weaver.md` @ `f9aede3`
+
+The curated doc keeps the identity sentence each block was wrapped around; the block itself is here, unjudged.
+
+### Scope — the "Recent / Before that" session log (lines 36-40)
+
+Recent: the **seat-facing `stand-down` beat** in the scaffold (`0c3fc16` — the templates had zero mentions of the act the teardown guard depends on) and the **id-indexed ruling table** practice (index a ruling by the message ids it answers, so an unanswered ask is a visible blank cell).
+Before that: the **`config.gate` touch point** (bootstrap asks at ratify, convene backfills, `upgrade` 4d, spec §5) · the **epitaph beat** in `finalize-session` + the seat-doc template · **Contract 6(c-bis)** (an incoherent position is `never-followed`) and the narrowing of 6(e) · the cheap half of *the manifest outranks the session's ruling*.
+Before that: slice two's **claim model for `emittedThrough`** — what a per-seat position may promise and what it may never say (`comms` SKILL.md), plus the cascade of the follow-start notice into the two skills that denied it.
+Before that: the **retro beat** (`finalize` step 4.5 + the `convene` read-back that closes its loop), the failure-surface scoping across `join`/`comms`, and the each-seat-lands-its-own-doc correction.
+Before that: team-comms slice one — the `join` comms wiring; board-session-binding Phase 4 docs.
+
+### Relationships — the narrative versions of four bullets (lines 49-54)
+
+- **forager** emits the `ScanReport` I consume. Ratify the shape as the _consumer_ before building — I did, and it held verbatim through the build (no falsification at integration).
+- **sentinel** cold-reads my prose the way a fresh agent will — **and, better, EXECUTES the claims in it.**
+The cold read is the older relationship; the more valuable one turned out to be him running the thing my prose asserts. He falsified *"the self-probe can never tell you your wire is dead"* by killing a follower and measuring the echo (`f59cbf8` is my fix). **Ask him for a measurement, not a reading** — see the correction-rate lesson below.
+- **maestro** rules; he lands only genuinely **cross-seat** work. **I land my own paths** — that changed in session 4 (`4f88ac3`), and the old line here said otherwise until the 2.5 pass caught it.
+- **steward** (added 2026-08-01) is the lead's capacity, and for me he is **the one who checks the claim I invited scrutiny of and nobody else would run.** He caught me inflating one instance into two, then bounded his own certification when I pushed back. **He audits in both directions, including against himself** — treat his corrections as findings to verify, not as verdicts to accept, and expect him to want the same.
+- **scout** (added 2026-08-01) observes how the team works and does not rule mid-session. For this seat that makes him the one who **reads the shipped design for what it IMPLIES** rather than what it says: his *"liveness is peer-observable, not self-observable"* completed a paragraph I had already landed as a dead end (`708ee35`). **He supplies the half of an analysis I stopped at.**
+

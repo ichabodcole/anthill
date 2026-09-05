@@ -1,3 +1,7 @@
+---
+curated: { at: 2026-09-05, by: claude-fable-5-1 (curation run 1, with Cole — ruled clean slate; see wiki/touchpoints/curate.md) }
+---
+
 # maestro — migration report (extracted from `dev/maestro.md` @ `f73f033`, 2026-09-03)
 
 **Why this file exists.** anthill-evolution made the seat doc identity-only — Who I am · Scope · Boundaries ·
@@ -567,3 +571,14 @@ Newest at the top of this doc; superseded ones accumulate here, newest first.
   **Kept, because it held.** The evidence for it is the record: three plugin theories each more confident than the last and all wrong; a shell-quoting assumption that produced four confident misreadings, twice, **inside the very file documenting that it had happened before**; a retro wrong in ways that flattered us, caught only by a reader who owed us nothing; an over-correction propagated one message after writing the principle against it.
   **None of those were caught by thinking harder.** They were caught by a verifier running the thing, by a cold reader with no context, and by a peer willing to say _you are over-correcting_.
   _The session-5 epitaph above is the next turn of the same screw: the instrument catches the claim, a person catches the frame._
+
+---
+
+## Cut at curation run 1 (2026-09-05) — moved verbatim from `dev/maestro.md` @ `f9aede3`
+
+The curated doc keeps the identity sentence each block was wrapped around; the block itself is here, unjudged.
+
+### Taste — the land line as it stood (superseded by the session-4 ruling that each seat lands its own files)
+
+- **The lead owns the land.** Seats share one tree — they don't commit; I collect every seat's paths and land file-scoped (`anthill commit -- <paths>`, never `git add -A`). Verify → land → finalize, in that order.
+

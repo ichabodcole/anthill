@@ -1,6 +1,6 @@
 # Curation run 1: proposal over the migration batch
 
-**Date:** 2026-09-04 · **Curator:** a fresh agent (Claude, claude-fable-5-1) that attended none of the sessions · **Batch:** `.anthill/reports/2026-09-03-migration/` (8 files, 5,511 lines) · **Status:** PROPOSAL. Nothing has been edited. The human rules line by line; every row below is one decision.
+**Date:** 2026-09-04 · **Curator:** a fresh agent (Claude, claude-fable-5-1) that attended none of the sessions · **Batch:** `.anthill/reports/2026-09-03-migration/` (8 files, 5,511 lines) · **Status:** RULED 2026-09-05 — **clean slate.** Cole ruled on the batch, not the rows: too much to hold, and the curator's own triage dropped about 95 percent. Applied: R1, R2, R4, R8 (facts wrong today), R-sentinel, R-seams (mechanical cut, Contract 5(b) removed, no new seam), W5. Everything else dropped under the ruling, not on its merits. The rulings and the run line are on `.anthill/wiki/touchpoints/curate.md`. The text below is the proposal as written.
 
 **Path shorthand used below.** `R/x.md` is `.anthill/reports/2026-09-03-migration/x.md`. `D/x.md` is `.anthill/dev/x.md`. `W/x.md` is `.anthill/wiki/touchpoints/x.md`. `seams:N` is a line in `D/seams.md`. Line numbers are as of `f73f033`'s successors at the time of reading (branch `feat/anthill-evolution`, tree clean).
 

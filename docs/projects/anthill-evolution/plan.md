@@ -110,6 +110,16 @@ Steps 3–5 may reorder after step 2 — that is the point of doing 1–2 first.
   [C6](../../backlog/2026-09-04-reflective-machinery-ledger.md) (C6 names the 2026-08-04 lesson-fired item as its
   predecessor). Exception kept: anything the curation loop itself needs in order to run stays in scope. The first of the
   three to ship should be framed as the first thing curation produced — that is the cleanest test of the design.
+- **2026-09-05 · step 6 · judgement — Cole's call, the first curation run.** A fresh curator triaged the migration batch by
+  class ([proposal](./curation/run-1-proposal.md)); Cole ruled **clean slate** rather than row by row: the batch was more
+  than a human can hold, and the proposal itself dropped about 95 percent. What survived the ruling is only what was **wrong
+  today** in the identity docs (vine, "seats don't commit", scout's report path, dead pointers), the two join-time load cuts
+  (seams 538 → 337 lines, sentinel's Taste 112 → 12), and the five report-writing rules on the finalize page. Method
+  consequences, recorded on the curate page as its first four rulings: a migration batch is archived, not curated; "wrong
+  today" is the admission test for a migration edit; a seams cut is mechanical; prompts change first. This also prices
+  step 8: Spellbook's migration is an archive plus the same salvage list, not a triage. Caveat carried: the proposal was
+  256 lines because the batch was 5,511; a normal run is one session's reports, so this is a verdict on migration
+  batches, not on curation.
 - **2026-09-03 · step 1 · improvement.** The lifted lint core was split into `collectDocsLint` (pure) + `runDocsLint`
   (printing) so the CLI can put the report through its own envelope. Worth upstreaming to agent-cli-conformance; the file
   header says so.

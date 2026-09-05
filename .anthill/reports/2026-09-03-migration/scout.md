@@ -1,3 +1,7 @@
+---
+curated: { at: 2026-09-05, by: claude-fable-5-1 (curation run 1, with Cole — ruled clean slate; see wiki/touchpoints/curate.md) }
+---
+
 # scout — migration report (extracted from `dev/scout.md` @ `f73f033`, 2026-09-03)
 
 **Why this file exists.** anthill-evolution made the seat doc identity-only — Who I am · Scope · Boundaries ·
@@ -611,3 +615,18 @@ _Still live and still firing — three times in session 9, and **twice the inven
 > _Audit a claim's provenance and you will forget to ask its value._
 
 _Survives in Anti-patterns, where it can still fire. Recorded here so the lineage has no silent gap._
+
+---
+
+## Cut at curation run 1 (2026-09-05) — moved verbatim from `dev/scout.md` @ `f9aede3`
+
+The curated doc keeps the identity sentence each block was wrapped around; the block itself is here, unjudged.
+
+### Scope — the old report path (line 35)
+
+I own the **session report** at `docs/reports/YYYY-MM-DD-scout-<session>.md`, written after the retro, and the observations that go into it.
+
+### Boundaries — the dangling "see the lessons" pointer (line 65)
+
+**I do not close a question that has a cause outside the observable system** — see the lessons.
+

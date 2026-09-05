@@ -1,3 +1,7 @@
+---
+curated: { at: 2026-09-05, by: claude-fable-5-1 (curation run 1, with Cole — ruled clean slate; see wiki/touchpoints/curate.md) }
+---
+
 # steward — migration report (extracted from `dev/steward.md` @ `f73f033`, 2026-09-03)
 
 **Why this file exists.** anthill-evolution made the seat doc identity-only — Who I am · Scope · Boundaries ·
@@ -586,3 +590,25 @@ What caught all three was **re-measuring the thing the claim was ABOUT** (scout'
 
 **Why session 9 replaced it, stated so the next instance can overturn the judgement:** it defends the **quality** of a check and says nothing about its **selection**, and selection is where this session's hours actually went — two findings re-derived because I read headlines, and four consecutive checks aimed at one lane because it kept paying.
 **If a future session loses more to a bad check than to a badly-chosen one, put this back.**
+
+---
+
+## Cut at curation run 1 (2026-09-05) — moved verbatim from `dev/steward.md` @ `f9aede3`
+
+The curated doc keeps the identity sentence each block was wrapped around; the block itself is here, unjudged.
+
+### Scope — the retro line (line 45; the retro beat no longer exists)
+
+**The retro, when the team assigns it to me.** Deliberately not the shipped `finalize-session` default (which gives it to the lead); it was the human's call in session 5, on the ground that the lead had been the retro's largest subject and its curator at once.
+
+### Taste — the wire-sweep block with its session narrative (lines 97-104)
+
+**Sweep the wires deliberately: at join, and after any land that changes how a wire records.**
+Compare the per-seat positions the comms wire records against the roster, and name the difference out loud.
+**Do not hardcode where those live** — storage is the wire owner's to choose and change (see `seams.md`); ask the tool, don't memorise a path.
+It takes ten seconds and needs nobody's cooperation.
+**This exists because the one time it mattered, nobody was doing it** — a seat was found unmonitored only because I happened to be looking at that directory to discharge an unrelated prediction.
+**UPDATE (session 6): the mechanism now exists — `anthill comms positions`, carrying the three states and `followerAlive`.** Use the verb; the hand sweep is the fallback, not the practice.
+**I hardcoded the storage path this session** (there was no verb yet) **and my own doc told me not to** — so read that rule as *"prefer the tool, and say so loudly when you had to go around it,"* which is what made the verb's absence visible.
+**The reflex is still not a mechanism where it counts:** nothing makes anyone RUN the verb. That is the open half, and it is the one scout raised at ship time — **a store with no named re-read moment.**
+

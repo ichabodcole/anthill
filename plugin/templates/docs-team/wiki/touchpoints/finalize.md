@@ -60,6 +60,16 @@ rewriting them here rewrites them everywhere.
 have them. Make the event survive without you: what you did, what happened, what it cost. Say what a
 number meant, not what it was. Do not compress, do not classify, do not decide whether it "counts".
 
+Five rules that make a report readable by a stranger, each one earned by a batch that was not:
+
+1. **Quote, do not cite.** A message, card or ruling you name is quoted — its first line, or the card
+   title — because none of them survives the session. An id alone is testimony.
+2. **Stamp the close.** Date, session, and the tree sha your last claim was measured at.
+3. **Expand a house word** the first time it appears in the report — one parenthetical per word.
+4. **Oldest first.** The report accretes during the session; do not reorder it at the close.
+5. **Label the layer.** _Pane_, _wire_, _board_ or _tree_ — one word per claim. They are four
+   different classes of evidence, and only the tree survives a clone.
+
 ### The lead's report
 
 The same three, plus **Carry-forward**: what the next session must test, decide, or not do, each with

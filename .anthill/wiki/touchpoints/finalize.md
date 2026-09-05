@@ -4,8 +4,8 @@ title: Finalize
 description: Each seat closes its report, the lead closes the lead report with carry-forward and sweeps the docs of record, nothing curated changes, and the session comes down.
 tags: [lifecycle, finalize]
 related: [touchpoint/curate, touchpoint/work]
-status: draft
-generated: { by: anthill, at: 2026-09-03 }
+status: stable
+generated: { by: claude-fable-5-1 (curation run 1, with Cole), at: 2026-09-05 }
 ---
 
 # Finalize
@@ -30,8 +30,11 @@ never touches a stable one.
 
 ## How this team does it
 
-_Not yet written for this team — the suggestions below are running as-is. Rewrite this section at
-curation, then set the page `stable`._
+anthill's suggestions below run as-is, with one addition from curation run 1 (2026-09-05): the five
+report-writing rules under "Close your report". They exist because the migration batch — 5,511 lines
+extracted from the old seat docs — pointed at a wire and a board that did not survive the session, and
+a stranger could not read it. The docs-of-record set for this repo is `docs/ROADMAP.md` and the active
+project's `plan.md`.
 
 ## anthill's suggestions
 
@@ -59,6 +62,16 @@ rewriting them here rewrites them everywhere.
 **Write for a curator who was not here.** Name the project's tools, docs and teammates freely — they
 have them. Make the event survive without you: what you did, what happened, what it cost. Say what a
 number meant, not what it was. Do not compress, do not classify, do not decide whether it "counts".
+
+Five rules that make a report readable by a stranger, each one earned by a batch that was not:
+
+1. **Quote, do not cite.** A message, card or ruling you name is quoted — its first line, or the card
+   title — because none of them survives the session. An id alone is testimony.
+2. **Stamp the close.** Date, session, and the tree sha your last claim was measured at.
+3. **Expand a house word** the first time it appears in the report — one parenthetical per word.
+4. **Oldest first.** The report accretes during the session; do not reorder it at the close.
+5. **Label the layer.** _Pane_, _wire_, _board_ or _tree_ — one word per claim. They are four
+   different classes of evidence, and only the tree survives a clone.
 
 ### The lead's report
 
