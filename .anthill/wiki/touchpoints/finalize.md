@@ -5,7 +5,7 @@ description: Each seat closes its report, the lead closes the lead report with c
 tags: [lifecycle, finalize]
 related: [touchpoint/curate, touchpoint/work]
 status: stable
-generated: { by: claude-fable-5-1 (curation run 1, with Cole), at: 2026-09-05 }
+generated: { by: claude-fable-5-1, at: 2026-09-05 }
 ---
 
 # Finalize

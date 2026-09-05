@@ -5,7 +5,7 @@ description: Outside any session: reports in, method out. The one event that edi
 tags: [lifecycle, curate]
 related: [touchpoint/finalize, touchpoint/convene]
 status: stable
-generated: { by: claude-fable-5-1 (curation run 1, with Cole), at: 2026-09-05 }
+generated: { by: claude-fable-5-1, at: 2026-09-05 }
 ---
 
 # Curate
