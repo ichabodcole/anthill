@@ -50,7 +50,7 @@ Each class below is a kind of sentence, not a list of words. The example shows o
 - **Appeals to the reader's feelings.** A description of how something feels rather than what it is. Example: "agreeing is the humble-looking move." Why it fails: it explains the reader's psychology to them instead of stating the rule.
 - **Hedged restatement.** A rule stated by contrast with a wrong version of itself. Example: "Not 'be careful with controls', which fails where it is needed, but name the world where the control fails." Why it fails: the reader has to hold the wrong version to find the right one. State the right one.
 - **Second phrasings.** The same point made twice in different words. Why it fails: the reader looks for the difference between the two and there is none. Keep the more concrete phrasing.
-- **Dated amendment notes inside a rule.** A record of when and how the rule's wording changed. Example: "widened session 11". Why it fails: version history is the repository's job. The reader needs the rule as it is now. See "Rules with provenance" for the exception.
+- **Dated amendment notes inside a rule.** A record of when and how the rule's wording changed. Example: "widened session 11". Why it fails: version history is the repository's job. The reader needs the rule as it is now.
 - **Reconciliation tables, sweep logs, and audit records.** Evidence that the document was checked. Why it fails: it is a record about the document, not guidance in it. Remove it. Do not copy it anywhere. See "State logs" for the exception.
 - **Cross-references to argument.** A pointer to reasoning elsewhere. Example: "same reason a ruling must name what it did not rule on." Why it fails: it sends the reader away from the instruction to read something that will not change what they do. A link goes with the argument it points at.
 
@@ -135,13 +135,9 @@ A word can be both a house term and an origin-story marker. "Scar" names the evi
 - One sentence per line where the document already uses that convention or the project requires it. Otherwise wrap normally.
 - Preserve existing links the reader follows to act. Remove a link whose only target is removed argument. A single-line pointer to a history file may stay if the source had one.
 
-## Rules with provenance
+## Rulings
 
-A document may carry rulings: decisions that a human made, that a reader applies, and that a reader may later ask to revisit.
-
-- A ruling keeps its date. The date identifies the decision. A session number or run number that identifies the decision is kept the same way. A session number that only says when a rule was learned is cut.
-- A ruling keeps a one-clause reason only when the document says readers may revisit rulings, or the ruling is the kind a reader must be able to overturn. Otherwise cut the reason.
-- A ruling keeps its instruction, in the imperative.
+A document may carry a ruling: a decision a human made that the reader applies. State it as the rule, in the imperative. Cut who ruled, when, and why. Example: "Ruled by the human, 2026-08-02: participate when a need arises" becomes "Participate when a need arises." Why: the reader follows the rule the same way whether or not they know its origin. The origin lives in the research document or state log that records the decision.
 
 ## State logs
 

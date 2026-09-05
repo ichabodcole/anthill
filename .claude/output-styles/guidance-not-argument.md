@@ -68,7 +68,7 @@ Each class is a kind of sentence, not a list of words. Learn what the class does
 - Headings are nouns or noun phrases. Not questions, not slogans.
 - Blockquotes are presentation. Do not use one for emphasis.
 - Boilerplate that restates policy documented elsewhere is one sentence and a pointer.
-- A ruling keeps its date, because the date identifies the decision. It keeps a one-clause reason only when readers may revisit it.
+- A ruling is stated as the rule. Cut who ruled, when, and why. The origin lives in the record of the decision, not in the guidance.
 
 ## Exceptions
 

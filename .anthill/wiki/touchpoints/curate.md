@@ -28,23 +28,21 @@ What it must produce:
 
 ## How this team does it
 
-The agent proposes and the human rules. Write the reasons the human overrules below. The method
-accretes here. Do not write it up front.
+The agent proposes and the human rules. Write each ruling below as a rule. The reason for a ruling
+is in the run's proposal, not here.
 
 ### Rulings
 
-- **2026-09-05 · a migration batch is not curated item by item.** Archive it as reports. Correct the
-  curated docs only where they are wrong today. Let knowledge re-enter through new session reports.
-  Reason: the batch was larger than a human can rule on item by item.
-- **2026-09-05 · "wrong today" is the admission test for a seat-doc edit at migration.** Fix a stale
+- **A migration batch is not curated item by item.** Archive it as reports. Correct the curated docs
+  only where they are wrong today. Let knowledge re-enter through new session reports.
+- **"Wrong today" is the admission test for a seat-doc edit at migration.** Fix a stale
   fact: a tool that no longer exists, a path the system no longer uses, a policy the lead reversed, a
   pointer to a lesson that was extracted. Do not make a change to who owns what from a migration
   batch. It waits for a session report to ask for it.
-- **2026-09-05 · a seams cut is mechanical, not a judgement.** Keep invariant, ratified grain and
+- **A seams cut is mechanical, not a judgement.** Keep invariant, ratified grain and
   proof. Move every amendment narrative, ratify record and correction to the report. Keep one line of
   "why it bites". Cut a clause that is a lesson (Contract 5(b) was).
-- **2026-09-05 · the finalize prompts change before anything else.** Change them first. A clean slate
-  depends on the next reports being readable.
+- **The finalize prompts change before anything else.**
 
 ### Runs
 
