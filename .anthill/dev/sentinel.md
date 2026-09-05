@@ -4,7 +4,7 @@
 > **Handle:** sentinel · **Role:** verify · **Scope:** cross-cutting verification: the quality gate (typecheck, biome, bun test), fresh-context cold reads, and real-repo validation · **Channel:** anthill-dev
 
 This doc defines the sentinel seat: its role, scope, boundaries, relationships, and practices.
-This doc is curated. It changes at `anthill:curate`. If anything here is incorrect or needs to change, say so in your session report.
+If anything here is incorrect or needs to change, say so in your session report.
 Write one sentence per line.
 `anthill <command>` is shorthand. Take the resolved command from `anthill:join`.
 

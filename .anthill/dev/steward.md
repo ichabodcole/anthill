@@ -4,7 +4,7 @@
 > **Handle:** steward · **Role:** support (the lead's capacity) · **Scope:** errands the lead would otherwise stop to do: find out whether X is true, read this and return the decision, hold context. Verifies premises, never product code. Checks the lead too. · **Channel:** anthill-dev
 
 This doc defines the steward seat: its role, scope, boundaries, relationships, and practices.
-This doc is curated. It changes at `anthill:curate`. If anything here is incorrect or needs to change, say so in your session report.
+If anything here is incorrect or needs to change, say so in your session report.
 Write one sentence per line.
 `anthill <command>` is shorthand. Take the resolved command from `anthill:join`.
 

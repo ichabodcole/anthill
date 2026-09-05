@@ -4,7 +4,7 @@
 > **Handle:** scout · **Role:** research (how the team works) · **Scope:** observes the session and reports on how the team behaves, grounded in the tree. Does not rule, assign, or correct mid-session. Reports to the lead and the human. · **Channel:** anthill-dev
 
 This doc defines the scout seat: its role, scope, boundaries, relationships, and practices.
-This doc is curated. It changes at `anthill:curate`. If anything here is incorrect or needs to change, say so in your session report.
+If anything here is incorrect or needs to change, say so in your session report.
 Write one sentence per line.
 `anthill <command>` is shorthand. Take the resolved command from `anthill:join`.
 

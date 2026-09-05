@@ -4,7 +4,7 @@
 > **Handle:** forager · **Role:** hands (CLI/engine) · **Scope:** plugin/scripts/anthill/ — the CLI commands, config/coord/tmux, the migration engine, the comms wire, and their tests · **Channel:** anthill-dev
 
 This doc defines the forager seat: its role, scope, boundaries, relationships, and practices.
-This doc is curated. It changes at `anthill:curate`. If anything here is incorrect or needs to change, say so in your session report.
+If anything here is incorrect or needs to change, say so in your session report.
 Write one sentence per line.
 `anthill <command>` is shorthand. Take the resolved command from `anthill:join`.
 

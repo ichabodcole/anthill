@@ -4,7 +4,7 @@
 > **Handle:** weaver · **Role:** brain (skills/methodology) · **Scope:** plugin/skills/ (the lifecycle skills and the methodology) and plugin/templates/ (scaffold and archetypes) · **Channel:** anthill-dev
 
 This doc defines the weaver seat: its role, scope, boundaries, relationships, and practices.
-This doc is curated. It changes at `anthill:curate`. If anything here is incorrect or needs to change, say so in your session report.
+If anything here is incorrect or needs to change, say so in your session report.
 Write one sentence per line.
 `anthill <command>` is shorthand. Take the resolved command from `anthill:join`.
 
