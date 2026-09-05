@@ -1,8 +1,7 @@
-# The team wiki — its maintainer contract
+# The team wiki: maintainer contract
 
-This file is the contract for adding or updating a page in this wiki. It is written for the
-agent or human about to write a page. It governs structure. The method lives in the pages.
-Read it once, then work.
+This file is the maintainer contract for the team wiki. Read it before adding or updating a
+page. It governs structure. The method lives in the pages.
 
 ## What this wiki is
 
@@ -12,14 +11,13 @@ fires and what to read: `anthill:convene`, `anthill:join`, `anthill:plan`,
 page says how this team does it. anthill ships the pages as a skeleton with suggestions. The
 team rewrites them as its own method proves out.
 
-**It is curated, not accumulated.** No seat edits a page here during a working session. Pages
-change at `curate`, or when the human and an agent deliberately sit down to edit method. A seat
-that thinks a page is wrong says so in its session report. Curation decides. The seat docs,
-`seams.md` and `principles.md` live under this same rule.
+**Curated, not accumulated.** No seat edits a page here during a working session. Pages change
+at `curate`, or when the human and an agent edit method together. A seat that
+thinks a page is wrong says so in its session report, and curation decides. The seat docs,
+`seams.md` and `principles.md` live under the same rule.
 
-**It is not the evidence trail.** Session reports live in `.anthill/reports/`, outside the
-wiki. They are dated, unprocessed until curation reads them, and never on a joining seat's read
-path.
+**Not the evidence trail.** Session reports live in `.anthill/reports/`, outside the wiki:
+dated, unprocessed until curation reads them, never on a joining seat's read path. 
 
 ## Layout
 
@@ -41,9 +39,9 @@ wiki/
    Anchors are GitHub-style slugs of the target heading. Link only anchors you have verified
    exist. The lint fails on any break.
 3. **Filenames** are kebab-case slugs of the title.
-4. **Front matter on every page.** Every page uses OKF (Open Knowledge Format) 0.2. `type` is
-   the one required field. `title`, `description`, `tags` and `status` are recommended. `generated`
-   is the trust family. `related` is an extension OKF permits.
+4. **Front matter on every page.** It follows OKF (Open Knowledge Format) 0.2. `type` is the
+   one required field. `title`, `description`, `tags` and `status` are recommended.
+   `generated` is the trust family. `related` is an extension OKF permits.
 
    ```yaml
    ---
@@ -57,9 +55,9 @@ wiki/
    ---
    ```
 
-   A page anthill shipped is `draft` with `generated.by: anthill`. That is a suggestion, not
-   this team's rule. The first time curation rewrites a page for this team, set it `stable` and
-   put the actor that did it in `generated.by`.
+   A page anthill shipped is `draft` with `generated.by: anthill`: a suggestion, not this
+   team's rule. The first time curation rewrites a page for this team, set it `stable` and put
+   the actor that did it in `generated.by`.
 5. **No page is an orphan.** Every page must be reachable from `index.md`, transitively. Add
    the catalog line in the same commit as the page.
 6. **Backlinks are computed, never authored.** The lint's JSON output carries inbound links,
@@ -69,8 +67,7 @@ wiki/
 
 `anthill wiki lint` checks links, anchors, front matter, catalog reachability and `related`
 edges, and emits the knowledge graph under `--format json`. A wiki with problems is an answer,
-not an error: the command exits `0` with `clean: false` and the problems listed, per anthill's
-CLI contract. A pre-commit or CI gate that wants a non-zero exit reads `clean` off the
+not an error: the command exits `0` with `clean: false` and the problems listed. A pre-commit or CI gate that wants a non-zero exit reads `clean` off the
 envelope: pipe the JSON through `jq -e '.data.clean'`.
 
 `anthill <command>` here is shorthand, not a binary on your PATH. The real invocation is

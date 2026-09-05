@@ -15,10 +15,10 @@ generated: { by: anthill, at: 2026-09-03 }
 Fires for multi-seat work, after convene and before building, via `anthill:plan`. Solo work
 skips it.
 
-**What it must produce:** a plan skeleton, and from each owning seat a ratification or
-falsification of every seam it touches. The skeleton states the integration order and the
-cross-seam interface contracts, as claims. A seam that changes here lands in `seams.md` through
-the lead, who single-sources it. A seat proposes a seam change. It does not write one.
+**What it must produce:** a plan skeleton (the integration order and the cross-seam interface
+contracts, stated as claims), and from each owning seat a ratification or falsification of every
+seam it touches. A seam that changes here lands in `seams.md` through the lead, who
+single-sources it. A seat proposes a seam change. A seat does not write it.
 
 ## How this team does it
 
@@ -27,10 +27,10 @@ curation, then set the page `stable`.
 
 ## anthill's suggestions
 
-- **The skeleton is a hypothesis, not blanks to fill.** If ratification finds nothing wrong, say
+- **The skeleton is a hypothesis, not a form to fill in.** If ratification finds nothing wrong, say
   so and move on.
 - **Ratify at a stated grain.** A contract agreed at the envelope level does not cover the field
-  level. A seat that builds past the agreed grain has manufactured a new seam. Name the grain in
+  level. A seat that builds past the agreed grain has created a new seam. Name the grain in
   the contract.
 - **State what must be true across the boundary, not how the owner satisfies it.**
   Implementation belongs to the owning seat.

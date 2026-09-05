@@ -76,8 +76,8 @@ carry-forward items:
 
 - **Did the team's shape fit the work?** Toe-stepping, an idle or overloaded seat, a seam that would
   not hold. Name it as a hypothesis. Curation may turn it into a roster change.
-- **Did anything look like a principle?** Usually no. Say what you saw. Do not write it into
-  `principles.md`. That is curation's call, made from the reports, with the scar attached.
+- **Did anything look like a principle?** Say what you saw. Do not write it into
+  `principles.md`. Curation writes principles, from the reports.
 
 ### The docs-of-record sweep
 
@@ -85,7 +85,7 @@ The docs in scope are the ones that claim something true of the tree and that no
 record, a roadmap, a proposal. **The lead names who checks each one.** Write a dated reconciliation
 line into each doc, claim by claim, stamped with the sha: `HELD` /
 `FALSIFIED <what> → <where it moved>` / `UNCHECKED`. **`UNCHECKED` is a real verdict and must be
-written.** A claim silently skipped is indistinguishable from one confirmed. Archives, scars and
+written.** A claim silently skipped is indistinguishable from one confirmed. Archives and
 superseded records are out of scope. Which docs are in the set is this project's answer, not
 anthill's. Put the list in "How this team does it" above.
 

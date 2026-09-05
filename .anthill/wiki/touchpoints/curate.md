@@ -1,7 +1,7 @@
 ---
 type: touchpoint
 title: Curate
-description: Outside any session: reports in, method out. The one event that edits the durable docs — and this wiki.
+description: Outside any session, a fresh agent and the human read the unprocessed reports and edit the durable docs, including this wiki.
 tags: [lifecycle, curate]
 related: [touchpoint/finalize, touchpoint/convene]
 status: stable
@@ -63,10 +63,10 @@ is in the run's proposal, not here.
   line. The same incident across three reports is a class, and a class is what becomes a
   checklist, a skill, or a guard. Prefer tooling that makes the mistake impossible over a rule that
   asks an agent to remember.
-- **A destination has an admission test.** Seat doc: does it change who this seat is or what
-  it owns? Seam: is it shared truth two seats rely on that drifts if restated? Principle: is
-  it a lesson that generalises past the incident, with its scar? Otherwise it is a skill, a tool,
-  or a drop. Drop is a real answer.
+- **A destination has an admission test.** Seat doc: it changes what the seat does or what it
+  owns. Seam: it is shared truth two seats rely on that drifts if restated. Principle: it is a rule
+  about how work goes wrong that generalises past the incident. Otherwise it is a skill, a tool, or
+  a drop. Drop is a real answer.
 - **The human is in the loop until the agent's triage matches the human's rulings across more
   than one project.** State the bar here when you can see it.
 - **Nothing is deleted.** A report that produced nothing stays a report. Pruned material from a

@@ -96,8 +96,6 @@ A word is a house term if the document uses it consistently as the name of one t
 
 Expand a house term on first use only when the source, or a document it points at, supplies the expansion. Otherwise leave it.
 
-A word can be both a house term and an origin-story marker. "Scar" names the evidence attached to a principle in some projects, and also introduces an incident narrative. Keep the word where it names the thing. Cut the sentence where it introduces the narrative.
-
 ## Sentence rules
 
 - One claim or one instruction per sentence.
