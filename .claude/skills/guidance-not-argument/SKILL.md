@@ -157,6 +157,10 @@ A document may be read by people who apply it and by people who write into it. I
 
 If the source is truncated or a sentence is incomplete, drop the fragment. Do not complete it. Say so in your report.
 
+## Applying a reviewer's correction
+
+When a reviewer marks a sentence, they are naming a kind of sentence, not a phrase. Classify what kind it is. Then read every document in scope, whole, for other sentences of that kind. A search for the marked words finds only the instances that share those words.
+
 ## Precedence
 
 "Cut on classification" wins over "keep when unsure".
@@ -169,6 +173,7 @@ If the source is truncated or a sentence is incomplete, drop the fragment. Do no
 3. Rewrite section by section. For each sentence: classify it, then apply the sentence rules.
 4. Check the output against the inventory. Restore anything on the inventory that is missing.
 5. Check the output against the removal classes. Remove anything remaining.
+   Do this by reading the whole document, not by searching for the example phrases. The removal classes name a kind of sentence, and each kind has many surface forms. A search finds the form you already know. Reading finds the ones you do not.
 6. Report, in this order:
    - Word count before and after. Line count is not a useful measure; the sentence rules split lines as fast as the cuts remove them.
    - Every extraction: source sentence, extracted instruction.
