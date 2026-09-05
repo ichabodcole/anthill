@@ -21,11 +21,12 @@ The team is ephemeral agents in durable seats.
 A seat persists across sessions. The agent filling it does not.
 Each seat has a committed seat doc that states its role and what it owns. The next agent in that seat grounds from it.
 
-Three rules follow:
+Knowledge moves between sessions in two steps:
 
-1. Knowledge that must survive a session is written to a curated doc, by curation, from reports.
-2. During a session, a seat writes to its session report, not to a curated doc.
-3. Team structure changes when the work shows friction: seats stepping on each other, a seam that does not hold, an overloaded or idle seat.
+1. During a session, each seat writes what happened into its session report. It does not edit the durable docs.
+2. Between sessions, a curation step reads the reports and decides what, if anything, changes in a seat doc, a seam, a principle, a wiki page, a skill, or tooling. A fresh agent proposes and the human rules.
+
+Team structure changes when the work shows friction: two seats working the same thing, a seam that does not hold, an overloaded or idle seat.
 
 ## Where knowledge lives
 
@@ -176,6 +177,7 @@ The lead also sweeps the docs of record (the plan of record, the roadmap, the pr
 Every seat ends with `anthill comms stand-down --as <handle>`.
 Run it after closing the report, after landing it, and after anything else you have to say.
 Stand down last.
+When the lead calls for stand-down, it names the command. "Finish up" is not an instruction to run it.
 
 The command writes a departure record.
 For a spawned seat, that record is what lets `anthill down` tear down without `--force`.

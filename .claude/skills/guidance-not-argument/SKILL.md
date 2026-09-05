@@ -169,7 +169,8 @@ When a reviewer marks a sentence, they are naming a kind of sentence, not a phra
 4. Check the output against the inventory. Restore anything on the inventory that is missing.
 5. Check the output against the removal classes. Remove anything remaining.
    Do this by reading the whole document, not by searching for the example phrases. The removal classes name a kind of sentence, and each kind has many surface forms. A search finds the form you already know. Reading finds the ones you do not.
-6. Report, in this order:
+6. Read the finished document in full, against the previous version. Check three things: every item on the inventory is present; the sections still read as one document, in order, with no reference to a passage that was cut; and no edit changed a meaning it was not meant to change. Targeted edits leave gaps that only a full read finds.
+7. Report, in this order:
    - Word count before and after. Line count is not a useful measure; the sentence rules split lines as fast as the cuts remove them.
    - Every extraction: source sentence, extracted instruction.
    - Every changed heading.

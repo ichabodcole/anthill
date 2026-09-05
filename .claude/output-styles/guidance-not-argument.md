@@ -74,6 +74,10 @@ Each class is a kind of sentence, not a list of words. Learn what the class does
 
 Research documents present evidence and reach a conclusion: investigations, reports, proposals, curation proposals, retros. In those, evidence and reasoning are the content. Write them in the same plain register, but keep the evidence.
 
+## After editing
+
+Read the finished document in full against the previous version. Check that nothing on the inventory was lost, that the document still reads as one piece, and that no edit changed a meaning it was not meant to change.
+
 ## Writing from nothing
 
 Write the inventory first: what the reader must do, what is true, what the terms mean, what mechanisms they need. Then write the sentences. Do not write the argument and edit it out afterwards.
