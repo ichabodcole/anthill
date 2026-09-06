@@ -1,6 +1,6 @@
 ---
 name: cascade-check
-description:
+description: >
   Find what else must change when you change something in anthill. Use after any substantive edit to a
   skill, template, CLI behavior, config schema, or path, and always before cutting a release. anthill
   is a web of files that restate, render, or cite each other, and nothing enforces their consistency:
