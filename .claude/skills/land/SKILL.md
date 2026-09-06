@@ -1,36 +1,29 @@
 ---
 name: land
 description: >
-  The merge step for this repo — write the merge message for a feature branch,
-  and produce the title and body for the develop→main release PR. Use when a
+  The merge step for this repo. It writes the merge message for a feature branch,
+  and produces the title and body for the develop→main release PR. Use when a
   branch is complete and about to be merged, when opening a develop→main pull
   request, or when finalizing a branch. Triggers when a user says "merge this
   branch", "land this", "open the PR", "create a pull request", "ready to merge",
-  "ship this", or when work is done and needs to reach develop or main. It is
-  the merge step ONLY — it does not replace project-docs:finalize-branch's
-  review, session docs or quality gates, and it does not replace cascade-check.
+  "ship this", or when work is done and needs to reach develop or main. It is the
+  merge step only. It does not replace project-docs:finalize-branch's review,
+  session docs or quality gates, and it does not replace cascade-check.
 ---
 
-# land — the merge step
+# land: the merge step
 
-> **⚠ THIS IS NOT THE WHOLE LANDING PROCEDURE.** It is the merge step only.
->
-> - **`project-docs:finalize-branch`** owns the independent review, the quality gate, and the
->   documentation. Run it. This skill is what its Step 8 policy lookup points at.
-> - **`cascade-check`** owns release **readiness** — the `plugin/` ship boundary, the template render
->   smoke, docs that go stale by construction, dependency floors, and _do not hand-bump versions_.
->   Run it before a `develop → main` PR. **This skill does not restate any of it**, deliberately: two
->   copies of a checklist is the drift both skills exist to prevent.
-> - **[`AGENTS.md` § Landing policy](../../../AGENTS.md)** owns the policy and the
->   commit-type → version mapping. This skill follows it; it does not decide it.
->
-> **Scope:** §1–2 are **feature → develop**. §3–6 are **develop → main**. Separate jobs — you are
-> usually asked for one, not both.
->
-> _Adapted from spellbook's local `land` skill, with what was left behind recorded in
-> [`docs/backlog/_archive/2026-08-10-adopt-a-land-skill-for-the-merge-step.md`](../../../docs/backlog/_archive/2026-08-10-adopt-a-land-skill-for-the-merge-step.md)._
+This skill is the merge step for this repo. It produces the merge message for a feature branch, and
+the title and body for the develop → main release PR. Sections 1 and 2 are feature → develop.
+Sections 3 to 6 are develop → main. You are usually asked for one, not both.
 
----
+- **`project-docs:finalize-branch`** owns the independent review, the quality gate, and the
+  documentation. Run it. This skill is what its Step 8 policy lookup points at.
+- **`cascade-check`** owns release readiness: the `plugin/` ship boundary, the template render
+  smoke, docs that go stale by construction, and dependency floors. Run it before a
+  `develop → main` PR. Do not hand-bump versions.
+- **[`AGENTS.md` § Landing policy](../../../AGENTS.md)** owns the landing policy and the
+  commit-type to version mapping. Follow it. Do not decide it here.
 
 ## 0 · Preconditions
 
@@ -40,19 +33,17 @@ git fetch origin
 git checkout <base> && git merge --ff-only origin/<base>   # the base must be current
 ```
 
-> **⚠ RUN THE GATE UNPIPED.** `bun run check | tail` reports **`tail`'s** exit code, which is always 0. Redirect and read `$?`:
->
-> ```bash
-> bun run check > /tmp/gate.log 2>&1; echo $?
-> ```
->
-> _Carried from spellbook, where it produced a false green more than once. **Reproduced here**
-> 2026-08-10: `sh -c 'exit 7' | tail -5; echo $?` → `0`, in both bash and zsh, with `pipefail` off._
+Run the gate unpiped. `bun run check | tail` reports `tail`'s exit code, which is always 0. Redirect
+and read `$?`:
 
-## 1 · The strategy is already decided — compute the facts anyway
+```bash
+bun run check > /tmp/gate.log 2>&1; echo $?
+```
 
-**`AGENTS.md`: merge; do not squash or rewrite.** You do not re-decide this per branch. But compute
-the facts, because they are what makes the policy true and they belong in the report:
+## 1 · Merge strategy, and the facts to compute anyway
+
+**`AGENTS.md`: merge. Do not squash or rewrite.** Do not re-decide this per branch. Compute the
+facts anyway, because they belong in the report:
 
 ```bash
 git log <base>..HEAD --oneline | wc -l
@@ -61,22 +52,18 @@ git log <base>..HEAD --format='%an%n%(trailers)' | sort -u                      
 ```
 
 Any sha citation, or more than one identity across `%an` and the `Anthill-Seat:` / `Co-Authored-By:`
-trailers, is information a squash would destroy. **Say so in the report even though the policy
-already forbids squashing** — the day the policy is revisited, these numbers are the argument.
+trailers, is information a squash would destroy. Say so in the report even though the policy already
+forbids squashing.
 
-> **The policy carries a live OPEN question** (`session-branch-strategy` settled on squash-merge,
-> unbuilt; the 2026-08-07 triage measured what that costs a sha-pinning repo). **Do not settle it
-> here.** If it flips, §2 changes and this section gains a mechanised check.
+The policy carries a live open question about squash-merge. Do not settle it here.
 
 ## 2 · Feature → develop: the named merge
 
-**Subject convention — `merge(<scope>): <what a reader got, in their terms>`.** Already 32 of this
-repo's 46 non-PR merges **as of 2026-08-10** — and 32 of the 36 that are actually feature→develop
-landings, since the other 10 are back-merges, merges into `seat/*`, and develop→feature merges that
-would never take this form. This stops the drift rather than starting a convention. `merge` is not a
-conventional-commit type, so it triggers no release — correct for something reaching only `develop`.
+**Subject convention:** `merge(<scope>): <what a reader got, in their terms>`. `merge` is not a
+conventional-commit type, so it triggers no release. That is correct for something reaching only
+`develop`.
 
-**Build ONE file** — subject, **blank line**, body:
+**Build one file:** the subject, a blank line, then the body.
 
 ```
 merge(<scope>): <what a reader got>
@@ -89,9 +76,8 @@ merge(<scope>): <what a reader got>
 git merge --no-ff <branch> -F <file>
 ```
 
-> **⛔ NEVER `-m "subject" -F body`.** git concatenates them **with no blank line**, so the entire
-> first paragraph becomes the subject. _Spellbook hit this and shipped a 251-character subject,
-> breaking the `git log --merges` view that naming the merge exists to create._
+Never use `-m "subject" -F body`. git concatenates them with no blank line, so the entire first
+paragraph becomes the subject.
 
 **Read it back before pushing:**
 
@@ -101,70 +87,61 @@ git log -1 --format='%h parents: %p'    # a named merge has TWO parents
 git commit --amend -F <file>            # the fix — only before pushing
 ```
 
-**Afterwards:** delete the merged branch, and delete the message file — it is untracked and will
+**Afterwards.** Delete the merged branch. Delete the message file. It is untracked and will
 otherwise be swept into a later `git add -A`.
 
-## 3 · develop → main: the PR message — a FRESH agent, from the tree
+## 3 · develop → main: the PR message, from a fresh agent reading the tree
 
-**Not the lead of the session that did the work.** That agent knows what was _interesting_ — the
-falsifications, the things that surprised it. **It does not reliably know what was _delivered_**, and
-it will write the retro instead of the release note.
+Do not use the lead of the session that did the work. Dispatch a fresh agent with the branch, the
+base, and nothing else. Give it no session log and no summary. If it cannot write a good message
+from the artifacts, that is a finding about the artifacts.
 
-**Dispatch it with the branch, the base, and nothing else** — no session log, no summary. The
-reconstruction is the point: a fresh agent reading the tree does what a future reader will do.
-**If it cannot write a good message from the artifacts, that is a finding about the artifacts.**
+Ask it to return the following separately from the prose:
 
-Ask it to return, **separately from the prose**:
+1. What it could not determine from the tree.
+2. Where documents contradicted each other or the code.
+3. Whether the artifacts were sufficient on their own.
+4. Anything that reads as shipped but is a limitation, or the reverse.
 
-1. what it could **not** determine from the tree;
-2. where documents **contradicted** each other or the code;
-3. whether the artifacts were **sufficient on their own**;
-4. anything that reads as shipped but is a **limitation**, or vice versa.
+## 4 · The cold read, before the message ships
 
-## 4 · Cold-read the message before it ships
+Use a second fresh agent. Give it the message text. Forbid it from looking anything up. If it wants
+to go check something, that is the finding.
 
-**A second fresh agent. Give it the message text and forbid it from looking anything up.** If it
-wants to go check something, **that is the finding**.
+Ask it for the terms it could not confidently interpret, separated into two categories: "I don't
+know this word" and "I know it but it might mean something specific here". Ask it for what it takes
+away in 2–3 sentences.
 
-Ask for **terms it could not confidently interpret**, separating _"I don't know this word"_ from
-_"I know it but it might mean something specific here"_, and **what it takes away in 2–3 sentences**.
+**What to do with the findings:**
 
-> **The second category is the dangerous one.** An unknown word makes a reader look it up; a
-> half-recognised one lets them carry on with the wrong reading.
+1. **Wrong or stale facts:** fix them in the tree and commit. They are defects.
+2. **Ambiguous terms:** fix them in the message.
+3. **Something shipped that reads as a limitation:** give it its own section.
+4. **Re-run the cold read only if the message's structure changed**, not for wording. One re-read
+   maximum.
 
-**What to do with the findings — not a loop:**
+## 5 · Opening the PR: the agent creates it, the human merges
 
-1. **Wrong or stale facts → fix in the tree and commit.** They are defects.
-2. **Ambiguous terms → fix in the message.**
-3. **Something SHIPPED that reads as a limitation → give it its own section.**
-4. **Re-run the cold read only if the message's STRUCTURE changed**, not for wording. **One re-read
-   maximum** — past that you are polishing.
-
-## 5 · Open the PR — the agent creates it, the human merges
-
-**Push first.** `gh pr create` uses the _pushed_ branch; an unpushed commit is silently absent from
-the PR. **Pushing to `develop` is the human's call — ask.**
+Push first. `gh pr create` uses the pushed branch. An unpushed commit is silently absent from the
+PR. Pushing to `develop` is the human's call. Ask.
 
 ```bash
 gh pr create --base main --head develop \
   --title "$(head -1 msg.md)" --body-file <(tail -n +3 msg.md)
 ```
 
-> **⚠ `gh` splits title and body; `git` does not.** And `tail -n +3` assumes **exactly one** subject
-> line and **one** blank line — check with `awk 'NR<=3'` first, or the body silently loses its first
-> line.
+`gh` splits title and body. `git` does not. `tail -n +3` assumes exactly one subject line and one
+blank line. Check with `awk 'NR<=3'` first, or the body silently loses its first line.
 
-**If the PR already exists** — which is the normal case, since the human usually opens it before
-asking for a message — it is `edit`, not `create`, and the flags are otherwise identical:
+If the PR already exists, use `edit` rather than `create`. The flags are otherwise identical. This
+is the normal case, because the human usually opens the PR before asking for a message.
 
 ```bash
 gh pr edit <n> --title "$(head -1 msg.md)" --body-file <(tail -n +3 msg.md)
 ```
 
-_Added after the first real run: this skill only documented `create`, and the PR was already open._
-
-**⛔ The agent does NOT merge to `main`.** That is the release: `main` is branch-protected, and
-release-please cuts a version on merge. **Hand the human the command; do not run it:**
+**The agent does not merge to `main`.** That merge is the release: `main` is branch-protected, and
+release-please cuts a version on merge. Hand the human the command. Do not run it:
 
 ```bash
 gh pr merge <n> --merge \
@@ -172,80 +149,45 @@ gh pr merge <n> --merge \
   --body-file <(tail -n +3 msg.md)
 ```
 
-**⚠ BOTH FLAGS, from the SAME file that produced the PR — and the body is the half that is easy to
-skip.** What GitHub pre-fills is `Merge pull request #NN from ichabodcole/develop` as the subject and
-**the PR's _title_** as the body. **The PR's DESCRIPTION never enters git at all** — it lives only in
-GitHub's database.
+Pass both flags, from the same file that produced the PR. The body is the half that is easy to skip.
+What GitHub pre-fills is `Merge pull request #NN from ichabodcole/develop` as the subject, and the
+PR's title as the body. The PR's description never enters git at all. It lives only in GitHub's
+database.
 
-**Measured on this repo, 2026-08-10 — every release merge ever cut here:**
-
-```
-4df9539  Merge pull request #103 from ichabodcole/develop     body: [Develop]
-7b24759  Merge pull request #87  from ichabodcole/develop     body: [Develop]
-8f68492  Merge pull request #84  from ichabodcole/develop     body: [Develop]
-```
-
-So §6's `git log --first-parent main` — **the query this skill names as how you read releases** — is
-a list of indistinguishable entries. **A good PR description fixes the GitHub view and does nothing
-for `git log`, a fresh clone, `git bisect`, or anyone offline.**
-
-> **Why the merge commit, and not just the PR body.** Two patterns are both legitimate: a thin merge
-> commit with a rich PR description (history is a pointer to GitHub), or a rich merge commit with the
-> PR as the conversation (history is the record). **This repo is the second, and not by taste** —
-> `AGENTS.md`'s landing policy exists so sha citations keep resolving and trailers stay readable _in
-> git_, and release-please builds the changelog from commits. A repo that reads its own history back
-> must not keep its release story where `git log` cannot reach.
->
-> **The duplication is fine, and asymmetric on purpose:** the commit is immutable, the PR body is
-> editable. The commit is a snapshot of what you believed at merge time, which is what a release
-> record should be. A long body costs nothing in the common view — `--first-parent` shows subjects
-> unless you ask for `%b`.
-
-_This said `--subject` only until 2026-08-10, carried from spellbook without asking whether the body
-should ride along. The measurement above is what changed it._
-
-**Which commit types release:** `AGENTS.md` § Branches and releases has it — `feat` minor, `fix`
-patch, and **`docs` / `test` / `chore` are hidden and trigger no release at all.** A docs-only merge
-to `main` producing no version is correct, not broken. **Ask before picking a type: does a CONSUMER
-get anything different?** If not, it is a `chore`.
+**Which commit types release.** `AGENTS.md` § Branches and releases has it: `feat` is minor, `fix`
+is patch, and `docs`, `test` and `chore` are hidden and trigger no release at all. A docs-only merge
+to `main` producing no version is correct, not broken. Ask before picking a type: does a consumer
+get anything different? If not, it is a `chore`.
 
 ## 6 · Reading history afterwards
 
-**Measured on this repo, 2026-08-10** — both work here:
+Both of these work in this repo:
 
 ```bash
 git log --first-parent main --format='%h %ci %s'                       # RELEASES
 git log develop --merges --format='%h %ci %s' | grep -v "Merge pull request"   # FEATURE merges
 ```
 
-> **⚠ Spellbook warns that `--first-parent develop` is useless there**, because its back-merge
-> fast-forwards develop onto main's spine and every named merge drops to a second parent.
-> **That is NOT true of anthill today** — this repo's **three** back-merges (`12612ba`, `9f1a3a5`,
-> `01314c6`) were **all real merges**, so `--first-parent develop` still shows develop's own history
-> (81 commits, measured). **Re-measure rather than trusting
-> either claim** if a back-merge ever fast-forwards.
+Spellbook warns that `--first-parent develop` is useless there, because its back-merge
+fast-forwards develop onto main's spine and every named merge drops to a second parent. That is not
+true of anthill today: this repo's back-merges are all real merges, so `--first-parent develop`
+still shows develop's own history. Re-measure rather than trusting either claim if a back-merge ever
+fast-forwards.
 
 ## 7 · Feedback
 
-**A skill copied between repos carries THREE kinds of claim, and they need three different
-treatments.** Named by spellbook's side of the crosstalk channel, 2026-08-10, after we had hit all
-three in one day:
+A skill copied between repos carries three kinds of claim, and they need three different treatments.
 
-| kind          | example from this file                          | what it needs                                     |
-| ------------- | ----------------------------------------------- | ------------------------------------------------- |
-| **mechanism** | `-m` + `-F` concatenates with no blank line     | **ports as-is** — it is git's behaviour           |
-| **topology**  | `--first-parent develop` is useless             | **RE-MEASURE** in the borrowing repo              |
-| **audience**  | whether the narrative belongs in a release page | **RE-DECIDE** — a human's call, not a measurement |
+| kind          | example from this file                          | what it needs                                |
+| ------------- | ----------------------------------------------- | -------------------------------------------- |
+| **mechanism** | `-m` + `-F` concatenates with no blank line     | ports as-is: it is git's behaviour           |
+| **topology**  | `--first-parent develop` is useless             | re-measure in the borrowing repo             |
+| **audience**  | whether the narrative belongs in a release page | re-decide: a human's call, not a measurement |
 
-The failure mode differs by kind. A mechanism claim that is wrong fails loudly. **A topology claim
-that does not port stays silent** — it describes a hazard the borrowing repo does not have, and
-nothing ever fires. **An audience claim is worse still**: it is not checkable at all, so a borrowed
-one imports another project's product decision wearing the authority of a measurement.
+The failure mode differs by kind. A mechanism claim that is wrong fails loudly. A topology claim
+that does not port stays silent, because it describes a hazard the borrowing repo does not have and
+nothing ever fires. An audience claim is not checkable at all, so a borrowed one imports another
+project's product decision as though it were a measurement.
 
-_All three fired here in one day: a filter string, the `--first-parent` warning, and the question of
-who the release narrative is for. The last one was settled by asking Cole, not by running anything._
-
-This skill is adapted from another repo's, and the parts marked as carried-not-reproduced are the
-likeliest to be wrong here. If a step misfires — or a scar turns out not to apply to anthill —
-correct it in place and say what you measured. **A borrowed scar that never fires here is worse than
-no scar: it teaches a hazard that does not exist.**
+This skill is adapted from another repo's. If a step misfires here, or a claim turns out not to
+apply to anthill, correct it in place and say what you measured.
