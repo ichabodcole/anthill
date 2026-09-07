@@ -236,11 +236,17 @@ independently divergent**: they were seeded at different times, and each has bee
 own seats since. There is no such thing as reconciling "the project's" `README.md`.
 
 **On `retro.md`: it is RETIRED (2026-09-03) and has no template, so there is nothing to diff it
-against — leave it alone.** A footprint that has one keeps it until the anthill-evolution migration
-folds it into the team's first report batch; do not delete it by hand and do not reconcile it. The
-same holds for the seat docs' retired sections (Epitaph, Hard-won lessons, Anti-patterns, Candidates):
-the template no longer has them, so the diff will show them as "extra" — **that is the migration's
-job, not the reconcile's.** Reconcile only the identity sections and the header.
+against — leave it alone.** A footprint that has one keeps it until the team migrates; do not delete it
+by hand and do not reconcile it. The same holds for the seat docs' retired sections (Epitaph, Hard-won
+lessons, Anti-patterns, Candidates): the template no longer has them, so the diff will show them as
+"extra" — leave them for the migration. Reconcile only the identity sections and the header.
+
+**The migration is a curation run, done by hand; no command performs it.** Move each retired section,
+`retro.md` and `paper-cuts.md` verbatim into `<teamDir>/reports/<date>-migration/<handle>.md` (one
+report per source file, with a header saying where it came from), cut the seat docs to their identity
+sections, then run `anthill:curate` on that batch. The first team to do this ruled that a migration
+batch is archived rather than triaged item by item, and that only facts wrong today are corrected in
+the identity docs; its rulings are on its curate page and are a reasonable starting method.
 
 **The general rule worth carrying: before you trust a diff, confirm both sides exist.** This is the
 failure mode step 0 spends five lines warning about, arriving from the other direction — there, an

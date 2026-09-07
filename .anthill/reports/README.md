@@ -31,7 +31,6 @@ the curator only ever sees failures.
 
 Answer the close prompts at the bottom of your report, in prose, as long as they need to be. The
 prompts live on this team's wiki finalize page, `.anthill/wiki/touchpoints/finalize.md`, not here.
-anthill's seed asks three open questions: what did you hit · what worked · what would you change.
 They ask what happened. They do not ask you to sort it.
 
 ## The lead's report

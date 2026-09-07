@@ -91,6 +91,17 @@ interface JoinData {
  * one commit — the "prose about code, written by the person who just wrote the
  * code" failure this seat records against itself. Rewritten, not amended.)_
  */
+/**
+ * The report folder is keyed by the LOCAL calendar date, not UTC. `toISOString()`
+ * flips to tomorrow at 17:00 Pacific, so two seats joining either side of it
+ * landed in different date folders for one session (found at review).
+ */
+export function localDateStamp(d: Date = new Date()): string {
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
 export type WireStatus = { available: true; cli: string } | { available: false; reason: string };
 
 /**
@@ -514,7 +525,7 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // cannot reach it" (false — a 452KB world-readable file) and this seat's own
     // promotion of that claim to a "guarantee".
     `Mint your session REPORT at ${i.reportRel} — create it now, write into it AS THINGS HAPPEN, in full, for a curator who was not here. It is the only place this session's lessons go: ${i.seatDocRel}, seams.md, principles.md and the wiki are CURATED — nobody edits them mid-session, and \`commit\` refuses them without --curated. If one of them reads wrong, that is the first line of your report.`,
-    `Finalize BEFORE you drop off: CLOSE your report at ${i.reportRel} (what you hit · what worked · what you would change), land it, THEN record your departure with \`bun ${i.cliPath} comms stand-down --as ${i.handle}\` — the LAST thing you do. It is a positive observation the teardown guard reads; "I stopped working" leaves no record and is not a departure. Scratch is gitignored, so it never TRAVELS — the files stay on your disk, but nothing commits them and no future instance reads them; the report is what travels.`,
+    `Finalize BEFORE you drop off: CLOSE your report at ${i.reportRel} (the close prompts are on the team's wiki finalize page), land it, THEN record your departure with \`bun ${i.cliPath} comms stand-down --as ${i.handle}\` — the LAST thing you do. It is a positive observation the teardown guard reads; "I stopped working" leaves no record and is not a departure. Scratch is gitignored, so it never TRAVELS — the files stay on your disk, but nothing commits them and no future instance reads them; the report is what travels.`,
     // NAMES NO WIRE — found by grepping this scope after the same collapse was
     // fixed three times elsewhere today. This said "on the vine", and it is
     // EMITTED to every consuming project: a team running comms-only (which this
@@ -768,7 +779,7 @@ export const teamJoinCommand = defineAnthillCommand({
     const reportRel = join(
       relative(root, config.teamDirPath()),
       "reports",
-      new Date().toISOString().slice(0, 10),
+      localDateStamp(),
       `${handle}.md`,
     );
 

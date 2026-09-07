@@ -832,6 +832,64 @@ describe("anthill commit — seat attribution (StoryLoom field request)", () => 
     }
   });
 
+  test("CURATED GUARD — a directory or glob pathspec that reaches a seat doc is refused after staging, and the index is restored", async () => {
+    const dir = makeRepo();
+    try {
+      withConfig(dir, ["maestro", "forager"]);
+      mkdirSync(join(dir, ".anthill", "dev"), { recursive: true });
+      writeFileSync(join(dir, ".anthill", "dev", "forager.md"), "# forager\n");
+      writeFileSync(join(dir, ".anthill", "dev", "notes.md"), "# notes\n");
+      // Track both first: the review's bypass was on TRACKED seat docs, where git
+      // expands the pathspec and the string guard never saw a seat-doc path.
+      Bun.spawnSync(["git", "add", "-A", ".anthill/dev"], { cwd: dir, env: GIT_ENV });
+      Bun.spawnSync(["git", "commit", "-q", "-m", "seed"], { cwd: dir, env: GIT_ENV });
+      writeFileSync(join(dir, ".anthill", "dev", "forager.md"), "# forager\n\nlesson\n");
+      writeFileSync(join(dir, ".anthill", "dev", "notes.md"), "# notes\n\nmore\n");
+      for (const spec of [".anthill/dev", ".anthill", ".anthill/dev/*.md"]) {
+        const { code, stderr } = await runCli(
+          ["commit", "-m", "sneak", "--as", "forager", spec],
+          dir,
+        );
+        expect(code, spec).toBe(1);
+        expect(firstJson(stderr)?.error, spec).toMatch(/refusing to commit CURATED doc/);
+        expect(firstJson(stderr)?.error, spec).toContain("forager.md");
+        expect(stagedNames(dir), spec).toEqual([]);
+      }
+      // Positive control: the same directory pathspec with NO curated change underneath lands.
+      Bun.spawnSync(["git", "checkout", "--", ".anthill/dev/forager.md"], {
+        cwd: dir,
+        env: GIT_ENV,
+      });
+      const ok = await runCli(
+        ["commit", "-m", "notes only", "--as", "forager", ".anthill/dev"],
+        dir,
+      );
+      expect(ok.code).toBe(0);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test("CURATED GUARD — --curated without --as is refused, not silently ignored", async () => {
+    const dir = makeRepo();
+    try {
+      withConfig(dir, ["maestro", "forager"]);
+      mkdirSync(join(dir, ".anthill", "dev"), { recursive: true });
+      writeFileSync(join(dir, ".anthill", "dev", "forager.md"), "# forager\n");
+      const { code, stderr } = await runCli(
+        ["commit", "-m", "x", "--curated", ".anthill/dev/forager.md"],
+        dir,
+      );
+      expect(code).toBe(1);
+      expect(firstJson(stderr)?.error).toMatch(
+        /--curated only means something on an attributed commit/,
+      );
+      expect(stagedNames(dir)).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   test("CURATED GUARD — a REPORT is not curated: an attributed commit of one lands", async () => {
     const dir = makeRepo();
     try {

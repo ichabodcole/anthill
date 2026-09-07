@@ -13,7 +13,7 @@ import { dirname, join, relative, resolve } from "node:path";
 // can be dropped into another repo unchanged. Anything project-specific belongs in
 // `extraChecks`, not in here.
 //
-// Entry point:  docs/wiki/lint.ts   (accepts --json)
+// Entry point here: `anthill wiki lint` (commands/team-wiki-lint.ts). In the source repo it was docs/wiki/lint.ts.
 //
 // anthill: lifted verbatim from agent-cli-conformance's `scripts/docs-lint/index.ts` on
 // 2026-09-03 (the same file dream-flute lifted from), with ONE change: the lint body is split

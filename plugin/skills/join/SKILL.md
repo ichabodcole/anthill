@@ -7,7 +7,7 @@ description: Join the project's agent team as a specific seat. Run by a seat age
 
 Adopt a seat on the project's **agent team** and re-ground in it. Run this at session start when the
 human tells you which seat to take (your **handle** — one of the seats in `.anthill/config.json`). This is
-how a fresh session inherits the seat's lineage: its hard-won understanding lives in its living doc.
+how a fresh session inherits the seat: its role and ownership live in its seat doc, and what past sessions learned reaches it through curation, not through the doc.
 
 > **The anthill CLI** — driven from the plugin:
 > `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, written **`anthill <command>`** below
@@ -226,7 +226,7 @@ status`** shows who's on + the board.
 
 4. **Mint your session REPORT and your scratch.** Two files, two jobs:
    - **Your report — `<teamDir>/reports/<YYYY-MM-DD>/<handle>.md`.** The manifest names the exact
-     path (`report`). Create it now, from the shape in `<teamDir>/reports/README.md`, and **write into
+     path (`report`). Create it now — a title line is enough; `<teamDir>/reports/README.md` says what goes in — and **write into
      it as things happen** — in full, in whatever words come, for a curator who was not here. It is
      committed, it is the only place this session's lessons go, and it is on no joining seat's read
      path. **Your seat doc, `seams.md`, `principles.md` and the wiki are CURATED** — nobody edits

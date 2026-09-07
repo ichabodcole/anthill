@@ -469,6 +469,16 @@ export const teamCommitCommand = defineAnthillCommand({
     // grew their seat docs past a thousand lines anyway. So the write-permission
     // split is enforced at the one write-point every seat uses, and `--curated`
     // is the declared exception, not a hint.
+    if (ctx.args.curated && seat === undefined) {
+      emitError({
+        format,
+        command: "commit",
+        error:
+          "--curated only means something on an attributed commit: pass --as <handle> with it. " +
+          "The curated guard runs on attributed commits, so --curated alone declares nothing.",
+      });
+      process.exit(1);
+    }
     if (config && !ctx.args.curated) {
       const hits = curatedHits(paths, curatedEntries(config), config.projectRoot, process.cwd());
       if (hits.length > 0) {
@@ -579,6 +589,33 @@ export const teamCommitCommand = defineAnthillCommand({
       if (!full.ok || !ours.ok) {
         restoreIndex();
         throw new Error(`git diff --cached failed:\n${full.stderr || ours.stderr || "unknown"}`);
+      }
+      // THE CURATED GUARD, second pass — on what git actually staged. The first
+      // pass above read the caller's STRINGS; git reads them as PATHSPECS, so
+      // `.anthill/dev`, `.anthill`, or an unexpanded glob walked past it while
+      // staging every seat doc underneath (found at review, on a fixture). The
+      // staged list is post-expansion and repo-relative, so it is the honest set.
+      if (config && !ctx.args.curated) {
+        const hits = curatedHits(
+          stagedList(ours.stdout),
+          curatedEntries(config),
+          config.projectRoot,
+        );
+        if (hits.length > 0) {
+          restoreIndex();
+          releaseLock(lock);
+          emitError({
+            format,
+            command: "commit",
+            error:
+              `refusing to commit CURATED doc(s) reached through your pathspec — ${hits
+                .map((h) => `${h.path} (${h.what})`)
+                .join(", ")}. ` +
+              "These change only at anthill:curate, from the seats' reports, or when the lead lands a " +
+              "ratified seam. Name your files explicitly, or pass --curated if you ARE curating.",
+          });
+          process.exit(1);
+        }
       }
       const unexpected = unexpectedStaged(stagedList(full.stdout), stagedList(ours.stdout));
       if (unexpected.length > 0) {

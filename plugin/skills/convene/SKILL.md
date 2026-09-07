@@ -39,8 +39,8 @@ stay solo.
      it and this skill differ on _how_, the page wins.
    - **the latest lead report's Carry-forward** — `<teamDir>/reports/<latest date>/<lead>.md`, the
      one report a session reads back. **None yet?** Normal before this team's first finalize; say so
-     and move on. **Count the unprocessed reports while you are there** (any report without
-     `curated:` front matter) and say the number in the brief: a pile of unread reports is the old
+     and move on. **Count the unprocessed reports while you are there** (every `<date>/<handle>.md` under
+     `reports/` without `curated:` front matter; the folder's `README.md` is not a report) and say the number in the brief: a pile of unread reports is the old
      accumulation under a new filename, and `anthill:curate` is how it clears.
      You are now the **lead**.
 
@@ -219,8 +219,8 @@ positions`.** This is the named moment to run it; without one it is a verb nobod
      skips the tail wiring. Good for a small single-session build.
      - **Bake the report close into every subagent brief** — the one thing to remember when
        dispatching seats. Make it the **final step of the task itself**: write and close your session
-       report (`<teamDir>/reports/<date>/<handle>.md` — what you hit · what worked · what you would
-       change), **return**, do not commit, and **do not touch your seat doc, `seams.md`,
+       report (`<teamDir>/reports/<date>/<handle>.md`, answering the close prompts on the team's wiki
+       finalize page), **return**, do not commit, and **do not touch your seat doc, `seams.md`,
        `principles.md` or the wiki** — those are curated. The lead lands the report. Mechanism in
        `anthill:finalize-session` step 0.
 
@@ -280,8 +280,8 @@ The stand-up beats that get skipped when you're eager to spawn. Run them as a li
   project has a branch policy (in the grounding docs), it's followed. _Do this **before** spawn — spawn
   is when seats gain commit power._
 - ◻ **Seats spawned** — `anthill spawn <handles…>`; `anthill status` confirms who's on + the columns.
-- ◻ **Every seat accounted for on `comms`** — `status` does **not** cover this wire (comms has no
-  presence). Count the "in, grounded" messages you actually received and name anyone missing.
+- ◻ **Every seat accounted for on `comms`** — `status` folds comms presence in, but a present seat is
+  not a grounded one. Count the "in, grounded" messages you actually received and name anyone missing.
 
 ## Output
 

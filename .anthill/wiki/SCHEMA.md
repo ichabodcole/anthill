@@ -45,7 +45,7 @@ wiki/
 
    ```yaml
    ---
-   type: touchpoint | guide | decision | concept
+   type: touchpoint | guide | decision | concept | index
    title: Finalize
    description: One sentence; doubles as the catalog hook in index.md.
    tags: [lifecycle, finalize]

@@ -61,8 +61,10 @@ emits, refuses, or reads, and what another skill depends on.
 6. **Tear down — the invariants, in order:**
    - ◻ Every present seat confirmed its report is landed (step 0).
    - ◻ **Nothing curated changed this session** — `git diff --name-only <session base>.. --
-<seatDir> <teamDir>/principles.md <teamDir>/wiki` is empty, except a seam the lead landed with
-     `--curated`. Non-empty is a finding for the lead report, not something to fix now.
+<seatDir>/<handle>.md… <seams.md> <teamDir>/principles.md <teamDir>/wiki` is empty (the seat docs by
+     name, not the whole `<seatDir>`: the roster `README.md` there is the lead's to edit), except a seam
+     the lead landed with `--curated`. Non-empty is a finding for the lead report, not something to fix
+     now.
    - ◻ The lead report is landed, Carry-forward included.
    - ◻ **The code merge is a separate ritual and this one does not perform it** — the project's own
      branch-completion procedure, from its grounding docs or skills. Do not hard-code one here.

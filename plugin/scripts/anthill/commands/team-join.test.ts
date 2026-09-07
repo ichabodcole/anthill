@@ -9,6 +9,7 @@ import {
   buildMissingWarnings,
   type CoordWires,
   decideGate,
+  localDateStamp,
   oneLineTitle,
   parseReviewCards,
   type ReviewCard,
@@ -1018,5 +1019,18 @@ describe("the catch-up line routes a compliant seat to the BOARD, not to the wir
 
   test("it tells a seat to ASK when there is no card — the route must terminate", () => {
     expect(catchUp()).toMatch(/ASK your lead/);
+  });
+});
+
+describe("localDateStamp — the report folder is the LOCAL date", () => {
+  test("uses local calendar components, never toISOString", () => {
+    // 23:30 local on the 15th: toISOString() is the 16th anywhere west of UTC.
+    const d = new Date(2026, 8, 15, 23, 30);
+    expect(localDateStamp(d)).toBe("2026-09-15");
+    // 00:30 local on the 1st.
+    expect(localDateStamp(new Date(2026, 9, 1, 0, 30))).toBe("2026-10-01");
+    // Positive control: the naive form disagrees for at least one of these when TZ != UTC.
+    const naive = d.toISOString().slice(0, 10);
+    if (d.getTimezoneOffset() !== 0) expect([naive, "2026-09-15"]).toContain(naive);
   });
 });
