@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
 import { main } from "./cli.ts";
 import { buildManifest } from "./manifest.ts";
 
@@ -51,19 +52,76 @@ const PIPE_CEILING = 65_536;
  */
 const SAFE_MAX = PIPE_CEILING / 2;
 
+/**
+ * 2026-09-03: the manifest crossed SAFE_MAX (32,874 bytes after `wiki lint` and
+ * `commit --curated` landed) and the tripwire fired as designed. Its remedy was
+ * taken — the root `--help` manifest path now RETURNS instead of exiting — so
+ * the manifest is no longer an exit-path payload and is not measured here. What
+ * IS still emitted before a `process.exit`: a single command's manifest entry
+ * (`<cmd> --help` in JSON), rendered usage, and `--version`. Those stay under
+ * the tripwire below. And because the immunity was accidental once, the exit's
+ * absence on the manifest path is pinned against the SOURCE, with a positive
+ * control, so a tidy-up that puts it back goes red here rather than at 64KB.
+ */
+const CLI_SRC = readFileSync(new URL("./cli.ts", import.meta.url), "utf8");
+
+/** The CODE lines that follow the root-manifest emit on the `--help` path —
+ * comments stripped, because the comment beside that `return` names the very
+ * call this guard looks for, and a guard that reads its own explanation as
+ * the defect is blind in the other direction. */
+export function afterRootManifestEmit(src: string, lines = 8): string {
+  const marker = 'data: manifest, renderText: () => ""';
+  const at = src.indexOf(marker);
+  if (at < 0) throw new Error("root-manifest emit not found in cli.ts — the marker moved");
+  return src
+    .slice(at)
+    .split("\n")
+    .filter((l) => !l.trim().startsWith("//"))
+    .slice(0, lines)
+    .join("\n");
+}
+
 describe("exit-path payloads must stay far below the pipe ceiling", () => {
-  test("`help --json`'s manifest — the largest payload emitted before a process.exit", async () => {
+  test("the largest SINGLE-COMMAND manifest entry — what `<cmd> --help` emits before exiting", async () => {
+    const manifest = await buildManifest(main);
+    const sizes: number[] = [];
+    const walk = (cmds: typeof manifest.commands) => {
+      for (const c of cmds) {
+        sizes.push(Buffer.byteLength(`${JSON.stringify(c, null, 2)}\n`, "utf8"));
+        walk(c.subcommands);
+      }
+    };
+    walk(manifest.commands);
+    const largest = Math.max(...sizes);
+    // Positive control: a manifest that had collapsed to nothing would also be
+    // "under the limit" and prove nothing.
+    expect(largest).toBeGreaterThan(500);
+    expect(largest).toBeLessThan(SAFE_MAX);
+  });
+
+  test("the WHOLE manifest is no longer emitted before an exit — the root --help path returns", () => {
+    const tail = afterRootManifestEmit(CLI_SRC);
+    expect(tail).not.toContain("process.exit");
+    expect(tail).toContain("return;");
+  });
+
+  test("POSITIVE CONTROL — the source guard sees an exit put back", () => {
+    const withExitBack = CLI_SRC.replace(
+      'data: manifest, renderText: () => "" });',
+      'data: manifest, renderText: () => "" });\n        process.exit(0);',
+    );
+    expect(withExitBack).not.toBe(CLI_SRC);
+    expect(afterRootManifestEmit(withExitBack)).toContain("process.exit");
+  });
+
+  test("the manifest itself is still far from the pipe ceiling — a number, so growth is visible", async () => {
     const manifest = await buildManifest(main);
     const bytes = Buffer.byteLength(`${JSON.stringify(manifest, null, 2)}\n`, "utf8");
-
-    // The positive control, carried inside the assertion rather than beside it:
-    // a manifest that had collapsed to nothing would also be "under the limit",
-    // and would pass a bare ceiling check while proving nothing.
+    // Not an exit-path payload any more, so the bound is the ceiling itself:
+    // past it the `help` verb's own natural-return drain is the only thing
+    // keeping the document whole, and that is a property worth knowing you
+    // are relying on.
     expect(bytes).toBeGreaterThan(1_000);
-
-    // The cell that fails. If this goes red, the fix is NOT to raise SAFE_MAX:
-    // it is to drop the `process.exit(0)` on that path in `cli.ts` and let the
-    // process end naturally, which is what every large emitter here already does.
-    expect(bytes).toBeLessThan(SAFE_MAX);
+    expect(bytes).toBeLessThan(PIPE_CEILING);
   });
 });

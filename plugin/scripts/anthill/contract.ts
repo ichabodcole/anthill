@@ -65,4 +65,6 @@ export const OUTPUT_KIND: Record<string, OutputKind> = {
   "field-notes": { kind: "data", cardinality: "single" },
   init: { kind: "data", cardinality: "single" },
   migrate: { kind: "data", cardinality: "single" },
+  wiki: { kind: "none" },
+  "wiki lint": { kind: "data", cardinality: "single" },
 };

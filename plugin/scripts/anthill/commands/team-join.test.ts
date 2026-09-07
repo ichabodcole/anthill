@@ -9,6 +9,7 @@ import {
   buildMissingWarnings,
   type CoordWires,
   decideGate,
+  localDateStamp,
   oneLineTitle,
   parseReviewCards,
   type ReviewCard,
@@ -160,6 +161,7 @@ const base = {
   lead: "maestro" as string | undefined,
   gate: "bun run check" as string | undefined,
   msgFileRel: ".anthill/scratch/forager/commit-msg.txt",
+  reportRel: ".anthill/reports/2026-09-03/forager.md",
   cliPath: "/plugin/scripts/anthill/cli.ts",
   // The DEFAULT fixture reads "we looked and you owe nothing", so every
   // pre-existing assertion below runs against the read-back's quiet state and
@@ -488,6 +490,26 @@ describe("buildChecklist — claim + catch-up guidance", () => {
     const finalize = line("Finalize BEFORE");
     expect(finalize).toContain("never TRAVELS");
     expect(finalize).not.toContain("does not survive");
+  });
+});
+
+// anthill-evolution: the seat doc is identity and is CURATED; the session REPORT
+// is the outlet. The checklist is the seat-resolved surface that gets read, so
+// the report path and the curated rule are emitted here — not left to prose.
+describe("buildChecklist — the report is the outlet, the seat doc is curated", () => {
+  test("mints the report by its resolved path, and says the curated docs are off-limits", () => {
+    const mint = line("Mint your session REPORT");
+    expect(mint).toContain(".anthill/reports/2026-09-03/forager.md");
+    expect(mint).toContain("CURATED");
+    expect(mint).toContain("--curated");
+    expect(mint).toContain(".anthill/dev/forager.md");
+  });
+
+  test("finalize closes the REPORT — it no longer synthesizes into the seat doc", () => {
+    const finalize = line("Finalize BEFORE");
+    expect(finalize).toContain("CLOSE your report at .anthill/reports/2026-09-03/forager.md");
+    expect(finalize).not.toContain("synthesize durable lessons");
+    expect(finalize).not.toContain("retro answers");
   });
 });
 
@@ -997,5 +1019,18 @@ describe("the catch-up line routes a compliant seat to the BOARD, not to the wir
 
   test("it tells a seat to ASK when there is no card — the route must terminate", () => {
     expect(catchUp()).toMatch(/ASK your lead/);
+  });
+});
+
+describe("localDateStamp — the report folder is the LOCAL date", () => {
+  test("uses local calendar components, never toISOString", () => {
+    // 23:30 local on the 15th: toISOString() is the 16th anywhere west of UTC.
+    const d = new Date(2026, 8, 15, 23, 30);
+    expect(localDateStamp(d)).toBe("2026-09-15");
+    // 00:30 local on the 1st.
+    expect(localDateStamp(new Date(2026, 9, 1, 0, 30))).toBe("2026-10-01");
+    // Positive control: the naive form disagrees for at least one of these when TZ != UTC.
+    const naive = d.toISOString().slice(0, 10);
+    if (d.getTimezoneOffset() !== 0) expect([naive, "2026-09-15"]).toContain(naive);
   });
 });

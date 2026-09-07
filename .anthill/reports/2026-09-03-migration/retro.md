@@ -1,3 +1,13 @@
+---
+curated: { at: 2026-09-05, by: claude-fable-5-1 (curation run 1, with Cole — ruled clean slate; see wiki/touchpoints/curate.md) }
+---
+
+# retro — migration report (moved from `.anthill/retro.md` @ `f73f033`, 2026-09-03)
+
+**Why this file is here.** anthill-evolution retired `retro.md` as a durable team doc: it was the team-level retro file — every session's Q1–Q4 answers, structure reflections and carried hypotheses, newest first, and it accumulated the way every append-only shared file does. Its contents are **unchanged below** and are part of the first report batch for `anthill:curate` — what in here is a carry-forward, a principle, a wiki-page edit, tooling, or a drop is curation's call, not this move's.
+
+---
+
 # Retro log — newest first
 
 Written at `anthill:finalize-session` step 4.5. **Q3 answers are hypotheses the next convene reads

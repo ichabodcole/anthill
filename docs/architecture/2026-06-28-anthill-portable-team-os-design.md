@@ -316,19 +316,26 @@ to prevent.
 What `anthill init` renders into a target repo. Generalized from dream-flute, with the three
 principles written in and all domain (wall/seam/engine) stripped.
 
-| Template                             | Content                                                                                                                                                                                                           | Fill state                            |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| `README.md` (SOP)                    | Stigmergy framing + the 3 principles; three homes for knowledge; shared practices; workflow (convene→work→finalize); commit discipline; the finalize+reflection ritual (curation-as-pheromone + structure-adapts) | Fully written, project-agnostic       |
-| `dev/seams.md`                       | Single-source inter-seat contracts: what belongs here, who owns a contract, the "whoever moves a boundary updates this + its proof" maintenance trigger. Contracts accrete as discovered.                         | Skeleton + guidance, no contracts yet |
-| `dev/<handle>.md`                    | One per seat. Fields (locked): **Who I am · Scope · Boundaries · Relationships · Taste & reflexes · Hard-won lessons · Anti-patterns · Candidates**. Header pre-filled from config; body scaffolded prompts.      | Header from config; body scaffolded   |
-| `dev/README.md`                      | Roster table generated from `config.seats`.                                                                                                                                                                       | Generated                             |
-| `paper-cuts.md`                      | Friction log: append-during-session, triage-by-cost, track-disposition (fixed / filed upstream / graduated to a project).                                                                                         | Template + method                     |
-| `principles.md` _(added 2026-08-01)_ | What this team learned the hard way, each entry carrying the scar that paid for it. What belongs here vs. the SOP; how one gets added at finalize.                                                                | Guidance only — **empty by design**   |
-| `retro.md` _(added 2026-08-09)_      | The three retro questions and the two rules that make them checkable (Q3 answers are falsifiable hypotheses; agreement is not truth). Newest-first entries, written by the lead at finalize.                      | Guidance only — **empty by design**   |
+| Template                                            | Content                                                                                                                                                                                                                                                                                                                                                                                                                                              | Fill state                                   |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `README.md` (SOP)                                   | Stigmergy framing + the 3 principles; three homes for knowledge; shared practices; workflow (convene→work→finalize); commit discipline; the finalize+reflection ritual (curation-as-pheromone + structure-adapts)                                                                                                                                                                                                                                    | Fully written, project-agnostic              |
+| `dev/seams.md`                                      | Single-source inter-seat contracts: what belongs here, who owns a contract, the "whoever moves a boundary updates this + its proof" maintenance trigger. Contracts accrete as discovered.                                                                                                                                                                                                                                                            | Skeleton + guidance, no contracts yet        |
+| `dev/<handle>.md`                                   | One per seat. Identity only _(as revised 2026-09-03)_: five sections — role, scope, boundaries, relationships, practices. No lessons, hypotheses or session log; those go in the session report. Header pre-filled from config; nobody edits it mid-session (`anthill commit` refuses it without `--curated`).                                                                                                                                       | Header from config; body scaffolded          |
+| `dev/README.md`                                     | Roster table generated from `config.seats`.                                                                                                                                                                                                                                                                                                                                                                                                          | Generated                                    |
+| `paper-cuts.md` _(retired 2026-09-03)_              | Was the friction log. Folded into the session report — friction is one of the things a report captures, and curation routes it (fix, upstream, backlog). Existing teams keep theirs until migrated.                                                                                                                                                                                                                                                  | —                                            |
+| `principles.md` _(added 2026-08-01)_                | What this team learned the hard way, each entry carrying the scar that paid for it. What belongs here vs. the SOP; how one gets added at finalize.                                                                                                                                                                                                                                                                                                   | Guidance only — **empty by design**          |
+| `retro.md` _(added 2026-08-09, retired 2026-09-03)_ | Was: the three retro questions and the two rules that make them checkable (Q3 answers are falsifiable hypotheses; agreement is not truth). Newest-first entries, written by the lead at finalize.                                                                                                                                                                                                                                                    | Guidance only — **empty by design**          |
+| `reports/README.md` _(added 2026-09-03)_            | The shape of a seat's **session report** — `<teamDir>/reports/<date>/<handle>.md`, committed, on no joining seat's read path. Capture as it happens; three open close prompts; the lead's adds carry-forward. The outlet that replaces synthesising into the seat doc; `anthill:curate` reads it.                                                                                                                                                    | Guidance only — reports are written by seats |
+| `wiki/` _(added 2026-09-03)_                        | The team wiki — the project-owned **how** behind each lifecycle touch point. `SCHEMA.md` (maintainer contract, OKF 0.2), `index.md` (catalog), `touchpoints/{convene,join,plan,work,finalize,curate}.md`. Shipped as anthill's _suggestions_ (`status: draft`, `generated.by: anthill`); a team rewrites a page at curation and sets it `stable`. Linted by `anthill wiki lint`. See [anthill-evolution](../projects/anthill-evolution/proposal.md). | Skeleton + suggestions per page              |
 
 **Running scratch:** per-session, append-only, gitignored — `<teamDir>/scratch/<handle>/<date>-<slug>.md`.
-`anthill:join` mints the session file; the seat appends as it works; `anthill:finalize-session`
-curates it into the seat doc. Disposable after synthesis.
+`anthill:join` mints the session file; the seat appends as it works. Throwaway. _(Until 2026-09-03 this
+was "curated into the seat doc at finalize"; the **report** is now what travels, and the seat doc is
+identity only — see anthill-evolution.)_
+
+**The curated set** _(2026-09-03)_: a seat doc, `seams.md`, `principles.md` and `wiki/` change only at
+`anthill:curate` or by the lead landing a ratified seam. `anthill commit` refuses them on an attributed
+commit unless `--curated` is passed.
 
 **Every path above resolves through `paths`** (§5) — `init` renders team-level docs under `teamDir`,
 the seat layer under `seatDir`, and `seams.md` at `seams`; the `dev/` segment in the template tree is
@@ -348,10 +355,14 @@ so action names stay clear.
   (CLI → grapevine open + topic, bounty board), seed cards, brief + spawn the seats the current
   phase needs.
 - **`anthill:join <handle>`** _(a seat re-grounds)_ — identify handle, re-ground (grounding →
-  SOP → `seams.md` → own seat doc), get on the wires (CLI emits tail commands), **open the
-  running scratch**, signal ready, claim card, work.
-- **`anthill:finalize-session`** — each seat curates scratch → seat doc; shared `seams.md` pass;
-  the **structure reflection**; lead lands doc commits + tears down the session.
+  SOP → `seams.md` → own seat doc), get on the wires (CLI emits tail commands), **mint the
+  session report** the manifest names, signal ready, claim card, work.
+- **`anthill:finalize-session`** — _(as revised 2026-09-03)_ each seat **closes its session report**
+  and lands it; the lead closes the lead report (carry-forward), sweeps the docs of record, tears down.
+  Nothing curated is edited here.
+- **`anthill:curate`** _(added 2026-09-03)_ — outside any session, a fresh agent + the human read the
+  unprocessed reports and decide what flows into a seat doc / seam / principle / wiki page / skill /
+  tooling; lands with `commit --curated`; records disagreements on the wiki's curate page.
 
 The human surface is intentionally tiny: _"convene the team"_ … _"finalize."_ The lead agent
 drives the CLI; the human rarely intervenes.
@@ -370,6 +381,14 @@ finalize-session`. The lead scaffolds a plan **skeleton** (integration order + c
 > **`anthill:bootstrap`** (Piece 5, §9) is itself a lifecycle skill. Current set:
 > `bootstrap · convene · plan · join · finalize-session · upgrade`.
 
+> **Addendum (2026-09-03) — the skill set is now seven, and the knowledge loop changed shape.**
+> [anthill-evolution](../projects/anthill-evolution/proposal.md): seats no longer synthesise into
+> their seat docs at finalize — they write a **session report**, and a new **`anthill:curate`** touch
+> point (outside the session, human in the loop) is the only writer of the curated docs (seat doc ·
+> `seams.md` · `principles.md` · `wiki/`), enforced by `anthill commit --curated`. Every lifecycle
+> skill is now a trigger that points at a page in the team **wiki** for the how. `retro.md` retired.
+> Current set: `bootstrap · convene · plan · join · finalize-session · curate · upgrade`.
+
 ---
 
 ## 8. Plugin/repo structure + CLI (Pieces 1–2)
@@ -387,7 +406,7 @@ anthill/
 │   ├─ .claude-plugin/
 │   │   └─ plugin.json         # plugin manifest
 │   ├─ skills/
-│   │   └─ bootstrap/ convene/ join/ plan/ finalize-session/ upgrade/
+│   │   └─ bootstrap/ convene/ join/ plan/ finalize-session/ curate/ upgrade/
 │   ├─ scripts/anthill/        # CLI — zero-dependency (in-house parseArgs layer)
 │   │   ├─ cli.ts  define.ts  agent-layer.ts  manifest.ts  help-renderer.ts  paths.ts  …
 │   │   ├─ config.ts           # find + parse .anthill/config.json (root marker)
@@ -419,11 +438,16 @@ subcommands — and the five that are not about a team (`info`, `scan`, `migrate
 - `anthill field-notes` — print anthill's cross-team observations (needs no config; the doc ships
   in the plugin, deliberately, so it is current for whoever has the plugin rather than frozen into a
   footprint at bootstrap)
-- `anthill commit` — file-scoped, serialized commit (carries the shared-index-race fix)
+- `anthill commit` — file-scoped, serialized commit (carries the shared-index-race fix). `--curated`
+  _(2026-09-03)_ is the declared exception to the curated-set refusal above.
 - `anthill init` — **deterministic renderer**: given `.anthill/config.json`, render `templates/`
   into the target repo (idempotent; re-runnable when the team reshapes — renders new seat docs
   without clobbering existing ones). **PROJECT-level, not team-level** (§5a): it renders **every**
   configured team unless `--team` narrows it, and the pin/`ANTHILL_TEAM` do not narrow it at all.
+- `anthill wiki lint` _(added 2026-09-03, anthill-evolution step 1)_ — lint the team wiki
+  (`<teamDir>/wiki/`: links, anchors, OKF 0.2 front matter, catalog reachability, `related` keys) and
+  emit its knowledge graph under `--format json`. A wiki with problems is an **answer** (`clean:
+false` at exit 0 — CONTRACT.md's "outcomes are not errors"); no wiki at all is a `failed`.
 - `anthill scan` — deterministic workspace/surface detection, feeding bootstrap's candidate seatings.
   **Reports whether it had anything to go on** (`evidence: "manifest" | "none"`), because
   `workspace: null` alone was true of both a real single-surface app and a repo with no readable

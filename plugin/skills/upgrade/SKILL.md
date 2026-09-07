@@ -150,7 +150,7 @@ working-tree changes. You land them together in step 5.
 
 The CLI **moves** content; it never **merges** it. For the **v1 → v2** _relocation_ that's the whole
 story — a pure relocate (`git mv` preserves every byte), so nothing needs merging: the seat docs,
-`seams.md`, and paper-cuts arrive intact under `.anthill/`.
+`seams.md`, and any `paper-cuts.md` the team kept arrive intact under `.anthill/`.
 
 **But relocation is not the only thing an upgrade owes the team, and this step runs even when there
 was no migration at all.**
@@ -211,8 +211,8 @@ TEAMDIR=.anthill   # ← `paths.teamDir` in .anthill/config.json, if this repo o
 diff "${CLAUDE_PLUGIN_ROOT}/templates/docs-team/README.md" "$TEAMDIR/README.md"
 ```
 
-Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `paper-cuts.md`,
-`principles.md`, `retro.md`.
+Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `reports/README.md`, the wiki's draft pages,
+`principles.md`. _(`retro.md` was retired 2026-09-03 — see the note below.)_
 
 > **Named correction to look for (2026-08-10) — `principles.md`, and it is a CORRECTION, not an
 > addition.** The "What other teams have found" section shipped a fenced block whose whole content
@@ -220,7 +220,7 @@ Repeat for any other scaffold the team kept: `dev/README.md`, `dev/seams.md`, `p
 > that fence either got "command not found" or — worse, and silently — the optional global launcher's
 > highest CACHED release, which need not be the one this project runs. It is now the resolved
 > `bun "${CLAUDE_PLUGIN_ROOT}/…" field-notes` form. **The same release added the shorthand legend to
-> `principles.md`, `paper-cuts.md`, `dev/README.md` and the shipped field notes** — every emitted doc
+> `principles.md`, `dev/README.md`, `reports/README.md`, the wiki and the shipped field notes** — every emitted doc
 > that uses `anthill <command>` in prose now says, in its own text, that the shorthand is not a
 > binary. A team seeded before this carries the fence and none of the legends.
 >
@@ -235,11 +235,18 @@ bootstrap-version guidance while you record the release as reconciled. **Each te
 independently divergent**: they were seeded at different times, and each has been written in by its
 own seats since. There is no such thing as reconciling "the project's" `README.md`.
 
-**On `retro.md`, expect a diff the size of the whole file, and do NOT reconcile it.** It is seeded
-by `init` with the ritual's guidance and then written by the **team** at finalize — so a footprint
-that has run a session diverges by every entry it has accumulated, which is the file working, not
-drift. Mirror down only changes to the guidance above the entries. _(A footprint that predates the
-template has no left-hand side at all; `anthill init` seeds it, skipping every doc that exists.)_
+**On `retro.md`: it is RETIRED (2026-09-03) and has no template, so there is nothing to diff it
+against — leave it alone.** A footprint that has one keeps it until the team migrates; do not delete it
+by hand and do not reconcile it. The same holds for the seat docs' retired sections (Epitaph, Hard-won
+lessons, Anti-patterns, Candidates): the template no longer has them, so the diff will show them as
+"extra" — leave them for the migration. Reconcile only the identity sections and the header.
+
+**The migration is a curation run, done by hand; no command performs it.** Move each retired section,
+`retro.md` and `paper-cuts.md` verbatim into `<teamDir>/reports/<date>-migration/<handle>.md` (one
+report per source file, with a header saying where it came from), cut the seat docs to their identity
+sections, then run `anthill:curate` on that batch. The first team to do this ruled that a migration
+batch is archived rather than triaged item by item, and that only facts wrong today are corrected in
+the identity docs; its rulings are on its curate page and are a reasonable starting method.
 
 **The general rule worth carrying: before you trust a diff, confirm both sides exist.** This is the
 failure mode step 0 spends five lines warning about, arriving from the other direction — there, an

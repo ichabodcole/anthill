@@ -1,441 +1,203 @@
-# team — how this team works (SOP)
+# team — standard operating procedure
 
-The standard operating procedure for the agent team that builds this project. A **map, not a
-manual** — it points at the source of truth rather than restating it. This is a **seed**: everything
-here is meant to evolve by use, not stand as the final answer. The team coordinates on
-**`anthill comms`** (the seat-aware log, durable across sessions) on the **`anthill-dev`** channel
-(substance) and the bounty board (task state); **maestro** leads.
-**`anthill-dev` is not only the wire's name** — it also keys the bounty board and names the tmux
-session, so it identifies this team rather than any one tool.
+How the agent team that builds this project works.
+This file points at the source of truth for each topic. It does not restate it.
 
-> **⚠ `anthill <command>` below is SHORTHAND, not a binary on your PATH.** The real invocation is
-> `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`, and every anthill skill prints it
-> resolved. A bare `anthill` only works if someone installed the optional global launcher — and that
-> launcher resolves to the highest CACHED release, which may not be the one this project is running.
->
-> **`${CLAUDE_PLUGIN_ROOT}` is only set while a plugin skill is running** — outside one it expands to
-> nothing and the command fails. Take the resolved invocation from `anthill:join` rather than retyping
-> the form above; no document can carry a runnable path, because the path depends on where the plugin
-> is installed.
-> _Added 2026-08-10 to the template; mirrored here 2026-08-10, having been missed in the pass that
-> added it — the exact cascade this footprint exists to receive._
+The team coordinates on `anthill comms`, channel `anthill-dev`, and on the bounty board.
+`anthill-dev` also keys the bounty board and names the tmux session.
+maestro leads.
 
-## The idea: living context (stigmergy)
+## The `anthill` shorthand
 
-The team is **ephemeral agents in durable seats**. An agent's hard-won understanding would evaporate
-between sessions — so each seat keeps a committed **living doc** (its brain), and the next agent in
-that seat re-grounds from it. We're ants; the docs-and-code are the anthill; the **trail carries the
-memory and shapes the next worker**. The docs are not documentation — they are the **pheromone trail
-the next instance follows**.
+`anthill <command>` in these docs is shorthand.
+The real invocation is `bun "${CLAUDE_PLUGIN_ROOT}/scripts/anthill/cli.ts" <command>`.
+`${CLAUDE_PLUGIN_ROOT}` is set only while a plugin skill is running.
+Take the resolved command from the output of `anthill:join`. Do not retype it.
+A bare `anthill` works only if the optional global launcher is installed, and that launcher resolves to the highest cached release, which may differ from the one this project runs.
 
-### The three principles (the soul of the method)
+## The model
 
-1. **Stigmergy — docs as pheromone.** Each agent is an ant: ephemeral, but it leaves context for its
-   successor. **Curation = strengthening the load-bearing trails and letting unimportant ones fade**,
-   called over time. A lean, true trail beats an exhaustive, rotting one.
+The team is ephemeral agents in durable seats.
+A seat persists across sessions. The agent filling it does not.
+Each seat has a committed seat doc that states its role and what it owns. The next agent in that seat grounds from it.
 
-2. **Running capture → curated synthesis.** Don't wait for the end. Keep a cheap **running session
-   scratch** as you work (`.anthill/scratch/<handle>/<date>-<slug>.md`, gitignored) — "this just bit
-   me," "this seam is fuzzy." **Finalize** is where those are articulated into durable form for the
-   next agent. Cheap capture, deliberate synthesis.
+Knowledge moves between sessions in two steps:
 
-3. **The anthill adapts to the work.** Structure — app, process, **and team** — is mutable in service
-   of the work. Persistent friction (toe-stepping, a seam that won't hold, an overloaded or idle
-   seat) is a **signal to reshape, not to endure**.
+1. During a session, each seat writes what happened into its session report. It does not edit the durable docs.
+2. Between sessions, a curation step reads the reports and decides what, if anything, changes in a seat doc, a seam, a principle, a wiki page, a skill, or tooling. A fresh agent proposes and the human rules.
 
-## Three homes — where knowledge lives
+Team structure changes when the work shows friction: two seats working the same thing, a seam that does not hold, an overloaded or idle seat.
 
-- **Taste → the seat doc** (`dev/<handle>.md`) — each seat's own face: **its epitaph**, scope +
-  boundaries, relationships, reflexes, anti-patterns, hard-won lessons. Opinionated. **Capture
-  judgments, not file maps** — the reasoning and the generalizable lesson, never a lesson-less event.
-  **The epitaph is written last and read first:** one sentence, chosen at finalize out of everything
-  the seat knows, addressed to the next instance. It is the one line that must survive if nothing
-  else does.
-- **Truth → `dev/seams.md`** — the contracts _between_ seats, stated **once**, owned by the
-  authoritative seat. Seat docs **point** at it, never restate it.
-- **Proof → the tests** — executable where it exists. A lesson pinned to a green test can't rot.
+## Where knowledge lives
 
-**The one strict rule: defer to one source — don't restate shared truth.** Restating a contract in
-three docs guarantees drift. Everything else stays flexible.
+**Curated docs.** Nobody edits these during a session, including the seat they describe.
+They change at `anthill:curate`, from the reports, by an agent that was not in the session, with the human ruling.
+`anthill commit` refuses them on an attributed commit unless `--curated` is passed.
 
-## Feedback — two homes (team-local vs. anthill-upstream)
+- Seat doc, `dev/<handle>.md`: what the seat does and what it owns, as a job description. Five sections: Role, Scope, Boundaries, Relationships, Practices.
+- `dev/seams.md`: the contracts between seats, each stated once and owned by one seat. Seat docs point at it. They do not restate it.
+- `principles.md`: rules about how work goes wrong. Read at convene and at join.
+- `wiki/`: one page per lifecycle touch point (convene, join, plan, work, finalize, curate). The skills are the triggers; the pages are the method. Linted by `anthill wiki lint`.
+- Tests: executable proof, where it exists.
 
-Feedback is **generative first**: an idea, a suggestion, a "here's a nicer way this could work" is as
-welcome as a bug report. Lead with the improvement, not just the friction — the corrective habit
-(paper-cuts, "what bit me") silently discards the ideas a maturing tool most wants.
+**Reports.** `reports/<date>/<handle>.md`, one per seat per session, committed.
+A report is the record of what happened, for a curator who was not there. See `reports/README.md`.
+No joining seat reads reports.
 
-Route it by **where it lives**:
+**Scratch.** `scratch/<handle>/<date>-<slug>.md`, gitignored. For throwaways. Anything worth a curator's time goes in the report.
 
-- **About _your_ project / team** (friction in your code, an idea for this repo) → stays here: your
-  `anthill:finalize-session` synthesis or `paper-cuts.md`. It loops back into your own work.
-- **About _anthill itself_** — a bug, a rough edge, **or an idea to make anthill better** → send it
-  _home_ so every project that uses anthill benefits. The path is **`anthill feedback`** (run
-  `anthill feedback --help` for what it's for and how to invoke it — the command is the single source
-  for that; this doc doesn't restate it).
+**One rule for all of these:** state shared truth once and point at it. Do not restate it.
 
-> ### ⚠ IN **THIS** REPO THERE IS NO UPSTREAM — WE ARE IT.
->
-> **`anthill feedback` files to `ichabodcole/anthill`, and `origin` here IS `ichabodcole/anthill`.**
-> The command exists so **consuming** projects can send findings home. Used from this repo it opens an
-> issue **against ourselves**, running parallel to the backlog + session process in `docs/ROADMAP.md`
-> — and then someone has to triage it back out of GitHub into the very docs it came from.
->
-> **So: anthill friction found HERE is ordinary session work.** It goes to `docs/backlog/` or into a
-> session's scope in the roadmap, **not through `anthill feedback`.** Nothing stops you filing a
-> GitHub issue if that is genuinely the right home — the point is that the *feedback command* is the
-> middleman, and here there is nothing on the other side of it.
->
-> _Found at session 12's close, by the human, after the lead had drafted a feedback issue about our
-> own finalize ritual and called it "ready to send". **The mechanical guard is carded (`S13-I`):
-> `anthill feedback` should notice that the current repo is its own target and say so** — because this
-> paragraph is a situational warning, and `principles.md` says those fail at the recognition step._
+## Feedback
 
-**On a team, the lead owns the outward send.** A seat that hits anthill friction **surfaces** the
-candidate to the lead (on comms, or as a `--submit`-ready draft) — it does **not** `anthill feedback
---submit` itself. The lead **dedupes** (N seats hitting one bug shouldn't file N issues) and submits the
-deduped set, the same way the lead owns the atomic land and routes decisions to the human. **Solo?
-You're the lead** — compose, confirm with the human, submit.
+Feedback includes ideas and suggestions, not only bugs.
 
-## The seats
+Route it by where it lives:
 
-See **`dev/README.md`** for the roster + division of labor. Each seat has its own living doc under
-`dev/`. Decisions and questions route to the human **through maestro** (the lead / liaison), not
-direct.
+- About this project or team: write it in your session report. Curation routes it.
+- About anthill itself, from a consuming project: `anthill feedback`. Run `anthill feedback --help` for usage.
 
-> **The lead is the routing DEFAULT, not an exclusive channel — and don't tell seats otherwise.**
-> Routing through the lead exists so four seats' questions become one ruling-with-reasoning instead of
-> four uncoordinated pings. It is not a claim that the human can't see you: `anthill spawn` gives each
-> seat its own tmux pane in a session the human can attach to **at will**, so "the human isn't watching
-> — talk to me" is **false by construction** and a lead who asserts it is wrong.
->
-> Why it matters: a lead who believes it is the only channel will not look for a seat that is stuck on
-> a human answer — and **a correctly-waiting seat produces no signal at all.** Not on the board, not in
-> the tree, not in any sweep. One session lost an unknown stretch to exactly this, surfacing only when
-> the seat volunteered it. **If you are waiting on a human, say so on comms**; waiting silently is
-> indistinguishable from working.
+**In this repo there is no upstream.** `anthill feedback` files to `ichabodcole/anthill`, which is this repo.
+Anthill friction found here is ordinary session work. Put it in `docs/backlog/` or in the roadmap. Do not use `anthill feedback` from this repo.
+
+On a team, the lead owns the outward send.
+A seat that finds anthill friction surfaces the candidate to the lead on comms or as a `--submit`-ready draft. The seat does not run `anthill feedback --submit`.
+The lead dedupes across seats and submits.
+A solo agent is the lead: compose, confirm with the human, submit.
+
+## Seats
+
+The roster and division of labour are in `dev/README.md`.
+Decisions and questions for the human route through maestro.
+
+Routing through the lead is the default, not an exclusive channel.
+The human can attach to any seat's tmux pane at any time.
+If you are waiting on a human answer, say so on comms. A seat waiting silently is indistinguishable from a seat working.
 
 ## Tools
 
-- **Bounty board** — task state (`todo → doing → review → done`). The **doer owns its card's
-  lifecycle**; the lead creates + assigns (leaves in `todo`) and hands off on comms; the reviewer
-  closes. The board is _state_. **It's key-bound:** `convene` owns the board-open (keyed to the team
-  channel, pinned via `.bounty-session`), so **in one shared working tree** every seat + the lead
-  target this board **ambiently** — no one threads `--session`.
-  **Per-seat git worktrees void that**, and the failure is silent: the board id is derived from the
-  repo path, so a worktree resolves a different one and the pinned file is gitignored and never
-  crosses. **A miss reports "no running bounty session", which reads as "the board isn't up."**
-  Session 6 hit this on all five seats — resolve the id once and pass it explicitly, and know that the
-  ambient guarantee is the thing you traded.
-  The mechanism lives once in the **board-binding contract** in
-  [`dev/seams.md`](./dev/seams.md); this points at it, never restates it.
-- **Comms (`anthill comms`, channel `anthill-dev`)** — the team's **seat-aware message log**, and the
-  wire. Seats discuss, coordinate, reconcile; comms is _substance_. Decisions route to the human
-  **through maestro**, not direct. Identity is a seat from the roster rather than a free-form alias,
-  and **nothing clears the log** — it accumulates across sessions, so a bare read replays every
-  session this team has ever had. Anchor a catch-up to an id.
-  **⚠ There is one wire, so there is no second one to fall back to** — and a wire that silently
-  delivers nothing looks exactly like a quiet channel. **`anthill comms positions` is what answers
-  it:** it reports every seat against the head as `null` / `0` / `N`, needs no seat of its own, and is
-  what you reach for when you suspect **your own** wire. A gap of `null` means the tool has no idea
-  what that seat has seen — it is **not** a rounded-down zero. The mechanism lives once in
-  [`dev/seams.md`](./dev/seams.md) Contract 6; this points at it, never restates it.
-- **The CLI** — `anthill` (run from the plugin; `convene` / `join` / `spawn` / `status` / `commit` /
-  `down` wrap comms + bounty + tmux). `anthill join <handle>` emits your grounding docs + an
-  action checklist — that checklist is the single source; don't restate it.
+**Bounty board.** Task state: `todo`, `doing`, `review`, `done`.
+The lead creates and assigns a card and leaves it in `todo`.
+The doer moves the card through `doing` and `review`.
+The reviewer closes it.
+The board is key-bound to the team channel. On one shared working tree every seat targets this board with no `--session` flag.
+Per-seat git worktrees break the binding silently. The failure reads as "no running bounty session". Resolve the board id once and pass it explicitly. The mechanism is Contract 3 in `dev/seams.md`.
 
-## Workflow — convene → plan → work → finalize
+**Comms.** `anthill comms`, channel `anthill-dev`. The seat-aware message log.
+Identity is a roster seat, not a free-form alias.
+The log is never cleared. A bare read replays every session. Anchor a catch-up to a message id.
+There is one wire. If you suspect your own wire is silent, run `anthill comms positions`. It reports every seat's gap against the head as `null`, `0`, or `N`. `null` means the tool has no record for that seat. It is not zero. The mechanism is Contract 6 in `dev/seams.md`.
 
-- **Convene** — the lead grounds, gathers the work from the human, stands up coordination (channel +
-  board), seeds cards, briefs + spawns the seats the **current phase** needs. Composition is a
-  _hypothesis_, not law.
-- **Plan** _(multi-seat features)_ — the lead scaffolds a plan **skeleton** (the integration order +
-  the cross-seam interface contracts, as _claims_), then each owning seat **ratifies or falsifies
-  the seams it touches before drafting**. The skeleton is a **hypothesis**, not blanks to fill —
-  the value is catching a wrong seam _before_ merge. Run **`anthill:plan`** (single-source
-  methodology). Solo work skips it and uses plain single-agent planning.
-- **Work** — builders build against the ratified seams; the lead and seats watch for **structure
-  signals** (toe-stepping, a renegotiated seam, an overloaded/idle seat, a verify finding that
-  bounces work back).
-- **Finalize (+ reflection)** — each seat curates its scratch → seat doc and **lands its own**; a
-  shared `seams.md` pass; then the **structure reflection** and the **retro** (below). The lead lands
-  what is genuinely cross-seat and tears down the session.
+**The CLI.** `anthill convene`, `join`, `spawn`, `status`, `commit`, `down` wrap comms, the board, and tmux.
+`anthill join <handle>` prints your grounding docs and an action checklist. That checklist is the single source. Do not restate it.
 
-**Verification is dynamic, not end-of-line.** A verify seat engages at **verification points** —
-which may be early (we need tests before building further), mid (prove a feature), or late — and
-often **stays** and ping-pongs with builders (fail → back to the owner → re-verify). The lead decides
-per phase when to pull each seat in; the plan's phases drive that, not a fixed end slot.
+## Workflow
+
+- **Convene.** The lead grounds, gathers the work from the human, opens the channel and the board, seeds cards, briefs and spawns the seats the current phase needs. Composition is a hypothesis.
+- **Plan** (multi-seat work). The lead writes a plan skeleton: the integration order and the cross-seam contracts, stated as claims. Each owning seat ratifies or falsifies the seams it touches before drafting. Run `anthill:plan`. Solo work skips this step.
+- **Work.** Builders build against the ratified seams. Everyone watches for structure signals: seats stepping on each other, a renegotiated seam, an overloaded or idle seat, a verify finding that bounces work back.
+- **Finalize.** Each seat closes its report and lands it. The lead closes the lead report with a Carry-forward section, sweeps the docs of record, and places every deferred item. Each seat stands down last. Nothing curated changes. The lead tears down the session.
+- **Curate** (outside any session). A fresh agent and the human read the unprocessed reports and decide what flows into a seat doc, a seam, a principle, a wiki page, a skill, or tooling. Run `anthill:curate`.
+
+Verification is not an end-of-line step.
+The verify seat engages at verification points, which may be early, mid, or late, and often stays to re-verify after a fix.
+The lead decides per phase when to pull each seat in.
 
 ## Committing on the shared tree
 
-Seats share **one working tree + one git index**. A bare `git commit` (after `git add`) takes the
-whole index → it **sweeps a peer's staged file** into your commit; concurrent commits also race git's
-index. So:
+Seats share one working tree and one git index.
+A bare `git commit` takes the whole index and can sweep a peer's staged file into your commit.
+Concurrent commits race the index.
 
-**Land with the command `anthill join <your-handle>` printed for you — verbatim, and don't rebuild it.**
-It arrives fully resolved: this project's **gate and the commit in one string with no pipe in it**,
-your handle substituted, and the message read from a **file** (`-F`) rather than an argument.
-The land it performs (1) commits the **named paths only** (refuses to run with no paths — no
-accidental sweep) and (2) holds a **serialize lock** so concurrent seats queue instead of racing. It
-**is** also the atomic cross-seat land: the lead collects every seat's paths and passes them in one
-call → one commit across the seats.
+Rules:
 
-**Two shell hazards it exists to remove, both of which beat agents who had just read the warning:**
-**never pipe the gate** (`gate | tail && commit` tests `tail`'s exit status, always 0, so the commit
-runs on a **red gate** — redirect to a file and read that), and **never pass a backtick-bearing body
-with `-m`** (the shell substitutes it before the tool sees it; that is upstream of any defence the
-tool could mount). **n=3 in one session, two agents** — one of them the seat who built `-F`.
-(The raw discipline if you must land by hand: `( <gate> ) && git commit -F <msgfile> -- <explicit paths>`
-with an `Anthill-Seat:` line in the body — never `git add -A`.)
+1. Land with the command `anthill join <your-handle>` printed. Run it verbatim. Do not rebuild it.
+   It commits the named paths only, holds a serialize lock so concurrent seats queue, and reads the message from a file (`-F`).
+2. Never pipe the gate. `gate | tail && commit` tests the exit status of `tail`, which is always 0. Redirect to a file and read that.
+3. Never pass a message body containing backticks with `-m`. The shell substitutes them before the tool runs. Use `-F`.
+4. Never run `git add -A`.
+5. If you must land by hand: `( <gate> ) && git commit -F <msgfile> -- <explicit paths>`, with an `Anthill-Seat: <handle>` line in the body.
 
-**The gate is THIS project's, from `gate` in `.anthill/config.json` — no default, on purpose.** Ours is
-`bun run check`. Unset, the emitted command announces that it is running no verification rather than
-quietly committing unchecked; if you ever see that announcement, tell the lead rather than working
-around it.
+The gate is this project's `gate` value in `.anthill/config.json`. There is no default. Ours is `bun run check`.
+If the emitted command announces that no gate is configured, tell the lead. Do not work around it.
 
-**⚠ In PER-SEAT WORKTREES the hand form stops being an equivalent fallback — use the tool.**
-Worktrees give each seat its own index, so the sweep hazard above genuinely goes away and the
-obvious inference is that a bare commit is now safe.
-It isn't, and the reason is not visible from the index: **git shares `refs/stash` across every
-worktree of a repo** while `HEAD` and the index are per-worktree, and a pre-commit hook that stashes
-(lint-staged does, on every commit) writes to exactly that shared ref.
-**So the one thing seats still share is the ref holding uncommitted work, and `anthill commit`'s lock
-is the only mutex over it.**
-Isolation moved the race from the index to the stash; it did not remove it.
-_(Session 6. Proven: `git rev-parse --git-path refs/stash` resolves to the common dir from a
-worktree while `HEAD` resolves per-worktree — the second half is the control that makes the first
-mean something. What is **not** proven is that a collision has actually eaten anyone's work; the
-guidance is correct without that, and saying so is the honest form.)_
+**Per-seat worktrees.** Use the tool there too.
+Worktrees give each seat its own index, but `refs/stash` is shared across all worktrees of a repo, and a pre-commit hook that stashes (lint-staged does) writes to it.
+The lock in `anthill commit` is the only mutex over that ref.
 
-**`--as` is not optional in practice.** Git records the **human** as the author of every seat's commit
-— all of them, identically — so without the seat stamp _"who landed this?"_ is unanswerable after the
-fact. A team hit exactly that: an unexplained commit appeared mid-session, the lead had to ask the
-channel, and the author was identified only because they volunteered. `--as` adds an
-`Anthill-Seat: <handle>` trailer, so `git log --grep "Anthill-Seat: <handle>"` answers it mechanically.
-It does **not** change git's author field; it adds a line git can search.
+**`--as`.** Git records the human as the author of every seat's commit.
+`--as <handle>` adds an `Anthill-Seat: <handle>` trailer so `git log --grep "Anthill-Seat: <handle>"` answers who landed a commit.
+Always pass it.
 
-**⚠ Know exactly what this protects.** The pathspec protects against sweeping a peer's **files**. It
-does **not** protect their **uncommitted edits inside a file you both write to** — naming
-`seams.md` commits _whatever is in `seams.md` right now_, including the paragraph a peer is
-mid-sentence on. This is reproduced, not theoretical: the commit returns `{"ok":true}` and **no guard
-fires**, because from git's point of view nothing is wrong. Worse, **the committer's own verification
-cannot see it** — _"my paths are clean"_ is true and blind.
+**Shared files.** The pathspec protects a peer's files, not a peer's uncommitted edits inside a file you both write to.
+Committing `seams.md` commits whatever is in it now, including a peer's half-written paragraph, and no guard fires.
+For a shared file: say on comms that you are taking it, edit, and land promptly.
 
-`seams.md` is where this recurs by design, since ownership there is per-contract inside one file. So
-for a **shared** file: say on comms that you're taking it, and land your edit promptly rather than
-holding it while others write. A short hold is the only real protection the tooling gives you here.
+**Read the envelope `anthill commit` returns.** Two fields matter:
 
-**Read the envelope your land returns — it already answers two questions we kept reconstructing by
-hand.** Both are on `anthill commit`'s own output, on every land:
+- `waitedMs`: how long you queued on the lock. Non-zero means a peer was landing at the same time.
+- `uncheckedAgainst`: dirty paths outside your commit when it landed. The gate runs over the whole tree, so a non-empty list means your green was measured against work your commit does not include.
 
-- **`waitedMs`** — how long you queued on the serialize lock. Non-zero means a peer was landing at the
-  same moment, so this **is** the concurrency window, measured rather than estimated.
-- **`uncheckedAgainst`** — dirty paths **outside** your commit at the instant it landed. The gate runs
-  over the **whole tree**; your commit contains only your paths. **Non-empty means your green was
-  measured against work your commit does not include, so the commit was never checked in isolation.**
-  That is the false-green, reported at the moment it happens rather than discovered later.
-- **⚠ THE TWO FIELDS INTERACT, AND AN EMPTY `uncheckedAgainst` IS NOT AN ALL-CLEAR — it is weakest
-  exactly where it reads strongest.** The dirty-path read happens **after** your lock wait, so a peer
-  who was dirty during your gate and **landed while you queued** is clean by the time the field is
-  computed, and never appears in it. **So the field is LEAST trustworthy precisely when `waitedMs` is
-  LARGE** — and *"I waited 11 seconds and came back clean"* is the single most reassuring pair the
-  envelope can print. **Read them together: a long wait with an empty list means peers landed inside
-  your window, not that nobody did.**
-  _Measured: `waitedMs 11053.9` with `uncheckedAgainst []`, with **two commits landing inside that
-  window**. Mechanism found by the seat who owns the emitter; the ordering re-checked against the
-  source by the seat who owns this prose._
-  **This is the anti-correlated shape this team keeps meeting — a check that cannot fail in the failing
-  case — and we already have that sentence in another file, about backfill completeness. Neither knew
-  about the other.**
+Read the two together.
+The dirty-path read happens after the lock wait, so a peer who landed while you queued does not appear in `uncheckedAgainst`.
+A long `waitedMs` with an empty `uncheckedAgainst` means peers landed inside your window. It is not an all-clear.
 
-_Scar (session 5): three seats reconstructed the residual land-race window by three separate methods —
-while the CLI printed it on every one of their commits. The lead relayed an `uncheckedAgainst` list to
-a peer and never asked what it was worth. **The affordance was not missing; it was unnamed.** That was
-the session's characteristic failure, and this paragraph is the fix. **Check `uncheckedAgainst` before
-you treat a green as a verdict on your commit.**_
+## Shared practices
 
-## Shared practices (true for every seat)
+Mechanics for every seat. Principles are in `principles.md`.
 
-> **The team's PRINCIPLES live in [`principles.md`](./principles.md), not here** — the hard-won
-> claims about how work goes wrong, each with the scar that paid for it. **Read them at convene and
-> at join.** What stays below is *mechanics*: how this team formats, addresses, and lands things.
-> The split exists because the two accrete differently — a principle is earned once and travels to
-> other teams; a practice is local and changes with the tooling.
+- **Put the point in the first 200 characters.** Peers receive a truncated preview and decide from it whether to fetch the rest. Lead with the verdict: what you found, what changed, what someone must do.
+- **Address in the headline:** `## <you> → <who>:`. Everything goes to everyone. The arrow is a salience hint, not a filter. Read on topic, not on address.
+- **When you ratify or post a verdict, name the last message id you had read.** Example: "ratifying as of #14."
+- **When one message answers several, index it by the message ids it answers.** Use a table: `| msg | from | ask | answered in |`. An unanswered ask then shows as a blank cell. Do not index by topic.
+- **Atomic cross-seat land: assemble, do not marinate.** When several seats' halves do not compile apart: draft out-of-tree in scratch, post `READY: <paths>`, the lead calls the land, all seats move files in at once, one gate run, one `anthill commit`. Land supporting code inert and early. Draft new files in scratch, not on the shared gate surface.
+- **Post the gate's numbers at join and at close.** The session's delta is then a measurement.
+- **Mark an unverified claim `UNVERIFIED`**, or `UNVERIFIED-BY-CONSTRUCTION` when it cannot be checked from where you stand. An unmarked claim reads as measured.
+- **A seat silent for about ten messages while holding a `doing` card is a cue to look at its pane.** A blocked seat produces no output.
+- **One sentence per line in the living docs.** The host repo's formatter may reflow hard-wrapped prose into broken lists. One sentence per line makes a reflow a no-op.
 
-- **Write for the preview — the first ~200 characters are the only part that reliably lands.** Peers
-  receive your message as a truncated notification and decide from that whether to fetch the rest.
-  Most messages are never fetched in full. So lead with the **verdict, not the setup**: what you
-  found, what changed, what someone must do. A message whose point is in paragraph three was, for
-  most of the team, not sent. (Every seat on a studied team evolved this independently, each thinking
-  it was a personal habit.)
-- **Address in the headline: `## <you> → <who>:`.** There is no routing — everything goes to
-  everyone — so the arrow is a **salience hint, not a filter**. Two things follow. Put it in the
-  headline or it lands below the cut. And **do not use a peer's arrow to decide to skip**: a seat who
-  did that nearly shipped a broken test, because a falsification addressed to the lead was about his
-  lane. Read on topic, not on address.
-- **When you ratify or post a verdict, name the last message id you had read** — _"ratifying as of
-  #14."_ Messages cross: two seats can ratify contradictory things simultaneously, and the channel has
-  no notion of a message being in flight. A read-watermark lets the other seat see instantly that your
-  call predates their falsification, instead of discovering it later. (New convention — tell us
-  whether it earned its keep.)
-- **When ONE message answers SEVERAL, index it by the message ids it answers — never by topic.**
-  A table (`| msg | from | ask | answered in |`) turns an unanswered ask into a **visible blank cell**;
-  a topic-shaped ruling leaves it an **absence**, and an absence is not readable.
-  This is the read-watermark's counterpart: a seat stamps **what it had read**, and whoever rules stamps **what it answered**.
-  It bites hardest for the lead, because answering several asks at once is the lead's default rather than an occasional act.
-  **Why writing "be thorough" cannot fix it:** a _"what I am NOT ruling on"_ section is enumerated from the author's **agenda** — the questions they are consciously holding — and not from the **inbox** of asks that arrived.
-  The omission and the deferral are produced by the same pass, so **the guard is blind in exactly the case it exists for**, and the ruling reads _more_ complete for having the section.
-  Same move as a total field whose `false` you can read: a readable blank beats a missing entry.
-  _Scar (session 10): a lead ruled six asks and explicitly named three he was not ruling on, and a seat's two asks appeared in neither list._
-  _One of them was **nearly** covered by a ruling on the same class — and "nearly" is the defect, because **a ruling that resolves the class without naming the instance is indistinguishable from one that missed it**, so the seat cannot tell whether it has been answered or overlooked._
-  _The table earned its keep a second way nobody predicted, within the hour: it makes a **wrong** entry auditable. A row recorded a claim whose own author retracted it minutes later, and the row is what made the stale entry findable and struck._
-- **The atomic cross-seat land: assemble, don't marinate.** When several seats' halves are
-  uncompilable until all of them land, the naive approach parks everyone's red work in the shared tree
-  for as long as the slowest seat drafts. Instead: **draft out-of-tree in gitignored scratch → post
-  `READY: <paths>` → the lead calls the land → all seats move files in at once → one gate run over the
-  assembled whole → one `anthill commit`.** That shrinks the red window from _the slowest seat's
-  drafting time_ to _the assembly_. Two corollaries, each a root cause a team hit repeatedly:
-  **land supporting code INERT and early** (an unused-but-green module can land now; holding it because
-  the _feature_ is unfinished blocks peers for no reason), and **draft new files in scratch, not on the
-  shared gate surface.**
-- **Baseline at join, baseline at close.** Post the gate's numbers when you arrive and again when you
-  leave, so the session's delta is a **measurement rather than an impression**. (A session reported a
-  wrong gate delta in its own retro for exactly this lack.)
-- **Mark an absence of verification explicitly — `UNVERIFIED`, or `UNVERIFIED-BY-CONSTRUCTION`** when
-  the thing cannot be checked from where you stand. An unmarked claim reads as measured; **hoping the
-  reader notices the gap is not a signal.**
-- **A seat silent while holding a `doing` card is different from a seat quiet between tasks.**
-  Roughly ten messages of the former is the cue to look at its pane — a blocked seat produces no
-  output and every other surface reads normal.
-- **One sentence per line in the living docs.** These docs live in the host repo, so its formatter
-  (prettier / biome) may reflow them — and a hard-wrapped continuation line can be mangled into a
-  stray list bullet, corrupting the trail. One sentence per line makes a reflow a no-op.
+## Finalize
 
-## Finalize + the structure reflection
+Close your report: answer the prompts at the bottom of `reports/<date>/<handle>.md`, in prose, for a curator who was not here.
+Name tools, docs, and teammates freely.
+Say what a number meant, not only what it was.
+If your seat doc, a seam, a principle, or a wiki page is incorrect or needs to change, say so in the report. Do not edit it.
+Land the report with the land command your join emitted.
 
-At finalize, **synthesize**: promote the durable lessons from your scratch into your seat doc (or
-`seams.md` if it's a boundary truth), **prune**, keep it lean. Pin a lesson to a green test where you
-can; to a durable concept or a commit otherwise; never to a transient line/file ref.
+Do not synthesise into a curated doc. That is curation's job.
+The full method is on `wiki/touchpoints/finalize.md`.
 
-**One intake, route at synthesis.** Capture everything cheaply into one place (your scratch) _as you
-work_ — don't stop mid-task to decide whether a note is a seat-doc lesson, a seam truth, or a
-paper-cut. The genre-sorting happens **here, at finalize**, when you route each captured note to its
-durable home. Sorting-while-working is a tax that suppresses capture.
+**The lead's report** has a Carry-forward section: what the next session must test, decide, or not do, each with what would prove it wrong, and whether the team's shape fit the work.
+The next convene reads it.
+The lead also sweeps the docs of record (the plan of record, the roadmap, the proposal) and writes a dated `HELD` / `FALSIFIED` / `UNCHECKED` line into each, claim by claim.
+`UNCHECKED` is a verdict. Write it.
 
-**Then get a cold read of what you wrote — you are the one person who cannot judge it.** Hand your
-seat doc to a reader holding **none of your session context** (a subagent spawned fresh, so none of
-your framing travels with it) and ask it to **restate each lesson in its own words** and quote
-whatever it could not interpret. **A doc can be entirely true and still fail to transmit**, and
-nothing about writing it tells you which one you produced: the assumptions you baked in are the
-things you did not need to say. Give it the whole doc and let it find the weak parts, and **ask for a
-restatement rather than a verdict** — a reader asked whether the doc is clear will say yes, and you
-will have measured nothing. **Scars compress hardest**, so they need the most care: name this
-project's tools, docs and teammates freely, since your reader has them, and make sure the **event**
-survives without you — what was done, what happened, what it cost. **Say what a number meant, not
-what it was.** The **epitaph** is the sharpest case of all, being written for someone who will not
-remember the session at all.
+### Standing down
 
-**A hypothesis is a fourth home, and it is the one the routing list keeps missing.** A lesson says
-what you now know; a **hypothesis** says what you predict and what would prove it wrong — so it goes
-to the **retro** (team-level, where the next convene reads it back) or to your **seat doc** (personal,
-re-read at join), and to exactly one of them. State it once: a prediction copied into two homes
-drifts, and a **stale prediction is worse than a stale lesson** because it commissions work against a
-world that has already moved.
+Every seat ends with `anthill comms stand-down --as <handle>`.
+Run it after closing the report, after landing it, and after anything else you have to say.
+Stand down last.
+When the lead calls for stand-down, it names the command. "Finish up" is not an instruction to run it.
 
-**Then sweep the DOCS OF RECORD — the ones that claim something true of the tree, and that nobody
-owns. THE LEAD runs this beat and names who checks each doc** — unlike the synthesis above, it is
-not a per-seat act, and the docs it covers are in no seat's scope by definition.
-Every seat re-reads the docs it owns at finalize; a plan of record, a roadmap, a proposal, a
-principles file is in **no seat's scope**, so that sweep passes cleanly over a doc that has been wrong
-for sessions. **The predicate was right and its domain was seats.**
+The command writes a departure record.
+For a spawned seat, that record is what lets `anthill down` tear down without `--force`.
 
-**The project names which docs are in the set, not anthill** — ask _which docs here claim something
-that must stay true of the tree?_ and take the answer from this project's own config or grounding docs.
-**Anything deliberately kept as a record of what USED to be true — archives, scars, superseded
-decisions — is out of scope**; rewriting those destroys the record. The test is whether a reader would
-ACT on the sentence today.
+**The lead's order differs.** The teardown check counts spawned seats, and the lead was not spawned.
+The lead still stands down, because its live follower makes it look present and `anthill down` refuses it by name.
+Order: every spawned seat stands down, then the lead stands down, then the lead runs `anthill down`.
 
-**Write a dated reconciliation line INTO each doc, claim by claim, stamped with the sha you checked at:
-`HELD` / `FALSIFIED <what> → <where it moved>` / `UNCHECKED`.** The line is the deliverable and its
-absence for a session is the signal — a doc carrying lines for two sessions and none for the third says
-so on its face. **`UNCHECKED` is a real verdict and must be written**: a claim you silently skipped is
-indistinguishable from one you confirmed.
-_"Re-read the plan" is the shape that goes 0-for-4 — a situational warning fails at the recognition
-step, so the beat has to name what was checked or it has not fired._
-**And the case that bites hardest is the claim that is still TRUE while its REASON has died:** ask what
-each sentence's justification RESTED on, not what it is about. A reason resting on a property this
-world no longer has does not go stale, it **inverts**, and the sentence still reads fine.
+A departure record means "I am finished". It does not mean the pane is inert.
+A seat that has stood down may still send. Read a late message normally.
 
-**⚠ SWEEP THE PROSE, NOT JUST THE TABLES — a document's NARRATIVE goes stale too, and it is the half
-a structured reader skips.** Status tables and criteria rows are the easy targets because they look
-like claims; the assertions buried in headers, blockquotes and scar boxes read as commentary and get
-no second look.
-_Measured on this beat's own first run: **4 stale claims found across 10 table rows, and a 5th MISSED
-among 91 assertion-bearing prose lines** — the miss sitting inside the very box warning that this
-document goes stale, and caught by a reader rather than by the sweep._
-
-_Scar: a session spent its night hunting predicates whose domain had gone unwritten, while its own
-plan of record carried **four stale claims** — one falsified by a test that landed the same session.
-The ritual caught none. **All four surfaced because the human asked whether the runway was clean.**_
-
-Then the **structure reflection** — the team turns the lens on itself:
-
-- **Where did we step on each other?** (overlapping scope → a boundary to draw or a seat to split.)
-- **What are the natural seams?** (the contracts that actually emerged vs. the ones we guessed.)
-- **Who actually owned what?** (vs. the roster on paper.)
-- **Did the composition fit the work?** (an idle seat, an overloaded one, a missing lens.)
-
-Its output flows to seat docs, `seams.md`, and **occasionally the roster/config itself** — re-run
-`anthill init` after a reshape to render new seat docs (existing ones are never clobbered). The
-anthill is yours to re-shape.
-
-Then the **retro** — _what went well · what didn't · what would you change_ — written to
-`.anthill/retro.md`, newest first. It differs from the reflection above by asking for **judgement**
-rather than shape, and two rules are what make it more than a mood:
-
-- **Every "what would you change" is a HYPOTHESIS the next session can test**, or it isn't an answer.
-  The next convene reads them back and says which it will test — so a prediction that comes back
-  **wrong** is the valuable outcome, not a failure of the team that wrote it.
-- **Agreement is not truth: ask what is behind each answer besides everyone agreeing.** Claims about
-  **artifacts** are executable — run them, and nobody had to agree with anything. Claims about **us**
-  are testimony; label them, and prefer the version carrying a number, a diff or a count. A retro of
-  agents who shared one session and one frame will converge, and that convergence is the expected
-  output of shared priors rather than evidence. **A unanimous "what went well" is a smell.**
-  **The lead is in scope** — a retro where the lead comes out clean is a retro that did not run.
-  **And the lead should not open by listing his own errors.** It reads as the opposite of
-  defensiveness and it is not: **a well-executed self-list pre-empts the audit**, leaving a seat
-  nothing to do but concur, so the document becomes indistinguishable from one where the audit found
-  nothing. _Scar (session 5): the lead volunteered six of his own failures in the finalize brief to
-  make the audit easy, and scout then checked and found **no seat produced a criticism of the lead he
-  had not already volunteered.**_ Say you are in scope; then say nothing until the seats have written.
-
-### Standing down — a seat's LAST act, and the verb has to be named
-
-**Every seat ends with `anthill comms stand-down --as <handle>` — after synthesis, after landing its own doc, and after its retro answers.**
-That order is the whole content of this beat: **stand down last.**
-
-**Name the verb when you call for it.** The instruction a seat receives at join says _"commit, **THEN stand down**"_ — in English, without naming the command — so a seat reads it as _"finish up and leave"_, which is an act with no artifact.
-**A departure only exists if the verb ran.** It writes a record, and for a **spawned** seat that record is what lets `anthill down` authorise a teardown **without `--force`**.
-
-**⚠ maestro is a seat and is NOT a spawned one — so the same act does a different job for the lead.**
-The teardown check quantifies over **the seats this session spawned**, and the lead convened rather than being spawned into that set, so **the lead's departure record does not enter that count at all.**
-The lead still stands down, for the other reason: **a live follower is what makes a seat look present**, and the lead's own follow is the last one running.
-**⚠ So for the lead, "last" means LAST BEFORE `anthill down` — not last of all.** The presence rows are built from the whole roster (`config.seats`), the live-follower branch is consulted first, and convene handed the lead that follower — so **the guard refuses him BY NAME after every spawned seat has correctly departed.** The order is **seats stand down → the lead stands down → `anthill down` → panes die**, and the discriminator is the **departure record, not the pid**: once he has stood down the teardown is authorised with his follow still alive, so there is nothing to kill first and nothing to wait for.
-_Scar (session 13): the lead published **"I stand down last, after `anthill down`"** — a reading this section's own wording permitted — and the guard refused him by name thirty seconds later. **The scar below is a lead improvising the inverse order ON THE WIRE; this one was reachable straight from the artifact**, which is the worse of the two because nothing evaporates._
-**State which population you mean whenever you write a rule about "every seat"** — this beat was drafted saying the record authorises teardown, full stop, and that sentence was **true of spawned seats and false of the lead who reads it.**
-
-**What the record does NOT mean.** It is an **administrative** statement — _"I am finished"_ — **not** _"this pane is inert."_
-A seat that has stood down **may still send**, deliberately, and that is not a violation: `down` kills **panes**, and a pane is not a statement.
-So treat a late message as normal, and never let a departure record talk you out of reading one.
-
-_Scar (session 9): the lead improvised **"stand down, then post your retro answers"** on the wire — the **inverse** of the order above._
-_**All four seats followed the wire and not the instruction each had read at join.** Seven messages landed after their authors' own departure records, including the report of the session's central defect, **71 seconds after** its author had stood down._
-_**The order was not missing. It was present, correct, and overridden by a message that evaporates** — which is why it is written here, where it does not._
-
-_Scar (session 10, and it is about this file): the beat above shipped to `plugin/templates/` — what a NEW team receives at `init` — and **not here**, where this team actually reads. `init` renders once and nothing refreshes it, so **an author fixes the scaffold and leaves their own team without the fix.** Caught by grepping both copies, hours before this team ran the ritual. **When you land guidance into the template, mirror it here in the same breath.**_
+When you write a rule about "every seat", state which population you mean: spawned seats, or the whole roster including the lead.
 
 ## Onboarding a fresh agent
 
-Ground in the **product** first (the `grounding` docs in `.anthill/config.json`), then: this SOP →
-`dev/seams.md` (shared contracts) → your seat's `dev/<handle>.md` → go. For the current state of
-play, check the bounty board + the active project docs. Then **keep your seat doc honest**: when
-something's no longer true, fix it.
+1. Ground in the product: the `grounding` docs in `.anthill/config.json`.
+2. Read this SOP.
+3. Read `dev/seams.md`.
+4. Read your seat doc, `dev/<handle>.md`.
+5. Read the wiki page for the touch point you are in.
+6. Check the bounty board and the active project docs for the current state.
+
+Do not edit your seat doc. If it is wrong, say so in your report.

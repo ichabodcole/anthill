@@ -55,6 +55,10 @@ const ALLOWED: Record<string, string> = {
   "commands/team-commit.test.ts": "try/finally at every makeRepo site; measured +0 per run",
   "commands/team-comms.test.ts": "per-test cleanup; measured +0 per run",
   "commands/team-field-notes.test.ts": "try/finally; measured +0 per run",
+  "commands/team-wiki-lint.test.ts":
+    "try/finally at every projectWithWiki site; measured +0 per run",
+  "docs-lint/index.test.ts":
+    "registry (tempRoots) + afterAll(rmSync) — lifted with the core from agent-cli-conformance; measured +0 per run",
   "commands/team-init.test.ts": "one module-level mint + afterAll(rmSync); measured +0 per run",
   "commands/team-init.multiteam.test.ts":
     "one module-level mint + afterAll(rmSync); every repo() is a subdir of it; measured +0 per run",

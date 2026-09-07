@@ -65,6 +65,10 @@ interface JoinData {
    * reporting `[]` for an unreachable board asserts *"you owe no verdicts"*,
    * which is the single claim this field is not entitled to make. */
   reviewCards: ReviewCard[] | null;
+  /** Repo-relative path of this seat's session report — minted by the seat at
+   * join, written as it works, closed at finalize, committed. Curation reads it;
+   * no joining seat does. */
+  report: string;
   checklist: string[];
   /** Surfaced when a configured grounding path doesn't exist — a dangling
    * `config.grounding` ref (e.g. a default `AGENTS.md` the repo doesn't have)
@@ -87,6 +91,17 @@ interface JoinData {
  * one commit — the "prose about code, written by the person who just wrote the
  * code" failure this seat records against itself. Rewritten, not amended.)_
  */
+/**
+ * The report folder is keyed by the LOCAL calendar date, not UTC. `toISOString()`
+ * flips to tomorrow at 17:00 Pacific, so two seats joining either side of it
+ * landed in different date folders for one session (found at review).
+ */
+export function localDateStamp(d: Date = new Date()): string {
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
 export type WireStatus = { available: true; cli: string } | { available: false; reason: string };
 
 /**
@@ -138,6 +153,10 @@ export interface ChecklistInput {
   /** Gitignored scratch path a seat writes its commit message to, so the body
    * never passes through a shell. */
   msgFileRel: string;
+  /** The seat's SESSION REPORT — `<teamDir>/reports/<date>/<handle>.md`, committed,
+   * and the only place this session's lessons go. The seat doc is identity and
+   * is curated; the report is the outlet (anthill-evolution). */
+  reportRel: string;
   /** Absolute path to the emitting cli.ts, so the LAND string resolves to the
    * binary that composed it rather than through PATH. */
   cliPath: string;
@@ -505,7 +524,8 @@ export function buildChecklist(i: ChecklistInput): string[] {
     // belief here; the others were "the comms log is gitignored so a fresh pane
     // cannot reach it" (false — a 452KB world-readable file) and this seat's own
     // promotion of that claim to a "guarantee".
-    `Finalize BEFORE you drop off: synthesize durable lessons into ${i.seatDocRel}, commit, post your retro answers, THEN record your departure with \`bun ${i.cliPath} comms stand-down --as ${i.handle}\` — the LAST thing you do. It is a positive observation the teardown guard reads; "I stopped working" leaves no record and is not a departure. Scratch is gitignored, so it never TRAVELS — the files stay on your disk, but nothing commits them and no future instance reads them. Synthesize earlier if the reasoning is warm.`,
+    `Mint your session REPORT at ${i.reportRel} — create it now, write into it AS THINGS HAPPEN, in full, for a curator who was not here. It is the only place this session's lessons go: ${i.seatDocRel}, seams.md, principles.md and the wiki are CURATED — nobody edits them mid-session, and \`commit\` refuses them without --curated. If one of them reads wrong, that is the first line of your report.`,
+    `Finalize BEFORE you drop off: CLOSE your report at ${i.reportRel} (the close prompts are on the team's wiki finalize page), land it, THEN record your departure with \`bun ${i.cliPath} comms stand-down --as ${i.handle}\` — the LAST thing you do. It is a positive observation the teardown guard reads; "I stopped working" leaves no record and is not a departure. Scratch is gitignored, so it never TRAVELS — the files stay on your disk, but nothing commits them and no future instance reads them; the report is what travels.`,
     // NAMES NO WIRE — found by grepping this scope after the same collapse was
     // fixed three times elsewhere today. This said "on the vine", and it is
     // EMITTED to every consuming project: a team running comms-only (which this
@@ -753,6 +773,15 @@ export const teamJoinCommand = defineAnthillCommand({
     }
 
     const seatDocRel = relative(root, config.seatDocPath(handle));
+    // One report per seat per session, keyed by date — a second session on the
+    // same day appends. Under `reports/`, which init does NOT gitignore: the
+    // report is the one thing from a session that travels.
+    const reportRel = join(
+      relative(root, config.teamDirPath()),
+      "reports",
+      localDateStamp(),
+      `${handle}.md`,
+    );
 
     const cliPath = fileURLToPath(new URL("../cli.ts", import.meta.url));
     const commsIncantation = buildCommsIncantation({
@@ -775,6 +804,7 @@ export const teamJoinCommand = defineAnthillCommand({
       // Beside the seat's scratch, which `init` already gitignores — so a
       // commit-message file never becomes a stray artifact on the gate surface.
       msgFileRel: join(relative(root, config.teamDirPath()), "scratch", handle, "commit-msg.txt"),
+      reportRel,
       reviewCards,
     });
 
@@ -791,6 +821,7 @@ export const teamJoinCommand = defineAnthillCommand({
         : null,
       comms: { channel, incantation: commsIncantation },
       reviewCards,
+      report: reportRel,
       checklist,
       ...(warnings.length > 0 && { warnings }),
     };

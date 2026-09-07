@@ -10,22 +10,26 @@
 > set while a plugin skill is running — take the resolved command from `anthill:join`. Seeded here
 > because this file starts without the shorthand and accumulates it as the team writes.
 >
-> **What belongs here.** A contract earns a place here when it is **shared truth that more than one
-> seat must agree on** and that **drifts if restated** — a data shape passed across a boundary, an
-> invariant two seats both rely on, a protocol between slices. Not a seat's private taste (that's the
-> seat doc), not a one-off (that's a commit message), not product docs.
+> **What belongs here — the admission test, applied at write time.** A contract earns a place here
+> when it is **shared truth that more than one seat must rely on** and that **drifts if restated** —
+> a data shape passed across a boundary, an invariant two seats both rely on, a protocol between
+> slices. **Not** a lesson, however important: a lesson dressed as a contract is the commonest way
+> this file grows into a diary, because a contract confers authority and a lesson does not. Lessons go
+> to your report; a lesson that generalises becomes a principle at curation.
 >
-> **This is a seed.** No contracts yet. Two ways they land here: the **load-bearing** cross-seam
-> contracts are **asserted up front and ratified** during the **plan phase** (the lead's skeleton →
-> owners ratify the seams they touch — see `anthill:plan`); the rest **accrete as they're
-> discovered**. Both/and — assert the load-bearing ones up front, let the long tail accrete. Start
-> empty; add the first one the first time two seats have to agree on something.
+> **Who writes here.** The **lead** lands a contract at `anthill:plan` (ratified up front) or
+> `anthill:curate` (accreted from reports). A seat **proposes** — on the wire during plan, in its
+> report otherwise — and never edits this file mid-session. One owner per contract keeps the prose
+> true; everyone else defers to it.
+>
+> **This is a seed.** No contracts yet. Add the first one the first time two seats have to agree on
+> something.
 
 ## Ownership & the maintenance trigger
 
 - **Each contract has ONE owning seat** — the seat that is authoritative for that boundary _in code_.
   The owner keeps the contract's prose true. Other seats **defer** to it.
-- **The write-trigger (binds everyone):** _whoever moves a boundary updates this file **and** its
+- **The write-trigger (binds everyone):** _whoever moves a boundary proposes the update **and** its
   proof_ — in the same change. A boundary moved in code but not here is a latent drift bug; the next
   agent trusts the trail and the trail lied.
 - **Pin to proof where you can.** A contract backed by a test that fails when the boundary breaks
@@ -36,7 +40,7 @@
 
 ## Contracts
 
-_(none yet — accrete here as boundaries emerge. Suggested shape for each:)_
+_(none yet — accrete here as boundaries emerge. The shape, and it is deliberately short:)_
 
 <!--
 ## Contract N — <short name>
@@ -44,12 +48,13 @@ _(none yet — accrete here as boundaries emerge. Suggested shape for each:)_
 **Owner:** <handle>   ·   **Pointed at from:** <seats that defer to it>
 **Ratified at:** <the grain this was agreed at — envelope / field set / call signature / wire format>
 
-**The lesson, stated once:** <the invariant / shape / protocol, in prose. State what must be TRUE
-ACROSS the boundary — the guarantee the other side may rely on — not how the owner satisfies it.>
-
-**Why it bites:** <the failure mode when the mirror lags>.
+**The invariant:** <what must be TRUE ACROSS the boundary — the guarantee the other side may rely on —
+in one to three sentences. Not how the owner satisfies it.>
 
 **Proof:** <the test / fixture that guards it, or the durable concept if none yet>.
+
+(**Why it bites**, if a reader would otherwise loosen it: ONE line. The story of how it was learned
+lives in the report that produced it, not here.)
 -->
 
 > **Two things that make a contract here trustworthy.**

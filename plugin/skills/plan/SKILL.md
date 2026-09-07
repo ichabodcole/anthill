@@ -115,8 +115,10 @@ plugin needed). Read it; this skill is the operational beats, not a restatement.
    TDD tasks, no placeholders, self-review against the seams), then builds. Orchestrate per the SOP
    (`comms` = substance, board = state, file-scoped atomic land); at wrap, run
    **`anthill:finalize-session`**. Verify → land → finalize are unchanged. _(Subagent build seats: bake
-   the finalize-capture into each build brief per `anthill:convene` — the seat self-synthesizes into
-   its seat doc as the final step of its task; mechanism in `anthill:finalize-session` step 0.)_
+   the report close into each build brief per `anthill:convene` — the seat closes its session report
+   as the final step of its task; mechanism in `anthill:finalize-session` step 0.)_ **The lead lands
+   `seams.md` with `anthill commit --curated`** — it is a curated doc, and the plan-phase ratification
+   is one of the two writers the guard exists for.
 
 ## Output
 

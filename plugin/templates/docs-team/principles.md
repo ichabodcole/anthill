@@ -20,14 +20,17 @@ and the experience is what makes it hold later, when following it costs somethin
 
 ## How one gets added
 
-At **`anthill:finalize-session`**, the retro asks: *did this session produce a principle?* **Usually
-the answer is no**, and that is the correct answer most of the time.
+At **`anthill:curate`** — outside any working session, from the seats' reports, by an agent who was
+not in the session, with the human ruling. The question is: *do these reports, together, show a
+principle?* **Usually the answer is no**, and that is the correct answer most of the time.
 
-- **A principle needs a scar, not a case.** A good argument is a hypothesis — those go in the retro's
-  Q3, where the next session can test them.
-- **Never add one mid-session.** The pressure to generalise peaks right after you have been burned,
-  which is exactly when the generalisation is worst.
-- **If it only holds for this tool or this repo, it is a practice** — SOP, not here.
+- **A principle needs a scar, not a case.** A good argument is a hypothesis — those go in the lead's
+  report as carry-forward, where the next session can test them.
+- **Never add one mid-session, and never add one yourself.** The pressure to generalise peaks right
+  after you have been burned, which is exactly when the generalisation is worst — and the agent who
+  was burned is the one who cannot tell what a stranger needs from it. Write what happened in your
+  report; curation decides.
+- **If it only holds for this tool or this repo, it is a practice** — a wiki page, not here.
 
 ## What other teams have found
 
@@ -39,8 +42,8 @@ Observations from teams using anthill, each with the evidence behind it. **It is
 expected to adopt** — it is what has been seen elsewhere, so you can take what fits and ignore what
 does not.
 
-**Nothing writes to this file but you.** anthill never edits it, never merges into it, and never
-seeds it.
+**Nothing writes to this file but your team's curation.** anthill never edits it, never merges into
+it, and never seeds it.
 
 ## Disagreeing is a legitimate entry
 
